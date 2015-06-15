@@ -19,7 +19,7 @@ public class MembershipAmbiguityInspector implements Inspector {
 		this.scale = scale;
 		for (String clabel : groups.keySet()) {
 			ArrayList<DataRecord> g = groups.get(clabel);
-			double[] m = InspectorUtil.getMeanVector(dpp, g);
+			double[] m = InspectorUtil.getMeanVector(dpp, g, InspectorUtil.input);
 			means.put(clabel, m);
 		}
 	}
@@ -27,10 +27,19 @@ public class MembershipAmbiguityInspector implements Inspector {
 	public double getActionLabel(DataRecord record) {
 		double[] alldists = new double[means.keySet().size()];
 		int cnt = 0;
+		boolean issmallest = true;
+		double refdist = InspectorUtil.getDistance(dpp, record, means.get(record.classLabel), weights, InspectorUtil.input);
 		for (String c : means.keySet()) {
-			double dist = InspectorUtil.getDistance(dpp, record, means.get(c), weights);
+			double dist = InspectorUtil.getDistance(dpp, record, means.get(c), weights,InspectorUtil.input);
+			if(c.compareTo(record.classLabel)!= 0 && dist < refdist){
+				issmallest = false;
+				break;
+			}
 			alldists[cnt] = dist;
 			cnt++;
+		}
+		if(!issmallest){
+			return -1;
 		}
 		Arrays.sort(alldists);
 		for (int i = 0; i < alldists.length - 1; i++) {

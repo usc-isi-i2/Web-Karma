@@ -1,6 +1,7 @@
 package edu.isi.karma.cleaning;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.slf4j.Logger;
@@ -9,12 +10,13 @@ import org.slf4j.LoggerFactory;
 public class GradientDecendOptimizer {
 	public double c_coef = 1;
 	public double relativeCoef = 1;
-	public static double ratio =0.4;
+	public static double ratio = 0.4;
 	public double stepsize = 0.1;
 	public double maximalIternumber = 50;
 	public double wIternumber = 100;
 	public boolean coef_initialized = false;
 	public double manualCoef = 1;
+	private double small_buffer = 1e-8;
 
 	Logger ulogger = LoggerFactory.getLogger(GradientDecendOptimizer.class);
 
@@ -22,15 +24,13 @@ public class GradientDecendOptimizer {
 	}
 
 	// used to calculate the value of objective function.
-	public double objectiveFunction(ArrayList<double[]> r,
-			ArrayList<double[]> s, ArrayList<double[]> t_star,
-			double[] w) {
+	public double objectiveFunction(ArrayList<double[]> r, ArrayList<double[]> s, ArrayList<double[]> t_star, double[] w) {
 		double res = 0.0;
 		for (double[] x : r) {
 			res += UtilTools.product(x, w);
 		}
 		double ml = 0.0;
-		
+
 		for (double[] e : s) {
 			ml += Math.pow(UtilTools.product(e, w), 0.5);
 		}
@@ -38,13 +38,11 @@ public class GradientDecendOptimizer {
 		for (double[] x : t_star) {
 			tmp += Math.pow(UtilTools.product(x, w), 0.5);
 		}
-		return res +  c_coef * Math.log(ml) - c_coef
-				* Math.log(tmp);
+		return res + c_coef * Math.log(ml) - c_coef * Math.log(tmp);
 	}
 
 	// compute the gradient according to the formula in slides
-	public double[] getGradient(ArrayList<double[]> r, ArrayList<double[]> s,
-			ArrayList<double[]> t_star, double[] w_old) {
+	public double[] getGradient(ArrayList<double[]> r, ArrayList<double[]> s, ArrayList<double[]> t_star, double[] w_old) {
 
 		int featuresize = w_old.length;
 		double[] r_sum = UtilTools.sum(r);
@@ -62,7 +60,7 @@ public class GradientDecendOptimizer {
 			vects[i] = 0;
 		}
 		for (double[] e : t_star) {
-			double cof = Math.pow(UtilTools.product(e, w_old) + (1e-4), -0.5);
+			double cof = Math.pow(UtilTools.product(e, w_old) + small_buffer, -0.5);
 			double[] x = UtilTools.produce(cof, e);
 			for (int j = 0; j < x.length; j++) {
 				vects[j] += x[j];
@@ -74,17 +72,17 @@ public class GradientDecendOptimizer {
 			s_scalar_sqrt_sum += Math.sqrt(UtilTools.product(e, w_old));
 		}
 		// System.out.println("scalar_sqrt_sum: "+scalar_sqrt_sum);
-		s_scalar_sqrt_sum = 1.0 / (s_scalar_sqrt_sum+1e-6);
+		s_scalar_sqrt_sum = 1.0 / (s_scalar_sqrt_sum + small_buffer);
 		double[] svects = new double[featuresize];
 		for (int i = 0; i < svects.length; i++) {
 			svects[i] = 0;
 		}
 		for (double[] e : s) {
-			double cof = Math.pow(UtilTools.product(e, w_old) + (1e-4), -0.5);
-			//System.out.println("coef: "+cof);
-			//System.out.println("e: "+Arrays.toString(e));
+			double cof = Math.pow(UtilTools.product(e, w_old) + small_buffer, -0.5);
+			// System.out.println("coef: "+cof);
+			// System.out.println("e: "+Arrays.toString(e));
 			double[] x = UtilTools.produce(cof, e);
-			//System.out.println("x: "+Arrays.toString(x));
+			// System.out.println("x: "+Arrays.toString(x));
 			for (int j = 0; j < x.length; j++) {
 				svects[j] += x[j];
 			}
@@ -100,9 +98,12 @@ public class GradientDecendOptimizer {
 		}
 		// computer the gradient using subcomponents
 		for (int i = 0; i < res.length; i++) {
-			res[i] = r_sum[i] + this.relativeCoef * manualCoef * svects[i]- manualCoef * vects[i];
-			//res[i] = this.relativeCoef * manualCoef *s_scalar_sqrt_sum*svects[i]- manualCoef *t_scalar_sqrt_sum*vects[i];;
-			//res[i] = this.relativeCoef * manualCoef *svects[i]- manualCoef *vects[i];
+			res[i] =  r_sum[i] + this.relativeCoef * manualCoef * svects[i] - manualCoef * vects[i] +w_old[i];
+			// res[i] = this.relativeCoef * manualCoef
+			// *s_scalar_sqrt_sum*svects[i]- manualCoef
+			// *t_scalar_sqrt_sum*vects[i];;
+			// res[i] = this.relativeCoef * manualCoef *svects[i]- manualCoef
+			// *vects[i];
 		}
 
 		return res;
@@ -125,30 +126,27 @@ public class GradientDecendOptimizer {
 		 * double smallest = ratios.get(ratios.size() - 1); for (Double right :
 		 * ratios) { if (right / smallest <= 10) { result = right; } }
 		 */
-		result = ratios.get(0);
+		if(ratios.size() > 0)
+			result = ratios.get(0);
 		return result;
 	}
-	//approximate the largrange multiplier
-	public double[] normalizeW(double[] w)
-	{
+
+	// approximate the largrange multiplier
+	public double[] normalizeW(double[] w) {
 		double sum = 0.0;
 		double goal = w.length;
 		double[] nw = new double[w.length];
-		for(int i = 0; i < w.length; i++)
-		{
+		for (int i = 0; i < w.length; i++) {
 			sum += w[i];
 		}
-		for(int i = 0; i < w.length; i++)
-		{
-			nw[i] =w[i]*goal*1.0/sum;
+		for (int i = 0; i < w.length; i++) {
+			nw[i] = w[i] * goal * 1.0 / sum;
 		}
 		return nw;
 	}
+
 	// as the objective function is convex. Could check the trend each step
-	public double[] doOptimize(ArrayList<double[]> examples,
-			ArrayList<double[]> instances,
-			ArrayList<ArrayList<double[]>> constraints,
-			ArrayList<ArrayList<double[]>> individualExps, double[] w) {
+	public double[] doOptimize(ArrayList<double[]> examples, ArrayList<double[]> instances, ArrayList<ArrayList<double[]>> constraints, ArrayList<ArrayList<double[]>> individualExps, double[] w) {
 
 		double[] w_0 = new double[examples.get(0).length];
 		double[] oldGradient = new double[examples.get(0).length];
@@ -164,42 +162,40 @@ public class GradientDecendOptimizer {
 		}
 		int cntor = 0;
 		while (cntor < maximalIternumber) {
+
 			ArrayList<double[]> r = compute_r(examples, instances, w_0);
-			//ArrayList<double[]> r = new ArrayList<double[]>();
+			// ArrayList<double[]> r = new ArrayList<double[]>();
 			ArrayList<double[]> t = compute_t(constraints, w_0);
 			ArrayList<double[]> s = compute_s(individualExps, w_0);
 			// System.out.println("t>>>");
 			// TestTools.print(t);
 			// System.out.println("s>>>");
 			// TestTools.print(s);
-			if (s.size() > 0)
-			{
-				this.relativeCoef = t.size()*ratio/s.size();
-				//relativeCoef = 2;
+			if (s.size() > 0) {
+				this.relativeCoef = t.size() * ratio / s.size();
+				// relativeCoef = 2;
 			}
 			double[] gradient = getGradient(r, s, t, w_0);
-			if(UtilTools.distance(gradient, oldGradient) < 10e-5)
-			{
+			if (UtilTools.distance(gradient, oldGradient) < 10e-5) {
 				break;
 			}
 			oldGradient = gradient;
-			if(s.size() > 0)
-			{
+			if (s.size() > 0) {
 				int negtiveCnt = 0;
-				for(int i = 0; i < gradient.length; i++)
-				{
-					if(gradient[i] < 0)
-					{
-						negtiveCnt ++;
+				for (int i = 0; i < gradient.length; i++) {
+					if (gradient[i] < 0) {
+						negtiveCnt++;
 					}
 				}
 				double offset = 1.0;
-				for(int x = 0; x < individualExps.size(); x++)
-				{
+				for (int x = 0; x < individualExps.size(); x++) {
 					offset += individualExps.get(x).size();
 				}
-				offset = offset/ (individualExps.size());
-				//String sx = String.format("s: %d, t: %d,nG: %f, relative: %f, offset:%f", s.size(), t.size(),(negtiveCnt*1.0/gradient.length), this.relativeCoef,offset );
+				offset = offset / (individualExps.size());
+				// String sx =
+				// String.format("s: %d, t: %d,nG: %f, relative: %f, offset:%f",
+				// s.size(), t.size(),(negtiveCnt*1.0/gradient.length),
+				// this.relativeCoef,offset );
 			}
 			int wcnt = 0;
 			double rstepsize = this.stepsize;
@@ -209,12 +205,18 @@ public class GradientDecendOptimizer {
 				for (int i = 0; i < w_0.length; i++) {
 					w_1[i] = w_0[i] - rstepsize * gradient[i];
 				}
+				boolean gradientToolarge = false;
 				for (int i = 0; i < w_1.length; i++) {
 					if (w_1[i] < 0) {
-						w_1[i] = 0;
+						gradientToolarge = true;
+						break;
 					}
 				}
-				w_1 = normalizeW(w_1);
+				if(gradientToolarge){
+					rstepsize = 0.1 * rstepsize;
+					continue;
+				}
+				//w_1 = normalizeW(w_1);
 				// the function should always decline
 				double v_old = objectiveFunction(r, s, t, w_0);
 				double v_new = objectiveFunction(r, s, t, w_1);
@@ -227,7 +229,7 @@ public class GradientDecendOptimizer {
 					continue;
 				}
 				// check stop condition
-				if (UtilTools.distance(w_0, w_1) < 10e-4) {
+				if (UtilTools.distance(w_0, w_1) < small_buffer) {
 					w_0 = w_1;
 					break;
 				}
@@ -236,13 +238,13 @@ public class GradientDecendOptimizer {
 			}
 			cntor++;
 		}
-		return w_0;
+		return normalizeW(w_0);
 	}
+
 	// compute the r vectors
-	public ArrayList<double[]> compute_r(ArrayList<double[]> centers,
-			ArrayList<double[]> instances, double[] w) {
+	public ArrayList<double[]> compute_r(ArrayList<double[]> centers, ArrayList<double[]> instances, double[] w) {
 		ArrayList<double[]> res = new ArrayList<double[]>();
-		// assign instance to different centers
+		
 		for (double[] e : instances) {
 			double[] cent_vec = null;
 			double min_dist = Double.MAX_VALUE;
@@ -264,8 +266,7 @@ public class GradientDecendOptimizer {
 	}
 
 	// compute the t vectors
-	public ArrayList<double[]> compute_t(
-			ArrayList<ArrayList<double[]>> constraints, double[] w) {
+	public ArrayList<double[]> compute_t(ArrayList<ArrayList<double[]>> constraints, double[] w) {
 		ArrayList<double[]> res = new ArrayList<double[]>();
 		// for each constraint group, find most apart two points
 		for (ArrayList<double[]> group : constraints) {
@@ -274,8 +275,7 @@ public class GradientDecendOptimizer {
 			double[] y = null;
 			for (int i = 0; i < group.size(); i++) {
 				for (int j = i + 1; j < group.size(); j++) {
-					double tmp = UtilTools.distance(group.get(i), group.get(j),
-							w);
+					double tmp = UtilTools.distance(group.get(i), group.get(j), w);
 					if (tmp >= max_dist) {
 						max_dist = tmp;
 						x = group.get(i);
@@ -293,8 +293,7 @@ public class GradientDecendOptimizer {
 	}
 
 	// computer the s vectors
-	public ArrayList<double[]> compute_s(ArrayList<ArrayList<double[]>> groups,
-			double[] w) {
+	public ArrayList<double[]> compute_s(ArrayList<ArrayList<double[]>> groups, double[] w) {
 		ArrayList<double[]> res = new ArrayList<double[]>();
 		for (ArrayList<double[]> group : groups) {
 			if (group.size() <= 1)
@@ -310,8 +309,7 @@ public class GradientDecendOptimizer {
 					break;
 				} else {
 					for (int k = 0; k < t.length; k++) {
-						t[k] = Math.pow(group.get(i)[k] - group.get(i + 1)[k],
-								2);
+						t[k] = Math.pow(group.get(i)[k] - group.get(i + 1)[k], 2);
 					}
 					tmp.add(t);
 				}
@@ -322,7 +320,7 @@ public class GradientDecendOptimizer {
 		return res;
 	}
 
-	//@Test
+	// @Test
 	public void test1() {
 		double[] p1 = { 1, 2 };
 		double[] p2 = { 50, 1 };
@@ -367,8 +365,7 @@ public class GradientDecendOptimizer {
 		group3.add(p6);
 		group3.add(p7);
 		cconstraints.add(group3);
-		double[] res = doOptimize(examples, instances, cconstraints,
-				mconstraints, null);
+		double[] res = doOptimize(examples, instances, cconstraints, mconstraints, null);
 		assert (res[0] < res[1]);
 		assert (res[0] < 1e-5);
 		// System.out.println("Final Weights: " + Arrays.toString(res));

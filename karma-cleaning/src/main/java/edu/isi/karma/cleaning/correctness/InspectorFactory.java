@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.hp.hpl.jena.sparql.function.library.namespace;
+
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.DataRecord;
 import edu.isi.karma.cleaning.Messager;
@@ -25,7 +27,27 @@ public class InspectorFactory {
 	}
 	public static List<String> getInspectorNames(){
 		ArrayList<String> names = new ArrayList<String>();
-		names.add(ClasscenterInspector.class.getName()+"|1.0");
+		ArrayList<Integer> targetContents = new ArrayList<Integer>();
+		targetContents.add(InspectorUtil.input);
+		targetContents.add(InspectorUtil.input_output);
+		targetContents.add(InspectorUtil.output);
+		//class center 
+		String classCenterPrefix = ClasscenterInspector.class.getName();
+		for(double scale = 1.0; scale <= 3.0; scale += 0.2){
+			for(int tar: targetContents){
+				String ins = String.format("%s|%.1f|%d", classCenterPrefix,scale,tar);
+				names.add(ins);
+			}
+		}
+		
+		String outlierPrefix = OutlierInspector.class.getName();
+		for(double scale = 1.0; scale <= 3.0; scale += 0.2){
+			for(int tar: targetContents){
+				String ins = String.format("%s|%.1f|%d", outlierPrefix,scale,tar);
+				names.add(ins);
+			}
+		}
+		/*names.add(ClasscenterInspector.class.getName()+"|1.0");
 		names.add(ClasscenterInspector.class.getName()+"|1.2");
 		names.add(ClasscenterInspector.class.getName()+"|1.4");
 		names.add(ClasscenterInspector.class.getName()+"|1.6");
@@ -38,7 +60,7 @@ public class InspectorFactory {
 		names.add(OutlierInspector.class.getName()+"|1.6");
 		names.add(OutlierInspector.class.getName()+"|1.8");
 		names.add(OutlierInspector.class.getName()+"|2.0");
-		names.add(OutlierInspector.class.getName()+"|3.0");
+		names.add(OutlierInspector.class.getName()+"|3.0");*/
 		names.add(MembershipAmbiguityInspector.class.getName()+"|0.05");
 		names.add(MembershipAmbiguityInspector.class.getName()+"|0.07");
 		names.add(MembershipAmbiguityInspector.class.getName()+"|0.09");
@@ -73,19 +95,22 @@ public class InspectorFactory {
 	}
 	public Inspector getInspector(String name) {
 		Inspector ret = null;
-		double scale = 1.8;
-		double ratio = 0.05;
+		//double scale = 1.8;
+		//double ratio = 0.05;
 		if (name.indexOf(ClasscenterInspector.class.getName()) != -1) {
-			if(name.indexOf("|")!= -1)
-				scale = Double.parseDouble(name.split("\\|")[1]);
-			ret = new ClasscenterInspector(dpp, examplegroups,all, weights, scale);
+			String[] parameters = name.split("\\|");
+			double scale =  Double.parseDouble(parameters[1]);
+			int targetContent = Integer.parseInt(parameters[2]); 
+			ret = new ClasscenterInspector(dpp, examplegroups,all, weights, scale, targetContent);
 			
 		} else if (name.indexOf(OutlierInspector.class.getName()) != -1) {
-			if(name.indexOf("|")!= -1)
-				scale = Double.parseDouble(name.split("\\|")[1]);
-			ret = new OutlierInspector(dpp, all, weights, scale);
+			String[] parameters = name.split("\\|");
+			double scale =  Double.parseDouble(parameters[1]);
+			int targetContent = Integer.parseInt(parameters[2]); 
+			ret = new OutlierInspector(dpp, all, weights, scale, targetContent);
 
 		} else if (name.indexOf(MembershipAmbiguityInspector.class.getName()) != -1) {
+			double ratio = 0.05;
 			if(name.indexOf("|")!= -1)
 				ratio = Double.parseDouble(name.split("\\|")[1]);
 			ret = new MembershipAmbiguityInspector(dpp, examplegroups,ratio, weights);

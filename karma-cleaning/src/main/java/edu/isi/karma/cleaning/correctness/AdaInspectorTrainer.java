@@ -3,6 +3,9 @@ package edu.isi.karma.cleaning.correctness;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.json.JSONObject;
+
 public class AdaInspectorTrainer {
 	Instance[] instances;
 	List<String> classifierList = null;	//各个弱分类器
@@ -128,8 +131,11 @@ public class AdaInspectorTrainer {
 		List<String> clfs = InspectorFactory.getInspectorNames();
 		AdaInspectorTrainer adaTrainer = new AdaInspectorTrainer(all.toArray(new Instance[all.size()]), clfs);
 		adaTrainer.adaboost(clfs.size());
-		System.out.println(""+adaTrainer.classifierList);
-		System.out.println(""+adaTrainer.alphaList);
+		JSONObject parameters = new JSONObject();
+		for(int i = 0; i < adaTrainer.alphaList.size(); i++){
+			parameters.put(adaTrainer.classifierList.get(i), adaTrainer.alphaList.get(i));
+		}
+		System.out.println(""+StringEscapeUtils.escapeJava(parameters.toString()));
 		System.out.println(adaTrainer.getResult(adaTrainer.classifierList, adaTrainer.alphaList, all));
 	}
 }

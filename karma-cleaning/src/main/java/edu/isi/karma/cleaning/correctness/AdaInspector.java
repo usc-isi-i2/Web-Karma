@@ -1,7 +1,10 @@
 package edu.isi.karma.cleaning.correctness;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import org.json.JSONObject;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.DataRecord;
@@ -26,28 +29,40 @@ public class AdaInspector implements Inspector {
 		}
 	}
 	public void initeParameter(){
+		String value = "{\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.8|2\":7.872529361397291E-4,\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.6|2\":0.09057573916569274,\"edu.isi.karma.cleaning.correctness.MultiviewInspector\":0.15428581496323063,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|1\":0.02867013540209644,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|2\":0.17812245056845116}";
+		
+		JSONObject parameters = new JSONObject(value);
+		Iterator<String> keys = parameters.keys();
+		while(keys.hasNext()){
+			String name = keys.next();
+			double weight = parameters.getDouble(name);
+			inspectorNames.add(name);
+			weights.add(weight);
+		}
 		//inspectorNames.add(OutlierInspector.class.getName());
-		//inspectorNames.add(MultiviewInspector.class.getName());
-		inspectorNames.add(OutlierInspector.class.getName()+"|1.2");
-		weights.add(0.5666898451496911);
+		/*inspectorNames.add(MultiviewInspector.class.getName());
+		weights.add(0.087861029);
+		inspectorNames.add(OutlierInspector.class.getName()+"|2.0");
+		weights.add(0.012302152);
+		inspectorNames.add(OutlierInspector.class.getName()+"|1.6");
+		weights.add(0.035516576);		
+		inspectorNames.add(OutlierInspector.class.getName()+"|1.4");
+		weights.add(0.247238603);
 		inspectorNames.add(ClasscenterInspector.class.getName()+"|3.0");
-		weights.add(0.408915677);
-		inspectorNames.add(OutlierInspector.class.getName()+"|3.0");
-		weights.add(0.185721764);
+		weights.add(0.2608630532750992);
 		inspectorNames.add(ClasscenterInspector.class.getName()+"|2.0");
-		weights.add(0.113038286);
-		inspectorNames.add(MultiviewInspector.class.getName());
-		weights.add(0.087623594);
-		inspectorNames.add(ClasscenterInspector.class.getName()+"|2.0");
-		weights.add(0.061326947);
-		inspectorNames.add(OutlierInspector.class.getName()+"|1.0");
-		weights.add(0.064084607);
-		inspectorNames.add(MembershipAmbiguityInspector.class.getName()+"|0.07");
-		weights.add(0.030297008);
+		weights.add(0.095855231);
+		inspectorNames.add(ClasscenterInspector.class.getName()+"|1.8");
+		weights.add(0.055448516);
 		inspectorNames.add(ClasscenterInspector.class.getName()+"|1.6");
-		weights.add(0.029405159);
+		weights.add(0.016814621);
+		inspectorNames.add(ClasscenterInspector.class.getCanonicalName()+"1.4");
+		weights.add(0.00632224);
 		inspectorNames.add(MembershipAmbiguityInspector.class.getName()+"|0.05");
-		weights.add( 0.005144666429806189);		
+		weights.add(0.089861187);
+		inspectorNames.add(ClasscenterInspector.class.getName()+"|2.0");
+		weights.add(0.137122140755571);*/
+		
 	}
 	public void initeParameterWithTraining() {
 		CreatingTrainingData cdata = new CreatingTrainingData();
@@ -77,9 +92,13 @@ public class AdaInspector implements Inspector {
 	public double getActionScore(DataRecord record){
 		double ret = 0.0;
 		//String line = "";
+		ArrayList<Double> alllabels = new ArrayList<Double>();
 		for (int i = 0; i < inspectors.size(); i++) {
-			ret += inspectors.get(i).getActionLabel(record) * weights.get(i);
+			alllabels.add(inspectors.get(i).getActionLabel(record) * weights.get(i));
 			//line += "|"+inspectors.get(i).getActionLabel(record) +", "+weights.get(i);
+		}
+		for(double d: alllabels){
+			ret += d;
 		}
 		return ret;
 	}

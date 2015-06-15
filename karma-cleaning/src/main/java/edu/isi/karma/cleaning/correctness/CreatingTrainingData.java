@@ -71,7 +71,7 @@ public class CreatingTrainingData {
 			ecnt.totalerror = wrong.size();
 			ecnt.totalrecord = allrec.size();
 			all_iter_cnt++;
-			if (runtimeErrorcnt == 0) {
+			if (runtimeErrorcnt == 0 && wrong.size() > 0) {
 				InspectorFactory factory = new InspectorFactory(tool.dpp, tool.msger, allrec, exampleIDs, tool.getProgramRule());
 				List<Inspector> inspectors = factory.getAllInspector();
 				for(DataRecord rec: allrec){

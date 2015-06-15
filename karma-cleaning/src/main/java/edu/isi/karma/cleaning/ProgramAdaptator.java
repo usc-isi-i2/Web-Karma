@@ -152,7 +152,7 @@ public class ProgramAdaptator {
 					break;
 				}
 			}
-			Prober.tracePatchers(program, errNodes, inExps, exp, valid, exp2program);
+			//Prober.tracePatchers(program, errNodes, inExps, exp, valid, exp2program);
 			if (valid) {
 				Partition nPartition = cwspace.mergewith(tIn);
 				ArrayList<String[]> expr = new ArrayList<String[]>();

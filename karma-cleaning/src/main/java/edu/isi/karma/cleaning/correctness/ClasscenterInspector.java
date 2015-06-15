@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.DataRecord;
+import edu.isi.karma.cleaning.UtilTools;
 
 public class ClasscenterInspector implements Inspector {
 	private double[] weights; 
@@ -12,6 +13,7 @@ public class ClasscenterInspector implements Inspector {
 	private HashMap<String, double[]> means = new HashMap<String, double[]>();
 	private double scale = 1.8;
 	private DataPreProcessor dpp;
+	private int targetContent = InspectorUtil.input_output;
 	public ArrayList<DataRecord> findExamples(ArrayList<String> expids, ArrayList<DataRecord> all){
 		ArrayList<DataRecord> ret = new ArrayList<DataRecord>();
 		for(DataRecord r: all){
@@ -30,7 +32,7 @@ public class ClasscenterInspector implements Inspector {
 		double sum = 0.0;		
 		for(DataRecord record: all){
 			if(record.classLabel.compareTo(clabel) == 0){
-				double val = InspectorUtil.getDistance(dpp, record, means.get(clabel), weights);
+				double val = InspectorUtil.getDistance(dpp, record, means.get(clabel), weights, targetContent);
 				sum += val;		
 				alldists.add(val);
 			}
@@ -42,12 +44,13 @@ public class ClasscenterInspector implements Inspector {
 		}
 		return Math.sqrt(squareDiff * 1.0 / all.size());
 	}
-	public ClasscenterInspector(DataPreProcessor dpp, HashMap<String, ArrayList<DataRecord>> expgroups, ArrayList<DataRecord> all, double[] weights, double scale){
+	public ClasscenterInspector(DataPreProcessor dpp, HashMap<String, ArrayList<DataRecord>> expgroups, ArrayList<DataRecord> all, double[] weights, double scale, int option){
 		this.weights = weights;
 		this.scale = scale;
 		this.dpp = dpp;
+		this.targetContent = option;
 		for(String key: expgroups.keySet()){
-			double[] mean = InspectorUtil.getMeanVector(dpp, expgroups.get(key));
+			double[] mean = InspectorUtil.getMeanVector(dpp, expgroups.get(key), targetContent);
 			means.put(key, mean);
 			double stdev = getStdevdistanceForOneClass(expgroups.get(key), dpp, key);
 			stdevs.put(key, stdev);
@@ -55,7 +58,10 @@ public class ClasscenterInspector implements Inspector {
 	}
 	@Override
 	public double getActionLabel(DataRecord record) {
-		double dist = InspectorUtil.getDistance(dpp, record, means.get(record.classLabel), weights);
+		if(!means.containsKey(record.classLabel)){
+			return -1;
+		}
+		double dist = InspectorUtil.getDistance(dpp, record, means.get(record.classLabel), weights, targetContent);
 		if(dist > scale * stdevs.get(record.classLabel)){
 			return -1;
 		}
@@ -67,6 +73,6 @@ public class ClasscenterInspector implements Inspector {
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
-		return this.getClass().getName()+"|"+this.scale;
+		return String.format("%s|%.1f|%d", this.getClass().getName(), this.scale, this.targetContent);
 	}
 }

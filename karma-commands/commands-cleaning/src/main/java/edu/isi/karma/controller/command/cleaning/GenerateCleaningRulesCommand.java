@@ -63,7 +63,8 @@ import edu.isi.karma.rep.cleaning.ValueCollection;
 
 public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
-	private int sample_size = 100;
+	private int sample_cnt = 200;
+	private int sample_size = 110;
 	private Vector<TransformationExample> examples;
 	private HashSet<String> nodeIds = new HashSet<String>();
 	RamblerTransformationInputs inputs;
@@ -73,7 +74,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	public GenerateCleaningRulesCommand(String id, String model, String worksheetId, String hNodeId, String examples, String cellIDs, String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
-		this.nodeIds = parseNodeIds(cellIDs);
+		//this.nodeIds = parseNodeIds(cellIDs);
 		ConfigParameters cfg = new ConfigParameters();
 		cfg.initeParameters();
 		DataCollection.config = cfg.getString();
@@ -159,7 +160,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 		int cnt = 0;
 		Random rchooser = new Random();
-		while(cnt < sample_size) {
+		while(cnt < sample_cnt && rows.size() < sample_size && rows.size() < nodes.size()) {
 			cnt ++;
 			int index = 	rchooser.nextInt(nodes.size());
 			Node node = nodes.get(index);

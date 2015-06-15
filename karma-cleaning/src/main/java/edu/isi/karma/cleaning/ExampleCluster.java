@@ -20,8 +20,9 @@ public class ExampleCluster {
 	Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
 	public ProgSynthesis pSynthesis; // data
 	HashMap<String, Vector<String>> uorgclusters = new HashMap<String, Vector<String>>();
-//	HashMap<String, double[]> string2Vector = new HashMap<String, double[]>();
-	int unlabelDataAmount = 5;
+	// HashMap<String, double[]> string2Vector = new HashMap<String,
+	// double[]>();
+	int unlabelDataAmount = 3;
 	double assignThreshold = 0.1;
 	public int featuresize = 0;
 	public int failedCnt = 0;
@@ -42,8 +43,7 @@ public class ExampleCluster {
 
 	}
 
-	public ExampleCluster(ProgSynthesis pSynthesis, Vector<Partition> examples,
-			DataPreProcessor dpp) {
+	public ExampleCluster(ProgSynthesis pSynthesis, Vector<Partition> examples, DataPreProcessor dpp) {
 		this.pSynthesis = pSynthesis;
 		this.examples = examples;
 		this.dpp = dpp;
@@ -67,8 +67,7 @@ public class ExampleCluster {
 
 	// accepting constraints from previous iterations
 	public void updateConstraints(Vector<Vector<String[]>> cnts) {
-		if (option == method.CPIC || option == method.DPIC
-				|| option == method.SPIC) {
+		if (option == method.CPIC || option == method.DPIC || option == method.SPIC) {
 			HashMap<String, Vector<String[]>> xHashMap1 = new HashMap<String, Vector<String[]>>();
 			for (Vector<String[]> group : cnts) {
 				xHashMap1.put(constraintKey(group), group);
@@ -111,7 +110,7 @@ public class ExampleCluster {
 
 	public void init() {
 		if (option == method.DP || option == method.DPIC) {
-			this.unlabelDataAmount = 5;
+			this.unlabelDataAmount = 3;
 		} else {
 			this.unlabelDataAmount = 0;
 		}
@@ -123,15 +122,12 @@ public class ExampleCluster {
 	}
 
 	// adaptive partition program learning
-	public Vector<Partition> adaptive_cluster_weightEuclidean(
-			Vector<Partition> pars) {
+	public Vector<Partition> adaptive_cluster_weightEuclidean(Vector<Partition> pars) {
 		// single example
 		if (pars.size() == 1) {
 			ProgramAdaptator pAdapter = new ProgramAdaptator();
-			ArrayList<String[]> exps = UtilTools
-					.extractExamplesinPartition(pars);
-			pAdapter.adapt(pSynthesis.msGer.exp2Partition,
-					pSynthesis.msGer.exp2program, exps);
+			ArrayList<String[]> exps = UtilTools.extractExamplesinPartition(pars);
+			pAdapter.adapt(pSynthesis.msGer.exp2Partition, pSynthesis.msGer.exp2program, exps);
 			return pars;
 		}
 		while (true) {
@@ -154,8 +150,7 @@ public class ExampleCluster {
 						legalParitions.put(key, false);
 						continue;
 					}
-					double par_dist = getDistance(pars.get(i), pars.get(j),
-							pars);
+					double par_dist = getDistance(pars.get(i), pars.get(j), pars);
 					if (par_dist < mindist) {
 						mindist = par_dist;
 						x_ind = i;
@@ -174,10 +169,9 @@ public class ExampleCluster {
 			tmppartitions.add(pars.get(y_ind));
 			String tmpkey = Partition.getStringKey(tmppartitions);
 			Partition z = null;
-			if(pSynthesis.msGer.exp2Partition.containsKey(tmpkey)){
+			if (pSynthesis.msGer.exp2Partition.containsKey(tmpkey)) {
 				z = pSynthesis.msGer.exp2Partition.get(tmpkey);
-			}
-			else{
+			} else {
 				z = pars.get(x_ind).mergewith(pars.get(y_ind));
 			}
 
@@ -187,23 +181,18 @@ public class ExampleCluster {
 				pars = UpdatePartitions(x_ind, y_ind, pars);
 				continue;
 			} else {
-				legalParitions.put(
-						getStringKey(pars.get(x_ind), pars.get(y_ind)), false);
+				legalParitions.put(getStringKey(pars.get(x_ind), pars.get(y_ind)), false);
 				// update the constraints
 				Vector<String[]> clique = new Vector<String[]>();
 				for (int k = 0; k < pars.get(x_ind).orgNodes.size(); k++) {
-					String org = UtilTools.print(pars.get(x_ind).orgNodes
-							.get(k));
-					String tar = UtilTools.print(pars.get(x_ind).tarNodes
-							.get(k));
+					String org = UtilTools.print(pars.get(x_ind).orgNodes.get(k));
+					String tar = UtilTools.print(pars.get(x_ind).tarNodes.get(k));
 					String[] pair = { org, tar };
 					clique.add(pair);
 				}
 				for (int k = 0; k < pars.get(y_ind).orgNodes.size(); k++) {
-					String org = UtilTools.print(pars.get(y_ind).orgNodes
-							.get(k));
-					String tar = UtilTools.print(pars.get(y_ind).tarNodes
-							.get(k));
+					String org = UtilTools.print(pars.get(y_ind).orgNodes.get(k));
+					String tar = UtilTools.print(pars.get(y_ind).tarNodes.get(k));
 					String[] pair = { org, tar };
 					clique.add(pair);
 				}
@@ -223,7 +212,7 @@ public class ExampleCluster {
 		if (pars.size() >= 2) {
 			assignUnlabeledData(pars);
 		}
-		//this.diagnose();
+		this.diagnose();
 		return pars;
 	}
 
@@ -258,8 +247,7 @@ public class ExampleCluster {
 					// double par_dist = getDistance(pars.get(i), pars.get(j));
 					// double par_dist = getCompScore(pars.get(i), pars.get(j),
 					// pars);// sumit heuristic
-					double par_dist = getDistance(pars.get(i), pars.get(j),
-							pars);
+					double par_dist = getDistance(pars.get(i), pars.get(j), pars);
 					if (par_dist < mindist) {
 						mindist = par_dist;
 						x_ind = i;
@@ -280,23 +268,18 @@ public class ExampleCluster {
 				pars = UpdatePartitions(x_ind, y_ind, pars);
 				continue;
 			} else {
-				legalParitions.put(
-						getStringKey(pars.get(x_ind), pars.get(y_ind)), false);
+				legalParitions.put(getStringKey(pars.get(x_ind), pars.get(y_ind)), false);
 				// update the constraints
 				Vector<String[]> clique = new Vector<String[]>();
 				for (int k = 0; k < pars.get(x_ind).orgNodes.size(); k++) {
-					String org = UtilTools.print(pars.get(x_ind).orgNodes
-							.get(k));
-					String tar = UtilTools.print(pars.get(x_ind).tarNodes
-							.get(k));
+					String org = UtilTools.print(pars.get(x_ind).orgNodes.get(k));
+					String tar = UtilTools.print(pars.get(x_ind).tarNodes.get(k));
 					String[] pair = { org, tar };
 					clique.add(pair);
 				}
 				for (int k = 0; k < pars.get(y_ind).orgNodes.size(); k++) {
-					String org = UtilTools.print(pars.get(y_ind).orgNodes
-							.get(k));
-					String tar = UtilTools.print(pars.get(y_ind).tarNodes
-							.get(k));
+					String org = UtilTools.print(pars.get(y_ind).orgNodes.get(k));
+					String tar = UtilTools.print(pars.get(y_ind).tarNodes.get(k));
 					String[] pair = { org, tar };
 					clique.add(pair);
 				}
@@ -410,8 +393,7 @@ public class ExampleCluster {
 		return dists;
 	}
 
-	public ArrayList<ArrayList<Double>> convertStringSetToContrainMatrix(
-			ArrayList<String> strings) {
+	public ArrayList<ArrayList<Double>> convertStringSetToContrainMatrix(ArrayList<String> strings) {
 		ArrayList<ArrayList<Double>> res = new ArrayList<ArrayList<Double>>();
 		for (int i = 0; i < strings.size(); i++) {
 			for (int j = i + 1; j < strings.size(); j++) {
@@ -465,8 +447,7 @@ public class ExampleCluster {
 				}
 				constraintgroup.add(group);
 			}
-			double[] w = gdo.doOptimize(centers, instances, constraintgroup,
-					individuals, this.weights);
+			double[] w = gdo.doOptimize(centers, instances, constraintgroup, individuals, this.weights);
 			this.weights = w;
 		} else {
 			this.weights = new double[featuresize];
@@ -475,8 +456,7 @@ public class ExampleCluster {
 	}
 
 	public double[] getFeatureArray(String s) {
-		Collection<Feature> cfeat = pSynthesis.featureSet
-				.computeFeatures(s, "");
+		Collection<Feature> cfeat = pSynthesis.featureSet.computeFeatures(s, "");
 		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
 		double[] res = new double[x.length];
 		for (int i = 0; i < x.length; i++) {
@@ -578,29 +558,28 @@ public class ExampleCluster {
 
 		return Math.sqrt(sum);
 	}
-	//check b can be copied from a
-	public boolean iscovered(String a, String b)
-	{
+
+	// check b can be copied from a
+	public boolean iscovered(String a, String b) {
 		String[] elems = b.split("\\*");
 		boolean covered = true;
-		for(String e: elems)
-		{
-			if(a.indexOf(e)== -1)
-			{
+		for (String e : elems) {
+			if (a.indexOf(e) == -1) {
 				covered = false;
 				break;
 			}
 		}
 		return covered;
 	}
+
 	public boolean adaptive_isLegalPartition(Partition p) {
 		if (p == null) {
 			failedCnt++;
 			return false;
 		}
-		
+
 		String key = p.getHashKey();
-		if(pSynthesis.msGer.exp2program.containsKey(key))
+		if (pSynthesis.msGer.exp2program.containsKey(key))
 			return true;
 		if (legalParitions.containsKey(key)) {
 			return legalParitions.get(key);
@@ -618,8 +597,8 @@ public class ExampleCluster {
 		ArrayList<Partition> nPs = new ArrayList<Partition>();
 		nPs.add(p);
 		ArrayList<String[]> examps = UtilTools.extractExamplesinPartition(nPs);
-		String fprogram = pAdapter.adapt(pSynthesis.msGer.exp2Partition,pSynthesis.msGer.exp2program, examps);
-		if (fprogram.indexOf("null")!= -1) {
+		String fprogram = pAdapter.adapt(pSynthesis.msGer.exp2Partition, pSynthesis.msGer.exp2program, examps);
+		if (fprogram.indexOf("null") != -1) {
 			failedCnt++;
 			legalParitions.put(key, false);
 			return false;
@@ -660,8 +639,7 @@ public class ExampleCluster {
 		}
 	}
 
-	public Vector<Partition> UpdatePartitions(int i, int j,
-			Vector<Partition> pars) {
+	public Vector<Partition> UpdatePartitions(int i, int j, Vector<Partition> pars) {
 		Partition p = pars.get(i).mergewith(pars.get(j));
 		Vector<Partition> res = new Vector<Partition>();
 		res.addAll(pars);

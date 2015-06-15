@@ -398,7 +398,7 @@ public class UtilTools {
 			}
 		}
 		// prune infrequent terms
-		int thresdhold = (int) (data.size() * 0.10);
+		int thresdhold = (int) (data.size() * 0.05);
 		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<String, Integer> e = iter.next();

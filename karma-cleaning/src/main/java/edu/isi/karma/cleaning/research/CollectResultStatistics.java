@@ -7,18 +7,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.DataRecord;
+import edu.isi.karma.cleaning.EmailNotification;
+import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.correctness.AdaInspector;
 import edu.isi.karma.cleaning.correctness.AdaInspectorTrainer;
-import edu.isi.karma.cleaning.correctness.Instance;
 class ErrorCnt{
 	int runtimeerror = 0;
 	int totalerror = 0;
@@ -51,7 +50,7 @@ public class CollectResultStatistics {
 			if (pair == null || pair.length <= 1)
 				break;
 			DataRecord tmp = new DataRecord();
-			tmp.id = seqno + "";
+			tmp.id = pair[0] + "";
 			tmp.origin = pair[0];
 			tmp.target = pair[1];
 			allrec.add(tmp);
@@ -62,7 +61,7 @@ public class CollectResultStatistics {
 		Tools tool = new Tools();
 		tool.init(allrec_v2);
 		PriorityQueue<DataRecord> wrong = new PriorityQueue<DataRecord>();
-		wrong.add(allrec.get(0));
+		wrong.addAll(allrec);
 		Vector<String[]> examples = new Vector<String[]>();
 		ArrayList<String> exampleIDs = new ArrayList<String>();
 		while (!wrong.isEmpty()) {
@@ -70,14 +69,13 @@ public class CollectResultStatistics {
 			String[] exp = this.generateExample(expRec);
 			System.out.println("" + Arrays.toString(exp));
 			examples.add(exp);
-			exampleIDs.add(expRec.id);
+			exampleIDs.add(expRec.origin);
 			tool.learnProgramRule(examples);
-			System.out.println("error cnt: " + wrong.size());
+			//System.out.println("error cnt: " + wrong.size());
 			assignClassLabel(allrec, exampleIDs, tool.getProgramRule());
-			int runtimeErrorcnt = getFailedCnt(wrong);
+			int runtimeErrorcnt = getFailedCnt(allrec);
 			ErrorCnt ecnt = new ErrorCnt();
 			ecnt.runtimeerror = runtimeErrorcnt;
-			ecnt.totalerror = wrong.size();
 			ecnt.totalrecord = allrec.size();
 			all_iter_cnt++;
 			wrong.clear();
@@ -85,7 +83,6 @@ public class CollectResultStatistics {
 				ArrayList<DataRecord> recmd = new ArrayList<DataRecord>();
 				inspector.initeInspector(tool.dpp, tool.msger, allrec, exampleIDs, tool.progRule);
 				for(DataRecord rec: allrec){
-					//System.out.println(String.format("%f, %f", inspector.getActionLabel(rec), rec.target.compareTo(rec.transformed)==0 ? 1.0: -1.0));
 					double value = inspector.getActionScore(rec);
 					rec.value = value;
 					if(value <= 0){
@@ -94,7 +91,7 @@ public class CollectResultStatistics {
 					if(inspector.getActionLabel(rec) == (rec.target.compareTo(rec.transformed)==0 ? 1.0: -1.0)){
 						correct_identified_record_cnt ++;
 					}
-					if(rec.transformed.compareTo(rec.target)!= 0 && !exampleIDs.contains(rec.id)){
+					if(rec.transformed.compareTo(rec.target)!= 0 && !exampleIDs.contains(rec.origin)){
 						wrong.add(rec);
 					}
 					all_record_cnt ++;
@@ -109,7 +106,6 @@ public class CollectResultStatistics {
 				ecnt.correctrecommand = crecmd.size();
 				ecnt.precsion = ecnt.correctrecommand * 1.0 / ecnt.recommand;
 				ecnt.reductionRate = ecnt.recommand *1.0/ecnt.totalrecord;
-				ret += printResult(ecnt)+"\n";
 				if(ecnt.correctrecommand > 0 || wrong.size() == 0){
 					correct_all_iter_cnt ++;
 				}
@@ -117,12 +113,15 @@ public class CollectResultStatistics {
 			else{
 				for(DataRecord rec: allrec){
 					rec.value = 0;
-					if(rec.transformed.compareTo(rec.target)!= 0 && !exampleIDs.contains(rec.id)){
+					if(rec.transformed.compareTo(rec.target)!= 0 && !exampleIDs.contains(rec.origin)){
 						wrong.add(rec);
 					}
 				}
 				correct_all_iter_cnt ++;
 			}
+			ecnt.totalerror = wrong.size();
+			System.out.println(""+tool.progRule.toString());
+			ret += printResult(ecnt)+"\n";
 		}
 		return ret;
 	}
@@ -148,9 +147,10 @@ public class CollectResultStatistics {
 
 	}
 
-	public int getFailedCnt(PriorityQueue<DataRecord> wrong) {
+	public int getFailedCnt(ArrayList<DataRecord> wrong) {
 		int cnt = 0;
 		for (DataRecord s : wrong) {
+			//Prober.CheckSpecificRecord(s);
 			if (s.transformed.contains("_FATAL_ERROR_")) {
 				cnt++;
 			}
@@ -189,11 +189,11 @@ public class CollectResultStatistics {
 		AdaInspectorTrainer.questionablePreference = parameter;
 		double[] ret = {0, 0};
 		inspector = new AdaInspector();
-		inspector.initeParameter();
+		inspector.initeParameterWithTraining();
 		String line = "";
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-					"/Users/bowu/Research/Feedback/result.txt")));
+					"/Users/bowu/Research/Feedback/result"+parameter+".txt")));
 			for (File f : allfiles) {
 				if (f.getName().indexOf(".csv") != (f.getName().length() - 4)) {
 					continue;
@@ -216,12 +216,14 @@ public class CollectResultStatistics {
 	}
 	public static void main(String[] args) {
 		String ret = "";
-		for(double p = 4; p <= 4; p = p+2){
+		for(double p = 4.4; p <= 4.5; p = p+0.1){
 			CollectResultStatistics collect = new CollectResultStatistics();
 			double[] one = collect.parameterSelection(p);
 			ret += String.format("%f, %f, %f", p, one[0], one[1])+"\n";
 		}
 		System.out.println(""+ret);
+		//EmailNotification alert = new EmailNotification();
+		//alert.notify(true, ret);
 	}
 
 }

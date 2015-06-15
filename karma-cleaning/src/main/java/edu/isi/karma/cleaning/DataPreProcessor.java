@@ -19,6 +19,8 @@ import edu.isi.karma.cleaning.grammartree.TNode;
 public class DataPreProcessor {
 	public Collection<String> data;
 	HashMap<String, double[]> data2Vector = new HashMap<String, double[]>();
+	double[] max_values;
+	double[] min_values;
 	RecordFeatureSet rfs = new RecordFeatureSet();
 
 	public DataPreProcessor(Collection<String> data) {
@@ -32,7 +34,7 @@ public class DataPreProcessor {
 		return rfs.xStrings;
 	}
 	public void run() {
-		Vector<String> toks = buildDict(data);
+		Vector<String> toks = UtilTools.buildDict(data);
 		// vectorize String
 		String[] vocb = toks.toArray(new String[toks.size()]);
 		rfs.addVocabulary(vocb);
@@ -77,6 +79,8 @@ public class DataPreProcessor {
 				}
 			}
 		}
+		this.max_values = maxvals;
+		this.min_values = minvals;
 		for (String key : xHashMap.keySet()) {
 			double[] value = xHashMap.get(key);
 			for (int i = 0; i < value.length; i++) {
@@ -94,7 +98,7 @@ public class DataPreProcessor {
 		HashMap<String, double[]> res = new HashMap<String, double[]>();
 		for (String line : data) {
 			if (!res.containsKey(line)) {
-				double[] row = getFeatureArray(line);
+				double[] row = getRawFeatureArray(line);
 				res.put(line, row);
 			}
 		}
@@ -119,8 +123,7 @@ public class DataPreProcessor {
 		return toRemove;
 
 	}
-
-	public double[] getFeatureArray(String s) {
+	public double[] getRawFeatureArray(String s){
 		Collection<Feature> cfeat = rfs.computeFeatures(s, "");
 		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
 		double[] res = new double[x.length];
@@ -129,58 +132,26 @@ public class DataPreProcessor {
 		}
 		return res;
 	}
-
-	public static Vector<String> buildDict(Collection<String> data) {
-		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
-		for (String pair : data) {
-			String s1 = pair;
-			if (s1.contains("<_START>")) {
-				s1 = s1.replace("<_START>", "");
+	public double[] getFeatureArray(String s) {
+		Collection<Feature> cfeat = rfs.computeFeatures(s, "");
+		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
+		double[] res = new double[x.length];
+		for (int i = 0; i < x.length; i++) {
+			res[i] = x[i].getScore();
+		}
+		for(int i = 0; i < res.length; i++){
+			if(res[i] >= max_values[i]){
+				res[i] = 1;
 			}
-			if (s1.contains("<_END>")) {
-				s1 = s1.replace("<_END>", "");
+			else if(res[i] <= min_values[i]){
+				res[i] = 0;
 			}
-			Ruler r = new Ruler();
-			r.setNewInput(s1);
-			Vector<TNode> v = r.vec;
-			HashSet<String> curRow = new HashSet<String>();
-			for (TNode t : v) {
-				String k = t.text;
-				k = k.replaceAll("[0-9]+", "DIGITs");
-				// filter punctuation
-				if (k.trim().length() == 1) {
-					if (!Character.isLetterOrDigit(k.charAt(0))) {
-						continue;
-					}
-				}
-				if (k.trim().length() == 0)
-					continue;
-				// only consider K once in one row
-				if (curRow.contains(k)) {
-					continue;
-				} else {
-					curRow.add(k);
-				}
-				if (mapHashSet.containsKey(k)) {
-					mapHashSet.put(k, mapHashSet.get(k) + 1);
-				} else {
-					mapHashSet.put(k, 1);
-				}
+			else{
+				res[i] = (res[i] - min_values[i])/(max_values[i] - min_values[i]);
 			}
 		}
-		// prune infrequent terms
-		int thresdhold = (int) (data.size() * 0.05);
-		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet()
-				.iterator();
-		while (iter.hasNext()) {
-			Entry<String, Integer> e = iter.next();
-			if (e.getValue() < thresdhold) {
-				iter.remove();
-			}
-		}
-		Vector<String> res = new Vector<String>();
-		res.addAll(mapHashSet.keySet());
 		return res;
 	}
+
 
 }

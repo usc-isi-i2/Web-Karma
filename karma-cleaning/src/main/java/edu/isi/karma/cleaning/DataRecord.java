@@ -10,7 +10,7 @@ public class DataRecord implements Comparable{
 	public String classLabel = unassigned;
 	public double value = 0.0;
 	public String toString(){
-		String ret = String.format("%s, %s, %s", id, origin, transformed);
+		String ret = String.format("%s, %s, %s, %s", id, origin, transformed, target);
 		return ret;
 	}
 	public DataRecord(){

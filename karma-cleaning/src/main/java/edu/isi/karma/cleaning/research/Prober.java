@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.DataRecord;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.cleaning.Patcher;
@@ -17,6 +18,11 @@ public class Prober {
 	public static String target;
 	public static long adaptedProg = 0;
 	public static MultiIndex records = new MultiIndex();
+	public static void CheckSpecificRecord(DataRecord rec){
+		if(rec.origin.compareTo("H: 58 x  W: 25")== 0){
+			System.out.println("Hello");
+		}
+	}
 	public static String PartitionDisplay1(Vector<Partition> vp) {
 		String res = "";
 		for (Partition p : vp) {

@@ -43,10 +43,10 @@ public class EmailNotification {
 				multipart.addBodyPart(messageBodyPart);
 				// Part two is attachment
 				messageBodyPart = new MimeBodyPart();
-				String filename = "./log/mylog.txt";
+				/*String filename = "./log/mylog.txt";
 				DataSource source = new FileDataSource(filename);
 				messageBodyPart.setDataHandler(new DataHandler(source));
-				messageBodyPart.setFileName(filename);
+				messageBodyPart.setFileName(filename);*/
 				multipart.addBodyPart(messageBodyPart);
 				message.setContent(multipart);
 				Transport.send(message);
