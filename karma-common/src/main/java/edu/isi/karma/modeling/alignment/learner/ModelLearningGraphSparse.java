@@ -71,7 +71,7 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 
 
 	@Override
-	public Set<InternalNode> addModel(SemanticModel model) {
+	public Set<InternalNode> addModel(SemanticModel model, boolean useOriginalWeights) {
 
 		HashMap<Node, Node> visitedNodes;
 		Node source, target;

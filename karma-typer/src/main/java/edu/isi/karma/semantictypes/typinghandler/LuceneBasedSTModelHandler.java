@@ -101,8 +101,17 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 * @return
 	 * @throws IOException
 	 */
+	
+	
 	private boolean indexTrainingColumn(String label,
 			ArrayList<String> selectedExamples) throws IOException {
+		/**
+		 * @patch applied
+		 * @author pranav and aditi
+		 * @date 12th June 2015
+		 * 
+		 * 
+		 */
 		
 		// treat content of column as single document
 		StringBuilder sb = new StringBuilder();
@@ -133,7 +142,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		try {
 			indexer.open();
 			if (labelDoc != null) {
-				IndexableField existingContent = labelDoc.getField(Indexer.CONTENT_FIELD_NAME);
+				IndexableField[] existingContent = labelDoc.getFields(Indexer.CONTENT_FIELD_NAME);
 				indexer.updateDocument(existingContent, sb.toString(), label);
 			} else {
 				indexer.addDocument(sb.toString(), label);

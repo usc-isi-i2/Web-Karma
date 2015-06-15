@@ -225,7 +225,7 @@ public class ModelLearner {
 //		logger.info("time to update weights: " + (updateWightsElapsedTimeMillis/1000F));
 		
 		logger.info("computing steiner trees ...");
-		int number = 1;
+		int number = 0;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			if (sn == null) continue;
 			logger.debug("computing steiner tree for steiner nodes set " + number + " ...");
@@ -235,7 +235,9 @@ public class ModelLearner {
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
 			if (this.graphBuilder instanceof GraphBuilderTopK) {
-				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getTopKSteinerTree(), true);
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
+						ModelingConfiguration.getTopKSteinerTree(), 
+						null, null, true);
 			} 
 //			else 
 			{
@@ -270,7 +272,7 @@ public class ModelLearner {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number == ModelingConfiguration.getNumCandidateMappings())
+			if (number >= ModelingConfiguration.getNumCandidateMappings())
 				break;
 
 		}

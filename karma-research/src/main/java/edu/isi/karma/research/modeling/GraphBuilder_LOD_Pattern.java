@@ -47,7 +47,7 @@ public class GraphBuilder_LOD_Pattern {
 		Set<InternalNode> temp = new HashSet<InternalNode>();
 		for (Pattern p : patterns.values()) {
 			SemanticModel sm = new SemanticModel(p.getId(), p.getGraph(), false);
-			temp = modelLearningGraph.addModel(sm);
+			temp = modelLearningGraph.addModel(sm, true);
 			if (temp != null) addedNodes.addAll(temp);
 		}
 		return addedNodes;
@@ -72,20 +72,20 @@ public class GraphBuilder_LOD_Pattern {
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;
 		
+//		 adding patterns of size 3
+		logger.info("adding patterns of size 3 ...");
+		temp = this.addPatterns(patternsSize3);
+		if (temp != null) addedNodes.addAll(temp);
+		
 		// adding patterns with size 2, popularity of the links
 		logger.info("adding patterns of size 2 ...");
 		temp = this.addPatterns(patternsSize2);
 		if (temp != null) addedNodes.addAll(temp);
 
-		// adding patterns of size 3
-		logger.info("adding patterns of size 3 ...");
-		temp = this.addPatterns(patternsSize3);
-		if (temp != null) addedNodes.addAll(temp);
-
 		// adding patterns of size 4
-		logger.info("adding patterns of size 4 ...");
-		temp = this.addPatterns(patternsSize4);
-		if (temp != null) addedNodes.addAll(temp);
+//		logger.info("adding patterns of size 4 ...");
+//		temp = this.addPatterns(patternsSize4);
+//		if (temp != null) addedNodes.addAll(temp);
 
 		try {
 			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 

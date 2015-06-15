@@ -62,15 +62,28 @@ public class PatternReader {
 		
 		Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 		
+//		CSVFormat csvFileFormat = CSVFormat.DEFAULT.withRecordSeparator("\n").
+//				withIgnoreEmptyLines(true).
+//				withDelimiter(' ').
+//				withIgnoreSurroundingSpaces(true).
+//				withHeader();
+		CSVFormat csvFileFormat = CSVFormat.RFC4180.withHeader();
+		CSVParser csvParserTotalFrequency;
+		CSVParser csvParser;
+		
 		File patternDir = new File(patternDirectoryPath);
 		if (patternDir.exists()) {
 			File[] patternFiles = patternDir.listFiles();
 			for (File file : patternFiles) {
 				try {
-					CSVParser csvParser = CSVParser.parse(file, Charsets.UTF_8, CSVFormat.RFC4180.withHeader());
+					csvParser = CSVParser.parse(file, Charsets.UTF_8, csvFileFormat);
 					Map<String, Integer> headerMap = csvParser.getHeaderMap();
+					
+					csvParserTotalFrequency = CSVParser.parse(file, Charsets.UTF_8, csvFileFormat);
+					int totalFrequency = getTotalFrequency(csvParserTotalFrequency, headerMap.get(COUNT_COLUMN));
+					
 					for (CSVRecord record : csvParser) {
-						Pattern p = getPattern(record, headerMap);
+						Pattern p = getPattern(record, headerMap, totalFrequency);
 						if (p != null) {
 							patterns.put(p.getId(), p);
 //							System.out.println(p.getPrintStr());
@@ -88,7 +101,19 @@ public class PatternReader {
 		return patterns;
 	}
 	
-	private static Pattern getPattern(CSVRecord record, Map<String, Integer> headerMap) {
+	private static int getTotalFrequency(CSVParser csvParser, Integer countColumnIndex) {
+		int total = 0;
+		if (csvParser == null || countColumnIndex == null)
+			return 0;
+		
+		for (CSVRecord record : csvParser) {
+			int frequency = Integer.parseInt(record.get(countColumnIndex));
+			total += frequency;
+		}		
+		return total;
+	}
+	
+	private static Pattern getPattern(CSVRecord record, Map<String, Integer> headerMap, int totalFrequency) {
 		
 		if (headerMap == null) return null;
 		
@@ -146,9 +171,10 @@ public class PatternReader {
 		}
 
 		// adding links
+		double w;
+		String key;
 		for (String header : headerMap.keySet()) {
 			String s = record.get(header);
-			String key;
 			Node source, target;
 			if (header.startsWith(OBJECT_PROPERTY_PREFIX)) {
 				key = header.substring(OBJECT_PROPERTY_PREFIX.length());
@@ -159,8 +185,10 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s), ObjectPropertyType.None);
 				graph.addEdge(source, target, link);
-//				graph.setEdgeWeight(link, frequency);
-				graph.setEdgeWeight(link, ModelingParams.PROPERTY_DIRECT_WEIGHT - (double)size / ModelingParams.PROPERTY_DIRECT_WEIGHT);
+				w = getWeight(size, frequency, totalFrequency);
+				graph.setEdgeWeight(link, w);
+//				if (size == 3 && (target.getId().contains("E21_") || target.getId().contains("E39_")) && source.getId().contains("E12_"))
+//					System.out.println("pattern size: " + size + " , link: " + link.getId() + ", count: " + frequency + ", w:" + w);
 			} else if (header.startsWith(DATA_PROPERTY_PREFIX)) {
 				key = header.substring(DATA_PROPERTY_PREFIX.length());
 				if (key.length() != 2) continue; // the object property header should be in form of prefix (dp) + [1..9] + [a..z] --> the key is "xy"
@@ -170,14 +198,31 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s));
 				graph.addEdge(source, target, link);
-//				graph.setEdgeWeight(link, frequency);
-				graph.setEdgeWeight(link, ModelingParams.PROPERTY_DIRECT_WEIGHT - (double)size / ModelingParams.PROPERTY_DIRECT_WEIGHT);
+				w = getWeight(size, frequency, totalFrequency);
+				graph.setEdgeWeight(link, w);
 			}
 		}
 
 		Pattern p = new Pattern(id, size, frequency, types, graph);
 		
 		return p;
+	}
+	
+	private static double getWeight(int patternSize, int frequency, int totalFrequency) {
+		double w = 0.0;
+		double initialWeight;
+		double subtract = 0.0;
+		
+		initialWeight = (ModelingParams.PATTERN_LINK_WEIGHT / (patternSize - 1));
+		initialWeight = initialWeight - ((double)patternSize - 2.0) / 10.0;
+		if (totalFrequency > 0) {
+			subtract = (double)frequency / (double)totalFrequency;
+			if (subtract > initialWeight) subtract = 0.0000001; //initialWeight - Double.MIN_VALUE;
+		}
+		
+		w = initialWeight - subtract;
+//		w = ModelingParams.PATTERN_LINK_WEIGHT;
+		return w;
 	}
 	
 	public static Pattern getPattern(String line) {

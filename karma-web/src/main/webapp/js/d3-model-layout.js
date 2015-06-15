@@ -1425,7 +1425,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	}
 
 	//print the Extented svg
-	function printExtentedSVG(resolution){
+	function printExtentedSVG(resolution, callback){
 		var recordWidth = windowWidth;
 		windowWidth = width + 100;
 		print = true;
@@ -1439,11 +1439,13 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			print = false;
 			firstTime = true;
 			setNodePosition();
+			if(callback)
+				callback();
 		}, 1500);
 	}
 
 	//print screen shot
-	function printSVG(resolution){
+	function printSVG(resolution, callback){
 		print = true;
 		firstTime = true;
 		setNodePosition();
@@ -1453,6 +1455,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			print = false;
 			firstTime = true;
 			setNodePosition();
+			if(callback)
+				callback();
 		}, 1500);
 	}
 
@@ -1764,10 +1768,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	};
 
 	//The savePath format: "file/image/", include last 'image'. 
-	this.printExtented = function(resolution){
-		printExtentedSVG(resolution);
+	this.printExtented = function(resolution, callback){
+		printExtentedSVG(resolution, callback);
 	}
-	this.print = function(resolution){
-		printSVG(resolution);
+	this.print = function(resolution, callback){
+		printSVG(resolution, callback);
 	}
 };

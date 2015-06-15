@@ -212,7 +212,7 @@ public class ModelLearner_LOD {
 //		logger.info("time to update weights: " + (updateWightsElapsedTimeMillis/1000F));
 		
 		logger.info("computing steiner trees ...");
-		int number = 1;
+		int number = 0;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			if (sn == null) continue;
 			logger.debug("computing steiner tree for steiner nodes set " + number + " ...");
@@ -222,7 +222,9 @@ public class ModelLearner_LOD {
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
 			if (this.graphBuilder instanceof GraphBuilderTopK) // which is not in ModelLearner_LOD
-				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, ModelingConfiguration.getNumCandidateMappings(), true);
+				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
+						ModelingConfiguration.getTopKSteinerTree(), 
+						50, 1, true);
 			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -254,33 +256,33 @@ public class ModelLearner_LOD {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number == ModelingConfiguration.getNumCandidateMappings())
+			if (number >= ModelingConfiguration.getNumCandidateMappings())
 				break;
 
 		}
 
 		Collections.sort(sortableSemanticModels);
-		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
+//		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
 		logger.info("results are ready ...");
-		sortableSemanticModels.get(0).print();
-		return sortableSemanticModels.subList(0, count);
+//		sortableSemanticModels.get(0).print();
+//		return sortableSemanticModels.subList(0, count);
 
-//		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
-//		SortableSemanticModel current, previous;
-//		if (sortableSemanticModels != null) {
-//			if (sortableSemanticModels.size() > 0)
-//				uniqueModels.add(sortableSemanticModels.get(0));
-//			for (int i = 1; i < sortableSemanticModels.size(); i++) {
-//				current = sortableSemanticModels.get(i);
-//				previous = sortableSemanticModels.get(i - 1);
-//				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
-//					continue;
-//				uniqueModels.add(current);
-//			}
-//		}
-//		
-//		logger.info("results are ready ...");
-//		return uniqueModels;
+		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
+		SortableSemanticModel current, previous;
+		if (sortableSemanticModels != null) {
+			if (sortableSemanticModels.size() > 0)
+				uniqueModels.add(sortableSemanticModels.get(0));
+			for (int i = 1; i < sortableSemanticModels.size(); i++) {
+				current = sortableSemanticModels.get(i);
+				previous = sortableSemanticModels.get(i - 1);
+				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
+					continue;
+				uniqueModels.add(current);
+			}
+		}
+		
+		logger.info("results are ready ...");
+		return uniqueModels;
 
 	}
 
@@ -825,20 +827,22 @@ public class ModelLearner_LOD {
 
 		boolean randomModel = false;
 		boolean useCorrectType = true;
-		int numberOfCRFCandidates = 1;
+		int numberOfCandidates = 1;
 		String filePath = Params.RESULTS_DIR;
 		String filename = "";
-		filename += "results,k=" + numberOfCRFCandidates;
-		filename += useCorrectType ? "-correct types":"";
-		filename += randomModel ? "-random":"";
+
+		filename += "results";
+		filename += useCorrectType ? "-correct types":"-k=" + numberOfCandidates;
+		filename += randomModel ? "-ontology":"-lod";
 		filename += ".csv"; 
+
 		PrintWriter resultFile = new PrintWriter(new File(filePath + filename));
 
 		resultFile.println("source \t p \t r \t t \n");
 
-		for (int i = 0; i < semanticModels.size(); i++) {
+//		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 0; {
+		int i = 3; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -863,7 +867,7 @@ public class ModelLearner_LOD {
 				try {
 					logger.info("loading the graph ...");
 					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-					modelLearner = new ModelLearner_LOD(new GraphBuilder(ontologyManager, graph, true), steinerNodes);
+					modelLearner = new ModelLearner_LOD(new GraphBuilderTopK(ontologyManager, graph), steinerNodes);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -884,15 +888,20 @@ public class ModelLearner_LOD {
 				return;
 			}
 
-			List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCRFCandidates);
+			List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCandidates);
 
 			long elapsedTimeMillis = System.currentTimeMillis() - start;
 			float elapsedTimeSec = elapsedTimeMillis/1000F;
 
 			List<SortableSemanticModel> topHypotheses = null;
 			if (hypothesisList != null) {
-				topHypotheses = hypothesisList.size() > ModelingConfiguration.getNumCandidateMappings() ? 
-						hypothesisList.subList(0, ModelingConfiguration.getNumCandidateMappings()) : 
+				
+				for (SortableSemanticModel sss : hypothesisList) {
+					ModelEvaluation mmm = sss.evaluate(correctModel);
+					System.out.println(mmm.getPrecision() + ", " + mmm.getRecall());
+				}
+				topHypotheses = hypothesisList.size() > 10 ? 
+						hypothesisList.subList(0, 10) : 
 							hypothesisList;
 			}
 

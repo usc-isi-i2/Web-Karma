@@ -125,6 +125,8 @@ public class GraphBuilderTopK extends GraphBuilder {
 
 	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(Set<Node> steinerNodes, 
 			int k, 
+			Integer recursiveLevel,
+			Integer maxPermutations,
 			boolean onlyAddInternalNodes) 
 		throws Exception {
 		
@@ -145,7 +147,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		}
 		
 //		DPBFfromMM N = new DPBFfromMM(terminals);
-		BANKSfromMM N = new BANKSfromMM(terminals);
+		BANKSfromMM N = new BANKSfromMM(terminals, recursiveLevel, maxPermutations);
 //		STARfromMM N = new STARfromMM(terminals);
 		TopKSteinertrees.graph = this.getTopKGraph();
 		TopKSteinertrees.nodes = this.getTopKGraphNodes();
@@ -175,11 +177,13 @@ public class GraphBuilderTopK extends GraphBuilder {
 	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(
 			SteinerNodes steinerNodes, 
 			int k, 
+			Integer recursiveLevel,
+			Integer maxPermutations,
 			boolean onlyAddInternalNodes) 
 			throws Exception {
 
 		List<DirectedWeightedMultigraph<Node, LabeledLink>> results = 
-				getTopKSteinerTrees(steinerNodes.getNodes(), k, onlyAddInternalNodes);
+				getTopKSteinerTrees(steinerNodes.getNodes(), k, recursiveLevel, maxPermutations, onlyAddInternalNodes);
 		
 		// adding data property links
 		if (results != null && onlyAddInternalNodes) {
@@ -336,7 +340,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		steinerNodes.add(n2);
 		steinerNodes.add(n3);
 		
-		List<DirectedWeightedMultigraph<Node, LabeledLink>> trees = gbtk.getTopKSteinerTrees(steinerNodes, 10, false);
+		List<DirectedWeightedMultigraph<Node, LabeledLink>> trees = gbtk.getTopKSteinerTrees(steinerNodes, 10, null, null, false);
 		for (DirectedWeightedMultigraph<Node, LabeledLink> tree : trees) {
 			System.out.println(GraphUtil.labeledGraphToString(tree));
 		}
