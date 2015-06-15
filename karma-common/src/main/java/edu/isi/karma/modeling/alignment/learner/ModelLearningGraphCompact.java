@@ -45,6 +45,7 @@ import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.util.RandomGUID;
 
@@ -427,10 +428,13 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //					System.out.println("added links: " + i);
 //					i++;
 					LabeledLink link = e.copy(id);
+					
 					if (link == null) {
 			    		logger.error("cannot instanciate a link from the type: " + e.getType().toString());
 			    		continue;
 					}
+					link.setStatus(LinkStatus.Normal); // all the links in learning graph are normal
+
 					if (link.getModelIds() != null)
 						link.getModelIds().clear();
 					link.getModelIds().add(indexedModelId);
