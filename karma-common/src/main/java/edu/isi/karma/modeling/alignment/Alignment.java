@@ -819,6 +819,7 @@ public class Alignment implements OntologyUpdateListener {
 			
 			this.getGraphBuilder().addLink(source, target, newLink); // returns false if link already exists
 			tree.addEdge(source, target, newLink);
+			tree.setEdgeWeight(newLink, l.getWeight());
 						
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 

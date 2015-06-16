@@ -99,7 +99,7 @@ public class ModelLearner {
 		this.ontologyManager = graphBuilder.getOntologyManager();
 		this.steinerNodes = steinerNodes;
 		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
-		this.graphBuilder = cloneGraphBuilder(graphBuilder); // create a copy of the graph builder
+		this.graphBuilder = graphBuilder;
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
 
