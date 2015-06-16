@@ -748,7 +748,7 @@ public class SemanticModel {
 		}
 		writer.name("graph");
 		if (this.graph == null) writer.value(nullStr);
-		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer);
+		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer, false, false);
 //		else GraphUtil.writeGraph(workspace, worksheet, GraphUtil.asDefaultGraph(this.graph), writer);
 		writer.endObject();
 	}

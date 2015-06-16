@@ -187,7 +187,7 @@ public abstract class ModelLearningGraph {
 	
 	public void exportJson() {
 		try {
-			GraphUtil.exportJson(this.graphBuilder.getGraph(), getGraphJsonName());
+			GraphUtil.exportJson(this.graphBuilder.getGraph(), getGraphJsonName(), true, true);
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to json!");
 		}

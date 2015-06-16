@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -299,7 +300,18 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		// Update the alignment
 		if(!this.isExecutedInBatch())
 			alignment.align();
-
+		else if (ModelingConfiguration.getPredictOnApplyHistory()) {
+			if (columnNode.getLearnedSemanticTypes() == null) {
+				// do this only one time: if user assigns a semantic type to the column, 
+				// and later clicks on Set Semantic Type button, we should not change the initially learned types 
+				logger.debug("adding learned semantic types to the column " + hNodeId);
+				columnNode.setLearnedSemanticTypes(
+						new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, columnNode, 4, selection));
+				if (columnNode.getLearnedSemanticTypes().isEmpty()) {
+					logger.info("no semantic type learned for the column " + hNodeId);
+				}
+			}
+		}
 
 		UpdateContainer c = new UpdateContainer();
 
@@ -317,7 +329,8 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		// worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(),
 		// newSynonymTypes);
 
-		if (trainAndShowUpdates) {
+		if(trainAndShowUpdates ||
+				(this.isExecutedInBatch() && ModelingConfiguration.getTrainOnApplyHistory())) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

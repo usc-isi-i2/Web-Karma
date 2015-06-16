@@ -308,7 +308,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 					changeInternalNodeLinksCommand.doIt(workspace);
 					appliedCommands.push(changeInternalNodeLinksCommand);
 					Command setMetaDataCommand = smpcf.createCommand(model, workspace, nestedHNodeId, worksheetId, "isUriOfClass", 
-							targetUri, targetId, "", selection.getName());
+							targetUri, targetId, false, "", selection.getName());
 					setMetaDataCommand.doIt(workspace);
 					appliedCommands.push(setMetaDataCommand);
 				}

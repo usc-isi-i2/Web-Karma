@@ -41,7 +41,9 @@ public class ModelingConfiguration {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelingConfiguration.class);
 
-//	private static Boolean manualAlignment;
+	private static Boolean trainOnApplyHistory;
+	private static Boolean predictOnApplyHistory;
+
 	private static Boolean ontologyAlignment;
 	private static Boolean knownModelsAlignment;
 	
@@ -76,6 +78,15 @@ public class ModelingConfiguration {
 
 	private static final String newLine = System.getProperty("line.separator").toString();
 	private static String defaultModelingProperties = 
+			"##########################################################################################" + newLine + 
+			"#" + newLine + 
+			"# Semantic Typing" + newLine + 
+			"#" + newLine + 
+			"##########################################################################################" + newLine + 
+			"" + newLine + 
+			"train.on.apply.history=false" + newLine + 
+			"predict.on.apply.history=false" + newLine + 
+			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
 			"# Alignment" + newLine + 
@@ -122,7 +133,7 @@ public class ModelingConfiguration {
 			"" + newLine + 
 			"learner.enabled=true" + newLine + 
 			"" + newLine + 
-			"add.ontology.paths=true" + newLine + 
+			"add.ontology.paths=false" + newLine + 
 			"" + newLine + 
 //			"learn.alignment.enabled=false" + newLine + 
 //			"" + newLine + 
@@ -151,6 +162,10 @@ public class ModelingConfiguration {
 			Properties modelingProperties = loadParams();
 
 			File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+
+			trainOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("train.on.apply.history", "false"));
+			predictOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("predict.on.apply.history", "false"));
+
 
 //			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("ontology.alignment", "false"));
 
@@ -204,7 +219,7 @@ public class ModelingConfiguration {
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				addOntologyPaths = true;
 				out.println();
-				out.println("add.ontology.paths=true");
+				out.println("add.ontology.paths=false");
 				out.close();
 			}
 			
@@ -308,6 +323,20 @@ public class ModelingConfiguration {
 //		}
 //		return manualAlignment;
 //	}
+	
+	public static Boolean getTrainOnApplyHistory() {
+		if (trainOnApplyHistory == null) {
+			load();
+		}
+		return trainOnApplyHistory;
+	}
+	
+	public static Boolean getPredictOnApplyHistory() {
+		if (predictOnApplyHistory == null) {
+			load();
+		}
+		return predictOnApplyHistory;
+	}
 	
 	public static Boolean getOntologyAlignment() {
 		if (ontologyAlignment == null) {

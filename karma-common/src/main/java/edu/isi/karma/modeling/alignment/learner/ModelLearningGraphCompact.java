@@ -488,7 +488,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		
 		ml.updateGraphUsingOntology(addedNodes);
 		try {
-			GraphUtil.exportJson(ml.getGraphBuilder().getGraph(), graphName);
+			GraphUtil.exportJson(ml.getGraphBuilder().getGraph(), graphName, true, true);
 			GraphVizUtil.exportJGraphToGraphviz(ml.getGraphBuilder().getGraph(), 
 					"main graph", 
 					true, 
