@@ -799,14 +799,16 @@ public class ModelLearner_KnownModels {
 		boolean iterativeEvaluation = false;
 		boolean useCorrectType = false;
 		boolean randomModel = false;
+		boolean onlyEvaluateInternalLinks = true; 
 
-		int numberOfCandidates = 4;
+		int numberOfCandidates = 1;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
 		filename += "results";
 		filename += useCorrectType ? "-correct types":"-k=" + numberOfCandidates;
 		filename += randomModel ? "-ontology":"";
+		filename += onlyEvaluateInternalLinks ? "-internal":"-all";
 		filename += iterativeEvaluation ? "-iterative":"";
 		filename += ".csv"; 
 		
@@ -965,7 +967,10 @@ public class ModelLearner_KnownModels {
 
 						SortableSemanticModel m = topHypotheses.get(k);
 
-						me = m.evaluate(correctModel);
+						if (onlyEvaluateInternalLinks)
+							me = m.evaluate(correctModel, true);
+						else
+							me = m.evaluate(correctModel, false);
 
 						String label = "candidate " + k + "\n" + 
 //								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +

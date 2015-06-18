@@ -103,6 +103,8 @@ public abstract class Node implements Comparable<Node> {
 	}
 	
 	public Set<String> getModelIds() {
+		if (this.modelIds == null)
+			return new HashSet<String>();
 		return modelIds;
 	}
 
