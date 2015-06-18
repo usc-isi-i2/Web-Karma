@@ -52,7 +52,7 @@ import edu.isi.karma.util.RandomGUID;
 public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraphCompact.class);
-	private static int MAX_MAPPING_SIZE = 3000;
+	private static int MAX_MAPPING_SIZE = 1000;
 	
 	public ModelLearningGraphCompact(OntologyManager ontologyManager) throws IOException {
 		super(ontologyManager, ModelLearningGraphType.Compact);

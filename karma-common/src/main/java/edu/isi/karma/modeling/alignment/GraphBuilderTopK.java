@@ -248,6 +248,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 				l = new CompactObjectPropertyLink(id, ObjectPropertyType.None);
 			}
 			else l = this.getIdToLinkMap().get(f.label().name);
+			
+			if (l == null) continue;
+			
 			weight = f.weight();
 			if (!visitedNodes.contains(source)) {
 				tree.addVertex(source);
@@ -258,6 +261,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 				visitedNodes.add(target);
 			}
 //			System.out.println(f.toString());
+			
 			tree.addEdge(source, target, l);
 			tree.setEdgeWeight(l, weight);
 		}
