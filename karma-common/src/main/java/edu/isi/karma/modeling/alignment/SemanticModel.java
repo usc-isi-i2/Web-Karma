@@ -246,6 +246,10 @@ public class SemanticModel {
 	}
 
 	public ModelEvaluation evaluate(SemanticModel baseModel) {
+		return evaluate(baseModel, false);
+	}
+
+	public ModelEvaluation evaluate(SemanticModel baseModel, boolean ignoreSemanticTypes) {
 
 		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
 			return new ModelEvaluation(null, null, null);
@@ -259,7 +263,7 @@ public class SemanticModel {
 				baseNodeIds.put(n, n.getId());
 		}
 		
-		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds);
+		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds, ignoreSemanticTypes);
 		Set<String> targetTriples = null;
 		List<HashMap<Node,String>> targetNodeIdSets = getPossibleNodeIdSets();
 		if (targetNodeIdSets == null)
@@ -270,7 +274,7 @@ public class SemanticModel {
 		double precision, recall, fmeasure;
 		for (HashMap<Node,String> targetNodeIds : targetNodeIdSets) {
 //			System.out.println("==============================");
-			targetTriples = getTriples(this.getGraph(), targetNodeIds);
+			targetTriples = getTriples(this.getGraph(), targetNodeIds, ignoreSemanticTypes);
 			precision = getPrecision(baseTriples, targetTriples);
 			recall = getRecall(baseTriples, targetTriples);
 			fmeasure = 2 * precision * recall / (precision + recall);
@@ -284,7 +288,8 @@ public class SemanticModel {
 		return new ModelEvaluation(0.0, bestPrecision, bestRecall);
 	}
 	
-	private Set<String> getTriples(DirectedWeightedMultigraph<Node, LabeledLink> g, HashMap<Node,String> nodeIds) {
+	private Set<String> getTriples(DirectedWeightedMultigraph<Node, LabeledLink> g, HashMap<Node,String> nodeIds, 
+			boolean ignoreSemanticTypes) {
 		
 		String separator = "|";
 		Set<String> triples = new HashSet<String>();
@@ -293,8 +298,7 @@ public class SemanticModel {
 		
 		String s, p, o, triple;
 		for (LabeledLink l : g.edgeSet()) {
-			// FIXME: this line skips the links corresponding to the semantic types
-			if (!(l.getTarget() instanceof InternalNode))
+			if (ignoreSemanticTypes && !(l.getTarget() instanceof InternalNode))
 				continue;
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
