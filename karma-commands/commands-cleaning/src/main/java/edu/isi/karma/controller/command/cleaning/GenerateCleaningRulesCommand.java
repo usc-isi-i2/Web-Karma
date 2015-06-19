@@ -29,6 +29,7 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Vector;
 
+import org.apache.commons.collections.SortedBag;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,7 +40,10 @@ import edu.isi.karma.cleaning.DataRecord;
 import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.cleaning.correctness.AdaInspector;
+import edu.isi.karma.cleaning.correctness.ClasscenterInspector;
 import edu.isi.karma.cleaning.correctness.FatalErrorInspector;
+import edu.isi.karma.cleaning.correctness.InspectorFactory;
+import edu.isi.karma.cleaning.correctness.InspectorUtil;
 import edu.isi.karma.cleaning.research.ConfigParameters;
 import edu.isi.karma.cleaning.research.DataCollection;
 import edu.isi.karma.controller.command.CommandException;
@@ -63,8 +67,9 @@ import edu.isi.karma.rep.cleaning.ValueCollection;
 
 public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
-	private int sample_cnt = 300;
-	private int sample_size = 150;
+	private int sample_cnt = 600;
+	private int sample_size = 300;
+	private int maximal_recommand_size = 50;
 	private Vector<TransformationExample> examples;
 	private HashSet<String> nodeIds = new HashSet<String>();
 	RamblerTransformationInputs inputs;
@@ -336,17 +341,20 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		inspector.initeParameter();
 		RamblerTransformation rtransformation = (RamblerTransformation) rtf.getTransformations().get(tpid);
 		ArrayList<String> exampleIDs = getExampleIDs();
+		HashSet<String> existed = new HashSet<String>();
 		inspector.initeInspector(dp, mg, records, exampleIDs, rtransformation.prog);
 		ArrayList<String> ret = new ArrayList<String>();
 		PriorityQueue<DataRecord> sortQueue = new PriorityQueue<DataRecord>();
 		for (DataRecord r : records) {
 			double value = inspector.getActionScore(r);
 			r.value = value;
-			if (value < 0 && !exampleIDs.contains(r.id)) {
+			if (value < 0 && !exampleIDs.contains(r.id) && ! existed.contains(r.origin) && sortQueue.size() < maximal_recommand_size) {
 				sortQueue.add(r);
+				existed.add(r.origin);
 			}
 		}
-		while (!sortQueue.isEmpty()) {
+		//only add the first one
+		while(!sortQueue.isEmpty()){
 			ret.add(sortQueue.poll().id);
 		}
 		return ret;

@@ -70,6 +70,13 @@ public class ClasscenterInspector implements Inspector {
 			return 1;
 		}
 	}
+	public double getScore(DataRecord record){
+		if(!means.containsKey(record.classLabel)){
+			return -1;
+		}
+		double dist = InspectorUtil.getDistance(dpp, record, means.get(record.classLabel), weights, targetContent);
+		return -dist;
+	}
 	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
