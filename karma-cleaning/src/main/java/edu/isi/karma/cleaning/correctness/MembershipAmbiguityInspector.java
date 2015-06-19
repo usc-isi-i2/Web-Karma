@@ -25,6 +25,9 @@ public class MembershipAmbiguityInspector implements Inspector {
 	}
 
 	public double getActionLabel(DataRecord record) {
+		if(!means.containsKey(record.classLabel)){
+			return -1;
+		}
 		double[] alldists = new double[means.keySet().size()];
 		int cnt = 0;
 		boolean issmallest = true;

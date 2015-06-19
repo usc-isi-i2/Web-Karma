@@ -142,7 +142,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 				val = t.transform_debug(orgval);
 				cLabel = t.getClassLabel(orgval);
 			} else {
-				val = "";
+				val = t.transform_debug(val);;
 				cLabel = t.getClassLabel(val);
 			}
 			vo.setValue(k, val);

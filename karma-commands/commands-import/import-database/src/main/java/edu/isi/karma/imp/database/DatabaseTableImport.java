@@ -73,7 +73,7 @@ public class DatabaseTableImport extends Import {
         ArrayList<ArrayList<String>> data;
 		try {
 			data = dbUtil.getDataForLimitedRows(dbType, hostname,
-			        portnumber, username, password, tableName, dBorSIDName, 100);
+			        portnumber, username, password, tableName, dBorSIDName, 1000);
 		} catch (SQLException | ClassNotFoundException e) {
 			throw new KarmaException("Unable to get data for limited rows " + e.getLocalizedMessage());
 		}

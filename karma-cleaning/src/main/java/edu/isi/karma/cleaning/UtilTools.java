@@ -361,6 +361,7 @@ public class UtilTools {
 
 	public static Vector<String> buildDict(Collection<String> data) {
 		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
+		PreprocessTokenizerWrapper r = new PreprocessTokenizerWrapper();
 		for (String pair : data) {
 			String s1 = pair;
 			if (s1.contains("<_START>")) {
@@ -369,9 +370,7 @@ public class UtilTools {
 			if (s1.contains("<_END>")) {
 				s1 = s1.replace("<_END>", "");
 			}
-			Ruler r = new Ruler();
-			r.setNewInput(s1);
-			Vector<TNode> v = r.vec;
+			ArrayList<TNode> v = r.tokenize(s1);
 			HashSet<String> curRow = new HashSet<String>();
 			for (TNode t : v) {
 				String k = t.text;
@@ -398,7 +397,7 @@ public class UtilTools {
 			}
 		}
 		// prune infrequent terms
-		int thresdhold = (int) (data.size() * 0.05);
+		int thresdhold = (int) (data.size() * 0.01);
 		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<String, Integer> e = iter.next();

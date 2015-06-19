@@ -141,9 +141,6 @@ public class Test {
 				ArrayList<double[]> accArrayList = new ArrayList<double[]>();
 				while (true) // repeat as no incorrect answer appears.
 				{
-					if (examples.size() == 4) {
-						System.out.println("Hello World");
-					}
 					long checknumber = 1;
 					long iterAfterNoFatalError = 0;
 					long isvisible = 0;

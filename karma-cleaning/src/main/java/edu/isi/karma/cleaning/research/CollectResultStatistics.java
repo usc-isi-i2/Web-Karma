@@ -216,7 +216,7 @@ public class CollectResultStatistics {
 	}
 	public static void main(String[] args) {
 		String ret = "";
-		for(double p = 4.4; p <= 4.5; p = p+0.1){
+		for(double p = 5; p <= 5; p = p+1){
 			CollectResultStatistics collect = new CollectResultStatistics();
 			double[] one = collect.parameterSelection(p);
 			ret += String.format("%f, %f, %f", p, one[0], one[1])+"\n";

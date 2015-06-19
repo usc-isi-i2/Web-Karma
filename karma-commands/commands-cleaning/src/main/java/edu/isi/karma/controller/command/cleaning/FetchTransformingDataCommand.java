@@ -78,6 +78,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
 		wk.clearSessionData();
+		wk.clearUserCleaningData();
 		SuperSelection selection = getSuperSelection(wk);
 		String Msg = String.format("begin, Time,%d, Worksheet,%s", System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
@@ -111,6 +112,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 		}
 		Msg = String.format("end, Time,%d, Worksheet,%s", System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
+		UserStudyUtil.logStart(wk.getUserMonitor(), System.currentTimeMillis());
 		return new UpdateContainer(new FetchResultUpdate(hNodeId, rows));
 	}
 

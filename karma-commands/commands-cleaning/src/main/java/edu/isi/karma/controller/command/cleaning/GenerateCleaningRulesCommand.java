@@ -63,8 +63,8 @@ import edu.isi.karma.rep.cleaning.ValueCollection;
 
 public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
-	private int sample_cnt = 200;
-	private int sample_size = 110;
+	private int sample_cnt = 300;
+	private int sample_size = 150;
 	private Vector<TransformationExample> examples;
 	private HashSet<String> nodeIds = new HashSet<String>();
 	RamblerTransformationInputs inputs;
@@ -142,8 +142,6 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet wk = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(wk);
-		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s", System.currentTimeMillis(), worksheetId);
-		logger.info(msg);
 		// Get the HNode
 		HashMap<String, String> rows = new HashMap<String, String>();
 		HNodePath selectedPath = null;
@@ -281,6 +279,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		if (rtf.nullRule) {
 			keys.clear();
 		}
+		UserStudyUtil.logOneiteration(wk.getUserMonitor(), worksheetId, System.currentTimeMillis(), examples, keys, resdata);
 		logDiagnosticInfo(rtf, resdata, keys);
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata, vars, keys));
 	}

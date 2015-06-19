@@ -11,7 +11,7 @@ public class AdaInspectorTrainer {
 	List<String> classifierList = null;	//各个弱分类器
 	List<Double> alphaList = null;			//每个弱分类器的权重
 	List<String> remainClassifiers;;
-	public static double questionablePreference = 4;
+	public static double questionablePreference = 5;
 	
 	public AdaInspectorTrainer(Instance[] instances, List<String> classifiers) {		
 		this.instances = instances;

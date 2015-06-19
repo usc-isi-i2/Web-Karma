@@ -65,8 +65,8 @@ public class RamblerTransformation implements Transformation {
 	@Override
 	public String transform_debug(String value) {
 		InterpreterType worker = prog.getRuleForValue(value);
-		if(value.length()==0)
-			return "";
+		/*if(value.length()==0)
+			return "";*/
 		String s = worker.execute_debug(value);
 		return s;
 	}

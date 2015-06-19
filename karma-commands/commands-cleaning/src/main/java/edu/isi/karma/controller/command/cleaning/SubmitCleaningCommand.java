@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.Messager;
-import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -164,13 +163,15 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		String colnameString = "";
 		UpdateContainer c = new UpdateContainer();
 		HNodePath selectedPath = null;
+		Worksheet wk = workspace.getWorksheet(worksheetId);
+		UserStudyUtil.storeStudyData(worksheetId, wk.getUserMonitor());
+
 		try {
 			// obtain transformed results
 			HashMap<String, String> rows = new HashMap<String, String>();
 			colnameString = obtainTransformedResultsAndFindNewColumnName(
 					workspace, rows);
 			createAndExecuteNewAddColumnCommand(workspace, colnameString);
-			Worksheet wk = workspace.getWorksheet(worksheetId);
 			selectedPath = findPathForNewColumn(workspace, colnameString);
 			DataPreProcessor dpp = (DataPreProcessor) wk.getDpp();
 			if(dpp == null)
@@ -210,7 +211,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(
 					workspace));
 		}
-
+		wk.clearUserCleaningData();
 		c.add(new InfoUpdate("Column transformation complete"));
 		return c;
 	}
