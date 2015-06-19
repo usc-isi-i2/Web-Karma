@@ -23,30 +23,41 @@ public class PyTransformConsolidator extends CommandConsolidator {
 				Iterator<Command> itr = refinedCommands.iterator();
 				boolean flag = true;
 				boolean found = false;
+				String model = command.getModel();
+				
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
-					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitPythonTransformationCommand && !(tmp instanceof SubmitEditPythonTransformationCommand)) {
+					if (tmp.getOutputColumns().equals(command.getOutputColumns())
+							&& tmp instanceof SubmitPythonTransformationCommand 
+							&& !(tmp instanceof SubmitEditPythonTransformationCommand)) {
 //						System.out.println("May Consolidate");
-						SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)tmp;
-						SubmitPythonTransformationCommand edit = (SubmitPythonTransformationCommand)command;
-						JSONArray inputJSON = new JSONArray(py.getInputParameterJson());
-						HistoryJsonUtil.setArgumentValue("transformationCode", edit.getTransformationCode(), inputJSON);
-						py.setInputParameterJson(inputJSON.toString());
-						py.setTransformationCode(edit.getTransformationCode());
-						flag = false;
-//						System.out.println(py.getInputParameterJson());
-						try {
-							py.doIt(workspace);
-						} catch (CommandException e) {
-							// TODO Auto-generated catch block
+						
+						if(model.equals(tmp.getModel())) {
+							SubmitPythonTransformationCommand py = (SubmitPythonTransformationCommand)tmp;
+							SubmitPythonTransformationCommand edit = (SubmitPythonTransformationCommand)command;
+							JSONArray inputJSON = new JSONArray(py.getInputParameterJson());
+							HistoryJsonUtil.setArgumentValue("transformationCode", edit.getTransformationCode(), inputJSON);
+							py.setInputParameterJson(inputJSON.toString());
+							py.setTransformationCode(edit.getTransformationCode());
+							flag = false;
+	//						System.out.println(py.getInputParameterJson());
+							try {
+								py.doIt(workspace);
+							} catch (CommandException e) {
+								// TODO Auto-generated catch block
+							}
 						}
 						found = true;
 						//PlaceHolder
 					}
-					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && tmp instanceof SubmitEditPythonTransformationCommand && command instanceof SubmitEditPythonTransformationCommand) {
+					if (tmp.getOutputColumns().equals(command.getOutputColumns()) 
+							&& tmp instanceof SubmitEditPythonTransformationCommand 
+							&& command instanceof SubmitEditPythonTransformationCommand) {
 //						System.out.println("Here");
 						found = true;
-						itr.remove();
+						if(model.equals(tmp.getModel())) {
+							itr.remove();
+						}
 					}
 				}
 				if (flag && found)

@@ -619,7 +619,7 @@ function refreshWorksheet(worksheetId, updates) {
 }
 
 function isValidUrl(url) {
-	var re = /^(ht|f)tps?:\/\/[a-z0-9-\.]+\.[a-z]{2,4}\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/;
+	var re = /^(ht|f)tps?:\/\/(([a-z0-9-\.]+\.[a-z]{2,4})|(localhost))\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/;
     return re.test(url);
 }
 

@@ -91,3 +91,5 @@ karma-offline/karma.err
 karma-offline/karma.out
 
 karma-mr/src/test/resources/tripleparser/*
+
+karma-mr/src/test/resources/atfLocal.properties
