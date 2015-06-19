@@ -663,7 +663,10 @@ function parse(data) {
 		} else if (element["updateType"] == "InfoUpdate") {
 			$.sticky(element["Info"]);
 		} else if (element["updateType"] == "AlignmentSVGVisualizationUpdate") {
-			D3ModelManager.getInstance().displayModel(element);
+			window.setTimeout(function() {
+				D3ModelManager.getInstance().displayModel(element);
+			}, 100);
+			
 		} else if (element["updateType"] == "KarmaInfo") {
 			if (infos[element["Info"]]) {
 				//ignore;
