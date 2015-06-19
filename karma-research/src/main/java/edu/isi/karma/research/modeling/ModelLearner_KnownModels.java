@@ -190,7 +190,7 @@ public class ModelLearner_KnownModels {
 			if (this.graphBuilder instanceof GraphBuilderTopK) {
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
 						ModelingConfiguration.getTopKSteinerTree(), 
-						null, null, true);
+						50, 1, true);
 			} 
 			else 
 			{
@@ -231,27 +231,27 @@ public class ModelLearner_KnownModels {
 		}
 		
 		Collections.sort(sortableSemanticModels);
-		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
+//		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
 		logger.info("results are ready ...");
 //		sortableSemanticModels.get(0).print();
-		return sortableSemanticModels.subList(0, count);
+//		return sortableSemanticModels.subList(0, count);
 
-//		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
-//		SortableSemanticModel current, previous;
-//		if (sortableSemanticModels != null) {
-//			if (sortableSemanticModels.size() > 0)
-//				uniqueModels.add(sortableSemanticModels.get(0));
-//			for (int i = 1; i < sortableSemanticModels.size(); i++) {
-//				current = sortableSemanticModels.get(i);
-//				previous = sortableSemanticModels.get(i - 1);
-//				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
-//					continue;
-//				uniqueModels.add(current);
-//			}
-//		}
-//		
-//		logger.info("results are ready ...");
-//		return uniqueModels;
+		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
+		SortableSemanticModel current, previous;
+		if (sortableSemanticModels != null) {
+			if (sortableSemanticModels.size() > 0)
+				uniqueModels.add(sortableSemanticModels.get(0));
+			for (int i = 1; i < sortableSemanticModels.size(); i++) {
+				current = sortableSemanticModels.get(i);
+				previous = sortableSemanticModels.get(i - 1);
+				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
+					continue;
+				uniqueModels.add(current);
+			}
+		}
+		
+		logger.info("results are ready ...");
+		return uniqueModels;
 
 	}
 
@@ -797,17 +797,18 @@ public class ModelLearner_KnownModels {
 		ModelLearner_KnownModels modelLearner;
 
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = false;
+		boolean useCorrectType = true;
 		boolean randomModel = false;
 		boolean onlyEvaluateInternalLinks = true; 
+		boolean zeroKnownModel = false;
 
 		int numberOfCandidates = 1;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
 		filename += "results";
-		filename += useCorrectType ? "-correct types":"-k=" + numberOfCandidates;
-		filename += randomModel ? "-ontology":"";
+		filename += useCorrectType ? "-correct":"-k=" + numberOfCandidates;
+		filename += zeroKnownModel ? "-ontology":"";
 		filename += onlyEvaluateInternalLinks ? "-internal":"-all";
 		filename += iterativeEvaluation ? "-iterative":"";
 		filename += ".csv"; 
@@ -828,9 +829,9 @@ public class ModelLearner_KnownModels {
 		}
 
 
-		for (int i = 0; i < semanticModels.size(); i++) {
+//		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 1; {
+		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -839,10 +840,12 @@ public class ModelLearner_KnownModels {
 			logger.info(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			System.out.println(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			logger.info("======================================================");
-
-			numberOfKnownModels = iterativeEvaluation ? 0 : semanticModels.size() - 1;
-//			numberOfKnownModels = 0;
-
+			
+			if (zeroKnownModel)
+				numberOfKnownModels = 0;
+			else
+				numberOfKnownModels = iterativeEvaluation ? 0 : semanticModels.size() - 1;
+			
 			if (iterativeEvaluation) {
 				if (resultsArray[0].length() > 0)	resultsArray[0].append(" \t ");			
 				resultsArray[0].append(newSource.getName() + "(" + newSource.getColumnNodes().size() + ")" + "\t" + " " + "\t" + " ");
@@ -1027,7 +1030,7 @@ public class ModelLearner_KnownModels {
 						true);
 
 				numberOfKnownModels ++;
-
+				if (zeroKnownModel) break;
 			}
 
 		//	resultFile.println("=======================================================");

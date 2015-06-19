@@ -6,6 +6,7 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 
 public class LinkCoherence extends Coherence {
@@ -20,6 +21,10 @@ public class LinkCoherence extends Coherence {
 	
 	public void updateCoherence(DirectedWeightedMultigraph<Node, LabeledLink> model, LabeledLink link) {
 		if (link == null) return;
+		
+		if (link.getStatus() == LinkStatus.ForcedByUser)
+			return;
+		
 //		if (!(link.getTarget() instanceof InternalNode))
 //				return;
 		if (link.getTarget() instanceof ColumnNode) {

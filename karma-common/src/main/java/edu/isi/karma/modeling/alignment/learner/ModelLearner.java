@@ -239,7 +239,7 @@ public class ModelLearner {
 						ModelingConfiguration.getTopKSteinerTree(), 
 						null, null, true);
 			} 
-//			else 
+			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
 				SteinerTree steinerTree = new SteinerTree(
