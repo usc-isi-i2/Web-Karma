@@ -11,6 +11,7 @@ import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.rdf.InputProperties.InputProperty;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class RDFGeneratorRequest {
 
@@ -29,6 +30,7 @@ public class RDFGeneratorRequest {
 	private List<String> tripleMapToKill;
 	private List<String> tripleMapToStop;
 	private List<String> POMToKill;
+	private ServletContextParameterMap contextParameters;
 	public RDFGeneratorRequest(String modelName, String sourceName)
 	{
 
@@ -43,6 +45,7 @@ public class RDFGeneratorRequest {
 		tripleMapToKill = new ArrayList<String>();
 		tripleMapToStop = new ArrayList<String>();
 		POMToKill = new ArrayList<String>();
+		contextParameters = null;
 	}
 
 	public void setTripleMapToKill(List<String> tripleMapToKill) {
@@ -190,6 +193,16 @@ public class RDFGeneratorRequest {
 
 	public String getSourceName() {
 		return sourceName;
+	}
+	
+	public void setContextParameters(ServletContextParameterMap contextParameters)
+	{
+		this.contextParameters = contextParameters;
+	}
+	
+	public ServletContextParameterMap getContextParameters()
+	{
+		return this.contextParameters;
 	}
 
 }

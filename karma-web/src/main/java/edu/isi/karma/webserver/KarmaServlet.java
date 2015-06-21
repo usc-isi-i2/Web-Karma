@@ -32,8 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.config.UIConfiguration;
+import edu.isi.karma.config.UIConfigurationRegistry;
 import edu.isi.karma.controller.command.alignment.R2RMLAlignmentFileSaver;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.CommandHistory;
@@ -41,11 +42,14 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
+import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.metadata.AvroMetadata;
 import edu.isi.karma.metadata.CSVMetadata;
 import edu.isi.karma.metadata.GraphVizMetadata;
 import edu.isi.karma.metadata.JSONMetadata;
 import edu.isi.karma.metadata.JSONModelsMetadata;
+import edu.isi.karma.metadata.KMLPublishedMetadata;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.ModelLearnerMetadata;
 import edu.isi.karma.metadata.OntologyMetadata;
@@ -66,10 +70,11 @@ import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.VWorkspaceRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class KarmaServlet extends HttpServlet {
 	private enum Arguments {
-		hasPreferenceId, workspacePreferencesId
+		hasPreferenceId, workspacePreferencesId, karmaHome
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -78,13 +83,29 @@ public class KarmaServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		KarmaMetadataManager metadataManager = null;
+		
 		UpdateContainer updateContainer = new  UpdateContainer();
+		
+		String karmaHomeDir = request.getParameter(Arguments.karmaHome.name());
+		
+		
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		ServletContextParameterMap contextParameters = contextParametersRegistry.getContextParameters(karmaHomeDir);
+		
+		try
+		{
+		ServerStart.initContextParameters(this.getServletContext(), contextParameters);
+		}
+		catch(Exception e)
+		{
+			logger.error("Unable to initalize parameters using servlet context", e);
+		}
+		KarmaMetadataManager metadataManager = null;
 		try {
-			metadataManager = new KarmaMetadataManager();
-			metadataManager.register(new UserUploadedMetadata(), updateContainer);
-			metadataManager.register(new UserPreferencesMetadata(), updateContainer);
-			metadataManager.register(new UserConfigMetadata(), updateContainer);
+			metadataManager = new KarmaMetadataManager(contextParameters);
+			metadataManager.register(new UserUploadedMetadata(contextParameters), updateContainer);
+			metadataManager.register(new UserPreferencesMetadata(contextParameters), updateContainer);
+			metadataManager.register(new UserConfigMetadata(contextParameters), updateContainer);
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
@@ -100,48 +121,50 @@ public class KarmaServlet extends HttpServlet {
 		/* If set, pick the right preferences and CRF Model file */
 		if(hasWorkspaceCookieId) {
 			String cachedWorkspaceId = request.getParameter(Arguments.workspacePreferencesId.name());
-			workspace = WorkspaceManager.getInstance().createWorkspaceWithPreferencesId(cachedWorkspaceId);
+			workspace = WorkspaceManager.getInstance().createWorkspaceWithPreferencesId(cachedWorkspaceId, contextParameters.getId());
 			vwsp = new VWorkspace(workspace, cachedWorkspaceId);
 		} else {
-			workspace = WorkspaceManager.getInstance().createWorkspace();
+			workspace = WorkspaceManager.getInstance().createWorkspace(contextParameters.getId());
 			vwsp = new VWorkspace(workspace);
 		}
-
-		workspace.setMetadataManager(metadataManager);
+		WorkspaceKarmaHomeRegistry.getInstance().register(workspace.getId(), contextParameters.getKarmaHome());
 		WorkspaceRegistry.getInstance().register(new ExecutionController(workspace));
 		VWorkspaceRegistry.getInstance().registerVWorkspace(workspace.getId(), vwsp);
 		
 		logger.info("Start Metadata Setup");
 		try {
-			metadataManager.register(new SemanticTypeModelMetadata(workspace), updateContainer);
-			metadataManager.register(new OntologyMetadata(workspace), updateContainer);
-			metadataManager.register(new JSONModelsMetadata(workspace), updateContainer);
-			metadataManager.register(new PythonTransformationMetadata(workspace), updateContainer);
-			metadataManager.register(new GraphVizMetadata(workspace), updateContainer);
-			metadataManager.register(new ModelLearnerMetadata(workspace), updateContainer);
-			metadataManager.register(new R2RMLMetadata(workspace), updateContainer);
-			metadataManager.register(new R2RMLPublishedMetadata(workspace), updateContainer);
-			metadataManager.register(new RDFMetadata(workspace), updateContainer);
-			metadataManager.register(new CSVMetadata(workspace), updateContainer);
-			metadataManager.register(new JSONMetadata(workspace), updateContainer);
-			metadataManager.register(new ReportMetadata(workspace), updateContainer);
-			metadataManager.register(new AvroMetadata(workspace), updateContainer);
+			metadataManager.register(new SemanticTypeModelMetadata(contextParameters), updateContainer);
+			metadataManager.register(new OntologyMetadata(contextParameters), updateContainer);
+			metadataManager.register(new JSONModelsMetadata(contextParameters), updateContainer);
+			metadataManager.register(new PythonTransformationMetadata(contextParameters), updateContainer);
+			metadataManager.register(new GraphVizMetadata(contextParameters), updateContainer);
+			metadataManager.register(new ModelLearnerMetadata(contextParameters), updateContainer);
+			metadataManager.register(new R2RMLMetadata(contextParameters), updateContainer);
+			metadataManager.register(new R2RMLPublishedMetadata(contextParameters), updateContainer);
+			metadataManager.register(new RDFMetadata(contextParameters), updateContainer);
+			metadataManager.register(new CSVMetadata(contextParameters), updateContainer);
+			metadataManager.register(new JSONMetadata(contextParameters), updateContainer);
+			metadataManager.register(new ReportMetadata(contextParameters), updateContainer);
+			metadataManager.register(new AvroMetadata(contextParameters), updateContainer);
+			metadataManager.register(new KMLPublishedMetadata(contextParameters), updateContainer);
+			PythonRepository pythonRepository = new PythonRepository(true, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+			PythonRepositoryRegistry.getInstance().register(pythonRepository);
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
-
+		metadataManager.setup(workspace, updateContainer);
 		CommandHistory.setIsHistoryEnabled(true);
 		CommandHistory.setHistorySaver(workspace.getId(), new R2RMLAlignmentFileSaver(workspace));
 						
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
 		workspace.getTagsContainer().addTag(outlierTag);
-
+		workspace.getOntologyManager().updateCache();
 		// Put all created worksheet models in the view.
 		updateContainer.add(new WorksheetListUpdate());
 		
 		for (Worksheet w : vwsp.getWorkspace().getWorksheets()) {
-			updateContainer.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId(), SuperSelectionManager.DEFAULT_SELECTION)); 
+			updateContainer.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(w.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId())); 
 		}
 
 		updateContainer.add(new AbstractUpdate() {
@@ -150,16 +173,18 @@ public class KarmaServlet extends HttpServlet {
 			public void generateJson(String prefix, PrintWriter pw,
 					VWorkspace vWorkspace) {
 				//1. Load all configurations
-				UIConfiguration.Instance().loadConfig();
-				ModelingConfiguration.load();
+				 
+				UIConfiguration uiConfiguration = UIConfigurationRegistry.getInstance().getUIConfiguration(vWorkspace.getWorkspace().getContextId());
+				uiConfiguration.loadConfig();
+				ModelingConfigurationRegistry.getInstance().register(vWorkspace.getWorkspace().getContextId());
 				
 				//2 Return all settings related updates
 				pw.println("{");
 				pw.println("\"updateType\": \"UISettings\", ");
 				pw.println("\"settings\": {");
-				pw.println("  \"googleEarthEnabled\" : " + UIConfiguration.Instance().isGoogleEarthEnabled() + ",");
-				pw.println("  \"maxLoadedClasses\" : " + UIConfiguration.Instance().getMaxClassesToLoad() + ",");
-				pw.println("  \"maxLoadedProperties\" : " + UIConfiguration.Instance().getMaxPropertiesToLoad());
+				pw.println("  \"googleEarthEnabled\" : " + uiConfiguration.isGoogleEarthEnabled() + ",");
+				pw.println("  \"maxLoadedClasses\" : " + uiConfiguration.getMaxClassesToLoad() + ",");
+				pw.println("  \"maxLoadedProperties\" : " + uiConfiguration.getMaxPropertiesToLoad());
 				pw.println("  }");
 				pw.println("}");
 			}

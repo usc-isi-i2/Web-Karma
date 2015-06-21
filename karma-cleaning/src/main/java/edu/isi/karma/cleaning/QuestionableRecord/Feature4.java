@@ -22,6 +22,7 @@
 package edu.isi.karma.cleaning.QuestionableRecord;
 
 import java.util.Vector;
+
 import edu.isi.karma.cleaning.TNode;
 
 public class Feature4 implements RecFeature {

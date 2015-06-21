@@ -17,14 +17,14 @@ public class SemanticTypeModelMetadata extends KarmaUserMetadata {
 
 	private static final Logger logger = LoggerFactory.getLogger(SemanticTypeModelMetadata.class);
 	
-	public SemanticTypeModelMetadata(Workspace workspace) throws KarmaException {
-		super(workspace);
+	public SemanticTypeModelMetadata(ServletContextParameterMap contextParameters) throws KarmaException {
+		super(contextParameters);
 	}
 	
 	@Override
-	public void setup(UpdateContainer uc) {
+	public void setup(UpdateContainer uc, Workspace workspace) {
 		File modelFile = null;
-		modelFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY));
+		modelFile = new File(contextParameters.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY));
 		/* Read and populate CRF Model from a file */
 		if(!modelFile.exists())
 		{
@@ -38,11 +38,11 @@ public class SemanticTypeModelMetadata extends KarmaUserMetadata {
 		boolean result = workspace.getSemanticTypeModelHandler().readModelFromFile(modelFile.getAbsolutePath());
 		if (!result)
 			logger.error("Error occured while reading CRF Model!");
-		String trainingExampleMaxCount = ServletContextParameterMap
+		String trainingExampleMaxCount = contextParameters
 						.getParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT);
 		if(trainingExampleMaxCount == null || trainingExampleMaxCount.isEmpty())
 		{
-			ServletContextParameterMap.setParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
+			contextParameters.setParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "200");
 		}
 		workspace.getSemanticTypeModelHandler().setModelHandlerEnabled(true);
 	}

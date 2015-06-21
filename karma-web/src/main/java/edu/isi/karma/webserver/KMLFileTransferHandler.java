@@ -35,20 +35,22 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.util.FileUtil;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
+// TODO This class is broken.  Where is the data supposed to go?
 public class KMLFileTransferHandler extends HttpServlet {
 	/**
-	 * 
+	 *   
 	 */
 	private static final long serialVersionUID = 1L;
 	
 	static Logger logger = LoggerFactory.getLogger(KMLFileTransferHandler.class);
-
+	
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException {
-		File file = FileUtil.downloadFileFromHTTPRequest(request);
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		File file = FileUtil.downloadFileFromHTTPRequest(request, contextParameters.getParameterValue(ContextParameter.USER_UPLOADED_DIR));
 
 		// Move the file to the webapp directory so that it is public
-		File dir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+		File dir = new File(contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
 				"KML/"+file.getName());
 		if(dir.exists())
 			dir.delete();

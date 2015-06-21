@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -15,8 +16,8 @@ public class SavedModelURLs {
 	private static final String modelFile = "model-urls.json";
 	private static int maxNumUrls = 20;
 	
-	public void saveModelUrl(String url) throws JSONException, IOException {
-		File file = getModelsFile();
+	public void saveModelUrl(String url, String contextId) throws JSONException, IOException {
+		File file = getModelsFile(contextId);
 		JSONObject json = new JSONObject(FileUtil.readFileContentsToString(file, "UTF-8"));
 		JSONArray models = ((JSONArray)json.get("models"));
 		
@@ -33,14 +34,15 @@ public class SavedModelURLs {
 		FileUtil.writePrettyPrintedJSONObjectToFile(json, file);
 	}
 	
-	public JSONObject getSavedModels() throws IOException {
-		File file = getModelsFile();
+	public JSONObject getSavedModels(String contextId) throws IOException {
+		File file = getModelsFile(contextId);
 		JSONObject json = new JSONObject(FileUtil.readFileContentsToString(file, "UTF-8"));
 		return json;
 	}
 	
-	private File getModelsFile() throws IOException {
-		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_PREFERENCES_DIRECTORY) + 
+	private File getModelsFile(String contextId) throws IOException {
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		File file = new File(contextParameters.getParameterValue(ContextParameter.USER_PREFERENCES_DIRECTORY) + 
 				  "/" + modelFile);
 		if(!file.exists()) {
 			JSONObject json = new JSONObject("{\"models\":[]}");

@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.Partition;
+import edu.isi.karma.cleaning.Patcher;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
-import edu.isi.karma.cleaning.Patcher;
 
 public class Prober {
 	public static ArrayList<String> track1 = new ArrayList<String>();

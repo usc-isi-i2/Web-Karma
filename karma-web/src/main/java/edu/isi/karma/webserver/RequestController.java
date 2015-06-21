@@ -46,35 +46,37 @@ public class RequestController extends HttpServlet {
 	private static Logger logger = LoggerFactory.getLogger(RequestController.class);
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		String workspaceId = request.getParameter("workspaceId");
+		
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspaceId));
 		// initilaize the JETTY_PORT for the first request
-		if (ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT).isEmpty()) {
+		if (contextParameters.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT).isEmpty()) {
 			String port = String.valueOf(request.getServerPort());
 			String protocol = request.getProtocol().split("/")[0];
 			String host = protocol.toLowerCase() + "://" + request.getServerName();
 
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT, port);
+			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT, port);
 			logger.info("JETTY_PORT initilized to " + port);
 
 
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST, host);
+			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST, host);
 			logger.info("JETTY_HOST initilized to " + host);
 
 			// also set PUBLIC_RDF_ADDRESS
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.PUBLIC_RDF_ADDRESS,
+			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.PUBLIC_RDF_ADDRESS,
 					host + ":" + port + "/RDF/");
 
 			// also set CLEANING_SERVICE_URL
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL,
+			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL,
 					host + ":" + port
-					+ ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL));
+					+ contextParameters.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL));
 
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL,
+			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL,
 					host + ":" + port
-					+ ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL));
+					+ contextParameters.getParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL));
 		}
 
-		String workspaceId = request.getParameter("workspaceId");
+		
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspaceId);
 		if (ctrl == null) {
 			logger.debug("No execution controller found. This sometime happens when the server is restarted and "

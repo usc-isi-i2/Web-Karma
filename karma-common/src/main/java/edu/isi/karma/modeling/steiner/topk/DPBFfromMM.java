@@ -1,7 +1,5 @@
 package edu.isi.karma.modeling.steiner.topk;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;

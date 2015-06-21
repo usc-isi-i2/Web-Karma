@@ -3,9 +3,12 @@ package edu.isi.karma.modeling.steiner.topk;
 import java.util.HashMap;
 import java.util.TreeSet;
 
+import edu.isi.karma.webserver.ContextParametersRegistry;
+
 public class TestTopK {
 	public static void main(String[] args) throws Exception {
 		
+		String contextId = ContextParametersRegistry.getInstance().getDefault().getId();
 		SteinerNode n1= new SteinerNode("n1");
 		SteinerNode n2= new SteinerNode("n2");
 		SteinerNode n3= new SteinerNode("n3");
@@ -99,7 +102,8 @@ public class TestTopK {
 		
 //		STARfromMM N = new STARfromMM(terminals);
 //		BANKSIIfromMM N = new BANKSIIfromMM(terminals);
-		BANKSfromMM N = new BANKSfromMM(terminals, null, null);
+		BANKSfromMM N = new BANKSfromMM(terminals, null, null, contextId);
+
 //		DNHfromMM N = new DNHfromMM(terminals);
 //		DPBFfromMM N = new DPBFfromMM(terminals);
 		N.graph = graph;

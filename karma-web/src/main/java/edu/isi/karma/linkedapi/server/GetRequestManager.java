@@ -1,17 +1,20 @@
 package edu.isi.karma.linkedapi.server;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hp.hpl.jena.rdf.model.Model;
+
 import edu.isi.karma.model.serialization.MimeType;
 import edu.isi.karma.model.serialization.SerializationLang;
 import edu.isi.karma.model.serialization.WebServiceLoader;
 import edu.isi.karma.model.serialization.WebServicePublisher;
 import edu.isi.karma.rep.sources.WebService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 
 public class GetRequestManager extends LinkedApiRequestManager {
@@ -21,8 +24,9 @@ public class GetRequestManager extends LinkedApiRequestManager {
 	public GetRequestManager(String serviceId, 
 			ResourceType resourceType, 
 			String returnType,
-			HttpServletResponse response) {
-		super(serviceId, resourceType, returnType, response);
+			HttpServletResponse response,
+			String contextId) {
+		super(serviceId, resourceType, returnType, response,contextId);
 	}
 	
 	public void HandleRequest() throws IOException {
@@ -51,7 +55,7 @@ public class GetRequestManager extends LinkedApiRequestManager {
 			edu.isi.karma.rep.model.Model outputModel = s.getOutputModel();
 			String sparql;
 			
-			WebServicePublisher servicePublisher = new WebServicePublisher(s);
+			WebServicePublisher servicePublisher = new WebServicePublisher(s, contextId);
 			if (getResourceType() == ResourceType.Input) {
 				if (getFormat().equalsIgnoreCase(SerializationLang.SPARQL)) {
 					sparql = inputModel.getSparqlConstructQuery(null);

@@ -20,10 +20,12 @@ import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.UtilTools;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.cleaning.features.RecordClassifier;
 
 public class Test {
 
+	public static String contextId = ContextParametersRegistry.getInstance().getDefault().getId();
 	// check whether it longest or shortest
 	public static boolean visible(HashMap<String, String[]> xHashMap, String Id) {
 		String[] pair = xHashMap.get(Id);
@@ -156,7 +158,7 @@ public class Test {
 					HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 					Vector<String> resultString = new Vector<String>();
 					xHashMap = new HashMap<String, String[]>();
-					ProgSynthesis psProgSynthesis = new ProgSynthesis();
+					ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 					HashMap<String, String> unlabeledData = new HashMap<String, String>();
 					for (int i = 0; i < vtmp.size(); i++) {
 						unlabeledData.put("" + i, vtmp.get(i));
@@ -374,7 +376,7 @@ public class Test {
 			String[] tmt = { "<_START>" + exps.get(i)[0] + "<_END>", exps.get(i)[1] };
 			examples.add(tmt);
 			xHashMap = new HashMap<String, String[]>();
-			ProgSynthesis psProgSynthesis = new ProgSynthesis();
+			ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 			psProgSynthesis.inite(examples, dpp, msger);
 			Vector<ProgramRule> pls = new Vector<ProgramRule>();
 			long t1 = System.currentTimeMillis();
@@ -422,7 +424,7 @@ public class Test {
 			String[] tmt = { "<_START>" + exps.get(i)[0] + "<_END>", exps.get(i)[1] };
 			examples.add(tmt);
 			xHashMap = new HashMap<String, String[]>();
-			ProgSynthesis psProgSynthesis = new ProgSynthesis();
+			ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 			psProgSynthesis.inite(examples, dpp, msger);
 			Vector<ProgramRule> pls = new Vector<ProgramRule>();
 			long t1 = System.currentTimeMillis();
@@ -505,7 +507,7 @@ public class Test {
 						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
-						ProgSynthesis psProgSynthesis = new ProgSynthesis();
+						ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 						HashMap<String, String> unlabeledData = new HashMap<String, String>();
 						for (int i = 0; i < vtmp.size(); i++) {
 							unlabeledData.put("" + i, vtmp.get(i));
@@ -783,7 +785,7 @@ public class Test {
 						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 						Vector<String> resultString = new Vector<String>();
 						xHashMap = new HashMap<String, String[]>();
-						ProgSynthesis psProgSynthesis = new ProgSynthesis();
+						ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 						HashMap<String, String> unlabeledData = new HashMap<String, String>();
 						for (int i = 0; i < vtmp.size(); i++) {
 							unlabeledData.put("" + i, vtmp.get(i));

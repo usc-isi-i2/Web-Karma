@@ -117,7 +117,7 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 			histExecutor.executeAllCommands(historyJson);
 			
 			// Add worksheet updates that could have resulted out of the transformation commands
-			UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
+			UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			c.add(new InfoUpdate("Model successfully applied!"));
 			return c;

@@ -2,27 +2,15 @@ package edu.isi.karma.metadata;
 
 import java.io.File;
 
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class PythonTransformationMetadata extends KarmaUserMetadata {
 
 	
-	public PythonTransformationMetadata(Workspace workspace) throws KarmaException
-	{
-		super(workspace);
-	}
-	
-	public PythonTransformationMetadata() throws KarmaException
-	{
-		super(null);
-	}
-	
-	@Override
-	public void setup(UpdateContainer uc) {
-		
+	public PythonTransformationMetadata(ServletContextParameterMap contextParameters) throws KarmaException {
+		super(contextParameters);
 	}
 
 	@Override

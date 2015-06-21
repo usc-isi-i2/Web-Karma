@@ -14,8 +14,9 @@ public class Program implements GrammarTreeNode {
 	public PartitionClassifierType classifier;
 	public DataPreProcessor dpPreProcessor;
 	public String program = "null";
-
-	public Program(Vector<Partition> pars, PartitionClassifierType classifier, DataPreProcessor dpp) {
+	public String contextId;
+	public Program(Vector<Partition> pars, PartitionClassifierType classifier, DataPreProcessor dpp, String contextId) {
+		this.contextId = contextId;
 		this.partitions = pars;
 		this.dpPreProcessor = dpp;
 		for (int i = 0; i < this.partitions.size(); i++) {
@@ -88,8 +89,8 @@ public class Program implements GrammarTreeNode {
 		}
 	}
 	public ProgramRule toProgram2(Messager msger){
-		ProgramRule pr = new ProgramRule(this);
-		ProgramAdaptator programAdaptator = new ProgramAdaptator();
+		ProgramRule pr = new ProgramRule(this, contextId);
+		ProgramAdaptator programAdaptator = new ProgramAdaptator(contextId);
 		if (this.partitions.size() > 1) {
 			//StopWatch spw1 = new Log4JStopWatch("Codeblock-genprogram");
 			for (Partition p : this.partitions) {
@@ -149,7 +150,7 @@ public class Program implements GrammarTreeNode {
 		}
 	}
 	public ProgramRule toProgram1() {
-		ProgramRule pr = new ProgramRule(this);
+		ProgramRule pr = new ProgramRule(this, contextId);
 		if (this.partitions.size() > 1) {
 			for (Partition p : this.partitions) {
 				if (p.tarNodes.get(0).size() == 0) {

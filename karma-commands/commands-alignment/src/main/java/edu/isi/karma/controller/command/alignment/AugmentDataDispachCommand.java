@@ -76,7 +76,7 @@ public class AugmentDataDispachCommand extends WorksheetSelectionCommand {
 			incoming.doIt(workspace);
 		if (predicatesoutgoingarray.length() > 0)
 			outgoing.doIt(workspace);
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
@@ -90,7 +90,7 @@ public class AugmentDataDispachCommand extends WorksheetSelectionCommand {
 			incoming.undoIt(workspace);
 		if (predicatesoutgoingarray.length() > 0)
 			outgoing.undoIt(workspace);
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

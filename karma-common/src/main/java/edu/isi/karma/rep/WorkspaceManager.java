@@ -47,16 +47,16 @@ public class WorkspaceManager {
 		return new WorkspaceManager();
 	}
 	
-	public Workspace createWorkspace() {
+	public Workspace createWorkspace(String contextId) {
 		String id = getNewId("WSP");
-		Workspace wsp = new Workspace(id);
+		Workspace wsp = new Workspace(id, contextId);
 		workspaces.put(id, wsp);
 		return wsp;
 	}
 	
-	public Workspace createWorkspaceWithPreferencesId(String preferenceId) {
+	public Workspace createWorkspaceWithPreferencesId(String preferenceId, String contextId) {
 		String id = getNewId("WSP");
-		Workspace wsp = new Workspace(id, preferenceId);
+		Workspace wsp = new Workspace(id, preferenceId, contextId);
 		workspaces.put(id, wsp);
 		return wsp;
 	}

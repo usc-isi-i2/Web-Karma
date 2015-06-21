@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.UIConfiguration;
+import edu.isi.karma.config.UIConfigurationRegistry;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
@@ -119,7 +120,8 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 		Workspace workspace = vWorkspace.getWorkspace();
 		alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 		this.alignmentGraph = alignment.getSteinerTree();
-		if (UIConfiguration.Instance().isForceModelLayoutEnabled())
+		UIConfiguration uiConfiguration = UIConfigurationRegistry.getInstance().getUIConfiguration(vWorkspace.getWorkspace().getContextId());
+		if (uiConfiguration.isForceModelLayoutEnabled())
 			generateJsonForForceLayout(prefix, pw, vWorkspace);
 		else
 			generateJsonForNormalLayout(prefix, pw, vWorkspace);

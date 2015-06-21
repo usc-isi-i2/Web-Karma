@@ -27,6 +27,7 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -42,6 +43,7 @@ public class PublishRDFCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		String worksheetId = request.getParameter(Arguments.worksheetId
 				.name());
 		String addInverseProperties = request.getParameter(Arguments.addInverseProperties
@@ -53,7 +55,7 @@ public class PublishRDFCommandFactory extends CommandFactory {
 		PublishRDFCommand comm = new PublishRDFCommand(getNewId(workspace), 
 				Command.NEW_MODEL,
 				worksheetId,
-				ServletContextParameterMap
+				contextParameters
 				.getParameterValue(ContextParameter.PUBLIC_RDF_ADDRESS),
 				rdfPrefix, rdfNamespace, addInverseProperties,
 				request.getParameter(Arguments.saveToStore.name()),

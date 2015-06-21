@@ -39,22 +39,28 @@ import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class CSVFileExport {
+	private Workspace workspace; 
 	private Worksheet worksheet;
 	private static final Logger logger = LoggerFactory
 			.getLogger(CSVFileExport.class);
-	public CSVFileExport(Worksheet worksheet) {
+	public CSVFileExport(Workspace workspace, Worksheet worksheet) {
+		this.workspace = workspace;
 		this.worksheet = worksheet;
 	}
 	public String publishCSV() throws FileNotFoundException {
+		
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		String filename = worksheet.getTitle() + ".csv";
-		String outputFile = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
+		String outputFile = contextParameters.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
 				filename;
-		String relativeFilename = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_RELATIVE_DIR) +  
+		String relativeFilename = contextParameters.getParameterValue(ContextParameter.CSV_PUBLISH_RELATIVE_DIR) +  
 				filename;
 		logger.info("CSV file exported. Location:"
 				+ outputFile);

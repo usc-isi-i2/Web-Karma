@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -64,8 +65,10 @@ import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 
 public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
@@ -132,10 +135,12 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
 		UpdateContainer uc = new UpdateContainer();
 		//save the preferences 
 		savePreferences(workspace);
-		boolean storeOldHistory = ModelingConfiguration.isStoreOldHistoryEnabled();
+		boolean storeOldHistory = modelingConfiguration.isStoreOldHistoryEnabled();
 		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
@@ -191,7 +196,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		}
 		// Prepare the model file path and names
 		final String modelFileName = graphLabel + "-model.ttl"; 
-		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
+		final String modelFileLocalPath = contextParameters.getParameterValue(
 				ContextParameter.R2RML_PUBLISH_DIR) +  modelFileName;
 
 		// Get the alignment for this Worksheet
@@ -247,7 +252,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 				Command changeInternalNodeLinksCommand = cinlcf.createCommand(inputJSON, model, workspace);
 				workspace.getCommandHistory().doCommand(changeInternalNodeLinksCommand, workspace);
 				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
-				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 				uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			}catch(Exception e)
 			{
@@ -262,7 +267,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		SemanticModel semanticModel = new SemanticModel(workspace, worksheet, worksheetName, alignment.getSteinerTree(), selection);
 		semanticModel.setName(worksheetName);
 		try {
-			semanticModel.writeJson(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR) + 
+			semanticModel.writeJson(contextParameters.getParameterValue(ContextParameter.JSON_MODELS_DIR) + 
 					semanticModel.getName() + 
 					".model.json");
 		} catch (Exception e) {
@@ -270,7 +275,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			//			e.printStackTrace();
 		}
 		try {
-			semanticModel.writeGraphviz(ServletContextParameterMap.getParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR) + 
+			semanticModel.writeGraphviz(contextParameters.getParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR) + 
 					semanticModel.getName() + 
 					".model.dot", false, false);
 		} catch (Exception e) {
@@ -278,7 +283,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			//			e.printStackTrace();
 		}
 
-		if (ModelingConfiguration.isLearnerEnabled())
+		if (modelingConfiguration.isLearnerEnabled())
 			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Compact).
 			addModelAndUpdateAndExport(semanticModel, false);
 
@@ -325,7 +330,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 						try {
 							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
 
-							outputObject.put(JsonKeys.fileUrl.name(), ServletContextParameterMap.getParameterValue(
+							outputObject.put(JsonKeys.fileUrl.name(), contextParameters.getParameterValue(
 									ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
 							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
 							pw.println(outputObject.toString());

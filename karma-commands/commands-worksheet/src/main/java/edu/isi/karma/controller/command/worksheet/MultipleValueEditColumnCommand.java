@@ -65,7 +65,7 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 			String newCellValue = newRowValueMap.get(rowID);
 			row.setValue(hNodeID, newCellValue, factory);
 		}
-		return WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(this.worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
+		return WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(this.worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 			String oldCellValue = oldRowValueMap.get(rowID);
 			row.setValue(hNodeID, oldCellValue, factory);
 		}
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
 	}
 
 }

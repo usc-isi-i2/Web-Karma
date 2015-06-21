@@ -21,15 +21,15 @@
 
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.util.List;
+import edu.isi.karma.view.VWorkspace;
 
 public class FetchR2RMLUpdate extends AbstractUpdate {
 

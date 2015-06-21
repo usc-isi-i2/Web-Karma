@@ -57,6 +57,7 @@ import edu.isi.karma.rep.sources.AttributeRequirement;
 import edu.isi.karma.rep.sources.IOType;
 import edu.isi.karma.rep.sources.Source;
 import edu.isi.karma.rep.sources.WebService;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -71,6 +72,7 @@ public class WebServiceLoader extends SourceLoader
 		      // Exists only to defeat instantiation.
 	}
 		   
+	//TODO make this not static!
 	public static WebServiceLoader getInstance() {
 		if (instance == null) {
 			instance = new WebServiceLoader();
@@ -94,7 +96,9 @@ public class WebServiceLoader extends SourceLoader
 		Repository.Instance().clearNamedModel(uri);
 		
 		String service_id = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 1);
-		String dir = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + Repository.Instance().SERVICE_REPOSITORY_REL_DIR;
+		//TODO this is not the right way to get the context parameters
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		String dir = contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + Repository.Instance().SERVICE_REPOSITORY_REL_DIR;
 		String fileName = service_id + Repository.Instance().getFileExtension(Repository.Instance().LANG);
 		File f = new File(dir + fileName);
 		

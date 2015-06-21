@@ -23,7 +23,6 @@
  */
 package edu.isi.karma.controller.command.worksheet;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -87,7 +86,7 @@ public class EditCellCommand extends WorksheetSelectionCommand {
 		node.setValue(newValueArg, Node.NodeStatus.edited,
 				workspace.getFactory());
 		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel);
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel, workspace.getContextId());
 		uc.add(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, newValueArg, Node.NodeStatus.edited));
 		return uc;
@@ -98,7 +97,7 @@ public class EditCellCommand extends WorksheetSelectionCommand {
 		Node node = workspace.getFactory().getNode(nodeIdArg);
 		SuperSelection sel = getSuperSelection(workspace);
 		node.setValue(previousValue, previousStatus, workspace.getFactory());
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel);
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel, workspace.getContextId());
 		uc.add(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, previousValue, previousStatus));
 		return uc;

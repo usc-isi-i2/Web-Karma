@@ -34,9 +34,11 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 
 /**
  * This abstract class in an interface to all Commands that import data from files
@@ -151,7 +153,10 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 		UpdateContainer uc = new UpdateContainer(new ImportPropertiesUpdate(getFile(), encoding, maxNumLines, id));
 		if (!filter)
 			return uc;
-		final Workspace workspace = WorkspaceManager.getInstance().createWorkspace();
+		String workspaceId = request.getParameter("workspaceId");
+		
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspaceId));
+		final Workspace workspace = WorkspaceManager.getInstance().createWorkspace(contextParameters.getId());
 		Import imp = createImport(workspace, 1000);
 		try {
 			final Worksheet worksheet = imp.generateWorksheet();						
@@ -197,9 +202,10 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 	protected abstract Import createImport(Workspace workspace, int sampleSize);
 	
 	protected UpdateContainer savePreset(Workspace workspace, final Worksheet wsht) throws FileNotFoundException {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		final String jsonFileName = workspace.getCommandPreferencesId() + wsht.getId() + "-" + 
 				wsht.getTitle().replaceAll("\\.", "_") +  "-preset"+".json"; 
-		final String jsonFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
+		final String jsonFileLocalPath = contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
 				jsonFileName;
 		PrintWriter printWriter = new PrintWriter(jsonFileLocalPath);
 		printWriter.println(new JSONArray(columnsJson).toString(4));
@@ -212,7 +218,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 					outputObject.put(JsonKeys.updateType.name(),
 							"PublishPresetUpdate");
 					outputObject.put(JsonKeys.fileUrl.name(), 
-							ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + jsonFileName);
+							contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + jsonFileName);
 					outputObject.put(JsonKeys.worksheetId.name(),
 							wsht.getId());
 					pw.println(outputObject.toString(4));
@@ -254,7 +260,7 @@ public abstract class ImportFileCommand extends ImportCommand implements IPrevie
 				wsht.setRevisedWorksheet(revisedWorksheet);  
 			}
 			uc.add(new WorksheetListUpdate());
-			uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
+			uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
 			if (savePreset) {
 				uc.append(savePreset(workspace, wsht));
 			}

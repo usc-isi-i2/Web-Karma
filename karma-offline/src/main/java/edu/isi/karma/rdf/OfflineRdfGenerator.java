@@ -55,8 +55,10 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
@@ -75,7 +77,10 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class OfflineRdfGenerator {
 
@@ -120,6 +125,7 @@ public class OfflineRdfGenerator {
 	private String contextFile;
 	private String contextURLString;
 	private URL contextURL;
+	private ServletContextParameterMap contextParameters;
 	public OfflineRdfGenerator(CommandLine cl)
 	{
 
@@ -179,15 +185,21 @@ public class OfflineRdfGenerator {
 	}
 
 	private void setupKarmaMetadata() throws KarmaException {
+		
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		contextParameters = contextParametersRegistry.registerByKarmaHome(null);
+		
 		UpdateContainer uc = new UpdateContainer();
-		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
-		userMetadataManager.register(new UserPreferencesMetadata(), uc);
-		userMetadataManager.register(new UserConfigMetadata(), uc);
-		userMetadataManager.register(new PythonTransformationMetadata(), uc);
-		PythonRepository.disableReloadingLibrary();
+		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
+		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
+		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-		ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
+		modelingConfiguration.setLearnerEnabled(false); // disable automatic learning
 
 	}
 
@@ -384,7 +396,7 @@ public class OfflineRdfGenerator {
 		}
 
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
-				hostname, port, username, password, dBorSIDName, encoding, selectionName);
+				hostname, port, username, password, dBorSIDName, encoding, selectionName, contextParameters);
 		ContextIdentifier contextId = null;
 		if (contextURL != null) {
 			
@@ -535,7 +547,7 @@ public class OfflineRdfGenerator {
 		createWriters();
 		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName);
 		rdfGenerator.addModel(id);
-
+		
 		InputType inputType = null;
 		if(this.inputType.equalsIgnoreCase("CSV"))
 			inputType = InputType.CSV;
@@ -575,6 +587,7 @@ public class OfflineRdfGenerator {
 		request.setTripleMapToKill(killTripleMap);
 		request.setTripleMapToStop(stopTripleMap);
 		request.setStrategy(new UserSpecifiedRootStrategy(rootTripleMap));
+		request.setContextParameters(contextParameters);
 		if (contextURL != null) {
 			ContextIdentifier contextId = new ContextIdentifier(contextURL.getQuery(), contextURL);
 			rdfGenerator.addContext(contextId);

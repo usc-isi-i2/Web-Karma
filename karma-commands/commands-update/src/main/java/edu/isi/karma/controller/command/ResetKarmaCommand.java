@@ -35,6 +35,7 @@ import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -112,6 +113,7 @@ public class ResetKarmaCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		UpdateContainer c = new UpdateContainer();
 		if (forgetSemanticTypes) {
 			boolean deletTypes = workspace.getSemanticTypeModelHandler().removeAllLabels();
@@ -120,7 +122,7 @@ public class ResetKarmaCommand extends Command {
 		}
 		
 		if (forgetModels) {
-			File dir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.R2RML_USER_DIR));
+			File dir = new File(contextParameters.getParameterValue(ContextParameter.R2RML_USER_DIR));
 			if (!dir.exists() || !dir.isDirectory()) {
 				logger.error("Directory not found where the model histories are stored.");
 				c.add(new ErrorUpdate("Error occured while removing Model Histories: Directory was not found"));
@@ -136,7 +138,7 @@ public class ResetKarmaCommand extends Command {
 		}
 			
 		if(forgetAlignment) {
-			File dir = new File(ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY));
+			File dir = new File(contextParameters.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY));
 			if (!dir.exists() || !dir.isDirectory()) {
 				logger.error("Directory not found where the Alignment is stored.");
 				c.add(new ErrorUpdate("Error occured while removing Alignment: Directory was not found"));

@@ -34,6 +34,7 @@ import edu.isi.karma.modeling.alignment.IAlignmentSaver;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -136,10 +137,11 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 
 	@Override
 	public String getHistoryFilepath(String worksheetId) {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		String modelFilename = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 				worksheet.getTitle() +  "-auto-model.ttl"; 
-		String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
+		String modelFileLocalPath = contextParameters.getParameterValue(
 				ContextParameter.R2RML_USER_DIR) +  modelFilename;
 		return modelFileLocalPath;
 	}

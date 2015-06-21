@@ -21,24 +21,45 @@
 
 package edu.isi.karma.model.serialization;
 
-import com.hp.hpl.jena.query.*;
-import com.hp.hpl.jena.rdf.model.*;
-import com.hp.hpl.jena.rdf.model.Model;
-
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.Prefixes;
-import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.model.*;
-import edu.isi.karma.rep.sources.*;
-import edu.isi.karma.rep.sources.DataSource;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.*;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
+
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Prefixes;
+import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.rep.model.Argument;
+import edu.isi.karma.rep.model.ArgumentType;
+import edu.isi.karma.rep.model.Atom;
+import edu.isi.karma.rep.model.ClassAtom;
+import edu.isi.karma.rep.model.IndividualPropertyAtom;
+import edu.isi.karma.rep.sources.Attribute;
+import edu.isi.karma.rep.sources.AttributeRequirement;
+import edu.isi.karma.rep.sources.DataSource;
+import edu.isi.karma.rep.sources.IOType;
+import edu.isi.karma.rep.sources.Source;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class DataSourceLoader extends SourceLoader {
 
@@ -73,7 +94,9 @@ public class DataSourceLoader extends SourceLoader {
 		Repository.Instance().clearNamedModel(uri);
 		
 		String source_id = uri.substring(uri.lastIndexOf("/") + 1, uri.length() - 1);
-		String dir = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
+		//TODO this is not the right way to get the context parameters
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		String dir = contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + 
 							Repository.Instance().SOURCE_REPOSITORY_REL_DIR;
 		String fileName = source_id + Repository.Instance().getFileExtension(Repository.Instance().LANG);
 		File f = new File(dir + fileName);

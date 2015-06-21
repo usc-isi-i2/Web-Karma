@@ -34,6 +34,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -41,43 +42,47 @@ public class ModelingConfiguration {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelingConfiguration.class);
 
-	private static Boolean trainOnApplyHistory;
-	private static Boolean predictOnApplyHistory;
 
-	private static Boolean ontologyAlignment;
-	private static Boolean knownModelsAlignment;
+	private String contextId;
+	private Boolean thingNode;
+	private Boolean nodeClosure;
+	private Boolean propertiesDirect;
+	private Boolean propertiesIndirect;
+	private Boolean propertiesWithOnlyDomain;
+	private Boolean propertiesWithOnlyRange;
+	private Boolean propertiesWithoutDomainRange;
+	private Boolean propertiesSubClass;
+
+	private String karmaSourcePrefix;
+	private String karmaServicePrefix; 
+
+	private Boolean trainOnApplyHistory;
+	private Boolean predictOnApplyHistory;
+
+	private Boolean ontologyAlignment;
+	private Boolean knownModelsAlignment;
+
+
+	private Integer numCandidateMappings;
+	private Integer mappingBranchingFactor;
+	private Integer topKSteinerTree;
+
+
+	private Double scoringConfidenceCoefficient;
+	private Double scoringCoherenceSCoefficient;
+	private Double scoringSizeCoefficient;
+
+	private Boolean learnerEnabled;
+	private Boolean addOntologyPaths;
+//	private Boolean learnAlignmentEnabled;
+	private Boolean multipleSamePropertyPerNode;
+	private Boolean storeOldHistory;
+
+	private Boolean showModelsWithoutMatching;
+
+	private final String newLine = System.getProperty("line.separator").toString();
 	
-	private static Boolean thingNode;
-	private static Boolean nodeClosure;
-	private static Boolean propertiesDirect;
-	private static Boolean propertiesIndirect;
-	private static Boolean propertiesWithOnlyDomain;
-	private static Boolean propertiesWithOnlyRange;
-	private static Boolean propertiesWithoutDomainRange;
-	private static Boolean propertiesSubClass;
-
-	private static String karmaSourcePrefix;
-	private static String karmaServicePrefix; 
-
-	private static Integer numCandidateMappings;
-	private static Integer mappingBranchingFactor;
-	private static Integer topKSteinerTree;
-
-	private static Double scoringConfidenceCoefficient;
-	private static Double scoringCoherenceSCoefficient;
-	private static Double scoringSizeCoefficient;
-
-	private static Boolean learnerEnabled;
-	private static Boolean addOntologyPaths;
-//	private static Boolean learnAlignmentEnabled;
-	private static Boolean multipleSamePropertyPerNode;
-
-	private static Boolean storeOldHistory;
-
-	private static Boolean showModelsWithoutMatching;
-
-	private static final String newLine = System.getProperty("line.separator").toString();
-	private static String defaultModelingProperties = 
+	private String defaultModelingProperties = 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
 			"# Semantic Typing" + newLine + 
@@ -157,11 +162,12 @@ public class ModelingConfiguration {
 			"history.store.old=false"
 			;
 
-	public static void load() {
+
+	public void load() {
 		try {
 			Properties modelingProperties = loadParams();
 
-			File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+			File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
 
 			trainOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("train.on.apply.history", "false"));
 			predictOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("predict.on.apply.history", "false"));
@@ -261,17 +267,22 @@ public class ModelingConfiguration {
 			showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching", "false"));
 
 		} catch (IOException e) {
-			logger.error("Error occured while reading config file ...");
+			logger.error("Error occured while reading config file ...", e);
 			System.exit(1);
 		}
 	}
 
-	private static Properties loadParams()
+	public ModelingConfiguration(String contextId)
+	{
+		this.contextId = contextId;
+	}
+	private Properties loadParams()
 			throws IOException {
 		Properties prop = new Properties();
 
-		File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
-		logger.debug("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		File file = new File(contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+		logger.info("Load modeling.properties: " + file.getAbsolutePath() + ":" + file.exists());
 		if(!file.exists()) {
 			file.createNewFile();
 			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");
@@ -294,7 +305,7 @@ public class ModelingConfiguration {
 		return prop;
 	}
 
-	public static Boolean getThingNode() {
+	public Boolean getThingNode() {
 
 		if (getOntologyAlignment() == false)
 			return false;
@@ -305,7 +316,7 @@ public class ModelingConfiguration {
 		return thingNode;
 	}
 
-	public static Boolean getNodeClosure() {
+	public Boolean getNodeClosure() {
 
 		if (getOntologyAlignment() == false)
 			return false;
@@ -324,21 +335,21 @@ public class ModelingConfiguration {
 //		return manualAlignment;
 //	}
 	
-	public static Boolean getTrainOnApplyHistory() {
+	public Boolean getTrainOnApplyHistory() {
 		if (trainOnApplyHistory == null) {
 			load();
 		}
 		return trainOnApplyHistory;
 	}
 	
-	public static Boolean getPredictOnApplyHistory() {
+	public Boolean getPredictOnApplyHistory() {
 		if (predictOnApplyHistory == null) {
 			load();
 		}
 		return predictOnApplyHistory;
 	}
 	
-	public static Boolean getOntologyAlignment() {
+	public Boolean getOntologyAlignment() {
 		if (ontologyAlignment == null) {
 			load();
 			logger.debug("Use Ontology in Alignment:" + ontologyAlignment);
@@ -346,7 +357,7 @@ public class ModelingConfiguration {
 		return ontologyAlignment;
 	}
 	
-	public static Boolean getKnownModelsAlignment() {
+	public Boolean getKnownModelsAlignment() {
 		if (knownModelsAlignment == null) {
 			load();
 			logger.debug("Use Known Models in Alignment:" + knownModelsAlignment);
@@ -354,97 +365,97 @@ public class ModelingConfiguration {
 		return knownModelsAlignment;
 	}
 
-	public static Boolean getPropertiesDirect() {
+	public Boolean getPropertiesDirect() {
 		if (propertiesDirect == null)
 			load();
 		return propertiesDirect;
 	}
 
-	public static Boolean getPropertiesIndirect() {
+	public Boolean getPropertiesIndirect() {
 		if (propertiesIndirect == null)
 			load();
 		return propertiesIndirect;
 	}
 
-	public static Boolean getPropertiesWithOnlyDomain() {
+	public Boolean getPropertiesWithOnlyDomain() {
 		if (propertiesWithOnlyDomain == null)
 			load();
 		return propertiesWithOnlyDomain;
 	}
 
-	public static Boolean getPropertiesWithOnlyRange() {
+	public Boolean getPropertiesWithOnlyRange() {
 		if (propertiesWithOnlyRange == null)
 			load();
 		return propertiesWithOnlyRange;
 	}
 
-	public static Boolean getPropertiesWithoutDomainRange() {
+	public Boolean getPropertiesWithoutDomainRange() {
 		if (propertiesWithoutDomainRange == null)
 			load();
 		return propertiesWithoutDomainRange;
 	}
 
-	public static Boolean getPropertiesSubClass() {
+	public Boolean getPropertiesSubClass() {
 		if (propertiesSubClass == null)
 			load();
 		return propertiesSubClass;
 	}
 
-	public static String getKarmaSourcePrefix() {
+	public String getKarmaSourcePrefix() {
 		if (karmaSourcePrefix == null)
 			load();
 		return karmaSourcePrefix.trim();
 	}
 
-	public static String getKarmaServicePrefix() {
+	public String getKarmaServicePrefix() {
 		if (karmaServicePrefix == null)
 			load();
 		return karmaServicePrefix.trim();
 	}
 
-	public static Integer getNumCandidateMappings() {
+	public Integer getNumCandidateMappings() {
 		if (numCandidateMappings == null)
 			load();
 		return numCandidateMappings;
 	}
 
-	public static Integer getMappingBranchingFactor() {
+	public Integer getMappingBranchingFactor() {
 		if (mappingBranchingFactor == null)
 			load();
 		return mappingBranchingFactor;
 	}
 	
-	public static Integer getTopKSteinerTree() {
+	public Integer getTopKSteinerTree() {
 		if (topKSteinerTree == null)
 			load();
 		return topKSteinerTree;
 	}
 
-	public static Double getScoringConfidenceCoefficient() {
+	public Double getScoringConfidenceCoefficient() {
 		if (scoringConfidenceCoefficient == null)
 			load();
 		return scoringConfidenceCoefficient;
 	}
 
-	public static Double getScoringCoherenceSCoefficient() {
+	public Double getScoringCoherenceSCoefficient() {
 		if (scoringCoherenceSCoefficient == null)
 			load();
 		return scoringCoherenceSCoefficient;
 	}
 
-	public static Double getScoringSizeCoefficient() {
+	public Double getScoringSizeCoefficient() {
 		if (scoringSizeCoefficient == null)
 			load();
 		return scoringSizeCoefficient;
 	}
 
-	public static boolean isLearnerEnabled() {
+	public boolean isLearnerEnabled() {
 		if (learnerEnabled == null)
 			load();
 		return learnerEnabled;
 	}
 
-	public static boolean getAddOntologyPaths() {
+	public boolean getAddOntologyPaths() {
 		if (addOntologyPaths == null)
 			load();
 		return addOntologyPaths;
@@ -456,29 +467,29 @@ public class ModelingConfiguration {
 //		return learnAlignmentEnabled;
 //	}
 	
-	public static boolean isStoreOldHistoryEnabled() {
+	public boolean isStoreOldHistoryEnabled() {
 		if (storeOldHistory == null)
 			load();
 		return storeOldHistory;
 	}
 
-	public static boolean isShowModelsWithoutMatching() {
+	public boolean isShowModelsWithoutMatching() {
 		if (showModelsWithoutMatching == null)
 			load();
 		return showModelsWithoutMatching;
 	}
 
-	public static void setLearnerEnabled(Boolean learnerEnabled) {
-		ModelingConfiguration.learnerEnabled = learnerEnabled;
+	public void setLearnerEnabled(Boolean learnerEnabled) {
+		this.learnerEnabled = learnerEnabled;
 	}
 
-	public static boolean isMultipleSamePropertyPerNode() {
+	public boolean isMultipleSamePropertyPerNode() {
 		if (multipleSamePropertyPerNode == null)
 			load();
 		return multipleSamePropertyPerNode;
 	}
 
-	public static void setManualAlignment()
+	public void setManualAlignment()
 	{
 		ontologyAlignment = false;
 		knownModelsAlignment = false;

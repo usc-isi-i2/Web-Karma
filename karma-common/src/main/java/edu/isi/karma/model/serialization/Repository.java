@@ -35,6 +35,7 @@ import com.hp.hpl.jena.tdb.TDB;
 import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.file.Location;
 
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -54,26 +55,27 @@ public class Repository {
 
 	private Dataset dataset;
 
+	//TODO this should not be static!
 	private static Repository _InternalInstance = null;
 	public static Repository Instance()
 	{
 		if (_InternalInstance == null)
 		{
 			_InternalInstance = new Repository();
-
-			File repository = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.REPOSITORY_REL_DIR);
+			ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+			File repository = new File(contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.REPOSITORY_REL_DIR);
 			if (!repository.exists())
 				repository.mkdir();
 			
-			File tripleStore = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.TRIPLE_DATASET_REL_DIR);
+			File tripleStore = new File(contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.TRIPLE_DATASET_REL_DIR);
 			if (!tripleStore.exists())
 				tripleStore.mkdir();
 			
-			File serviceRepository = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.SERVICE_REPOSITORY_REL_DIR);
+			File serviceRepository = new File(contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.SERVICE_REPOSITORY_REL_DIR);
 			if (!serviceRepository.exists())
 				serviceRepository.mkdir();
 			
-			File sourceRepository = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.SOURCE_REPOSITORY_REL_DIR);
+			File sourceRepository = new File(contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + _InternalInstance.SOURCE_REPOSITORY_REL_DIR);
 			if (!sourceRepository.exists())
 				sourceRepository.mkdir();
 			
@@ -83,8 +85,8 @@ public class Repository {
 	}
 	
 	public void createRepository() {
-		
-		Location location = new Location(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + this.TRIPLE_DATASET_REL_DIR);
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		Location location = new Location(contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + this.TRIPLE_DATASET_REL_DIR);
 		this.dataset = TDBFactory.createDataset(location);
 //		TDB.getContext().set(TDB.symUnionDefaultGraph, true);
 	}

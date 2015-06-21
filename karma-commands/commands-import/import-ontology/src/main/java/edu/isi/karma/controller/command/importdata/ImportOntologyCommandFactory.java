@@ -20,21 +20,27 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
+import java.io.File;
+
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ImportOntologyCommandFactory extends CommandFactory {
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request, contextParameters.getParameterValue(ContextParameter.USER_UPLOADED_DIR));
 		return new ImportOntologyCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
+
 	}
 
 	@Override

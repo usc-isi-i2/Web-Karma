@@ -43,12 +43,11 @@ import edu.isi.karma.kr2rml.planning.WorksheetDepthRootStrategy;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -100,15 +99,15 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		logger.info("Entered ExportJSONCommand");
-
-
+		
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
-		RepFactory f = workspace.getFactory();
+		
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
 						worksheetId));
-		OntologyManager ontMgr = workspace.getOntologyManager();
+		workspace.getOntologyManager();
 		// Set the prefix and namespace to be used while generating RDF
 		fetchRdfPrefixAndNamespaceFromPreferences(workspace);
 
@@ -177,10 +176,10 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 		// create JSONKR2RMLRDFWriter
 		final String jsonFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".json"; 
-		final String jsonFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
+		final String jsonFileLocalPath = contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) +  
 				jsonFileName;
 		final String contextName = workspace.getCommandPreferencesId() + worksheetId + "-" + worksheet.getTitle().replaceAll("\\.", "_") +  "-context.json";
-		final String jsonContextFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) + contextName;
+		final String jsonContextFileLocalPath = contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_DIR) + contextName;
 		PrintWriter printWriter;
 		try {
 			printWriter = new PrintWriter(jsonFileLocalPath);
@@ -212,11 +211,11 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 				if(contextURL == null || contextURL.trim().isEmpty())
 				{
 					StringBuilder url = new StringBuilder();
-					url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JETTY_HOST));
+					url.append(contextParameters.getParameterValue(ContextParameter.JETTY_HOST));
 					url.append(":");
-					url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JETTY_PORT));
+					url.append(contextParameters.getParameterValue(ContextParameter.JETTY_PORT));
 					url.append("/");
-					url.append(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR));
+					url.append(contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR));
 					url.append(contextName);
 					contextURL = url.toString();
 				}
@@ -224,7 +223,7 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 			}
 			writer.addPrefixes(mapping.getPrefixes());
 			RootStrategy strategy = new UserSpecifiedRootStrategy(rootTriplesMapId, new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy()));
-			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, f, writer, false, strategy, mapping, errorReport, selection);
+			KR2RMLWorksheetRDFGenerator generator = new KR2RMLWorksheetRDFGenerator(worksheet, workspace, writer, false, strategy, mapping, errorReport, selection);
 			try {
 				generator.generateRDF(true);
 				logger.info("RDF written to file.");
@@ -247,10 +246,10 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 					outputObject.put(JsonKeys.updateType.name(),
 							"PublishJSONUpdate");
 					outputObject.put(JsonKeys.fileUrl.name(), 
-							ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + jsonFileName);
+							contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + jsonFileName);
 					if (contextJSON != null && !contextJSON.isEmpty()) {
 						outputObject.put(JsonKeys.contextUrl.name(), 
-								ServletContextParameterMap.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + contextName);
+								contextParameters.getParameterValue(ContextParameter.JSON_PUBLISH_RELATIVE_DIR) + contextName);
 					}
 					outputObject.put(JsonKeys.worksheetId.name(),
 							worksheetId);

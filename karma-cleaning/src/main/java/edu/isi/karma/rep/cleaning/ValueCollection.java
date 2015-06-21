@@ -20,9 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.rep.cleaning;
 
-import org.json.JSONObject;
-
 import java.util.Collection;
+
+import org.json.JSONObject;
 
 public interface ValueCollection {
 	public abstract String getValue(String id);

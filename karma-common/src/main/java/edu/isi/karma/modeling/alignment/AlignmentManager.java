@@ -66,7 +66,6 @@ public class AlignmentManager {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspaceId, worksheetId);
 		
-//		Workspace workspace = WorkspaceManager.getInstance().getWorkspace(workspaceId);
 		Worksheet worksheet = WorkspaceManager.getInstance().getWorkspace(workspaceId).getWorksheet(worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		

@@ -47,11 +47,17 @@ public class OntologyManager  {
 	private OntologyHandler ontHandler = null;
 	private OntologyCache ontCache = null;
 	private List<OntologyUpdateListener> ontUpdateListeners; 
-	
-	public OntologyManager() {
+	private String contextId; 
+	public OntologyManager(String contextId) {
+		this.contextId = contextId;
 		ontHandler = new OntologyHandler();
-		ontCache = new OntologyCache(ontHandler);
+		ontCache = new OntologyCache(ontHandler, contextId);
 		ontUpdateListeners = new ArrayList<OntologyUpdateListener>();	
+	}
+	
+	public String getContextId()
+	{
+		return contextId;
 	}
 
 	public boolean isEmpty() {
@@ -116,7 +122,7 @@ public class OntologyManager  {
 		
 		
 		// update the cache
-		ontCache = new OntologyCache(ontHandler);
+		ontCache = new OntologyCache(ontHandler, contextId);
 		ontCache.init();
 		
 		// notify listeners
@@ -158,7 +164,7 @@ public class OntologyManager  {
 	}
 	
 	public void updateCache() {
-		ontCache = new OntologyCache(ontHandler);
+		ontCache = new OntologyCache(ontHandler, contextId);
 		ontCache.init();
 	}
 	

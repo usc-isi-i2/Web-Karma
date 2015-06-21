@@ -44,14 +44,14 @@ public class VWorkspace {
 	public VWorkspace(Workspace workspace) {
 		super();
 		this.workspace = workspace;
-		preferences = new ViewPreferences(workspace.getId());
+		preferences = new ViewPreferences(workspace.getId(), workspace.getContextId());
 		preferencesId=workspace.getId();
 	}
 	
 	public VWorkspace(Workspace workspace, String workspacePreferencesId) {
 		super();
 		this.workspace = workspace;
-		preferences = new ViewPreferences(workspacePreferencesId);
+		preferences = new ViewPreferences(workspacePreferencesId, workspace.getContextId());
 		preferencesId = workspacePreferencesId;
 	}
 

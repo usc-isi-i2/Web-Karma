@@ -61,36 +61,24 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.KarmaException;
 
 public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
-	private final URL r2rmlModelFile;
+	private URL r2rmlModelFile;
+	private File uploadedFile; 
+	private String modelFileUrl;
 	private boolean override;
 	private static Logger logger = LoggerFactory.getLogger(ApplyHistoryFromR2RMLModelCommand.class);
 
 	protected ApplyHistoryFromR2RMLModelCommand(String id, String model, File uploadedFile, 
 			String worksheetId, boolean override) {
 		super(id, model, worksheetId);
-		URL modelFile = null;
-		try {
-			modelFile = uploadedFile.toURI().toURL();
-		} catch(MalformedURLException me) {
-			logger.error("Error locating the model file:", me);
-		} finally {
-			this.r2rmlModelFile = modelFile;
-		}
+		this.uploadedFile = uploadedFile;
+		
 		this.override = override;
 	}
 	
 	protected ApplyHistoryFromR2RMLModelCommand(String id, String model, String modelFileUrl, 
 			String worksheetId, boolean override) {
 		super(id, model, worksheetId);
-		URL modelFile = null;
-		try {
-			modelFile = new URL(modelFileUrl);
-			(new SavedModelURLs()).saveModelUrl(modelFileUrl);
-		} catch(Exception me) {
-			logger.error("Error locating the model file:", me);
-		} finally {
-			this.r2rmlModelFile = modelFile;
-		}
+		this.modelFileUrl = modelFileUrl;
 		this.override = override;
 	}
 
@@ -122,6 +110,29 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		long start = System.currentTimeMillis();
 		
+		if(uploadedFile != null)
+		{
+			URL modelFile = null;
+			try {
+				modelFile = uploadedFile.toURI().toURL();
+			} catch(MalformedURLException me) {
+				logger.error("Error locating the model file:", me);
+			} finally {
+				this.r2rmlModelFile = modelFile;
+			}
+		}
+		else if (modelFileUrl != null)
+		{
+			URL modelFile = null;
+			try {
+				modelFile = new URL(modelFileUrl);
+				(new SavedModelURLs()).saveModelUrl(modelFileUrl, workspace.getContextId());
+			} catch(Exception me) {
+				logger.error("Error locating the model file:", me);
+			} finally {
+				this.r2rmlModelFile = modelFile;
+			}
+		}
 		final Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer c = new UpdateContainer();
 		

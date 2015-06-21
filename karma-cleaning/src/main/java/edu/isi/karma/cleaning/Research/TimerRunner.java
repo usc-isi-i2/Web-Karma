@@ -20,10 +20,11 @@ import edu.isi.karma.cleaning.UtilTools;
 public class TimerRunner implements Runnable {
 	File f;
 	DataCollection dCollection;
-
-	public TimerRunner(File f, DataCollection dCollection) {
+	String contextId;
+	public TimerRunner(File f, DataCollection dCollection, String contextId) {
 		this.f = f;
 		this.dCollection = dCollection;
+		this.contextId = contextId;
 	}
 
 	public void run() {
@@ -81,7 +82,7 @@ public class TimerRunner implements Runnable {
 					HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
 					Vector<String> resultString = new Vector<String>();
 					xHashMap = new HashMap<String, String[]>();
-					ProgSynthesis psProgSynthesis = new ProgSynthesis();
+					ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 					HashMap<String, String> unlabeledData = new HashMap<String, String>();
 					for (int i = 0; i < vtmp.size(); i++) {
 						unlabeledData.put("" + i, vtmp.get(i));

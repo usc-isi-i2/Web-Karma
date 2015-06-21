@@ -15,8 +15,10 @@ import edu.isi.karma.cleaning.Traces;
 
 public class ViewFunc implements VerificationFunc {
 	private HashMap<String, String> data = new HashMap<String, String>();
-	public ViewFunc(ArrayList<TransRecord> records, ProgSynthesis ps, ProgramRule pr)
+	private String contextId; 
+	public ViewFunc(ArrayList<TransRecord> records, ProgSynthesis ps, ProgramRule pr, String contextId)
 	{
+		this.contextId = contextId;
 		Vector<Partition> pars = ps.myprog.partitions;
 		HashMap<String, ArrayList<TransRecord>> resHashMap = cluster(records);
 		for(Partition p: pars)
@@ -53,7 +55,7 @@ public class ViewFunc implements VerificationFunc {
 	// detect the records which prog failed on
 	public boolean identifyIncorrRecord(ArrayList<TransRecord> records,
 			String prog) {
-		ProgramRule pr = new ProgramRule(prog);
+		ProgramRule pr = new ProgramRule(prog, contextId);
 		boolean res = true;
 		for (TransRecord r : records) {
 			String orgString = r.org;
@@ -90,7 +92,7 @@ public class ViewFunc implements VerificationFunc {
 				ArrayList<String> lviews = new ArrayList<String>();
 				do {
 					rule = gt.toProgram();
-					ProgramRule pr = new ProgramRule(rule);
+					ProgramRule pr = new ProgramRule(rule,contextId);
 					String ares = "";
 					for (String s : rdata) {
 						ares += pr.transform(s);
