@@ -117,7 +117,7 @@ public class GraphBuilder_LOD_Pattern {
 					true, 
 					Params.GRAPHS_DIR + "lod.graph.dot");
 			GraphUtil.exportJson(this.getGraphBuilder().getGraph(), 
-					Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT);
+					Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT, true, true);
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}

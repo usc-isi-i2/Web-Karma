@@ -207,12 +207,45 @@ public class SemanticTypeUtil {
 		return new SemanticTypeColumnModel(result);
 	}
 
-	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode cn, int numSuggestions, SuperSelection sel) {
+	public List<SemanticType> getSuggestedTypes(OntologyManager ontologyManager, 
+			ColumnNode columnNode, SemanticTypeColumnModel columnModel) {
+		
 		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
-		logger.info("Column Semantic Suggestions for:" + cn.getColumnName());
+		if (columnModel == null)
+			return suggestedSemanticTypes;
+		
+		for (Entry<String, Double> entry : columnModel.getScoreMap().entrySet()) {
+			
+			String key = entry.getKey();
+			Double confidence = entry.getValue();
+			if (key == null || key.isEmpty()) continue;
+
+			String[] parts = key.split("\\|");
+			if (parts == null || parts.length != 2) continue;
+
+			String domainUri = parts[0].trim();
+			String propertyUri = parts[1].trim();
+
+			Label domainLabel = ontologyManager.getUriLabel(domainUri);
+			if (domainLabel == null) continue;
+
+			Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
+			if (propertyLabel == null) continue;
+
+			SemanticType semanticType = new SemanticType(columnNode.getHNodeId(), propertyLabel, domainLabel, Origin.TfIdfModel, confidence);
+			logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
+			suggestedSemanticTypes.add(semanticType);
+		}
+		Collections.sort(suggestedSemanticTypes, Collections.reverseOrder());
+		return suggestedSemanticTypes;
+	}
+	
+	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode columnNode, int numSuggestions, SuperSelection sel) {
+		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
+		logger.info("Column Semantic Suggestions for:" + columnNode.getColumnName());
 		if(workspace != null && worksheet != null) {
 			OntologyManager ontologyManager = workspace.getOntologyManager();
-			String hNodeId = cn.getHNodeId();
+			String hNodeId = columnNode.getHNodeId();
 			SemanticTypeColumnModel columnModel = predictColumnSemanticType(workspace, worksheet, hNodeId, numSuggestions, sel);
 			
 			if (columnModel != null) {

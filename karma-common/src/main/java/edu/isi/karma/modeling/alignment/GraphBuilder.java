@@ -159,10 +159,11 @@ public class GraphBuilder {
 			source = link.getSource();
 			target = link.getTarget();
 			
+			DefaultLink l = link.getCopy(link.getId());
 			if (useOriginalWeights)
-				this.addLink(source, target, link, link.getWeight());
+				this.addLink(source, target, l, l.getWeight());
 			else
-				this.addLink(source, target, link);
+				this.addLink(source, target, l);
 		}
 		
 		logger.debug("graph has been loaded.");

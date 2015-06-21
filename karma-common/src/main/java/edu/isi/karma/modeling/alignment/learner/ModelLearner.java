@@ -61,7 +61,6 @@ import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ContextParametersRegistry;
-import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class ModelLearner {
 
@@ -102,7 +101,7 @@ public class ModelLearner {
 		this.ontologyManager = graphBuilder.getOntologyManager();
 		this.steinerNodes = steinerNodes;
 		if (this.steinerNodes != null) Collections.sort(this.steinerNodes);
-		this.graphBuilder = cloneGraphBuilder(graphBuilder); // create a copy of the graph builder
+		this.graphBuilder = graphBuilder;
 		this.nodeIdFactory = this.graphBuilder.getNodeIdFactory();
 	}
 
@@ -243,7 +242,7 @@ public class ModelLearner {
 						modelingConfiguration.getTopKSteinerTree(), 
 						null, null, true);
 			} 
-//			else 
+			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
 				SteinerTree steinerTree = new SteinerTree(

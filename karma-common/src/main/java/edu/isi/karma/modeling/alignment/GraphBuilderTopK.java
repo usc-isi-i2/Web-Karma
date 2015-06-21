@@ -22,7 +22,6 @@ import edu.isi.karma.modeling.steiner.topk.Fact;
 import edu.isi.karma.modeling.steiner.topk.ResultGraph;
 import edu.isi.karma.modeling.steiner.topk.SteinerEdge;
 import edu.isi.karma.modeling.steiner.topk.SteinerNode;
-import edu.isi.karma.modeling.steiner.topk.TopKSteinertrees;
 import edu.isi.karma.rep.alignment.CompactObjectPropertyLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -120,9 +119,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 		SteinerNode n2 = new SteinerNode(link.getTarget().getId());
 		SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight);
 //		getTopKGraph().get(n1).remove(e);
-		getTopKGraph().get(n2).remove(e);
-//		getTopKGraph().get(n1).add(e);
-		getTopKGraph().get(n2).add(e);
+		
+		if (getTopKGraph().get(n2).remove(e))
+			getTopKGraph().get(n2).add(e);
 	}
 
 	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(Set<Node> steinerNodes, 
@@ -151,8 +150,10 @@ public class GraphBuilderTopK extends GraphBuilder {
 //		DPBFfromMM N = new DPBFfromMM(terminals);
 		BANKSfromMM N = new BANKSfromMM(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
 //		STARfromMM N = new STARfromMM(terminals);
-		TopKSteinertrees.graph = this.getTopKGraph();
-		TopKSteinertrees.nodes = this.getTopKGraphNodes();
+
+		
+		BANKSfromMM.graph = this.getTopKGraph();
+		BANKSfromMM.nodes = this.getTopKGraphNodes();
 		
 		List<DirectedWeightedMultigraph<Node, LabeledLink>> results = new 
 				LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -244,12 +245,16 @@ public class GraphBuilderTopK extends GraphBuilder {
 				target = this.getIdToNodeMap().get(f.destination().name());
 			}
 
-			
 			if (LinkIdFactory.getLinkUri(f.label().name).equals(Uris.DEFAULT_LINK_URI)) {
 				String id = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, source.getId(), target.getId());					
 				l = new CompactObjectPropertyLink(id, ObjectPropertyType.None);
 			}
 			else l = this.getIdToLinkMap().get(f.label().name);
+			
+			if (l == null) {
+				logger.error("this should not happen! there is a bug!");
+			}
+			
 			weight = f.weight();
 			if (!visitedNodes.contains(source)) {
 				tree.addVertex(source);
@@ -260,6 +265,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 				visitedNodes.add(target);
 			}
 //			System.out.println(f.toString());
+			
 			tree.addEdge(source, target, l);
 			tree.setEdgeWeight(l, weight);
 		}

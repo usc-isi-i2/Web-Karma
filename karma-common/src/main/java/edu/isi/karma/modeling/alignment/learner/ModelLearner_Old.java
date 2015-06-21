@@ -788,7 +788,7 @@ public class ModelLearner_Old {
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file
 					try {
-						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
+						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName, true, true);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

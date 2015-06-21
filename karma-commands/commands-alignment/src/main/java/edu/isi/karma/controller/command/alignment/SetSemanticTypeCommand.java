@@ -30,6 +30,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -121,6 +123,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		OntologyManager ontMgr = workspace.getOntologyManager();
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ontMgr.getContextId());
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
@@ -280,6 +283,18 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				// Update the alignment
 				if(!this.isExecutedInBatch())
 					alignment.align();
+				else if (modelingConfiguration.getPredictOnApplyHistory()) {
+					if (columnNode.getLearnedSemanticTypes() == null) {
+						// do this only one time: if user assigns a semantic type to the column, 
+						// and later clicks on Set Semantic Type button, we should not change the initially learned types 
+						logger.debug("adding learned semantic types to the column " + hNodeId);
+						columnNode.setLearnedSemanticTypes(
+								new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, columnNode, 4, selection));
+						if (columnNode.getLearnedSemanticTypes().isEmpty()) {
+							logger.info("no semantic type learned for the column " + hNodeId);
+						}
+					}
+				}
 
 			} catch (JSONException e) {
 				logger.error("JSON Exception occured", e);
@@ -312,9 +327,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		//new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		
 		
-		if(trainAndShowUpdates) {
+		if(trainAndShowUpdates ||
+				(this.isExecutedInBatch() && modelingConfiguration.getTrainOnApplyHistory())) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
-		} 
+		}  
 		
 		
 		c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
