@@ -187,7 +187,7 @@ public class OfflineRdfGenerator {
 	private void setupKarmaMetadata() throws KarmaException {
 		
 		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
-		contextParametersRegistry.registerByKarmaHome(null);
+		contextParameters = contextParametersRegistry.registerByKarmaHome(null);
 		
 		UpdateContainer uc = new UpdateContainer();
 		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
