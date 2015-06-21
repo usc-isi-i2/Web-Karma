@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public abstract class ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraph.class);
 	
-	private static ModelLearningGraph instance = null;
+	private static ConcurrentHashMap<OntologyManager, ModelLearningGraph> instances = new ConcurrentHashMap<OntologyManager, ModelLearningGraph>();
 	protected OntologyManager ontologyManager;
 	protected GraphBuilder graphBuilder;
 	protected NodeIdFactory nodeIdFactory; 
@@ -68,26 +69,55 @@ public abstract class ModelLearningGraph {
 		return contextParameters.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.dot";
 	}
 
-	public static synchronized ModelLearningGraph getInstance(OntologyManager ontologyManager, ModelLearningGraphType type) {
-		if (instance == null || !ontologyManager.equals(instance.ontologyManager)) {
+	public static ModelLearningGraph getInstance(OntologyManager ontologyManager, ModelLearningGraphType type) {
+		ModelLearningGraph instance = null;
+		ModelLearningGraph previousInstance = null;
+		if (!instances.containsKey(ontologyManager)) {
 			try {
 				if (type == ModelLearningGraphType.Compact)
+				{
 					instance = new ModelLearningGraphCompact(ontologyManager);
+					previousInstance = instances.putIfAbsent(ontologyManager, instance);
+					if(previousInstance != null)
+						instance = previousInstance;
+				}
+					
 				else
+				{
 					instance = new ModelLearningGraphSparse(ontologyManager);
+					previousInstance = instances.putIfAbsent(ontologyManager, instance);
+					if(previousInstance != null)
+						instance = previousInstance;
+				}
 			} catch (IOException e) {
 				logger.error("error in importing the main learning graph!", e);
 				return null;
 			}
 		}
+		else
+		{
+			instance = instances.get(ontologyManager);
+		}
 		return instance;
 	}
 
 	public static ModelLearningGraph getEmptyInstance(OntologyManager ontologyManager, ModelLearningGraphType type) {
+		ModelLearningGraph instance = null;
+		ModelLearningGraph previousInstance = null;
 		if (type == ModelLearningGraphType.Compact)
+		{
 			instance = new ModelLearningGraphCompact(ontologyManager, true);
+			previousInstance = instances.putIfAbsent(ontologyManager, instance);
+			if(previousInstance != null)
+				instance = previousInstance;
+		}
 		else
+		{
 			instance = new ModelLearningGraphSparse(ontologyManager, true);
+			previousInstance = instances.putIfAbsent(ontologyManager, instance);
+			if(previousInstance != null)
+				instance = previousInstance;
+		}
 		return instance;
 	}
 	
