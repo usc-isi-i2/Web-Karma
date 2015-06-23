@@ -88,7 +88,7 @@ public class CustomizedBANKS extends TopKSteinertrees {
 		this.modelCoherence = new ModelCoherence(30,30);
 		if (recursiveLevel != null)
 			this.recursiveLevel = recursiveLevel;
-		if (this.maxPermutations != null)
+		if (maxPermutations != null)
 			this.maxPermutations = maxPermutations;
 		
 		banksIterators=new PriorityQueue<BANKSIterator>(terminals.size(), new BANKSIteratorComparator(this.modelCoherence));

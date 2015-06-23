@@ -159,7 +159,10 @@ public class KarmaServlet extends HttpServlet {
 		// Initialize the Outlier tag
 		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
 		workspace.getTagsContainer().addTag(outlierTag);
-		workspace.getOntologyManager().updateCache();
+		
+		// updating cache is already done in OntologyMetadata setup
+//		workspace.getOntologyManager().updateCache();
+		
 		// Put all created worksheet models in the view.
 		updateContainer.add(new WorksheetListUpdate());
 		

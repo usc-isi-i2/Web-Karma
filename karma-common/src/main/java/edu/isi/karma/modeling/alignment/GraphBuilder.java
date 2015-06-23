@@ -490,12 +490,12 @@ public class GraphBuilder {
 		}
 		
 		if (!this.idToNodeMap.containsKey(source.getId())) {
-			logger.debug("The link source " + link.getSource().getId() + " does not exist in the graph");
+			logger.debug("The link source " + source.getId() + " does not exist in the graph");
 			return false;
 		}
 
 		if (!this.idToNodeMap.containsKey(target.getId())) {
-			logger.debug("The link target " + link.getTarget().getId() + " does not exist in the graph");
+			logger.debug("The link target " + target.getId() + " does not exist in the graph");
 			return false;
 		}
 

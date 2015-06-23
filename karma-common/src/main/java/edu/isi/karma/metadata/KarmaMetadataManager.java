@@ -45,9 +45,17 @@ public class KarmaMetadataManager {
 		return metadataTypes.containsKey(type);
 	}
 	public void setup(Workspace workspace, UpdateContainer updateContainer) {
+		// some meta data such as ModelLearner need preloaded-ontologies, we do this meta data first
 		for(KarmaMetadata metadata : metadataTypes.values())
 		{
-			metadata.setup(updateContainer, workspace);
+			if (metadata instanceof OntologyMetadata)
+				metadata.setup(updateContainer, workspace);
+		}
+		
+		for(KarmaMetadata metadata : metadataTypes.values())
+		{
+			if (!(metadata instanceof OntologyMetadata))
+				metadata.setup(updateContainer, workspace);
 		}
 		
 	}
