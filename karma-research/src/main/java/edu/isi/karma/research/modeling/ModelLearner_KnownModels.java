@@ -78,6 +78,7 @@ import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelLearner_KnownModels {
 
@@ -192,7 +193,7 @@ public class ModelLearner_KnownModels {
 			if (this.graphBuilder instanceof GraphBuilderTopK) {
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
 						modelingConfiguration.getTopKSteinerTree(), 
-						50, 1, true);
+						5, 3, true);
 			} 
 			else 
 			{
@@ -764,6 +765,7 @@ public class ModelLearner_KnownModels {
 		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
 		 */
 		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
 
 		//		String inputPath = Params.INPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
@@ -802,7 +804,7 @@ public class ModelLearner_KnownModels {
 		boolean iterativeEvaluation = false;
 		boolean useCorrectType = true;
 		boolean randomModel = false;
-		boolean onlyEvaluateInternalLinks = true; 
+		boolean onlyEvaluateInternalLinks = false; 
 		boolean zeroKnownModel = false;
 
 		int numberOfCandidates = 1;
@@ -908,7 +910,7 @@ public class ModelLearner_KnownModels {
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file
 					try {
-//						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
+//						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName, true, true);
 //						GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), 
 //								"test", 
 //								true, 						

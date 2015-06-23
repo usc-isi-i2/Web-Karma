@@ -415,7 +415,7 @@ public class SemanticModel {
 				List<List<String>> permList = new ArrayList<List<String>>();
 				permList.addAll(permutations);
 				
-				interval = interval / nodeGroup.size();
+				interval = interval / BigIntegerMath.factorial(nodeGroup.size()).intValue();
 				List<String> perm;
 				int k = 0, count = 1;
 				for (int i = 0; i < nodeIdSets.size(); i++) {

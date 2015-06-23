@@ -207,12 +207,7 @@ public abstract class ModelLearningGraph {
 				}
 			}
 		}
-		
-		// This line should be uncommented when we have a good top-k steiner tree algorithm. 
-		// The current algorithm does not give right answer when I add the links from ontology. 
-		// FIXME
-//		this.updateGraphUsingOntology(addedNodes);
-		
+				
 		this.exportJson();
 		this.exportGraphviz();
 		this.lastUpdateTime = System.currentTimeMillis();
@@ -235,7 +230,7 @@ public abstract class ModelLearningGraph {
 					GraphVizLabelType.LocalId,
 					GraphVizLabelType.LocalUri,
 					false, 
-					false, 
+					true, 
 					getGraphGraphvizName());
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");

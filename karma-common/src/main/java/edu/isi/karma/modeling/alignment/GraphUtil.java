@@ -491,7 +491,7 @@ public class GraphUtil {
 
 		FileOutputStream out = new FileOutputStream(file); 
 		JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
-		//writer.setIndent("    ");
+		writer.setIndent("    ");
 		try {
 			writeGraph(graph, writer, writeNodeAnnotations, writeLinkAnnotations);
 //			writeGraph(workspace, worksheet, graph, writer);

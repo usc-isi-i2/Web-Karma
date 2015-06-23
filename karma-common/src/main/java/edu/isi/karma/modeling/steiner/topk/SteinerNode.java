@@ -27,6 +27,7 @@ public class SteinerNode extends Entity {
 	protected boolean wasArg1;
 	protected double [] distancesToSources=new double [2];
 	
+	protected SteinerEdge predecessorLink;
 	/*
 	 * for BANKS II
 	 */

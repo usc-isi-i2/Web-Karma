@@ -161,7 +161,7 @@ public class GraphBuilder {
 			
 			DefaultLink l = link.getCopy(link.getId());
 			if (useOriginalWeights)
-				this.addLink(source, target, l, l.getWeight());
+				this.addLink(source, target, l, link.getWeight());
 			else
 				this.addLink(source, target, l);
 		}

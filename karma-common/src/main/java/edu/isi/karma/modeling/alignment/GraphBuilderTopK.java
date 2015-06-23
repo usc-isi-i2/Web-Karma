@@ -82,6 +82,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 			SteinerNode n1 = new SteinerNode(source.getId());
 			SteinerNode n2 = new SteinerNode(target.getId());
 			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)link.getWeight());
+			if (link instanceof LabeledLink) {
+				e.setModelIds(((LabeledLink)link).getModelIds());
+			}
 //			getTopKGraph().get(n1).add(e);
 			getTopKGraph().get(n2).add(e); // each node only stores its incoming links
 			return true;
@@ -94,6 +97,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 			SteinerNode n1 = new SteinerNode(source.getId());
 			SteinerNode n2 = new SteinerNode(target.getId());
 			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight.doubleValue());
+			if (link instanceof LabeledLink) {
+				e.setModelIds(((LabeledLink)link).getModelIds());
+			}
 //			getTopKGraph().get(n1).add(e);
 			getTopKGraph().get(n2).add(e); // each node only stores its incoming links
 			return true;
@@ -120,8 +126,12 @@ public class GraphBuilderTopK extends GraphBuilder {
 		SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight);
 //		getTopKGraph().get(n1).remove(e);
 		
-		if (getTopKGraph().get(n2).remove(e))
+		if (getTopKGraph().get(n2).remove(e)) {
+			if (link instanceof LabeledLink) {
+				e.setModelIds(((LabeledLink)link).getModelIds());
+			}
 			getTopKGraph().get(n2).add(e);
+		}
 	}
 
 	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(Set<Node> steinerNodes, 
@@ -141,14 +151,40 @@ public class GraphBuilderTopK extends GraphBuilder {
 		
 		TreeSet<SteinerNode> terminals= new TreeSet<SteinerNode>();
 		for (Node n : steinerNodes) {
-			if (onlyAddInternalNodes && !(n instanceof InternalNode))
+			if (onlyAddInternalNodes && !(n instanceof InternalNode)) {
 				continue;
+			}
 
 			terminals.add(new SteinerNode(n.getId()));
-		}
+		}		
+		
+//		for (Node n : steinerNodes) {
+//			if (!(n instanceof InternalNode)) {
+//				Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(n);
+//				if (incomingLinks != null && incomingLinks.size() == 1) {
+//					DefaultLink l = incomingLinks.iterator().next(); 
+//					if (l instanceof LabeledLink) {
+//						LabeledLink labeledLink = (LabeledLink)l;
+//						Node domain = labeledLink.getSource();
+//						if (domain != null && steinerNodes.contains(domain)) {
+//							Set<String> linkModelIds = labeledLink.getModelIds();
+//							Set<String> nodeModelIds = domain.getModelIds();
+//							if (nodeModelIds == null) {
+//								nodeModelIds = new HashSet<String>();
+//								domain.setModelIds(nodeModelIds);
+//							}
+//							if (linkModelIds != null)
+//								nodeModelIds.addAll(linkModelIds);
+//						}
+//					}
+//				}
+//			}
+//			terminals.add(new SteinerNode(n.getId()));
+//		}
 		
 //		DPBFfromMM N = new DPBFfromMM(terminals);
 		BANKSfromMM N = new BANKSfromMM(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
+//		BANKSfromMM2 N = new BANKSfromMM2(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
 //		STARfromMM N = new STARfromMM(terminals);
 
 		
