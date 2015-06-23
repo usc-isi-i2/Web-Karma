@@ -17,7 +17,7 @@ import edu.isi.karma.config.ModelingConfigurationRegistry;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-public class BANKSfromMM2 extends TopKSteinertrees {
+public class CustomizedBANKS extends TopKSteinertrees {
 	
 //	private static Logger logger = LoggerFactory.getLogger(BANKSfromMM.class);
 
@@ -29,10 +29,10 @@ public class BANKSfromMM2 extends TopKSteinertrees {
 	private List<HashMap<SteinerNode,SortedSteinerNodes>> duplicateIndex;
 	private String contextId;
 
-	private Integer recursiveLevel;
-	private Integer maxPermutations;
+	private Integer recursiveLevel = 5;
+	private Integer maxPermutations = 3;
 
-	public BANKSfromMM2() {
+	public CustomizedBANKS() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -81,13 +81,15 @@ public class BANKSfromMM2 extends TopKSteinertrees {
 	 */
 	protected Queue<BANKSIterator> banksIterators;
 	
-	public BANKSfromMM2(TreeSet<SteinerNode> terminals, Integer recursiveLevel, Integer maxPermutations, String contextId) throws Exception {
+	public CustomizedBANKS(TreeSet<SteinerNode> terminals, Integer recursiveLevel, Integer maxPermutations, String contextId) throws Exception {
 		super(terminals);
 	
 		this.contextId = contextId;
 		this.modelCoherence = new ModelCoherence(30,30);
-		this.recursiveLevel = recursiveLevel;
-		this.maxPermutations = maxPermutations;
+		if (recursiveLevel != null)
+			this.recursiveLevel = recursiveLevel;
+		if (this.maxPermutations != null)
+			this.maxPermutations = maxPermutations;
 		
 		banksIterators=new PriorityQueue<BANKSIterator>(terminals.size(), new BANKSIteratorComparator(this.modelCoherence));
 		
@@ -162,14 +164,15 @@ public class BANKSfromMM2 extends TopKSteinertrees {
 		mainQueueMap.put(queueId, ancestor);
 		searchNodeInQueues.add(mainQueueMap);
 
-		int max;
-		if (this.maxPermutations == null) {
-			if (duplicateIndex.size() <= 15) max = 3;
-			else if (duplicateIndex.size() > 15 && duplicateIndex.size() < 30) max = 2;
-			else max = 1;
-		} else {
-			max = this.maxPermutations.intValue();
-		}
+		int max = this.maxPermutations.intValue();
+		
+//		if (this.maxPermutations == null) {
+//			if (duplicateIndex.size() <= 15) max = 3;
+//			else if (duplicateIndex.size() > 15 && duplicateIndex.size() < 30) max = 2;
+//			else max = 1;
+//		} else {
+//			max = this.maxPermutations.intValue();
+//		}
 		
 		List<HashMap<Integer, SteinerNode>> permutations = 
 				getPermutation(searchNodeInQueues, processedNodes, searchNode, 0, max, queueId);
@@ -278,11 +281,7 @@ public class BANKSfromMM2 extends TopKSteinertrees {
 		
 		//counting computed results
 		int count=0;
-		int maxRecurseCount;
-		if (this.recursiveLevel == null)
-			maxRecurseCount = 10;
-		else
-			maxRecurseCount = this.recursiveLevel.intValue();
+		int maxRecurseCount = this.recursiveLevel.intValue();
 		
 		boolean debug = false;
 		

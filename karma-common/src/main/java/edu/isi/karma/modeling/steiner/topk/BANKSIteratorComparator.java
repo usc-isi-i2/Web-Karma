@@ -3,7 +3,7 @@ package edu.isi.karma.modeling.steiner.topk;
 import java.util.Comparator;
 import java.util.Set;
 
-import edu.isi.karma.modeling.steiner.topk.BANKSfromMM2.BANKSIterator;
+import edu.isi.karma.modeling.steiner.topk.CustomizedBANKS.BANKSIterator;
 
 public class BANKSIteratorComparator implements Comparator<BANKSIterator>{
 

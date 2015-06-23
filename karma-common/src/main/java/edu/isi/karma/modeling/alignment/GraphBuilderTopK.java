@@ -17,7 +17,7 @@ import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
 import edu.isi.karma.modeling.alignment.learner.SteinerNodes;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.steiner.topk.BANKSfromMM;
+import edu.isi.karma.modeling.steiner.topk.CustomizedBANKS;
 import edu.isi.karma.modeling.steiner.topk.Fact;
 import edu.isi.karma.modeling.steiner.topk.ResultGraph;
 import edu.isi.karma.modeling.steiner.topk.SteinerEdge;
@@ -182,14 +182,14 @@ public class GraphBuilderTopK extends GraphBuilder {
 //			terminals.add(new SteinerNode(n.getId()));
 //		}
 		
-//		DPBFfromMM N = new DPBFfromMM(terminals);
-		BANKSfromMM N = new BANKSfromMM(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
-//		BANKSfromMM2 N = new BANKSfromMM2(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
-//		STARfromMM N = new STARfromMM(terminals);
 
-		
-		BANKSfromMM.graph = this.getTopKGraph();
-		BANKSfromMM.nodes = this.getTopKGraphNodes();
+//		BANKSfromMM N = new BANKSfromMM(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
+//		BANKSfromMM.graph = this.getTopKGraph();
+//		BANKSfromMM.nodes = this.getTopKGraphNodes();
+
+		CustomizedBANKS N = new CustomizedBANKS(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
+		CustomizedBANKS.graph = this.getTopKGraph();
+		CustomizedBANKS.nodes = this.getTopKGraphNodes();
 		
 		List<DirectedWeightedMultigraph<Node, LabeledLink>> results = new 
 				LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();

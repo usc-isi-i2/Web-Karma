@@ -142,8 +142,8 @@ public class ModelingConfiguration {
 			"" + newLine + 
 //			"learn.alignment.enabled=false" + newLine + 
 //			"" + newLine + 
-			"mapping.branching.factor=10" + newLine + 
-			"num.candidate.mappings=10" + newLine + 
+			"mapping.branching.factor=100" + newLine + 
+			"num.candidate.mappings=20" + newLine + 
 			"topk.steiner.tree=20" + newLine + 
 			"multiple.same.property.per.node=false" + newLine + 
 			"" + newLine + 

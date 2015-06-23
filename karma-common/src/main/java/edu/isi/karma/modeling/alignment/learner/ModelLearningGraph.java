@@ -103,20 +103,20 @@ public abstract class ModelLearningGraph {
 
 	public static ModelLearningGraph getEmptyInstance(OntologyManager ontologyManager, ModelLearningGraphType type) {
 		ModelLearningGraph instance = null;
-		ModelLearningGraph previousInstance = null;
+//		ModelLearningGraph previousInstance = null;
 		if (type == ModelLearningGraphType.Compact)
 		{
 			instance = new ModelLearningGraphCompact(ontologyManager, true);
-			previousInstance = instances.putIfAbsent(ontologyManager, instance);
-			if(previousInstance != null)
-				instance = previousInstance;
+//			previousInstance = instances.putIfAbsent(ontologyManager, instance);
+//			if(previousInstance != null)
+//				instance = previousInstance;
 		}
 		else
 		{
 			instance = new ModelLearningGraphSparse(ontologyManager, true);
-			previousInstance = instances.putIfAbsent(ontologyManager, instance);
-			if(previousInstance != null)
-				instance = previousInstance;
+//			previousInstance = instances.putIfAbsent(ontologyManager, instance);
+//			if(previousInstance != null)
+//				instance = previousInstance;
 		}
 		return instance;
 	}

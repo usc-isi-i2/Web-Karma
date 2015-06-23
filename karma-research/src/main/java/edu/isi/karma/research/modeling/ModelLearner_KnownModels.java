@@ -802,12 +802,12 @@ public class ModelLearner_KnownModels {
 		ModelLearner_KnownModels modelLearner;
 
 		boolean iterativeEvaluation = false;
-		boolean useCorrectType = true;
+		boolean useCorrectType = false;
 		boolean randomModel = false;
 		boolean onlyEvaluateInternalLinks = false; 
 		boolean zeroKnownModel = false;
 
-		int numberOfCandidates = 1;
+		int numberOfCandidates = 4;
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
@@ -882,7 +882,7 @@ public class ModelLearner_KnownModels {
 				//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
 
 				List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
-				modelLearner = new ModelLearner_KnownModels(ontologyManager, steinerNodes);
+				modelLearner = new ModelLearner_KnownModels(modelLearningGraph.getGraphBuilder(), steinerNodes);
 				long start = System.currentTimeMillis();
 
 				String graphName = !iterativeEvaluation?
@@ -896,8 +896,8 @@ public class ModelLearner_KnownModels {
 					try {
 						logger.info("loading the graph ...");
 						DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-						modelLearner.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
-						modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
+						GraphBuilder gb = new GraphBuilderTopK(ontologyManager, graph);
+						modelLearner = new ModelLearner_KnownModels(gb, steinerNodes);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -906,8 +906,9 @@ public class ModelLearner_KnownModels {
 					for (SemanticModel sm : trainingData)
 //						modelLearningGraph.addModel(sm);
 						modelLearningGraph.addModelAndUpdate(sm, false);
-					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
-					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
+					modelLearner = new ModelLearner_KnownModels(modelLearningGraph.getGraphBuilder(), steinerNodes);
+//					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
+//					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file
 					try {
 //						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName, true, true);

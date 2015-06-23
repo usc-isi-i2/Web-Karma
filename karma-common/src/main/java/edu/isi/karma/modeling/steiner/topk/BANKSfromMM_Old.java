@@ -18,7 +18,7 @@ import java.util.TreeSet;
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.ModelingConfigurationRegistry;
 
-public class BANKSfromMM extends TopKSteinertrees {
+public class BANKSfromMM_Old extends TopKSteinertrees {
 	
 //	private static Logger logger = LoggerFactory.getLogger(BANKSfromMM.class);
 
@@ -31,7 +31,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 	private Integer recursiveLevel;
 	private Integer maxPermutations;
 
-	public BANKSfromMM(String contextId) {
+	public BANKSfromMM_Old(String contextId) {
 		super();
 		this.contextId = contextId;
 	}
@@ -79,7 +79,7 @@ public class BANKSfromMM extends TopKSteinertrees {
 	protected Queue<BANKSIterator> banksIterators;
 	
 
-	public BANKSfromMM(TreeSet<SteinerNode> terminals, Integer recursiveLevel, Integer maxPermutations, String contextId) throws Exception {
+	public BANKSfromMM_Old(TreeSet<SteinerNode> terminals, Integer recursiveLevel, Integer maxPermutations, String contextId) throws Exception {
 		super(terminals);
 		this.contextId = contextId;
 		this.recursiveLevel = recursiveLevel;
