@@ -66,8 +66,8 @@ public class CandidateSteinerSets {
 		if (this.steinerSets.size() == 0) {
 			for (SemanticTypeMapping stm : sortedMappings) {
 				SteinerNodes sn = new SteinerNodes(contextId);
-				sn.addNodes(stm);
-				this.steinerSets.add(sn);
+				if (sn.addNodes(stm))
+					this.steinerSets.add(sn);
 			}			
 		} else {
 			int numOfNewSets = 0;
@@ -79,9 +79,10 @@ public class CandidateSteinerSets {
 						continue;
 
 					SteinerNodes sn = new SteinerNodes(nodeSet,contextId);
-					sn.addNodes(stm);
-					newSteinerNodes.add(sn);
-					numOfNewSets ++;
+					if (sn.addNodes(stm)) {
+						newSteinerNodes.add(sn);
+						numOfNewSets ++;
+					}
 				}
 			}
 			if (numOfNewSets == 0) {
@@ -117,8 +118,8 @@ public class CandidateSteinerSets {
 		
 		if (this.steinerSets.size() == 0) {
 			SteinerNodes sn = new SteinerNodes(contextId);
-			sn.addNode(n);
-			this.steinerSets.add(sn);
+			if (sn.addNode(n))
+				this.steinerSets.add(sn);
 		} else {
 			int numOfNewSets = 0;
 			for (SteinerNodes nodeSet : this.steinerSets) {
@@ -128,9 +129,10 @@ public class CandidateSteinerSets {
 
 				SteinerNodes sn = new SteinerNodes(nodeSet,contextId);
 				
-				sn.addNode(n);
-				newSteinerNodes.add(sn);
-				numOfNewSets ++;
+				if (sn.addNode(n)) {
+					newSteinerNodes.add(sn);
+					numOfNewSets ++;
+				}
 			}
 			if (numOfNewSets == 0) {
 				for (SteinerNodes nodeSet : this.steinerSets) {

@@ -109,6 +109,7 @@ public class OfflineRdfGenerator {
 	private String sourceFilePath;
 	private String dBorSIDName;
 	private String tablename;
+	private String topkrows;
 	private String queryFile;
 	private String portnumber;
 	private String sMaxNumLines;
@@ -282,6 +283,7 @@ public class OfflineRdfGenerator {
 		encoding = (String) cl.getOptionValue("encoding");
 		dBorSIDName = (String) cl.getOptionValue("dbname");
 		tablename = (String) cl.getOptionValue("tablename");
+		topkrows = (String) cl.getOptionValue("topkrows");
 		queryFile = (String) cl.getOptionValue("queryfile");
 		portnumber = (String) cl.getOptionValue("portnumber");
 	}
@@ -405,7 +407,7 @@ public class OfflineRdfGenerator {
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
 			createWriters();
-			dbRdfGen.generateRDFFromTable(tablename, writers, id, contextId, baseURI);
+			dbRdfGen.generateRDFFromTable(tablename, topkrows, writers, id, contextId, baseURI);
 		} else {
 			String query = loadQueryFromFile();
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
@@ -619,6 +621,7 @@ public class OfflineRdfGenerator {
 		options.addOption(new Option("portnumber", "portnumber", true, "portnumber for database connection"));
 		options.addOption(new Option("dbname", "dbname", true, "database or SID name for database connection"));
 		options.addOption(new Option("tablename", "tablename", true, "hostname for database connection"));
+		options.addOption(new Option("topkrows", "topkrows", true, "number of top k rows to select from the table"));
 		options.addOption(new Option("queryfile", "queryfile", true, "query file for loading data"));
 		options.addOption(new Option("outputbloomfilter", "bloomfiltersfile", true, "generate bloom filters"));
 		options.addOption(new Option("baseuri", "base URI", true, "specifies base uri"));

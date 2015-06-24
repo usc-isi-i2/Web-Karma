@@ -96,11 +96,22 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		generateRDF(wkname, query, writers, id, baseURI);
 	}
 	
-	public void generateRDFFromTable(String tablename, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, ContextIdentifier contextId, String baseURI)
+	public void generateRDFFromTable(String tablename, String topkrows,
+			List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, 
+			ContextIdentifier contextId, String baseURI)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		initializeWriter(id, contextId, writers);
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
+		if (topkrows != null) {
+			if (dbType == DBType.SQLServer) {
+				query = "Select TOP " + topkrows + " * FROM " + dbUtil.escapeTablename(tablename);
+			} else if (dbType == DBType.MySQL) {
+				query = "Select * FROM " + dbUtil.escapeTablename(tablename) + " LIMIT " + topkrows;
+			} else if (dbType == DBType.Oracle) {
+				query = "Select * FROM " + dbUtil.escapeTablename(tablename) + " WHERE ROWNUM <= " + topkrows;
+			}
+		}
 		generateRDF(tablename, query, writers, id, baseURI);
 	}
 	

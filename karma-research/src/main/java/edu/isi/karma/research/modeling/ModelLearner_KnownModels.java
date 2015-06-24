@@ -185,7 +185,11 @@ public class ModelLearner_KnownModels {
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			if (sn == null) continue;
 			logger.info("computing steiner tree for steiner nodes set " + number + " ...");
-			logger.debug(sn.getScoreDetailsString());
+//			logger.info(sn.getScoreDetailsString());
+//			for (Entry<ColumnNode, SemanticTypeMapping> n : sn.getColumnNodeInfo().entrySet()) {
+//				System.out.println(sn.getMappingToSourceColumns().get(n.getKey()).getColumnName() + "---" +
+//						n.getValue().getLink().getId());
+//			}
 			number++;
 //			logger.info("START ...");
 			
@@ -834,9 +838,9 @@ public class ModelLearner_KnownModels {
 		}
 
 
-//		for (int i = 0; i < semanticModels.size(); i++) {
-//		for (int i = 0; i <= 10; i++) {
-		int i = 0; {
+		for (int i = 0; i < semanticModels.size(); i++) {
+//		for (int i = 0; i <= 1; i++) {
+//		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
