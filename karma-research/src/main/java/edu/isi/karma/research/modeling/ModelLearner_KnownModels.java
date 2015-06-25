@@ -807,7 +807,6 @@ public class ModelLearner_KnownModels {
 
 		boolean iterativeEvaluation = false;
 		boolean useCorrectType = false;
-		boolean randomModel = false;
 		boolean onlyEvaluateInternalLinks = false; 
 		boolean zeroKnownModel = false;
 
@@ -893,9 +892,7 @@ public class ModelLearner_KnownModels {
 						graphPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPH_FILE_EXT : 
 							graphPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPH_FILE_EXT;
 
-				if (randomModel) {
-					modelLearner = new ModelLearner_KnownModels(new GraphBuilder(ontologyManager, false), steinerNodes);
-				} else if (new File(graphName).exists()) {
+				if (new File(graphName).exists()) {
 					// read graph from file
 					try {
 						logger.info("loading the graph ...");
@@ -980,10 +977,7 @@ public class ModelLearner_KnownModels {
 
 						SortableSemanticModel m = topHypotheses.get(k);
 
-						if (onlyEvaluateInternalLinks)
-							me = m.evaluate(correctModel, true);
-						else
-							me = m.evaluate(correctModel, false);
+						me = m.evaluate(correctModel, onlyEvaluateInternalLinks);
 
 						String label = "candidate " + k + "\n" + 
 //								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +

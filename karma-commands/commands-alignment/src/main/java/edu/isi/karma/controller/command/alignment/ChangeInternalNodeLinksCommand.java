@@ -110,6 +110,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		// First delete the links that are not present in newEdges and present
 		// in intialEdges
 		try {
+			refineInitialEdges(alignment);
 			deleteLinks(worksheet, alignment);
 			addNewLinks(alignment, ontMgr);
 			
@@ -121,6 +122,22 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		}
 
 		return this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
+	}
+
+	private void refineInitialEdges(Alignment alignment) {
+		int j = initialEdges.length() - 1;
+		while (j >= 0) {
+			JSONObject initialEdge = initialEdges.getJSONObject(j);
+			String edgeUri = initialEdge.getString(JsonKeys.edgeId.name());
+			String sourceId = initialEdge.getString(JsonKeys.edgeSourceId.name());
+			String targetId = initialEdge.getString(JsonKeys.edgeTargetId.name());
+			String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
+			if (alignment.getLinkById(linkId) == null) { // the link is not even in the graph
+				initialEdges.remove(j);
+			}
+			j--;
+		}
+
 	}
 
 	private void addNewLinks(Alignment alignment, OntologyManager ontMgr)

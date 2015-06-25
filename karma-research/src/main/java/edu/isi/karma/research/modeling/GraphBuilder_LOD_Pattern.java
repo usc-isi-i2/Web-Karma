@@ -9,8 +9,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.config.ModelingConfiguration;
-import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizLabelType;
@@ -24,20 +22,19 @@ import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class GraphBuilder_LOD_Pattern {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphBuilder_LOD_Pattern.class);
-	ModelLearningGraph modelLearningGraph;
-	OntologyManager ontologyManger;
+	private ModelLearningGraph modelLearningGraph;
+	private int maxPatternSize;
 
-	public GraphBuilder_LOD_Pattern(OntologyManager ontologyManager, String patternsDir) {
+	public GraphBuilder_LOD_Pattern(OntologyManager ontologyManager, String patternsDir, int maxPatternSize) {
 		
-		this.ontologyManger = ontologyManager;
 		modelLearningGraph = (ModelLearningGraphCompact)
 				ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
 		
+		this.maxPatternSize = maxPatternSize;
 		buildGraph(ontologyManager, patternsDir);
 
 	}
@@ -76,20 +73,23 @@ public class GraphBuilder_LOD_Pattern {
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;
 		
-//		 adding patterns of size 3
-		logger.info("adding patterns of size 3 ...");
-		temp = this.addPatterns(patternsSize3);
-		if (temp != null) addedNodes.addAll(temp);
-		
-		// adding patterns with size 2, popularity of the links
-		logger.info("adding patterns of size 2 ...");
-		temp = this.addPatterns(patternsSize2);
-		if (temp != null) addedNodes.addAll(temp);
+		if (this.maxPatternSize >= 4) {
+			logger.info("adding patterns of size 4 ...");
+			temp = this.addPatterns(patternsSize4);
+			if (temp != null) addedNodes.addAll(temp);
+		}
 
-		// adding patterns of size 4
-//		logger.info("adding patterns of size 4 ...");
-//		temp = this.addPatterns(patternsSize4);
-//		if (temp != null) addedNodes.addAll(temp);
+		if (this.maxPatternSize >= 3) {
+			logger.info("adding patterns of size 3 ...");
+			temp = this.addPatterns(patternsSize3);
+			if (temp != null) addedNodes.addAll(temp);
+		}
+		
+		if (this.maxPatternSize >= 2) {
+			logger.info("adding patterns of size 2 ...");
+			temp = this.addPatterns(patternsSize2);
+			if (temp != null) addedNodes.addAll(temp);
+		}
 
 		try {
 			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
@@ -152,7 +152,7 @@ public class GraphBuilder_LOD_Pattern {
 		
 
 //		GraphBuilder_LOD_Pattern lodPatternGraphBuilder = 
-				new GraphBuilder_LOD_Pattern(ontologyManager, Params.PATTERNS_DIR);
+				new GraphBuilder_LOD_Pattern(ontologyManager, Params.PATTERNS_DIR, 2);
 
 		
 //		HashMap<String, Integer> opFrequency = new HashMap<String, Integer>();
