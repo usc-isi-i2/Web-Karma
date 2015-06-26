@@ -586,13 +586,15 @@ public class Alignment implements OntologyUpdateListener {
 		
 		// Change the status of previously preferred links to normal
 		Set<LabeledLink> linksInPreviousTree = this.getLinksByStatus(LinkStatus.PreferredByUI);
+		Set<LabeledLink> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
+
 		if (linksInPreviousTree != null) {
 			LabeledLink[] links = linksInPreviousTree.toArray(new LabeledLink[0]);
 			for (LabeledLink link : links)
-				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
+				if (linksForcedByUser == null || !linksForcedByUser.contains(link))
+					this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
 		}
 		
-		Set<LabeledLink> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
 		for (LabeledLink link: this.steinerTree.edgeSet()) {
 			if (linksForcedByUser == null || !linksForcedByUser.contains(link)) {
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);

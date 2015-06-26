@@ -267,19 +267,8 @@ public class GraphBuilderTopK extends GraphBuilder {
 		double weight;
 		for (Fact f : initialTree.getFacts()) { 
 
-//			if (f.source().name().startsWith("helper_")) { // source node is helper
-//				continue;
-//			}
-//
-//			if (f.destination().name().startsWith("helper_")) { // target node is helper
-//				source = this.getIdToNodeMap().get(f.source().name());
-//				String targetId = getHelperNodeToTargetMap().get(f.destination()).getNodeId();
-//				target = this.getIdToNodeMap().get(targetId);
-//			} else 
-			{
-				source = this.getIdToNodeMap().get(f.source().name());
-				target = this.getIdToNodeMap().get(f.destination().name());
-			}
+			source = this.getIdToNodeMap().get(f.source().name());
+			target = this.getIdToNodeMap().get(f.destination().name());
 
 			if (LinkIdFactory.getLinkUri(f.label().name).equals(Uris.DEFAULT_LINK_URI)) {
 				String id = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, source.getId(), target.getId());					

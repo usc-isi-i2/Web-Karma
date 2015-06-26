@@ -221,12 +221,6 @@ public class ModelLearner {
 
 		logger.info("number of steiner sets: " + candidateSteinerSets.numberOfCandidateSets());
 
-//		logger.info("updating weights according to training data ...");
-//		long start = System.currentTimeMillis();
-//		this.updateWeights();
-//		long updateWightsElapsedTimeMillis = System.currentTimeMillis() - start;
-//		logger.info("time to update weights: " + (updateWightsElapsedTimeMillis/1000F));
-		
 		logger.info("computing steiner trees ...");
 		int number = 0;
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
@@ -253,13 +247,8 @@ public class ModelLearner {
 					topKSteinerTrees.add(treePostProcess.getTree());
 			}
 			
-//			System.out.println(GraphUtil.labeledGraphToString(treePostProcess.getTree()));
-			
-//			logger.info("END ...");
-
 			for (DirectedWeightedMultigraph<Node, LabeledLink> tree: topKSteinerTrees) {
 				if (tree != null) {
-//					System.out.println();
 					SemanticModel sm = new SemanticModel(new RandomGUID().toString(), 
 							tree,
 							columnNodes,
@@ -270,9 +259,7 @@ public class ModelLearner {
 					sortableSemanticModels.add(sortableSemanticModel);
 					
 //					sortableSemanticModel.print();
-//					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
 //					System.out.println(sortableSemanticModel.getRankingDetails());
-//					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
 			if (number == modelingConfiguration.getNumCandidateMappings())
