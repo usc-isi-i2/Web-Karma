@@ -646,15 +646,20 @@ public class GraphBuilder {
 	
 	public void changeLinkStatus(LabeledLink link, LinkStatus newStatus) {
 
-		LinkStatus oldStatus = link.getStatus();
+		if (link == null) return;
+		LabeledLink graphLink = this.getIdToLinkMap().get(link.getId()); // use the graph link, not the tree link sent by the alignment (steiner tree has a copy of the graph link)
+		if (graphLink == null) return;
+		
+		LinkStatus oldStatus = graphLink.getStatus();
 		if (newStatus == oldStatus)
 			return;
 		
+		graphLink.setStatus(newStatus);
 		link.setStatus(newStatus);
-		this.changeLinkWeight(link, computeWeight(link));
+		this.changeLinkWeight(graphLink, computeWeight(graphLink));
 		
 		Set<LabeledLink> linksWithOldStatus = this.statusToLinksMap.get(oldStatus);
-		if (linksWithOldStatus != null) linksWithOldStatus.remove(link);
+		if (linksWithOldStatus != null) linksWithOldStatus.remove(graphLink);
 
 		if (newStatus == LinkStatus.Normal) // we don't need to index normal links 
 			return;
@@ -664,7 +669,7 @@ public class GraphBuilder {
 			linksWithNewStatus = new HashSet<LabeledLink>();
 			statusToLinksMap.put(newStatus, linksWithNewStatus);
 		}
-		linksWithNewStatus.add(link);
+		linksWithNewStatus.add(graphLink);
 	}
 	
 	public void changeLinkWeight(DefaultLink link, double weight) {
