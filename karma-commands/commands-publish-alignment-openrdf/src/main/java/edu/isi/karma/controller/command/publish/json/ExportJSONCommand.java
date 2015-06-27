@@ -185,7 +185,7 @@ public class ExportJSONCommand extends WorksheetSelectionCommand {
 			printWriter = new PrintWriter(jsonFileLocalPath);
 			String baseURI = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.baseURI);
 			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(printWriter, baseURI);
-			if((contextJSON == null || contextJSON.trim().isEmpty()) && contextURL != null)
+			if((contextJSON == null || contextJSON.trim().isEmpty()) && contextURL != null && !contextURL.isEmpty())
 			{
 				try{
 					contextJSON = IOUtils.toString(new URL(contextURL).openStream());	
