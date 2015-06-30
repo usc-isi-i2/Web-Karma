@@ -45,7 +45,6 @@ import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizLabelType;
 import edu.isi.karma.modeling.alignment.GraphVizUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
@@ -734,7 +733,7 @@ public class ModelLearner_LOD {
 
 
 		String outputPath = Params.OUTPUT_DIR;
-		String graphPath = Params.GRAPHS_DIR;
+//		String graphPath = Params.GRAPHS_DIR;
 
 		List<SemanticModel> semanticModels = 
 				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
@@ -745,7 +744,7 @@ public class ModelLearner_LOD {
 		boolean useCorrectType = true;
 		int numberOfCandidates = 1;
 		boolean onlyEvaluateInternalLinks = true; 
-		int maxPatternSize = 3;
+		int maxPatternSize = 4;
 
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = "";
@@ -778,19 +777,20 @@ public class ModelLearner_LOD {
 			List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
 			long start = System.currentTimeMillis();
 
-			String graphName = graphPath + "lod" + Params.GRAPH_FILE_EXT; 
+//			String graphName = graphPath + "lod" + Params.GRAPH_FILE_EXT; 
 
 			if (onlyUseOntology) {
 				modelLearner = new ModelLearner_LOD(new GraphBuilder(ontologyManager, false), steinerNodes);
-			} else if (new File(graphName).exists()) {
-				// read graph from file
-				try {
-					logger.info("loading the graph ...");
-					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-					modelLearner = new ModelLearner_LOD(new GraphBuilderTopK(ontologyManager, graph), steinerNodes);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+//			} else if (new File(graphName).exists()) {
+//				// read graph from file
+//				try {
+//					logger.info("loading the graph ...");
+//					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
+//					modelLearner = new ModelLearner_LOD(new GraphBuilderTopK(ontologyManager, graph), steinerNodes);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					return;
+//				}
 			} else 
 			{
 				logger.info("building the graph ...");
@@ -801,11 +801,6 @@ public class ModelLearner_LOD {
 				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, 
 						Params.PATTERNS_DIR, maxPatternSize);
 				modelLearner = new ModelLearner_LOD(b.getGraphBuilder(), steinerNodes);
-			}
-
-			if (modelLearner == null) {
-				resultFile.close();
-				return;
 			}
 
 			List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCandidates);

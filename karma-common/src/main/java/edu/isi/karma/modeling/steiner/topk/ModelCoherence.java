@@ -74,6 +74,7 @@ public class ModelCoherence {
 		for (ModelFrequencyPair m : this.topKModels) {
 			System.out.print(m.getFrequency() + ", ");
 		}
+		System.out.println();
 	}
 
 }

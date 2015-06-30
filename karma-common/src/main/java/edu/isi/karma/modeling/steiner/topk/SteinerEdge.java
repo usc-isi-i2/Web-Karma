@@ -16,6 +16,7 @@ public class SteinerEdge extends Fact {
 	protected SteinerNode sourceNode;
 	protected SteinerNode sinkNode;
 	
+	boolean isForced;
 	protected Set<String> modelIds;
 
 	
@@ -25,6 +26,7 @@ public class SteinerEdge extends Fact {
 		
 		sourceNode= n1;//n1-->n2
 		sinkNode= n2;
+		isForced = false;
 	}
 	
 	public int hashCode(){
@@ -51,6 +53,14 @@ public class SteinerEdge extends Fact {
 
 	public void setModelIds(Set<String> modelIds) {
 		this.modelIds = modelIds;
+	}
+
+	public boolean isForced() {
+		return isForced;
+	}
+
+	public void setForced(boolean isForced) {
+		this.isForced = isForced;
 	}	
 	
 	

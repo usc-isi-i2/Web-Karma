@@ -27,6 +27,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
@@ -84,6 +85,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)link.getWeight());
 			if (link instanceof LabeledLink) {
 				e.setModelIds(((LabeledLink)link).getModelIds());
+				e.setForced(((LabeledLink)link).getStatus() == LinkStatus.ForcedByUser);
 			}
 //			getTopKGraph().get(n1).add(e);
 			getTopKGraph().get(n2).add(e); // each node only stores its incoming links
@@ -119,16 +121,34 @@ public class GraphBuilderTopK extends GraphBuilder {
 			return false;
 	}
 	
+	public void changeLinkStatus(LabeledLink link, LinkStatus status) {
+		super.changeLinkStatus(link, status);
+		if (status == LinkStatus.PreferredByUI)
+			return;
+		
+		SteinerNode n1 = new SteinerNode(link.getSource().getId());
+		SteinerNode n2 = new SteinerNode(link.getTarget().getId());
+		SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)link.getWeight());
+		
+		if (getTopKGraph().get(n2).remove(e)) {
+			if (link instanceof LabeledLink) {
+				e.setModelIds(((LabeledLink)link).getModelIds());
+				e.setForced(status == LinkStatus.ForcedByUser);
+			}
+			getTopKGraph().get(n2).add(e);
+		}
+	}
+	
 	public void changeLinkWeight(DefaultLink link, double weight) {
 		super.changeLinkWeight(link, weight);
 		SteinerNode n1 = new SteinerNode(link.getSource().getId());
 		SteinerNode n2 = new SteinerNode(link.getTarget().getId());
 		SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight);
-//		getTopKGraph().get(n1).remove(e);
 		
 		if (getTopKGraph().get(n2).remove(e)) {
 			if (link instanceof LabeledLink) {
 				e.setModelIds(((LabeledLink)link).getModelIds());
+				e.setForced(((LabeledLink)link).getStatus() == LinkStatus.ForcedByUser);
 			}
 			getTopKGraph().get(n2).add(e);
 		}
@@ -202,6 +222,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 			// no solution found! --> return a tree with just terminal nodes
 			ResultGraph emptyTree = new ResultGraph();
 			processedTree = getLabeledSteinerTree(emptyTree, terminals);
+			if (processedTree != null) results.add(processedTree);
 		}
 		
 		for(ResultGraph tree: N.getResultQueue()){

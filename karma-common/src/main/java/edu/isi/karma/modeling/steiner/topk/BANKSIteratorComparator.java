@@ -17,7 +17,15 @@ public class BANKSIteratorComparator implements Comparator<BANKSIterator>{
 	@Override
 	public int compare(BANKSIterator n1, BANKSIterator n2) {
 		
-		if (Math.abs(n1.distanceToSource - n2.distanceToSource) <= distanceDifference)
+		// prefer forced links
+		if (n1.predecessorLink != null && n1.predecessorLink.isForced() 
+				&& (n2.predecessorLink == null || !n2.predecessorLink.isForced()))
+			return -1;
+		else if (n2.predecessorLink != null && n2.predecessorLink.isForced() 
+				&& (n1.predecessorLink == null || !n1.predecessorLink.isForced()))
+			return 1;
+
+		else if (Math.abs(n1.distanceToSource - n2.distanceToSource) <= distanceDifference)
 			return compareModelIds(n1, n2);
 		else
 			return compareDistances(n1, n2);
