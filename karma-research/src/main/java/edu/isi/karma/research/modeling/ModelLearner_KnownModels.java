@@ -704,7 +704,6 @@ public class ModelLearner_KnownModels {
         return Double.valueOf(DForm.format(d));
 	}
 
-	@SuppressWarnings("unused")
 	private static void getStatistics(List<SemanticModel> semanticModels) {
 		for (int i = 0; i < semanticModels.size(); i++) {
 			SemanticModel source = semanticModels.get(i);
@@ -796,21 +795,22 @@ public class ModelLearner_KnownModels {
 		}
 		ontologyManager.updateCache();  
 
-//		getStatistics(semanticModels);
-//
-//		if (true)
-//			return;
-
 		ModelLearningGraph modelLearningGraph = null;
 		
 		ModelLearner_KnownModels modelLearner;
-
+		
+		boolean onlyGenerateSemanticTypeStatistics = false;
 		boolean iterativeEvaluation = false;
 		boolean useCorrectType = false;
 		boolean onlyEvaluateInternalLinks = false; 
 		boolean zeroKnownModel = false;
-
 		int numberOfCandidates = 4;
+
+		if (onlyGenerateSemanticTypeStatistics) {
+			getStatistics(semanticModels);
+			return;
+		}
+		
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
@@ -837,9 +837,9 @@ public class ModelLearner_KnownModels {
 		}
 
 
-		for (int i = 0; i < semanticModels.size(); i++) {
+//		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 1; i++) {
-//		int i = 0; {
+		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);

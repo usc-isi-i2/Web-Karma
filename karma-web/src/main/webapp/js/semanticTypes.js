@@ -2916,6 +2916,7 @@ var ExportJSONDialog = (function() {
 			}
 			else {
 				contextJSON = "";
+				contextURL = "";
 			}
 			newInfo.push(getParamObject("contextJSON", contextJSON, "other"));
 			newInfo.push(getParamObject("contextFromModel", contextFromModel, "other"));

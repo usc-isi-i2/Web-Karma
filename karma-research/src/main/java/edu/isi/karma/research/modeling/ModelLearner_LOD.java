@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.io.FileUtils;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
@@ -226,7 +227,7 @@ public class ModelLearner_LOD {
 			if (this.graphBuilder instanceof GraphBuilderTopK) // which is not in ModelLearner_LOD
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
 						modelingConfiguration.getTopKSteinerTree(), 
-						50, 1, true);
+						5, 3, true);
 			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -255,6 +256,7 @@ public class ModelLearner_LOD {
 					sortableSemanticModels.add(sortableSemanticModel);
 					
 //					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
+//					System.out.println(sortableSemanticModel.getRankingDetails());
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
@@ -263,7 +265,7 @@ public class ModelLearner_LOD {
 
 		}
 
-		Collections.sort(sortableSemanticModels);
+		Collections.sort(sortableSemanticModels, new LOD_SemanticModelComparator());
 //		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
 		logger.info("results are ready ...");
 //		sortableSemanticModels.get(0).print();
@@ -287,42 +289,6 @@ public class ModelLearner_LOD {
 		return uniqueModels;
 
 	}
-
-//	private DirectedWeightedMultigraph<Node, LabeledLink> computeSteinerTree(Set<Node> steinerNodes) {
-//
-//		if (steinerNodes == null || steinerNodes.size() == 0) {
-//			logger.error("There is no steiner node.");
-//			return null;
-//		}
-//
-//		//		System.out.println(steinerNodes.size());
-//		List<Node> steinerNodeList = new ArrayList<Node>(steinerNodes); 
-//
-//		long start = System.currentTimeMillis();
-//		UndirectedGraph<Node, DefaultLink> undirectedGraph = new AsUndirectedGraph<Node, DefaultLink>(this.graphBuilder.getGraph());
-//
-//		logger.debug("computing steiner tree ...");
-//		SteinerTree steinerTree = new SteinerTree(undirectedGraph, steinerNodeList);
-//		DirectedWeightedMultigraph<Node, LabeledLink> tree = new TreePostProcess(this.graphBuilder, steinerTree.getDefaultSteinerTree(), null, false).getTree();
-//		//(DirectedWeightedMultigraph<Node, LabeledLink>)GraphUtil.asDirectedGraph(steinerTree.getDefaultSteinerTree());
-//
-//		logger.debug(GraphUtil.labeledGraphToString(tree));
-//
-//		long steinerTreeElapsedTimeMillis = System.currentTimeMillis() - start;
-//		logger.debug("total number of nodes in steiner tree: " + tree.vertexSet().size());
-//		logger.debug("total number of edges in steiner tree: " + tree.edgeSet().size());
-//		logger.debug("time to compute steiner tree: " + (steinerTreeElapsedTimeMillis/1000F));
-//
-//		return tree;
-//
-//		//		long finalTreeElapsedTimeMillis = System.currentTimeMillis() - steinerTreeElapsedTimeMillis;
-//		//		DirectedWeightedMultigraph<Node, Link> finalTree = buildOutputTree(tree);
-//		//		logger.info("time to build final tree: " + (finalTreeElapsedTimeMillis/1000F));
-//
-//		//		GraphUtil.printGraph(finalTree);
-//		//		return finalTree; 
-//
-//	}
 
 	private CandidateSteinerSets getCandidateSteinerSets(List<Node> steinerNodes, boolean useCorrectTypes, int numberOfCandidates, Set<Node> addedNodes) {
 
@@ -435,8 +401,8 @@ public class ModelLearner_LOD {
 						semanticTypeMappings.addAll(tempSemanticTypeMappings);
 	
 					int countOfMatches = tempSemanticTypeMappings == null ? 0 : tempSemanticTypeMappings.size();
-					if (countOfMatches < countOfSemanticType) 
-//					if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
+//					if (countOfMatches < countOfSemanticType) 
+					if (countOfMatches == 0) // No struct in graph is matched with the semantic type, we add a new struct to the graph
 					{
 						SemanticTypeMapping mp = addSemanticTypeStruct(cn, semanticType, addedNodes);
 						if (mp != null)
@@ -735,6 +701,8 @@ public class ModelLearner_LOD {
 
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
+		
+		FileUtils.cleanDirectory(new File(graphPath));
 
 		List<SemanticModel> semanticModels = 
 				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
@@ -750,9 +718,9 @@ public class ModelLearner_LOD {
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = "";
 
-		filename += "results";
+		filename += "lod-results";
 		filename += useCorrectType ? "-correct":"-k=" + numberOfCandidates;
-		filename += onlyUseOntology ? "-ontology":"-lod";
+		filename += onlyUseOntology ? "-ontology" : "";
 		filename += onlyEvaluateInternalLinks ? "-internal":"-all";
 		filename += ".csv"; 
 
@@ -760,9 +728,9 @@ public class ModelLearner_LOD {
 
 		resultFile.println("source \t p \t r \t t \n");
 
-//		for (int i = 0; i < semanticModels.size(); i++) {
+		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-		int i = 0; {
+//		int i = 1; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -776,7 +744,6 @@ public class ModelLearner_LOD {
 			List<ColumnNode> columnNodes = correctModel.getColumnNodes();
 
 			List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
-			long start = System.currentTimeMillis();
 
 			String graphName = graphPath + "lod" + Params.GRAPH_FILE_EXT; 
 
@@ -790,6 +757,8 @@ public class ModelLearner_LOD {
 					modelLearner = new ModelLearner_LOD(new GraphBuilderTopK(ontologyManager, graph), steinerNodes);
 				} catch (Exception e) {
 					e.printStackTrace();
+					resultFile.close();
+					return;
 				}
 			} else 
 			{
@@ -803,10 +772,7 @@ public class ModelLearner_LOD {
 				modelLearner = new ModelLearner_LOD(b.getGraphBuilder(), steinerNodes);
 			}
 
-			if (modelLearner == null) {
-				resultFile.close();
-				return;
-			}
+			long start = System.currentTimeMillis();
 
 			List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCandidates);
 

@@ -172,39 +172,48 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 			}
 			
 			String sourceId = newEdge.has(JsonKeys.edgeSourceId.name()) ? newEdge.getString(JsonKeys.edgeSourceId.name()) : null;
-			
 			Node sourceNode = null;
-			Node targetNode = null;
 			if(sourceId != null) {
 				if(sourceId.endsWith(" (add)"))
 					sourceId = sourceId.substring(0, sourceId.length()-5).trim();
 				sourceNode = alignment.getNodeById(sourceId);
 			} 
+			
 			String targetId = newEdge.has(JsonKeys.edgeTargetId.name()) ? newEdge.getString(JsonKeys.edgeTargetId.name()) : null;
+			Node targetNode = null;
 			if(targetId != null) {
 				if(targetId.endsWith(" (add)"))
 					targetId = targetId.substring(0, targetId.length()-5).trim();
 				targetNode = alignment.getNodeById(targetId);;
 			}
+			
 			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
 			String sourceUri = newEdge.has(JsonKeys.edgeSourceUri.name()) ? newEdge.getString(JsonKeys.edgeSourceUri.name()) : null;
 			String targetUri = newEdge.has(JsonKeys.edgeTargetUri.name()) ? newEdge.getString(JsonKeys.edgeTargetUri.name()) : null;
 			
-			
 			if (sourceNode == null && sourceUri != null) {
 				sourceNode = alignment.addInternalNode(new Label(sourceUri));
+				sourceId = sourceNode.getId();
 			} 
 			
 			if (targetNode == null && targetUri != null) {
 				targetNode = alignment.addInternalNode(new Label(targetUri));
+				targetId = targetNode.getId();
 			} 
 
-			Label linkLabel = ontMgr.getUriLabel(edgeUri);
-
-			LabeledLink newLink = alignment.addObjectPropertyLink(sourceNode,
-					targetNode, linkLabel);
-			alignment.changeLinkStatus(newLink.getId(),
-					LinkStatus.ForcedByUser);
+			
+			String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
+			LabeledLink newLink = alignment.getLinkById(linkId);
+			if (newLink != null) {
+				alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
+			} else {
+				Label linkLabel = ontMgr.getUriLabel(edgeUri);
+				newLink = alignment.addObjectPropertyLink(sourceNode,
+						targetNode, linkLabel);
+				linkId = newLink.getId();
+			}
+				
+			alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
 
 
 			// Add info to description string

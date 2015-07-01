@@ -14,7 +14,22 @@ public class SteinerNodeComparator implements Comparator<SteinerNode>{
 	@Override
 	public int compare(SteinerNode n1, SteinerNode n2) {
 		
-		if (Math.abs(n1.distancesToSources[0] - n2.distancesToSources[0]) <= distanceDifference)
+		// prefer forced links
+		if (n1.predecessorLink != null && n1.predecessorLink.isForced() 
+				&& (n2.predecessorLink == null || !n2.predecessorLink.isForced()))
+			return -1;
+		else if (n2.predecessorLink != null && n2.predecessorLink.isForced() 
+				&& (n1.predecessorLink == null || !n1.predecessorLink.isForced()))
+			return 1;
+		
+//		else if (n1.predecessorLink != null && this.modelCoherence.getVisitedLinks().contains(n1.predecessorLink.label().name()) 
+//				&& n2.predecessorLink != null && !this.modelCoherence.getVisitedLinks().contains(n2.predecessorLink.label().name()))
+//			return -1;
+//		else if (n2.predecessorLink != null && this.modelCoherence.getVisitedLinks().contains(n2.predecessorLink.label().name()) 
+//				&& n1.predecessorLink != null && !this.modelCoherence.getVisitedLinks().contains(n1.predecessorLink.label().name()))
+//			return -1;
+		
+		else if (Math.abs(n1.distancesToSources[0] - n2.distancesToSources[0]) <= distanceDifference)
 			return compareModelIds(n1, n2);
 		else
 			return compareDistances(n1, n2);
@@ -71,5 +86,4 @@ public class SteinerNodeComparator implements Comparator<SteinerNode>{
 		else return 0;
 
 	}
-	
 }

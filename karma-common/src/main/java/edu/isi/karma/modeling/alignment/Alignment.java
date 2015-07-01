@@ -591,8 +591,7 @@ public class Alignment implements OntologyUpdateListener {
 		if (linksInPreviousTree != null) {
 			LabeledLink[] links = linksInPreviousTree.toArray(new LabeledLink[0]);
 			for (LabeledLink link : links)
-				if (linksForcedByUser == null || !linksForcedByUser.contains(link))
-					this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
+				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
 		}
 		
 		for (LabeledLink link: this.steinerTree.edgeSet()) {

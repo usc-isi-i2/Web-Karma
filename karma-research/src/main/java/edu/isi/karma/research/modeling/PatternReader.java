@@ -76,6 +76,7 @@ public class PatternReader {
 			File[] patternFiles = patternDir.listFiles();
 			for (File file : patternFiles) {
 				try {
+					if (file.isDirectory()) continue;
 					csvParser = CSVParser.parse(file, Charsets.UTF_8, csvFileFormat);
 					Map<String, Integer> headerMap = csvParser.getHeaderMap();
 					
