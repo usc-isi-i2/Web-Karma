@@ -52,6 +52,7 @@ import edu.isi.karma.metadata.JSONModelsMetadata;
 import edu.isi.karma.metadata.KMLPublishedMetadata;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.ModelLearnerMetadata;
+import edu.isi.karma.metadata.NumericSemanticTypeModelMetadata;
 import edu.isi.karma.metadata.OntologyMetadata;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.R2RMLMetadata;
@@ -59,6 +60,7 @@ import edu.isi.karma.metadata.R2RMLPublishedMetadata;
 import edu.isi.karma.metadata.RDFMetadata;
 import edu.isi.karma.metadata.ReportMetadata;
 import edu.isi.karma.metadata.SemanticTypeModelMetadata;
+import edu.isi.karma.metadata.TextualSemanticTypeModelMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.metadata.UserUploadedMetadata;
@@ -133,6 +135,8 @@ public class KarmaServlet extends HttpServlet {
 		
 		logger.info("Start Metadata Setup");
 		try {
+			metadataManager.register(new TextualSemanticTypeModelMetadata(contextParameters), updateContainer);
+			metadataManager.register(new NumericSemanticTypeModelMetadata(contextParameters), updateContainer);
 			metadataManager.register(new SemanticTypeModelMetadata(contextParameters), updateContainer);
 			metadataManager.register(new OntologyMetadata(contextParameters), updateContainer);
 			metadataManager.register(new JSONModelsMetadata(contextParameters), updateContainer);

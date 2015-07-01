@@ -78,6 +78,8 @@ public abstract class KarmaUserMetadata extends KarmaMetadata{
 		oldNames.put(ContextParameter.JSON_MODELS_DIR, "JSON");
 		oldNames.put(ContextParameter.R2RML_USER_DIR, "R2RML");
 		oldNames.put(ContextParameter.SEMTYPE_MODEL_DIRECTORY, "SemanticTypeModels");
+		oldNames.put(ContextParameter.TEXTUAL_SEMTYPE_MODEL_DIRECTORY, "TextualSemanticTypeModels");
+		oldNames.put(ContextParameter.NUMERIC_SEMTYPE_MODEL_DIRECTORY, "NumericSemanticTypeModels");
 		oldNames.put(ContextParameter.USER_CONFIG_DIRECTORY, "Config");
 		oldNames.put(ContextParameter.USER_PREFERENCES_DIRECTORY, "UserPrefs");
 		oldNames.put(ContextParameter.USER_UPLOADED_DIR, "UserUploadedFiles");
