@@ -25,6 +25,13 @@ public class BANKSIteratorComparator implements Comparator<BANKSIterator>{
 				&& (n1.predecessorLink == null || !n1.predecessorLink.isForced()))
 			return 1;
 
+//		else if (n1.predecessorLink != null && this.modelCoherence.getVisitedLinks().contains(n1.predecessorLink.label().name()) 
+//				&& n2.predecessorLink != null && !this.modelCoherence.getVisitedLinks().contains(n2.predecessorLink.label().name()))
+//			return -1;
+//		else if (n2.predecessorLink != null && this.modelCoherence.getVisitedLinks().contains(n2.predecessorLink.label().name()) 
+//				&& n1.predecessorLink != null && !this.modelCoherence.getVisitedLinks().contains(n1.predecessorLink.label().name()))
+//			return -1;
+		
 		else if (Math.abs(n1.distanceToSource - n2.distanceToSource) <= distanceDifference)
 			return compareModelIds(n1, n2);
 		else

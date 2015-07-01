@@ -22,6 +22,13 @@ public class SteinerNodeComparator implements Comparator<SteinerNode>{
 				&& (n1.predecessorLink == null || !n1.predecessorLink.isForced()))
 			return 1;
 		
+//		else if (n1.predecessorLink != null && this.modelCoherence.getVisitedLinks().contains(n1.predecessorLink.label().name()) 
+//				&& n2.predecessorLink != null && !this.modelCoherence.getVisitedLinks().contains(n2.predecessorLink.label().name()))
+//			return -1;
+//		else if (n2.predecessorLink != null && this.modelCoherence.getVisitedLinks().contains(n2.predecessorLink.label().name()) 
+//				&& n1.predecessorLink != null && !this.modelCoherence.getVisitedLinks().contains(n1.predecessorLink.label().name()))
+//			return -1;
+		
 		else if (Math.abs(n1.distancesToSources[0] - n2.distancesToSources[0]) <= distanceDifference)
 			return compareModelIds(n1, n2);
 		else

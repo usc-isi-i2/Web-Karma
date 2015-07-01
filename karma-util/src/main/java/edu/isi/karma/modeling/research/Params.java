@@ -28,6 +28,7 @@ public class Params {
 //	private static String DATASET_NAME = "museum-saam-crm";
 //	private static String DATASET_NAME = "museum-29-edm";
 	private static String DATASET_NAME = "museum-29-crm";
+//	private static String DATASET_NAME = "museum-29-crm-lod";
 //	private static String DATASET_NAME = "music";
 	
 	private static String ROOT_DIR = "/Users/mohsen/Dropbox/Source Modeling/datasets/" + DATASET_NAME + "/";

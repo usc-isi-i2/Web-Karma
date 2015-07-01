@@ -220,9 +220,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 		if (terminals.size() > 0 && N.getResultQueue().isEmpty()) { 
 			// No edge in the tree, we still want to return a graph with only nodes
 			// no solution found! --> return a tree with just terminal nodes
-			ResultGraph emptyTree = new ResultGraph();
-			processedTree = getLabeledSteinerTree(emptyTree, terminals);
-			if (processedTree != null) results.add(processedTree);
+//			ResultGraph emptyTree = new ResultGraph();
+//			processedTree = getLabeledSteinerTree(emptyTree, terminals);
+//			if (processedTree != null) results.add(processedTree);
 		}
 		
 		for(ResultGraph tree: N.getResultQueue()){
@@ -230,7 +230,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 			processedTree = getLabeledSteinerTree(tree, terminals);
 			if (processedTree != null) results.add(processedTree);
 		}
-
+		
 		return results;
 	}
 	

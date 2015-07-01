@@ -147,24 +147,7 @@ public class SortableSemanticModel extends SemanticModel
 //		else
 //			return 0;
 //	}
-//	
-//	private static int compareCoherence(List<Integer> c1, List<Integer> c2) {
-//		if (c1 == null || c2 == null)
-//			return 0;
-//		
-//		for (int i = 0; i < c1.size(); i++) {
-//			if (i < c2.size()) {
-//				if (c1.get(i) > c2.get(i)) return 1;
-//				else if (c1.get(i) < c2.get(i)) return -1;
-//			}
-//		}
-//		if (c1.size() < c2.size())
-//			return 1;
-//		else if (c2.size() < c1.size())
-//			return -1;
-//		else
-//			return 0;
-//	}
+
 	
 	@Override
 	public int compareTo(SortableSemanticModel m) {

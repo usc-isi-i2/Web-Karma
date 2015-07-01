@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,16 +15,21 @@ public class ModelCoherence {
 	private Map<String,Integer> modelIndex;
 	private List<ModelFrequencyPair> topKModels;
 	private int k;
+	private Set<String> visitedLinks;
 
 	public ModelCoherence(int size, int k) {
 		this.k = k;
 		this.modelFrequency = new ModelFrequencyPair[size];
 		this.modelIndex = new HashMap<String,Integer>();
 		this.topKModels = new ArrayList<ModelFrequencyPair>();
+		this.visitedLinks = new HashSet<String>();
 	}
 
-	public void update(Set<String> modelIds) {
+	public void update(SteinerEdge e) {
 		Integer index;
+		Set<String> modelIds = e.getModelIds();
+		if (this.visitedLinks.contains(e.label().name())) return;
+		else this.visitedLinks.add(e.label().name());
 		if (modelIds == null) return;
 		for (String id : modelIds) {
 			index = modelIndex.get(id);
@@ -69,6 +75,10 @@ public class ModelCoherence {
 		return topKModels;
 	}
 	
+	public Set<String> getVisitedLinks() {
+		return visitedLinks;
+	}
+
 	public void print() {
 		System.out.print("model coherence: ");
 		for (ModelFrequencyPair m : this.topKModels) {

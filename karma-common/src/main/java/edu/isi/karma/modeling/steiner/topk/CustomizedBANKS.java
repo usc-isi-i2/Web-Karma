@@ -337,10 +337,10 @@ public class CustomizedBANKS extends TopKSteinertrees {
 					SteinerNode n= (SteinerNode)queue.banksIterator.poll();
 					
 					if (n.predecessorLink != null)
-						this.modelCoherence.update(n.predecessorLink.modelIds);
+						this.modelCoherence.update(n.predecessorLink);
 					
-					if (debug)
-						this.modelCoherence.print();
+//					if (debug)
+//						this.modelCoherence.print();
 				
 					//mark n as processed
 					processedNodes.get(queue.id).put(n.name(), n);
