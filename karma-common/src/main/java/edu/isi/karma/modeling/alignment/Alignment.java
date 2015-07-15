@@ -747,6 +747,7 @@ public class Alignment implements OntologyUpdateListener {
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");
+			this.addForcedLinks(); //add new semantic type to the tree 
 			return ;
 		}
 
@@ -757,10 +758,14 @@ public class Alignment implements OntologyUpdateListener {
 		Set<LabeledLink> forcedLinks = getLinksByStatus(LinkStatus.ForcedByUser);
 		if (forcedLinks != null)
 		for (LabeledLink link : forcedLinks) {
-			if (!this.steinerTree.containsEdge(link) &&
-					this.steinerTree.containsVertex(link.getSource()) &&
-					this.steinerTree.containsVertex(link.getTarget())) {
-						this.steinerTree.addEdge(link.getSource(), link.getTarget(), link);
+			if (!this.steinerTree.containsEdge(link)) {
+				if (!this.steinerTree.containsVertex(link.getSource())) {
+					this.steinerTree.addVertex(link.getSource());
+				}
+				if (!this.steinerTree.containsVertex(link.getTarget())) {
+					this.steinerTree.addVertex(link.getTarget());
+				}
+				this.steinerTree.addEdge(link.getSource(), link.getTarget(), link);
 			}
 		}
 	}
