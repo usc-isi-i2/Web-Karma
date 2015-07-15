@@ -63,7 +63,10 @@ public class BaseKarma {
 				if (subject != null) {
 					itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
 					while (itr.hasNext()) {
+						
 						rdfGenerationRoot = itr.next().getSubject().toString();
+						
+						LOG.error("RDFGENERATIONROOT FROM BASEKARMA: " + rdfGenerationRoot);
 					}
 				}
 			}
