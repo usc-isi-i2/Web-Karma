@@ -191,6 +191,7 @@ public class BaseKarma {
 	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
 		try{
 			Model model = generator.getModelParser(modelName).getModel();
+			LOG.error("GOT MODEL IN SETRDFGENERATIONL:" + modelName + "," + rdfGenerationRoot);
 			if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
 				StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rdfGenerationRoot);
 				Resource subject = null;
@@ -201,6 +202,7 @@ public class BaseKarma {
 					itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
 					while (itr.hasNext()) {
 						this.rdfGenerationRoot = itr.next().getSubject().toString();
+						LOG.error("TRIPLEMAP:" + this.rdfGenerationRoot);
 					}
 				}
 			}
