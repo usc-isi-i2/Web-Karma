@@ -206,8 +206,8 @@ public class BaseKarma {
 			}
 		}
 		catch (KarmaException | IOException e) {
-			LOG.error("Unable to complete Karma set up: " + e.getMessage());
-			throw new RuntimeException("Unable to complete Karma set up: "
+			LOG.error("Unable to set rdf generation root: " + e.getMessage());
+			throw new RuntimeException("Unable to set rdf generation root: "
 					+ e.getMessage());
 		}
 	}
