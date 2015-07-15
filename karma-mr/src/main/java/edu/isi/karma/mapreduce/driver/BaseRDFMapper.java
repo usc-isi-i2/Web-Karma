@@ -118,37 +118,6 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			}
 		
 			
-			/*if(isRootInSource){
-				
-				if(jObj.containsKey("roots")){
-					
-					JSONArray jArrayRoots = jObj.getJSONArray("roots");
-					
-					for (int i=0;i<jArrayRoots.size();i++){
-						
-						JSONObject jObjRoots = jArrayRoots.getJSONObject(i);
-						
-						if(jObjRoots.containsKey("root")){
-							
-							karma.setRdfGenerationRoot(jObjRoots.getString("root"));
-							
-							LOG.error("USING MODEL: " + modelName);
-							String results = generateJSONLD(key, value,modelName);
-							if (!results.equals("[\n\n]\n") && results != null) {
-								
-								writeRDFToContext(context, results);
-								
-							}
-							else
-							{
-								LOG.info("RDF is empty! ");
-							}
-						}
-					}
-				}
-			}*/
-
-			
 			if(jObj.containsKey("roots")){
 				
 				JSONArray jArrayRoots = jObj.getJSONArray("roots");
@@ -159,7 +128,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 					
 					if(jObjRoots.containsKey("root")){
 						
-						karma.setRdfGenerationRoot(jObjRoots.getString("root"));
+						karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
 						
 						LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
 						LOG.error("MODEL ROOTS: " + modelName);

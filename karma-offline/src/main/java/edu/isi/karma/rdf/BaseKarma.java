@@ -63,10 +63,7 @@ public class BaseKarma {
 				if (subject != null) {
 					itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
 					while (itr.hasNext()) {
-						
 						rdfGenerationRoot = itr.next().getSubject().toString();
-						
-						LOG.error("RDFGENERATIONROOT FROM BASEKARMA: " + rdfGenerationRoot);
 					}
 				}
 			}
@@ -191,7 +188,27 @@ public class BaseKarma {
 		return rdfGenerationRoot;
 	}
 	
-	public void setRdfGenerationRoot(String rdfGenerationRoot) {
-		this.rdfGenerationRoot =  rdfGenerationRoot;
+	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
+		try{
+			Model model = generator.getModelParser(modelName).getModel();
+			if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
+				StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rdfGenerationRoot);
+				Resource subject = null;
+				while (itr.hasNext()) {
+					subject = itr.next().getSubject();
+				}
+				if (subject != null) {
+					itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
+					while (itr.hasNext()) {
+						rdfGenerationRoot = itr.next().getSubject().toString();
+					}
+				}
+			}
+		}
+		catch (KarmaException | IOException e) {
+			LOG.error("Unable to complete Karma set up: " + e.getMessage());
+			throw new RuntimeException("Unable to complete Karma set up: "
+					+ e.getMessage());
+		}
 	}
 }
