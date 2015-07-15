@@ -189,7 +189,7 @@ public class BaseKarma {
 	}
 	
 	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
-		try{
+		/*try{
 			Model model = generator.getModelParser(modelName).getModel();
 			LOG.error("GOT MODEL IN SETRDFGENERATIONL:" + modelName + "," + rdfGenerationRoot);
 			if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
@@ -211,6 +211,8 @@ public class BaseKarma {
 			LOG.error("Unable to set rdf generation root: " + e.getMessage());
 			throw new RuntimeException("Unable to set rdf generation root: "
 					+ e.getMessage());
-		}
+		}*/
+		
+		this.rdfGenerationRoot = rdfGenerationRoot;
 	}
 }
