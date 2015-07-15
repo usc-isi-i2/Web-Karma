@@ -109,6 +109,12 @@ public class BaseKarma {
 		getModel();
 		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
 	}
+	
+	public void addModel(String modelName,String modelFile,String modelUri) throws MalformedURLException {
+		URL modelURL = getModel(modelFile,modelUri);
+		generator.addModel(new R2RMLMappingIdentifier(modelName,modelURL));
+		
+	}
 
 	private void addContext(String contextURI)    {
 		try {
@@ -164,8 +170,25 @@ public class BaseKarma {
 		}
 		return modelURL;
 	}
+	
+	private URL getModel(String modelFile,String modelUri) throws MalformedURLException
+	{
+		URL newModelURL=null;
+		
+		if (modelUri != null) {
+			newModelURL = new URL(modelUri);
+		} else if (modelFile != null) {
+			newModelURL = new File(modelFile).toURI().toURL();
+		}
+	
+		return newModelURL;
+	}
 
 	public String getRdfGenerationRoot() {
 		return rdfGenerationRoot;
+	}
+	
+	public void setRdfGenerationRoot(String rdfGenerationRoot) {
+		this.rdfGenerationRoot =  rdfGenerationRoot;
 	}
 }
