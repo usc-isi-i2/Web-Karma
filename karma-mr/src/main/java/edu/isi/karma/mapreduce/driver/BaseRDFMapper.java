@@ -79,23 +79,6 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			JSONObject jObj = (JSONObject) JSONSerializer.toJSON(contents);
 			
 			String modelName=null;
-			/*if(isModelInSource){
-				
-				if (jObj.containsKey("model_uri")){
-					
-					//add a new model with uri as name. This will prevent hitting github million times(literally)
-					modelName = jObj.getString("model_uri").trim();
-					
-					karma.addModel(modelName,null, jObj.getString("model_uri"));
-					
-					LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
-				}
-				else {
-					LOG.error("NO MODEL URI found in source: " + jObj.toString());
-				}
-			}*/
-			
-			
 				
 			if (jObj.containsKey("model_uri")){
 				

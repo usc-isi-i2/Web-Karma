@@ -189,8 +189,21 @@ public class BaseKarma {
 	}
 	
 	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
-		/*try{
+		try{
+			if(generator == null){
+			
+				LOG.error("***********BaseKarma Error: GenericRDFGenerator object is null");
+				//return;
+			}
+			
+			
+				
 			Model model = generator.getModelParser(modelName).getModel();
+			
+			if (model == null){
+				
+				LOG.error("***********BaseKarma Error: model not found:" + modelName);
+			}
 			LOG.error("GOT MODEL IN SETRDFGENERATIONL:" + modelName + "," + rdfGenerationRoot);
 			if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
 				StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rdfGenerationRoot);
@@ -211,7 +224,7 @@ public class BaseKarma {
 			LOG.error("Unable to set rdf generation root: " + e.getMessage());
 			throw new RuntimeException("Unable to set rdf generation root: "
 					+ e.getMessage());
-		}*/
+		}
 		
 		this.rdfGenerationRoot = rdfGenerationRoot;
 	}
