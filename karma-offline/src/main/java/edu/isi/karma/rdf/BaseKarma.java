@@ -196,7 +196,7 @@ public class BaseKarma {
 			
 			if(generator != null){
 	
-				Model model = generator.getModelParser(modelName).getModel();
+				Model model = generator.getModelParser(modelName).getModelFromCache();
 				//LOG.error("GOT MODEL IN SETRDFGENERATIONL:" + modelName + "," + rdfGenerationRoot);
 				
 				if (model != null){
@@ -224,7 +224,7 @@ public class BaseKarma {
 				LOG.error("***********BaseKarma Error: GenericRDFGenerator object is null");
 			}
 		}
-		catch (KarmaException | IOException e) {
+		catch (KarmaException e) {
 			LOG.error("Unable to set rdf generation root: " + e.getMessage() + "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
 			throw new RuntimeException("Unable to set rdf generation root: "
 					+ e.getMessage()+ "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
