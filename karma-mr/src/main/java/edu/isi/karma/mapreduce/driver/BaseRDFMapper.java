@@ -59,6 +59,8 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 
 		String contents = value.toString();
 		
+		LOG.error("ABSOLUTE FRESH INPUT:" + contents);
+		
 		//TODO key should be url, match it with regex here instead of doing it in landmark-extraction
 		
 		//String modelName="model";
@@ -78,6 +80,8 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 		if(karma.getInputType() != null && karma.getInputType().equals(InputType.JSON)){
 			
 			JSON json = JSONSerializer.toJSON(contents);
+			
+			
 			
 			if(json instanceof JSONObject){
 				
@@ -117,7 +121,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 						if(jObjRoots.containsKey("root")){
 							
 							karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
-							
+							LOG.error("HUMAN READABLE ROOT:" + jObjRoots.getString("root"));
 							LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
 							LOG.error("MODEL ROOTS: " + modelName);
 							String results = generateJSONLD(key, value,modelName);
@@ -198,7 +202,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			}
 			if(karma.getRdfGenerationRoot() != null)
 			{
-				LOG.error("ROOT FROM FUNCTION GENERATEJSONLD:" + karma.getRdfGenerationRoot());
+				//LOG.error("ROOT FROM FUNCTION GENERATEJSONLD:" + karma.getRdfGenerationRoot());
 				request.setStrategy(new UserSpecifiedRootStrategy(karma.getRdfGenerationRoot()));
 			}
 			if (karma.getContextId() != null) {

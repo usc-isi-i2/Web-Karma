@@ -211,6 +211,7 @@ public class BaseKarma {
 								this.rdfGenerationRoot = itr.next().getSubject().toString();
 							}
 						}
+						
 					}
 				}
 				else{
