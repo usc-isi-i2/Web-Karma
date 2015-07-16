@@ -122,7 +122,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 							LOG.error("MODEL ROOTS: " + modelName);
 							String results = generateJSONLD(key, value,modelName);
 							LOG.error("JSONLD ROOTS: " + results);
-							if (!results.equals("[\n\n]\n") && results != null) {
+							if (results != null && !results.equals("[\n\n]\n")) {
 								
 								writeRDFToContext(context, results);
 								
