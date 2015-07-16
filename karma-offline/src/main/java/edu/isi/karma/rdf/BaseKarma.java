@@ -190,34 +190,35 @@ public class BaseKarma {
 	
 	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
 		try{
-			if(generator == null){
+			this.rdfGenerationRoot = rdfGenerationRoot;
 			
-				LOG.error("***********BaseKarma Error: GenericRDFGenerator object is null");
-				//return;
-			}
-			
-			
+			if(generator != null){
+	
+				Model model = generator.getModelParser(modelName).getModel();
+				//LOG.error("GOT MODEL IN SETRDFGENERATIONL:" + modelName + "," + rdfGenerationRoot);
 				
-			Model model = generator.getModelParser(modelName).getModel();
-			
-			if (model == null){
-				
-				LOG.error("***********BaseKarma Error: model not found:" + modelName);
-			}
-			LOG.error("GOT MODEL IN SETRDFGENERATIONL:" + modelName + "," + rdfGenerationRoot);
-			if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
-				StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rdfGenerationRoot);
-				Resource subject = null;
-				while (itr.hasNext()) {
-					subject = itr.next().getSubject();
-				}
-				if (subject != null) {
-					itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
-					while (itr.hasNext()) {
-						this.rdfGenerationRoot = itr.next().getSubject().toString();
-						LOG.error("TRIPLEMAP:" + this.rdfGenerationRoot);
+				if (model != null){
+
+					if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
+						StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rdfGenerationRoot);
+						Resource subject = null;
+						while (itr.hasNext()) {
+							subject = itr.next().getSubject();
+						}
+						if (subject != null) {
+							itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
+							while (itr.hasNext()) {
+								this.rdfGenerationRoot = itr.next().getSubject().toString();
+							}
+						}
 					}
 				}
+				else{
+					LOG.error("***********BaseKarma Error: model not found:" + modelName);
+				}
+			}
+			else{
+				LOG.error("***********BaseKarma Error: GenericRDFGenerator object is null");
 			}
 		}
 		catch (KarmaException | IOException e) {
@@ -226,6 +227,5 @@ public class BaseKarma {
 					+ e.getMessage());
 		}
 		
-		this.rdfGenerationRoot = rdfGenerationRoot;
 	}
 }

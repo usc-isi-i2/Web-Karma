@@ -3,6 +3,7 @@ package edu.isi.karma.mapreduce.driver;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
@@ -74,76 +75,80 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			contents = header+"\n" + contents;
 		}
 		
-		if(karma.getInputType().equals(InputType.JSON)){
+		if(karma.getInputType() != null && karma.getInputType().equals(InputType.JSON)){
 			
-			JSONObject jObj = (JSONObject) JSONSerializer.toJSON(contents);
+			JSON json = JSONSerializer.toJSON(contents);
 			
-			String modelName=null;
+			if(json instanceof JSONObject){
 				
-			if (jObj.containsKey("model_uri")){
-				
-				//add a new model with uri as name. This will prevent hitting github million times(literally)
-				
-				String modelURL = jObj.getString("model_uri");
-				
-				int index = modelURL.lastIndexOf("/");
-				
-				modelName = modelURL.substring(index+1);
-				
-				modelName = modelName.substring(0, modelName.length()-4);
-				
-				karma.addModel(modelName,null, jObj.getString("model_uri"));
-				
-				LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
-			}
-			else {
-				LOG.error("NO MODEL URI found in source: " + jObj.toString());
-			}
+				JSONObject jObj = (JSONObject) json;
+
+				String modelName=null;
+					
+				if (jObj.containsKey("model_uri")){
+					
+					//add a new model with uri as name. This will prevent hitting github million times(literally)
+					
+					String modelURL = jObj.getString("model_uri");
+					
+					int index = modelURL.lastIndexOf("/");
+					
+					modelName = modelURL.substring(index+1);
+					
+					modelName = modelName.substring(0, modelName.length()-4);
 		
+					karma.addModel(modelName,null, jObj.getString("model_uri"));
+						
+					LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
+				}
+				else {
+					LOG.error("NO MODEL URI found in source: " + jObj.toString());
+				}
 			
-			if(jObj.containsKey("roots")){
 				
-				JSONArray jArrayRoots = jObj.getJSONArray("roots");
-				
-				for (int i=0;i<jArrayRoots.size();i++){
+				if(jObj.containsKey("roots")){
 					
-					JSONObject jObjRoots = jArrayRoots.getJSONObject(i);
+					JSONArray jArrayRoots = jObj.getJSONArray("roots");
 					
-					if(jObjRoots.containsKey("root")){
+					for (int i=0;i<jArrayRoots.size();i++){
 						
-						karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
+						JSONObject jObjRoots = jArrayRoots.getJSONObject(i);
 						
-						LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
-						LOG.error("MODEL ROOTS: " + modelName);
-						String results = generateJSONLD(key, value,modelName);
-						LOG.error("JSONLD ROOTS: " + results);
-						if (!results.equals("[\n\n]\n") && results != null) {
+						if(jObjRoots.containsKey("root")){
 							
-							writeRDFToContext(context, results);
+							karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
 							
-						}
-						else
-						{
-							LOG.info("RDF is empty! ");
+							LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
+							LOG.error("MODEL ROOTS: " + modelName);
+							String results = generateJSONLD(key, value,modelName);
+							LOG.error("JSONLD ROOTS: " + results);
+							if (!results.equals("[\n\n]\n") && results != null) {
+								
+								writeRDFToContext(context, results);
+								
+							}
+							else
+							{
+								LOG.info("RDF is empty! ");
+							}
 						}
 					}
 				}
-			}
-			else{
-				LOG.error("NO ROOTS MODEL:" +  modelName);
-				String results = generateJSONLD(key, value,modelName);
-				LOG.error("JSONLD ROOTS: " + results);
-				if (!results.equals("[\n\n]\n") && results != null) {
-					LOG.error("JSON-LD PRODUCED: " + results);
-					writeRDFToContext(context, results);
-					
+				else{
+					LOG.error("NO ROOTS MODEL:" +  modelName);
+					String results = generateJSONLD(key, value,modelName);
+					LOG.error("JSONLD ROOTS: " + results);
+					if (results != null && !results.equals("[\n\n]\n")) {
+						LOG.error("JSON-LD PRODUCED: " + results);
+						writeRDFToContext(context, results);
+						
+					}
+					else
+					{
+						LOG.info("RDF is empty! ");
+					}
 				}
-				else
-				{
-					LOG.info("RDF is empty! ");
-				}
 			}
-			
 		}
 		else{
 			
