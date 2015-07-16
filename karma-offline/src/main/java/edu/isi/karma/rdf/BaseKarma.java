@@ -190,7 +190,9 @@ public class BaseKarma {
 	
 	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
 		try{
-			this.rdfGenerationRoot = rdfGenerationRoot;
+			
+			//TODO the line below must be uncommented, problem is ar-15 model.  
+			//this.rdfGenerationRoot = rdfGenerationRoot;
 			
 			if(generator != null){
 	
