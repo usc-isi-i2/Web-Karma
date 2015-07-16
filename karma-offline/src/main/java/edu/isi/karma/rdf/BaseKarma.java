@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -196,7 +197,7 @@ public class BaseKarma {
 			
 			if(generator != null){
 	
-				Model model = generator.getModelParser(modelName).getModelFromCache();
+				Model model = generator.getModelParser(modelName).getModel();
 				//LOG.error("GOT MODEL IN SETRDFGENERATIONL:" + modelName + "," + rdfGenerationRoot);
 				
 				if (model != null){
@@ -224,7 +225,7 @@ public class BaseKarma {
 				LOG.error("***********BaseKarma Error: GenericRDFGenerator object is null");
 			}
 		}
-		catch (KarmaException e) {
+		catch (KarmaException | JSONException | IOException e) {
 			LOG.error("Unable to set rdf generation root: " + e.getMessage() + "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
 			throw new RuntimeException("Unable to set rdf generation root: "
 					+ e.getMessage()+ "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);

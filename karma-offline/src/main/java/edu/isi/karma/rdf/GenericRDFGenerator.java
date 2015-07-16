@@ -90,13 +90,14 @@ public class GenericRDFGenerator extends RdfGenerator {
 
 	public void addModel(R2RMLMappingIdentifier modelIdentifier) {
 		
-		if(modelIdentifiers.containsKey(modelIdentifier.getName())){
+		/*if(modelIdentifiers.containsKey(modelIdentifier.getName())){
 
 			readModelParsers.remove(modelIdentifier.getName());
 		}
-		
-		
-		this.modelIdentifiers.put(modelIdentifier.getName(), modelIdentifier);
+		*/
+		if(!modelIdentifiers.containsKey(modelIdentifier.getName())){
+			this.modelIdentifiers.put(modelIdentifier.getName(), modelIdentifier);
+		}
 		
 	}
 	

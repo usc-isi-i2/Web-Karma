@@ -83,7 +83,9 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 	
 	public synchronized Model getModel() throws IOException {
-		loadModel();
+		if(this.model == null){
+			loadModel();
+		}
 		return model;
 	}
 	
