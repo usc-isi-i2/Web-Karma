@@ -177,10 +177,14 @@ public class WorksheetR2RMLJenaModelParser {
 	}
     public static Model loadSourceModelIntoJenaModel(URL modelURL) throws IOException {
         // Create an empty Model
+    	try{
         Model model = ModelFactory.createDefaultModel();
         InputStream s = modelURL.openStream();
         model.read(s, null, "TURTLE");
         return model;
+    	}catch(Exception e){
+    		return null;
+    	}
     }
 	private Resource getMappingResourceFromSourceName() throws KarmaException {
 		Property sourceNameProp = model.getProperty(Uris.KM_SOURCE_NAME_URI);
