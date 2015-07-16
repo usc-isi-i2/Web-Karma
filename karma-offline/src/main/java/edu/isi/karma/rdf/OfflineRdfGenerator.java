@@ -182,7 +182,14 @@ public class OfflineRdfGenerator {
 		}
 
 		logger.info("done after {}", (System.currentTimeMillis() - l));
-		logger.info("RDF published at: " + outputFilePath);
+		if(outputFilePath != null)
+		{
+			logger.info("RDF published at: " + outputFilePath);
+		}
+		if(outputFileJSONPath != null)
+		{
+			logger.info("JSON-LD published at: " + outputFileJSONPath);
+		}
 	}
 
 	private void setupKarmaMetadata() throws KarmaException {
@@ -298,9 +305,9 @@ public class OfflineRdfGenerator {
 	protected boolean validateCommandLineOptions() throws IOException
 	{
 
-		if ((modelURLString == null && modelFilePath == null) || outputFilePath == null || inputType == null) {
+		if ((modelURLString == null && modelFilePath == null) || (outputFilePath == null && outputFileJSONPath == null) || inputType == null) {
 			logger.error("Mandatory value missing. Please provide argument value "
-					+ "for sourcetype, modelfilepath and outputfile.");
+					+ "for sourcetype, (modelfilepath or modelurl) and (outputfile or jsonoutputfile).");
 			return false;
 		}
 
@@ -481,19 +488,23 @@ public class OfflineRdfGenerator {
 	protected void createN3Writer()
 			throws UnsupportedEncodingException, FileNotFoundException {
 
-		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-		BufferedWriter bw = new BufferedWriter(fw);
-		PrintWriter pw = new PrintWriter(bw);
-		N3KR2RMLRDFWriter n3Writer = new N3KR2RMLRDFWriter(new URIFormatter(), pw);
+		if(outputFilePath != null)
+		{
+			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter pw = new PrintWriter(bw);
+			N3KR2RMLRDFWriter n3Writer = new N3KR2RMLRDFWriter(new URIFormatter(), pw);
+			
+			if(baseURI != null)
+			{
+				n3Writer.setBaseURI(baseURI);
+			}
+			writers.add(n3Writer);
+		}
 		if (outputFileJSONPath != null) {
 			JSONKR2RMLRDFWriter jsonWriter = new JSONKR2RMLRDFWriter(new PrintWriter(outputFileJSONPath), baseURI);
 			writers.add(jsonWriter);
 		}
-		if(baseURI != null)
-		{
-			n3Writer.setBaseURI(baseURI);
-		}
-		writers.add(n3Writer);
 	}
 
 	protected void createBloomFilterWriter() throws Exception {
