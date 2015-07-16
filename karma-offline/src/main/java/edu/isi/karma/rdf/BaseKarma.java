@@ -223,9 +223,9 @@ public class BaseKarma {
 			}
 		}
 		catch (KarmaException | IOException e) {
-			LOG.error("Unable to set rdf generation root: " + e.getMessage());
+			LOG.error("Unable to set rdf generation root: " + e.getMessage() + "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
 			throw new RuntimeException("Unable to set rdf generation root: "
-					+ e.getMessage());
+					+ e.getMessage()+ "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
 		}
 		
 	}
