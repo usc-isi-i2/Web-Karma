@@ -3,17 +3,22 @@ package edu.isi.karma.semantictypes.typinghandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-
-import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
+import java.util.Map;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
+import edu.isi.karma.semantictypes.numeric.KSTest;
 import edu.isi.karma.semantictypes.tfIdf.Indexer;
 import edu.isi.karma.semantictypes.tfIdf.Searcher;
 import edu.isi.karma.webserver.ContextParametersRegistry;
@@ -21,6 +26,8 @@ import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 /**
+ * LATEST
+ * 
  * This is the API class for the semantic typing module, implementing the
  * combined approach of TF-IDF based cosine similarity and Kolmogorov-Smirnov
  * test approaches for textual and numeric respectively by 
@@ -30,26 +37,34 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
  * 
  */
 
-public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
-	
+public class HybridSTModelHandler implements ISemanticTypeModelHandler {
+
 	static Logger logger = LoggerFactory
-			.getLogger(LuceneBasedSTModelHandler.class.getSimpleName());
+			.getLogger(HybridSTModelHandler.class.getSimpleName());
 	private ArrayList<String> allowedCharacters;
 
 	private boolean modelEnabled = false;
 	private String contextId;
-	/**
-	 * NOTE: Currently, TF-IDF based approach is used for both textual and
-	 * numeric data due to bug in KS test on Apache Commons Math.
-	 * 
-	 * TODO: Integrate KS test when this bug is resolved :
-	 * https://issues.apache.org/jira/browse/MATH-1131
-	 */
 
-	public LuceneBasedSTModelHandler(String contextId) {
+	/*
+	 * While training,
+	 * 	if numericCount >= pureNumeric -> train as NUMERIC COLUMN
+	 * 	else if numericCount <= pureText -> train as TEXTUAL COLUMN
+	 * 	else (pureText<numericCount<pureNumeric) -> train as NUMERIC as well as TEXTUAL 
+	 * 
+	 * While testing,
+	 * 	if numericCount >= pureNumeric -> test as NUMERIC COLUMN
+	 * 	else (numericCount<pureNumeric) -> test as TEXTUAL COLUMN
+	 */
+	private double trainNumericThreshold = 0.8;
+	private double trainTextualThreshold = 0.6;
+	private double testThreshold = 0.7;
+	
+	private String numericRegEx = "((\\-)?[0-9]{1,3}(,[0-9]{3})+(\\.[0-9]+)?)|((\\-)?[0-9]*\\.[0-9]+)|((\\-)?[0-9]+)|((\\-)?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)";
+	
+	public HybridSTModelHandler(String contextId) {
 		allowedCharacters = allowedCharacters();
 		this.contextId = contextId;
-		logger.warn("inside STModelHandler constructor");
 	}
 
 	/**
@@ -64,7 +79,8 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	@Override
 	public synchronized boolean addType(String label, List<String> examples) {
 		boolean savingSuccessful = false;
-
+		int countNumeric = 0;
+		
 		// running basic sanity checks in the input arguments
 		if (label == null || label.trim().length() == 0 || examples.size() == 0) {
 			logger.warn("@label argument cannot be null or an empty string and the @examples list cannot be empty.");
@@ -73,7 +89,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		
 		label = label.trim();
 		ArrayList<String> cleanedExamples = new ArrayList<String>();
-		cleanedExamplesList(examples, cleanedExamples);
+		countNumeric = cleanedExamplesList(examples, cleanedExamples);
 		
 		// making sure that the condition where the examples list is not empty
 		// but contains junk only is not accepted
@@ -83,10 +99,8 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			return false;
 		}
 
-
-		// if the column is textual
 		try {
-			savingSuccessful = indexTrainingColumn(label, cleanedExamples);
+			savingSuccessful = indexTrainingColumn(label, cleanedExamples, countNumeric);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -99,13 +113,14 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 * 
 	 * @param label
 	 * @param selectedExamples
+	 * @param countNumeric
 	 * @return
 	 * @throws IOException
 	 */
 	
 	
 	private boolean indexTrainingColumn(String label,
-			ArrayList<String> selectedExamples) throws IOException {
+			List<String> selectedExamples, int countNumeric) throws IOException {
 		/**
 		 * @patch applied
 		 * @author pranav and aditi
@@ -113,6 +128,28 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		 * 
 		 * 
 		 */
+	
+		/**
+		 * TODO: Currently training exclusively as textual or numeric based on 0.7, 
+		 * 		not as both if between 0.6 & 0.8
+		 */
+		// check if textual or numeric
+		boolean isNumeric = false;
+		double fractionNumeric = ((double)(countNumeric+0.0))/((double)(selectedExamples.size()+0.0));
+		if (fractionNumeric >= testThreshold) {
+			isNumeric = true;
+		}
+		
+		logger.warn("-----------------------------------------------------------------------------");
+		// if numeric, clean examples to remove text
+		if (isNumeric) {
+			selectedExamples = cleanExamplesNumeric(selectedExamples);
+			logger.warn("Training Label "+label+" classified as numeric - fractionNumeric = "+fractionNumeric);
+		}
+		else {
+			logger.warn("Training Label "+label+" classified as textual - fractionNumeric = "+fractionNumeric);
+		}
+		logger.warn("-----------------------------------------------------------------------------");
 		
 		// treat content of column as single document
 		StringBuilder sb = new StringBuilder();
@@ -120,13 +157,13 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			sb.append(ex);
 			sb.append(" ");
 		}
-
+		
 		// check if semantic label already exists
 		Document labelDoc = null; // document corresponding to existing semantic label if exists
-		if (indexDirectoryExists()) {
+		if (indexDirectoryExists(isNumeric)) {
 			try {
 				// check if semantic label already exists in index
-				Searcher searcher = new Searcher(getIndexDirectory(),
+				Searcher searcher = new Searcher(getIndexDirectory(isNumeric),
 						Indexer.LABEL_FIELD_NAME);
 				try {
 					labelDoc = searcher.getDocumentForLabel(label);
@@ -139,7 +176,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		}
 
 		// index the document
-		Indexer indexer = new Indexer(getIndexDirectory());
+		Indexer indexer = new Indexer(getIndexDirectory(isNumeric));
 		try {
 			indexer.open();
 			if (labelDoc != null) {
@@ -161,10 +198,17 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 * 
 	 * @return
 	 */
-	private boolean indexDirectoryExists() {
+	private boolean indexDirectoryExists(boolean isNumeric) {
 		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
-		String indexDirectory = contextParameters
-				.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY);
+		String indexDirectory;
+		if (isNumeric) {
+			indexDirectory = contextParameters
+					.getParameterValue(ContextParameter.NUMERIC_SEMTYPE_MODEL_DIRECTORY);
+		}
+		else {
+			indexDirectory = contextParameters
+					.getParameterValue(ContextParameter.TEXTUAL_SEMTYPE_MODEL_DIRECTORY);			
+		}
 		File dir = new File(indexDirectory);
 
 		if (dir.exists() && dir.listFiles().length > 0) {
@@ -215,29 +259,92 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		}
 
 		logger.debug("Predic Type for " + examples.toArray().toString());
+
+		logger.warn("-----------------------------------------------------------------------------");
+		// decide if test column is textual or numeric
+		boolean isNumeric = false;
+		int countNumeric = 0;
+		for (String example: examples) {
+			if (example.matches(numericRegEx)) {
+				countNumeric++;
+			}			
+		}
+		double fractionNumeric = ((double)(countNumeric+0.0))/((double)(examples.size()+0.0));
+		if (fractionNumeric >= testThreshold) {
+			isNumeric = true;
+			logger.warn("Test Label classified as numeric - fractionNumeric = "+fractionNumeric);
+		}
+		else {
+			logger.warn("Test Label classified as textual - fractionNumeric = "+fractionNumeric);
+		}
+	
 		// get top-k suggestions
-		if (indexDirectoryExists()) {
-			// construct single text for test column
-			StringBuilder sb = new StringBuilder();
-			for (String ex : examples) {
-				sb.append(ex);
-				sb.append(" ");
-			}
-			
-			try {
-				Searcher predictor = new Searcher(getIndexDirectory(),
-						Indexer.CONTENT_FIELD_NAME);
+		if (isNumeric) { // numeric test column
+			if (indexDirectoryExists(isNumeric)) {
+				KSTest test = new KSTest();
+				logger.warn("KS test called");
+				
+				// extract distributions for each trained semantic label
+				Map<String, List<Double>> trainingLabelToExamplesMap = new HashMap<String, List<Double>>();
 				try {
-					List<SemanticTypeLabel> result = predictor.getTopK(numPredictions, sb.toString());
-					logger.debug("Got " + result.size() + " predictions");
-					return result;
-				} finally {
-					predictor.close();
+					IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(
+							getIndexDirectory(isNumeric))));
+					try {
+						for (int i=0; i<reader.maxDoc(); i++) {
+						    Document doc = reader.document(i);
+						    String label = doc.get(Indexer.LABEL_FIELD_NAME);
+						    List<Double> exampleList = new ArrayList<Double>(); 
+						    String content = doc.get(Indexer.CONTENT_FIELD_NAME);
+						    for (String example: content.split(" ")) {
+						    	exampleList.add(Double.parseDouble(example));
+						    }
+						    trainingLabelToExamplesMap.put(label, exampleList);
+						}
+					} finally {
+						reader.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
+
+				// extract test column distribution
+				List<Double> testExamples = new ArrayList<Double>();
+				for (String example: examples) {
+					testExamples.add(Double.parseDouble(example));
+				}				
+
+				List<SemanticTypeLabel> result = test.predictLabelsForColumn(numPredictions, trainingLabelToExamplesMap, testExamples);
+				logger.debug("Got " + result.size() + " predictions");
+				return result;
+			}			
+		}
+		else { // textual test column
+			if (indexDirectoryExists(isNumeric)) {
+				
+				logger.warn("TF-IDF cosine similarity called");
+				// construct single text for test column
+				StringBuilder sb = new StringBuilder();
+				for (String ex : examples) {
+					sb.append(ex);
+					sb.append(" ");
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+				
+				try {
+					Searcher predictor = new Searcher(getIndexDirectory(isNumeric),
+							Indexer.CONTENT_FIELD_NAME);
+					try {
+						List<SemanticTypeLabel> result = predictor.getTopK(numPredictions, sb.toString());
+						logger.debug("Got " + result.size() + " predictions");
+						return result;
+					} finally {
+						predictor.close();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		logger.warn("-----------------------------------------------------------------------------");
 
 		return null;
 	}
@@ -252,7 +359,20 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	@Override
 	public boolean removeAllLabels() {
 		try {
-			Indexer indexer = new Indexer(getIndexDirectory());
+			Indexer indexer = new Indexer(getIndexDirectory(true)); // remove numeric labels
+			try {
+				indexer.open();
+				indexer.deleteAllDocuments();
+				indexer.commit();
+			} finally {
+				indexer.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			Indexer indexer = new Indexer(getIndexDirectory(false)); // remove textual labels
 			try {
 				indexer.open();
 				indexer.deleteAllDocuments();
@@ -267,11 +387,18 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		return true;
 	}
 
-	public String getIndexDirectory()
+	public String getIndexDirectory(boolean isNumeric)
 	{
 		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
-		String indexDirectory = contextParameters
-				.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY);
+		String indexDirectory;
+		if (isNumeric) {
+			indexDirectory = contextParameters
+					.getParameterValue(ContextParameter.NUMERIC_SEMTYPE_MODEL_DIRECTORY);
+		}
+		else {
+			indexDirectory = contextParameters
+					.getParameterValue(ContextParameter.TEXTUAL_SEMTYPE_MODEL_DIRECTORY);			
+		}
 		return indexDirectory;
 	}
 	/**
@@ -282,9 +409,11 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 *            such as nulls or empty strings This method cleans the examples
 	 *            list passed to it. Generally, it is used by other methods to
 	 *            sanitize lists passed from outside.
+	 * @return countNumeric            
 	 */
-	private void cleanedExamplesList(List<String> uncleanList,
+	private int cleanedExamplesList(List<String> uncleanList,
 			List<String> cleanedList) {
+		int countNumeric = 0;
 		cleanedList.clear();
 		for (String example : uncleanList) {
 			if (example != null) {
@@ -292,9 +421,13 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 				trimmedExample = getSanitizedString(example);
 				if (trimmedExample.length() != 0) {
 					cleanedList.add(trimmedExample);
+					if (trimmedExample.matches(numericRegEx)) {
+						countNumeric++;
+					}
 				}
 			}
 		}
+		return countNumeric;
 	}
 
 	/**
@@ -353,11 +486,30 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		return allowed;
 	}
 
+	public List<String> cleanExamplesNumeric(List<String> exampleList)
+	{
+		List<String> cleanedExamples = new ArrayList<String>();
+		Iterator<String> itr = exampleList.iterator();
+		while(itr.hasNext()) {
+			String ex = itr.next();
+			if(ex.matches(numericRegEx)) {
+				cleanedExamples.add(ex);
+			}
+		}
+		return cleanedExamples;
+	}
+	
 	@Override
-	public boolean readModelFromFile(String filepath) {
+	public boolean readModelFromFile(String filepath, boolean isNumeric) {
 		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
-		contextParameters
-				.setParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY, filepath);
+		if (isNumeric) {
+			contextParameters
+			.setParameterValue(ContextParameter.NUMERIC_SEMTYPE_MODEL_DIRECTORY, filepath);			
+		}
+		else {
+			contextParameters
+			.setParameterValue(ContextParameter.TEXTUAL_SEMTYPE_MODEL_DIRECTORY, filepath);				
+		}
 		return true;
 	}
 
@@ -368,9 +520,11 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	}
 
 	@Override
-	public boolean readModelFromFile(String filepath, boolean isNumeric) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean readModelFromFile(String filepath) {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		contextParameters
+			.setParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY, filepath);			
+		return true;
 	}
 
 }

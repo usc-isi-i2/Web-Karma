@@ -34,6 +34,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
+import edu.isi.karma.semantictypes.typinghandler.HybridSTModelHandler;
 import edu.isi.karma.semantictypes.typinghandler.LuceneBasedSTModelHandler;
 
 /**
@@ -98,7 +99,7 @@ public class Workspace extends Entity {
 		this.commandPreferences = new CommandPreferences(cachedPreferencesId, contextId);
 		this.commandPreferencesId = cachedPreferencesId;
 		this.contextId = contextId;
-		this.semTypeModelHandler = new LuceneBasedSTModelHandler(contextId);
+		this.semTypeModelHandler = new HybridSTModelHandler(contextId);
 	}
 
 	public CommandHistory getCommandHistory() {
