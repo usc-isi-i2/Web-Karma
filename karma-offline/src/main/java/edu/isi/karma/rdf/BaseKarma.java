@@ -218,15 +218,15 @@ public class BaseKarma {
 					}
 				}
 				else{
-					LOG.error("***********BaseKarma Error: model not found:" + modelName);
+					//LOG.error("***********BaseKarma Error: model not found:" + modelName);
 				}
 			}
 			else{
-				LOG.error("***********BaseKarma Error: GenericRDFGenerator object is null");
+				//LOG.error("***********BaseKarma Error: GenericRDFGenerator object is null");
 			}
 		}
 		catch (KarmaException | JSONException | IOException e) {
-			LOG.error("Unable to set rdf generation root: " + e.getMessage() + "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
+			//LOG.error("Unable to set rdf generation root: " + e.getMessage() + "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
 			throw new RuntimeException("Unable to set rdf generation root: "
 					+ e.getMessage()+ "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
 		}

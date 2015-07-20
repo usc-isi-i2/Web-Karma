@@ -103,10 +103,10 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 		
 					karma.addModel(modelName,null, jObj.getString("model_uri"));
 						
-					LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
+					//LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
 				}
 				else {
-					LOG.error("NO MODEL URI found in source: " + jObj.toString());
+					//LOG.error("NO MODEL URI found in source: " + jObj.toString());
 				}
 			
 				
@@ -121,11 +121,11 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 						if(jObjRoots.containsKey("root")){
 							
 							karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
-							LOG.error("HUMAN READABLE ROOT:" + jObjRoots.getString("root"));
-							LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
-							LOG.error("MODEL ROOTS: " + modelName);
+							//LOG.error("HUMAN READABLE ROOT:" + jObjRoots.getString("root"));
+							//LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
+							//LOG.error("MODEL ROOTS: " + modelName);
 							String results = generateJSONLD(key, value,modelName);
-							LOG.error("JSONLD ROOTS: " + results);
+							//LOG.error("JSONLD ROOTS: " + results);
 							if (results != null && !results.equals("[\n\n]\n")) {
 								
 								writeRDFToContext(context, results);
@@ -139,11 +139,11 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 					}
 				}
 				else{
-					LOG.error("NO ROOTS MODEL:" +  modelName);
+					//LOG.error("NO ROOTS MODEL:" +  modelName);
 					String results = generateJSONLD(key, value,modelName);
-					LOG.error("JSONLD ROOTS: " + results);
+					//LOG.error("JSONLD ROOTS: " + results);
 					if (results != null && !results.equals("[\n\n]\n")) {
-						LOG.error("JSON-LD PRODUCED: " + results);
+						//LOG.error("JSON-LD PRODUCED: " + results);
 						writeRDFToContext(context, results);
 						
 					}
@@ -212,7 +212,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			karma.getGenerator().generateRDF(request);
 
 			results = sw.toString();
-			LOG.error("GENERATED JSON:" + results);
+			//LOG.error("GENERATED JSON:" + results);
 			
 
 		} catch (Exception e) {
