@@ -59,118 +59,116 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 
 		String contents = value.toString();
 		
-		LOG.error("ABSOLUTE FRESH INPUT:" + contents);
 		
 		//TODO key should be url, match it with regex here instead of doing it in landmark-extraction
 		
-		//String modelName="model";
-		
-		LOG.debug(key.toString() + " started");
-		if(hasHeader && header ==null)
-		{
-			header=contents;
-			LOG.debug("found header: " + header);
-			return;
-		}
-		else if(hasHeader && header != null)
-		{
-			contents = header+"\n" + contents;
-		}
-		
-		if(karma.getInputType() != null && karma.getInputType().equals(InputType.JSON)){
+		if (contents.trim() != ""){
+			LOG.debug(key.toString() + " started");
+			if(hasHeader && header ==null)
+			{
+				header=contents;
+				LOG.debug("found header: " + header);
+				return;
+			}
+			else if(hasHeader && header != null)
+			{
+				contents = header+"\n" + contents;
+			}
 			
-			JSON json = JSONSerializer.toJSON(contents);
-			
-			
-			
-			if(json instanceof JSONObject){
+			if(karma.getInputType() != null && karma.getInputType().equals(InputType.JSON)){
 				
-				JSONObject jObj = (JSONObject) json;
-
-				String modelName=null;
-					
-				if (jObj.containsKey("model_uri")){
-					
-					//add a new model with uri as name. This will prevent hitting github million times(literally)
-					
-					String modelURL = jObj.getString("model_uri");
-					
-					int index = modelURL.lastIndexOf("/");
-					
-					modelName = modelURL.substring(index+1);
-					
-					modelName = modelName.substring(0, modelName.length()-4);
-		
-					karma.addModel(modelName,null, jObj.getString("model_uri"));
-						
-					//LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
-				}
-				else {
-					//LOG.error("NO MODEL URI found in source: " + jObj.toString());
-				}
-			
+				JSON json = JSONSerializer.toJSON(contents);
 				
-				if(jObj.containsKey("roots")){
+				
+				
+				if(json instanceof JSONObject){
 					
-					JSONArray jArrayRoots = jObj.getJSONArray("roots");
-					
-					for (int i=0;i<jArrayRoots.size();i++){
+					JSONObject jObj = (JSONObject) json;
+	
+					String modelName=null;
 						
-						JSONObject jObjRoots = jArrayRoots.getJSONObject(i);
+					if (jObj.containsKey("model_uri")){
 						
-						if(jObjRoots.containsKey("root")){
+						//add a new model with uri as name. This will prevent hitting github million times(literally)
+						
+						String modelURL = jObj.getString("model_uri");
+						
+						int index = modelURL.lastIndexOf("/");
+						
+						modelName = modelURL.substring(index+1);
+						
+						modelName = modelName.substring(0, modelName.length()-4);
+			
+						karma.addModel(modelName,null, jObj.getString("model_uri"));
 							
-							karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
-							//LOG.error("HUMAN READABLE ROOT:" + jObjRoots.getString("root"));
-							//LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
-							//LOG.error("MODEL ROOTS: " + modelName);
-							String results = generateJSONLD(key, value,modelName);
-							//LOG.error("JSONLD ROOTS: " + results);
-							if (results != null && !results.equals("[\n\n]\n")) {
+						//LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
+					}
+					else {
+						//LOG.error("NO MODEL URI found in source: " + jObj.toString());
+					}
+				
+					
+					if(jObj.containsKey("roots")){
+						
+						JSONArray jArrayRoots = jObj.getJSONArray("roots");
+						
+						for (int i=0;i<jArrayRoots.size();i++){
+							
+							JSONObject jObjRoots = jArrayRoots.getJSONObject(i);
+							
+							if(jObjRoots.containsKey("root")){
 								
-								writeRDFToContext(context, results);
-								
-							}
-							else
-							{
-								LOG.info("RDF is empty! ");
+								karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
+								//LOG.error("HUMAN READABLE ROOT:" + jObjRoots.getString("root"));
+								//LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
+								//LOG.error("MODEL ROOTS: " + modelName);
+								String results = generateJSONLD(key, value,modelName);
+								//LOG.error("JSONLD ROOTS: " + results);
+								if (results != null && !results.equals("[\n\n]\n")) {
+									
+									writeRDFToContext(context, results);
+									
+								}
+								else
+								{
+									LOG.info("RDF is empty! ");
+								}
 							}
 						}
 					}
-				}
-				else{
-					//LOG.error("NO ROOTS MODEL:" +  modelName);
-					String results = generateJSONLD(key, value,modelName);
-					//LOG.error("JSONLD ROOTS: " + results);
-					if (results != null && !results.equals("[\n\n]\n")) {
-						//LOG.error("JSON-LD PRODUCED: " + results);
-						writeRDFToContext(context, results);
-						
+					else{
+						//LOG.error("NO ROOTS MODEL:" +  modelName);
+						String results = generateJSONLD(key, value,modelName);
+						//LOG.error("JSONLD ROOTS: " + results);
+						if (results != null && !results.equals("[\n\n]\n")) {
+							//LOG.error("JSON-LD PRODUCED: " + results);
+							writeRDFToContext(context, results);
+							
+						}
+						else
+						{
+							LOG.info("RDF is empty! ");
+						}
 					}
-					else
-					{
-						LOG.info("RDF is empty! ");
-					}
 				}
 			}
-		}
-		else{
-			
-			String results = generateJSONLD(key, value,"model");
-			LOG.error("JSON-LD PRODUCED: " + results);
-			if (!results.equals("[\n\n]\n") && results != null) {
+			else{
 				
-				writeRDFToContext(context, results);
-				
+				String results = generateJSONLD(key, value,"model");
+				LOG.error("JSON-LD PRODUCED: " + results);
+				if (!results.equals("[\n\n]\n") && results != null) {
+					
+					writeRDFToContext(context, results);
+					
+				}
+				else
+				{
+					LOG.info("RDF is empty! ");
+				}
 			}
-			else
-			{
-				LOG.info("RDF is empty! ");
-			}
-		}
-	
-		LOG.debug(key.toString() + " finished");
 		
+			LOG.debug(key.toString() + " finished");
+		}
 		
 	}
 
