@@ -52,6 +52,7 @@ public class JSONMapper extends BaseRDFMapper {
 					context.write(reusableOutputKey, new Text(reusableOutputValue));
 				}catch(ArrayIndexOutOfBoundsException ae){
 					LOG.error("************ARRAYEXCEPTION*********:" + ae.getMessage() + "SOURCE: " + generatedObjects.getJSONObject(i).toString());
+					throw new ArrayIndexOutOfBoundsException("************ARRAYEXCEPTION*********:" + ae.getMessage() + "SOURCE: " + generatedObjects.getJSONObject(i).toString());
 				}
 			}
 		
