@@ -724,15 +724,15 @@ public class Alignment implements OntologyUpdateListener {
 			return;
 		}
 
-		logger.info("*** steiner tree before post processing step ***");
-		logger.info(GraphUtil.defaultGraphToString(tree));
+		logger.debug("*** steiner tree before post processing step ***");
+		logger.debug(GraphUtil.defaultGraphToString(tree));
 		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, getLinksByStatus(LinkStatus.ForcedByUser), true);
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
 
-		logger.info("*** steiner tree after post processing step ***");
-		logger.info(GraphUtil.labeledGraphToString(this.steinerTree));
+		logger.debug("*** steiner tree after post processing step ***");
+		logger.debug(GraphUtil.labeledGraphToString(this.steinerTree));
 	}
 	
 	private void learnFromKnownSemanticModels() {

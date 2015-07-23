@@ -608,8 +608,14 @@ public class ModelLearner_LOD {
 		return mappingStruct;
 	}
 
-	@SuppressWarnings("unused")
-	private static void getStatistics1(List<SemanticModel> semanticModels) {
+	private static double roundDecimals(double d, int k) {
+		String format = "";
+		for (int i = 0; i < k; i++) format += "#";
+        DecimalFormat DForm = new DecimalFormat("#." + format);
+        return Double.valueOf(DForm.format(d));
+	}
+
+	private static void getStatistics(List<SemanticModel> semanticModels) {
 		for (int i = 0; i < semanticModels.size(); i++) {
 			SemanticModel source = semanticModels.get(i);
 			int attributeCount = source.getColumnNodes().size();
@@ -621,55 +627,49 @@ public class ModelLearner_LOD {
 				if (n instanceof InternalNode) classNodeCount++;
 				if (n instanceof ColumnNode) datanodeCount++;
 			}
-			System.out.println(attributeCount + "\t" + nodeCount + "\t" + linkCount + "\t" + classNodeCount + "\t" + datanodeCount);
+//			System.out.println(attributeCount + "\t" + nodeCount + "\t" + linkCount + "\t" + classNodeCount + "\t" + datanodeCount);
 			
 			List<ColumnNode> columnNodes = source.getColumnNodes();
-			getStatistics2(columnNodes);
 
-		}
-	}
-	
-	private static void getStatistics2(List<ColumnNode> columnNodes) {
+			if (columnNodes == null)
+				return;
+			
+			
+			int numberOfAttributesWhoseTypeIsFirstCRFType = 0;
+			int numberOfAttributesWhoseTypeIsInCRFTypes = 0;
+			for (ColumnNode cn : columnNodes) {
+				List<SemanticType> userSemanticTypes = cn.getUserSemanticTypes();
+				List<SemanticType> top4Suggestions = cn.getTopKLearnedSemanticTypes(4);
 
-		if (columnNodes == null)
-			return;
-
-		int numberOfAttributesWhoseTypeIsFirstCRFType = 0;
-		int numberOfAttributesWhoseTypeIsInCRFTypes = 0;
-		for (ColumnNode cn : columnNodes) {
-			List<SemanticType> userSemanticTypes = cn.getUserSemanticTypes();
-			List<SemanticType> top4Suggestions = cn.getTopKLearnedSemanticTypes(4);
-
-			for (int i = 0; i < top4Suggestions.size(); i++) {
-				SemanticType st = top4Suggestions.get(i);
-				if (userSemanticTypes != null) {
-					for (SemanticType t : userSemanticTypes) {
-						if (st.getModelLabelString().equalsIgnoreCase(t.getModelLabelString())) {
-							if (i == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
-							numberOfAttributesWhoseTypeIsInCRFTypes ++;
-							i = top4Suggestions.size();
-							break;
+				for (int j = 0; j < top4Suggestions.size(); j++) {
+					SemanticType st = top4Suggestions.get(j);
+					if (userSemanticTypes != null) {
+						for (SemanticType t : userSemanticTypes) {
+							if (st.getModelLabelString().equalsIgnoreCase(t.getModelLabelString())) {
+								if (j == 0) numberOfAttributesWhoseTypeIsFirstCRFType ++;
+								numberOfAttributesWhoseTypeIsInCRFTypes ++;
+								j = top4Suggestions.size();
+								break;
+							}
 						}
-					}
-				} 
+					} 
+				}
+
 			}
 
+//			System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
+			
+			System.out.println(
+					attributeCount + "\t" + 
+					nodeCount + "\t" + 
+					linkCount + "\t" + 
+					(linkCount - attributeCount) + "\t" +
+					classNodeCount + "\t" + 
+					datanodeCount + "\t" + 
+					numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + 
+					numberOfAttributesWhoseTypeIsFirstCRFType);
+
 		}
-
-
-		System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
-//		System.out.println(columnNodes.size() + "\t" + numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
-
-//		System.out.println("totalNumberOfAttributes: " + columnNodes.size());
-//		System.out.println("numberOfAttributesWhoseTypeIsInCRFTypes: " + numberOfAttributesWhoseTypeIsInCRFTypes);
-//		System.out.println("numberOfAttributesWhoseTypeIsFirstCRFType:" + numberOfAttributesWhoseTypeIsFirstCRFType);
-	}
-
-	private static double roundDecimals(double d, int k) {
-		String format = "";
-		for (int i = 0; i < k; i++) format += "#";
-		DecimalFormat DForm = new DecimalFormat("#." + format);
-		return Double.valueOf(DForm.format(d));
 	}
 	
 	
@@ -709,18 +709,24 @@ public class ModelLearner_LOD {
 
 		ModelLearner_LOD modelLearner = null;
 
+		boolean onlyGenerateSemanticTypeStatistics = false;
 		boolean onlyUseOntology = false;
-		boolean useCorrectType = true;
-		int numberOfCandidates = 1;
-		boolean onlyEvaluateInternalLinks = true; 
+		boolean useCorrectType = false;
+		int numberOfCandidates = 4;
+		boolean onlyEvaluateInternalLinks = false; 
 		int maxPatternSize = 3;
+
+		if (onlyGenerateSemanticTypeStatistics) {
+			getStatistics(semanticModels);
+			return;
+		}
 
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = "";
 
 		filename += "lod-results";
 		filename += useCorrectType ? "-correct":"-k=" + numberOfCandidates;
-		filename += onlyUseOntology ? "-ontology" : "";
+		filename += onlyUseOntology ? "-ontology" : "-p" + maxPatternSize;
 		filename += onlyEvaluateInternalLinks ? "-internal":"-all";
 		filename += ".csv"; 
 

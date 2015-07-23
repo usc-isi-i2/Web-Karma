@@ -26,8 +26,8 @@ public class Params {
 	public static boolean RESEARCH_MODE = true;
 	
 //	private static String DATASET_NAME = "museum-saam-crm";
-//	private static String DATASET_NAME = "museum-29-edm";
-	private static String DATASET_NAME = "museum-29-crm";
+	private static String DATASET_NAME = "museum-29-edm";
+//	private static String DATASET_NAME = "museum-29-crm";
 //	private static String DATASET_NAME = "museum-29-crm-lod";
 //	private static String DATASET_NAME = "music";
 	
@@ -40,6 +40,8 @@ public class Params {
 	public static String GRAPHS_DIR = ROOT_DIR + "alignment-graph/";
 	public static String MODEL_DIR = ROOT_DIR + "models-json/";
 	public static String GRAPHVIS_DIR = ROOT_DIR + "models-graphviz/";
+	public static String SOURCE_DIR = ROOT_DIR + "sources/";
+	public static String R2RML_DIR = ROOT_DIR + "models-r2rml/";
 	public static String RESULTS_DIR = ROOT_DIR + "results/";
 	
 	public static String GRAPH_FILE_EXT = ".graph.json";

@@ -349,12 +349,24 @@ public class ModelingConfiguration {
 		return predictOnApplyHistory;
 	}
 	
+	public void setTrainOnApplyHistory(Boolean trainOnApplyHistory) {
+		this.trainOnApplyHistory = trainOnApplyHistory;
+	}
+
+	public void setPredictOnApplyHistory(Boolean predictOnApplyHistory) {
+		this.predictOnApplyHistory = predictOnApplyHistory;
+	}
+
 	public Boolean getOntologyAlignment() {
 		if (ontologyAlignment == null) {
 			load();
 			logger.debug("Use Ontology in Alignment:" + ontologyAlignment);
 		}
 		return ontologyAlignment;
+	}
+	
+	public void setOntologyAlignment(Boolean ontologyAlignment) {
+		this.ontologyAlignment = ontologyAlignment;
 	}
 	
 	public Boolean getKnownModelsAlignment() {
@@ -365,6 +377,10 @@ public class ModelingConfiguration {
 		return knownModelsAlignment;
 	}
 
+	public void setKnownModelsAlignment(Boolean knownModelsAlignment) {
+		this.knownModelsAlignment = knownModelsAlignment;
+	}
+	
 	public Boolean getPropertiesDirect() {
 		if (propertiesDirect == null)
 			load();
@@ -455,12 +471,20 @@ public class ModelingConfiguration {
 		return learnerEnabled;
 	}
 
+	public void setLearnerEnabled(Boolean learnerEnabled) {
+		this.learnerEnabled = learnerEnabled;
+	}
+	
 	public boolean getAddOntologyPaths() {
 		if (addOntologyPaths == null)
 			load();
 		return addOntologyPaths;
 	}
 
+	public void setAddOntologyPaths(Boolean addOntologyPaths) {
+		this.addOntologyPaths = addOntologyPaths;
+	}
+	
 //	public static boolean isLearnAlignmentEnabled() {
 //		if (learnAlignmentEnabled == null)
 //			load();
@@ -479,10 +503,6 @@ public class ModelingConfiguration {
 		return showModelsWithoutMatching;
 	}
 
-	public void setLearnerEnabled(Boolean learnerEnabled) {
-		this.learnerEnabled = learnerEnabled;
-	}
-
 	public boolean isMultipleSamePropertyPerNode() {
 		if (multipleSamePropertyPerNode == null)
 			load();
@@ -495,4 +515,5 @@ public class ModelingConfiguration {
 		knownModelsAlignment = false;
 	}
 
+	
 }

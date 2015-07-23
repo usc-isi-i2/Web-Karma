@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
@@ -43,6 +44,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.ModelingConfigurationRegistry;
+import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -768,7 +771,15 @@ public class ModelLearner_KnownModels {
 		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
 		 */
 		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
-		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config/");
+		contextParameters.setParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "1000");
+		contextParameters.setParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY, "/Users/mohsen/karma/semantic-type-files/");
+		contextParameters.setParameterValue(ContextParameter.JSON_MODELS_DIR, "/Users/mohsen/karma/models-json/");
+		contextParameters.setParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR, "/Users/mohsen/karma/models-graphviz/");
+		contextParameters.setParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY, "/Users/mohsen/karma/python/");
+		contextParameters.setParameterValue(ContextParameter.EVALUATE_MRR, "/Users/mohsen/karma/evaluate-mrr/");
+		PythonRepository pythonRepository = new PythonRepository(true, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 
 		//		String inputPath = Params.INPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
@@ -777,13 +788,21 @@ public class ModelLearner_KnownModels {
 		List<SemanticModel> semanticModels = 
 				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
 
-		//		ModelEvaluation me2 = semanticModels.get(20).evaluate(semanticModels.get(20));
-		//		System.out.println(me2.getPrecision() + "--" + me2.getRecall());
-		//		if (true)
-		//			return;
+		
+		File[] sources = new File(Params.SOURCE_DIR).listFiles();
+		File[] r2rmlModels = new File(Params.R2RML_DIR).listFiles();
+		if (sources.length > 0 && sources[0].getName().startsWith(".")) 
+			sources = (File[]) ArrayUtils.removeElement(sources, sources[0]);
+		if (r2rmlModels.length > 0 && r2rmlModels[0].getName().startsWith(".")) 
+			r2rmlModels = (File[]) ArrayUtils.removeElement(r2rmlModels, r2rmlModels[0]);
+
 
 		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
-
+		File[] trainingSources;
+		File[] trainingModels;
+		File testSource;
+		File testModel;
+		
 		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
@@ -800,11 +819,11 @@ public class ModelLearner_KnownModels {
 		ModelLearner_KnownModels modelLearner;
 		
 		boolean onlyGenerateSemanticTypeStatistics = false;
-		boolean iterativeEvaluation = false;
+		boolean iterativeEvaluation = true;
 		boolean useCorrectType = false;
 		boolean onlyEvaluateInternalLinks = false; 
 		boolean zeroKnownModel = false;
-		int numberOfCandidates = 4;
+		int numberOfCandidates = 1;
 
 		if (onlyGenerateSemanticTypeStatistics) {
 			getStatistics(semanticModels);
@@ -866,20 +885,34 @@ public class ModelLearner_KnownModels {
 			{
 
 				trainingData.clear();
+				trainingSources = new File[numberOfKnownModels];
+				trainingModels = new File[numberOfKnownModels];
 
 				int j = 0, count = 0;
 				while (count < numberOfKnownModels) {
 					if (j != newSourceIndex) {
 						trainingData.add(semanticModels.get(j));
+						trainingSources[count] = sources[j];
+						trainingModels[count] = r2rmlModels[j];
 						count++;
-					}
+					} 
 					j++;
 				}
 
 				modelLearningGraph = (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
 				
+				SemanticModel correctModel;
+				if (useCorrectType)
+					correctModel = newSource;
+				else {
+					testSource = sources[newSourceIndex];
+					testModel = r2rmlModels[newSourceIndex];
+					correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
+							trainingSources, trainingModels, 
+							testSource, testModel);
+				}
 				
-				SemanticModel correctModel = newSource;
+				
 				List<ColumnNode> columnNodes = correctModel.getColumnNodes();
 				//				if (useCorrectType && numberOfCRFCandidates > 1)
 				//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);

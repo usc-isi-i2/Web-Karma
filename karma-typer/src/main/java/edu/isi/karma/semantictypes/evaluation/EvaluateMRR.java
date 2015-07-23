@@ -15,16 +15,20 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 public class EvaluateMRR {
 	
-	private final static String INPUT_DIR_NAME="/home/v/karma-dev-home/models-json/"; //path to models-json in karma home
-	private final static String OUTPUT_DIR_NAME="evaluation-results";
+//	private final static String INPUT_DIR_NAME="/home/v/karma-dev-home/models-json/"; //path to models-json in karma home
+//	private final static String OUTPUT_DIR_NAME="evaluation-results";
 
 	public static JSONObject calculateMRR(String inputFile){
 		
@@ -141,15 +145,14 @@ public class EvaluateMRR {
 		
 	  }
 	
-	public static void printEvaluatedJSON(String inputFileName,String outputDirName){
+	public static void printEvaluatedJSON(String inputFileName,String outputFileName){
 		JSONObject obtainedObject = calculateMRR(inputFileName);
-		String fileNameTokens[]=inputFileName.split("/");
-		String oldFileName= fileNameTokens[fileNameTokens.length -1];
-		String newFileName = outputDirName + "//" +  oldFileName.split(".json",2)[0]+".MRR"+".json";	
-		 
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String json = gson.toJson(obtainedObject);
+
 		try {
-			FileWriter fw = new FileWriter(newFileName);
-			fw.write(obtainedObject.toJSONString());
+			PrintWriter fw = new PrintWriter(outputFileName);
+			fw.write(json);
 			fw.flush();
 			fw.close();
 		} catch (IOException e) {
@@ -158,11 +161,11 @@ public class EvaluateMRR {
 		}
 	}	
 		
-	public static void printAllEvaluatedJSON(String inputDirName,String outputDirName){
-		File inputDir = new File(inputDirName);
+	public static void printAllEvaluatedJSON(File inputDir,File outputDir){
 		String[] inputFileNameList = inputDir.list();
+		String extension = ".mrr.json";
 		for(String inputFileName : inputFileNameList){
-			printEvaluatedJSON(inputDirName + inputFileName, outputDirName);
+			printEvaluatedJSON(inputDir.getAbsolutePath() + inputFileName, outputDir.getAbsolutePath() + inputFileName + extension);
 		}
 	}
 	
@@ -191,7 +194,7 @@ public class EvaluateMRR {
 		 * Call for Entire Directory
 		 */
 		
-		printAllEvaluatedJSON(EvaluateMRR.INPUT_DIR_NAME, EvaluateMRR.OUTPUT_DIR_NAME);
+//		printAllEvaluatedJSON(EvaluateMRR.INPUT_DIR_NAME, EvaluateMRR.OUTPUT_DIR_NAME);
 		
 		
         
