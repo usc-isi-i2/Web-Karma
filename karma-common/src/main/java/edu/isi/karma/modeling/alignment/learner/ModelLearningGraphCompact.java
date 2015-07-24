@@ -272,15 +272,15 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		if (model == null) 
 			return null;
 		
-		String modelId = model.getId();
-		if (this.graphBuilder.getModelIds().contains(modelId)) {
-			// FIXME
-			// we need to somehow update the graph, but I don't know how to do that yet.
-			// so, we rebuild the whole graph from scratch.
-			logger.info("the graph already includes the model and needs to be updated, we re-initialize the graph from the repository!");
-			initializeFromJsonRepository();
-			return null;
-		}
+//		String modelId = model.getId();
+//		if (this.graphBuilder.getModelIds().contains(modelId)) {
+//			// FIXME	
+//			// we need to somehow update the graph, but I don't know how to do that yet.
+//			// so, we rebuild the whole graph from scratch.
+//			logger.info("the graph already includes the model and needs to be updated, we re-initialize the graph from the repository!");
+//			initializeFromJsonRepository();
+//			return null;
+//		}
 		
 		// add the model  nodes that are not in the graph
 		Set<InternalNode> addedInternalNodes = new HashSet<InternalNode>();

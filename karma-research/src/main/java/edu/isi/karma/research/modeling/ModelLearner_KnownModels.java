@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -764,14 +765,15 @@ public class ModelLearner_KnownModels {
 		}
 	}
 	
-		
+	
 	public static void main(String[] args) throws Exception {
 
 		/***
 		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
 		 */
-		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
-		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config/");
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome("/Users/mohsen/karma");
+//		contextParameters.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, "/Users/mohsen/karma");
+		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
 		contextParameters.setParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "1000");
 		contextParameters.setParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY, "/Users/mohsen/karma/semantic-type-files/");
 		contextParameters.setParameterValue(ContextParameter.JSON_MODELS_DIR, "/Users/mohsen/karma/models-json/");
@@ -798,8 +800,10 @@ public class ModelLearner_KnownModels {
 
 
 		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
-		File[] trainingSources;
-		File[] trainingModels;
+//		File[] trainingSources;
+//		File[] trainingModels;
+		File trainingSource = null;
+		File trainingModel = null;
 		File testSource;
 		File testModel;
 		
@@ -855,10 +859,12 @@ public class ModelLearner_KnownModels {
 			resultFile.println("source \t p \t r \t t \n");
 		}
 
-
 //		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 1; i++) {
 		int i = 0; {
+
+			// clean semantic files folder in karma home
+			FileUtils.cleanDirectory(new File(contextParameters.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY)));
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -885,16 +891,20 @@ public class ModelLearner_KnownModels {
 			{
 
 				trainingData.clear();
-				trainingSources = new File[numberOfKnownModels];
-				trainingModels = new File[numberOfKnownModels];
+//				trainingSources = new File[numberOfKnownModels];
+//				trainingModels = new File[numberOfKnownModels];
 
 				int j = 0, count = 0;
 				while (count < numberOfKnownModels) {
 					if (j != newSourceIndex) {
 						trainingData.add(semanticModels.get(j));
-						trainingSources[count] = sources[j];
-						trainingModels[count] = r2rmlModels[j];
+//						trainingSources[count] = sources[j];
+//						trainingModels[count] = r2rmlModels[j];
 						count++;
+						if (count == numberOfKnownModels) {
+							trainingSource = sources[j];
+							trainingModel = r2rmlModels[j];
+						}
 					} 
 					j++;
 				}
@@ -908,8 +918,11 @@ public class ModelLearner_KnownModels {
 					testSource = sources[newSourceIndex];
 					testModel = r2rmlModels[newSourceIndex];
 					correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
-							trainingSources, trainingModels, 
-							testSource, testModel);
+							trainingSource, trainingModel, 
+							testSource, testModel, numberOfKnownModels);
+//					correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
+//							trainingSources, trainingModels, 
+//							testSource, testModel);
 				}
 				
 				
@@ -972,7 +985,7 @@ public class ModelLearner_KnownModels {
 //				}
 				
 				List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCandidates);
-
+				
 				long elapsedTimeMillis = System.currentTimeMillis() - start;
 				float elapsedTimeSec = elapsedTimeMillis/1000F;
 

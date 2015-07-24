@@ -10,7 +10,6 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -57,15 +56,18 @@ import edu.isi.karma.rdf.InputProperties.InputProperty;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.WorkspaceManager;
+import edu.isi.karma.rep.metadata.Tag;
+import edu.isi.karma.rep.metadata.TagsContainer.Color;
+import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.semantictypes.evaluation.EvaluateMRR;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import edu.isi.karma.webserver.WorkspaceRegistry;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class OfflineTraining {
 
@@ -105,6 +107,8 @@ public class OfflineTraining {
 		omd.setup(new UpdateContainer(), workspace);
 		SemanticTypeModelMetadata stmd = new SemanticTypeModelMetadata(contextParameters);
 		stmd.setup(new UpdateContainer(), workspace);
+		Tag outlierTag = new Tag(TagName.Outlier, Color.Red);
+		workspace.getTagsContainer().addTag(outlierTag);
 		
 		return workspace;
 
@@ -314,6 +318,9 @@ public class OfflineTraining {
 			FileNotFoundException, 
 			JSONException, KarmaException, MalformedURLException {
 
+		if (source == null || model  == null)
+			return null;
+		
 		InputStream data = new FileInputStream(source);
 		R2RMLMappingIdentifier rmlID = new R2RMLMappingIdentifier(model.getAbsolutePath(), model.toURI().toURL());
 		WorksheetR2RMLJenaModelParser modelParser = new WorksheetR2RMLJenaModelParser(rmlID);
@@ -366,6 +373,16 @@ public class OfflineTraining {
 		}
 
 	}
+	
+
+	private InputType getDataType(String fileName) {
+		String ext = FilenameUtils.getExtension(fileName);
+		if (ext.equalsIgnoreCase("csv")) return InputType.CSV;
+		else if (ext.equalsIgnoreCase("xml")) return InputType.XML;
+		else if (ext.equalsIgnoreCase("json")) return InputType.JSON;
+		else if (ext.equalsIgnoreCase("xsls")) return InputType.EXCEL;
+		return null;
+	}
 
 	public SemanticModel getCorrectModel(ServletContextParameterMap contextParameters, 
 			File[] trainingSources,
@@ -373,8 +390,6 @@ public class OfflineTraining {
 			File testSource,
 			File testModel) throws JSONException, KarmaException, IOException {
 		
-		FileUtils.cleanDirectory(new File(contextParameters.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY)));
-
 		ModelingConfiguration mConf = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
 		boolean ontologyAlignment = mConf.getOntologyAlignment();
 		boolean knownModelsAlignment = mConf.getKnownModelsAlignment();
@@ -386,26 +401,21 @@ public class OfflineTraining {
 		mConf.setLearnerEnabled(false);
 		mConf.setOntologyAlignment(false);
 
-		InputType dataType = null;
+		InputType trainingDataType = null;
 		for (int i = 0; i < trainingSources.length; i++) {
 			File f = trainingSources[i];
 			String sourceName = f.getName();
-			String ext = FilenameUtils.getExtension(f.getName());
-			if (ext.equalsIgnoreCase("csv")) dataType = InputType.CSV;
-			else if (ext.equalsIgnoreCase("xml")) dataType = InputType.XML;
-			else if (ext.equalsIgnoreCase("json")) dataType = InputType.JSON;
-			else if (ext.equalsIgnoreCase("xsls")) dataType = InputType.EXCEL;
-			if (dataType == null) continue;
-			applyModel(contextParameters, f, sourceName, dataType, trainingModels[i], true, false);
+			trainingDataType = getDataType(f.getName());
+			if (trainingDataType == null) continue;
+			applyModel(contextParameters, f, sourceName, trainingDataType, trainingModels[i], true, false);
 		}
 
-		String ext = FilenameUtils.getExtension(testSource.getName());
-		if (ext.equalsIgnoreCase("csv")) dataType = InputType.CSV;
-		else if (ext.equalsIgnoreCase("xml")) dataType = InputType.XML;
-		else if (ext.equalsIgnoreCase("json")) dataType = InputType.JSON;
-		else if (ext.equalsIgnoreCase("xsls")) dataType = InputType.EXCEL;
-		if (dataType == null) return null;
-		SemanticModel sm = applyModel(contextParameters, testSource, testSource.getName(), dataType, testModel, false, true);
+		if (testSource == null && testModel == null) 
+			return null;
+
+		InputType testDataType = getDataType(testSource.getName());
+		if (testDataType == null) return null;
+		SemanticModel sm = applyModel(contextParameters, testSource, testSource.getName(), testDataType, testModel, false, true);
 
 		String modelJson = contextParameters.getParameterValue(ContextParameter.JSON_MODELS_DIR) + sm.getName() + "." + trainingSources.length + ".model.json";
 		String modelGraphviz = contextParameters.getParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR) + sm.getName() + "." + trainingSources.length + ".model.dot";
@@ -432,7 +442,62 @@ public class OfflineTraining {
 		
 		return sm;
 	}
+	
+	public SemanticModel getCorrectModel(ServletContextParameterMap contextParameters, 
+			File trainingSource,
+			File trainingModel,
+			File testSource,
+			File testModel,
+			int index) throws JSONException, KarmaException, IOException {
+		
+		ModelingConfiguration mConf = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
+		boolean ontologyAlignment = mConf.getOntologyAlignment();
+		boolean knownModelsAlignment = mConf.getKnownModelsAlignment();
+		boolean learner = mConf.isLearnerEnabled();
+		boolean addOntologyPaths = mConf.getAddOntologyPaths();
+		
+		mConf.setAddOntologyPaths(false);
+		mConf.setKnownModelsAlignment(false);
+		mConf.setLearnerEnabled(false);
+		mConf.setOntologyAlignment(false);
 
-	//TODO: apply incrementally
+		if (trainingSource != null && trainingModel != null) {
+			InputType trainingDataType = getDataType(trainingSource.getName());
+			if (trainingDataType == null) return null;
+			applyModel(contextParameters, trainingSource, trainingSource.getName(), trainingDataType, trainingModel, true, false);
+		}
+
+		if (testSource == null && testModel == null) 
+			return null;
+		
+		InputType testDataType = getDataType(testSource.getName());
+		if (testDataType == null) return null;
+		SemanticModel sm = applyModel(contextParameters, testSource, testSource.getName(), testDataType, testModel, false, true);
+
+		String modelJson = contextParameters.getParameterValue(ContextParameter.JSON_MODELS_DIR) + sm.getName() + "." + index + ".model.json";
+		String modelGraphviz = contextParameters.getParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR) + sm.getName() + "." + index + ".model.dot";
+		String evaluateMRR = contextParameters.getParameterValue(ContextParameter.EVALUATE_MRR) + sm.getName() + "." + index + ".mrr.json";
+
+		try {
+			sm.writeJson(modelJson);
+		} catch (Exception e) {
+			logger.error("error in exporting the model to JSON!");
+			//			e.printStackTrace();
+		}
+		try {
+			sm.writeGraphviz(modelGraphviz, false, false);
+		} catch (Exception e) {
+			logger.error("error in exporting the model to GRAPHVIZ!");
+			//			e.printStackTrace();
+		}
+		EvaluateMRR.printEvaluatedJSON(modelJson, evaluateMRR);
+
+		mConf.setAddOntologyPaths(ontologyAlignment);
+		mConf.setKnownModelsAlignment(knownModelsAlignment);
+		mConf.setLearnerEnabled(learner);
+		mConf.setOntologyAlignment(addOntologyPaths);
+		
+		return sm;
+	}
 
 }
