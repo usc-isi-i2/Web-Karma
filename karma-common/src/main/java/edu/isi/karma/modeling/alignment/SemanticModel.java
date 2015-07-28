@@ -79,6 +79,9 @@ public class SemanticModel {
 	protected Worksheet worksheet;
 //	private SuperSelection selection;
 	
+	protected Double accuracy;
+	protected Double mrr;
+	
 	public SemanticModel(String id,
 			DirectedWeightedMultigraph<Node, LabeledLink> graph, boolean suggestSemanticTypes) {
 
@@ -117,7 +120,7 @@ public class SemanticModel {
 //		this.selection = sel;
 //		this.setLearnedTypesForColumnNodes();
 		this.setUserTypesForColumnNodes();
-
+		
 		this.sourceColumns = this.getColumnNodes();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		for (ColumnNode c : this.sourceColumns)
@@ -178,6 +181,22 @@ public class SemanticModel {
 		return sourceColumns;
 	}
 	
+	public Double getAccuracy() {
+		return accuracy;
+	}
+
+	public void setAccuracy(Double accuracy) {
+		this.accuracy = accuracy;
+	}
+
+	public Double getMrr() {
+		return mrr;
+	}
+
+	public void setMrr(Double mrr) {
+		this.mrr = mrr;
+	}
+
 	public Set<InternalNode> getInternalNodes() {
 		Set<InternalNode> internalNodes = new HashSet<InternalNode>();
 		if (this.graph != null) {

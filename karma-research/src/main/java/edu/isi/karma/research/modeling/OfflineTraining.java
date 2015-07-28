@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.text.DecimalFormat;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -60,6 +61,7 @@ import edu.isi.karma.rep.metadata.Tag;
 import edu.isi.karma.rep.metadata.TagsContainer.Color;
 import edu.isi.karma.rep.metadata.TagsContainer.TagName;
 import edu.isi.karma.semantictypes.evaluation.EvaluateMRR;
+import edu.isi.karma.semantictypes.evaluation.MRRItem;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
@@ -443,12 +445,20 @@ public class OfflineTraining {
 		return sm;
 	}
 	
+	private static double roundDecimals(double d, int k) {
+		String format = "";
+		for (int i = 0; i < k; i++) format += "#";
+        DecimalFormat DForm = new DecimalFormat("#." + format);
+        return Double.valueOf(DForm.format(d));
+	}
+	
 	public SemanticModel getCorrectModel(ServletContextParameterMap contextParameters, 
 			File trainingSource,
 			File trainingModel,
 			File testSource,
 			File testModel,
-			int index) throws JSONException, KarmaException, IOException {
+			int index,
+			int numberOfCandidates) throws JSONException, KarmaException, IOException {
 		
 		ModelingConfiguration mConf = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
 		boolean ontologyAlignment = mConf.getOntologyAlignment();
@@ -491,6 +501,12 @@ public class OfflineTraining {
 			//			e.printStackTrace();
 		}
 		EvaluateMRR.printEvaluatedJSON(modelJson, evaluateMRR);
+		
+		MRRItem mrrItem = EvaluateMRR.calculateMRRValue(modelJson, numberOfCandidates);
+		
+		
+		sm.setAccuracy(roundDecimals(mrrItem.getAccuracy(),2));
+		sm.setMrr(roundDecimals(mrrItem.getMrr(),2));
 
 		mConf.setAddOntologyPaths(ontologyAlignment);
 		mConf.setKnownModelsAlignment(knownModelsAlignment);
