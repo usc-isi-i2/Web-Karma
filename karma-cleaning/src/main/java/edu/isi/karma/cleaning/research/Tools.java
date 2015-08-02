@@ -19,6 +19,7 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 package edu.isi.karma.cleaning.research;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -41,56 +42,58 @@ public class Tools {
 	public DataPreProcessor dpp;
 	public Messager msger;
 	public ProgramRule progRule = null;
-	
-	public void init(Vector<String[]> records){
+
+	public void init(Vector<String[]> records) {
 		Vector<String> tmp = new Vector<String>();
-		for(String[] r: records){
+		for (String[] r : records) {
 			tmp.add(r[0]);
 		}
 		dpp = new DataPreProcessor(tmp);
 		dpp.run();
 		msger = new Messager();
 	}
-	public ProgramRule getProgramRule(){
+
+	public ProgramRule getProgramRule() {
 		return progRule;
 	}
-	public String[] constrExample(String[] data){
-		if(data.length < 2){
+
+	public String[] constrExample(String[] data) {
+		if (data.length < 2) {
 			return null;
 		}
 		String[] xStrings = { "<_START>" + data[0] + "<_END>", data[1] };
 		return xStrings;
 	}
-	public void learnProgramRule(Vector<String[]> examples){
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();				
-		psProgSynthesis.inite(examples,dpp,msger); //
+
+	public void learnProgramRule(Vector<String[]> examples) {
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		psProgSynthesis.inite(examples, dpp, msger); //
 		Collection<ProgramRule> ps = psProgSynthesis.adaptive_main();
-		if(ps.size() > 0){
+		if (ps.size() > 0) {
 			progRule = ps.iterator().next();
 
 		}
 		System.out.println("" + psProgSynthesis.myprog.toString());
-
-		msger.updateCM_Constr(psProgSynthesis.partiCluster
-				.getConstraints());
+		msger.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
 		msger.updateWeights(psProgSynthesis.partiCluster.weights);
 	}
-	public Vector<String[]> transformSet(Vector<String[]> records,Vector<String[]> examples){
+
+	public Vector<String[]> transformSet(Vector<String[]> records, Vector<String[]> examples) {
 		Vector<String[]> ret = new Vector<String[]>();
 		ProgramRule pr = progRule;
-		for(String[] org: records)
-		{
+		for (String[] org : records) {
 			String ttar = pr.transform(org[0]);
 			if (Test.isExample(org[0], examples)) {
 				ttar = org[1];
 			}
-			if(org[1].compareTo(ttar)!= 0){
-				String[] n = {org[0], org[1], ttar};
+			if (org[1].compareTo(ttar) != 0) {
+				String[] n = { org[0], org[1], ttar };
 				ret.add(n);
-			}			
+			}
 		}
 		return ret;
 	}
+
 	public void transformFile(String fpath) {
 		try {
 			Vector<String[]> examples = new Vector<String[]>();
@@ -119,8 +122,7 @@ public class Tools {
 				Vector<String[]> result = new Vector<String[]>();
 				System.out.print("Enter raw value\n");
 				// open up standard input
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						System.in));
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				String raw = null;
 				raw = br.readLine();
 				if (raw.compareTo("end") == 0) {
@@ -135,27 +137,23 @@ public class Tools {
 				String[] xStrings = { "<_START>" + raw + "<_END>", tar };
 				examples.add(xStrings);
 				for (String[] elem : examples) {
-					System.out.println("Examples inputed: "
-							+ Arrays.toString(elem));
+					System.out.println("Examples inputed: " + Arrays.toString(elem));
 				}
-				String ofpath = "/Users/bowu/Research/50newdata/tmp/"
-						+ nf.getName();
+				String ofpath = "/Users/bowu/Research/50newdata/tmp/" + nf.getName();
 				CSVWriter cw = new CSVWriter(new FileWriter(new File(ofpath)));
-				ProgSynthesis psProgSynthesis = new ProgSynthesis();				
-				psProgSynthesis.inite(examples,dpp,msger); //
+				ProgSynthesis psProgSynthesis = new ProgSynthesis();
+				psProgSynthesis.inite(examples, dpp, msger); //
 				Collection<ProgramRule> ps = psProgSynthesis.run_main();
-				msger.updateCM_Constr(psProgSynthesis.partiCluster
-						.getConstraints());
+				msger.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
 				msger.updateWeights(psProgSynthesis.partiCluster.weights);
 				ProgramRule pr = ps.iterator().next();
-				System.out.println(""+psProgSynthesis.myprog.toString());
+				System.out.println("" + psProgSynthesis.myprog.toString());
 				System.out.println("" + pr.toString());
-				for(String org: vtmp)
-				{
+				for (String org : vtmp) {
 					String ttar = pr.transform(org);
-					String[] pValue = {org,ttar};
+					String[] pValue = { org, ttar };
 					cw.writeNext(pValue);
-					System.out.println(String.format("%s,%s", org,ttar ));
+					System.out.println(String.format("%s,%s", org, ttar));
 					result.add(pValue);
 				}
 				cw.close();
@@ -168,8 +166,7 @@ public class Tools {
 	public void test1() {
 		Vector<String[]> examples = new Vector<String[]>();
 		String[] xStrings = { "<_START>Ruth Asawa<_END>", "Asawa, Ruth" };
-		String[] yStrings = { "<_START>Robert Boardman Howard<_END>",
-				"Howard, Robert Boardman" };
+		String[] yStrings = { "<_START>Robert Boardman Howard<_END>", "Howard, Robert Boardman" };
 		// String[] zStrings =
 		// {"<_START>Artist unknown Salem, Massachusetts area<_END>","Artist unknown"};
 		examples.add(xStrings);
@@ -180,7 +177,7 @@ public class Tools {
 		DataPreProcessor dbDataPreProcessor = new DataPreProcessor(data);
 		Vector<Vector<String[]>> cstrns = new Vector<Vector<String[]>>();
 
-		psProgSynthesis.inite(examples,dbDataPreProcessor,cstrns);
+		psProgSynthesis.inite(examples, dbDataPreProcessor, cstrns);
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();
 		ProgramRule pr = ps.iterator().next();
 		System.out.println("" + pr.toString());
@@ -195,8 +192,8 @@ public class Tools {
 		DataCollection.config = cfg.getString();
 		Tools tools = new Tools();
 		tools.transformFile("/Users/bowu/Research/testdata/workable_singleColumn/n0.csv");
-		//tools.transformFile("/Users/bowu/Research/50newdata/tmp/example.csv");
-		//tools.test1();
+		// tools.transformFile("/Users/bowu/Research/50newdata/tmp/example.csv");
+		// tools.test1();
 
 	}
 }

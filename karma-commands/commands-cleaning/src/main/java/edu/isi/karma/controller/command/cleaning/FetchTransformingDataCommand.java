@@ -25,7 +25,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(FetchTransformingDataCommand.class);
 	private final String hNodeId;
-	private static final int max_sample_cnt = 100;
+	private static final int max_sample_cnt = 200;
 
 	public FetchTransformingDataCommand(String id, String newmodel, String worksheetId, String hNodeId, String selectionId) {
 		super(id, newmodel, worksheetId, selectionId);

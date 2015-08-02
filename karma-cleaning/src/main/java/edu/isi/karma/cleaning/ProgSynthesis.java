@@ -197,7 +197,7 @@ public class ProgSynthesis {
 		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
 		double[] res = new double[x.length];
 		for (int i = 0; i < x.length; i++) {
-			res[i] = x[i].getScore();
+			res[i] = x[i].getScore(s);
 		}
 		return res;
 	}
@@ -230,7 +230,6 @@ public class ProgSynthesis {
 			if (r == null)
 				return null;
 			String xString = "";
-			int termCnt = 0;
 			boolean findRule = true;
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
@@ -249,7 +248,6 @@ public class ProgSynthesis {
 						r.updateClassworker(xString, newRule);
 					}
 				}
-				termCnt++;
 			}
 			if (findRule)
 			{
@@ -272,21 +270,17 @@ public class ProgSynthesis {
 	}
 	public Collection<ProgramRule> adaptive_main()
 	{
-		StopWatch stopWatch0 = new Log4JStopWatch("adaptive_main");
 		long t1 = System.currentTimeMillis();
-		StopWatch stopWatch = new Log4JStopWatch("adaptive_producePartition");
-		Vector<Partition> par = this.adaptive_producePartition();		
-		stopWatch.stop();
-		StopWatch stopWatch1 = new Log4JStopWatch("adaptive_produceProgram");		
+		Vector<Partition> par = new Vector<Partition>();
+		par = this.adaptive_producePartition();					
 		Collection<ProgramRule> cpr = new ArrayList<ProgramRule>(); 
 		cpr = this.adaptive_produceProgram(par);
-		stopWatch1.stop();
 		Traces.AllSegs.clear();
 		//record the learning time
 		this.learnspan = (long) ((System.currentTimeMillis()-t1)*1.0/1000);
-		stopWatch0.stop();
 		return cpr;
 	}
+	
 	public Collection<ProgramRule> produceProgram_all(Vector<Partition> pars, Program prog)
 	{
 		this.myprog = prog;
@@ -299,7 +293,6 @@ public class ProgSynthesis {
 			if (r == null)
 				break;
 			String xString = "";
-			int termCnt = 0;
 			boolean findRule = true;
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
@@ -318,7 +311,6 @@ public class ProgSynthesis {
 						r.updateClassworker(xString, newRule);
 					}
 				}
-				termCnt++;
 			}
 			if (findRule)
 			{
@@ -340,7 +332,6 @@ public class ProgSynthesis {
 			if (r == null)
 				return rules;
 			String xString = "";
-			int termCnt = 0;
 			boolean findRule = true;
 			while ((xString = this.validRule(r, pars)) != "GOOD" && findRule) {
 				if (xString.compareTo("NO_CLASIF") == 0) {
@@ -359,7 +350,6 @@ public class ProgSynthesis {
 						r.updateClassworker(xString, newRule);
 					}
 				}
-				termCnt++;
 			}
 			if (findRule)
 			{
@@ -371,12 +361,25 @@ public class ProgSynthesis {
 	}
 	public Vector<Partition> adaptive_producePartition()
 	{	
+		// check compatibilities with last partitions
+		
 		Vector<Partition> pars = this.adaptive_initePartitions();
 		partiCluster = new ExampleCluster(this, pars, dataPreProcessor);
 		partiCluster.updateConstraints(msGer.getConstraints());
 		partiCluster.updateWeights(msGer.weights);
-		//update the program space and hypothesis space
-		pars = partiCluster.adaptive_cluster_weightEuclidean(pars);
+		ProgramAdaptator progAdaptator = new ProgramAdaptator();
+		ArrayList<String[]> examples = UtilTools.extracExamplesinTNodes(orgVector, tarVector);
+		ArrayList<Partition> lightAdaptation = progAdaptator.onlyadaptConditionalStatement(examples, this.msGer);
+		if(lightAdaptation!= null){
+			pars.clear();
+			Vector<Partition> tmpars = new Vector<Partition>();
+			tmpars.addAll(lightAdaptation);
+			partiCluster.assignUnlabeledData(tmpars);
+			pars.addAll(lightAdaptation);
+		}
+		else{
+			pars = partiCluster.adaptive_cluster_weightEuclidean(pars);
+		}
 		this.ruleNo = pars.size();
 		return pars;
 	}

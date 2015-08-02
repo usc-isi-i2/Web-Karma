@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.DataRecord;
-import edu.isi.karma.cleaning.UtilTools;
 
 public class ClasscenterInspector implements Inspector {
 	private double[] weights; 

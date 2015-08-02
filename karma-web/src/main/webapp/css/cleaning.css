@@ -109,10 +109,10 @@ button.editbutton{
 	height: 20px;
 }
 .cleaningOverflowDiv {
-	max-height: 150px;
+	max-height: 300px;
 	overflow: auto;
 }
 .cleaningOverflowDivLarge {
-	max-height: 450px;
+	max-height: 200px;
 	overflow: auto;
 }

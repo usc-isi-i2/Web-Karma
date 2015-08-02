@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
@@ -50,6 +51,7 @@ public class CreatingTrainingData {
 			allrec_v2.add(pair);
 			seqno++;
 		}
+		cr.close();
 		assert (!allrec.isEmpty());
 		Tools tool = new Tools();
 		tool.init(allrec_v2);
@@ -161,8 +163,33 @@ public class CreatingTrainingData {
 		}
 		return alldata;
 	}
+	public void printInspectorAccuracy(ArrayList<Instance> data){
+		Collection<String> keys = data.get(0).labeles.keySet();
+		int totalCnt = 0;
+		HashMap<String, Double> correctCnt = new HashMap<String, Double>();
+		for(String name: keys){
+			correctCnt.put(name, 0.0);
+		}
+		for(Instance row: data){
+			for(String key: row.labeles.keySet()){
+				if(row.labeles.get(key).doubleValue() == row.label.doubleValue()){
+					correctCnt.put(key, correctCnt.get(key)+1);
+				}
+			}
+		}
+		totalCnt = data.size();
+		for(String key:correctCnt.keySet()){
+			correctCnt.put(key, correctCnt.get(key)*1.0/totalCnt);
+		}
+		String ret = "";
+		for(String key: correctCnt.keySet()){
+			ret += key+", "+correctCnt.get(key) + "\n";
+		}
+		System.out.println(""+ret);
+	}
 	public static void main(String[] args){
 		CreatingTrainingData cdata = new CreatingTrainingData();
-		System.out.println(cdata.printTrainingData(cdata.runDir()));
+		//System.out.println(cdata.printTrainingData(cdata.runDir()));
+		cdata.printInspectorAccuracy(cdata.runDir());
 	}
 }

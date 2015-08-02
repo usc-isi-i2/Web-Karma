@@ -29,7 +29,6 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Vector;
 
-import org.apache.commons.collections.SortedBag;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -40,10 +39,7 @@ import edu.isi.karma.cleaning.DataRecord;
 import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.cleaning.correctness.AdaInspector;
-import edu.isi.karma.cleaning.correctness.ClasscenterInspector;
 import edu.isi.karma.cleaning.correctness.FatalErrorInspector;
-import edu.isi.karma.cleaning.correctness.InspectorFactory;
-import edu.isi.karma.cleaning.correctness.InspectorUtil;
 import edu.isi.karma.cleaning.research.ConfigParameters;
 import edu.isi.karma.cleaning.research.DataCollection;
 import edu.isi.karma.controller.command.CommandException;
@@ -67,9 +63,9 @@ import edu.isi.karma.rep.cleaning.ValueCollection;
 
 public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
-	private int sample_cnt = 600;
-	private int sample_size = 300;
-	private int maximal_recommand_size = 50;
+	private int sample_cnt = 300;
+	private int sample_size = 200;
+	private int maximal_recommand_size = 100;
 	private Vector<TransformationExample> examples;
 	private HashSet<String> nodeIds = new HashSet<String>();
 	RamblerTransformationInputs inputs;
@@ -165,7 +161,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		Random rchooser = new Random();
 		while(cnt < sample_cnt && rows.size() < sample_size && rows.size() < nodes.size()) {
 			cnt ++;
-			int index = 	rchooser.nextInt(nodes.size());
+			int index = 	rchooser.nextInt(nodes.size()-1);
 			Node node = nodes.get(index);
 			String id = node.getId();
 			if(existed.contains(id)){
@@ -318,7 +314,13 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		ArrayList<String> ret = new ArrayList<String>();
 		PriorityQueue<DataRecord> sortedList = new PriorityQueue<DataRecord>();
 		FatalErrorInspector inspector = new FatalErrorInspector();
+		HashSet<String> existed = new HashSet<String>();
+		HashSet<String> exampleInputs = getExampleInputs();
 		for (DataRecord r : records) {
+			if(existed.contains(r.origin) || exampleInputs.contains(r.origin)){
+				continue;
+			}
+			existed.add(r.origin);
 			double value = inspector.getActionLabel(r);
 			r.value = value;
 			sortedList.add(r);
@@ -336,11 +338,25 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 				existed.add(id);
 		}
 	}
+	private HashSet<String> getExampleInputs(){
+		HashSet<String> ret = new HashSet<String>();
+		String v = "";
+		for(TransformationExample exp: examples){
+			if(!ret.contains(exp.getBefore()))
+				v = exp.getBefore();
+				v = v.replace("<_START>", "");
+				v = v.replace("<_END>", "");
+				ret.add(v);
+		}
+		return ret;
+		
+	}
 	private ArrayList<String> getRecommendedIDs(DataPreProcessor dp, Messager mg, ArrayList<DataRecord> records, RamblerTransformationOutput rtf, String tpid) {
 		AdaInspector inspector = new AdaInspector();
 		inspector.initeParameter();
 		RamblerTransformation rtransformation = (RamblerTransformation) rtf.getTransformations().get(tpid);
 		ArrayList<String> exampleIDs = getExampleIDs();
+		HashSet<String> exampleInputs = getExampleInputs();
 		HashSet<String> existed = new HashSet<String>();
 		inspector.initeInspector(dp, mg, records, exampleIDs, rtransformation.prog);
 		ArrayList<String> ret = new ArrayList<String>();
@@ -348,12 +364,11 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		for (DataRecord r : records) {
 			double value = inspector.getActionScore(r);
 			r.value = value;
-			if (value < 0 && !exampleIDs.contains(r.id) && ! existed.contains(r.origin) && sortQueue.size() < maximal_recommand_size) {
+			if (value < 0 &&!exampleInputs.contains(r.origin)&& !exampleIDs.contains(r.id) && ! existed.contains(r.origin) && sortQueue.size() < maximal_recommand_size) {
 				sortQueue.add(r);
 				existed.add(r.origin);
 			}
 		}
-		//only add the first one
 		while(!sortQueue.isEmpty()){
 			ret.add(sortQueue.poll().id);
 		}

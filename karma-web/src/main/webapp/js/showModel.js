@@ -62,7 +62,7 @@ var ShowExistingModelDialog = (function() {
 			$("span.error", dialog).hide();
 			$("div.noItems", dialog).hide();
 
-
+			return; // 
 			var info = generateInfoObject(lastWorksheetId, "", "FetchExistingModelsForWorksheetCommand");
 			info["garbage"] = "garbage";
 			var returned = $.ajax({

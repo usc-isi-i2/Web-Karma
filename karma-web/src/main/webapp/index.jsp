@@ -72,6 +72,8 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/model.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/augmentdata.css?<jsp:include page='version.jsp' />" />
+	<link rel="stylesheet" href="./css/font-awesome.min.css" />
+
         <%
         
         UIConfiguration.Instance().loadConfig();

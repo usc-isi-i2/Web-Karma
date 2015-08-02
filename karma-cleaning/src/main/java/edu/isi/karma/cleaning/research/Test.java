@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.json.JSONObject;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.DataPreProcessor;
-import edu.isi.karma.cleaning.EmailNotification;
 import edu.isi.karma.cleaning.ExampleCluster;
-import edu.isi.karma.cleaning.ExampleCluster.method;
 import edu.isi.karma.cleaning.ExampleSelection;
 import edu.isi.karma.cleaning.GradientDecendOptimizer;
 import edu.isi.karma.cleaning.InterpreterType;
@@ -20,6 +22,10 @@ import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.UtilTools;
+import edu.isi.karma.cleaning.correctness.AdaInspectorTrainer;
+import edu.isi.karma.cleaning.correctness.CreatingTrainingData;
+import edu.isi.karma.cleaning.correctness.InspectorFactory;
+import edu.isi.karma.cleaning.correctness.Instance;
 
 public class Test {
 
@@ -317,11 +323,11 @@ public class Test {
 		return measure;
 	}
 
-	public static void test4(String dirpath, boolean adaptive) {
+	public static void test4(String dirpath, boolean adaptive, String parameterConfig) {
 		HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
-		DataCollection dCollection = new DataCollection();
+		DataCollection dCollection = new DataCollection(parameterConfig);
 		for (File f : allfiles) {
 			Vector<String[]> examples = new Vector<String[]>();
 			Vector<String[]> addExamples = new Vector<String[]>();
@@ -474,6 +480,10 @@ public class Test {
 									}
 									xHashMap.put(j + "", ts);
 								}
+								//////////*****////////////
+								/*if(wexam != null)
+									break;
+								*/
 							}
 
 							if (wexam == null || (entries.size() - ErrorCnt) * 1.0 / entries.size() == 1.0) {
@@ -496,7 +506,8 @@ public class Test {
 								expsel.inite(xHashMap, expFeData);
 								int e = Integer.parseInt(expsel.Choose());
 								// /
-								//System.out.println("Recommand Example: "+Arrays.toString(xHashMap.get("" + e)));
+								// System.out.println("Recommand Example: "+Arrays.toString(xHashMap.get(""
+								// + e)));
 								// /
 								if (xHashMap.get("" + e)[4].compareTo("right") != 0) {
 									wexp[0] = "<_START>" + entries.get(e)[0] + "<_END>";
@@ -557,44 +568,50 @@ public class Test {
 		System.out.println("" + s);
 	}
 
-	public static void runSeriseExper() {
-		EmailNotification notification = new EmailNotification();
-		ExampleCluster.option = method.CP;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile", false);
-		notification.notify(true, "CP");
-
-		ExampleCluster.option = method.DPIC;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile", false);
-		notification.notify(true, "DPIC");
-
-		ExampleCluster.option = method.DP;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile", false);
-		notification.notify(true, "DP");
-
-		ExampleCluster.option = method.SPIC;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile", false);
-		notification.notify(true, "SPIC");
-
-		ExampleCluster.option = method.SP;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile", false);
-		notification.notify(true, "SP");
-
-		ExampleCluster.option = method.CPIC;
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile", false);
-		notification.notify(true, "CPIC");
-
-	}
-
 	public static int MaximalNumber = -1;
 	public static int MinimalNumber = 100;
 	public static Vector<String[]> larexamples = new Vector<String[]>();
 	public static Vector<String[]> smalexamples = new Vector<String[]>();
 
+	public void ParameterSelection() {
+		/*
+		 * ConfigParameters cfg = new ConfigParameters(); cfg.initeParameters();
+		 * DataCollection.config = cfg.getString();
+		 */
+		double[] r2constraints = { 1e2, 1e3, 1e4, 1e5, 1e6 };
+		int[] unlabeled = { 0, 1, 2, 3, 4 };
+		double[] musttoMustnotRatio = { 0.2, 0.4, 0.5, 0.6, 0.7 };
+		for (int i = 0; i < r2constraints.length; i++) {
+			GradientDecendOptimizer.overfit_factor = r2constraints[i];
+			for (int j = 0; j < unlabeled.length; j++) {
+				ExampleCluster.unlabelDataScale = unlabeled[j];
+				for (int k = 0; k < musttoMustnotRatio.length; k++) {
+					GradientDecendOptimizer.ratio = musttoMustnotRatio[k];
+					Test.test4("/Users/bowu/Research/testdata/TestSingleFile", true, String.format("%f-%d-%f", r2constraints[i], unlabeled[j], musttoMustnotRatio[k]));
+				}
+			}
+		}
+	}
+
+	public void learnAdaParameters() {
+		CreatingTrainingData cdata = new CreatingTrainingData();
+		ArrayList<Instance> all = cdata.runDir();
+		// System.out.println(cdata.printTrainingData(all));
+		List<String> clfs = InspectorFactory.getInspectorNames();
+		AdaInspectorTrainer adaTrainer = new AdaInspectorTrainer(all.toArray(new Instance[all.size()]), clfs);
+		adaTrainer.adaboost(clfs.size());
+		JSONObject parameters = new JSONObject();
+		for (int i = 0; i < adaTrainer.alphaList.size(); i++) {
+			parameters.put(adaTrainer.classifierList.get(i), adaTrainer.alphaList.get(i));
+		}
+		System.out.println("" + StringEscapeUtils.escapeJava(parameters.toString()));
+		System.out.println(adaTrainer.getResult(adaTrainer.classifierList, adaTrainer.alphaList, all));
+	}
+
 	public static void main(String[] args) {
-		ConfigParameters cfg = new ConfigParameters();
-		cfg.initeParameters();
-		DataCollection.config = cfg.getString();
-		Test.test4("/Users/bowu/Research/testdata/TestSingleFile", true);
-		
+		//Test test = new Test();
+		//test.ParameterSelection();
+		 Test.test4("/Users/bowu/Research/testdata/TestSingleFile", true, "Test");
+		// test.learnAdaParameters();
 	}
 }

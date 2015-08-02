@@ -10,7 +10,7 @@ import edu.isi.karma.cleaning.UtilTools;
 
 public class Segment implements GrammarTreeNode {
 	public Vector<Section> section = new Vector<Section>();
-	public static final int cxtsize_limit = 4;
+	public static final int cxtsize_limit = 5;
 	public static final int time_limit = 5;
 	public String tarString = "";
 	public static final String LEFTPOS = "leftpos";

@@ -13,7 +13,7 @@ public class UserMonitorLogParser {
 		String dirpath = "/Users/bowu/projects/Web-Karma/karma-web/log";
 		File dir = new File(dirpath);
 		for (File f : dir.listFiles()) {
-			if (f.getName().indexOf(".txt") != (f.getName().length() - 4)) {
+			if ((f.getName().indexOf(".json")== -1) || (f.getName().indexOf(".json") != (f.getName().length() - 5))) {
 				continue;
 			}
 			try {
@@ -23,15 +23,23 @@ public class UserMonitorLogParser {
 				while ((line = reader.readLine()) != null) {
 					jsonstr += line;
 				}
+				reader.close();
 				JSONObject data = new JSONObject(jsonstr);
 				ArrayList<Long> stamps = getTimeStamps(data);
+				System.out.println(""+f.getName());
 				System.out.println("[durations]: "+UserMonitorLogParser.getDurations(stamps));
 				ArrayList<int[]> acc = UserMonitorLogParser.getExampleIndex(data);
 				System.out.println("[exampleIndex]: "+UserMonitorLogParser.printExampleIndexes(acc));
+				System.out.println("[accuracy]: "+UserMonitorLogParser.getAccuracy(data));
 			} catch (Exception ex) {
+				System.out.println(""+f.getAbsolutePath());
 				ex.printStackTrace();
 			}
 		}
+	}
+	public static String getAccuracy(JSONObject data){
+		String ret = data.get("accuracy").toString();
+		return ret;
 	}
 	public static String printExampleIndexes(ArrayList<int[]> acc){
 		String ret = "";
@@ -61,7 +69,7 @@ public class UserMonitorLogParser {
 		try {
 			for (Object key : obj.keySet()) {
 				String skey = (String) key;
-				if (skey.equals("start") || skey.equals("end")) {
+				if (!skey.equals("Iteration") ) {
 					continue;
 				}
 				JSONArray array = obj.getJSONArray((String) key);
@@ -103,7 +111,7 @@ public class UserMonitorLogParser {
 		try {
 			for (Object key : obj.keySet()) {
 				String skey = (String) key;
-				if (skey.equals("start") || skey.equals("end")) {
+				if (!skey.equals("Iteration")) {
 					continue;
 				}
 				JSONArray array = obj.getJSONArray((String) key);

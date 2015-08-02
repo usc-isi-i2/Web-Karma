@@ -34,6 +34,7 @@ public class RecordFeatureSet {
 			"\\?", "<", ">", "\\.", "/", "\\\\", "\\d+", "[A-Z]+", "[a-z]+", "[\\s]" };
 	//public String[] xStrings = {"\\d+"};
 	public String[] vocabs = {};
+	public ArrayList<Feature> features = new ArrayList<Feature>();
 	public String[] getLabels()
 	{
 		return labels.toArray(new String[labels.size()]);
@@ -48,8 +49,8 @@ public class RecordFeatureSet {
 	}
 	public void removeFeatures(ArrayList<Integer> fs)
 	{
-		ArrayList<String> xList = new ArrayList<String>();
-		for(int i = 0; i<xStrings.length; i++)
+		ArrayList<Feature> xList = new ArrayList<Feature>();
+		for(int i = 0; i<features.size(); i++)
 		{
 			boolean found = false;
 			for(int j = 0; j < fs.size(); j++)
@@ -61,9 +62,8 @@ public class RecordFeatureSet {
 				}
 			}
 			if(!found)
-				xList.add(xStrings[i]);
+				xList.add(features.get(i));
 		}
-		xStrings = xList.toArray(new String[xList.size()]);
 	}
 	public void addVocabulary(String[] vocb)
 	{
@@ -93,33 +93,52 @@ public class RecordFeatureSet {
 		this.xStrings = res.toArray(new String[res.size()]);
 	}
 	public Collection<Feature> computeFeatures(String record, String label) {
-		Vector<Feature> xCollection = new Vector<Feature>();
-		for (String c : xStrings) {
-			Feature f = new RecordCntFeatures(c, record, c);
-			xCollection.add(f);
+		ArrayList<Feature> xCollection = new ArrayList<Feature>();
+		if(features.size() != 0){
+			xCollection = this.features;
 		}
-		if (!labels.contains(label)) {
-			this.labels.add(label);
+		else{
+			for (String c : xStrings) {
+				Feature f = new RecordCntFeatures(c, record, c);
+				xCollection.add(f);
+				Feature f1 = new RecordTokenFirstOccPosition(c, record, c);
+				xCollection.add(f1);
+			}
+			if (!labels.contains(label)) {
+				this.labels.add(label);
+			}
+			features.addAll(xCollection);
 		}
 		return xCollection;
 	}
 
 	public Collection<String> getFeatureNames() {
-		Vector<String> x = new Vector<String>();
-		for (String s : xStrings) {
-			if (s.compareTo("\"") == 0) {
-				s = "Quote";
+		ArrayList<String> x = new ArrayList<String>();
+		if(!features.isEmpty()){
+			for(Feature f: features){
+				x.add(f.getName());
 			}
-			if (s.compareTo(",") == 0) {
-				s = "Comma";
+		}
+		else{
+			for (String s : xStrings) {
+				if (s.compareTo("\"") == 0) {
+					s = "Quote";
+				}
+				if (s.compareTo(",") == 0) {
+					s = "Comma";
+				}
+				if (s.compareTo("\\\"") == 0) {
+					s = "DbQuto";
+				}
+				if (s.compareTo("\\\'") == 0) {
+					s = "SgQuto";
+				}
+				//x.add("attr_" + s);
 			}
-			if (s.compareTo("\\\"") == 0) {
-				s = "DbQuto";
+			for(String s: xStrings){
+				x.add("attr_"+s);
+				x.add("attr_pos_"+s);
 			}
-			if (s.compareTo("\\\'") == 0) {
-				s = "SgQuto";
-			}
-			x.add("attr_" + s);
 		}
 		return x;
 	}

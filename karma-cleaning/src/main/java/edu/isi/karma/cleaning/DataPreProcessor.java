@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.features.Feature;
@@ -14,7 +12,6 @@ import edu.isi.karma.cleaning.features.RecordFeatureSet;
 //vectorize string to feature vectors
 //decorrelate features
 //rescale features
-import edu.isi.karma.cleaning.grammartree.TNode;
 
 public class DataPreProcessor {
 	public Collection<String> data;
@@ -52,7 +49,9 @@ public class DataPreProcessor {
 		this.data2Vector = xHashMap;
 	}
 	public String[] getFeatureName(){
-		return rfs.xStrings;
+		Collection<String> names = rfs.getFeatureNames();
+		String[] ret = names.toArray(new String[names.size()]);
+		return ret;
 	}
 	public double[] getNormalizedreScaledVector(String data) throws Exception{
 		if(data2Vector.containsKey(data)){
@@ -128,7 +127,7 @@ public class DataPreProcessor {
 		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
 		double[] res = new double[x.length];
 		for (int i = 0; i < x.length; i++) {
-			res[i] = x[i].getScore();
+			res[i] = x[i].getScore(s);
 		}
 		return res;
 	}
@@ -137,7 +136,7 @@ public class DataPreProcessor {
 		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
 		double[] res = new double[x.length];
 		for (int i = 0; i < x.length; i++) {
-			res[i] = x[i].getScore();
+			res[i] = x[i].getScore(s);
 		}
 		for(int i = 0; i < res.length; i++){
 			if(res[i] >= max_values[i]){

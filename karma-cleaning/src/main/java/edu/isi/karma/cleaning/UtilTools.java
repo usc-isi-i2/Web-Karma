@@ -358,7 +358,21 @@ public class UtilTools {
 		results.clear();
 		index = 0;
 	}
-
+	public static double getRemainingPercentage(int num){
+		int upper_bound = 90;
+		int lower_bound = 1;
+		double max_percentage = 0.1;
+		double min_percentage = 0.01;
+		if(num > upper_bound){
+			return max_percentage;
+		}
+		else if (num < lower_bound){
+			return min_percentage;
+		}
+		else{
+			return min_percentage + (num - lower_bound)*(max_percentage - min_percentage)/(upper_bound - lower_bound);
+		}
+	}
 	public static Vector<String> buildDict(Collection<String> data) {
 		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
 		PreprocessTokenizerWrapper r = new PreprocessTokenizerWrapper();
@@ -396,8 +410,8 @@ public class UtilTools {
 				}
 			}
 		}
-		// prune infrequent terms
-		int thresdhold = (int) (data.size() * 0.01);
+		// prune infrequent terms UtilTools.getRemainingPercentage(mapHashSet.size())
+		int thresdhold = (int) (data.size() * UtilTools.getRemainingPercentage(mapHashSet.size()));
 		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<String, Integer> e = iter.next();
@@ -449,6 +463,14 @@ public class UtilTools {
 				String[] exp = { UtilTools.print(par.orgNodes.get(i)), UtilTools.print(par.tarNodes.get(i)) };
 				examples.add(exp);
 			}
+		}
+		return examples;
+	}
+	public static ArrayList<String[]> extracExamplesinTNodes(Vector<Vector<TNode>> orgs, Vector<Vector<TNode>> tars){
+		ArrayList<String[]> examples = new ArrayList<String[]>();
+		for(int i = 0; i < orgs.size(); i++){
+			String[] exp = { UtilTools.print(orgs.get(i)), UtilTools.print(tars.get(i)) };
+			examples.add(exp);
 		}
 		return examples;
 	}

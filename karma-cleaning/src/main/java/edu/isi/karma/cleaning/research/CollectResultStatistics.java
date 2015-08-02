@@ -13,12 +13,11 @@ import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.DataRecord;
-import edu.isi.karma.cleaning.EmailNotification;
-import edu.isi.karma.cleaning.MyLogger;
 import edu.isi.karma.cleaning.ProgramRule;
 import edu.isi.karma.cleaning.correctness.AdaInspector;
 import edu.isi.karma.cleaning.correctness.AdaInspectorTrainer;
 class ErrorCnt{
+	int firstErrorIndex = -1;
 	int runtimeerror = 0;
 	int totalerror = 0;
 	int totalrecord = 0;
@@ -36,6 +35,9 @@ public class CollectResultStatistics {
 	public int correct_all_iter_cnt = 0;
 	public int all_scenario_cnt = 0;		
 	public int correct_all_scenario_cnt = 0;
+	public int questionable_iteration = 0;
+	public int questionable_correct_iteration = 0;
+	public int sum_first_incorrect_indexes = 0;
 	public AdaInspector inspector = new AdaInspector();
 	public String collectIncorrects(String fpath) throws IOException {
 		// read a file
@@ -45,7 +47,6 @@ public class CollectResultStatistics {
 		String[] pair;
 		ArrayList<DataRecord> allrec = new ArrayList<DataRecord>();
 		Vector<String[]> allrec_v2 = new Vector<String[]>();
-		int seqno = 0;
 		while ((pair = cr.readNext()) != null) {
 			if (pair == null || pair.length <= 1)
 				break;
@@ -55,8 +56,8 @@ public class CollectResultStatistics {
 			tmp.target = pair[1];
 			allrec.add(tmp);
 			allrec_v2.add(pair);
-			seqno++;
 		}
+		cr.close();
 		assert (!allrec.isEmpty());
 		Tools tool = new Tools();
 		tool.init(allrec_v2);
@@ -83,6 +84,7 @@ public class CollectResultStatistics {
 				ArrayList<DataRecord> recmd = new ArrayList<DataRecord>();
 				inspector.initeInspector(tool.dpp, tool.msger, allrec, exampleIDs, tool.progRule);
 				for(DataRecord rec: allrec){
+					//System.out.println(String.format("%s, %s", rec.origin, rec.transformed));
 					double value = inspector.getActionScore(rec);
 					rec.value = value;
 					if(value <= 0){
@@ -96,19 +98,18 @@ public class CollectResultStatistics {
 					}
 					all_record_cnt ++;
 				}
-				//viewChecker = new MultiviewChecker(tool.progRule);
-				//formatChecker = new FormatOutlier(allrec, null);
-				//recmd.addAll(viewChecker.checkRecordCollection(allrec));
-				//recmd.addAll(formatChecker.getAllOutliers());
-				ArrayList<DataRecord> crecmd = getCorrectRecommand(recmd, wrong);
+				
+				ArrayList<DataRecord> crecmd = getCorrectRecommand(recmd, wrong, ecnt);
 				System.out.println(""+recmd.size());
 				ecnt.recommand = recmd.size();
 				ecnt.correctrecommand = crecmd.size();
 				ecnt.precsion = ecnt.correctrecommand * 1.0 / ecnt.recommand;
 				ecnt.reductionRate = ecnt.recommand *1.0/ecnt.totalrecord;
 				if(ecnt.correctrecommand > 0 || wrong.size() == 0){
-					correct_all_iter_cnt ++;
+						correct_all_iter_cnt ++;
 				}
+				questionable_iteration ++;
+				this.sum_first_incorrect_indexes += ecnt.firstErrorIndex;
 			}
 			else{
 				for(DataRecord rec: allrec){
@@ -117,7 +118,9 @@ public class CollectResultStatistics {
 						wrong.add(rec);
 					}
 				}
+				ecnt.firstErrorIndex = 0;
 				correct_all_iter_cnt ++;
+				this.sum_first_incorrect_indexes += 0;
 			}
 			ecnt.totalerror = wrong.size();
 			System.out.println(""+tool.progRule.toString());
@@ -157,7 +160,7 @@ public class CollectResultStatistics {
 		}
 		return cnt;
 	}
-	public ArrayList<DataRecord> getCorrectRecommand(ArrayList<DataRecord> recmd,PriorityQueue<DataRecord> wrong){
+	public ArrayList<DataRecord> getCorrectRecommand(ArrayList<DataRecord> recmd,PriorityQueue<DataRecord> wrong, ErrorCnt repo){
 		HashSet<String> rawInputs = new HashSet<String>();
 		for(DataRecord rec: wrong){
 			if(!rawInputs.contains(rec.origin)){
@@ -165,9 +168,12 @@ public class CollectResultStatistics {
 			}
 		}
 		ArrayList<DataRecord> ret = new ArrayList<DataRecord>();
-		for(DataRecord rec: recmd){
-			boolean matched = false;		 
+		for(int i = 0; i < recmd.size(); i++){
+			DataRecord rec = recmd.get(i);
 			if(rawInputs.contains(rec.origin)){
+				if(repo.firstErrorIndex == -1){
+					repo.firstErrorIndex = i;
+				}
 				ret.add(rec);
 			}
 		}
@@ -175,7 +181,7 @@ public class CollectResultStatistics {
 	}
 	public String printResult(ErrorCnt ecnt) {
 		String s = "";
-		s += String.format("rt, %d, e,%d,t,%d, r,%d, cr, %d, red, %f, pre, %f", ecnt.runtimeerror, ecnt.totalerror, ecnt.totalrecord, ecnt.recommand,ecnt.correctrecommand,ecnt.reductionRate, ecnt.precsion);
+		s += String.format("rt, %d, e,%d,t,%d, r,%d, cr, %d, first, %d, red, %f, pre, %f", ecnt.runtimeerror, ecnt.totalerror, ecnt.totalrecord, ecnt.recommand,ecnt.correctrecommand, ecnt.firstErrorIndex, ecnt.reductionRate, ecnt.precsion);
 		/*for (String[] e : wrong) {
 			s += String.format("%s, %s, %s ||", e[0], e[1], e[2]);
 		}*/
@@ -187,26 +193,29 @@ public class CollectResultStatistics {
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
 		AdaInspectorTrainer.questionablePreference = parameter;
-		double[] ret = {0, 0};
+		double[] ret = {0,0,0, 0};
 		inspector = new AdaInspector();
-		inspector.initeParameterWithTraining();
+		inspector.initeParameter();
 		String line = "";
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
 					"/Users/bowu/Research/Feedback/result"+parameter+".txt")));
 			for (File f : allfiles) {
-				if (f.getName().indexOf(".csv") != (f.getName().length() - 4)) {
+				if (f.getName().indexOf(".csv")== -1 || ( f.getName().indexOf(".csv") != (f.getName().length() - 4))) {
 					continue;
 				}
 				bw.write(f.getName()+"\n");
 				line = collectIncorrects(f.getAbsolutePath())+"\n";
+				System.out.println(""+line);
 				bw.write(line);
 			}
 			
 			System.out.println(String.format("%d, %d, %f", correct_identified_record_cnt, all_record_cnt, correct_identified_record_cnt*1.0/all_record_cnt));
 			System.out.println(String.format("%d, %d", correct_all_iter_cnt, all_iter_cnt) +", Percentage of correct iteration: "+ (correct_all_iter_cnt * 1.0 / all_iter_cnt));
 			ret[0] = correct_all_iter_cnt * 1.0 / all_iter_cnt;
-			ret[1] = correct_identified_record_cnt*1.0/all_record_cnt;
+			ret[1] = questionable_correct_iteration * 1.0 / questionable_iteration;
+			ret[2] = correct_identified_record_cnt*1.0/all_record_cnt;
+			ret[3] = sum_first_incorrect_indexes*1.0 / all_iter_cnt;
 			bw.flush();
 			bw.close();
 		} catch (Exception e) {
@@ -216,10 +225,10 @@ public class CollectResultStatistics {
 	}
 	public static void main(String[] args) {
 		String ret = "";
-		for(double p = 5; p <= 5; p = p+1){
+		for(double p = 3; p <= 3; p += 1){
 			CollectResultStatistics collect = new CollectResultStatistics();
 			double[] one = collect.parameterSelection(p);
-			ret += String.format("%f, %f, %f", p, one[0], one[1])+"\n";
+			ret += String.format("%f, a, %f, q, %f, r, %f, avg_first %f", p, one[0], one[1], one[2], one[3])+"\n";
 		}
 		System.out.println(""+ret);
 		//EmailNotification alert = new EmailNotification();

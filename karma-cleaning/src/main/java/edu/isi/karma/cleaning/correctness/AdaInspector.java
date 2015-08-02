@@ -29,8 +29,7 @@ public class AdaInspector implements Inspector {
 		}
 	}
 	public void initeParameter(){
-		String value = "{\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|1.0|2\":0.027693142998358185,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|3\":0.006409251098819078,\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.4|2\":0.06780036942851692,\"edu.isi.karma.cleaning.correctness.MultiviewInspector\":0.09992930976206217,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.6|3\":0.09469385739867839,\"edu.isi.karma.cleaning.correctness.MembershipAmbiguityInspector|0.05\":0.020846077294063826}";
-		
+		String value = "{\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.0|2\":0.27548135140147095,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|3\":0.08225784904838043,\"edu.isi.karma.cleaning.correctness.MultiviewInspector\":0.07807552589600536,\"edu.isi.karma.cleaning.correctness.MembershipAmbiguityInspector|0.05\":0.029981516710614383}";		
 		JSONObject parameters = new JSONObject(value);
 		Iterator<String> keys = parameters.keys();
 		while(keys.hasNext()){
@@ -39,30 +38,6 @@ public class AdaInspector implements Inspector {
 			inspectorNames.add(name);
 			weights.add(weight);
 		}
-		//inspectorNames.add(OutlierInspector.class.getName());
-		/*inspectorNames.add(MultiviewInspector.class.getName());
-		weights.add(0.087861029);
-		inspectorNames.add(OutlierInspector.class.getName()+"|2.0");
-		weights.add(0.012302152);
-		inspectorNames.add(OutlierInspector.class.getName()+"|1.6");
-		weights.add(0.035516576);		
-		inspectorNames.add(OutlierInspector.class.getName()+"|1.4");
-		weights.add(0.247238603);
-		inspectorNames.add(ClasscenterInspector.class.getName()+"|3.0");
-		weights.add(0.2608630532750992);
-		inspectorNames.add(ClasscenterInspector.class.getName()+"|2.0");
-		weights.add(0.095855231);
-		inspectorNames.add(ClasscenterInspector.class.getName()+"|1.8");
-		weights.add(0.055448516);
-		inspectorNames.add(ClasscenterInspector.class.getName()+"|1.6");
-		weights.add(0.016814621);
-		inspectorNames.add(ClasscenterInspector.class.getCanonicalName()+"1.4");
-		weights.add(0.00632224);
-		inspectorNames.add(MembershipAmbiguityInspector.class.getName()+"|0.05");
-		weights.add(0.089861187);
-		inspectorNames.add(ClasscenterInspector.class.getName()+"|2.0");
-		weights.add(0.137122140755571);*/
-		
 	}
 	public void initeParameterWithTraining() {
 		CreatingTrainingData cdata = new CreatingTrainingData();
@@ -91,20 +66,20 @@ public class AdaInspector implements Inspector {
 	}
 	public double getActionScore(DataRecord record){
 		double ret = 0.0;
-		//String line = "";
 		ArrayList<Double> alllabels = new ArrayList<Double>();
 		for (int i = 0; i < inspectors.size(); i++) {
 			alllabels.add(inspectors.get(i).getActionLabel(record) * weights.get(i));
-			//line += "|"+inspectors.get(i).getActionLabel(record) +", "+weights.get(i);
 		}
 		for(double d: alllabels){
 			ret += d;
 		}
+		/*if(ret < 0){
+			Prober.printRecommendation(record, alllabels);
+		}*/
 		return ret;
 	}
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "AdaInspector";
 	}
 	public static void main(String[] args){

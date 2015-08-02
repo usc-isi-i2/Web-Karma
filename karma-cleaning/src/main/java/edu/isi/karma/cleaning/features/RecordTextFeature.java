@@ -61,9 +61,9 @@ public class RecordTextFeature implements Feature {
 	}
 
 	@Override
-	public double getScore() {
-		// TODO Auto-generated method stub
-		return this.score;
+	public double getScore(String value) {
+		this.value = value;
+		return this.computeScore();
 	}
 
 }

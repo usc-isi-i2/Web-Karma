@@ -1,6 +1,6 @@
 package edu.isi.karma.cleaning;
 
-public class DataRecord implements Comparable{
+public class DataRecord implements Comparable<DataRecord>{
 	public static final String nonexist = "none";
 	public static final String unassigned = "none";
 	public String id = nonexist;
@@ -22,7 +22,7 @@ public class DataRecord implements Comparable{
 		this.transformed = transformed;
 		this.classLabel = classlabel;
 	}
-	public int compareTo(Object other) {
+	public int compareTo(DataRecord other) {
 		DataRecord cmp = (DataRecord)other;
 		if(this.value < cmp.value){
 			return -1;			

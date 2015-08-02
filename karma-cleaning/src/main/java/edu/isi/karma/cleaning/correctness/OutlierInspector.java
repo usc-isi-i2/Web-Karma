@@ -1,14 +1,12 @@
 package edu.isi.karma.cleaning.correctness;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.DataRecord;
-import edu.isi.karma.cleaning.UtilTools;
 
 public class OutlierInspector implements Inspector {
 
@@ -29,24 +27,7 @@ public class OutlierInspector implements Inspector {
 		this.targetContent = targetContent;
 		getMeanandDists(records, dmetric);
 	}
-	/*private String genKey(DataRecord record){
-		return record.origin + " " + record.transformed;
-	}*/
-	private double getMedian(double[] values){
-		if(values.length == 0){
-			return 0.0;
-		}
-		double ret = 0.0;
-		if(values.length %2 == 0){
-			int ind = values.length /2 -1;
-			ret = (values[ind] + values[ind+1]) *1.0/2;
-		}
-		else{
-			int ind = values.length /2 ;
-			ret = values[ind];
-		}
-		return ret;
-	}
+	
 	//identify the mean vector of each cluster
 	private void getMeanandDists(ArrayList<DataRecord> records, double[] dmetric)
 	{

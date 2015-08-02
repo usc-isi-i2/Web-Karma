@@ -17,8 +17,6 @@ public class Interpretor {
 		PythonInterpreter interpreter = new PythonInterpreter();
 
 		String dirpathString = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH)+ ServletContextParameterMap.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
-
-		;
 		if (dirpathString == null || dirpathString.toString().length() <= 1) {
 			dirpathString = "../karma-web/src/main/webapp/resources/pythonCleaningscripts";
 		}

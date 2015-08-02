@@ -1,7 +1,6 @@
 package edu.isi.karma.cleaning;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.slf4j.Logger;
@@ -10,13 +9,15 @@ import org.slf4j.LoggerFactory;
 public class GradientDecendOptimizer {
 	public double c_coef = 1;
 	public double relativeCoef = 1;
-	public static double ratio = 0.4;
+	public static double ratio = 0.6;
 	public double stepsize = 0.1;
 	public double maximalIternumber = 50;
 	public double wIternumber = 100;
 	public boolean coef_initialized = false;
 	public double manualCoef = 1;
 	private double small_buffer = 1e-8;
+	public static double overfit_factor = 1e4;
+
 
 	Logger ulogger = LoggerFactory.getLogger(GradientDecendOptimizer.class);
 
@@ -38,7 +39,7 @@ public class GradientDecendOptimizer {
 		for (double[] x : t_star) {
 			tmp += Math.pow(UtilTools.product(x, w), 0.5);
 		}
-		return res + c_coef * Math.log(ml) - c_coef * Math.log(tmp);
+		return res + c_coef * Math.log(ml) - c_coef * Math.log(tmp) + 0.5 * UtilTools.product(w, w);
 	}
 
 	// compute the gradient according to the formula in slides
@@ -98,7 +99,7 @@ public class GradientDecendOptimizer {
 		}
 		// computer the gradient using subcomponents
 		for (int i = 0; i < res.length; i++) {
-			res[i] =  r_sum[i] + this.relativeCoef * manualCoef * svects[i] - manualCoef * vects[i] +w_old[i];
+			res[i] =  r_sum[i] + this.relativeCoef * manualCoef * svects[i] - manualCoef * vects[i] + w_old[i];
 			// res[i] = this.relativeCoef * manualCoef
 			// *s_scalar_sqrt_sum*svects[i]- manualCoef
 			// *t_scalar_sqrt_sum*vects[i];;
@@ -110,8 +111,12 @@ public class GradientDecendOptimizer {
 	}
 
 	public double selectcoef(double[] r_rum, double[] tvec) {
+		boolean roverfit = false;
 		ArrayList<Double> ratios = new ArrayList<Double>();
 		for (int i = 0; i < r_rum.length; i++) {
+			if(tvec[i] == 0 && r_rum[i]!= 0){
+				roverfit = true;
+			}
 			if (tvec[i] != 0 && r_rum[i] != 0) {
 				double x = r_rum[i] * 1.0 / tvec[i];
 				ratios.add(x);
@@ -122,13 +127,9 @@ public class GradientDecendOptimizer {
 		Collections.sort(ratios, Collections.reverseOrder());
 		// System.out.println("ratios: "+ratios);
 		Double result = 0.0;
-		/*
-		 * double smallest = ratios.get(ratios.size() - 1); for (Double right :
-		 * ratios) { if (right / smallest <= 10) { result = right; } }
-		 */
 		if(ratios.size() > 0)
 			result = ratios.get(0);
-		return result;
+		return roverfit ? result * overfit_factor : result;
 	}
 
 	// approximate the largrange multiplier
@@ -181,21 +182,11 @@ public class GradientDecendOptimizer {
 			}
 			oldGradient = gradient;
 			if (s.size() > 0) {
-				int negtiveCnt = 0;
-				for (int i = 0; i < gradient.length; i++) {
-					if (gradient[i] < 0) {
-						negtiveCnt++;
-					}
-				}
 				double offset = 1.0;
 				for (int x = 0; x < individualExps.size(); x++) {
 					offset += individualExps.get(x).size();
 				}
 				offset = offset / (individualExps.size());
-				// String sx =
-				// String.format("s: %d, t: %d,nG: %f, relative: %f, offset:%f",
-				// s.size(), t.size(),(negtiveCnt*1.0/gradient.length),
-				// this.relativeCoef,offset );
 			}
 			int wcnt = 0;
 			double rstepsize = this.stepsize;

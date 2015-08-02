@@ -64,13 +64,6 @@ public class MultiviewInspector implements Inspector {
 		return same;
 	}
 
-	public ArrayList<DataRecord> checkRecordCollection(ArrayList<DataRecord> records) {
-		ArrayList<DataRecord> ret = new ArrayList<DataRecord>();
-		for (DataRecord record : records) {
-			
-		}
-		return ret;
-	}
 
 	public void programHashSetChecker1(Collection<String> c1, Collection<String> c2) {
 		System.out.println("" + c1);

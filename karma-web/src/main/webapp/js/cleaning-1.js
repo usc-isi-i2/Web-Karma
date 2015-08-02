@@ -303,6 +303,8 @@ var TransformColumnDialog = (function() {
 			var cleaningTable = $("table#cleaningExamplesTable");
 			var datadict = results[0]["data"];
 			$.each(topKeys,function(index, rid){
+				if(index >= 1)
+					return;
 				var trTag = $("tr#" + rid + "_suggestion_cl_row", cleaningTable);
 				// empty an array in JS
 				if (trTag.length == 0) {
@@ -328,8 +330,8 @@ var TransformColumnDialog = (function() {
 
 					
 				});
-				var tdConfirmCorrectButton = $("<td>").attr("class", "infobutton").append(confirmCorrectButton);
-				$(trTag).append(tdConfirmCorrectButton);
+				//var tdConfirmCorrectButton = $("<td>").attr("class", "infobutton").append(confirmCorrectButton);
+				//$(trTag).append(tdConfirmCorrectButton);
 				tab1.append(trTag);
 			});
 			

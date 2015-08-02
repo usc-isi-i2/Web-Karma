@@ -31,7 +31,6 @@ public class Partition implements GrammarTreeNode {
 	public long size() {
 		return trace.size();
 	}
-
 	public Partition(Vector<Vector<TNode>> org, Vector<Vector<TNode>> tar) {
 		this.orgNodes = org;
 		this.tarNodes = tar;
@@ -118,9 +117,10 @@ public class Partition implements GrammarTreeNode {
 		ArrayList<String> lines = new ArrayList<String>();
 		for(int i = 0; i<this.orgNodes.size(); i++)
 		{
-			String line= UtilTools.print(this.orgNodes.get(i))+"   "+UtilTools.print(this.tarNodes.get(i))+"\n";
+			String line= UtilTools.print(this.orgNodes.get(i))+"	"+UtilTools.print(this.tarNodes.get(i))+"\n";
 			lines.add(line);
 		}
+		
 		Collections.sort(lines);
 		s += Arrays.toString(lines.toArray());
 		return s;

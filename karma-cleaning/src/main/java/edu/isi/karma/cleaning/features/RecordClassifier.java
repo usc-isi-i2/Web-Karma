@@ -42,9 +42,11 @@ public class RecordClassifier implements PartitionClassifierType {
 	HashMap<String, Double> labelMapping = new HashMap<String, Double>();
 	public double[] maxValues;
 	public double[] minValues;
-	public int ctype = svm_parameter.C_SVC; 
+	public int ctype = svm_parameter.C_SVC;
 	public double nu = 0.5;
 	public int feature_cnt = 0;
+	public double power = 1.0;
+	public svm_model tempModelbuf = null;
 	public RecordClassifier() {
 		this.rf = new RecordFeatureSet();
 	}
@@ -52,13 +54,15 @@ public class RecordClassifier implements PartitionClassifierType {
 	public RecordClassifier(RecordFeatureSet rf) {
 		this.rf = rf;
 	}
-	public RecordClassifier(RecordFeatureSet rfs, int type){
+
+	public RecordClassifier(RecordFeatureSet rfs, int type) {
 		this.rf = rfs;
 		this.ctype = type;
-		if(ctype == svm_parameter.ONE_CLASS){
+		if (ctype == svm_parameter.ONE_CLASS) {
 			this.nu = 0.01;
-		}	
+		}
 	}
+
 	public void init(String[] vocb) {
 		this.trainData = new ArrayList<svm_node[]>();
 		this.targets = new ArrayList<Double>();
@@ -75,7 +79,7 @@ public class RecordClassifier implements PartitionClassifierType {
 		// convert value to feature vector
 		rawData.add(v);
 		svm_node[] testNodes = new svm_node[value.length];
-		feature_cnt = feature_cnt != 0 ? feature_cnt: value.length;
+		feature_cnt = feature_cnt != 0 ? feature_cnt : value.length;
 		for (int k = 0; k < testNodes.length; k++) {
 			svm_node node = new svm_node();
 			node.index = k;
@@ -107,7 +111,7 @@ public class RecordClassifier implements PartitionClassifierType {
 		for (int k = 0; k < cfeat.size(); k++) {
 			svm_node node = new svm_node();
 			node.index = k;
-			node.value = x[k].getScore();
+			node.value = x[k].getScore(value);
 			testNodes[k] = node;
 		}
 		this.trainData.add(testNodes);
@@ -124,10 +128,9 @@ public class RecordClassifier implements PartitionClassifierType {
 		}
 	}
 
-	public void printTraindata(svm_node[][] data) {
+	public String printTraindata(svm_node[][] data) {
 		String res = "";
-		String line = Arrays.toString(this.rf.getFeatureNames().toArray(
-				new String[this.feature_cnt]));
+		String line = Arrays.toString(this.rf.getFeatureNames().toArray(new String[this.feature_cnt]));
 		res += line + "\n";
 		for (svm_node[] l : data) {
 			String tmp = "";
@@ -137,6 +140,7 @@ public class RecordClassifier implements PartitionClassifierType {
 			tmp = tmp.substring(0, tmp.length() - 1);
 			res += tmp + "\n";
 		}
+		return res;
 	}
 
 	// duplicate data to avoid the situation that one instance per class (svm
@@ -175,24 +179,10 @@ public class RecordClassifier implements PartitionClassifierType {
 		ulogger.info("Diagnose info....Vocbulary learned: " + s);
 	}
 
-	public void rescale(svm_node[] tmp) {
-		double[] maxvals = this.maxValues;
-		double[] minvals = this.minValues;
-		for (int i = 0; i < tmp.length; i++) {
-			if (maxvals[i] > minvals[i]) {
-				tmp[i].value = (tmp[i].value - minvals[i]) * 1.0
-						/ (maxvals[i] - minvals[i]);
-			} else {
-				tmp[i].value = 0;
-			}
-		}
-	}
-
 	public void convertToCSVfile() {
 		ArrayList<String[]> xArrayList = new ArrayList<String[]>();
 		String[] attrname = new String[feature_cnt + 1];
-		String[] names = rf.getFeatureNames().toArray(
-				new String[attrname.length - 1]);
+		String[] names = rf.getFeatureNames().toArray(new String[attrname.length - 1]);
 		// add attribute names
 		System.arraycopy(names, 0, attrname, 0, names.length);
 		attrname[attrname.length - 1] = "label";
@@ -206,8 +196,7 @@ public class RecordClassifier implements PartitionClassifierType {
 			xArrayList.add(row);
 		}
 		try {
-			CSVWriter cr = new CSVWriter(new FileWriter(
-					"/Users/bowu/Research/testdata/tmp/data.csv"));
+			CSVWriter cr = new CSVWriter(new FileWriter("/Users/bowu/Research/testdata/tmp/data.csv"));
 			for (String[] line : xArrayList) {
 				cr.writeNext(line);
 			}
@@ -217,7 +206,19 @@ public class RecordClassifier implements PartitionClassifierType {
 		}
 	}
 
-	public void NormalizeTrainingData() {
+	public void NormalizeTestingData(svm_node[] tmp) {
+		double[] maxvals = this.maxValues;
+		double[] minvals = this.minValues;
+		for (int i = 0; i < tmp.length; i++) {
+			if (maxvals[i] > minvals[i]) {
+				tmp[i].value = Math.pow((tmp[i].value - minvals[i]) * 1.0 / (maxvals[i] - minvals[i]), this.power);
+			} else {
+				tmp[i].value = 0;
+			}
+		}
+	}
+
+	public void NormalizeTrainingData(double power) {
 		int featuresize = feature_cnt;
 		double[] maxvals = new double[featuresize];
 		maxvals = UtilTools.initArray(maxvals, -1);
@@ -239,8 +240,7 @@ public class RecordClassifier implements PartitionClassifierType {
 		for (svm_node[] tmp : trainData) {
 			for (int i = 0; i < tmp.length; i++) {
 				if (maxvals[i] > minvals[i]) {
-					tmp[i].value = (tmp[i].value - minvals[i]) * 1.0
-							/ (maxvals[i] - minvals[i]);
+					tmp[i].value = Math.pow((tmp[i].value - minvals[i]) * 1.0 / (maxvals[i] - minvals[i]), power);
 				} else {
 					tmp[i].value = 0;
 				}
@@ -248,8 +248,18 @@ public class RecordClassifier implements PartitionClassifierType {
 		}
 	}
 
+	public svm_node[] powerNormalize(double factor, svm_node[] line) {
+		svm_node[] newline = new svm_node[line.length];
+		for (int i = 0; i < line.length; i++) {
+			newline[i] = new svm_node();
+			newline[i].index = line[i].index;
+			newline[i].value = Math.pow(line[i].value, factor);
+		}
+		return newline;
+	}
+
 	public void parameterselectionandScale() {
-		this.NormalizeTrainingData();
+		this.NormalizeTrainingData(1.0);
 		this.gridSearch();
 	}
 
@@ -270,58 +280,97 @@ public class RecordClassifier implements PartitionClassifierType {
 
 	@Override
 	public String learnClassifer() {
-		//dignose();
+		// dignose();
+		this.expandData();
 		this.parameterselectionandScale();
 		return "";
 	}
 
+	public double getAccuracyforParameter(double gamma, double c) {
+		svm_model model = internallearnClassifer(gamma, c, trainData, targets);
+		double x = getAccuracy(model, trainData, targets);
+		return x;
+	}
+
+	public double mean(double[] array) {
+		double sum = 0.0;
+		for (double d : array) {
+			sum += d;
+		}
+		return sum * 1.0 / array.length;
+	}
+
 	public void gridSearch() {
-		double[][] gammas = { { 0.001,0.005, 0.01, 0.03, 0.05,0.1,0.5},
-				{ 0.06, 0.07, 0.08, 0.09, 0.1 } };
-		double[][] c = { { 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 },
-				{ 2.0, 3.0, 4.0, 5.0, 6.0 } };
+		double benchMark = 1.0 / this.rf.getFeatureNames().size();
+		double[][] gammas = { { benchMark * 0.1, benchMark * 0.2, benchMark * 0.3 }, { benchMark * 0.4, benchMark * 0.5, benchMark * 0.6 },
+				{ benchMark * 0.7, benchMark * 0.8, benchMark * 0.9, benchMark }, { benchMark, benchMark * 1.1, benchMark * 1.2, benchMark * 1.3, benchMark * 1.4, benchMark * 1.5 },
+				{ benchMark * 1.6, benchMark * 1.7, benchMark * 1.8, benchMark * 1.9, benchMark * 2.0 } };
+		double[][] c = { { 0.5, 0.6, 0.7 }, { 0.8, 0.9, 1.0 }, { 2.0, 3.0, 4.0, 5.0, 6.0 } };
+		double[][] power = { { 0.1, 0.2, 0.3 }, { 0.4, 0.5, 0.6, 0.7 }, { 0.8, 0.9, 1.0 } };
 		double maxAcc = -1;
 		double optG = 0.5;
 		double optC = 1;
-		// coarse level search
-		double[] gInd = {
-				(gammas[0][0] + gammas[0][gammas[0].length - 1]) * 1.0 / 2,
-				(gammas[1][0] + gammas[1][gammas[1].length - 1]) * 1.0 / 2 };
-		double[] cInd = { (c[0][0] + c[0][c[0].length - 1]) * 1.0 / 2,
-				(c[1][0] + c[1][c[1].length - 1]) * 1.0 / 2 };
-		int gIndex = -1;
-		int cIndex = -1;
-		for (int i = 0; i < gInd.length; i++) {
-			for (int j = 0; j < cInd.length; j++) {
-				double acc = cross_verify(gInd[i], cInd[j]);
-				if (acc > maxAcc) {
-					maxAcc = acc;
-					gIndex = i;
-					cIndex = j;
-
+		double optP = 1;
+		int gindex = 0, cindex = 0, pindex = 0;
+		for (int i = 0; i < gammas.length; i++) {
+			for (int j = 0; j < c.length; j++) {
+				for (int k = 0; k < power.length; k++) {
+					double acc = cross_verify(mean(gammas[i]), mean(c[j]), mean(power[k]));
+					if (acc > maxAcc) {
+						optG = mean(gammas[i]);
+						optC = mean(c[j]);
+						optP = mean(power[k]);
+						gindex = i;
+						cindex = j;
+						pindex = k;
+						maxAcc = acc;
+					}
 				}
 			}
 		}
 		maxAcc = -1;
-		// fine level search
-		for (int i = 0; i < gammas[gIndex].length; i++) {
-			for (int j = 0; j < c[cIndex].length; j++) {
-				double acc = cross_verify(gammas[gIndex][i], c[cIndex][j]);
-				if (acc > maxAcc) {
-					maxAcc = acc;
-					optC = c[cIndex][j];
-					optG = gammas[gIndex][i];
+		for (int i = 0; i < gammas[gindex].length; i++) {
+			for (int j = 0; j < c[cindex].length; j++) {
+				for (int k = 0; k < power[pindex].length; k++) {
+					if (maxAcc == 1) {
+						break;
+					}
+					double acc = cross_verify(gammas[gindex][i], c[cindex][j], power[pindex][k]);
+					if (acc > maxAcc) {
+						maxAcc = acc;
+						this.model = this.tempModelbuf;
+						optC = c[cindex][j];
+						optG = gammas[gindex][i];
+						optP = power[pindex][k];
+					}
 				}
 			}
 		}
-		// retain on all the data
-		//System.out.println(String.format("Gamma: %f, C: %f, Acc: %f", optG,optC, maxAcc));
-		this.model = internallearnClassifer(optG, optC, trainData, targets);
-		return;
+		ArrayList<svm_node[]> normalized = new ArrayList<svm_node[]>();
+		this.power = optP;
+		for (svm_node[] line : trainData) {
+			normalized.add(powerNormalize(optP, line));
+		}
+		trainData = normalized;
 	}
 
-	public double cross_verify(double gamma, double c) {
-		double acc = 0.0;
+	public int getMultiplierScale(HashMap<Double, ArrayList<Integer>> labPos, int fold) {
+		ArrayList<Integer> ret = new ArrayList<Integer>();
+		for (Double key : labPos.keySet()) {
+			ret.add(labPos.get(key).size());
+		}
+		Collections.sort(ret);
+		int min = ret.get(0);
+		if (fold <= min) {
+			return 0;
+		} else {
+			if (min == 0) {
+				min = 1;
+			}
+			return fold / min;
+		}
+	}
+	public void expandData(){
 		int fold = 5;
 		HashMap<Double, ArrayList<Integer>> labPos = new HashMap<Double, ArrayList<Integer>>();
 		for (int i = 0; i < targets.size(); i++) {
@@ -334,7 +383,60 @@ public class RecordClassifier implements PartitionClassifierType {
 				labPos.put(l, pos);
 			}
 		}
-
+		int times = getMultiplierScale(labPos, fold);
+		for (Double l : labPos.keySet()) {
+			ArrayList<Integer> ditems = (ArrayList<Integer>) labPos.get(l).clone();
+			for (int t = 1; t < times; t++) {
+				labPos.get(l).addAll(ditems);
+			}
+		}
+		ArrayList<svm_node[]> train = new ArrayList<svm_node[]>();
+		ArrayList<Double> tar = new ArrayList<Double>();
+		for (Double l : labPos.keySet()) {
+			int datasize = labPos.get(l).size();
+			for (int k = 0; k < datasize; k++) {
+				int itemIndex = labPos.get(l).get(k);
+				train.add(deepCopy(trainData.get(itemIndex)));
+				tar.add(targets.get(itemIndex));
+			}
+		}
+		this.trainData = train;
+		this.targets = tar;
+	}
+	public svm_node[] deepCopy(svm_node[] org){
+		svm_node[] ret = new svm_node[org.length];
+		for(int i = 0; i < ret.length; i++){
+			svm_node n = new svm_node();
+			n.index = org[i].index;
+			n.value = org[i].value;
+			ret[i] = n;
+		}
+		return ret;
+	}
+	public double cross_verify(double gamma, double c, double pow) {
+		double acc = 0.0;
+		double bestIter = -1;
+		svm_model bestModel = null;
+		int fold = 5;
+		HashMap<Double, ArrayList<Integer>> labPos = new HashMap<Double, ArrayList<Integer>>();
+		for (int i = 0; i < targets.size(); i++) {
+			Double l = targets.get(i);
+			if (labPos.containsKey(l)) {
+				labPos.get(l).add(i);
+			} else {
+				ArrayList<Integer> pos = new ArrayList<Integer>();
+				pos.add(i);
+				labPos.put(l, pos);
+			}
+		}
+		/*
+		int times = getMultiplierScale(labPos, fold);
+		for (Double l : labPos.keySet()) {
+			ArrayList<Integer> ditems = (ArrayList<Integer>) labPos.get(l).clone();
+			for (int t = 1; t < times + 1; t++) {
+				labPos.get(l).addAll(ditems);
+			}
+		}*/
 		for (int i = 0; i < fold; i++) {
 			ArrayList<svm_node[]> tmpTrain = new ArrayList<svm_node[]>();
 			ArrayList<svm_node[]> tmpTest = new ArrayList<svm_node[]>();
@@ -342,36 +444,31 @@ public class RecordClassifier implements PartitionClassifierType {
 			ArrayList<Double> tmpTesttar = new ArrayList<Double>();
 			for (Double l : labPos.keySet()) {
 				int datasize = labPos.get(l).size();
-				if (datasize < fold) {
-					// add its own data until reach the fold number
-					int times = fold / datasize;
-					@SuppressWarnings("unchecked")
-					ArrayList<Integer> ditems = (ArrayList<Integer>) labPos.get(l).clone();
-					for (int t = 1; t < times+1; t++) {
-						labPos.get(l).addAll(ditems);
-					}
-					datasize = labPos.get(l).size();
-				}
 				for (int k = 0; k < datasize; k++) {
 					int itemIndex = labPos.get(l).get(k);
 					if (k % fold == i) {
-						tmpTest.add(trainData.get(itemIndex));
+						tmpTest.add(powerNormalize(pow, trainData.get(itemIndex)));
 						tmpTesttar.add(targets.get(itemIndex));
 					} else {
-						tmpTrain.add(trainData.get(itemIndex));
+						tmpTrain.add(powerNormalize(pow, trainData.get(itemIndex)));
 						tmpTraintar.add(targets.get(itemIndex));
 					}
 				}
 			}
-			svm_model m = internallearnClassifer(gamma, c, tmpTrain,
-					tmpTraintar);
-			acc += getAccuracy(m, tmpTest, tmpTesttar);
+			svm_model m = internallearnClassifer(gamma, c, tmpTrain, tmpTraintar);
+			double iteracc = getAccuracy(m, tmpTest, tmpTesttar);
+			acc += iteracc;
+			if(iteracc > bestIter){
+				bestIter = iteracc;
+				bestModel = m;
+			}
 		}
-		return acc * 1.0 / fold;
+		this.tempModelbuf = bestModel;
+		double ret =  acc * 1.0 / fold;
+		return ret;
 	}
 
-	public double getAccuracy(svm_model m, ArrayList<svm_node[]> tData,
-			ArrayList<Double> tars) {
+	public double getAccuracy(svm_model m, ArrayList<svm_node[]> tData, ArrayList<Double> tars) {
 		if (tData.size() == 0) {
 			return 0;
 		}
@@ -385,23 +482,21 @@ public class RecordClassifier implements PartitionClassifierType {
 		return 1 - errorCnt * 1.0 / tData.size();
 	}
 
-	public svm_model internallearnClassifer(double gamma, double c,
-			ArrayList<svm_node[]> tData, ArrayList<Double> tars) {
+	public svm_model internallearnClassifer(double gamma, double c, ArrayList<svm_node[]> tData, ArrayList<Double> tars) {
 		// duplicateData();
 		this.convertToCSVfile();
 		svm_problem problem = new svm_problem();
 		problem.l = tData.size();
 		problem.x = tData.toArray(new svm_node[tData.size()][]); // feature
 																	// nodes
-		problem.y = ArrayUtils
-				.toPrimitive(tars.toArray(new Double[tars.size()])); // target
-																		// values
+		problem.y = ArrayUtils.toPrimitive(tars.toArray(new Double[tars.size()])); // target
+																					// values
 		svm_parameter parameters = new svm_parameter();
 
 		parameters.gamma = gamma;
 		parameters.svm_type = ctype;
 		parameters.kernel_type = svm_parameter.RBF;
-		//parameters.kernel_type = svm_parameter.LINEAR;
+		// parameters.kernel_type = svm_parameter.LINEAR;
 		parameters.degree = 3;
 		parameters.coef0 = 0;
 		parameters.nu = this.nu;
@@ -433,9 +528,10 @@ public class RecordClassifier implements PartitionClassifierType {
 		svm_model model = svm.svm_train(problem, parameters);
 		return model;
 	}
-	public String getLabel(double[] value){
+
+	public String getLabel(double[] value) {
 		svm_node[] testNodes = new svm_node[value.length];
-		for(int k = 0; k < testNodes.length; k++){
+		for (int k = 0; k < testNodes.length; k++) {
 			svm_node node = new svm_node();
 			node.index = k;
 			node.value = value[k];
@@ -443,6 +539,20 @@ public class RecordClassifier implements PartitionClassifierType {
 		}
 		double v = svm.svm_predict(model, testNodes);
 		return findLable(v);
+	}
+	private svm_node[] getNodes(String value){
+		Collection<Feature> cfeat = rf.computeFeatures(value, "");
+		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
+		// row.add(f.getName());
+		svm_node[] testNodes = new svm_node[cfeat.size()];
+		for (int k = 0; k < cfeat.size(); k++) {
+			svm_node node = new svm_node();
+			node.index = k;
+			node.value = x[k].getScore(value);
+			testNodes[k] = node;
+		}
+		NormalizeTestingData(testNodes);
+		return testNodes;
 	}
 	@Override
 	public String getLabel(String value) {
@@ -453,14 +563,14 @@ public class RecordClassifier implements PartitionClassifierType {
 		for (int k = 0; k < cfeat.size(); k++) {
 			svm_node node = new svm_node();
 			node.index = k;
-			node.value = x[k].getScore();
+			node.value = x[k].getScore(value);
 			testNodes[k] = node;
 		}
 		/* temp test */
 
 		// double[] prob_estimates = new
 		// double[this.labelMapping.keySet().size()];
-		rescale(testNodes);
+		NormalizeTestingData(testNodes);
 		double v = svm.svm_predict(model, testNodes);
 		// find string lable
 		return findLable(v);
@@ -479,12 +589,12 @@ public class RecordClassifier implements PartitionClassifierType {
 	}
 
 	public void selfVerify2() {
+		System.out.println(this.rf.getFeatureNames());
 		for (int i = 0; i < this.trainData.size(); i++) {
-			System.out.println("Label: " + this.rawData.get(i) + ", "
-					+ this.getLabel(this.rawData.get(i)));
-			System.out.println("Test1:" + this.printLine(trainData.get(i)));
-			System.out.println("Model: "
-					+ svm.svm_predict(model, this.trainData.get(i)));
+			//System.out.println("Label: " + this.rawData.get(i) + ", " + this.targets.get(i));
+			System.out.println(this.printLine(trainData.get(i)));
+			System.out.println(this.printLine(this.getNodes(rawData.get(i))));
+			//System.out.println("Model: " + svm.svm_predict(model, this.trainData.get(i)));
 		}
 	}
 
@@ -511,7 +621,7 @@ public class RecordClassifier implements PartitionClassifierType {
 	}
 
 	public void testOnFile() {
-		String[] vocbs = { "=","\\(", "-","'", "\\.", "/" };
+		String[] vocbs = { };
 		String fpath1 = "/Users/bowu/Research/testdata/tmp/data.txt";
 		String fpath2 = "/Users/bowu/Research/testdata/tmp/labels.txt";
 		try {
@@ -533,6 +643,7 @@ public class RecordClassifier implements PartitionClassifierType {
 			RecordFeatureSet rfs = new RecordFeatureSet();
 			rfs.addVocabulary(vocbs);
 			this.rf = rfs;
+			int testSplit = 20;
 			for (int i = 0; i < data.size(); i++) {
 				addTrainingData(data.get(i), "c" + labels.get(i));
 			}
@@ -543,7 +654,7 @@ public class RecordClassifier implements PartitionClassifierType {
 				String tmpline = String.format("%s, %s, %s\n", predict, rlabel, data.get(i));
 				System.out.println(""+tmpline);
 			}
-			selfVerify();
+			selfVerify2();
 			br1.close();
 			br2.close();
 		} catch (Exception ex) {
@@ -552,38 +663,6 @@ public class RecordClassifier implements PartitionClassifierType {
 	}
 
 	public static void main(String[] args) {
-		// RecordFeatureSet rfs = new RecordFeatureSet();
-		// String[] vocbs = { "D", "E", "G", "(", ")", "H", ".", "in", "I",
-		// "DIGITs", "W", "cm", "P", "x" };
-		// // String[] vocbs ={};
-		// rfs.addVocabulary(vocbs);
-		// RecordClassifier rcf = new RecordClassifier(rfs);
-		// rcf.addTrainingData(
-		// "11.75 in|15.5 in HIGH x 15.75 in|19.75 in WIDE(29.84 cm|39.37 cm HIGH x 40.00 cm|50.16 cm WIDE)",
-		// "c1");
-		// rcf.addTrainingData(
-		// "7.25 in|11.5 in HIGH x 9.25 in|13 in WIDE(18.41 cm|29.21 cm HIGH x 23.49 cm|33.02 cm WIDE)",
-		// "c1");
-		// rcf.addTrainingData(
-		// "9.75 in|16 in HIGH x 13.75 in|19.5 in WIDE(24.76 cm|40.64 cm HIGH x 34.92 cm|49.53 cm WIDE)",
-		// "c1");
-		// rcf.addTrainingData("20 in. HIGH x 24 in. WIDE", "c2");
-		// rcf.addTrainingData("26 in. HIGH x 22.5 in. WIDE", "c2");
-		// rcf.addTrainingData("10.25 in. HIGH x 8.5 in. WIDE", "c2");
-		// rcf.addTrainingData("59.75 in WIDE(151.76 cm WIDE)", "c3");
-		// rcf.addTrainingData("29.75 in HIGH(75.56 cm HIGH)", "c4");
-		// rcf.learnClassifer();
-		// for (String val : rcf.rawData) {
-		// System.out.println("class: " + rcf.getLabel(val));
-		// }
-		//
-		// System.out.println("self verifying....");
-		// System.out.println(rcf.selfVerify());
-		// // System.out.println("class: "+rcf.getLabel("."));
-		// // System.out.println("class: "+rcf.getLabel("&$"));
-		/*RecordFeatureSet rfs1 = new RecordFeatureSet();
-		String[] vocbs1 = { "by", "G", "L", "M", "K", "ade", "DIGITs" };
-		rfs1.addVocabulary(vocbs1);*/
 		RecordClassifier rcf1 = new RecordClassifier();
 		rcf1.testOnFile();
 	}

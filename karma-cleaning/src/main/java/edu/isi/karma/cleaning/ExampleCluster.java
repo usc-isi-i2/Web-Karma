@@ -22,7 +22,8 @@ public class ExampleCluster {
 	HashMap<String, Vector<String>> uorgclusters = new HashMap<String, Vector<String>>();
 	// HashMap<String, double[]> string2Vector = new HashMap<String,
 	// double[]>();
-	int unlabelDataAmount = 3;
+	public static int unlabelDataScale = 4;
+	int unlabelDataAmount = unlabelDataScale;
 	double assignThreshold = 0.1;
 	public int featuresize = 0;
 	public int failedCnt = 0;
@@ -110,7 +111,7 @@ public class ExampleCluster {
 
 	public void init() {
 		if (option == method.DP || option == method.DPIC) {
-			this.unlabelDataAmount = 3;
+			this.unlabelDataAmount = unlabelDataScale;
 		} else {
 			this.unlabelDataAmount = 0;
 		}
@@ -289,13 +290,8 @@ public class ExampleCluster {
 			}
 		}
 		if (pars.size() > 1)
-			updateDistanceMetric(pars); // tune the final weight given the
-										// current
-		// clusters
-		// assign ulabled data to each partition
-		for (Partition p : pars) {
-			p.orgUnlabeledData.clear();
-		}
+			updateDistanceMetric(pars); 
+	
 		if (pars.size() >= 2) {
 			assignUnlabeledData(pars);
 		}
@@ -304,6 +300,9 @@ public class ExampleCluster {
 	}
 
 	public void assignUnlabeledData(Vector<Partition> pars) {
+		for (Partition p : pars) {
+			p.orgUnlabeledData.clear();
+		}
 		HashMap<String, Double> dists = new HashMap<String, Double>();
 		// find the distance between partitions
 		for (int i = 0; i < pars.size(); i++) {
@@ -352,24 +351,13 @@ public class ExampleCluster {
 					testResult.get(p_index).put(val, min_val);
 				}
 			}
-			/*
-			 * if (p_index.orgUnlabeledData.size() < 10) {
-			 * p_index.orgUnlabeledData.add(val); }
-			 */
 		}
 		for (Partition key : testResult.keySet()) {
 			Map<?, ?> dicttmp = UtilTools.sortByComparator(testResult.get(key));
-			/** print unlabeled data **/
-			// System.out.println("Partition: " + key.label);
-			// ProgTracker.printUnlabeledData(dicttmp);
-			/****/
 			int cnt = 0;
 			for (Object xkey : dicttmp.keySet()) {
 				if (cnt < unlabelDataAmount * key.orgNodes.size()) {
-					if (exampleInputs.contains((String) xkey))// exclude
-																// examples from
-																// unlabeled
-																// data
+					if (exampleInputs.contains((String) xkey))
 						continue;
 					key.orgUnlabeledData.add((String) xkey);
 					cnt++;
@@ -460,7 +448,7 @@ public class ExampleCluster {
 		Feature[] x = cfeat.toArray(new Feature[cfeat.size()]);
 		double[] res = new double[x.length];
 		for (int i = 0; i < x.length; i++) {
-			res[i] = x[i].getScore();
+			res[i] = x[i].getScore(s);
 		}
 		return res;
 	}

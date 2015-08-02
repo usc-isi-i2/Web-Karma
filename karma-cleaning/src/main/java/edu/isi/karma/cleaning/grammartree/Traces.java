@@ -122,60 +122,10 @@ public class Traces implements GrammarTreeNode {
 
 	Vector<Segment> findSegs(int pos) {
 		Vector<Segment> ret = new Vector<Segment>();
-		ret = SegmentMapper.findMapping(orgNodes, tarNodes, pos);
+		SegmentMapper mapper = new SegmentMapper();
+		ret = mapper.findMapping(orgNodes, tarNodes, pos);
 		return ret;
 	}
-
-	// find all segments starting from pos
-	/*
-	 * Vector<Segment> findSegs(int pos) { Vector<Segment> segs = new
-	 * Vector<Segment>(); if (tarNodes.size() == 0) { int[] mapping = { 0, 0 };
-	 * Vector<int[]> corrm = new Vector<int[]>(); corrm.add(mapping); Segment s
-	 * = new Segment(0, 0, corrm, orgNodes, tarNodes); segs.add(s); return segs;
-	 * } if (pos >= tarNodes.size()) return segs; Vector<TNode> tmp = new
-	 * Vector<TNode>(); tmp.add(tarNodes.get(pos)); // identify the const string
-	 * int q = Ruler.Search(orgNodes, tmp, 0); if (q == -1) { int cnt = pos;
-	 * Vector<TNode> tvec = new Vector<TNode>(); while (q == -1) {
-	 * tvec.add(tarNodes.get(cnt)); cnt++; tmp.clear(); if (cnt >=
-	 * tarNodes.size()) break; tmp.add(tarNodes.get(cnt)); q =
-	 * Ruler.Search(orgNodes, tmp, 0); } String key =
-	 * UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos +
-	 * cnt; Segment seg; if (AllSegs.containsKey(key)) { seg = AllSegs.get(key);
-	 * } else { seg = new Segment(pos, cnt, tvec); AllSegs.put(key, seg); }
-	 * segs.add(seg); return segs; } for (int i = pos; i < tarNodes.size(); i++)
-	 * { Vector<TNode> tvec = new Vector<TNode>(); for (int j = pos; j <= i;
-	 * j++) { tvec.add(tarNodes.get(j)); } Vector<Integer> mappings = new
-	 * Vector<Integer>(); int r = Ruler.Search(orgNodes, tvec, 0); while (r !=
-	 * -1) { mappings.add(r); r = Ruler.Search(orgNodes, tvec, r + 1); } if
-	 * (mappings.size() > 1) { Vector<int[]> corrm = new Vector<int[]>(); for
-	 * (int t : mappings) { int[] m = { t, t + tvec.size() }; corrm.add(m); } //
-	 * create a segment now String key =
-	 * UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos + (i
-	 * + 1); Segment s; if (AllSegs.containsKey(key)) { s = AllSegs.get(key); }
-	 * else { s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
-	 * AllSegs.put(key, s); } if (s.section.size() > 0) segs.add(s); continue; }
-	 * else if (mappings.size() == 1) { Vector<int[]> corrm = new
-	 * Vector<int[]>(); // creating based on whether can find segment with one
-	 * more // token if (i >= (tarNodes.size() - 1)) { int[] m = {
-	 * mappings.get(0), mappings.get(0) + tvec.size() }; corrm.add(m); String
-	 * key = UtilTools.print(this.tarNodes) +
-	 * UtilTools.print(this.orgNodes)+pos+(i+1); Segment s; if
-	 * (AllSegs.containsKey(key)) { s = AllSegs.get(key); } else { s = new
-	 * Segment(pos, i + 1, corrm, orgNodes, tarNodes); AllSegs.put(key, s); } if
-	 * (s.section.size() > 0) segs.add(s); } else { tvec.add(tarNodes.get(i +
-	 * 1)); int p = Ruler.Search(orgNodes, tvec, 0); Vector<TNode> repToken =
-	 * new Vector<TNode>(); repToken.add(tarNodes.get(i + 1)); int rind = 0; int
-	 * tokenCnt = 0; while ((rind = Ruler.Search(orgNodes, repToken, rind)) !=
-	 * -1) { rind++; tokenCnt++; } if (p == -1 || (tokenCnt > 1 &&
-	 * tarNodes.get(i + 1).text .compareTo(" ") != 0)) { int[] m = {
-	 * mappings.get(0), mappings.get(0) + tvec.size() - 1 }; corrm.add(m);
-	 * String key =
-	 * UtilTools.print(this.orgNodes)+UtilTools.print(this.tarNodes) + pos + (i
-	 * + 1); Segment s; if (AllSegs.containsKey(key)) { s = AllSegs.get(key); }
-	 * else { s = new Segment(pos, i + 1, corrm, orgNodes, tarNodes);
-	 * AllSegs.put(key, s); } if (s.section.size() > 0) segs.add(s); } else {
-	 * continue; } } } else { break; } } return segs; }
-	 */
 
 	public Traces mergewith(Traces t) {
 		// merge segment lines

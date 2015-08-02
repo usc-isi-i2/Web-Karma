@@ -1,6 +1,7 @@
 package edu.isi.karma.cleaning;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,13 +10,14 @@ import java.util.Vector;
 import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 
-import edu.isi.karma.cleaning.research.Prober;
+import antlr.Utils;
 import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
 import edu.isi.karma.cleaning.grammartree.Partition;
 import edu.isi.karma.cleaning.grammartree.Position;
 import edu.isi.karma.cleaning.grammartree.PositionSet;
 import edu.isi.karma.cleaning.grammartree.Section;
 import edu.isi.karma.cleaning.grammartree.Segment;
+import edu.isi.karma.cleaning.grammartree.TNode;
 import edu.isi.karma.cleaning.grammartree.Template;
 import edu.isi.karma.cleaning.grammartree.Traces;
 
@@ -28,7 +30,7 @@ public class ProgramAdaptator {
 		if (exp2program.containsKey(key2)) {
 			return exp2program.get(key2);
 		}
-		if (examples.size() == 1 || keys.size()==0) {
+		if (examples.size() == 1 || keys.size() == 0) {
 			ExamplePartitions tool = new ExamplePartitions();
 			ArrayList<String[]> tmpKey = new ArrayList<String[]>();
 			tmpKey.add(examples.get(0));
@@ -49,10 +51,9 @@ public class ProgramAdaptator {
 				prog = p1.toProgram();
 				exp2program.put(tK, prog);
 			}
-			if(keys.size() != 0){
+			if (keys.size() != 0) {
 				return prog;
-			}
-			else{
+			} else {
 				keys.add(0);
 			}
 		}
@@ -152,7 +153,8 @@ public class ProgramAdaptator {
 					break;
 				}
 			}
-			//Prober.tracePatchers(program, errNodes, inExps, exp, valid, exp2program);
+			// Prober.tracePatchers(program, errNodes, inExps, exp, valid,
+			// exp2program);
 			if (valid) {
 				Partition nPartition = cwspace.mergewith(tIn);
 				ArrayList<String[]> expr = new ArrayList<String[]>();
@@ -161,7 +163,7 @@ public class ProgramAdaptator {
 				String nKey = formKey(expr, new ArrayList<Integer>(), false);
 				// return the successfully adapted program
 				String fprog = this.applyPatch(ptree, errNodes);
-				if(!validProgram(fprog, expr)){
+				if (!validProgram(fprog, expr)) {
 					return "null";
 				}
 				// update session repo
@@ -358,18 +360,20 @@ public class ProgramAdaptator {
 		tree.children = nChildren;
 		return tree.toProgram();
 	}
-	public boolean validProgram(String prog, ArrayList<String[]> exps){
+
+	public boolean validProgram(String prog, ArrayList<String[]> exps) {
 		boolean res = true;
 		ProgramRule pr = new ProgramRule(prog);
-		for(String[] exp: exps){
+		for (String[] exp : exps) {
 			String ret = pr.transform(exp[0]);
-			if(ret.compareTo(exp[1])!= 0){
+			if (ret.compareTo(exp[1]) != 0) {
 				res = false;
 				break;
 			}
 		}
 		return res;
 	}
+
 	public boolean updateProgram(Patcher pat, GrammarTreeNode space) {
 		if (space == null)
 			return false;
@@ -570,6 +574,66 @@ public class ProgramAdaptator {
 			}
 		}
 		return res;
+	}
+
+	public ArrayList<Partition> onlyadaptConditionalStatement(ArrayList<String[]> examples, Messager msger) {
+		ArrayList<Partition> ret = new ArrayList<Partition>();
+		HashSet<Integer> toRemove = new HashSet<Integer>();
+		ArrayList<String[]> remaining = new ArrayList<String[]>();
+		ArrayList<String> keys = new ArrayList<String>();
+		do {
+			remaining = new ArrayList<String[]>();
+			toRemove.clear();
+			toRemove.addAll(chooseLargestSubset(msger.exp2program, examples));
+			ArrayList<String[]> expKeys = new ArrayList<String[]>();
+			for (int i = 0; i < examples.size(); i++) {
+				if (!toRemove.contains(i)) {
+					remaining.add(examples.get(i));
+				} else {
+					expKeys.add(examples.get(i));
+				}
+			}
+			if(!expKeys.isEmpty())
+				keys.add(UtilTools.createkey(expKeys));
+			examples = remaining;
+		} while (!toRemove.isEmpty());
+		if(keys.isEmpty()){
+			return null;
+		}
+		if(keys.size() >= 3){
+			return null;
+		}
+		for (String pid : keys) {
+			Partition p = msger.exp2Partition.get(pid);
+			String prog = msger.exp2program.get(pid);
+			Iterator<String[]> iter = remaining.iterator();
+			Ruler tokenizer = new Ruler();
+			while(iter.hasNext()){
+				String[] record = iter.next();
+				ProgramRule pRule = new ProgramRule(prog);
+				if(pRule.transform(record[0]).equals(record[1])){
+					Vector<Vector<TNode>> ovt = new Vector<Vector<TNode>>();
+					Vector<Vector<TNode>> tvt = new Vector<Vector<TNode>>();
+					tokenizer.setNewInput(record[0]);					
+					ovt.add(tokenizer.vec);
+					tokenizer.setNewInput(record[1]);
+					tvt.add(tokenizer.vec);
+					Partition pt = new Partition(ovt, tvt);
+					Partition np = p.mergewith(pt);
+					if(np != null){
+						p = np;
+						iter.remove();
+					}
+				}				
+			}
+			ret.add(p);
+		}
+		if(remaining.isEmpty())
+			return ret;
+		else{
+			return null;
+		}
+		
 	}
 
 	// identify the correspondence between the subprograms and the concrete

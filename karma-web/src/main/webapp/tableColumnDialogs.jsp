@@ -230,7 +230,7 @@
 		  				<table id="recmd" class="table table-striped table-condensed">
 		  				</table>
 			  		</div>	
-			  		<B>All Records:</B>
+			  		<B>Sampled Records:</B>
 			  		<div class="cleaningOverflowDivLarge">
 			  			<table id="cleaningExamplesTable" class="table table-striped table-condensed" style="max-height:100px; overflow:auto">
 		  				</table>

@@ -34,9 +34,9 @@ public class DataCollection {
 	public static String config = "";
 	Vector<FileStat> fstates = new Vector<FileStat>();
 	public HashSet<String> succeededFiles = new HashSet<String>();
-	@SuppressWarnings("unused")
-	public DataCollection() {
-		MyLogger myLogger = new MyLogger();
+	MyLogger myLogger = null;
+	public DataCollection(String name) {
+		myLogger = new MyLogger(name);
 	}
 	public void addSucceededFile(String fname)
 	{
@@ -55,11 +55,11 @@ public class DataCollection {
 	}
 
 	public void print() {
-		MyLogger.logsth("============Detail Information==========="
+		myLogger.logsth("============Detail Information==========="
 				+ this.getDate() + "\n");
-		MyLogger.logsth(DataCollection.config + "\n");
+		myLogger.logsth(DataCollection.config + "\n");
 		for (FileStat f : fstates) {
-			MyLogger.logsth("" + f.toString());
+			myLogger.logsth("" + f.toString());
 		}
 	}
 
@@ -92,9 +92,9 @@ public class DataCollection {
 			}
 		}
 		// get average value
-		MyLogger.logsth("============Summary Information===========\n"
+		myLogger.logsth("============Summary Information===========\n"
 				+ this.getDate() + "\n");
-		MyLogger.logsth(DataCollection.config + "\n");
+		myLogger.logsth(DataCollection.config + "\n");
 		for (String key : stats.keySet()) {
 			Double[] value = stats.get(key);
 			Double cnt = value[6];
@@ -109,7 +109,7 @@ public class DataCollection {
 			else {
 				lineString = String.format("%s_failed,T_learn,%f,avg_learn,%f,T_gen,%f,avg_gen,%f,T_exec,%f,avg_exec,%f,exp,%f,constraint,%f,clfacc,%f,parNum,%f\n",key,value[0],value[1],value[2],value[3],value[4],value[5],value[6],value[7],value[10],value[11]);
 			}
-			MyLogger.logsth(lineString);
+			myLogger.logsth(lineString);
 		}
 	}
 }

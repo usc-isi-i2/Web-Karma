@@ -72,6 +72,8 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/cleaningChart.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/model.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/augmentdata.css?<jsp:include page='version.jsp' />" />
+	<link rel="stylesheet" href="./css/font-awesome.min.css" />
+
         <%
         
         UIConfiguration.Instance().loadConfig();
@@ -359,7 +361,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/databaseImportDialog.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/d3-model-manager.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/fileImport.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/cleaning-study.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/cleaning-1.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/reset-options.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>

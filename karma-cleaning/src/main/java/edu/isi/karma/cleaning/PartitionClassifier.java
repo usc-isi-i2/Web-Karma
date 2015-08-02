@@ -2,13 +2,11 @@ package edu.isi.karma.cleaning;
 
 import java.util.Vector;
 
-import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 
 import edu.isi.karma.cleaning.grammartree.Partition;
 
 public class PartitionClassifier {
-	private PyObject interpreterClass;
 	public String clssettingString = "";
 	public String[] vocabs;
 
@@ -32,7 +30,6 @@ public class PartitionClassifier {
 		interpreter.exec("from FeatureFactory import *");
 		interpreter.exec("from NaiveBayes import *");
 		interpreter.exec("from IDCTClassifier import *");
-		interpreterClass = interpreter.get("IDCTClassifier");
 	}
 
 	public PartitionClassifierType create2(Vector<Partition> pars,
