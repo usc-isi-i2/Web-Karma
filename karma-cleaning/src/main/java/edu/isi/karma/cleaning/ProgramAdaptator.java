@@ -23,7 +23,6 @@ import edu.isi.karma.cleaning.grammartree.Traces;
 
 public class ProgramAdaptator {
 	public ParseTreeNode program;
-
 	public String adapt(HashMap<String, Partition> exp2Partition, HashMap<String, String> exp2program, ArrayList<String[]> examples) {
 		ArrayList<Integer> keys = chooseLargestSubset(exp2program, examples);
 		String key2 = UtilTools.createkey(examples);

@@ -1,15 +1,16 @@
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.view.VWorkspace;
+import java.io.File;
+import java.io.PrintWriter;
+
 import org.json.JSONException;
 import org.json.JSONStringer;
 import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.PrintWriter;
+import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.view.VWorkspace;
 
 public class ImportPropertiesUpdate extends AbstractUpdate {
 	private String commandId;

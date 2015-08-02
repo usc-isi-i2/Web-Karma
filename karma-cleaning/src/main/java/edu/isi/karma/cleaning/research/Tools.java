@@ -37,6 +37,7 @@ import edu.isi.karma.cleaning.InterpreterType;
 import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.ProgSynthesis;
 import edu.isi.karma.cleaning.ProgramRule;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 
 public class Tools {
 	public DataPreProcessor dpp;
@@ -93,7 +94,6 @@ public class Tools {
 		}
 		return ret;
 	}
-
 	public void transformFile(String fpath) {
 		try {
 			Vector<String[]> examples = new Vector<String[]>();

@@ -52,7 +52,7 @@ public class GetR2RMLModelURLsCommand extends Command {
 					VWorkspace vWorkspace) {
 				
 				try {
-					JSONObject outputObject = (new SavedModelURLs()).getSavedModels();
+					JSONObject outputObject = (new SavedModelURLs()).getSavedModels(vWorkspace.getWorkspace().getContextId());
 					JSONArray models = outputObject.getJSONArray("models");
 					JSONArray revModels = new JSONArray();
 					for(int i=models.length()-1; i>=0; i--)

@@ -89,7 +89,7 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 				history._getHistory().add(t);
 			history._getHistory().addAll(tmp);
 		}
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel, workspace.getContextId());
 		uc.add(new HistoryUpdate(history));
 		return uc;
 	}

@@ -1,6 +1,5 @@
 package edu.isi.karma.controller.command.worksheet;
 
-import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;

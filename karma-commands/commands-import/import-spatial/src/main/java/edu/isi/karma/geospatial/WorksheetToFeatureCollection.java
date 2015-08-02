@@ -21,24 +21,25 @@
 
 package edu.isi.karma.geospatial;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.io.WKTReader;
-
-import de.micromata.opengis.kml.v_2_2_0.*;
-import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.modeling.Namespaces;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.Node;
-import edu.isi.karma.rep.Row;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.util.RandomGUID;
-import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.Transaction;
@@ -63,16 +64,39 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.io.WKTReader;
+
+import de.micromata.opengis.kml.v_2_2_0.AltitudeMode;
+import de.micromata.opengis.kml.v_2_2_0.Boundary;
+import de.micromata.opengis.kml.v_2_2_0.Coordinate;
+import de.micromata.opengis.kml.v_2_2_0.Folder;
+import de.micromata.opengis.kml.v_2_2_0.Icon;
+import de.micromata.opengis.kml.v_2_2_0.Kml;
+import de.micromata.opengis.kml.v_2_2_0.KmlFactory;
+import de.micromata.opengis.kml.v_2_2_0.LinearRing;
+import de.micromata.opengis.kml.v_2_2_0.LookAt;
+import de.micromata.opengis.kml.v_2_2_0.Placemark;
+import de.micromata.opengis.kml.v_2_2_0.Style;
+import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.ontology.OntologyManager;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.util.RandomGUID;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetToFeatureCollection {
+	private Workspace workspace;
 	private Worksheet worksheet;
 	private OntologyManager om;
 
@@ -116,39 +140,40 @@ public class WorksheetToFeatureCollection {
 	private SuperSelection selection;
 	
 	private static String SRID_PROPERTY = Namespaces.GEOSPATIAL
-			+ ServletContextParameterMap
+			+ ContextParametersRegistry.getInstance().getDefault()
 					.getParameterValue(ContextParameter.SRID_PROPERTY);
 	private static String KML_CATEGORY_PROPERTY = Namespaces.GEOSPATIAL
-			+ ServletContextParameterMap
+			+ ContextParametersRegistry.getInstance().getDefault()
 					.getParameterValue(ContextParameter.KML_CATEGORY_PROPERTY);
 	private static String KML_LABEL_PROPERTY = Namespaces.GEOSPATIAL
-			+ ServletContextParameterMap
+			+ ContextParametersRegistry.getInstance().getDefault()
 					.getParameterValue(ContextParameter.KML_LABEL_PROPERTY);
-	private static String WGS84_LAT_PROPERTY = ServletContextParameterMap
+	private static String WGS84_LAT_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.WGS84_LAT_PROPERTY);
-	private static String WGS84_LNG_PROPERTY = ServletContextParameterMap
+	private static String WGS84_LNG_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.WGS84_LNG_PROPERTY);
-	private static String POINT_POS_PROPERTY = ServletContextParameterMap
+	private static String POINT_POS_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.POINT_POS_PROPERTY);
-	private static String POS_LIST_PROPERTY = ServletContextParameterMap
+	private static String POS_LIST_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.POS_LIST_PROPERTY);
 	private static String SRID_CLASS = Namespaces.GEOSPATIAL
-			+ ServletContextParameterMap
+			+ ContextParametersRegistry.getInstance().getDefault()
 					.getParameterValue(ContextParameter.SRID_CLASS);
 	private static String KML_CUSTOMIZATION_CLASS = Namespaces.GEOSPATIAL
-			+ ServletContextParameterMap
+			+ ContextParametersRegistry.getInstance().getDefault()
 					.getParameterValue(ContextParameter.KML_CUSTOMIZATION_CLASS);
-	private static String POINT_CLASS = ServletContextParameterMap
+	private static String POINT_CLASS = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.POINT_CLASS);
-	private static String LINE_CLASS = ServletContextParameterMap
+	private static String LINE_CLASS = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.LINE_CLASS);
-	private static String POLYGON_CLASS = ServletContextParameterMap
+	private static String POLYGON_CLASS = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.POLYGON_CLASS);
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(WorksheetGeospatialContent.class);
+			.getLogger(WorksheetToFeatureCollection.class);
 
-	public WorksheetToFeatureCollection(Worksheet worksheet, OntologyManager om, SuperSelection sel) {
+	public WorksheetToFeatureCollection(Workspace workspace, Worksheet worksheet, OntologyManager om, SuperSelection sel) {
+		this.workspace = workspace; 
 		this.worksheet = worksheet;
 		this.om = om;
 		this.selection = sel;
@@ -383,7 +408,9 @@ public class WorksheetToFeatureCollection {
 		fileName = fileName.substring(0, fileName.length() - 4);
 		zippedSpatialDataFolderAndName = spatialDataFolder + "/" + fileName
 				+ ".zip";
-		spatialDataFolder = ServletContextParameterMap
+		
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		spatialDataFolder = contextParameters
 				.getParameterValue(ContextParameter.USER_DIRECTORY_PATH)
 				+ "publish/SpatialData/" + spatialDataFolder + "/";
 		File dir = new File(spatialDataFolder);
@@ -431,7 +458,8 @@ public class WorksheetToFeatureCollection {
 		fileName = fileName.substring(0, fileName.length() - 4);
 		zippedSpatialDataFolderAndName = spatialDataFolder + "/" + fileName
 				+ ".zip";
-		spatialDataFolder = ServletContextParameterMap
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		spatialDataFolder = contextParameters
 				.getParameterValue(ContextParameter.USER_DIRECTORY_PATH)
 				+ "publish/SpatialData/" + spatialDataFolder + "/";
 		File dir = new File(spatialDataFolder);

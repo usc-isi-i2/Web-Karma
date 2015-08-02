@@ -147,24 +147,7 @@ public class SortableSemanticModel extends SemanticModel
 //		else
 //			return 0;
 //	}
-//	
-//	private static int compareCoherence(List<Integer> c1, List<Integer> c2) {
-//		if (c1 == null || c2 == null)
-//			return 0;
-//		
-//		for (int i = 0; i < c1.size(); i++) {
-//			if (i < c2.size()) {
-//				if (c1.get(i) > c2.get(i)) return 1;
-//				else if (c1.get(i) < c2.get(i)) return -1;
-//			}
-//		}
-//		if (c1.size() < c2.size())
-//			return 1;
-//		else if (c2.size() < c1.size())
-//			return -1;
-//		else
-//			return 0;
-//	}
+
 	
 	@Override
 	public int compareTo(SortableSemanticModel m) {
@@ -174,8 +157,8 @@ public class SortableSemanticModel extends SemanticModel
 		
 		double confidenceScore1 = this.getConfidenceScore();
 		double confidenceScore2 = m.getConfidenceScore();
-		double score1 = this.getScore();
-		double score2 = m.getScore();
+//		double score1 = this.getScore();
+//		double score2 = m.getScore();
 
 		double linkCoherence1 = this.linkCoherence.getCoherenceValue();
 		double linkCoherence2 = m.linkCoherence.getCoherenceValue();
@@ -185,20 +168,22 @@ public class SortableSemanticModel extends SemanticModel
 		else if (linkCoherence1 < linkCoherence2)
 			return lessThan;
 
-		if (score1 > score2)
-			return greaterThan;
-		else if (score1 < score2)
-			return lessThan;	
+//		if (score1 > score2)
+//			return greaterThan;
+//		else if (score1 < score2)
+//			return lessThan;	
 
+		if (confidenceScore1 > confidenceScore2)
+			return greaterThan;
+		else if (confidenceScore1 < confidenceScore2)
+			return lessThan;
+		
 		if (this.cost < m.cost)
 			return greaterThan;
 		else if (m.cost < this.cost)
 			return lessThan;
 		
-		if (confidenceScore1 > confidenceScore2)
-			return greaterThan;
-		else if (confidenceScore1 < confidenceScore2)
-			return lessThan;	
+	
 		
 		return 0;
 		

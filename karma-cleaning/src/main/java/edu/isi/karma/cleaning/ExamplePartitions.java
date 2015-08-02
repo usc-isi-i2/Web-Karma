@@ -3,7 +3,6 @@ package edu.isi.karma.cleaning;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
-
 import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
 import edu.isi.karma.cleaning.grammartree.Partition;
 import edu.isi.karma.cleaning.grammartree.Section;
@@ -14,9 +13,10 @@ import edu.isi.karma.cleaning.grammartree.Traces;
 
 public class ExamplePartitions {
 	public HashMap<String, Partition> expPartitions = new HashMap<String, Partition>();
+	String contextId;
 	public ExamplePartitions()
 	{
-		
+		this.contextId = contextId;
 	}
 	public Partition createPartition(String[] example)
 	{
@@ -26,8 +26,7 @@ public class ExamplePartitions {
 		ruler.setNewInput("<_START>"+example[0]+"<_END>");
 		orgNodes.add(ruler.vec);
 		ruler.setNewInput(example[1]);
-		tarNodes.add(ruler.vec);
-		
+		tarNodes.add(ruler.vec);		
 		Partition t = new Partition(orgNodes, tarNodes);
 		this.addPartition(example, t);
 		return t;

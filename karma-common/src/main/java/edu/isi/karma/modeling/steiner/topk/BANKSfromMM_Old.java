@@ -16,8 +16,9 @@ import java.util.TreeSet;
 //import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 
-public class BANKSfromMM extends TopKSteinertrees {
+public class BANKSfromMM_Old extends TopKSteinertrees {
 	
 //	private static Logger logger = LoggerFactory.getLogger(BANKSfromMM.class);
 
@@ -26,12 +27,13 @@ public class BANKSfromMM extends TopKSteinertrees {
 	private HashMap<SteinerNode,SteinerNode> recurseNodeMap;
 	private List<HashMap<SteinerNode,SteinerNode>> shortestNodeIndex;
 	private List<HashMap<SteinerNode,SortedSteinerNodes>> duplicateIndex;
-	
+	private String contextId;
 	private Integer recursiveLevel;
 	private Integer maxPermutations;
 
-	public BANKSfromMM() {
-		// TODO Auto-generated constructor stub
+	public BANKSfromMM_Old(String contextId) {
+		super();
+		this.contextId = contextId;
 	}
 	
 	class SortedSteinerNodes{
@@ -76,9 +78,10 @@ public class BANKSfromMM extends TopKSteinertrees {
 	 */
 	protected Queue<BANKSIterator> banksIterators;
 	
-	public BANKSfromMM(TreeSet<SteinerNode> terminals, Integer recursiveLevel, Integer maxPermutations) throws Exception {
+
+	public BANKSfromMM_Old(TreeSet<SteinerNode> terminals, Integer recursiveLevel, Integer maxPermutations, String contextId) throws Exception {
 		super(terminals);
-	
+		this.contextId = contextId;
 		this.recursiveLevel = recursiveLevel;
 		this.maxPermutations = maxPermutations;
 		
@@ -164,8 +167,9 @@ public class BANKSfromMM extends TopKSteinertrees {
 		
 		List<HashMap<Integer, SteinerNode>> permutations = 
 				getPermutation(searchNodeInQueues, processedNodes, searchNode, 0, max, queueId);
-		
-		int cutoff = ModelingConfiguration.getTopKSteinerTree();
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId);
+				
+		int cutoff = modelingConfiguration.getTopKSteinerTree();
 		if (permutations.size() > cutoff)
 			permutations = permutations.subList(0, cutoff);
 		

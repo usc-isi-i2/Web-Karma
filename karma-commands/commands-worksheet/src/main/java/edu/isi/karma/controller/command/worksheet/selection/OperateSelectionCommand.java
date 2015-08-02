@@ -92,7 +92,7 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 			return getErrorUpdate("The operation is undefined");
 		}
 		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel, workspace.getContextId());
 		return uc;
 	}
 
@@ -113,7 +113,7 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 			superSel.removeSelection(currentSel);
 		}
 		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);	
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel, workspace.getContextId());	
 		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));
 		return uc;
 	}

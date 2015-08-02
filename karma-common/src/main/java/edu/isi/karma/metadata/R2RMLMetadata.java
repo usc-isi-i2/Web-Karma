@@ -1,22 +1,15 @@
 package edu.isi.karma.metadata;
 
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class R2RMLMetadata extends KarmaUserMetadata {
 
-	public R2RMLMetadata(Workspace workspace) throws KarmaException {
-		super(workspace);
+	public R2RMLMetadata(ServletContextParameterMap contextParameters) throws KarmaException {
+		super(contextParameters);
 	}
 	
-	
-	@Override
-	public void setup(UpdateContainer uc) {
-	
-	}
-
 	@Override
 	protected ContextParameter getDirectoryContextParameter() {
 		return ContextParameter.R2RML_USER_DIR;

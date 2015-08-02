@@ -43,6 +43,7 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.rep.metadata.Tag;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -60,21 +61,6 @@ public class SemanticTypeUtil {
 
 	private static boolean isSemanticTypeTrainingEnabled = true;
 	
-	private final static int TRAINING_EXAMPLE_MAX_COUNT ;
-	static {
-		int temp = 10000;
-		try
-		{
-			temp = Integer
-				.parseInt(ServletContextParameterMap
-						.getParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT));
-		}
-		catch (Exception e)
-		{
-		}
-		
-		TRAINING_EXAMPLE_MAX_COUNT = temp;
-	}
 	/**
 	 * Prepares and returns a collection of training examples to be used in
 	 * semantic types training. Parameter TRAINING_EXAMPLE_MAX_COUNT specifies
@@ -88,12 +74,16 @@ public class SemanticTypeUtil {
 	 *            Path to the target column
 	 * @return Collection of training examples
 	 */
-	public static ArrayList<String> getTrainingExamples(Worksheet worksheet,
+	public static ArrayList<String> getTrainingExamples(Workspace workspace, Worksheet worksheet,
 			HNodePath path, SuperSelection sel) {
 		if(!getSemanticTypeTrainingEnabled() || path == null)
 		{
 			return new ArrayList<String>();
 		}
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		int TRAINING_EXAMPLE_MAX_COUNT = Integer
+		.parseInt(contextParameters
+				.getParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT));
 		ArrayList<Node> nodes = new ArrayList<Node>(Math.max(100, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(path, nodes, sel);
 
@@ -138,7 +128,7 @@ public class SemanticTypeUtil {
 			}
 		}
 		
-		ArrayList<String> examples = getTrainingExamples(worksheet, currentColumnPath, sel);
+		ArrayList<String> examples = getTrainingExamples(workspace, worksheet, currentColumnPath, sel);
 		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
 		String label = newType.getModelLabelString();
 		modelHandler.addType(label, examples);
@@ -159,7 +149,7 @@ public class SemanticTypeUtil {
 	}
 	
 	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions, SuperSelection sel) {
-		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(worksheet,
+		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet,
 				path, sel);
 		if (trainingExamples.size() == 0)
 			return null;
@@ -217,12 +207,45 @@ public class SemanticTypeUtil {
 		return new SemanticTypeColumnModel(result);
 	}
 
-	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode cn, int numSuggestions, SuperSelection sel) {
+	public List<SemanticType> getSuggestedTypes(OntologyManager ontologyManager, 
+			ColumnNode columnNode, SemanticTypeColumnModel columnModel) {
+		
 		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
-		logger.info("Column Semantic Suggestions for:" + cn.getColumnName());
+		if (columnModel == null)
+			return suggestedSemanticTypes;
+		
+		for (Entry<String, Double> entry : columnModel.getScoreMap().entrySet()) {
+			
+			String key = entry.getKey();
+			Double confidence = entry.getValue();
+			if (key == null || key.isEmpty()) continue;
+
+			String[] parts = key.split("\\|");
+			if (parts == null || parts.length != 2) continue;
+
+			String domainUri = parts[0].trim();
+			String propertyUri = parts[1].trim();
+
+			Label domainLabel = ontologyManager.getUriLabel(domainUri);
+			if (domainLabel == null) continue;
+
+			Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
+			if (propertyLabel == null) continue;
+
+			SemanticType semanticType = new SemanticType(columnNode.getHNodeId(), propertyLabel, domainLabel, Origin.TfIdfModel, confidence);
+			logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
+			suggestedSemanticTypes.add(semanticType);
+		}
+		Collections.sort(suggestedSemanticTypes, Collections.reverseOrder());
+		return suggestedSemanticTypes;
+	}
+	
+	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode columnNode, int numSuggestions, SuperSelection sel) {
+		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
+		logger.info("Column Semantic Suggestions for:" + columnNode.getColumnName());
 		if(workspace != null && worksheet != null) {
 			OntologyManager ontologyManager = workspace.getOntologyManager();
-			String hNodeId = cn.getHNodeId();
+			String hNodeId = columnNode.getHNodeId();
 			SemanticTypeColumnModel columnModel = predictColumnSemanticType(workspace, worksheet, hNodeId, numSuggestions, sel);
 			
 			if (columnModel != null) {

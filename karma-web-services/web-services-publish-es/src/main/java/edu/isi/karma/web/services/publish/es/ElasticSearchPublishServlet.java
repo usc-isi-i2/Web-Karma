@@ -10,6 +10,8 @@ import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -40,6 +42,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
@@ -54,7 +57,10 @@ import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 @Path("/")
 public class ElasticSearchPublishServlet extends Application {
@@ -69,6 +75,11 @@ public class ElasticSearchPublishServlet extends Application {
 	
 	public ElasticSearchPublishServlet(@Context ServletContext context) {
 		this.context = context;
+		try {
+			initialization(context);
+		} catch (KarmaException ke) {
+			logger.error("KarmaException: " + ke.getMessage());
+		}
 		String bulksize = context.getInitParameter("ESBulkSize");
 		if(bulksize != null)
 			this.bulksize = Integer.parseInt(bulksize);
@@ -321,25 +332,39 @@ public class ElasticSearchPublishServlet extends Application {
 		return request;
 	}
 
-	static {
-		try {
-			initialization();
-		} catch (KarmaException ke) {
-			logger.error("KarmaException: " + ke.getMessage());
+	//TODO find a way to refactor this out.  Also in servletstart
+	public static void initContextParameters(ServletContext ctx, ServletContextParameterMap contextParameters)
+	{
+		Enumeration<?> params = ctx.getInitParameterNames();
+		ArrayList<String> validParams = new ArrayList<String>();
+		for (ContextParameter param : ContextParameter.values()) {
+			validParams.add(param.name());
 		}
+		while (params.hasMoreElements()) {
+			String param = params.nextElement().toString();
+			if (validParams.contains(param)) {
+				ContextParameter mapParam = ContextParameter.valueOf(param);
+				String value = ctx.getInitParameter(param);
+				contextParameters.setParameterValue(mapParam, value);
+			}
+		}
+
+		//String contextPath = ctx.getRealPath(File.separator);
+		String contextPath = ctx.getRealPath("/"); //File.separator was not working in Windows. / works
+		contextParameters.setParameterValue(ContextParameter.WEBAPP_PATH, contextPath);
 	}
-
-
-	private static void initialization() throws KarmaException {
+	private void initialization(ServletContext context) throws KarmaException {
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		initContextParameters(context, contextParameters);
 		UpdateContainer uc = new UpdateContainer();
-		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
-		userMetadataManager.register(new UserPreferencesMetadata(), uc);
-		userMetadataManager.register(new UserConfigMetadata(), uc);
-		userMetadataManager.register(new PythonTransformationMetadata(), uc);
+		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
+		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-
-		ModelingConfiguration.setLearnerEnabled(false); // disable automatic													// learning
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
+		modelingConfiguration.setLearnerEnabled(false); // disable automatic													// learning
 	}
 
 }

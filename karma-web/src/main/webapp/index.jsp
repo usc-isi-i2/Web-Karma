@@ -1,8 +1,11 @@
 
 <%@page import="edu.isi.karma.config.ModelingConfiguration"%>
+<%@page import="edu.isi.karma.config.ModelingConfigurationRegistry"%>
+<%@page import="edu.isi.karma.webserver.ContextParametersRegistry"%>
 <%@page import="edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter"%>
 <%@page import="edu.isi.karma.webserver.ServletContextParameterMap"%>
 <%@page import="edu.isi.karma.config.UIConfiguration"%>
+<%@page import="edu.isi.karma.config.UIConfigurationRegistry"%>
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -75,11 +78,9 @@ and related projects, please see: http://www.isi.edu/integration
 	<link rel="stylesheet" href="./css/font-awesome.min.css" />
 
         <%
-        
-        UIConfiguration.Instance().loadConfig();
-        ModelingConfiguration.load();
-        
-        if(UIConfiguration.Instance().isForceModelLayoutEnabled()) {
+
+        if(UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()) {
+
         %>
         <link rel="stylesheet" href="css/d3-model-layout.css?<jsp:include page='version.jsp' />" />
 		<%
@@ -261,7 +262,7 @@ and related projects, please see: http://www.isi.edu/integration
 	        		<div class="col-sm-4">
 	        			<div class="form-group">
 	        				<label>Karma Home: </label>
-	        				<span id="karmaHome"><%=ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span>
+	        				<span id="karmaHome"><%=ContextParametersRegistry.getInstance().getDefault().getParameterValue(ContextParameter.USER_DIRECTORY_PATH) %></span>
 	        			</div>
 	        		</div>
 	        		<div class="col-sm-4">
@@ -330,7 +331,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="uiLibs/jquery/js/jquery.qtip.min.js"></script>
         
         <%
-        if(UIConfiguration.Instance().isGoogleEarthEnabled()) {
+        if(UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isGoogleEarthEnabled()) {
         %>
         <script type="text/javascript" src="https://www.google.com/jsapi?key=AIzaSyDEvzzmlVOhVWTy13y5r6OPt5BRNR5QKsg&sensor=false"></script>
         <%
@@ -380,7 +381,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/saveSvgAsPng.js?<jsp:include page='version.jsp' />"></script>
         
         <%
-        if(UIConfiguration.Instance().isForceModelLayoutEnabled()) {
+        if(UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()) {
         %>
 		<script type="text/javascript" src="js/d3-model-layout.js?<jsp:include page='version.jsp' />"></script>
 		<%
@@ -391,10 +392,10 @@ and related projects, please see: http://www.isi.edu/integration
         }
         %>
         <script>
-        	var googleEarthEnabled = <%=UIConfiguration.Instance().isGoogleEarthEnabled()%>;
-        	var ontologyAligment = <%=ModelingConfiguration.getOntologyAlignment()%>;
-        	var knownModelsAlignment = <%=ModelingConfiguration.getKnownModelsAlignment()%>;
-        	var forceLayoutEnabled = <%=UIConfiguration.Instance().isForceModelLayoutEnabled()%>;
+        	var googleEarthEnabled = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isGoogleEarthEnabled()%>;
+        	var ontologyAligment = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getOntologyAlignment()%>;
+        	var knownModelsAlignment = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getKnownModelsAlignment()%>;
+        	var forceLayoutEnabled = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()%>;
             $(function() {
                 // Clear the workspace when closing the window
                 $(window).bind("beforeunload", function() {

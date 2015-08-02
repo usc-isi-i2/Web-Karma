@@ -20,15 +20,20 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
+import java.io.File;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ImportAvroFileCommandFactory extends CommandFactory {
 	
@@ -38,13 +43,16 @@ public class ImportAvroFileCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 				
-		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request);
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		File uploadedFile = FileUtil.downloadFileFromHTTPRequest(request, contextParameters.getParameterValue(ContextParameter.USER_UPLOADED_DIR));
+		
                 
-                if (request.getParameter("revisedWorksheet") == null) {
-		return new ImportAvroFileCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
-                }
+        if (request.getParameter("revisedWorksheet") == null) {
+        	return new ImportAvroFileCommand(getNewId(workspace), Command.NEW_MODEL, uploadedFile);
+        }
+
                 
-                return new ImportAvroFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);
+        return new ImportAvroFileCommand(getNewId(workspace), request.getParameter("revisedWorksheet"), uploadedFile);
 	}
 
 	@Override

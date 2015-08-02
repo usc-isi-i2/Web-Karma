@@ -117,6 +117,8 @@ public abstract class LabeledLink extends DefaultLink {
 	}
 	
 	public Set<String> getModelIds() {
+		if (this.modelIds == null)
+			return new HashSet<String>();
 		return modelIds;
 	}
 

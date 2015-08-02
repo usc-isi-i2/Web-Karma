@@ -18,8 +18,8 @@ public class Partition implements GrammarTreeNode {
 	public String label; // the class label of current partition
 	public String cls;
 	public String program = "";
-	public Partition()
-	{	
+	public Partition(){
+		
 	}
 	public Partition(Traces t,Vector<Vector<TNode>> orgNodes, Vector<Vector<TNode>> tarNodes)
 	{

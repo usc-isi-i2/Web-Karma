@@ -97,7 +97,7 @@ public class ImportServiceCommand extends ImportCommand {
             c.add(new ImportServiceCommandPreferencesUpdate(serviceUrl, worksheetName));
 
             c.add(new WorksheetListUpdate());
-            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
+            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
             return c;
         } catch (Exception e) {
             logger.error("Error occured while creating worksheet from web-service: " + serviceUrl);

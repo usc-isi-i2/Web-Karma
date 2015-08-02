@@ -26,7 +26,6 @@ public class Position implements GrammarTreeNode {
 	public static Interpretor itInterpretor = null;
 	public int fixedlength = 0;
 	public String program = "null";
-
 	public Position(Vector<Integer> absPos, Vector<TNode> lcxt, Vector<TNode> rcxt, Vector<String> orgStrings, Vector<String> tarStrings, boolean loop) {
 		this.absPosition = absPos;
 		this.orgStrings.addAll(orgStrings);
@@ -357,9 +356,17 @@ public class Position implements GrammarTreeNode {
 					int cnt = 1;
 					String r = "";
 					while (r.indexOf("None") == -1) {
+<<<<<<< HEAD:karma-cleaning/src/main/java/edu/isi/karma/cleaning/grammartree/Position.java
 						String tmpRule = rule.replace("counter", String.valueOf(cnt));
 						ProgramRule programRule = new ProgramRule(tmpRule);
 						String val = programRule.transform(this.orgStrings.get(j));
+=======
+						String tmpRule = rule.replace("counter",
+								String.valueOf(cnt));
+						ProgramRule programRule = new ProgramRule(tmpRule, contextId);
+						String val = programRule.transform(this.orgStrings
+								.get(j));
+>>>>>>> upstream/development:karma-cleaning/src/main/java/edu/isi/karma/cleaning/Position.java
 						if (val.indexOf("None") != -1)
 							break;
 						r += val + ",";
@@ -383,7 +390,7 @@ public class Position implements GrammarTreeNode {
 				}
 
 			} else {
-				ProgramRule pr = new ProgramRule(rule);
+				ProgramRule pr = new ProgramRule(rule, contextId);
 				boolean isValid = true;
 				for (int k = 0; k < this.orgStrings.size(); k++) {
 					String val = String.valueOf(pr.transform(this.orgStrings.get(k)));

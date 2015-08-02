@@ -29,7 +29,7 @@ public class ExampleCluster {
 	public int failedCnt = 0;
 	public double[] weights = {};
 	public DataPreProcessor dpp;
-
+	String contextId;
 	public static enum method {
 		CP, CPIC, SP, SPIC, DP, DPIC
 	};
@@ -40,8 +40,8 @@ public class ExampleCluster {
 	 * example are (id, (input, output)) constrain: true->must link constraints,
 	 * false->cannot link constraints
 	 */
-	public ExampleCluster() {
-
+	public ExampleCluster(String contextId) {
+		this.contextId = contextId;
 	}
 
 	public ExampleCluster(ProgSynthesis pSynthesis, Vector<Partition> examples, DataPreProcessor dpp) {

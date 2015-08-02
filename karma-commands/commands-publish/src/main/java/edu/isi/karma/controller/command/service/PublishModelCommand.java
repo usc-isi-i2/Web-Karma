@@ -129,7 +129,7 @@ public class PublishModelCommand extends WorksheetCommand{
 		
 		try {
 			if (service != null) {
-				WebServicePublisher servicePublisher = new WebServicePublisher(service);
+				WebServicePublisher servicePublisher = new WebServicePublisher(service, workspace.getContextId());
 				servicePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Service model has successfully been published to repository: " + service.getId());
 				return new UpdateContainer(new InfoUpdate(

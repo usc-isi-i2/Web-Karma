@@ -30,7 +30,6 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
@@ -83,10 +82,7 @@ public class DataSource extends Source {
 		attIdToAttMap = new HashMap<String, Attribute>();
 		this.updateModel(treeModel);
 	}
-	
-	public String getUri() {
-		return ModelingConfiguration.getKarmaSourcePrefix() + getId() + "#";
-	}
+
 	public List<Attribute> getAttributes() {
 		return Collections.unmodifiableList(attributes);
 	}

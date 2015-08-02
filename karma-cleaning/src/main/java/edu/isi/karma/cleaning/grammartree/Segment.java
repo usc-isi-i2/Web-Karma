@@ -27,7 +27,7 @@ public class Segment implements GrammarTreeNode {
 	public Vector<String> segStrings = new Vector<String>();
 	public int VersionSP_size = 0;
 	public String program = "null";
-
+	
 	public Segment(Vector<TNode> cont) {
 		constNodes = cont;
 		for(TNode n:cont)

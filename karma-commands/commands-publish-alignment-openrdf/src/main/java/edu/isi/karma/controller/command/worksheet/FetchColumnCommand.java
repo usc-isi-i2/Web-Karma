@@ -46,6 +46,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -93,6 +94,7 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		String worksheetName = worksheet.getTitle();
@@ -101,7 +103,7 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 			// preparing model file name
 			final String modelFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 					worksheetName +  "-model.ttl";
-			final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
+			final String modelFileLocalPath = contextParameters.getParameterValue(
 					ContextParameter.R2RML_PUBLISH_DIR) + modelFileName;
 			
 			File f = new File(modelFileLocalPath);

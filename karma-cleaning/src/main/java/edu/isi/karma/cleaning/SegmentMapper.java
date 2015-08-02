@@ -8,6 +8,7 @@ import edu.isi.karma.cleaning.grammartree.Segment;
 import edu.isi.karma.cleaning.grammartree.TNode;
 import edu.isi.karma.cleaning.internalfunlibrary.InternalTransformationLibrary;
 import edu.isi.karma.cleaning.internalfunlibrary.TransformFunction;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 
 class Dataitem {
 	public int[] range = { -1, -1 };
@@ -224,6 +225,8 @@ public class SegmentMapper {
 		}
 	}
 
+	static String contextId = ContextParametersRegistry.getInstance().getDefault().getId();
+			
 	public static void main(String[] args) {
 		String[] s1 = {"<_START>PA2050 <_END>"};
 		String[] s2 = {"2050 PA"};

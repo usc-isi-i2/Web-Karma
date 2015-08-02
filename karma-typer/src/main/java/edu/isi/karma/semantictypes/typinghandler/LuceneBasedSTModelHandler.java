@@ -15,6 +15,7 @@ import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
 import edu.isi.karma.semantictypes.tfIdf.Indexer;
 import edu.isi.karma.semantictypes.tfIdf.Searcher;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -35,8 +36,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	private ArrayList<String> allowedCharacters;
 
 	private boolean modelEnabled = false;
-	private String indexDirectory;
-
+	private String contextId;
 	/**
 	 * NOTE: Currently, TF-IDF based approach is used for both textual and
 	 * numeric data due to bug in KS test on Apache Commons Math.
@@ -45,10 +45,9 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 * https://issues.apache.org/jira/browse/MATH-1131
 	 */
 
-	public LuceneBasedSTModelHandler() {
+	public LuceneBasedSTModelHandler(String contextId) {
 		allowedCharacters = allowedCharacters();
-		indexDirectory = ServletContextParameterMap
-				.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY);
+		this.contextId = contextId;
 	}
 
 	/**
@@ -125,7 +124,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		if (indexDirectoryExists()) {
 			try {
 				// check if semantic label already exists in index
-				Searcher searcher = new Searcher(indexDirectory,
+				Searcher searcher = new Searcher(getIndexDirectory(),
 						Indexer.LABEL_FIELD_NAME);
 				try {
 					labelDoc = searcher.getDocumentForLabel(label);
@@ -138,7 +137,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		}
 
 		// index the document
-		Indexer indexer = new Indexer(indexDirectory);
+		Indexer indexer = new Indexer(getIndexDirectory());
 		try {
 			indexer.open();
 			if (labelDoc != null) {
@@ -161,6 +160,9 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 * @return
 	 */
 	private boolean indexDirectoryExists() {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		String indexDirectory = contextParameters
+				.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY);
 		File dir = new File(indexDirectory);
 
 		if (dir.exists() && dir.listFiles().length > 0) {
@@ -221,7 +223,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 			}
 			
 			try {
-				Searcher predictor = new Searcher(indexDirectory,
+				Searcher predictor = new Searcher(getIndexDirectory(),
 						Indexer.CONTENT_FIELD_NAME);
 				try {
 					List<SemanticTypeLabel> result = predictor.getTopK(numPredictions, sb.toString());
@@ -247,9 +249,8 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 */
 	@Override
 	public boolean removeAllLabels() {
-
 		try {
-			Indexer indexer = new Indexer(indexDirectory);
+			Indexer indexer = new Indexer(getIndexDirectory());
 			try {
 				indexer.open();
 				indexer.deleteAllDocuments();
@@ -264,6 +265,13 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		return true;
 	}
 
+	public String getIndexDirectory()
+	{
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		String indexDirectory = contextParameters
+				.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY);
+		return indexDirectory;
+	}
 	/**
 	 * @param uncleanList
 	 *            List of all examples
@@ -345,7 +353,9 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 
 	@Override
 	public boolean readModelFromFile(String filepath) {
-		indexDirectory = filepath;
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		contextParameters
+				.setParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY, filepath);
 		return true;
 	}
 

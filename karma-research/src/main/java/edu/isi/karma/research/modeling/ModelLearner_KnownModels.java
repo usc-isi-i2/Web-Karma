@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
@@ -42,6 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
+import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -75,6 +80,7 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.util.RandomGUID;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -130,6 +136,7 @@ public class ModelLearner_KnownModels {
 
 	public List<SortableSemanticModel> hypothesize(boolean useCorrectTypes, int numberOfCandidates) throws Exception {
 
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ontologyManager.getContextId());
 		List<SortableSemanticModel> sortableSemanticModels = new ArrayList<SortableSemanticModel>();
 		Set<Node> addedNodes = new HashSet<Node>(); //They should be deleted from the graph after computing the semantic models
 
@@ -182,15 +189,19 @@ public class ModelLearner_KnownModels {
 		for (SteinerNodes sn : candidateSteinerSets.getSteinerSets()) {
 			if (sn == null) continue;
 			logger.info("computing steiner tree for steiner nodes set " + number + " ...");
-			logger.debug(sn.getScoreDetailsString());
+//			logger.info(sn.getScoreDetailsString());
+//			for (Entry<ColumnNode, SemanticTypeMapping> n : sn.getColumnNodeInfo().entrySet()) {
+//				System.out.println(sn.getMappingToSourceColumns().get(n.getKey()).getColumnName() + "---" +
+//						n.getValue().getLink().getId());
+//			}
 			number++;
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
 			if (this.graphBuilder instanceof GraphBuilderTopK) {
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
-						ModelingConfiguration.getTopKSteinerTree(), 
-						null, null, true);
+						modelingConfiguration.getTopKSteinerTree(), 
+						5, 3, true);
 			} 
 			else 
 			{
@@ -225,33 +236,34 @@ public class ModelLearner_KnownModels {
 //					System.out.println(sortableSemanticModel.getLinkCoherence().printCoherenceList());
 				}
 			}
-			if (number >= ModelingConfiguration.getNumCandidateMappings())
+			if (number >= modelingConfiguration.getNumCandidateMappings())
 				break;
 
 		}
 		
 		Collections.sort(sortableSemanticModels);
-		int count = Math.min(sortableSemanticModels.size(), ModelingConfiguration.getNumCandidateMappings());
+//		int count = Math.min(sortableSemanticModels.size(), modelingConfiguration.getNumCandidateMappings());
+
 		logger.info("results are ready ...");
 //		sortableSemanticModels.get(0).print();
-		return sortableSemanticModels.subList(0, count);
+//		return sortableSemanticModels.subList(0, count);
 
-//		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
-//		SortableSemanticModel current, previous;
-//		if (sortableSemanticModels != null) {
-//			if (sortableSemanticModels.size() > 0)
-//				uniqueModels.add(sortableSemanticModels.get(0));
-//			for (int i = 1; i < sortableSemanticModels.size(); i++) {
-//				current = sortableSemanticModels.get(i);
-//				previous = sortableSemanticModels.get(i - 1);
-//				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
-//					continue;
-//				uniqueModels.add(current);
-//			}
-//		}
-//		
-//		logger.info("results are ready ...");
-//		return uniqueModels;
+		List<SortableSemanticModel> uniqueModels = new ArrayList<SortableSemanticModel>();
+		SortableSemanticModel current, previous;
+		if (sortableSemanticModels != null) {
+			if (sortableSemanticModels.size() > 0)
+				uniqueModels.add(sortableSemanticModels.get(0));
+			for (int i = 1; i < sortableSemanticModels.size(); i++) {
+				current = sortableSemanticModels.get(i);
+				previous = sortableSemanticModels.get(i - 1);
+				if (current.getScore() == previous.getScore() && current.getCost() == previous.getCost())
+					continue;
+				uniqueModels.add(current);
+			}
+		}
+		
+		logger.info("results are ready ...");
+		return uniqueModels;
 
 	}
 
@@ -297,7 +309,7 @@ public class ModelLearner_KnownModels {
 			return null;
 
 		int maxNumberOfSteinerNodes = steinerNodes.size() * 2;
-		CandidateSteinerSets candidateSteinerSets = new CandidateSteinerSets(maxNumberOfSteinerNodes);
+		CandidateSteinerSets candidateSteinerSets = new CandidateSteinerSets(maxNumberOfSteinerNodes,ontologyManager.getContextId());
 
 		if (addedNodes == null) 
 			addedNodes = new HashSet<Node>();
@@ -443,7 +455,7 @@ public class ModelLearner_KnownModels {
 			HashMap<String, Integer> semanticTypesCount, Set<Node> addedNodes) {
 
 		logger.debug("finding matches for semantic type in the graph ... ");
-
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ontologyManager.getContextId());
 		if (addedNodes == null)
 			addedNodes = new HashSet<Node>();
 
@@ -503,7 +515,7 @@ public class ModelLearner_KnownModels {
 		logger.debug("adding data property to the found internal nodes ...");
 
 		Integer count;
-		boolean allowMultipleSamePropertiesPerNode = ModelingConfiguration.isMultipleSamePropertyPerNode();
+		boolean allowMultipleSamePropertiesPerNode = modelingConfiguration.isMultipleSamePropertyPerNode();
 		Set<Node> nodesWithSameUriOfDomain = this.graphBuilder.getUriToNodesMap().get(domainUri);
 		if (nodesWithSameUriOfDomain != null) { 
 			for (Node source : nodesWithSameUriOfDomain) {
@@ -696,7 +708,6 @@ public class ModelLearner_KnownModels {
         return Double.valueOf(DForm.format(d));
 	}
 
-	@SuppressWarnings("unused")
 	private static void getStatistics(List<SemanticModel> semanticModels) {
 		for (int i = 0; i < semanticModels.size(); i++) {
 			SemanticModel source = semanticModels.get(i);
@@ -754,29 +765,50 @@ public class ModelLearner_KnownModels {
 		}
 	}
 	
-		
+	
 	public static void main(String[] args) throws Exception {
 
 		/***
 		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
 		 */
-		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome("/Users/mohsen/karma");
+//		contextParameters.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, "/Users/mohsen/karma");
+		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+		contextParameters.setParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "1000");
+		contextParameters.setParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY, "/Users/mohsen/karma/semantic-type-files/");
+		contextParameters.setParameterValue(ContextParameter.JSON_MODELS_DIR, "/Users/mohsen/karma/models-json/");
+		contextParameters.setParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR, "/Users/mohsen/karma/models-graphviz/");
+		contextParameters.setParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY, "/Users/mohsen/karma/python/");
+		contextParameters.setParameterValue(ContextParameter.EVALUATE_MRR, "/Users/mohsen/karma/evaluate-mrr/");
+		PythonRepository pythonRepository = new PythonRepository(true, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 
 		//		String inputPath = Params.INPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
+		File semFilesFolder = new File(contextParameters.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY));
 
 		//		List<SemanticModel> semanticModels = ModelReader.importSemanticModels(inputPath);
 		List<SemanticModel> semanticModels = 
 				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
 
-		//		ModelEvaluation me2 = semanticModels.get(20).evaluate(semanticModels.get(20));
-		//		System.out.println(me2.getPrecision() + "--" + me2.getRecall());
-		//		if (true)
-		//			return;
+		
+		File[] sources = new File(Params.SOURCE_DIR).listFiles();
+		File[] r2rmlModels = new File(Params.R2RML_DIR).listFiles();
+		if (sources.length > 0 && sources[0].getName().startsWith(".")) 
+			sources = (File[]) ArrayUtils.removeElement(sources, sources[0]);
+		if (r2rmlModels.length > 0 && r2rmlModels[0].getName().startsWith(".")) 
+			r2rmlModels = (File[]) ArrayUtils.removeElement(r2rmlModels, r2rmlModels[0]);
+
 
 		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
-
-		OntologyManager ontologyManager = new OntologyManager();
+//		File[] trainingSources;
+//		File[] trainingModels;
+		File trainingSource = null;
+		File trainingModel = null;
+		File testSource;
+		File testModel;
+		
+		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		for (File f : files) {
@@ -787,26 +819,28 @@ public class ModelLearner_KnownModels {
 		}
 		ontologyManager.updateCache();  
 
-//		getStatistics(semanticModels);
-//
-//		if (true)
-//			return;
-
 		ModelLearningGraph modelLearningGraph = null;
 		
 		ModelLearner_KnownModels modelLearner;
-
-		boolean iterativeEvaluation = false;
+		
+		boolean onlyGenerateSemanticTypeStatistics = false;
+		boolean iterativeEvaluation = true;
 		boolean useCorrectType = false;
-		boolean randomModel = false;
-
+		boolean onlyEvaluateInternalLinks = false || useCorrectType; 
+		boolean zeroKnownModel = false;
 		int numberOfCandidates = 4;
+
+		if (onlyGenerateSemanticTypeStatistics) {
+			getStatistics(semanticModels);
+			return;
+		}
 		int numberOfKnownModels;
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = ""; 
 		filename += "results";
-		filename += useCorrectType ? "-correct types":"-k=" + numberOfCandidates;
-		filename += randomModel ? "-ontology":"";
+		filename += useCorrectType ? "-correct":"-k=" + numberOfCandidates;
+		filename += zeroKnownModel ? "-ontology":"";
+		filename += onlyEvaluateInternalLinks ? "-internal":"-all";
 		filename += iterativeEvaluation ? "-iterative":"";
 		filename += ".csv"; 
 		
@@ -822,13 +856,22 @@ public class ModelLearner_KnownModels {
 			}
 		} else {
 			resultFile = new PrintWriter(new File(filePath + filename));
-			resultFile.println("source \t p \t r \t t \n");
+			resultFile.println("source \t p \t r \t t \t a \t m \n");
 		}
-
+		
+//		new OfflineTraining().getCorrectModel(contextParameters, 
+//				null, null, 
+//				sources[20], r2rmlModels[20], 0, numberOfCandidates);
+//		if (true) return;
 
 		for (int i = 0; i < semanticModels.size(); i++) {
-//		for (int i = 0; i <= 10; i++) {
+//		for (int i = 0; i <= 1; i++) {
 //		int i = 1; {
+
+			// clean semantic files folder in karma home
+			FileUtils.cleanDirectory(semFilesFolder);
+			trainingSource = null;
+			trainingModel = null;
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -837,15 +880,17 @@ public class ModelLearner_KnownModels {
 			logger.info(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			System.out.println(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
 			logger.info("======================================================");
-
-			numberOfKnownModels = iterativeEvaluation ? 0 : semanticModels.size() - 1;
-//			numberOfKnownModels = 0;
-
+			
+			if (zeroKnownModel)
+				numberOfKnownModels = 0;
+			else
+				numberOfKnownModels = iterativeEvaluation ? 0 : semanticModels.size() - 1;
+			
 			if (iterativeEvaluation) {
 				if (resultsArray[0].length() > 0)	resultsArray[0].append(" \t ");			
-				resultsArray[0].append(newSource.getName() + "(" + newSource.getColumnNodes().size() + ")" + "\t" + " " + "\t" + " ");
+				resultsArray[0].append(newSource.getName() + "(" + newSource.getColumnNodes().size() + ")" + "\t" + " " + "\t" + " " + "\t" + " " + "\t" + " ");
 				if (resultsArray[1].length() > 0)	resultsArray[1].append(" \t ");			
-				resultsArray[1].append("p \t r \t t");
+				resultsArray[1].append("p \t r \t t \t a \t m");
 			}
 
 //			numberOfKnownModels = 2;
@@ -853,41 +898,62 @@ public class ModelLearner_KnownModels {
 			{
 
 				trainingData.clear();
+//				trainingSources = new File[numberOfKnownModels];
+//				trainingModels = new File[numberOfKnownModels];
 
 				int j = 0, count = 0;
 				while (count < numberOfKnownModels) {
 					if (j != newSourceIndex) {
 						trainingData.add(semanticModels.get(j));
+//						trainingSources[count] = sources[j];
+//						trainingModels[count] = r2rmlModels[j];
 						count++;
-					}
+						if (count == numberOfKnownModels) {
+							trainingSource = sources[j];
+							trainingModel = r2rmlModels[j];
+						}
+					} 
 					j++;
 				}
 
 				modelLearningGraph = (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
 				
+				SemanticModel correctModel;
+				if (useCorrectType) {
+					correctModel = newSource;
+					correctModel.setAccuracy(1.0);
+					correctModel.setMrr(1.0);
+				} else {
+					testSource = sources[newSourceIndex];
+					testModel = r2rmlModels[newSourceIndex];
+					correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
+							trainingSource, trainingModel, 
+							testSource, testModel, numberOfKnownModels, numberOfCandidates);
+//					correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
+//							trainingSources, trainingModels, 
+//							testSource, testModel);
+				}
 				
-				SemanticModel correctModel = newSource;
+				
 				List<ColumnNode> columnNodes = correctModel.getColumnNodes();
 				//				if (useCorrectType && numberOfCRFCandidates > 1)
 				//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
 
 				List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
-				modelLearner = new ModelLearner_KnownModels(ontologyManager, steinerNodes);
+				modelLearner = new ModelLearner_KnownModels(modelLearningGraph.getGraphBuilder(), steinerNodes);
 				long start = System.currentTimeMillis();
 
 				String graphName = !iterativeEvaluation?
 						graphPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPH_FILE_EXT : 
 							graphPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPH_FILE_EXT;
 
-				if (randomModel) {
-					modelLearner = new ModelLearner_KnownModels(new GraphBuilder(ontologyManager, false), steinerNodes);
-				} else if (new File(graphName).exists()) {
+				if (new File(graphName).exists()) {
 					// read graph from file
 					try {
 						logger.info("loading the graph ...");
 						DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
-						modelLearner.graphBuilder = new GraphBuilderTopK(ontologyManager, graph);
-						modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
+						GraphBuilder gb = new GraphBuilderTopK(ontologyManager, graph);
+						modelLearner = new ModelLearner_KnownModels(gb, steinerNodes);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -896,11 +962,12 @@ public class ModelLearner_KnownModels {
 					for (SemanticModel sm : trainingData)
 //						modelLearningGraph.addModel(sm);
 						modelLearningGraph.addModelAndUpdate(sm, false);
-					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
-					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
+					modelLearner = new ModelLearner_KnownModels(modelLearningGraph.getGraphBuilder(), steinerNodes);
+//					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
+//					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file
 					try {
-//						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName);
+//						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName, true, true);
 //						GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), 
 //								"test", 
 //								true, 						
@@ -914,24 +981,10 @@ public class ModelLearner_KnownModels {
 					}
 				}
 				
-//				HashMap<String, Integer> test = new HashMap<String, Integer>();
-//				for (DefaultLink l : modelLearner.graphBuilder.getGraph().edgeSet()) {
-//					String key = l.getSource().getId() + l.getTarget().getId();
-//					Integer c = test.get(key);
-//					if (c == null) c = 0;
-//					test.put(key, c + 1);
-//				}
-//				for (String s : test.keySet()) {
-//					if (test.get(s) > 1)
-//						System.out.println(s + "\n" + test.get(s));
-//				}
-				
 				List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCandidates);
-
+				
 				long elapsedTimeMillis = System.currentTimeMillis() - start;
 				float elapsedTimeSec = elapsedTimeMillis/1000F;
-
-//				System.out.println("time: " + elapsedTimeSec);
 				
 				int cutoff = 20;//ModelingConfiguration.getMaxCandidateModels();
 				List<SortableSemanticModel> topHypotheses = null;
@@ -944,20 +997,6 @@ public class ModelLearner_KnownModels {
 				Map<String, SemanticModel> models = 
 						new TreeMap<String, SemanticModel>();
 
-				// export to json
-				//				if (topHypotheses != null)
-				//					for (int k = 0; k < topHypotheses.size() && k < 3; k++) {
-				//						
-				//						String fileExt = null;
-				//						if (k == 0) fileExt = Params.MODEL_RANK1_FILE_EXT;
-				//						else if (k == 1) fileExt = Params.MODEL_RANK2_FILE_EXT;
-				//						else if (k == 2) fileExt = Params.MODEL_RANK3_FILE_EXT;
-				//						SortableSemanticModel m = topHypotheses.get(k);
-				//						new SemanticModel(m).writeJson(Params.MODEL_DIR + 
-				//								newSource.getName() + fileExt);
-				//						
-				//					}
-
 				ModelEvaluation me;
 				models.put("1-correct model", correctModel);
 				if (topHypotheses != null)
@@ -965,7 +1004,7 @@ public class ModelLearner_KnownModels {
 
 						SortableSemanticModel m = topHypotheses.get(k);
 
-						me = m.evaluate(correctModel);
+						me = m.evaluate(correctModel, onlyEvaluateInternalLinks);
 
 						String label = "candidate " + k + "\n" + 
 //								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
@@ -986,20 +1025,34 @@ public class ModelLearner_KnownModels {
 							System.out.println("number of known models: " + numberOfKnownModels +
 									", precision: " + me.getPrecision() + 
 									", recall: " + me.getRecall() + 
-									", time: " + elapsedTimeSec);
+									", time: " + elapsedTimeSec + 
+									", accuracy: " + correctModel.getAccuracy() + 
+									", mrr: " + correctModel.getMrr()); 
 							logger.info("number of known models: " + numberOfKnownModels +
 									", precision: " + me.getPrecision() + 
 									", recall: " + me.getRecall() + 
-									", time: " + elapsedTimeSec);
+									", time: " + elapsedTimeSec + 
+									", accuracy: " + correctModel.getAccuracy() + 
+									", mrr: " + correctModel.getMrr()); 
 //							resultFile.println("number of known models \t precision \t recall");
 //							resultFile.println(numberOfKnownModels + "\t" + me.getPrecision() + "\t" + me.getRecall());
-							String s = me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec;
+							String s = me.getPrecision() + "\t" + 
+										me.getRecall() + "\t" + 
+										elapsedTimeSec + "\t" + 
+										correctModel.getAccuracy() + "\t" + 
+										correctModel.getMrr();
+							
 							if (iterativeEvaluation) {
 								if (resultsArray[numberOfKnownModels + 2].length() > 0) 
 									resultsArray[numberOfKnownModels + 2].append(" \t ");
 								resultsArray[numberOfKnownModels + 2].append(s);
 							} else {
-								s = newSource.getName() + "\t" + me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec;
+								s = newSource.getName() + "\t" + 
+										me.getPrecision() + "\t" + 
+										me.getRecall() + "\t" + 
+										elapsedTimeSec + "\t" + 
+										correctModel.getAccuracy() + "\t" + 
+										correctModel.getMrr();
 								resultFile.println(s);
 							}
 
@@ -1022,10 +1075,9 @@ public class ModelLearner_KnownModels {
 						true);
 
 				numberOfKnownModels ++;
-
+				if (zeroKnownModel) break;
 			}
 
-		//	resultFile.println("=======================================================");
 		}
 		if (iterativeEvaluation) {
 			for (StringBuffer s : resultsArray)
@@ -1034,6 +1086,7 @@ public class ModelLearner_KnownModels {
 		} else {
 			resultFile.close();
 		}
+		
 	}
 
 

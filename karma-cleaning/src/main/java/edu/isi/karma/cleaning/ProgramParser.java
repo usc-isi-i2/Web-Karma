@@ -6,14 +6,7 @@ import edu.isi.karma.cleaning.ParseTreeNode.nodetype;
 
 public class ProgramParser {
 	public ParseTreeNode root = null;
-
 	public ProgramParser() {
-
-	}
-
-	public ProgramParser(String program) {
-		this.root = this.parse(program);
-
 	}
 
 	// parse the sub program with a sequence of segment

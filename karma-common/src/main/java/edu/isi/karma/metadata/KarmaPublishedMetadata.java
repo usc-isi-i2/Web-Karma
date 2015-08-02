@@ -5,7 +5,6 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -14,20 +13,20 @@ public abstract class KarmaPublishedMetadata extends KarmaMetadata {
 
 	private static final Logger logger = LoggerFactory.getLogger(KarmaUserMetadata.class);
 	
-	public KarmaPublishedMetadata(Workspace workspace) throws KarmaException
+	public KarmaPublishedMetadata(ServletContextParameterMap contextParameters) throws KarmaException
 	{
-		super(workspace);
+		super(contextParameters);
 	}
 
-	protected void createDirectoryForMetadata(ContextParameter parameter, String directory) throws KarmaException {
+	protected void createDirectoryForMetadata(ServletContextParameterMap contextParameters, ContextParameter parameter, String directory) throws KarmaException {
 		
-		String metadataDirPath = ServletContextParameterMap.getParameterValue(parameter);
+		String metadataDirPath = contextParameters.getParameterValue(parameter);
 		if(metadataDirPath == null || metadataDirPath.isEmpty())
 		{
-			String userDirPath = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH) + "/publish/";
+			String userDirPath = contextParameters.getParameterValue(ContextParameter.WEBAPP_PATH) + "/publish/";
 			metadataDirPath = userDirPath + directory;
-			ServletContextParameterMap.setParameterValue(parameter, metadataDirPath);
-			ServletContextParameterMap.setParameterValue(getRelativeDirectoryContextParameter(), "publish/" + directory);
+			contextParameters.setParameterValue(parameter, metadataDirPath);
+			contextParameters.setParameterValue(getRelativeDirectoryContextParameter(), "publish/" + directory);
 		}
 		logger.info("Set parameter: " + parameter + " -> " + metadataDirPath);
 		File metadataDir = new File(metadataDirPath);

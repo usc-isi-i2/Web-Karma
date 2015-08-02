@@ -33,10 +33,10 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 

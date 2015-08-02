@@ -79,6 +79,9 @@ public class SemanticModel {
 	protected Worksheet worksheet;
 //	private SuperSelection selection;
 	
+	protected Double accuracy;
+	protected Double mrr;
+	
 	public SemanticModel(String id,
 			DirectedWeightedMultigraph<Node, LabeledLink> graph, boolean suggestSemanticTypes) {
 
@@ -117,7 +120,7 @@ public class SemanticModel {
 //		this.selection = sel;
 //		this.setLearnedTypesForColumnNodes();
 		this.setUserTypesForColumnNodes();
-
+		
 		this.sourceColumns = this.getColumnNodes();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		for (ColumnNode c : this.sourceColumns)
@@ -178,6 +181,22 @@ public class SemanticModel {
 		return sourceColumns;
 	}
 	
+	public Double getAccuracy() {
+		return accuracy;
+	}
+
+	public void setAccuracy(Double accuracy) {
+		this.accuracy = accuracy;
+	}
+
+	public Double getMrr() {
+		return mrr;
+	}
+
+	public void setMrr(Double mrr) {
+		this.mrr = mrr;
+	}
+
 	public Set<InternalNode> getInternalNodes() {
 		Set<InternalNode> internalNodes = new HashSet<InternalNode>();
 		if (this.graph != null) {
@@ -246,6 +265,10 @@ public class SemanticModel {
 	}
 
 	public ModelEvaluation evaluate(SemanticModel baseModel) {
+		return evaluate(baseModel, false);
+	}
+
+	public ModelEvaluation evaluate(SemanticModel baseModel, boolean ignoreSemanticTypes) {
 
 		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
 			return new ModelEvaluation(null, null, null);
@@ -259,7 +282,7 @@ public class SemanticModel {
 				baseNodeIds.put(n, n.getId());
 		}
 		
-		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds);
+		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds, ignoreSemanticTypes);
 		Set<String> targetTriples = null;
 		List<HashMap<Node,String>> targetNodeIdSets = getPossibleNodeIdSets();
 		if (targetNodeIdSets == null)
@@ -270,7 +293,7 @@ public class SemanticModel {
 		double precision, recall, fmeasure;
 		for (HashMap<Node,String> targetNodeIds : targetNodeIdSets) {
 //			System.out.println("==============================");
-			targetTriples = getTriples(this.getGraph(), targetNodeIds);
+			targetTriples = getTriples(this.getGraph(), targetNodeIds, ignoreSemanticTypes);
 			precision = getPrecision(baseTriples, targetTriples);
 			recall = getRecall(baseTriples, targetTriples);
 			fmeasure = 2 * precision * recall / (precision + recall);
@@ -284,7 +307,8 @@ public class SemanticModel {
 		return new ModelEvaluation(0.0, bestPrecision, bestRecall);
 	}
 	
-	private Set<String> getTriples(DirectedWeightedMultigraph<Node, LabeledLink> g, HashMap<Node,String> nodeIds) {
+	private Set<String> getTriples(DirectedWeightedMultigraph<Node, LabeledLink> g, HashMap<Node,String> nodeIds, 
+			boolean ignoreSemanticTypes) {
 		
 		String separator = "|";
 		Set<String> triples = new HashSet<String>();
@@ -293,8 +317,7 @@ public class SemanticModel {
 		
 		String s, p, o, triple;
 		for (LabeledLink l : g.edgeSet()) {
-			// FIXME: this line skips the links corresponding to the semantic types
-			if (!(l.getTarget() instanceof InternalNode))
+			if (ignoreSemanticTypes && !(l.getTarget() instanceof InternalNode))
 				continue;
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
@@ -411,7 +434,7 @@ public class SemanticModel {
 				List<List<String>> permList = new ArrayList<List<String>>();
 				permList.addAll(permutations);
 				
-				interval = interval / nodeGroup.size();
+				interval = interval / BigIntegerMath.factorial(nodeGroup.size()).intValue();
 				List<String> perm;
 				int k = 0, count = 1;
 				for (int i = 0; i < nodeIdSets.size(); i++) {
@@ -748,7 +771,7 @@ public class SemanticModel {
 		}
 		writer.name("graph");
 		if (this.graph == null) writer.value(nullStr);
-		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer);
+		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer, false, false);
 //		else GraphUtil.writeGraph(workspace, worksheet, GraphUtil.asDefaultGraph(this.graph), writer);
 		writer.endObject();
 	}

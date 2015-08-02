@@ -37,8 +37,8 @@ import edu.isi.karma.util.Preferences;
  */
 public class CommandPreferences extends Preferences{
 	
-	public CommandPreferences(String preferencesId) {
-		super(preferencesId);
+	public CommandPreferences(String preferencesId, String contextId) {
+		super(preferencesId, contextId);
 	}	
 	
 	public JSONObject getCommandPreferencesJSONObject(String commandName){

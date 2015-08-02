@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
-import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
@@ -71,6 +71,7 @@ import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 
 
 
@@ -84,14 +85,15 @@ public class Alignment implements OntologyUpdateListener {
 	private Node root = null;
 	private NodeIdFactory nodeIdFactory;
 	private Set<ColumnNode> sourceColumnNodes;
-
+	private String contextId;
 
 	public Alignment(OntologyManager ontologyManager) {
 
+		this.contextId = ontologyManager.getContextId();
 		this.ontologyManager = ontologyManager;
 		this.ontologyManager.subscribeListener(this);
 		this.sourceColumnNodes = new HashSet<ColumnNode>(); 
-		if (ModelingConfiguration.getKnownModelsAlignment()) {
+		if (ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getKnownModelsAlignment()) {
 			this.graphBuilder = 
 					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilderClone();
 		} else {
@@ -584,13 +586,14 @@ public class Alignment implements OntologyUpdateListener {
 		
 		// Change the status of previously preferred links to normal
 		Set<LabeledLink> linksInPreviousTree = this.getLinksByStatus(LinkStatus.PreferredByUI);
+		Set<LabeledLink> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
+
 		if (linksInPreviousTree != null) {
 			LabeledLink[] links = linksInPreviousTree.toArray(new LabeledLink[0]);
 			for (LabeledLink link : links)
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
 		}
 		
-		Set<LabeledLink> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
 		for (LabeledLink link: this.steinerTree.edgeSet()) {
 			if (linksForcedByUser == null || !linksForcedByUser.contains(link)) {
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);
@@ -666,7 +669,7 @@ public class Alignment implements OntologyUpdateListener {
 				logger.debug("\t" + link.getId());
 		}
 		
-		if (ModelingConfiguration.getKnownModelsAlignment())
+		if (ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getKnownModelsAlignment())
 			learnFromKnownSemanticModels();
 		else
 			learnFromOntology();
@@ -721,15 +724,15 @@ public class Alignment implements OntologyUpdateListener {
 			return;
 		}
 
-		logger.info("*** steiner tree before post processing step ***");
-		logger.info(GraphUtil.defaultGraphToString(tree));
+		logger.debug("*** steiner tree before post processing step ***");
+		logger.debug(GraphUtil.defaultGraphToString(tree));
 		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, getLinksByStatus(LinkStatus.ForcedByUser), true);
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
 
-		logger.info("*** steiner tree after post processing step ***");
-		logger.info(GraphUtil.labeledGraphToString(this.steinerTree));
+		logger.debug("*** steiner tree after post processing step ***");
+		logger.debug(GraphUtil.labeledGraphToString(this.steinerTree));
 	}
 	
 	private void learnFromKnownSemanticModels() {
@@ -744,6 +747,7 @@ public class Alignment implements OntologyUpdateListener {
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");
+			this.addForcedLinks(); //add new semantic type to the tree 
 			return ;
 		}
 
@@ -754,10 +758,14 @@ public class Alignment implements OntologyUpdateListener {
 		Set<LabeledLink> forcedLinks = getLinksByStatus(LinkStatus.ForcedByUser);
 		if (forcedLinks != null)
 		for (LabeledLink link : forcedLinks) {
-			if (!this.steinerTree.containsEdge(link) &&
-					this.steinerTree.containsVertex(link.getSource()) &&
-					this.steinerTree.containsVertex(link.getTarget())) {
-						this.steinerTree.addEdge(link.getSource(), link.getTarget(), link);
+			if (!this.steinerTree.containsEdge(link)) {
+				if (!this.steinerTree.containsVertex(link.getSource())) {
+					this.steinerTree.addVertex(link.getSource());
+				}
+				if (!this.steinerTree.containsVertex(link.getTarget())) {
+					this.steinerTree.addVertex(link.getTarget());
+				}
+				this.steinerTree.addEdge(link.getSource(), link.getTarget(), link);
 			}
 		}
 	}
@@ -819,6 +827,7 @@ public class Alignment implements OntologyUpdateListener {
 			
 			this.getGraphBuilder().addLink(source, target, newLink); // returns false if link already exists
 			tree.addEdge(source, target, newLink);
+			tree.setEdgeWeight(newLink, l.getWeight());
 						
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 

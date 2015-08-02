@@ -25,12 +25,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphBuilderTopK;
 import edu.isi.karma.modeling.alignment.GraphUtil;
@@ -42,6 +44,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -49,41 +52,72 @@ public abstract class ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraph.class);
 	
-	private static ModelLearningGraph instance = null;
+	private static ConcurrentHashMap<OntologyManager, ModelLearningGraph> instances = new ConcurrentHashMap<OntologyManager, ModelLearningGraph>();
 	protected OntologyManager ontologyManager;
 	protected GraphBuilder graphBuilder;
 	protected NodeIdFactory nodeIdFactory; 
 	protected long lastUpdateTime;
 	
-	private static final String getGraphJsonName()
+	private final String getGraphJsonName()
 	{
-		return ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.json";
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId());
+		return contextParameters.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.json";
 	}
-	private static final String getGraphGraphvizName()
+	private final String getGraphGraphvizName()
 	{
-		return ServletContextParameterMap.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.dot";
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId());
+		return contextParameters.getParameterValue(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY) + "graph.dot";
 	}
 
-	public static synchronized ModelLearningGraph getInstance(OntologyManager ontologyManager, ModelLearningGraphType type) {
-		if (instance == null || !ontologyManager.equals(instance.ontologyManager)) {
+	public static ModelLearningGraph getInstance(OntologyManager ontologyManager, ModelLearningGraphType type) {
+		ModelLearningGraph instance = null;
+		ModelLearningGraph previousInstance = null;
+		if (!instances.containsKey(ontologyManager)) {
 			try {
 				if (type == ModelLearningGraphType.Compact)
+				{
 					instance = new ModelLearningGraphCompact(ontologyManager);
+					previousInstance = instances.putIfAbsent(ontologyManager, instance);
+					if(previousInstance != null)
+						instance = previousInstance;
+				}
+					
 				else
+				{
 					instance = new ModelLearningGraphSparse(ontologyManager);
+					previousInstance = instances.putIfAbsent(ontologyManager, instance);
+					if(previousInstance != null)
+						instance = previousInstance;
+				}
 			} catch (IOException e) {
 				logger.error("error in importing the main learning graph!", e);
 				return null;
 			}
 		}
+		else
+		{
+			instance = instances.get(ontologyManager);
+		}
 		return instance;
 	}
 
 	public static ModelLearningGraph getEmptyInstance(OntologyManager ontologyManager, ModelLearningGraphType type) {
+		ModelLearningGraph instance = null;
+//		ModelLearningGraph previousInstance = null;
 		if (type == ModelLearningGraphType.Compact)
+		{
 			instance = new ModelLearningGraphCompact(ontologyManager, true);
+//			previousInstance = instances.putIfAbsent(ontologyManager, instance);
+//			if(previousInstance != null)
+//				instance = previousInstance;
+		}
 		else
+		{
 			instance = new ModelLearningGraphSparse(ontologyManager, true);
+//			previousInstance = instances.putIfAbsent(ontologyManager, instance);
+//			if(previousInstance != null)
+//				instance = previousInstance;
+		}
 		return instance;
 	}
 	
@@ -146,7 +180,7 @@ public abstract class ModelLearningGraph {
 	
 	public void initializeFromJsonRepository() {
 		logger.info("initializing the graph from models in the json repository ...");
-		
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId());
 		if (this instanceof ModelLearningGraphSparse)
 			this.graphBuilder = new GraphBuilder(ontologyManager, false);
 		else 
@@ -155,7 +189,7 @@ public abstract class ModelLearningGraph {
 		
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;
-		File ff = new File(ServletContextParameterMap.getParameterValue(ContextParameter.JSON_MODELS_DIR));
+		File ff = new File(contextParameters.getParameterValue(ContextParameter.JSON_MODELS_DIR));
 		if (ff.exists()) {
 			File[] files = ff.listFiles();
 			
@@ -173,12 +207,7 @@ public abstract class ModelLearningGraph {
 				}
 			}
 		}
-		
-		// This line should be uncommented when we have a good top-k steiner tree algorithm. 
-		// The current algorithm does not give right answer when I add the links from ontology. 
-		// FIXME
-//		this.updateGraphUsingOntology(addedNodes);
-		
+				
 		this.exportJson();
 		this.exportGraphviz();
 		this.lastUpdateTime = System.currentTimeMillis();
@@ -187,7 +216,7 @@ public abstract class ModelLearningGraph {
 	
 	public void exportJson() {
 		try {
-			GraphUtil.exportJson(this.graphBuilder.getGraph(), getGraphJsonName());
+			GraphUtil.exportJson(this.graphBuilder.getGraph(), getGraphJsonName(), true, true);
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to json!");
 		}
@@ -201,7 +230,7 @@ public abstract class ModelLearningGraph {
 					GraphVizLabelType.LocalId,
 					GraphVizLabelType.LocalUri,
 					false, 
-					false, 
+					true, 
 					getGraphGraphvizName());
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
@@ -223,12 +252,14 @@ public abstract class ModelLearningGraph {
 	}
 	
 	private void updateGraphUsingOntology(SemanticModel model) {
-		if (ModelingConfiguration.getAddOntologyPaths())
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ontologyManager.getContextId());
+		if (modelingConfiguration.getAddOntologyPaths())
 			this.graphBuilder.addClosureAndUpdateLinks(model.getInternalNodes(), null);
 	}
 	
 	public void updateGraphUsingOntology(Set<InternalNode> nodes) {
-		if (ModelingConfiguration.getAddOntologyPaths())
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ontologyManager.getContextId());
+		if (modelingConfiguration.getAddOntologyPaths())
 			this.graphBuilder.addClosureAndUpdateLinks(nodes, null);
 	}
 	

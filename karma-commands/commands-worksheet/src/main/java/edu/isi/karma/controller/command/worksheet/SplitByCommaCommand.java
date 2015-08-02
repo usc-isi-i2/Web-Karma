@@ -100,7 +100,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 		split.split(oldNodeValueMap, oldNodeStatusMap);
 		splitValueHNodeId = split.getSplitValueHNodeId();
 
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk), workspace.getContextId()));
 		
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -145,7 +145,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node), workspace.getFactory());
 		}
 
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk));
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk), workspace.getContextId());
 		
 	}
 }

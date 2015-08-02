@@ -20,20 +20,21 @@ import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.InternalNode;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class GraphBuilder_LOD_Pattern {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphBuilder_LOD_Pattern.class);
-	ModelLearningGraph modelLearningGraph;
+	private ModelLearningGraph modelLearningGraph;
+	private int maxPatternSize;
 
-
-	public GraphBuilder_LOD_Pattern(OntologyManager ontologyManager, String patternsDir) {
+	public GraphBuilder_LOD_Pattern(OntologyManager ontologyManager, String patternsDir, int maxPatternSize) {
 		
 		modelLearningGraph = (ModelLearningGraphCompact)
 				ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
 		
+		this.maxPatternSize = maxPatternSize;
 		buildGraph(ontologyManager, patternsDir);
 
 	}
@@ -72,20 +73,23 @@ public class GraphBuilder_LOD_Pattern {
 		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
 		Set<InternalNode> temp;
 		
-//		 adding patterns of size 3
-		logger.info("adding patterns of size 3 ...");
-		temp = this.addPatterns(patternsSize3);
-		if (temp != null) addedNodes.addAll(temp);
-		
-		// adding patterns with size 2, popularity of the links
-		logger.info("adding patterns of size 2 ...");
-		temp = this.addPatterns(patternsSize2);
-		if (temp != null) addedNodes.addAll(temp);
+		if (this.maxPatternSize >= 4) {
+			logger.info("adding patterns of size 4 ...");
+			temp = this.addPatterns(patternsSize4);
+			if (temp != null) addedNodes.addAll(temp);
+		}
 
-		// adding patterns of size 4
-//		logger.info("adding patterns of size 4 ...");
-//		temp = this.addPatterns(patternsSize4);
-//		if (temp != null) addedNodes.addAll(temp);
+		if (this.maxPatternSize >= 3) {
+			logger.info("adding patterns of size 3 ...");
+			temp = this.addPatterns(patternsSize3);
+			if (temp != null) addedNodes.addAll(temp);
+		}
+		
+		if (this.maxPatternSize >= 2) {
+			logger.info("adding patterns of size 2 ...");
+			temp = this.addPatterns(patternsSize2);
+			if (temp != null) addedNodes.addAll(temp);
+		}
 
 		try {
 			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
@@ -113,7 +117,7 @@ public class GraphBuilder_LOD_Pattern {
 					true, 
 					Params.GRAPHS_DIR + "lod.graph.dot");
 			GraphUtil.exportJson(this.getGraphBuilder().getGraph(), 
-					Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT);
+					Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT, true, true);
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}
@@ -122,9 +126,9 @@ public class GraphBuilder_LOD_Pattern {
 	
 	public static void main(String[] args) throws Exception {
 
-		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
-
-		OntologyManager ontologyManager = new OntologyManager();
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		
+		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		if (files == null) {
@@ -148,7 +152,7 @@ public class GraphBuilder_LOD_Pattern {
 		
 
 //		GraphBuilder_LOD_Pattern lodPatternGraphBuilder = 
-				new GraphBuilder_LOD_Pattern(ontologyManager, Params.PATTERNS_DIR);
+				new GraphBuilder_LOD_Pattern(ontologyManager, Params.PATTERNS_DIR, 2);
 
 		
 //		HashMap<String, Integer> opFrequency = new HashMap<String, Integer>();

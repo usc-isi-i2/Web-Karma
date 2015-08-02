@@ -68,11 +68,6 @@ public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 	public void tearDown() throws Exception {
 	}
 
-	/**
-	 * Test method for
-	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
-	 * .
-	 */
 	@Test
 	public void testGenerateRDF1() {
 		try {
@@ -84,11 +79,6 @@ public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 		}
 	}
 
-	/**
-	 * Test method for
-	 * {@link edu.isi.karma.rdf.JSONRDFGenerator#generateRDF(java.lang.String, java.lang.String, boolean, java.io.PrintWriter)}
-	 * .
-	 */
 	@Test
 	public void testGenerateRDF2() {
 		testMenus();

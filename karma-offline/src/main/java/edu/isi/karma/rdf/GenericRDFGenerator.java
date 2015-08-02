@@ -55,7 +55,9 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class GenericRDFGenerator extends RdfGenerator {
 
@@ -105,7 +107,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 	
 	private void generateRDF(String modelName, String sourceName,String contextName, InputStream data, InputType dataType,  InputProperties inputTypeParameters, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy, 
-			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill)
+			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill, ServletContextParameterMap contextParameters)
 					throws KarmaException, IOException {
 		
 		R2RMLMappingIdentifier id = this.modelIdentifiers.get(modelName);
@@ -138,16 +140,21 @@ public class GenericRDFGenerator extends RdfGenerator {
 		}
 		//Check if the parser for this model exists, else create one
 		WorksheetR2RMLJenaModelParser modelParser = getModelParser(modelName);
-		generateRDF(modelParser, sourceName, data, dataType, inputTypeParameters, addProvenance, writers, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill);
+		generateRDF(modelParser, sourceName, data, dataType, inputTypeParameters, addProvenance, writers, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill, contextParameters);
 	}
 	
 	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType,  InputProperties inputTypeParameters,
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy, 
-			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill) throws KarmaException, IOException {
+			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill, ServletContextParameterMap contextParameters) throws KarmaException, IOException {
 		logger.debug("Generating rdf for " + sourceName);
 		
+		if(contextParameters == null)
+		{
+			contextParameters = ContextParametersRegistry.getInstance().getDefault();
+			logger.debug("No context specified.  Defaulting to: " + contextParameters.getKarmaHome());
+		}
 		logger.debug("Initializing workspace for {}", sourceName);
-		Workspace workspace = initializeWorkspace();
+		Workspace workspace = initializeWorkspace(contextParameters);
 		logger.debug("Initialized workspace for {}", sourceName);
 		try
 		{
@@ -174,7 +181,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 			}
 			logger.debug("Generating output for {}", sourceName);
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet,
-			        workspace.getFactory(), writers,
+			        workspace, writers,
 			        addProvenance, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill, 
 			        mapping, errorReport, selection);
 			rdfGen.generateRDF(true);
@@ -213,7 +220,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		generateRDF(request.getModelName(), request.getSourceName(), request.getContextName(), 
 				inputStream, request.getDataType(), request.getInputTypeProperties(), request.isAddProvenance(), 
 				request.getWriters(), request.getStrategy(), 
-				request.getTripleMapToKill(), request.getTripleMapToStop(), request.getPOMToKill());
+				request.getTripleMapToKill(), request.getTripleMapToStop(), request.getPOMToKill(), request.getContextParameters());
 	}
 	
 	private InputType getInputType(Metadata metadata) {

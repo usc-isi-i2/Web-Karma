@@ -88,8 +88,6 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 				train, rdfLiteralType, 
 				selectionName);
 		
-		// Change the train flag, so that it does not train while reading from history
-		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}

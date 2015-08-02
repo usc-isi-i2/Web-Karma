@@ -22,7 +22,6 @@ public class Program implements GrammarTreeNode {
 	public PartitionClassifierType classifier;
 	public DataPreProcessor dpPreProcessor;
 	public String program = "null";
-
 	public Program(Vector<Partition> pars, PartitionClassifierType classifier, DataPreProcessor dpp) {
 		this.partitions = pars;
 		this.dpPreProcessor = dpp;

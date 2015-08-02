@@ -75,7 +75,7 @@ public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
 					uc.add(new RegenerateWorksheetUpdate(worksheetId));
 					break;
 				case "all":
-					uc = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, sel);
+					uc = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, sel, workspace.getContextId());
 					break;
 				case "cleaning":
 					uc.add(new WorksheetCleaningUpdate(worksheetId, false, sel));

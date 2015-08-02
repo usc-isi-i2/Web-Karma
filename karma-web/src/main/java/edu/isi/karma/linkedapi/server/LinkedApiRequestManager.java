@@ -1,11 +1,12 @@
 package edu.isi.karma.linkedapi.server;
 
-import edu.isi.karma.config.ModelingConfiguration;
-import edu.isi.karma.model.serialization.SerializationLang;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
-import java.io.PrintWriter;
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
+import edu.isi.karma.model.serialization.SerializationLang;
 
 public class LinkedApiRequestManager {
 
@@ -14,13 +15,16 @@ public class LinkedApiRequestManager {
 	private String serviceId;
 	private String serviceUri;
 	private HttpServletResponse response;
-	
+	protected String contextId;
 	public LinkedApiRequestManager(String serviceId, 
 			ResourceType resourceType, 
 			String returnType,
-			HttpServletResponse response) {
+			HttpServletResponse response,
+			String contextId) {
 		this.serviceId = serviceId;
-		this.serviceUri = ModelingConfiguration.getKarmaServicePrefix() + serviceId + (!serviceId.endsWith("#")?"#":""); 
+		this.contextId = contextId;
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId);
+		this.serviceUri = modelingConfiguration.getKarmaServicePrefix() + serviceId + (!serviceId.endsWith("#")?"#":""); 
 		this.resourceType = resourceType;
 		this.format = returnType;
 		this.response = response;

@@ -59,6 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.util.HTTPUtil;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 
@@ -74,9 +75,9 @@ public class TripleStoreUtil {
 	public static final String karma_model_repo = "karma_models";
 	public static final String karma_data_repo = "karma_data";
 	static {
-		String host = ServletContextParameterMap
+		String host = ContextParametersRegistry.getInstance().getDefault()
 				.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST);
-		String port = ServletContextParameterMap
+		String port = ContextParametersRegistry.getInstance().getDefault()
 				.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT);
 		final String baseURL = host + ":" + port + "/openrdf-sesame";
 		defaultServerUrl = baseURL + "/repositories";

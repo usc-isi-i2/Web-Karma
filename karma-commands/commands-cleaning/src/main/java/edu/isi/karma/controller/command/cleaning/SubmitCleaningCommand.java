@@ -275,7 +275,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		while (iterNum < 1 && !results) // try to find any rule during 1 times
 										// running
 		{
-			rtf = new RamblerTransformationOutput(inputs);
+			rtf = new RamblerTransformationOutput(inputs, workspace.getContextId());
 			if (rtf.getTransformations().keySet().size() > 0) {
 				results = true;
 			}
@@ -361,7 +361,6 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		HTable currentTable = workspace.getFactory().getHTable(hTableId);
 		// remove the new column
 		currentTable.removeHNode(newHNodeId, worksheet);
-
 		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
 		// TODO is it necessary to compute alignment and semantic types for
 		// everything?

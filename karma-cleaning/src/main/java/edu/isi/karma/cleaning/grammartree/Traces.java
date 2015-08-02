@@ -24,7 +24,6 @@ public class Traces implements GrammarTreeNode {
 	// keep all the segment expression to prevent repeated construction
 	public static HashMap<String, Segment> AllSegs = new HashMap<String, Segment>();
 	public String program = "null";
-
 	public Traces() {
 
 	}
@@ -734,7 +733,6 @@ public class Traces implements GrammarTreeNode {
 			System.out.println("" + loopline.get(key));
 		}
 	}
-
 	public void emptyState() {
 		for (GrammarTreeNode t : this.totalOrderVector) {
 			t.emptyState();

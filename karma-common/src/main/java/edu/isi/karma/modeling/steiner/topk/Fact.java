@@ -1,7 +1,5 @@
 package edu.isi.karma.modeling.steiner.topk;
 
-import java.io.IOException;
-import java.io.Writer;
 
 /**
  * This class is part of the YAGO extractors (http://mpii.de/yago). It is licensed under the 

@@ -21,24 +21,30 @@
 
 package edu.isi.karma.model.serialization;
 
-import com.hp.hpl.jena.rdf.model.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.rep.sources.Attribute;
 import edu.isi.karma.rep.sources.AttributeRequirement;
 import edu.isi.karma.rep.sources.IOType;
 import edu.isi.karma.rep.sources.WebService;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 
 public class WebServicePublisher extends SourcePublisher {
 
@@ -46,9 +52,10 @@ public class WebServicePublisher extends SourcePublisher {
 	
 	private WebService service;
 	private Model model = null;
-	
-	public WebServicePublisher(WebService service) {
+	private String contextId;
+	public WebServicePublisher(WebService service, String contextId) {
 		this.service = service;
+		this.contextId = contextId;
 	}
 
 	@Override
@@ -134,8 +141,8 @@ public class WebServicePublisher extends SourcePublisher {
 	public void writeToFile(String lang) throws FileNotFoundException {
 		if (this.model == null)
 			model = exportToJenaModel();
-		
-		String service_desc_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+		String service_desc_file = contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
 										Repository.Instance().SERVICE_REPOSITORY_REL_DIR + 
 		 							this.service.getId() +
 									Repository.Instance().getFileExtension(lang);
@@ -298,20 +305,22 @@ public class WebServicePublisher extends SourcePublisher {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		String serviceUri = ModelingConfiguration.getKarmaServicePrefix() + "CDA81BE4-DD77-E0D3-D033-FC771B2F4800" + "#";
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
+		String serviceUri = modelingConfiguration.getKarmaServicePrefix() + "CDA81BE4-DD77-E0D3-D033-FC771B2F4800" + "#";
 		WebService service = WebServiceLoader.getInstance().getSourceByUri(serviceUri);
 		
-		String service_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+		String service_file = contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
 									Repository.Instance().SERVICE_REPOSITORY_REL_DIR + 
 									"service" + 
 									Repository.Instance().getFileExtension(SerializationLang.N3);
 		
-		String service_input_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+		String service_input_file = contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
 									Repository.Instance().SERVICE_REPOSITORY_REL_DIR + 
 									"input" + 
 									Repository.Instance().getFileExtension(SerializationLang.N3);
 
-		String service_output_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+		String service_output_file = contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
 									Repository.Instance().SERVICE_REPOSITORY_REL_DIR + 
 									"output" + 
 									Repository.Instance().getFileExtension(SerializationLang.N3);
@@ -320,7 +329,7 @@ public class WebServicePublisher extends SourcePublisher {
 		OutputStreamWriter outputServiceInput = new OutputStreamWriter(new FileOutputStream(service_input_file));
 		OutputStreamWriter outputServiceOutput = new OutputStreamWriter(new FileOutputStream(service_output_file));
 
-		WebServicePublisher webServicePublisher = new WebServicePublisher(service);
+		WebServicePublisher webServicePublisher = new WebServicePublisher(service, contextParameters.getId());
 		com.hp.hpl.jena.rdf.model.Model model = webServicePublisher.exportToJenaModel();
 		com.hp.hpl.jena.rdf.model.Model inputModel = webServicePublisher.generateInputPart();
 		com.hp.hpl.jena.rdf.model.Model outputModel = webServicePublisher.generateOutputPart();

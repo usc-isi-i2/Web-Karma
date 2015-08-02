@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
@@ -58,6 +59,7 @@ import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.VWorkspaceRegistry;
@@ -108,6 +110,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
@@ -172,7 +176,8 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 		steinerNodes = alignment.computeSteinerNodes();
 		ModelLearner modelLearner = null;
-		if (ModelingConfiguration.getKnownModelsAlignment()) 
+
+		if (modelingConfiguration.getKnownModelsAlignment()) 
 			modelLearner = new ModelLearner(alignment.getGraphBuilder(), steinerNodes);
 		else
 			modelLearner = new ModelLearner(ontologyManager, alignment.getLinksByStatus(LinkStatus.ForcedByUser), steinerNodes);

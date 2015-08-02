@@ -41,7 +41,6 @@ public class ProgSynthesis {
 	public ExampleCluster partiCluster;
 	public DataPreProcessor dataPreProcessor;
 	public Messager msGer;
-
 	public ProgSynthesis() {
 	}
 

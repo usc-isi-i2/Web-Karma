@@ -1,5 +1,4 @@
 package edu.isi.karma.controller.update;
-
 import edu.isi.karma.view.VWorkspace;
 
 import org.json.JSONArray;

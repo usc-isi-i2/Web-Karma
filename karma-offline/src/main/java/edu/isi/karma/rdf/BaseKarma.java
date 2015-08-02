@@ -14,6 +14,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
@@ -22,7 +23,10 @@ import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class BaseKarma {
 	private static Logger LOG = LoggerFactory.getLogger(BaseKarma.class);
@@ -87,13 +91,18 @@ public class BaseKarma {
 			}	
 		}
 		
+		ServletContextParameterMap contextParameters = new ServletContextParameterMap(null);
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		contextParametersRegistry.register(contextParameters);
+		
 		KarmaMetadataManager userMetadataManager;
-		userMetadataManager = new KarmaMetadataManager();
+		userMetadataManager = new KarmaMetadataManager(contextParameters);
 		UpdateContainer uc = new UpdateContainer();
-		userMetadataManager.register(new UserPreferencesMetadata(), uc);
-		userMetadataManager.register(new UserConfigMetadata(), uc);
-		userMetadataManager.register(new PythonTransformationMetadata(), uc);
-		PythonRepository.disableReloadingLibrary();
+		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
+		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 	}
 
 	private void addModel() throws MalformedURLException {

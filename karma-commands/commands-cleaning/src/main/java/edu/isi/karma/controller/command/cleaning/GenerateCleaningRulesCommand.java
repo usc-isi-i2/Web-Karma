@@ -198,7 +198,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		RamblerTransformationOutput rtf = null;
 		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
-			rtf = new RamblerTransformationOutput(inputs);
+			rtf = new RamblerTransformationOutput(inputs, workspace.getContextId());
 			if (rtf.getTransformations().keySet().size() > 0) {
 				results = true;
 			}

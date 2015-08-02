@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 
 
@@ -60,6 +61,7 @@ public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 		request.setAddProvenance(generateProvenance);
 		request.setDataType(InputType.JSON);
 		request.addWriters(writers);
+		request.setContextParameters(ContextParametersRegistry.getInstance().getDefault());
 		rdfGen.generateRDF(request);
 		String rdf = sw.toString();
 		assertNotEquals(rdf.length(), 0);

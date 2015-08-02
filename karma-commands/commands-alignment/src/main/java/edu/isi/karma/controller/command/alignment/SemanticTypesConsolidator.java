@@ -15,10 +15,11 @@ public class SemanticTypesConsolidator extends CommandConsolidator {
 		List<Command> refinedCommands = new ArrayList<Command>();
 		for (Command command : commands) {
 			if (command instanceof UnassignSemanticTypeCommand) {
+				String model = command.getModel();
 				Iterator<Command> itr = refinedCommands.iterator();
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
-					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && (tmp instanceof SetSemanticTypeCommand || tmp instanceof SetMetaPropertyCommand)) {
+					if (tmp.getModel().equals(model) && tmp.getOutputColumns().equals(command.getOutputColumns()) && (tmp instanceof SetSemanticTypeCommand || tmp instanceof SetMetaPropertyCommand)) {
 						tmp.getOutputColumns().clear();
 						command.getOutputColumns().clear();
 					}

@@ -1,10 +1,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -25,9 +22,6 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SemanticType.Origin;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
@@ -87,7 +81,7 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 					// do this only one time: if user assigns a semantic type to the column, 
 					// and later clicks on Set Semantic Type button, we should not change the initially learned types 
 					logger.debug("adding learned semantic types to the column " + hNodeId);
-					columnNode.setLearnedSemanticTypes(getSuggestedTypes(ontMgr, model));
+					columnNode.setLearnedSemanticTypes(new SemanticTypeUtil().getSuggestedTypes(ontMgr, columnNode, model));
 					if (columnNode.getLearnedSemanticTypes().isEmpty()) {
 						logger.info("no semantic type learned for the column " + hNodeId);
 					}
@@ -103,38 +97,6 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 		return uc;
 	}
 	
-	private List<SemanticType> getSuggestedTypes(OntologyManager ontologyManager, 
-			SemanticTypeColumnModel columnModel) {
-		
-		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
-		if (columnModel == null)
-			return suggestedSemanticTypes;
-		
-		for (Entry<String, Double> entry : columnModel.getScoreMap().entrySet()) {
-			
-			String key = entry.getKey();
-			Double confidence = entry.getValue();
-			if (key == null || key.isEmpty()) continue;
-
-			String[] parts = key.split("\\|");
-			if (parts == null || parts.length != 2) continue;
-
-			String domainUri = parts[0].trim();
-			String propertyUri = parts[1].trim();
-
-			Label domainLabel = ontologyManager.getUriLabel(domainUri);
-			if (domainLabel == null) continue;
-
-			Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
-			if (propertyLabel == null) continue;
-
-			SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, Origin.TfIdfModel, confidence);
-			logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
-			suggestedSemanticTypes.add(semanticType);
-		}
-		Collections.sort(suggestedSemanticTypes, Collections.reverseOrder());
-		return suggestedSemanticTypes;
-	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {

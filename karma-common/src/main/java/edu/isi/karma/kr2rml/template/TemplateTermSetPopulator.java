@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
-import edu.isi.karma.kr2rml.KR2RMLConfiguration;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
@@ -41,7 +40,8 @@ public class TemplateTermSetPopulator {
 	private URIFormatter formatter;
 	
 	// WK-226 Adds the ability to generate blank nodes with out satisfying any column terms
-	private static Boolean noMinimumNumberOfSatisifiedTerms = null;
+	//TODO make this not static
+	private static Boolean noMinimumNumberOfSatisifiedTerms = false;
 	
 	public TemplateTermSetPopulator(TemplateTermSet originalTerms, StringBuilder baseTemplate, URIFormatter formatter)
 	{
@@ -64,7 +64,8 @@ public class TemplateTermSetPopulator {
 		this.formatter = formatter;
 		if(noMinimumNumberOfSatisifiedTerms == null)
 		{
-			noMinimumNumberOfSatisifiedTerms = KR2RMLConfiguration.getNoMinimumNumberOfSatisifiedTerms();
+			// TODO look this up using the kr2ml configuration registry
+			noMinimumNumberOfSatisifiedTerms = false;
 		}
 	}
 	
@@ -152,6 +153,7 @@ public class TemplateTermSetPopulator {
 		return termsSatisifed || (!useNodeValue && (atLeastOneTermSatisified || noMinimumNumberOfSatisifiedTerms));
 	}
 
+	//TODO make this workspace specific.
 	public static void setNoMinimumNumberOfSatisifiedTerms(boolean noMinimumNumberOfSatisifiedTerms)
 	{
 		TemplateTermSetPopulator.noMinimumNumberOfSatisifiedTerms = noMinimumNumberOfSatisifiedTerms; 

@@ -9,6 +9,7 @@ import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.N3KR2RMLRDFWriter;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 
 //If running in offline mode, need to set manual.alignment=true in modeling.peoperties
@@ -33,7 +34,7 @@ public class JSONRDFGenerator extends GenericRDFGenerator {
 		super(selectionName);
 	}
 	
-	void generateRDF(String modelName, String jsonData, boolean addProvenance, PrintWriter pw) throws KarmaException, JSONException, IOException {
+	void generateRDF(String modelName, String jsonData, boolean addProvenance, PrintWriter pw, ServletContextParameterMap contextParameters) throws KarmaException, JSONException, IOException {
 		URIFormatter uriFormatter = new URIFormatter();
 		KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 		RDFGeneratorRequest request = new RDFGeneratorRequest(modelName, null);
@@ -41,6 +42,7 @@ public class JSONRDFGenerator extends GenericRDFGenerator {
 		request.setDataType(InputType.JSON);
 		request.setInputData(jsonData);
 		request.addWriter(outWriter);
+		request.setContextParameters(contextParameters);
 		this.generateRDF(request);
 	}
 	

@@ -15,6 +15,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.alignment.GraphBuilder;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.GraphVizLabelType;
@@ -32,6 +34,7 @@ import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.util.RandomGUID;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -128,7 +131,7 @@ public class GraphBuilder_Popularity {
 					true, 
 					true, 
 					Params.GRAPHS_DIR + "lod.graph.dot");
-			GraphUtil.exportJson(this.graphBuilder.getGraph(), Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT);
+			GraphUtil.exportJson(this.graphBuilder.getGraph(), Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT, true, true);
 		} catch (Exception e) {
 			logger.error("error in exporting the alignment graph to graphviz!");
 		}
@@ -318,9 +321,8 @@ public class GraphBuilder_Popularity {
 
 	public static void main(String[] args) throws Exception {
 
-		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
-
-		OntologyManager ontologyManager = new OntologyManager();
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		if (files == null) {

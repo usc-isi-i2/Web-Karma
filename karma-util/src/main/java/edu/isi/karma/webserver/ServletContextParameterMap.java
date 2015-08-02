@@ -21,18 +21,21 @@
 package edu.isi.karma.webserver;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServletContextParameterMap {
-	private static HashMap<ContextParameter, String> valuesMap = new HashMap<ContextParameter, String>();
+	private Map<ContextParameter, String> valuesMap = new ConcurrentHashMap<ContextParameter, String>();
 
+	protected final String id;
+	
 	private static Logger logger = LoggerFactory
 			.getLogger(ServletContextParameterMap.class);
-
+ 
 	public enum ContextParameter {
 		PUBLIC_RDF_ADDRESS,PUBLIC_KML_ADDRESS, 
 		KML_TRANSFER_SERVICE, WGS84_LAT_PROPERTY, 
@@ -55,13 +58,22 @@ public class ServletContextParameterMap {
 		RDF_PUBLISH_DIR, RDF_PUBLISH_RELATIVE_DIR,
 		CSV_PUBLISH_DIR, CSV_PUBLISH_RELATIVE_DIR, USER_PYTHON_SCRIPTS_DIRECTORY,
 		JSON_PUBLISH_DIR, JSON_PUBLISH_RELATIVE_DIR,
-		REPORT_PUBLISH_DIR, REPORT_PUBLISH_RELATIVE_DIR, AVRO_PUBLISH_DIR, AVRO_PUBLISH_RELATIVE_DIR, USER_UPLOADED_DIR
+		REPORT_PUBLISH_DIR, REPORT_PUBLISH_RELATIVE_DIR, AVRO_PUBLISH_DIR, AVRO_PUBLISH_RELATIVE_DIR, USER_UPLOADED_DIR,
+		KML_PUBLISH_DIR, KML_PUBLISH_RELATIVE_DIR, EVALUATE_MRR
 	}
 	
-	static {
+	public ServletContextParameterMap(String karmaDir)
+	{
+		setup(karmaDir);
+		id = getKarmaHome(); 
+	}
+	public void setup(String karmaDir) {
 		
-		// Find a safe place to store preferences
-		String karmaDir = System.getenv("KARMA_USER_HOME");
+		if(karmaDir == null)
+		{
+			// Find a safe place to store preferences
+			karmaDir = System.getenv("KARMA_USER_HOME");
+		}
 		if(karmaDir == null)
 		{
 			karmaDir = System.getProperty("KARMA_USER_HOME");
@@ -86,18 +98,25 @@ public class ServletContextParameterMap {
 		logger.info("Karma home: " + karmaDir);
 		
 	}
-	public static void setParameterValue(ContextParameter param, String value) {
+	public void setParameterValue(ContextParameter param, String value) {
 		valuesMap.put(param, value);
 	}
 
-	public static String getParameterValue(ContextParameter param) {
+	public String getParameterValue(ContextParameter param) {
 		if (valuesMap.containsKey(param))
 			return valuesMap.get(param);
 //		logger.error("Parameter value does not exist! " + param);
 
 		return "";
 	}
+
+	public String getKarmaHome() {
+		
+		return getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
+	}
 	
-	
+	public String getId(){
+		return id;
+	}
 
 }

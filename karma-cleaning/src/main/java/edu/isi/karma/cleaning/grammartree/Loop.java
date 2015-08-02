@@ -10,7 +10,6 @@ public class Loop implements GrammarTreeNode {
 	public static final int LOOP_END = 1;
 	public static final int LOOP_BOTH = 2;
 	public static final int LOOP_MID = 3;
-
 	public Loop(Segment loopbody, int looptype) {
 		if (loopbody.section.size() == 0) {
 			this.loopbody = new Segment(loopbody.constNodes);

@@ -55,8 +55,10 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.URIFormatter;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
@@ -75,7 +77,10 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class OfflineRdfGenerator {
 
@@ -104,6 +109,7 @@ public class OfflineRdfGenerator {
 	private String sourceFilePath;
 	private String dBorSIDName;
 	private String tablename;
+	private String topkrows;
 	private String queryFile;
 	private String portnumber;
 	private String sMaxNumLines;
@@ -120,6 +126,7 @@ public class OfflineRdfGenerator {
 	private String contextFile;
 	private String contextURLString;
 	private URL contextURL;
+	private ServletContextParameterMap contextParameters;
 	public OfflineRdfGenerator(CommandLine cl)
 	{
 
@@ -175,19 +182,32 @@ public class OfflineRdfGenerator {
 		}
 
 		logger.info("done after {}", (System.currentTimeMillis() - l));
-		logger.info("RDF published at: " + outputFilePath);
+		if(outputFilePath != null)
+		{
+			logger.info("RDF published at: " + outputFilePath);
+		}
+		if(outputFileJSONPath != null)
+		{
+			logger.info("JSON-LD published at: " + outputFileJSONPath);
+		}
 	}
 
 	private void setupKarmaMetadata() throws KarmaException {
+		
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		contextParameters = contextParametersRegistry.registerByKarmaHome(null);
+		
 		UpdateContainer uc = new UpdateContainer();
-		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager();
-		userMetadataManager.register(new UserPreferencesMetadata(), uc);
-		userMetadataManager.register(new UserConfigMetadata(), uc);
-		userMetadataManager.register(new PythonTransformationMetadata(), uc);
-		PythonRepository.disableReloadingLibrary();
+		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
+		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
+		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-		ModelingConfiguration.setLearnerEnabled(false); // disable automatic learning
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
+		modelingConfiguration.setLearnerEnabled(false); // disable automatic learning
 
 	}
 
@@ -270,6 +290,7 @@ public class OfflineRdfGenerator {
 		encoding = (String) cl.getOptionValue("encoding");
 		dBorSIDName = (String) cl.getOptionValue("dbname");
 		tablename = (String) cl.getOptionValue("tablename");
+		topkrows = (String) cl.getOptionValue("topkrows");
 		queryFile = (String) cl.getOptionValue("queryfile");
 		portnumber = (String) cl.getOptionValue("portnumber");
 	}
@@ -284,9 +305,9 @@ public class OfflineRdfGenerator {
 	protected boolean validateCommandLineOptions() throws IOException
 	{
 
-		if ((modelURLString == null && modelFilePath == null) || outputFilePath == null || inputType == null) {
+		if ((modelURLString == null && modelFilePath == null) || (outputFilePath == null && outputFileJSONPath == null) || inputType == null) {
 			logger.error("Mandatory value missing. Please provide argument value "
-					+ "for sourcetype, modelfilepath and outputfile.");
+					+ "for sourcetype, (modelfilepath or modelurl) and (outputfile or jsonoutputfile).");
 			return false;
 		}
 
@@ -384,7 +405,7 @@ public class OfflineRdfGenerator {
 		}
 
 		DatabaseTableRDFGenerator dbRdfGen = new DatabaseTableRDFGenerator(dbType,
-				hostname, port, username, password, dBorSIDName, encoding, selectionName);
+				hostname, port, username, password, dBorSIDName, encoding, selectionName, contextParameters);
 		ContextIdentifier contextId = null;
 		if (contextURL != null) {
 			
@@ -393,7 +414,7 @@ public class OfflineRdfGenerator {
 		if(inputType.equals("DB")) {
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
 			createWriters();
-			dbRdfGen.generateRDFFromTable(tablename, writers, id, contextId, baseURI);
+			dbRdfGen.generateRDFFromTable(tablename, topkrows, writers, id, contextId, baseURI);
 		} else {
 			String query = loadQueryFromFile();
 			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
@@ -467,19 +488,23 @@ public class OfflineRdfGenerator {
 	protected void createN3Writer()
 			throws UnsupportedEncodingException, FileNotFoundException {
 
-		OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
-		BufferedWriter bw = new BufferedWriter(fw);
-		PrintWriter pw = new PrintWriter(bw);
-		N3KR2RMLRDFWriter n3Writer = new N3KR2RMLRDFWriter(new URIFormatter(), pw);
+		if(outputFilePath != null)
+		{
+			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(outputFilePath), "UTF-8");
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter pw = new PrintWriter(bw);
+			N3KR2RMLRDFWriter n3Writer = new N3KR2RMLRDFWriter(new URIFormatter(), pw);
+			
+			if(baseURI != null)
+			{
+				n3Writer.setBaseURI(baseURI);
+			}
+			writers.add(n3Writer);
+		}
 		if (outputFileJSONPath != null) {
 			JSONKR2RMLRDFWriter jsonWriter = new JSONKR2RMLRDFWriter(new PrintWriter(outputFileJSONPath), baseURI);
 			writers.add(jsonWriter);
 		}
-		if(baseURI != null)
-		{
-			n3Writer.setBaseURI(baseURI);
-		}
-		writers.add(n3Writer);
 	}
 
 	protected void createBloomFilterWriter() throws Exception {
@@ -535,7 +560,7 @@ public class OfflineRdfGenerator {
 		createWriters();
 		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName);
 		rdfGenerator.addModel(id);
-
+		
 		InputType inputType = null;
 		if(this.inputType.equalsIgnoreCase("CSV"))
 			inputType = InputType.CSV;
@@ -575,6 +600,7 @@ public class OfflineRdfGenerator {
 		request.setTripleMapToKill(killTripleMap);
 		request.setTripleMapToStop(stopTripleMap);
 		request.setStrategy(new UserSpecifiedRootStrategy(rootTripleMap));
+		request.setContextParameters(contextParameters);
 		if (contextURL != null) {
 			ContextIdentifier contextId = new ContextIdentifier(contextURL.getQuery(), contextURL);
 			rdfGenerator.addContext(contextId);
@@ -606,6 +632,7 @@ public class OfflineRdfGenerator {
 		options.addOption(new Option("portnumber", "portnumber", true, "portnumber for database connection"));
 		options.addOption(new Option("dbname", "dbname", true, "database or SID name for database connection"));
 		options.addOption(new Option("tablename", "tablename", true, "hostname for database connection"));
+		options.addOption(new Option("topkrows", "topkrows", true, "number of top k rows to select from the table"));
 		options.addOption(new Option("queryfile", "queryfile", true, "query file for loading data"));
 		options.addOption(new Option("outputbloomfilter", "bloomfiltersfile", true, "generate bloom filters"));
 		options.addOption(new Option("baseuri", "base URI", true, "specifies base uri"));

@@ -1,10 +1,23 @@
 package edu.isi.karma.linkedapi.server;
 
-import edu.isi.karma.model.serialization.MimeType;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLConnection;
+
 import org.apache.commons.lang3.CharEncoding;
 
-import java.io.*;
-import java.net.*;
+import edu.isi.karma.model.serialization.MimeType;
 
 public class HTTPClientTest {
 
