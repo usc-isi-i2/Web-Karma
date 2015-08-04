@@ -1,13 +1,17 @@
 package edu.isi.karma.mapreduce.driver;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -17,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.BaseKarma;
-import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
 
 public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
@@ -28,10 +31,10 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 	protected String header = null;
 	protected String delimiter = null;
 	protected boolean hasHeader = false;
-	boolean isModelInSource = false;
-	boolean isRootInSource = false;
+	boolean readKarmaConfig = false;
+	JSONArray jKarmaConfig = null;
 	@Override
-	public void setup(Context context) {
+	public void setup(Context context) throws IOException {
 
 		karma = new BaseKarma();
 		String inputTypeString = context.getConfiguration().get(
@@ -48,8 +51,29 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 				baseURI, contextURI, rdfGenerationRoot, rdfSelection);
 		
 		
-		isModelInSource = Boolean.parseBoolean(context.getConfiguration().get("is.model.in.json"));
-		isRootInSource = Boolean.parseBoolean(context.getConfiguration().get("is.root.in.json"));
+		readKarmaConfig = Boolean.parseBoolean(context.getConfiguration().get("read.karma.config"));
+		
+		String configFilePath = context.getConfiguration().get("karma.config.file");
+		
+		FileSystem fs = FileSystem.get(context.getConfiguration());
+		
+		if(readKarmaConfig)
+		{
+			if(!fs.exists(new Path(configFilePath))){
+				throw new FileNotFoundException("File at :" + configFilePath + " doesn't exist.");
+			}
+			else{
+				StringBuilder sbConfig = new StringBuilder();
+				BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(new Path(configFilePath))));
+				String line=null;
+				
+				while((line = br.readLine()) != null){
+					sbConfig.append(line.trim());
+				}
+				
+				jKarmaConfig = (JSONArray) JSONSerializer.toJSON(sbConfig.toString());
+			}
+		}
 	
 	}
 
@@ -59,8 +83,18 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 
 		String contents = value.toString();
 		
+		JSONObject jMatchedKarmaConfig = null;
+				
+		for(int i=0;i<jKarmaConfig.size();i++){
+			
+			if(key.toString().matches(jKarmaConfig.getJSONObject(i).getString("urls"))){
+				jMatchedKarmaConfig = jKarmaConfig.getJSONObject(i);
+				break;
+			}
+			
+		}
 		
-		//TODO key should be url, match it with regex here instead of doing it in landmark-extraction
+		
 		
 		if (contents.trim() != ""){
 			LOG.debug(key.toString() + " started");
@@ -75,23 +109,17 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 				contents = header+"\n" + contents;
 			}
 			
-			if(karma.getInputType() != null && karma.getInputType().equals(InputType.JSON)){
+			if(readKarmaConfig && jMatchedKarmaConfig != null){
 				
-				JSON json = JSONSerializer.toJSON(contents);
-				
-				
-				
-				if(json instanceof JSONObject){
+				if(jMatchedKarmaConfig instanceof JSONObject){
 					
-					JSONObject jObj = (JSONObject) json;
-	
 					String modelName=null;
 						
-					if (jObj.containsKey("model_uri")){
+					if (jMatchedKarmaConfig.containsKey("model-uri")){
 						
 						//add a new model with uri as name. This will prevent hitting github million times(literally)
 						
-						String modelURL = jObj.getString("model_uri");
+						String modelURL = jMatchedKarmaConfig.getString("model-uri");
 						
 						int index = modelURL.lastIndexOf("/");
 						
@@ -99,18 +127,15 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 						
 						modelName = modelName.substring(0, modelName.length()-4);
 			
-						karma.addModel(modelName,null, jObj.getString("model_uri"));
-							
-						//LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
+						karma.addModel(modelName,null, jMatchedKarmaConfig.getString("model-uri"));
 					}
 					else {
-						//LOG.error("NO MODEL URI found in source: " + jObj.toString());
 					}
 				
 					
-					if(jObj.containsKey("roots")){
+					if(jMatchedKarmaConfig.containsKey("roots")){
 						
-						JSONArray jArrayRoots = jObj.getJSONArray("roots");
+						JSONArray jArrayRoots = jMatchedKarmaConfig.getJSONArray("roots");
 						
 						for (int i=0;i<jArrayRoots.size();i++){
 							
@@ -119,11 +144,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 							if(jObjRoots.containsKey("root")){
 								
 								karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
-								//LOG.error("HUMAN READABLE ROOT:" + jObjRoots.getString("root"));
-								//LOG.error("ROOT SELECTED:" + karma.getRdfGenerationRoot());
-								//LOG.error("MODEL ROOTS: " + modelName);
 								String results = generateJSONLD(key, value,modelName);
-								//LOG.error("JSONLD ROOTS: " + results);
 								if (results != null && !results.equals("[\n\n]\n")) {
 									
 									writeRDFToContext(context, results);
@@ -137,11 +158,8 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 						}
 					}
 					else{
-						//LOG.error("NO ROOTS MODEL:" +  modelName);
 						String results = generateJSONLD(key, value,modelName);
-						//LOG.error("JSONLD ROOTS: " + results);
 						if (results != null && !results.equals("[\n\n]\n")) {
-							//LOG.error("JSON-LD PRODUCED: " + results);
 							writeRDFToContext(context, results);
 							
 						}
@@ -155,7 +173,6 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			else{
 				
 				String results = generateJSONLD(key, value,"model");
-				LOG.error("JSON-LD PRODUCED: " + results);
 				if (!results.equals("[\n\n]\n") && results != null) {
 					
 					writeRDFToContext(context, results);
@@ -200,7 +217,6 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			}
 			if(karma.getRdfGenerationRoot() != null)
 			{
-				//LOG.error("ROOT FROM FUNCTION GENERATEJSONLD:" + karma.getRdfGenerationRoot());
 				request.setStrategy(new UserSpecifiedRootStrategy(karma.getRdfGenerationRoot()));
 			}
 			if (karma.getContextId() != null) {
@@ -210,13 +226,11 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			karma.getGenerator().generateRDF(request);
 
 			results = sw.toString();
-			//LOG.error("GENERATED JSON:" + results);
 			
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.error("Unable to generate RDF: " + e.getMessage());
-			//throw new IOException();
 		}
 		
 		return results;
