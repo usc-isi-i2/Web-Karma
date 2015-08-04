@@ -151,31 +151,33 @@ public class KarmaServlet extends HttpServlet {
 			PythonRepositoryRegistry.getInstance().register(pythonRepository);
 			
 			String port = String.valueOf(request.getServerPort());
-			String protocol = request.getProtocol().split("/")[0];
-			String host = protocol.toLowerCase() + "://" + request.getServerName();
-
-			//Set JETTY_PORT and HOST
-			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT, port);
-			logger.info("JETTY_PORT initilized to " + port);
-
-			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST, host);
-			logger.info("JETTY_HOST initilized to " + host);
-
-			// also set PUBLIC_RDF_ADDRESS
-			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.PUBLIC_RDF_ADDRESS, host + ":" + port + "/RDF/");
-
-			// also set CLEANING_SERVICE_URL
-			String cleaningServiceUrl = host + ":" + port
-					+ contextParameters.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL);
-			logger.info("CLEANING SERVICE initialized to " + cleaningServiceUrl);
-			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL, cleaningServiceUrl);
-
-			//and the CLUSTER_SERVICE url
-			String clusterServiceUrl =host + ":" + port
-					+ contextParameters.getParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL);
-			logger.info("CLUSTER SERVICE initialized to " + clusterServiceUrl);
-			contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL, clusterServiceUrl);
-			
+			String protocol = request.getProtocol();
+			if(protocol != null) {
+				protocol = protocol.split("/")[0];
+				String host = protocol.toLowerCase() + "://" + request.getServerName();
+	
+				//Set JETTY_PORT and HOST
+				contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT, port);
+				logger.info("JETTY_PORT initilized to " + port);
+	
+				contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST, host);
+				logger.info("JETTY_HOST initilized to " + host);
+	
+				// also set PUBLIC_RDF_ADDRESS
+				contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.PUBLIC_RDF_ADDRESS, host + ":" + port + "/RDF/");
+	
+				// also set CLEANING_SERVICE_URL
+				String cleaningServiceUrl = host + ":" + port
+						+ contextParameters.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL);
+				logger.info("CLEANING SERVICE initialized to " + cleaningServiceUrl);
+				contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL, cleaningServiceUrl);
+	
+				//and the CLUSTER_SERVICE url
+				String clusterServiceUrl =host + ":" + port
+						+ contextParameters.getParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL);
+				logger.info("CLUSTER SERVICE initialized to " + clusterServiceUrl);
+				contextParameters.setParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL, clusterServiceUrl);
+			}
 		} catch (KarmaException e) {
 			logger.error("Unable to complete Karma set up: ", e);
 		}
