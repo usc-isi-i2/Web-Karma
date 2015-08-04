@@ -12,6 +12,8 @@ public class ContextParametersRegistry {
 		return singleton;
 	}
 
+	private String defaultKarmaId = null;
+	
 	public ServletContextParameterMap registerByKarmaHome(String karmaHome)
 	{
 		if(karmaHome == null || !karmaHomeToContextParameters.containsKey(karmaHome))
@@ -33,7 +35,9 @@ public class ContextParametersRegistry {
 	
 	public ServletContextParameterMap getDefault()
 	{
-		return registerByKarmaHome(null);	
+		ServletContextParameterMap contextMap = registerByKarmaHome(defaultKarmaId);	
+		defaultKarmaId = contextMap.getId();
+		return contextMap;
 	}
 	
 	public void deregister(String contextId) {
