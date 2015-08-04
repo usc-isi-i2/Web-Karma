@@ -55,6 +55,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class InvokeCleaningServiceCommand extends WorksheetSelectionCommand {
@@ -119,11 +120,11 @@ public class InvokeCleaningServiceCommand extends WorksheetSelectionCommand {
 			// String url =
 			// "http://localhost:8080/cleaningService/IdentifyData";
 //			String url = "http://localhost:8070/myWS/IdentifyData";
-			ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+			String workspaceId = workspace.getId();
+			String url = ContextParametersRegistry.getInstance()
+											.getContextParameters(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspaceId))
+											.getParameterValue(ContextParameter.CLEANING_SERVICE_URL);
 			
-			String url = contextParameters.getParameterValue(
-					ContextParameter.CLEANING_SERVICE_URL);
-
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = null;
 			HttpResponse response = null;

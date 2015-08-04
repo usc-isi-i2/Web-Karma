@@ -47,6 +47,7 @@ import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
 import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetCleaningUpdate extends
@@ -129,9 +130,11 @@ AbstractUpdate {
 						logger.error("Empty values input for path" + path.toColumnNamePath());
 						continue;
 					}
-					String cleaningServiceURL = ContextParametersRegistry.getInstance().getDefault().getParameterValue(
-							ContextParameter.CLEANING_SERVICE_URL);
-
+					String workspaceId = vWorkspace.getWorkspace().getId();
+					String cleaningServiceURL = ContextParametersRegistry.getInstance()
+													.getContextParameters(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspaceId))
+													.getParameterValue(ContextParameter.CLEANING_SERVICE_URL);
+				
 					Map<String, String> formParams = new HashMap<String, String>();
 					formParams.put(JsonKeys.json.name(), requestJsonArray.toString());
 					String reqResponse = HTTPUtil.executeHTTPPostRequest(cleaningServiceURL, null,
