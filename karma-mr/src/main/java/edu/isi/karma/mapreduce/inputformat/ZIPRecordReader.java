@@ -17,12 +17,15 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @InterfaceAudience.Public
 @InterfaceStability.Stable
 public class ZIPRecordReader
 extends RecordReader<Writable, Writable> {
 
+	private static Logger LOG = LoggerFactory.getLogger(ZIPRecordReader.class);
 	private Text key = new Text();
 	private BytesWritable value = new BytesWritable();
 	private long start;
@@ -66,6 +69,8 @@ extends RecordReader<Writable, Writable> {
 	@Override
 	public Writable getCurrentValue() 
 			throws IOException, InterruptedException {
+		try
+		{
 		if(entry != null)
 		{
 		      ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -80,13 +85,29 @@ extends RecordReader<Writable, Writable> {
 			bytesReadEstimate += filebytes.length;
 			
 		}
+		}
+		catch(Exception e)
+		{
+			LOG.error("Unable to process: " + key.toString(), e);
+			value = new BytesWritable();
+		
+		}
 		return value;
 	}
 
 	public synchronized boolean nextKeyValue() 
 			throws IOException, InterruptedException {
+		try
+		{
 		while((entry = is.getNextEntry())!=null && entry.isDirectory());
 		return entry != null;
+		}
+		catch(Exception e)
+		{
+			LOG.error("Unable to process next key/value", e);
+			return false;
+		}
+		
 	}
 
 	public float getProgress() throws IOException,  InterruptedException {
