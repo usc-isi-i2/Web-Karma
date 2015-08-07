@@ -35,7 +35,14 @@ public class XMLElementExtractorProcessor extends Configured implements Tool{
 		{
 			conf.setIfUnset("karma.extraction.xml.tag", p.getProperty("karma.extraction.xml.tag"));
 		}
-
+		if(p.getProperty("karma.extraction.xml.prologue") != null)
+		{
+			conf.setIfUnset("karma.extraction.xml.prologue", p.getProperty("karma.extraction.xml.prologue"));
+		}
+		if(p.getProperty("karma.extraction.xml.epilogue") != null)
+		{
+			conf.setIfUnset("karma.extraction.xml.epilogue", p.getProperty("karma.extraction.xml.epilogue"));
+		}
 		Job job = Job.getInstance(conf);
     job.setInputFormatClass(ZIPInputFormat.class);
     job.setJarByClass(XMLElementExtractorProcessor.class);
@@ -65,7 +72,6 @@ public class XMLElementExtractorProcessor extends Configured implements Tool{
 	 public int run(String[] args) throws Exception {
 		 Properties p = new Properties();
 		 p.load(new FileInputStream(new File(args[0])));
-		 
          
          Job job = configure(p);
          

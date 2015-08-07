@@ -73,7 +73,9 @@ extends RecordReader<Writable, Writable> {
 		{
 		if(entry != null)
 		{
-		      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			int size = (int)entry.getSize();
+			size = size== -1? 1000: size;
+		      ByteArrayOutputStream baos = new ByteArrayOutputStream(size);
 		        while(true){
 		            int b = is.read();
 		            if(b == -1) break;
