@@ -235,7 +235,7 @@ public class JsonImportValues {
 			// TODO, conserve the types of the primitive types.
 			String value = "";
 			if (listValue instanceof String || listValue instanceof Boolean) {
-				value = (String) listValue;
+				value = listValue.toString();
 			} else if (listValue instanceof Double) {
 				value = Double.toString((Double) listValue);
 			} else if (listValue instanceof Integer) {
