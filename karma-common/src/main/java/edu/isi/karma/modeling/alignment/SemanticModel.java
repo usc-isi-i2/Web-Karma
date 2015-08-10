@@ -265,13 +265,13 @@ public class SemanticModel {
 	}
 
 	public ModelEvaluation evaluate(SemanticModel baseModel) {
-		return evaluate(baseModel, false);
+		return evaluate(baseModel, false, false);
 	}
 
-	public ModelEvaluation evaluate(SemanticModel baseModel, boolean ignoreSemanticTypes) {
+	public ModelEvaluation evaluate(SemanticModel baseModel, boolean ignoreSemanticTypes, boolean ignoreColumnNodes) {
 
 		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
-			return new ModelEvaluation(null, null, null);
+			return new ModelEvaluation(null, null, null, null);
 		
 		NodeIdFactory nodeIdFactory = new NodeIdFactory();
 		HashMap<Node,String> baseNodeIds = new HashMap<Node,String>();
@@ -282,33 +282,35 @@ public class SemanticModel {
 				baseNodeIds.put(n, n.getId());
 		}
 		
-		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds, ignoreSemanticTypes);
+		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds, ignoreSemanticTypes, ignoreColumnNodes);
 		Set<String> targetTriples = null;
 		List<HashMap<Node,String>> targetNodeIdSets = getPossibleNodeIdSets();
 		if (targetNodeIdSets == null)
 			return null;
 		
 		double bestFMeasure = 0.0;
-		double bestPrecision = 0.0, bestRecall = 0.0;
-		double precision, recall, fmeasure;
+		double bestPrecision = 0.0, bestRecall = 0.0, bestJaccard = 0.0;
+		double precision, recall, fmeasure, jaccard;
 		for (HashMap<Node,String> targetNodeIds : targetNodeIdSets) {
 //			System.out.println("==============================");
-			targetTriples = getTriples(this.getGraph(), targetNodeIds, ignoreSemanticTypes);
+			targetTriples = getTriples(this.getGraph(), targetNodeIds, ignoreSemanticTypes, ignoreColumnNodes);
 			precision = getPrecision(baseTriples, targetTriples);
 			recall = getRecall(baseTriples, targetTriples);
+			jaccard = getJaccard(baseTriples, targetTriples);
 			fmeasure = 2 * precision * recall / (precision + recall);
 			if (fmeasure > bestFMeasure) {
 				bestFMeasure = fmeasure;
 				bestPrecision = precision;
 				bestRecall = recall;
+				bestJaccard = jaccard;
 			}
 		}
 		
-		return new ModelEvaluation(0.0, bestPrecision, bestRecall);
+		return new ModelEvaluation(0.0, bestPrecision, bestRecall, bestJaccard);
 	}
 	
 	private Set<String> getTriples(DirectedWeightedMultigraph<Node, LabeledLink> g, HashMap<Node,String> nodeIds, 
-			boolean ignoreSemanticTypes) {
+			boolean ignoreSemanticTypes, boolean ignoreColumnNodes) {
 		
 		String separator = "|";
 		Set<String> triples = new HashSet<String>();
@@ -322,7 +324,10 @@ public class SemanticModel {
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
 			p = l.getLabel().getUri();
-			triple = s + separator + p + separator + o;
+			if (ignoreColumnNodes) 
+				triple = s + separator + p;
+			else
+				triple = s + separator + p + separator + o;
 //			System.out.println(triple);
 			triples.add(triple);
 		}
@@ -455,7 +460,7 @@ public class SemanticModel {
 	public ModelEvaluation evaluate_old(SemanticModel baseModel) {
 
 		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
-			return new ModelEvaluation(null, null, null);
+			return new ModelEvaluation(null, null, null, null);
 		
 		Double distance = getDistance(baseModel);
 		
@@ -496,7 +501,7 @@ public class SemanticModel {
 		Double precision = getPrecision(basePathString, modelPathString);
 		Double recall = getRecall(basePathString, modelPathString);
 		
-		return new ModelEvaluation(distance, precision, recall);
+		return new ModelEvaluation(distance, precision, recall, null);
 	}
 	
 	private String getPathString(SemanticModel sm, GraphPath gp) {
@@ -718,6 +723,17 @@ public class SemanticModel {
 		int correctSize = correct.size();
 		
 		return correctSize == 0 ? 0 : (double) intersection / (double) correctSize;	
+	}
+	
+	private Double getJaccard(Set<String> correct, Set<String> result) {
+		
+		if (correct == null || result == null)
+			return null;
+		
+		int intersection = Sets.intersection(correct, result).size();
+		int union = Sets.union(correct, result).size();
+		
+		return union == 0 ? 0.0 : (double) intersection / (double) union;	
 	}
 	
 	public void writeGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {

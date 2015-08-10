@@ -28,11 +28,13 @@ public class ModelEvaluation {
 	private double precision;
 	private double recall;
 	private double distance;
+	private double jaccard;
 	
-	public ModelEvaluation(Double distance, Double precision, Double recall) {
+	public ModelEvaluation(Double distance, Double precision, Double recall, Double jaccard) {
 		this.distance = distance == null ? -1 : distance;
 		this.precision = precision == null ? 0 : precision;
 		this.recall = recall == null ? 0 : recall;;
+		this.jaccard = jaccard == null ? 0 : jaccard;;
 	}
 	public double getPrecision() {
 		return roundTwoDecimals(precision);
@@ -42,6 +44,9 @@ public class ModelEvaluation {
 	}
 	public double getDistance() {
 		return distance;
+	}
+	public double getJaccard() {
+		return roundTwoDecimals(jaccard);
 	}
 	
 	private static double roundTwoDecimals(double d) {

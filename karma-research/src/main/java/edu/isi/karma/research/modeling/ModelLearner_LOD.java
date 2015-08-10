@@ -807,7 +807,7 @@ public class ModelLearner_LOD {
 
 					SortableSemanticModel m = topHypotheses.get(k);
 
-					me = m.evaluate(correctModel, onlyEvaluateInternalLinks);
+					me = m.evaluate(correctModel, onlyEvaluateInternalLinks, false);
 
 					String label = "candidate " + k + "\n" + 
 //							(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
