@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -83,20 +84,10 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 
 		String contents = value.toString();
 		
-		JSONObject jMatchedKarmaConfig = null;
+		JSONObject jMatchedKarmaConfig = matchKeyToKarmaConfig(key.toString());
 				
-		for(int i=0;i<jKarmaConfig.size();i++){
-			
-			if(key.toString().matches(jKarmaConfig.getJSONObject(i).getString("urls"))){
-				jMatchedKarmaConfig = jKarmaConfig.getJSONObject(i);
-				break;
-			}
-			
-		}
-		
-		
-		
 		if (contents.trim() != ""){
+			
 			LOG.debug(key.toString() + " started");
 			if(hasHeader && header ==null)
 			{
@@ -111,84 +102,76 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			
 			if(readKarmaConfig && jMatchedKarmaConfig != null){
 				
-				if(jMatchedKarmaConfig instanceof JSONObject){
-					
-					String modelName=null;
-						
-					if (jMatchedKarmaConfig.containsKey("model-uri")){
-						
-						//add a new model with uri as name. This will prevent hitting github million times(literally)
-						
-						String modelURL = jMatchedKarmaConfig.getString("model-uri");
-						
-						int index = modelURL.lastIndexOf("/");
-						
-						modelName = modelURL.substring(index+1);
-						
-						modelName = modelName.substring(0, modelName.length()-4);
-			
-						karma.addModel(modelName,null, jMatchedKarmaConfig.getString("model-uri"));
-					}
-					else {
-					}
-				
-					
+				String modelName = addModelToKarmaSetup(jMatchedKarmaConfig);
+				if(modelName != null){
 					if(jMatchedKarmaConfig.containsKey("roots")){
-						
 						JSONArray jArrayRoots = jMatchedKarmaConfig.getJSONArray("roots");
-						
 						for (int i=0;i<jArrayRoots.size();i++){
-							
 							JSONObject jObjRoots = jArrayRoots.getJSONObject(i);
-							
 							if(jObjRoots.containsKey("root")){
-								
 								karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
-								String results = generateJSONLD(key, value,modelName);
-								if (results != null && !results.equals("[\n\n]\n")) {
-									
-									writeRDFToContext(context, results);
-									
-								}
-								else
-								{
-									LOG.info("RDF is empty! ");
-								}
+								checkResultsAndWriteToContext(key,value,modelName,context);
 							}
 						}
 					}
 					else{
-						String results = generateJSONLD(key, value,modelName);
-						if (results != null && !results.equals("[\n\n]\n")) {
-							writeRDFToContext(context, results);
-							
-						}
-						else
-						{
-							LOG.info("RDF is empty! ");
-						}
+						checkResultsAndWriteToContext(key,value,modelName,context);
 					}
+				}
+				else{
+					LOG.info("Model uri missing from karma config:" + jMatchedKarmaConfig.toString());
 				}
 			}
 			else{
-				
-				String results = generateJSONLD(key, value,"model");
-				if (!results.equals("[\n\n]\n") && results != null) {
-					
-					writeRDFToContext(context, results);
-					
-				}
-				else
-				{
-					LOG.info("RDF is empty! ");
-				}
+				checkResultsAndWriteToContext(key,value,"model",context);
 			}
-		
 			LOG.debug(key.toString() + " finished");
 		}
 		
 	}
+	
+	protected String addModelToKarmaSetup(JSONObject jMatchedKarmaConfig) throws MalformedURLException{
+		
+		String modelName=null;
+		if (jMatchedKarmaConfig.containsKey("model-uri")){
+			
+			//add a new model with uri as name. This will prevent hitting github million times(literally)
+			String modelURL = jMatchedKarmaConfig.getString("model-uri");
+			int index = modelURL.lastIndexOf("/");
+			modelName = modelURL.substring(index+1);
+			modelName = modelName.substring(0, modelName.length()-4);
+			karma.addModel(modelName,null, jMatchedKarmaConfig.getString("model-uri"));
+		}
+		return modelName;
+	}
 
+	protected void checkResultsAndWriteToContext(Writable key, Text value,String modelName,Context context) throws IOException, InterruptedException{
+		String results = generateJSONLD(key, value,modelName);
+		if (results != null && !results.equals("[\n\n]\n")) {
+			
+			writeRDFToContext(context, results);
+			
+		}
+		else
+		{
+			LOG.info("RDF is empty! ");
+		}
+	}
+	protected JSONObject matchKeyToKarmaConfig(String key){
+		
+		JSONObject jMatchedKarmaConfig = null;
+		if(jKarmaConfig != null){
+			for(int i=0;i<jKarmaConfig.size();i++){
+				
+				if(key.matches(jKarmaConfig.getJSONObject(i).getString("urls"))){
+					jMatchedKarmaConfig = jKarmaConfig.getJSONObject(i);
+					break;
+				}
+				
+			}
+		}
+		return jMatchedKarmaConfig;
+	}
 	
 	protected String generateJSONLD(Writable key, Text value, String modelName)
 	{

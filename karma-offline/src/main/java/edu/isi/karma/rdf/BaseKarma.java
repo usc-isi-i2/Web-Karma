@@ -195,38 +195,26 @@ public class BaseKarma {
 			//TODO the line below must be uncommented, problem is ar-15 model.  
 			//this.rdfGenerationRoot = rdfGenerationRoot;
 			
-			if(generator != null){
-	
-				Model model = generator.getModelParser(modelName).getModel();
-				//LOG.error("GOT MODEL IN SETRDFGENERATIONL:" + modelName + "," + rdfGenerationRoot);
-				
-				if (model != null){
+			Model model = generator.getModelParser(modelName).getModel();
+			
+			if (model != null){
 
-					if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
-						StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rdfGenerationRoot);
-						Resource subject = null;
+				if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
+					StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rdfGenerationRoot);
+					Resource subject = null;
+					while (itr.hasNext()) {
+						subject = itr.next().getSubject();
+					}
+					if (subject != null) {
+						itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
 						while (itr.hasNext()) {
-							subject = itr.next().getSubject();
+							this.rdfGenerationRoot = itr.next().getSubject().toString();
 						}
-						if (subject != null) {
-							itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
-							while (itr.hasNext()) {
-								this.rdfGenerationRoot = itr.next().getSubject().toString();
-							}
-						}
-						
 					}
 				}
-				else{
-					//LOG.error("***********BaseKarma Error: model not found:" + modelName);
-				}
-			}
-			else{
-				//LOG.error("***********BaseKarma Error: GenericRDFGenerator object is null");
 			}
 		}
 		catch (KarmaException | JSONException | IOException e) {
-			//LOG.error("Unable to set rdf generation root: " + e.getMessage() + "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
 			throw new RuntimeException("Unable to set rdf generation root: "
 					+ e.getMessage()+ "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
 		}
