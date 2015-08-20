@@ -39,7 +39,8 @@ import edu.isi.karma.rep.Row;
 public class TriplesMapWorker implements Callable<Boolean> {
 
 	private Logger LOG = LoggerFactory.getLogger(TriplesMapWorker.class);
-	protected List<CountDownLatch> dependentTriplesMapLatches;
+	protected List<TriplesMapWorker> dependentTriplesMapWorkers;
+	protected List<TriplesMapWorker> workersDependentOn;
 	protected CountDownLatch latch;
 	protected TriplesMap triplesMap;
 	protected Row r;
@@ -47,25 +48,26 @@ public class TriplesMapWorker implements Callable<Boolean> {
 	
 	protected TriplesMapWorkerPlan plan;
 	
-	public TriplesMapWorker(TriplesMap triplesMap, CountDownLatch latch, Row r, TriplesMapWorkerPlan plan, List<KR2RMLRDFWriter> outWriters)
+	public TriplesMapWorker(TriplesMap triplesMap, List<TriplesMapWorker> workersDependentOn, Row r, TriplesMapWorkerPlan plan, List<KR2RMLRDFWriter> outWriters)
 	{
-		this.latch = latch;
+		this.workersDependentOn = workersDependentOn;
+		this.latch = new CountDownLatch(workersDependentOn.size());
 		this.triplesMap = triplesMap;
 		this.plan = plan;
-		this.dependentTriplesMapLatches = new LinkedList<CountDownLatch>();
+		this.dependentTriplesMapWorkers = new LinkedList<TriplesMapWorker>();
 		this.r = r;
 		this.outWriters = outWriters;
 	}
-	public void addDependentTriplesMapLatch(CountDownLatch latch)
+	public void addDependentTriplesMapWorker(TriplesMapWorker dependentTriplesMapWorker)
 	{
-		dependentTriplesMapLatches.add(latch);
+		dependentTriplesMapWorkers.add(dependentTriplesMapWorker);
 	}
 	
 	private void notifyDependentTriplesMapWorkers()
 	{
-		for(CountDownLatch latch : dependentTriplesMapLatches)
+		for(TriplesMapWorker dependentWorker : dependentTriplesMapWorkers)
 		{
-			latch.countDown();
+			dependentWorker.getLatch().countDown();
 		}
 	}
 	

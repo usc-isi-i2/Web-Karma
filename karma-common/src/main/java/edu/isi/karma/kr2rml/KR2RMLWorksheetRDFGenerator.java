@@ -218,7 +218,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
 			{
 				try{
-					TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap, selection);
+					TriplesMapWorkerPlan workerPlan = new TriplesMapWorkerPlan(factory, triplesMap, kr2rmlMapping, uriFormatter, translator,  addColumnContextInformation, hNodeToContextUriMap, selection, graphTriplesMapsProcessingOrder);
 					triplesMapToWorkerPlan.put(triplesMap, workerPlan);
 				}
 				catch (Exception ex)
@@ -230,7 +230,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				for(Entry<TriplesMapGraph, List<String>> entry : graphTriplesMapsProcessingOrder.entrySet())
 				{
 					TriplesMapPlanGenerator g = new TriplesMapPlanGenerator(triplesMapToWorkerPlan, row, outWriters);
-					TriplesMapPlan plan = g.generatePlan(entry.getKey(), entry.getValue());
+					TriplesMapPlan plan = g.generatePlan(entry.getKey(), entry.getValue(), strategy);
 					errorReport.combine(e.execute(plan));
 				}
 				for(KR2RMLRDFWriter outWriter : outWriters)
