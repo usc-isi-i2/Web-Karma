@@ -771,10 +771,10 @@ public class ModelLearner_KnownModels {
 		/***
 		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
 		 */
-		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome("/Users/mohsen/karma");
-//		contextParameters.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, "/Users/mohsen/karma");
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome("/Users/mohsen/karma/");
+		contextParameters.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, "/Users/mohsen/karma/");
 		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
-		contextParameters.setParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "1000");
+		contextParameters.setParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT, "1000000");
 		contextParameters.setParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY, "/Users/mohsen/karma/semantic-type-files/");
 		contextParameters.setParameterValue(ContextParameter.JSON_MODELS_DIR, "/Users/mohsen/karma/models-json/");
 		contextParameters.setParameterValue(ContextParameter.GRAPHVIZ_MODELS_DIR, "/Users/mohsen/karma/models-graphviz/");
@@ -801,8 +801,8 @@ public class ModelLearner_KnownModels {
 
 
 		List<SemanticModel> trainingData = new ArrayList<SemanticModel>();
-//		File[] trainingSources;
-//		File[] trainingModels;
+		File[] trainingSources;
+		File[] trainingModels;
 		File trainingSource = null;
 		File trainingModel = null;
 		File testSource;
@@ -828,7 +828,7 @@ public class ModelLearner_KnownModels {
 		boolean useCorrectType = false;
 		boolean onlyEvaluateInternalLinks = false || useCorrectType; 
 		boolean zeroKnownModel = false;
-		int numberOfCandidates = 4;
+		int numberOfCandidates = 1;
 
 		if (onlyGenerateSemanticTypeStatistics) {
 			getStatistics(semanticModels);
@@ -898,15 +898,15 @@ public class ModelLearner_KnownModels {
 			{
 
 				trainingData.clear();
-//				trainingSources = new File[numberOfKnownModels];
-//				trainingModels = new File[numberOfKnownModels];
+				trainingSources = new File[numberOfKnownModels];
+				trainingModels = new File[numberOfKnownModels];
 
 				int j = 0, count = 0;
 				while (count < numberOfKnownModels) {
 					if (j != newSourceIndex) {
 						trainingData.add(semanticModels.get(j));
-//						trainingSources[count] = sources[j];
-//						trainingModels[count] = r2rmlModels[j];
+						trainingSources[count] = sources[j];
+						trainingModels[count] = r2rmlModels[j];
 						count++;
 						if (count == numberOfKnownModels) {
 							trainingSource = sources[j];
@@ -926,12 +926,15 @@ public class ModelLearner_KnownModels {
 				} else {
 					testSource = sources[newSourceIndex];
 					testModel = r2rmlModels[newSourceIndex];
-					correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
-							trainingSource, trainingModel, 
-							testSource, testModel, numberOfKnownModels, numberOfCandidates);
-//					correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
-//							trainingSources, trainingModels, 
-//							testSource, testModel);
+					if (iterativeEvaluation) {
+						correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
+								trainingSource, trainingModel, 
+								testSource, testModel, numberOfKnownModels, numberOfCandidates);
+					} else {
+						correctModel = new OfflineTraining().getCorrectModel(contextParameters, 
+								trainingSources, trainingModels, 
+								testSource, testModel, numberOfCandidates);
+					}
 				}
 				
 				
@@ -1047,12 +1050,15 @@ public class ModelLearner_KnownModels {
 									resultsArray[numberOfKnownModels + 2].append(" \t ");
 								resultsArray[numberOfKnownModels + 2].append(s);
 							} else {
-								s = newSource.getName() + "\t" + 
-										me.getPrecision() + "\t" + 
+//								s = newSource.getName() + "\t" + 
+//										me.getPrecision() + "\t" + 
+//										me.getRecall() + "\t" + 
+//										elapsedTimeSec + "\t" + 
+//										correctModel.getAccuracy() + "\t" + 
+//										correctModel.getMrr();
+								s = me.getPrecision() + "\t" + 
 										me.getRecall() + "\t" + 
-										elapsedTimeSec + "\t" + 
-										correctModel.getAccuracy() + "\t" + 
-										correctModel.getMrr();
+										elapsedTimeSec; 
 								resultFile.println(s);
 							}
 

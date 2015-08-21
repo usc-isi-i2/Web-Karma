@@ -390,7 +390,8 @@ public class OfflineTraining {
 			File[] trainingSources,
 			File[] trainingModels,
 			File testSource,
-			File testModel) throws JSONException, KarmaException, IOException {
+			File testModel,
+			int numberOfCandidates) throws JSONException, KarmaException, IOException {
 		
 		ModelingConfiguration mConf = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
 		boolean ontologyAlignment = mConf.getOntologyAlignment();
@@ -437,10 +438,21 @@ public class OfflineTraining {
 		}
 		EvaluateMRR.printEvaluatedJSON(modelJson, evaluateMRR);
 
+		MRRItem mrrItem = EvaluateMRR.calculateMRRValue(modelJson, numberOfCandidates);
+		
+		sm.setAccuracy(roundDecimals(mrrItem.getAccuracy(),2));
+		sm.setMrr(roundDecimals(mrrItem.getMrr(),2));
+
 		mConf.setAddOntologyPaths(ontologyAlignment);
 		mConf.setKnownModelsAlignment(knownModelsAlignment);
 		mConf.setLearnerEnabled(learner);
 		mConf.setOntologyAlignment(addOntologyPaths);
+		
+//		String modelJson = contextParameters.getParameterValue(ContextParameter.JSON_MODELS_DIR) + testSource.getName() + "." + trainingSources.length + ".model.json";
+//		MRRItem mrrItem = EvaluateMRR.calculateMRRValue(modelJson, numberOfCandidates);
+//		SemanticModel sm = SemanticModel.readJson(modelJson);
+//		sm.setAccuracy(roundDecimals(mrrItem.getAccuracy(),2));
+//		sm.setMrr(roundDecimals(mrrItem.getMrr(),2));
 		
 		return sm;
 	}
@@ -512,6 +524,12 @@ public class OfflineTraining {
 		mConf.setKnownModelsAlignment(knownModelsAlignment);
 		mConf.setLearnerEnabled(learner);
 		mConf.setOntologyAlignment(addOntologyPaths);
+		
+//		String modelJson = contextParameters.getParameterValue(ContextParameter.JSON_MODELS_DIR) + testSource.getName() + "." + index + ".model.json";
+//		MRRItem mrrItem = EvaluateMRR.calculateMRRValue(modelJson, numberOfCandidates);
+//		SemanticModel sm = SemanticModel.readJson(modelJson);
+//		sm.setAccuracy(roundDecimals(mrrItem.getAccuracy(),2));
+//		sm.setMrr(roundDecimals(mrrItem.getMrr(),2));
 		
 		return sm;
 	}
