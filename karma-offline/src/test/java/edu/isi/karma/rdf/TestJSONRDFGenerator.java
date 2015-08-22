@@ -32,6 +32,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ import edu.isi.karma.webserver.KarmaException;
  */
 public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 
-	protected final GenericRDFGenerator rdfGen = new GenericRDFGenerator(null);
+	protected final GenericRDFGenerator rdfGen = new GenericRDFGenerator(SuperSelectionManager.DEFAULT_SELECTION_TEST_NAME);
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGenerator.class);
 	
 	protected void executeBasicJSONTest(String filename, String modelName, boolean generateProvenance, int expectedNumberOfLines) throws IOException, URISyntaxException,
