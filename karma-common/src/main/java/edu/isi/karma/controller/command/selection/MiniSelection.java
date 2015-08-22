@@ -114,7 +114,7 @@ public class MiniSelection extends Selection {
 		}
 		String selectionMethodStmt = PythonTransformationHelper
 				.getPythonSelectionMethodDefinitionState(worksheet,
-						trimmedSelectionCode,selectionId);
+						trimmedSelectionCode, selectionId);
 
 
 		logger.debug("Executing PySelection\n" + selectionMethodStmt);
@@ -127,6 +127,7 @@ public class MiniSelection extends Selection {
 		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
 		locals.__setitem__("selectionName", new PyString(superSelectionName));
 		locals.__setitem__("command", Py.java2py(this));
+		locals.__setitem__("worksheetId", new PyString(worksheetId));
 		return repo.getSelectionCode();
 	}	
 
