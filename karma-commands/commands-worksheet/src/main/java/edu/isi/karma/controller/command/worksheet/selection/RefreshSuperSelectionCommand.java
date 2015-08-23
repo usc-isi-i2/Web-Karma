@@ -22,10 +22,14 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 
-	public RefreshSuperSelectionCommand(String id, String model, String worksheetId, 
+	private static Logger logger = LoggerFactory
+			.getLogger(WorksheetSelectionCommand.class);
+	public RefreshSuperSelectionCommand(String id, String model, String worksheetId,
 			String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		addTag(CommandTag.Transformation);
@@ -87,7 +91,7 @@ public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 				Command c = new RefreshSelectionCommandFactory().createCommand(inputJSON, model, workspace);
 				c.doIt(workspace);
 			} catch (Exception e) {
-				
+				logger.error("Exception happened", e);
 			} 
 		}
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, currentSel, workspace.getContextId());

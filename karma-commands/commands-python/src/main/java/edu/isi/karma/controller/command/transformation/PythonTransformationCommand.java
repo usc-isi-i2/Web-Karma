@@ -127,7 +127,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonInterpreter interpreter = repo.getInterpreter();
 
-		repo.initializeInterperter(interpreter);
+		repo.initializeInterpreter(interpreter);
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);

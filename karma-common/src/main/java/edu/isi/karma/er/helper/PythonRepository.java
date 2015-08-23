@@ -3,6 +3,9 @@ package edu.isi.karma.er.helper;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.FileUtils;
@@ -18,6 +21,7 @@ public class PythonRepository {
 	private ConcurrentHashMap<String, PyCode> scripts = new ConcurrentHashMap<String, PyCode>();
 	private ConcurrentHashMap<String, PyCode> libraryScripts = new ConcurrentHashMap<String, PyCode>();
 	private ConcurrentHashMap<String, Long> fileNameTolastTimeRead = new ConcurrentHashMap<String, Long>();
+	private List<String> localKeys = Arrays.asList("workspaceid", "selectionName", "command", "worksheetId", "selection", "nodeid");
 	private boolean libraryHasBeenLoaded = false;
 	private boolean reloadLibrary = true;
 	private PyStringMap initialLocals = new PyStringMap();
@@ -46,7 +50,7 @@ public class PythonRepository {
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getVDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getTransformStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getSelectionStatement());
-		initializeInterperter(interpreter);
+		initializeInterpreter(interpreter);
 	}
 
 	public PyCode compileAndAddToRepositoryAndExec(PythonInterpreter interpreter, String statement)
@@ -77,7 +81,7 @@ public class PythonRepository {
 		return interpreter.compile(statement);
 	}
 
-	public void initializeInterperter(PythonInterpreter interpreter)
+	public void initializeInterpreter(PythonInterpreter interpreter)
 	{
 		boolean localsUninitialized = interpreter.getLocals() == initialLocals;
 		if(localsUninitialized)
@@ -172,7 +176,18 @@ public class PythonRepository {
 		return repositoryPath;
 	}
 
+	private void resetRuntimeLocal() {
+		for (String key : localKeys) {
+			try {
+				this.interpreter.getLocals().__delitem__(key);
+			} catch (Exception e) {
+				//Key is missing, do nothing
+			}
+		}
+	}
+
 	public PythonInterpreter getInterpreter() {
+		resetRuntimeLocal();
 		return this.interpreter;
 	}
 }

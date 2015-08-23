@@ -221,7 +221,7 @@ public class CommandHistory {
 			tagsArr.put(tag.name());
 		commObj.put(HistoryArguments.tags.name(), tagsArr);
 
-		JSONArray inputArr = new JSONArray(comm.getInputParameterJson());
+		JSONArray inputArr = new JSONArray(comm.getInputParameterJson() == null ? "[]" : comm.getInputParameterJson());
 		for (int i = 0; i < inputArr.length(); i++) {
 			JSONObject inpP = inputArr.getJSONObject(i);
 

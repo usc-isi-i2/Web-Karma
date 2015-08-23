@@ -42,19 +42,24 @@ public class MiniSelection extends Selection {
 		
 	}
 
-	public void updateSelection(){
+	public void updateSelection() {
 		if (this.status == SelectionStatus.UP_TO_DATE)
 			return;
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonInterpreter interpreter = repo.getInterpreter();
+		repo.initializeInterpreter(interpreter);
 		evalColumns.clear();
-		String transformId = Thread.currentThread().getName() + this.superSelectionName;
+		String transformId = String.format("%d_%d_%s", System.currentTimeMillis(), Thread.currentThread().getId(), this.superSelectionName);
+		PyCode code = null;
+		try {
+			code = getCompiledCode(pythonCode, interpreter, transformId);
+		}catch(IOException e) {
+			logger.error("Code error", e);
+		}
 		for (Entry<Row, Boolean> entry : this.selectedRowsCache.entrySet()) {
 			Row key = entry.getKey();
-			PythonInterpreter interpreter = new PythonInterpreter();
-			try {
-				entry.setValue(evaluatePythonExpression(key, getCompiledCode(pythonCode, interpreter, transformId), interpreter));
-			}catch(IOException e) {
-				entry.setValue(false);
-			}
+				entry.setValue(evaluatePythonExpression(key, code, interpreter));
 		}
 		this.status = SelectionStatus.UP_TO_DATE;
 	}
@@ -68,11 +73,11 @@ public class MiniSelection extends Selection {
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
-		String selectionId = Thread.currentThread().getId() + this.superSelectionName;
+		String selectionId = String.format("%d_%d_%s", System.currentTimeMillis(), Thread.currentThread().getId(), this.superSelectionName);//Thread.currentThread().getId() + this.superSelectionName;
 		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 		PythonInterpreter interpreter = repo.getInterpreter();
-		repo.initializeInterperter(interpreter);
-		PyCode code = null;
+		repo.initializeInterpreter(interpreter);
+		PyCode code;
 		try {
 			code = getCompiledCode(pythonCode, interpreter, selectionId);
 			interpreter.getLocals().__setitem__("selection", interpreter.get("selection"+selectionId));
