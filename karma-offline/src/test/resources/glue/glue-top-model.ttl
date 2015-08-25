@@ -23,7 +23,7 @@ _:node18ods7khfx1 a km-dev:R2RMLMapping ;
 	km-dev:sourceName "glue-top.json" ;
 	km-dev:modelPublicationTime "1400625156655"^^xsd:long ;
 	km-dev:modelVersion "1.1" ;
-	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"values\",\"value\":[{\"name\":\"checked\",\"value\":[{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"checked\",\"value\":[{\"columnName\":\"name\"}],\"type\":\"hNodeId\"}],\"type\":\"hNodeIdList\"}],\"commandName\":\"GlueCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Glue_1\"},{\"columnName\":\"First\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/firstName\",\"DomainLabel\":\"foaf:Person1 (add)\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Glue_1\"},{\"columnName\":\"Last\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/lastName\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Glue_1\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/myersBriggs\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"values\",\"value\":[{\"name\":\"checked\",\"value\":[{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"checked\",\"value\":[{\"columnName\":\"name\"}],\"type\":\"hNodeId\"}],\"type\":\"hNodeIdList\"}],\"commandName\":\"GlueCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Glue_1\"},{\"columnName\":\"name_First\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/firstName\",\"DomainLabel\":\"foaf:Person1 (add)\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Glue_1\"},{\"columnName\":\"name_Last\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/lastName\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"Glue_1\"},{\"columnName\":\"score_values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/myersBriggs\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person1\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
 
 km-dev:TriplesMap_1 a rr:TriplesMap .
 
@@ -43,7 +43,7 @@ _:node18ods7khfx3 a rr:SubjectMap ;
 
 _:node18ods7khfx4 rr:predicate foaf:firstName .
 
-_:node18ods7khfx5 rr:column "[\"Glue_1\",\"First\"]" ;
+_:node18ods7khfx5 rr:column "[\"Glue_1\",\"name_First\"]" ;
 	a rr:ObjectMap .
 
 _:node18ods7khfx4 rr:objectMap _:node18ods7khfx5 .
@@ -54,7 +54,7 @@ _:node18ods7khfx4 a rr:PredicateObjectMap .
 
 _:node18ods7khfx6 rr:predicate foaf:lastName .
 
-_:node18ods7khfx7 rr:column "[\"Glue_1\",\"Last\"]" ;
+_:node18ods7khfx7 rr:column "[\"Glue_1\",\"name_Last\"]" ;
 	a rr:ObjectMap .
 
 _:node18ods7khfx6 rr:objectMap _:node18ods7khfx7 .
@@ -65,7 +65,7 @@ _:node18ods7khfx6 a rr:PredicateObjectMap .
 
 _:node18ods7khfx8 rr:predicate foaf:myersBriggs .
 
-_:node18ods7khfx9 rr:column "[\"Glue_1\",\"values\"]" ;
+_:node18ods7khfx9 rr:column "[\"Glue_1\",\"score_values\"]" ;
 	a rr:ObjectMap .
 
 _:node18ods7khfx8 rr:objectMap _:node18ods7khfx9 .
