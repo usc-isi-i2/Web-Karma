@@ -34,7 +34,7 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 		this.pythonCode = pythonCode;
 		this.operation = operation;
 		this.onError = onError;
-		addTag(CommandTag.Transformation);
+		addTag(CommandTag.Selection);
 	}
 
 	@Override

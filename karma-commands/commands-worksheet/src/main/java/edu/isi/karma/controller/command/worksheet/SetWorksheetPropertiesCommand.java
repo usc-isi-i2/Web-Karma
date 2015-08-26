@@ -43,8 +43,7 @@ public class SetWorksheetPropertiesCommand extends WorksheetCommand {
 	public SetWorksheetPropertiesCommand(String id, String model, String worksheetId, String properties) {
 		super(id, model, worksheetId);
 		this.properties = properties;
-		
-		addTag(CommandTag.Modeling);
+		addTag(CommandTag.Transformation);
 	}
 
 	@Override

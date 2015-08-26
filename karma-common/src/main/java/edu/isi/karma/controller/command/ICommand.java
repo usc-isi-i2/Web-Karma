@@ -71,6 +71,8 @@ public interface ICommand extends IEntity
 
 	void setAppendToHistory(boolean appendToHistory);
 
+	CommandTag getTagFromPriority();
+
 	String getModel();
 	
 	public enum HistoryType {
@@ -82,6 +84,6 @@ public interface ICommand extends IEntity
 	}
 
 	public enum CommandTag {
-		Modeling, Transformation, Cleaning, Integration, Import
+		Modeling, Transformation, Selection, SemanticType, Import, Other
 	}
 }

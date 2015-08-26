@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.update.HistoryUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +96,9 @@ public class RequestController extends HttpServlet {
 			Command command = ctrl.getCommand(request);
 			try {
 				UpdateContainer updateContainer =ctrl.invokeCommand(command);
+				if (command.getCommandType() != CommandType.notInHistory) {
+					updateContainer.add(new HistoryUpdate(vWorkspace.getWorkspace().getCommandHistory()));
+				}
 				updateContainer.applyUpdates(vWorkspace);
 				responseString = updateContainer.generateJson(vWorkspace);
 			} catch(Exception e) {

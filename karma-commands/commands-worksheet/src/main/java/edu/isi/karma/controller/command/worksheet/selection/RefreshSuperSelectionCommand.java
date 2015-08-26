@@ -32,7 +32,7 @@ public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 	public RefreshSuperSelectionCommand(String id, String model, String worksheetId,
 			String selectionId) {
 		super(id, model, worksheetId, selectionId);
-		addTag(CommandTag.Transformation);
+		addTag(CommandTag.Selection);
 	}
 	
 	private class SelectionWithPriority implements Comparable<SelectionWithPriority>{

@@ -25,13 +25,7 @@ package edu.isi.karma.controller.history;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,7 +65,7 @@ public class CommandHistory {
 		}
 	}
 	
-	private final List<ICommand> history = new ArrayList<ICommand>();
+	private final Map<CommandTag, List<ICommand> > history = new HashMap<>();
 	private Command previewCommand;
 	private final List<RedoCommandObject> redoStack = new ArrayList<RedoCommandObject>();
 	/**
@@ -96,13 +90,20 @@ public class CommandHistory {
 		worksheetId, commandName, inputParameters, hNodeId, tags, model
 	}
 
-	public CommandHistory() {
+	private void initialize() {
+		for (CommandTag tag : CommandTag.values()) {
+			history.put(tag, new ArrayList<ICommand>());
+		}
+	}
 
+	public CommandHistory() {
+		initialize();
 	}
 
 	public CommandHistory(List<ICommand> history, List<RedoCommandObject> redoStack) {
+		initialize();
 		for (ICommand c : history) {
-			this.history.add(c);
+			this.history.get(c.getTagFromPriority()).add(c);
 		}
 		for (RedoCommandObject c : redoStack) {
 			this.redoStack.add(c);
@@ -118,7 +119,14 @@ public class CommandHistory {
 	}
 
 	public List<ICommand> _getHistory() {
-		return history;
+		List<ICommand> commands = new ArrayList<>();
+		commands.addAll(history.get(CommandTag.Import));
+		commands.addAll(history.get(CommandTag.Transformation));
+		commands.addAll(history.get(CommandTag.Selection));
+		commands.addAll(history.get(CommandTag.SemanticType));
+		commands.addAll(history.get(CommandTag.Modeling));
+		commands.addAll(history.get(CommandTag.Other));
+		return commands;
 	}
 
 	public List<ICommand> _getRedoStack() {
@@ -130,7 +138,11 @@ public class CommandHistory {
 	}
 
 	public CommandHistory clone() {
-		return new CommandHistory(history, redoStack);
+		List<ICommand> commands = new ArrayList<>();
+		for (CommandTag tag : CommandTag.values()) {
+			commands.addAll(history.get(tag));
+		}
+		return new CommandHistory(commands, redoStack);
 	}
 
 	/**
@@ -165,7 +177,7 @@ public class CommandHistory {
 			}
 			lastCommandWasUndo = false;
 
-			history.add(command);
+			history.get(command.getTagFromPriority()).add(command);
 			effects.add(new HistoryAddCommandUpdate(command));
 		}
 
@@ -179,7 +191,7 @@ public class CommandHistory {
 					}
 				} catch (Exception e) {
 					logger.error("Error occured while writing history!" , e);
-					e.printStackTrace();
+					logger.error("Error with this command: {}, Input params: {}", command.getCommandName(), command.getInputParameterJson());
 				}
 			}
 		}
@@ -189,7 +201,7 @@ public class CommandHistory {
 	private void writeHistoryPerWorksheet(Workspace workspace, IHistorySaver historySaver) throws Exception {
 		String workspaceId = workspace.getId();
 		HashMap<String, JSONArray> comMap = new HashMap<String, JSONArray>();
-		for(ICommand command : history) {
+		for(ICommand command : _getHistory()) {
 			if(command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
 					|| command.hasTag(CommandTag.Transformation))) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
@@ -364,7 +376,7 @@ public class CommandHistory {
 	 */
 	public UpdateContainer undoOrRedoCommandsUntil(Workspace workspace,
 			String commandId) throws CommandException {
-		List<ICommand> commandsToUndo = getCommandsUntil(history, commandId);
+		List<ICommand> commandsToUndo = getCommandsUntil(_getHistory(), commandId);
 		if (!commandsToUndo.isEmpty()) {
 			lastCommandWasUndo = true;
 			return undoCommands(workspace, commandsToUndo);
@@ -391,7 +403,9 @@ public class CommandHistory {
 
 		UpdateContainer effects = new UpdateContainer();
 		for (ICommand c : commandsToUndo) {
-			history.remove(c);
+			for (CommandTag tag : CommandTag.values()) {
+				history.get(tag).remove(c);
+			}
 			redoStack.add(new RedoCommandObject(c, getCommandJSON(workspace, c)));
 			effects.append(c.undoIt(workspace));
 		}
@@ -430,9 +444,9 @@ public class CommandHistory {
 						model = rco.historyObject.getString(HistoryArguments.model.name());
 					Command comm = cf.createCommand(inputParamArr, model, workspace);
 					effects.append(comm.doIt(workspace));
-					history.add(comm);
+					history.get(comm.getTagFromPriority()).add(comm);
 				}catch(Exception e) {
-					history.add(rco.command);
+					history.get(rco.command.getTagFromPriority()).add(rco.command);
 					effects.append(rco.command.doIt(workspace));
 				}
 				
@@ -501,7 +515,7 @@ public class CommandHistory {
 
 	public void generateFullHistoryJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		Iterator<ICommand> histIt = history.iterator();
+		Iterator<ICommand> histIt = _getHistory().iterator();
 		while (histIt.hasNext()) {
 			histIt.next().generateJson(prefix, pw, vWorkspace,
 					Command.HistoryType.undo);
@@ -522,6 +536,7 @@ public class CommandHistory {
 
 	public void removeCommands(Workspace workspace, String worksheetId) {
 		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
+		List<ICommand> history = _getHistory();
 		ListIterator<ICommand> commandItr = history.listIterator(history.size());
 		while(commandItr.hasPrevious()) {
 			ICommand command = commandItr.previous();
@@ -546,6 +561,7 @@ public class CommandHistory {
 
 	public void removeCommands(String worksheetId) {
 		List<ICommand> commandsFromWorksheet = new ArrayList<ICommand>();
+		List<ICommand> history = _getHistory();
 		for(ICommand command: history) {
 			try {
 
@@ -566,6 +582,7 @@ public class CommandHistory {
 
 	public List<Command> getCommandsFromWorksheetId(String worksheetId) {
 		List<Command> commandsFromWorksheet = new ArrayList<Command>();
+		List<ICommand> history = _getHistory();
 		for(ICommand command: history) {
 			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
 					|| command.hasTag(CommandTag.Transformation))) {
@@ -580,7 +597,8 @@ public class CommandHistory {
 
 	public ICommand getCommand(String commandId)
 	{
-		for(ICommand  c: this.history)
+		List<ICommand> history = _getHistory();
+		for(ICommand  c: history)
 		{
 			if(c.getId().equals(commandId))
 			{
@@ -593,6 +611,7 @@ public class CommandHistory {
 
 	public List<ICommand> getCommands(CommandTag tag) {
 		List<ICommand> retCommands = new ArrayList<ICommand>();
+		List<ICommand> history = _getHistory();
 		for(ICommand command: history) {
 			if(command.hasTag(tag))
 				retCommands.add(command);

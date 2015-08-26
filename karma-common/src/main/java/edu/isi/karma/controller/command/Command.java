@@ -72,11 +72,21 @@ public abstract class Command extends Entity implements ICommand
 	 */
 	private List<CommandTag> tags = new ArrayList<CommandTag>();
 
+	private static final List<CommandTag> commandTagPriority = new ArrayList<>();
+
 	private String inputParameterJson;
 	
 	private boolean isExecutedInBatch = false;
 	protected String model;
 	public static final String NEW_MODEL = "new";
+
+	static {
+		commandTagPriority.add(CommandTag.Import);
+		commandTagPriority.add(CommandTag.Transformation);
+		commandTagPriority.add(CommandTag.Selection);
+		commandTagPriority.add(CommandTag.SemanticType);
+		commandTagPriority.add(CommandTag.Modeling);
+	}
 	
 	protected Command(String id, String model) {
 		super(id);
@@ -183,6 +193,16 @@ public abstract class Command extends Entity implements ICommand
 	@Override
 	public String getModel() {
 		return model;
+	}
+
+	@Override
+	public CommandTag getTagFromPriority() {
+		for (CommandTag tag : commandTagPriority) {
+			if (hasTag(tag)) {
+				return tag;
+			}
+		}
+		return CommandTag.Other;
 	}
 	// /////////////////////////////////////////////////////////////////////////////
 	//
