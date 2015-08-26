@@ -89,7 +89,7 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 		conf.set("karma.input.type", "JSON");
 		conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("calguns-model.ttl").toURI().toString());
 		conf.set("rdf.generation.root", "http://schema.org/Thread1");
-		JSONArray jObj = (JSONArray) JSONSerializer.toJSON(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("part-00000.json")));
+		JSONArray jObj = (JSONArray) JSONSerializer.toJSON(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("extracted_calguns.json")));
 		
 		for(int i=0;i<jObj.size();i++){
 		
@@ -98,7 +98,7 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 		
 		
 		
-		mapReduceDriver.addAllOutput(getPairsFromFile("output/calguns-post1-jsonld.json"));
+		mapReduceDriver.addAllOutput(getPairsFromFile("calguns-post1-jsonld.json"));
 		mapReduceDriver.runTest();
 		
 	}

@@ -43,6 +43,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.kr2rml.KR2RMLVersion;
 import edu.isi.karma.kr2rml.ObjectMap;
@@ -159,7 +160,30 @@ public class WorksheetR2RMLJenaModelParser {
 		
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes(kr2rmlMapping, subjectResources);
+		createGraphNodeToTriplesNodeMap(kr2rmlMapping);
 		return mapping = kr2rmlMapping;
+		}
+	}
+	
+	
+	//TODO TEST THIS
+	private void createGraphNodeToTriplesNodeMap(KR2RMLMapping kr2rmlMapping){
+		
+		StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), (RDFNode)null);
+		Resource subject = null;
+		while (itr.hasNext()) {
+			Statement subjMapToNodeIdStmt = itr.next();
+			String nodeId = subjMapToNodeIdStmt.getObject().toString();
+			subject = itr.next().getSubject();
+			if (subject != null) {
+				StmtIterator itr2 = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
+				while (itr2.hasNext()) {
+					//this.rdfGenerationRoot = itr.next().getSubject().toString();
+					String triplesMapId = itr2.next().getSubject().toString();
+					kr2rmlMapping.getAuxInfo().getGraphNodeIdToTriplesMapIdMap().put(nodeId, triplesMapId);
+				}
+				
+			}
 		}
 	}
 	
