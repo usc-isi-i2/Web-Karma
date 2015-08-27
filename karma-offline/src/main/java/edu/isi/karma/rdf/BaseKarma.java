@@ -9,20 +9,16 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.ContextIdentifier;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
@@ -54,7 +50,7 @@ public class BaseKarma {
 			if (contextURI != null && !contextURI.isEmpty()) {
 				addContext(contextURI);
 			}
-			Model model = generator.getModelParser("model").getModel();
+			/*Model model = generator.getModelParser("model").getModel();
 			if (root != null && !root.isEmpty()) {
 				StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), root);
 				Resource subject = null;
@@ -67,7 +63,8 @@ public class BaseKarma {
 						rdfGenerationRoot = itr.next().getSubject().toString();
 					}
 				}
-			}
+			}*/
+			setRdfGenerationRoot(root, "model");
 		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: "
@@ -195,7 +192,7 @@ public class BaseKarma {
 			//TODO the line below must be uncommented, problem is ar-15 model.  
 			//this.rdfGenerationRoot = rdfGenerationRoot;
 			
-			Model model = generator.getModelParser(modelName).getModel();
+		/*	Model model = generator.getModelParser(modelName).getModel();
 			
 			if (model != null){
 
@@ -212,11 +209,19 @@ public class BaseKarma {
 						}
 					}
 				}
+			}*/
+			
+			
+			KR2RMLMapping kr2rmlMapping = generator.getModelParser(modelName).parse();
+			String triplesMapId = kr2rmlMapping.translateGraphNodeIdToTriplesMapId(rdfGenerationRoot);
+			if(triplesMapId != null){
+				this.rdfGenerationRoot = triplesMapId;
+			}else{
+				throw new RuntimeException("triplesMapId not found for rdfGenerationRoot:" + rdfGenerationRoot);
 			}
 		}
 		catch (KarmaException | JSONException | IOException e) {
-			throw new RuntimeException("Unable to set rdf generation root: "
-					+ e.getMessage()+ "*****************" + rdfGenerationRoot + "**********" + modelName + "*********" + this.rdfGenerationRoot);
+			throw new RuntimeException("Unable to set rdf generation root: " + e.getMessage());
 		}
 		
 	}

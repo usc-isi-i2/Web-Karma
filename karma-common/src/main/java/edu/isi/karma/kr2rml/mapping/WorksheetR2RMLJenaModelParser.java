@@ -21,8 +21,10 @@
 
 package edu.isi.karma.kr2rml.mapping;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -167,10 +169,11 @@ public class WorksheetR2RMLJenaModelParser {
 	
 	
 	//TODO TEST THIS
-	private void createGraphNodeToTriplesNodeMap(KR2RMLMapping kr2rmlMapping){
+	private void createGraphNodeToTriplesNodeMap(KR2RMLMapping kr2rmlMapping) throws FileNotFoundException, UnsupportedEncodingException{
 		
 		StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), (RDFNode)null);
 		Resource subject = null;
+		Map<String,String> graphNodeIdToTriplesMapIdMap = kr2rmlMapping.getAuxInfo().getGraphNodeIdToTriplesMapIdMap();
 		while (itr.hasNext()) {
 			Statement subjMapToNodeIdStmt = itr.next();
 			String nodeId = subjMapToNodeIdStmt.getObject().toString();
@@ -180,11 +183,13 @@ public class WorksheetR2RMLJenaModelParser {
 				while (itr2.hasNext()) {
 					//this.rdfGenerationRoot = itr.next().getSubject().toString();
 					String triplesMapId = itr2.next().getSubject().toString();
-					kr2rmlMapping.getAuxInfo().getGraphNodeIdToTriplesMapIdMap().put(nodeId, triplesMapId);
+					graphNodeIdToTriplesMapIdMap.put(nodeId, triplesMapId);
 				}
 				
 			}
 		}
+		
+		kr2rmlMapping.getAuxInfo().printTriplesMap();
 	}
 	
 	private SourceTypes getSourceType(Resource mappingResource)
