@@ -20,8 +20,6 @@ public class SemanticTypesConsolidator extends CommandConsolidator {
 				while(itr.hasNext()) {
 					Command tmp = itr.next();
 					if (tmp.getModel().equals(model) && tmp.getOutputColumns().equals(command.getOutputColumns()) && (tmp instanceof SetSemanticTypeCommand || tmp instanceof SetMetaPropertyCommand)) {
-						tmp.getOutputColumns().clear();
-						command.getOutputColumns().clear();
 						commandsToRemove.add(tmp);
 						found = true;
 					}
