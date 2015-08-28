@@ -59,6 +59,10 @@ public class InspectorFactory {
 		names.add(OutlierInspector.class.getName()+"|1.8");
 		names.add(OutlierInspector.class.getName()+"|2.0");
 		names.add(OutlierInspector.class.getName()+"|3.0");*/
+		names.add(MembershipAmbiguityInspector.class.getName()+"|0.01");
+		names.add(MembershipAmbiguityInspector.class.getName()+"|0.02");
+		names.add(MembershipAmbiguityInspector.class.getName()+"|0.03");
+		names.add(MembershipAmbiguityInspector.class.getName()+"|0.04");
 		names.add(MembershipAmbiguityInspector.class.getName()+"|0.05");
 		names.add(MembershipAmbiguityInspector.class.getName()+"|0.07");
 		names.add(MembershipAmbiguityInspector.class.getName()+"|0.09");

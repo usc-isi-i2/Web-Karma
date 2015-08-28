@@ -18,18 +18,20 @@ public class CleaningResultUpdate extends AbstractUpdate {
 
 	private HashMap<String,HashMap<String, String>> map = new HashMap<String, HashMap<String,String>>();
 	private String hNodeId = "";
-	private String varString;
 	private List<String> topkey = new ArrayList<String>();
+	private List<String> minimal = new ArrayList<String>();
+	private double coverage = 0.0;
 	public enum JsonKeys {
 		worksheetId, hNodeId, result
 	}
 	private static Logger logger = LoggerFactory
 			.getLogger(CleaningResultUpdate.class);
-	public CleaningResultUpdate(String hNodeId, HashMap<String,HashMap<String, String>> store,String vars,List<String> keys) {
+	public CleaningResultUpdate(String hNodeId, HashMap<String,HashMap<String, String>> store,double coverage, List<String> keys, List<String> minimal) {
 		this.hNodeId = hNodeId;
 		topkey = keys;
-		varString = vars;
 		this.map = store;
+		this.coverage = coverage;
+		this.minimal = minimal;
 	}
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
@@ -46,13 +48,19 @@ public class CleaningResultUpdate extends AbstractUpdate {
 				JSONObject jsBest = new JSONObject(map);
 				bestpac.put("data", jsBest);
 			}
-			JSONArray jba = new JSONArray();
+			JSONArray recmd = new JSONArray();
 			for(String key:topkey)
 			{
-				jba.put(key);
+				recmd.put(key);
+			}
+			JSONArray min = new JSONArray();
+			for(String key: this.minimal){
+				min.put(key);
 			}
 			bestpac.put("tps",new JSONObject());
-			bestpac.put("top", jba);
+			bestpac.put("top", recmd);
+			bestpac.put("coverage", this.coverage);
+			bestpac.put("minimal",min );
 			jsa.put(0,bestpac);//put the best one as the first
 			obj.put(JsonKeys.result.name(), jsa);
 			pw.print(obj.toString(4));

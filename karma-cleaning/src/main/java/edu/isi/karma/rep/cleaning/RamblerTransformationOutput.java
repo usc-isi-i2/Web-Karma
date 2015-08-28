@@ -40,11 +40,9 @@ public class RamblerTransformationOutput implements TransformationOutput {
 	private RamblerTransformationInputs input;
 	private HashMap<String, Transformation> transformations;
 	public boolean nullRule = false;
-	public String contextId;
-	public RamblerTransformationOutput(RamblerTransformationInputs input, String contextId) {
+	public RamblerTransformationOutput(RamblerTransformationInputs input) {
 		
 		this.input = input;
-		this.contextId = contextId;
 		transformations = new HashMap<String, Transformation>();
 		ExecutorService executor = Executors.newFixedThreadPool(1);
 		final Future<?> worker = executor.submit(new Runnable() {

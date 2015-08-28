@@ -29,7 +29,8 @@ public class AdaInspector implements Inspector {
 		}
 	}
 	public void initeParameter(){
-		String value = "{\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.0|2\":0.27548135140147095,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|3\":0.08225784904838043,\"edu.isi.karma.cleaning.correctness.MultiviewInspector\":0.07807552589600536,\"edu.isi.karma.cleaning.correctness.MembershipAmbiguityInspector|0.05\":0.029981516710614383}";		
+		//String value = "{\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.0|2\":0.20450001920049324,\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.6|2\":0.024386868116059113,\"edu.isi.karma.cleaning.correctness.MembershipAmbiguityInspector|0.07\":0.0025917344906929455,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.6|2\":0.007308103433307873,\"edu.isi.karma.cleaning.correctness.MultiviewInspector\":0.21458067957712698,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|1\":0.12985188307902093,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|2\":0.20038555374000705}";		
+		String value = "{\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|0.0|3\":0.08225784904838043}";
 		JSONObject parameters = new JSONObject(value);
 		Iterator<String> keys = parameters.keys();
 		while(keys.hasNext()){

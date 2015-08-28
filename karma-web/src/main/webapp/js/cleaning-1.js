@@ -26,6 +26,7 @@ var TransformColumnDialog = (function() {
 		var dialog = $("#transformColumnDialog");
 		var worksheetId, columnId;
 		var cleaningExamples, results, topkeys, transformedResult, nodeIds;
+		var coverage, mintests;
 
 		function init() {
 			//Initialize what happens when we show the dialog
@@ -76,6 +77,8 @@ var TransformColumnDialog = (function() {
 			cleaningExamples = [];
 			results = [];
 			topkeys = [];
+			coverage = 0.0;
+			mintests = [];
 
 			var values = fetchCleanningRawData();
 
@@ -349,8 +352,8 @@ var TransformColumnDialog = (function() {
 			var topCol = cleaningResults[0];
 			results = cleaningResults;
 			topKeys = topCol["top"];
-
-			//var sndCol = element["result"][1];
+			coverage = results["coverage"];
+			mintests = resutls["minimal"];
 			preprocessData(topCol, topCol["top"]);
 			populateResult(topCol);
 			populateInfoPanel();

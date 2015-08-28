@@ -11,7 +11,7 @@ public class AdaInspectorTrainer {
 	public List<String> classifierList = null;	
 	public List<Double> alphaList = null;			
 	public List<String> remainClassifiers;
-	public static double questionablePreference = 5;
+	public static double questionablePreference = 6;
 	
 	public AdaInspectorTrainer(Instance[] instances, List<String> classifiers) {		
 		this.instances = instances;

@@ -34,12 +34,17 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.DataRecord;
 import edu.isi.karma.cleaning.Messager;
 import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.cleaning.correctness.AdaInspector;
 import edu.isi.karma.cleaning.correctness.FatalErrorInspector;
+import edu.isi.karma.cleaning.correctness.Inspector;
+import edu.isi.karma.cleaning.correctness.InspectorFactory;
+import edu.isi.karma.cleaning.correctness.MultiviewInspector;
 import edu.isi.karma.cleaning.research.ConfigParameters;
 import edu.isi.karma.cleaning.research.DataCollection;
 import edu.isi.karma.controller.command.CommandException;
@@ -198,7 +203,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		RamblerTransformationOutput rtf = null;
 		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
-			rtf = new RamblerTransformationOutput(inputs, workspace.getContextId());
+			rtf = new RamblerTransformationOutput(inputs);
 			if (rtf.getTransformations().keySet().size() > 0) {
 				results = true;
 			}
@@ -276,13 +281,16 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			ArrayList<String> sortedIds = getRecommendedIDswithFatalError(records);
 			keys = sortedIds;
 		}
+		HashSet<String> mintest = getMinimalTestSet(dp, mg, records, rtf, tpid);
+		ArrayList<String> expIds = getExampleIDs();
+		double coverage = getTestCoverage(mintest, expIds);
 		String vars = "";
 		if (rtf.nullRule) {
 			keys.clear();
 		}
 		UserStudyUtil.logOneiteration(wk.getUserMonitor(), worksheetId, System.currentTimeMillis(), examples, keys, resdata);
 		logDiagnosticInfo(rtf, resdata, keys);
-		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata, vars, keys));
+		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata, coverage, keys, Lists.newArrayList(mintest)));
 	}
 	private void addExamplesIntoRecords(ArrayList<DataRecord> records, Transformation tf){
 		for(TransformationExample exp: examples){
@@ -350,6 +358,36 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		}
 		return ret;
 		
+	}
+	private double getTestCoverage(HashSet<String> toTest, ArrayList<String> exampleIds){
+		//handle redundancy
+		double total = 1;
+		double tested = 0;
+		for(String id: exampleIds){
+			if(toTest.contains(id)){
+				tested ++;
+			}
+		}
+		if(toTest.size() != 0){
+			total = toTest.size();
+		}
+		return tested * 1.0 / total;
+	}
+	private HashSet<String> getMinimalTestSet(DataPreProcessor dp, Messager mg, ArrayList<DataRecord> records, RamblerTransformationOutput rtf, String tpid){
+		HashSet<String> ret = new HashSet<String>();
+		ArrayList<String> exampleIDs = getExampleIDs();
+		RamblerTransformation rtransformation = (RamblerTransformation) rtf.getTransformations().get(tpid);
+		InspectorFactory factory = new InspectorFactory(dp, mg, records, exampleIDs, rtransformation.prog);
+		Inspector mvInspector = factory.getInspector(MultiviewInspector.class.getName());
+		HashSet<String> existed = new HashSet<String>();
+		for (DataRecord r : records) {
+			double value = mvInspector.getActionLabel(r);
+			if(value < 0){
+				if(!ret.contains(r.id) && !existed.contains(r.origin));
+					ret.add(r.id);
+			}
+		}
+		return ret;
 	}
 	private ArrayList<String> getRecommendedIDs(DataPreProcessor dp, Messager mg, ArrayList<DataRecord> records, RamblerTransformationOutput rtf, String tpid) {
 		AdaInspector inspector = new AdaInspector();
