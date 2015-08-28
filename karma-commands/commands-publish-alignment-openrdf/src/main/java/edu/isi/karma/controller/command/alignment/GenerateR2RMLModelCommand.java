@@ -155,12 +155,11 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		}
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		historyUtil.consolidateHistory();	
-		if (!oldCommands.equals(historyUtil.getCommands())) {
+		if (oldCommands.size() != historyUtil.getCommands().size()) {
 			uc.append(historyUtil.replayHistory());
 			uc.removeUpdateByClass(HistoryAddCommandUpdate.class);
 			uc.removeUpdateByClass(InfoUpdate.class);
 			uc.removeUpdateByClass(ErrorUpdate.class);
-			historyUtil.consolidateHistory();
 			uc.add(new HistoryUpdate(workspace.getCommandHistory()));
 
 		}

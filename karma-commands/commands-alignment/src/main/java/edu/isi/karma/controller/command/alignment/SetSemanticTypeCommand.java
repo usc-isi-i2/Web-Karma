@@ -71,7 +71,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 	private String labelName = "";
 	private SemanticType oldType;
 	private SemanticType newType;
-	
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
 	protected SetSemanticTypeCommand(String id, String model, String worksheetId, String hNodeId, 
@@ -83,7 +83,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		this.typesArr = typesArr;
 		this.rdfLiteralType = rdfLiteralType;
 
-		addTag(CommandTag.Modeling);
+		addTag(CommandTag.SemanticType);
 	}
 	
 	@Override
@@ -179,8 +179,9 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					}
 				}
 				
-				if(domainUriOrId.endsWith(" (add)"))
-					domainUriOrId = domainUriOrId.substring(0, domainUriOrId.length()-5).trim();
+				if(domainUriOrId.endsWith(" (add)")) {
+					domainUriOrId = domainUriOrId.substring(0, domainUriOrId.length() - 5).trim();
+				}
 				
 				domain = alignment.getNodeById(domainUriOrId);
 				logger.info("Got domain for domainUriOrId:" + domainUriOrId + " ::" + domain);
@@ -401,17 +402,5 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		}
 		return c;
 	}
-	
-//	@Override
-//	public Set<String> getInputColumns() {
-//		Set<String> t = new HashSet<String>();
-//		t.add(hNodeId);
-//		return t;
-//	}
-//	
-//	@Override
-//	public Set<String> getOutputColumns() {
-//		Set<String> t = new HashSet<String>();
-//		return t;
-//	}
+
 }

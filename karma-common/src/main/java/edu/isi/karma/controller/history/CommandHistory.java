@@ -67,7 +67,7 @@ public class CommandHistory {
 	
 	private final Map<CommandTag, List<ICommand> > history = new HashMap<>();
 	private Command previewCommand;
-	private final List<RedoCommandObject> redoStack = new ArrayList<RedoCommandObject>();
+	private final List<RedoCommandObject> redoStack = new ArrayList<>();
 	/**
 	 * If the last command was undo, and then we do a command that goes on the
 	 * history, then we need to send the browser the full history BEFORE we send
@@ -185,8 +185,12 @@ public class CommandHistory {
 			// Save the modeling commands
 			if (!(instanceOf(command, "ResetKarmaCommand"))) {
 				try {
-					if(isHistoryWriteEnabled && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
-							|| command.hasTag(CommandTag.Transformation)) && historySavers.get(workspace.getId()) != null) {
+					if(isHistoryWriteEnabled && command.isSavedInHistory() &&
+							(command.hasTag(CommandTag.Modeling)
+							|| command.hasTag(CommandTag.Transformation)
+							|| command.hasTag(CommandTag.Selection)
+							|| command.hasTag(CommandTag.SemanticType)
+							) && historySavers.get(workspace.getId()) != null) {
 						writeHistoryPerWorksheet(workspace, historySavers.get(workspace.getId()));
 					}
 				} catch (Exception e) {
@@ -202,8 +206,12 @@ public class CommandHistory {
 		String workspaceId = workspace.getId();
 		HashMap<String, JSONArray> comMap = new HashMap<String, JSONArray>();
 		for(ICommand command : _getHistory()) {
-			if(command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
-					|| command.hasTag(CommandTag.Transformation))) {
+			if(command.isSavedInHistory() &&
+					(command.hasTag(CommandTag.Modeling)
+					|| command.hasTag(CommandTag.Transformation)
+					|| command.hasTag(CommandTag.Selection)
+					|| command.hasTag(CommandTag.SemanticType)
+					)) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
 				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
 				if(workspace.getWorksheet(worksheetId) != null)
@@ -540,8 +548,12 @@ public class CommandHistory {
 		ListIterator<ICommand> commandItr = history.listIterator(history.size());
 		while(commandItr.hasPrevious()) {
 			ICommand command = commandItr.previous();
-			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
-					|| command.hasTag(CommandTag.Transformation))) {
+			if(command instanceof Command && command.isSavedInHistory() &&
+					(command.hasTag(CommandTag.Modeling)
+					|| command.hasTag(CommandTag.Transformation)
+					|| command.hasTag(CommandTag.Selection)
+					|| command.hasTag(CommandTag.SemanticType)
+					)) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
 				if (HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json).equals(worksheetId)) {
 					commandsToBeRemoved.add(command);
@@ -556,7 +568,9 @@ public class CommandHistory {
 				}
 			}
 		}
-		history.removeAll(commandsToBeRemoved);
+		for (CommandTag tag : CommandTag.values()) {
+			this.history.get(tag).removeAll(commandsToBeRemoved);
+		}
 	}
 
 	public void removeCommands(String worksheetId) {
@@ -577,15 +591,21 @@ public class CommandHistory {
 				logger.error("Unable to remove command " + command.getCommandName());
 			}
 		}
-		history.removeAll(commandsFromWorksheet);
+		for (CommandTag tag : CommandTag.values()) {
+			this.history.get(tag).removeAll(commandsFromWorksheet);
+		}
 	}
 
 	public List<Command> getCommandsFromWorksheetId(String worksheetId) {
 		List<Command> commandsFromWorksheet = new ArrayList<Command>();
 		List<ICommand> history = _getHistory();
 		for(ICommand command: history) {
-			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
-					|| command.hasTag(CommandTag.Transformation))) {
+			if(command instanceof Command && command.isSavedInHistory() &&
+					(command.hasTag(CommandTag.Modeling)
+					|| command.hasTag(CommandTag.Transformation)
+					|| command.hasTag(CommandTag.Selection)
+					|| command.hasTag(CommandTag.SemanticType)
+					)) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
 				if (HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json).equals(worksheetId))
 					commandsFromWorksheet.add((Command)command);

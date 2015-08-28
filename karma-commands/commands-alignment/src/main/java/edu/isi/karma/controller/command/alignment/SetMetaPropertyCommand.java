@@ -79,6 +79,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 	private SemanticType oldType;
 	private SemanticType newType;
 
+
 	private final Logger logger = LoggerFactory.getLogger(this.getClass()
 			.getSimpleName());
 
@@ -95,7 +96,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		this.metaPropertyId = metaPropertyId;
 		this.rdfLiteralType = rdfLiteralType;
 
-		addTag(CommandTag.Modeling);
+		addTag(CommandTag.SemanticType);
 	}
 
 	@Override
@@ -170,8 +171,9 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 		}
 
-		if(metaPropertyId.endsWith(" (add)"))
-			metaPropertyId = metaPropertyId.substring(0, metaPropertyId.length()-5).trim();
+		if(metaPropertyId.endsWith(" (add)")) {
+			metaPropertyId = metaPropertyId.substring(0, metaPropertyId.length() - 5).trim();
+		}
 		
 	if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyId);

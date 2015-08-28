@@ -106,6 +106,8 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		inputColumns.clear();
+		outputColumns.clear();
 		Worksheet worksheet = workspace.getWorksheet(
 				worksheetId);
 		
@@ -153,7 +155,8 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 			
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-			
+			inputColumns.add(hNodeId);
+			outputColumns.add(newHNodeId);
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());

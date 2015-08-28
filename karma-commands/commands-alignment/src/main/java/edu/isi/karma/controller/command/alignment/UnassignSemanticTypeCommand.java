@@ -66,8 +66,8 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 	public UnassignSemanticTypeCommand(String id, String model, String hNodeId, String worksheetId) {
 		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
-		
-		addTag(CommandTag.Modeling);
+
+		addTag(CommandTag.SemanticType);
 	}
 
 	@Override
@@ -194,6 +194,10 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 			return new UpdateContainer(new ErrorUpdate("Error occured during undo of unassigning the semantic type!"));
 		}
 		return c;
+	}
+
+	public SemanticType getOldSemanticType() {
+		return oldSemanticType;
 	}
 
 }
