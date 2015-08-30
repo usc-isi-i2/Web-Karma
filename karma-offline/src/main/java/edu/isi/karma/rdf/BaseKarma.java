@@ -24,6 +24,7 @@ import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.util.Util;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -70,8 +71,9 @@ public class BaseKarma {
 			}
 		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
+			Util.logException(LOG, e);
 			throw new RuntimeException("Unable to complete Karma set up: "
-					+ e.getMessage());
+					+ e.getMessage() + modelUri + "      " + rdfGenerationRoot);
 		}
 	}
 

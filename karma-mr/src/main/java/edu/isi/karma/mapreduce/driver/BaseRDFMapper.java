@@ -1,7 +1,9 @@
 package edu.isi.karma.mapreduce.driver;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
@@ -19,6 +21,7 @@ import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.BaseKarma;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
 import edu.isi.karma.rdf.RDFGeneratorRequest;
+import edu.isi.karma.util.Util;
 
 public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 
@@ -34,17 +37,22 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 	public void setup(Context context) {
 
 		karma = new BaseKarma();
+		String contextURI=null;
 		String inputTypeString = context.getConfiguration().get(
 				"karma.input.type");
 		String modelUri = context.getConfiguration().get("model.uri");
 		String modelFile = context.getConfiguration().get("model.file");
 		String baseURI = context.getConfiguration().get("base.uri");
-		String contextURI = context.getConfiguration().get("context.uri");
+		try{
+			contextURI = new File("./karma.zip/karma/" + context.getConfiguration().get("context.uri")).toURI().toURL().toString();
+		}catch(Exception e){
+			Util.logException(LOG, e);
+		}
 		String rdfGenerationRoot = context.getConfiguration().get("rdf.generation.root");
 		String rdfSelection = context.getConfiguration().get("rdf.generation.selection");
 		delimiter = context.getConfiguration().get("karma.input.delimiter");
 		hasHeader = context.getConfiguration().getBoolean("karma.input.header", false);
-		karma.setup("./karma.zip/karma", inputTypeString, modelUri, modelFile, 
+		karma.setup("./karma.zip/karma", inputTypeString, modelUri, "./karma.zip/karma/models/"+modelFile, 
 				baseURI, contextURI, rdfGenerationRoot, rdfSelection);
 		
 		
@@ -101,7 +109,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 					
 					modelName = modelName.substring(0, modelName.length()-4);
 		
-					karma.addModel(modelName,null, jObj.getString("model_uri"));
+					karma.addModel(modelName,"./karma.zip/karma/models/"+jObj.getString("model_uri"),null);
 						
 					//LOG.error("Added Model from SOURCE JSON:" + jObj.toString());
 				}
