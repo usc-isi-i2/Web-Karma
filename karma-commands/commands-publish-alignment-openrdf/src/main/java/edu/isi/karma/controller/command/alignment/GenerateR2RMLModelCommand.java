@@ -74,7 +74,6 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private String tripleStoreUrl;
-	private String graphContext;
 	private String RESTserverAddress;
 	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
 
@@ -86,10 +85,9 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 
-	protected GenerateR2RMLModelCommand(String id, String model, String worksheetId, String url, String context, String selectionId) {
+	protected GenerateR2RMLModelCommand(String id, String model, String worksheetId, String url, String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
-		this.graphContext = context;
 	}
 
 	public String getTripleStoreUrl() {
@@ -98,14 +96,6 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	public void setTripleStoreUrl(String tripleStoreUrl) {
 		this.tripleStoreUrl = tripleStoreUrl;
-	}
-
-	public String getGraphContext() {
-		return graphContext;
-	}
-
-	public void setGraphContext(String graphContext) {
-		this.graphContext = graphContext;
 	}
 
 	public void setRESTserverAddress(String RESTserverAddress) {

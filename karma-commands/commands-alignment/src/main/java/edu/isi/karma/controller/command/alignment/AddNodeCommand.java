@@ -42,7 +42,7 @@ public class AddNodeCommand extends WorksheetCommand {
 		this.nodeUri = uri;
 		this.nodeLabel = label;
 		
-		addTag(CommandTag.Modeling);
+		addTag(CommandTag.SemanticType);
 	}
 
 	@Override

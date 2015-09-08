@@ -1,19 +1,5 @@
 package edu.isi.karma.controller.history;
 
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.reflections.Reflections;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -26,6 +12,13 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.reflections.Reflections;
+
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 public class CommandHistoryUtil {
 	private final static Set<CommandConsolidator> consolidators = new HashSet<CommandConsolidator>();
@@ -147,21 +140,21 @@ public class CommandHistoryUtil {
 	}
 
 	private boolean checkDependency(List<Command> commands) {
-		Set<String> OutputhNodeIds = new HashSet<String>();
+		Set<String> OutputHNodeIds = new HashSet<String>();
 		for (HNode hnode : workspace.getFactory().getAllHNodes()) {
 			if (hnode.getHNodeType() == HNodeType.Regular)
-				OutputhNodeIds.add(hnode.getId());
+				OutputHNodeIds.add(hnode.getId());
 		}
 		boolean dependency = true;
 		for (Command command : commands) {
 			if (command.getInputColumns().size() > 0) {
 				for (String hNodeId : command.getInputColumns()) {
-					if (!OutputhNodeIds.contains(hNodeId))
+					if (!OutputHNodeIds.contains(hNodeId))
 						dependency = false;
 				}
 			}
 			if (command.getOutputColumns().size() > 0) {
-				OutputhNodeIds.addAll(command.getOutputColumns());
+				OutputHNodeIds.addAll(command.getOutputColumns());
 			}
 		}
 		return dependency;
@@ -223,21 +216,23 @@ public class CommandHistoryUtil {
 		return commands;
 	}
 
-	public void removeCommands(CommandTag tag) {
+	public void removeCommands(Set<String> commandIds) {
 		Iterator<Command> commandItr = commands.iterator();
 		while (commandItr.hasNext()) {
 			Command command = commandItr.next();
-			if(command.hasTag(tag))
+			if (commandIds.contains(command.getId())) {
 				commandItr.remove();
+			}
 		}
 	}
 
-	public void removeCommands(String hNodeId) {
+	public void retainCommands(Set<String> commandIds) {
 		Iterator<Command> commandItr = commands.iterator();
 		while (commandItr.hasNext()) {
 			Command command = commandItr.next();
-			if(command.getOutputColumns().contains(hNodeId))
+			if (!commandIds.contains(command.getId())) {
 				commandItr.remove();
+			}
 		}
 	}
 

@@ -143,6 +143,23 @@ function WorksheetOptions(wsId, wsTitle) {
 					func: clearThis
 				}]
 			}]
+		}, {
+			name: "divider"
+		}, 
+		{
+			name: "History",
+			func: undefined,
+			addLevel: true,
+			levels: [
+			{
+				name: "Export History",
+				func: exportHistory
+			},
+			{
+				name: "Delete History",
+				func: deleteHistory
+			}
+			]
 		}
 	];
 
@@ -465,6 +482,52 @@ function WorksheetOptions(wsId, wsTitle) {
 	
 	function printModel() {
 		D3ModelManager.getInstance().printModel(worksheetId);
+	}
+
+	function deleteHistory() {
+		hideDropdown();
+		var response = extractHistoryCheckboxes();
+		var info = generateInfoObject(worksheetId, "", "ExportOrDeleteHistoryCommand");
+
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("commandList", response, "other"));
+		newInfo.push(getParamObject("isDelete", "true", "other"));
+		newInfo.push(getParamObject("tripleStoreUrl", $('#txtModel_URL').text(), "other"));
+		newInfo.push(getParamObject("requestUrl", window.location.href.replace("/#", ""), "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(info["worksheetId"]);
+		var returned = sendRequest(info, worksheetId);
+	}
+
+	function exportHistory() {
+		hideDropdown();
+		var response = extractHistoryCheckboxes();
+		var response = extractHistoryCheckboxes();
+		var info = generateInfoObject(worksheetId, "", "ExportOrDeleteHistoryCommand");
+
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("commandList", response, "other"));
+		newInfo.push(getParamObject("isDelete", "false", "other"));
+		newInfo.push(getParamObject("tripleStoreUrl", $('#txtModel_URL').text(), "other"));
+		newInfo.push(getParamObject("requestUrl", window.location.href.replace("/#", ""), "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(info["worksheetId"]);
+		var returned = sendRequest(info, worksheetId);
+	}
+
+	function extractHistoryCheckboxes() {
+		var checkboxes = $("#commandHistory").find(":checked");
+		var response = "";
+		for (var i = 0; i < checkboxes.length; i++) {
+			if (i == 0) {
+				response += checkboxes[i].value;
+			}
+			else {
+				response += "," + checkboxes[i].value;
+			}
+		}
+		console.log(response);
+		return response;
 	}
 	
 	this.generateJS = function() {

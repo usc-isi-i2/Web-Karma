@@ -67,7 +67,7 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
 
-		addTag(CommandTag.Modeling);
+		addTag(CommandTag.SemanticType);
 	}
 
 	@Override

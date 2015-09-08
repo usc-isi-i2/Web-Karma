@@ -374,9 +374,31 @@ function parse(data) {
 			if (element.command.description.length > 0) {
 				title = title + ": " + element.command.description;
 			}
+			var historyLabelDiv = $("<div>")
+					.append($("<label />")
+						.html(title)
+						.prepend(
+							$("<input>")
+							.attr("type", "checkbox")
+							.attr("value", element.command.commandId)
+							)
+						);
+			if (element.command["commandType"] == "notUndoable") {
+				historyLabelDiv = $("<div>")
+					.text(title);
+			}
 			var commandDiv = $("<div>").addClass("CommandDiv undo-state " + element.command.commandType).attr("id", element.command.commandId).css({
 				"position": "relative"
-			}).append($("<div>").text(title)).append($("<div>").addClass("iconDiv").append($("<img>").attr("src", "images/edit_undo.png")).bind('click', clickUndoButton).qtip({
+			}).append(historyLabelDiv)
+				.append(
+					$("<div>")
+					.addClass("iconDiv")
+					.append(
+						$("<img>")
+						.attr("src", "images/edit_undo.png")
+						)
+					.bind('click', clickUndoButton)
+					.qtip({
 				content: {
 					text: 'Undo'
 				},
@@ -398,9 +420,32 @@ function parse(data) {
 		} else if (element["updateType"] == "HistoryUpdate") {
 			$("div#commandHistory div.CommandDiv").remove();
 			$.each(element["commands"], function(index, command) {
+				var title = command.title;
+				if (command.description.length > 0) {
+					title = title + ": " + command.description;
+				}
+				var historyLabelDiv = $("<div>")
+					.append($("<label />")
+						.html(title)
+						.prepend(
+							$("<input>")
+							.attr("type", "checkbox")
+							.attr("value", command.commandId)
+							)
+						);
+				if (command["commandType"] == "notUndoable") {
+					historyLabelDiv = $("<div>")
+					.text(title);
+				}
 				var commandDiv = $("<div>").addClass("CommandDiv " + command.commandType).attr("id", command.commandId).css({
 					"position": "relative"
-				}).append($("<div>").text(command.title + ": " + command.description)).append($("<div>").addClass("iconDiv").bind('click', clickUndoButton)).hover(
+				})
+				.append(historyLabelDiv)
+				.append($("<div>")
+					.addClass("iconDiv")
+					.bind('click', clickUndoButton)
+					)
+				.hover(
 					// hover in function
 					commandDivHoverIn,
 					// hover out function
