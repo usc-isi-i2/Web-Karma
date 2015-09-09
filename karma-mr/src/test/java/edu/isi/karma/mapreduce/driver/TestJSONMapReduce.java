@@ -46,7 +46,7 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 	public void tearDown() throws Exception {
 	}
 
-	/*@Test
+	@Test
 	public void testMap() throws IOException {
 
 		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
@@ -79,29 +79,6 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 		mapReduceDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
 		mapReduceDriver.addAllOutput(getPairsFromFile("output/people.output.json"));
 		mapReduceDriver.runTest();
-	}*/
-	
-	@Test
-	public void testMultiRoot() throws URISyntaxException, IOException{
-		
-
-		org.apache.hadoop.conf.Configuration conf = mapReduceDriver.getConfiguration();
-		conf.set("karma.input.type", "JSON");
-		conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("calguns-model.ttl").toURI().toString());
-		conf.set("rdf.generation.root", "http://schema.org/Thread1");
-		JSONArray jObj = (JSONArray) JSONSerializer.toJSON(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("extracted_calguns.json")));
-		
-		for(int i=0;i<jObj.size();i++){
-		
-			mapReduceDriver.addInput(new Text("calguns-sample.json"), new Text(jObj.getString(i)));
-		}
-		
-		
-		
-		mapReduceDriver.addAllOutput(getPairsFromFile("calguns-post1-jsonld.json"));
-		mapReduceDriver.runTest();
-		
 	}
-
 
 }
