@@ -40,6 +40,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+import org.json.XML;
+
 
 public class HTTPUtil {
 	public enum HTTP_METHOD {
@@ -135,6 +138,60 @@ public class HTTPUtil {
 			}
 		}
 		return responseString.toString();
+	}
+
+	public static Object executeAndParseHTTPGetService(String uri, boolean includeInputAttributes) throws ClientProtocolException, IOException {
+		HttpClient httpClient = new DefaultHttpClient();
+		
+		HttpGet request = new HttpGet(uri);
+		request.setHeader(HTTP_HEADERS.Accept.name(), "application/json; text/xml");
+		
+		HttpResponse response = httpClient.execute(request);
+		
+		// Parse the response and store it in a String
+		HttpEntity entity = response.getEntity();
+		StringBuilder responseString = new StringBuilder();
+		if (entity != null) {
+			BufferedReader buf = new BufferedReader(new InputStreamReader(entity.getContent()));
+			
+			String line = buf.readLine();
+			while(line != null) {
+				responseString.append(line);
+				responseString.append('\n');
+				line = buf.readLine();
+			}
+		}
+		
+		Object output = null;
+		if(entity.getContentType().toString().indexOf("xml") != -1) {
+			output = XML.toJSONObject(responseString.toString());
+		} else if(entity.getContentType().toString().indexOf("json") != -1){
+			output = JSONUtil.createJson(responseString.toString());
+		}
+		
+		if(output != null && includeInputAttributes) {
+			String[] queryParams = request.getURI().getQuery().split("&");
+			
+			JSONObject nestedArr;
+			if(output instanceof JSONObject)
+				nestedArr = (JSONObject)output;
+			else {   
+				nestedArr = new JSONObject();
+				nestedArr.put("output", output);
+			}
+			for(String queryParam: queryParams) {
+				String[] param = queryParam.split("=");
+				String name = param[0];
+				String value = param[1];
+				nestedArr.put(name, value);
+			}
+			
+			JSONObject result = new JSONObject();
+			result.put("nestedArray", nestedArr);
+			return result;
+		} else {
+			return output;
+		}
 	}
 	
 	public static String executeHTTPDeleteRequest(String uri) 
