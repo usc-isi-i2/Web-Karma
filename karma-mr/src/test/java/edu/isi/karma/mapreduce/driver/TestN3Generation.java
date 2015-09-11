@@ -18,7 +18,7 @@ public class TestN3Generation {
 
 	protected static MiniDFSCluster dfsCluster;
 	protected static MiniMRYarnCluster cluster;
-	@BeforeClass
+	//@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
 		Configuration dfsConf = new Configuration();
@@ -33,7 +33,7 @@ public class TestN3Generation {
 		cluster.start();
 	}
 
-	@AfterClass
+	//@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		if(cluster != null)
 		{
@@ -42,7 +42,7 @@ public class TestN3Generation {
 		}
 	}
 
-	@Test
+//	@Test
 	public void test() throws Exception {
 		Configuration conf = cluster.getConfig();
 		String[] args = {new File( getTestResource("InputFileDirectoryLoader.properties").toURI()).getAbsolutePath()};

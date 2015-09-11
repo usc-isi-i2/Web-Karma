@@ -168,7 +168,6 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 	
 	
-	//TODO TEST THIS
 	private void createGraphNodeToTriplesNodeMap(KR2RMLMapping kr2rmlMapping) throws FileNotFoundException, UnsupportedEncodingException{
 		
 		StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), (RDFNode)null);
@@ -177,11 +176,10 @@ public class WorksheetR2RMLJenaModelParser {
 		while (itr.hasNext()) {
 			Statement subjMapToNodeIdStmt = itr.next();
 			String nodeId = subjMapToNodeIdStmt.getObject().toString();
-			subject = itr.next().getSubject();
+			subject = subjMapToNodeIdStmt.getSubject();
 			if (subject != null) {
 				StmtIterator itr2 = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
 				while (itr2.hasNext()) {
-					//this.rdfGenerationRoot = itr.next().getSubject().toString();
 					String triplesMapId = itr2.next().getSubject().toString();
 					graphNodeIdToTriplesMapIdMap.put(nodeId, triplesMapId);
 				}

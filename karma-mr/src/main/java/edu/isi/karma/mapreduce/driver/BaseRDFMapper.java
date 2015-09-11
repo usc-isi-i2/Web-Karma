@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -162,12 +164,14 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 		JSONObject jMatchedKarmaConfig = null;
 		if(jKarmaConfig != null){
 			for(int i=0;i<jKarmaConfig.size();i++){
-				
-				if(key.matches(jKarmaConfig.getJSONObject(i).getString("urls"))){
-					jMatchedKarmaConfig = jKarmaConfig.getJSONObject(i);
-					break;
+				if(jKarmaConfig.getJSONObject(i).containsKey("urls")){
+					Pattern p = Pattern.compile(jKarmaConfig.getJSONObject(i).getString("urls").trim());
+					Matcher m = p.matcher(key.trim());
+					if(m.find()){
+						jMatchedKarmaConfig = jKarmaConfig.getJSONObject(i);
+						break;
+					}
 				}
-				
 			}
 		}
 		return jMatchedKarmaConfig;

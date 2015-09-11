@@ -50,20 +50,6 @@ public class BaseKarma {
 			if (contextURI != null && !contextURI.isEmpty()) {
 				addContext(contextURI);
 			}
-			/*Model model = generator.getModelParser("model").getModel();
-			if (root != null && !root.isEmpty()) {
-				StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), root);
-				Resource subject = null;
-				while (itr.hasNext()) {
-					subject = itr.next().getSubject();
-				}
-				if (subject != null) {
-					itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
-					while (itr.hasNext()) {
-						rdfGenerationRoot = itr.next().getSubject().toString();
-					}
-				}
-			}*/
 			setRdfGenerationRoot(root, "model");
 		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
@@ -188,36 +174,15 @@ public class BaseKarma {
 	
 	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
 		try{
-			
-			//TODO the line below must be uncommented, problem is ar-15 model.  
-			//this.rdfGenerationRoot = rdfGenerationRoot;
-			
-		/*	Model model = generator.getModelParser(modelName).getModel();
-			
-			if (model != null){
 
-				if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()) {
-					StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rdfGenerationRoot);
-					Resource subject = null;
-					while (itr.hasNext()) {
-						subject = itr.next().getSubject();
-					}
-					if (subject != null) {
-						itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
-						while (itr.hasNext()) {
-							this.rdfGenerationRoot = itr.next().getSubject().toString();
-						}
-					}
+			if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()){
+				KR2RMLMapping kr2rmlMapping = generator.getModelParser(modelName).parse();
+				String triplesMapId = kr2rmlMapping.translateGraphNodeIdToTriplesMapId(rdfGenerationRoot);
+				if(triplesMapId != null){
+					this.rdfGenerationRoot = triplesMapId;
+				}else{
+					throw new RuntimeException("triplesMapId not found for rdfGenerationRoot:" + rdfGenerationRoot);
 				}
-			}*/
-			
-			
-			KR2RMLMapping kr2rmlMapping = generator.getModelParser(modelName).parse();
-			String triplesMapId = kr2rmlMapping.translateGraphNodeIdToTriplesMapId(rdfGenerationRoot);
-			if(triplesMapId != null){
-				this.rdfGenerationRoot = triplesMapId;
-			}else{
-				throw new RuntimeException("triplesMapId not found for rdfGenerationRoot:" + rdfGenerationRoot);
 			}
 		}
 		catch (KarmaException | JSONException | IOException e) {

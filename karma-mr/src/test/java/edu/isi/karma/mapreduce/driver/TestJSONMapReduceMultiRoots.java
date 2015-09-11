@@ -1,14 +1,8 @@
 package edu.isi.karma.mapreduce.driver;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
-import java.util.List;
-
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
 import org.apache.commons.io.IOUtils;
@@ -19,7 +13,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
-import org.apache.hadoop.mrunit.types.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +28,8 @@ public class TestJSONMapReduceMultiRoots extends TestRDFMapReduce {
 		mapDriver = MapDriver.newMapDriver(mapper);
 		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
 		conf.set("read.karma.config", "true");
-		conf.set("karma.config.file", TestJSONMapReduceMultiRoots.class.getClassLoader().getResource("karmaconfig.json").toURI().toString());
+		String string = TestJSONMapReduceMultiRoots.class.getClassLoader().getResource("karmaconfig.json").toURI().toString();
+		conf.set("karma.config.file", string);
 		reduceDriver = ReduceDriver.newReduceDriver(reducer);
 		mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 	}
