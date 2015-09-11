@@ -142,6 +142,12 @@ public abstract class Command extends Entity implements ICommand
 	public void generateJson(String prefix, PrintWriter pw,
 	                         VWorkspace vWorkspace, HistoryType historyType) {
 		pw.println(prefix + "{");
+		generateCommandJSONAttributes(prefix, pw, vWorkspace, historyType);
+		pw.println(prefix + "}");
+	}
+
+	protected void generateCommandJSONAttributes(String prefix, PrintWriter pw,
+            VWorkspace vWorkspace, HistoryType historyType) {
 		String newPref = prefix + "  ";
 		pw.println(newPref + JSONUtil.json(JsonKeys.commandId, getId()));
 		pw.println(newPref + JSONUtil.json(JsonKeys.title, getTitle()));
@@ -152,9 +158,8 @@ public abstract class Command extends Entity implements ICommand
 		pw.println(newPref
 				+ JSONUtil.jsonLast(JsonKeys.commandType, getCommandType()
 						.name()));
-		pw.println(prefix + "}");
 	}
-
+	
 	@Override
 	public boolean hasTag(CommandTag tag) {
 		return tags.contains(tag);
