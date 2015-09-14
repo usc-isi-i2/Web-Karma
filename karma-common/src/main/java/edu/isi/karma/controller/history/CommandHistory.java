@@ -24,6 +24,7 @@
 package edu.isi.karma.controller.history;
 
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -56,6 +57,8 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
  */
 public class CommandHistory {
 
+	private static final String IMPORT_COMMANDS = "ImportCommands";
+
 	private class RedoCommandObject {
 		private ICommand command;
 		private JSONObject historyObject;
@@ -64,8 +67,108 @@ public class CommandHistory {
 			this.historyObject = historyObject;
 		}
 	}
+
+	private class HistoryWorksheetMap {
+
+		private class CommandTagListMap {
+			private final Map<CommandTag, List<ICommand> > commandTagListHashMap = new HashMap<>();
+			public CommandTagListMap() {
+				for (CommandTag tag : CommandTag.values()) {
+					commandTagListHashMap.put(tag, new ArrayList<ICommand>());
+				}
+			}
+
+			public List<ICommand> getCommands() {
+				List<ICommand> commands = new ArrayList<>();
+				commands.addAll(commandTagListHashMap.get(CommandTag.Import));
+				commands.addAll(commandTagListHashMap.get(CommandTag.Transformation));
+				commands.addAll(commandTagListHashMap.get(CommandTag.Selection));
+				commands.addAll(commandTagListHashMap.get(CommandTag.SemanticType));
+				commands.addAll(commandTagListHashMap.get(CommandTag.Modeling));
+				commands.addAll(commandTagListHashMap.get(CommandTag.Other));
+				return commands;
+			}
+
+			public void addCommand(ICommand command) {
+				commandTagListHashMap.get(command.getTagFromPriority()).add(command);
+			}
+
+			public void removeCommand(ICommand command) {
+				for (CommandTag tag : CommandTag.values()) {
+					commandTagListHashMap.get(tag).remove(command);
+				}
+			}
+
+			public void removeCommand(List<ICommand> commands) {
+				for (CommandTag tag : CommandTag.values()) {
+					commandTagListHashMap.get(tag).removeAll(commands);
+				}
+			}
+		}
+
+		private final Map<String, CommandTagListMap> historyWorksheetMap = new TreeMap<>();
+
+		public HistoryWorksheetMap() {
+			historyWorksheetMap.put(IMPORT_COMMANDS, new CommandTagListMap());
+		}
+
+		public void removeCommand(ICommand command) {
+			for(Map.Entry<String, CommandTagListMap> entry : historyWorksheetMap.entrySet()) {
+				entry.getValue().removeCommand(command);
+			}
+		}
+
+		public void removeCommand(List<ICommand> commands) {
+			for(Map.Entry<String, CommandTagListMap> entry : historyWorksheetMap.entrySet()) {
+				entry.getValue().removeCommand(commands);
+			}
+		}
+
+		public void insertCommand(ICommand command) {
+			String worksheetId = getWorksheetId(command);
+			if (worksheetId != null) {
+				CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
+				if (commandTagListMap == null) {
+					commandTagListMap = new CommandTagListMap();
+					historyWorksheetMap.put(worksheetId, commandTagListMap);
+				}
+				commandTagListMap.addCommand(command);
+			}
+			else {
+				historyWorksheetMap.get(IMPORT_COMMANDS).addCommand(command);
+			}
+		}
+
+		public List<ICommand> getAllCommands() {
+			List<ICommand> commands = new ArrayList<>();
+			for (Map.Entry<String, CommandTagListMap> entry : historyWorksheetMap.entrySet()) {
+				commands.addAll(entry.getValue().getCommands());
+			}
+			return commands;
+		}
+
+		public List<ICommand> getCommandsFromWorksheetId(String worksheetId) {
+			List<ICommand> commands = new ArrayList<>();
+			CommandTagListMap map = historyWorksheetMap.get(worksheetId);
+			if (map != null) {
+				commands.addAll(map.getCommands());
+			}
+			return commands;
+		}
+
+		private String getWorksheetId(ICommand c) {
+			try {
+				Method getWorksheetIdMethod = c.getClass().getMethod("getWorksheetId");
+				String worksheetId = (String)getWorksheetIdMethod.invoke(c, (Object[])null);
+				return worksheetId;
+			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+
+			}
+			return null;
+		}
+	}
 	
-	private final Map<CommandTag, List<ICommand> > history = new HashMap<>();
+	private final HistoryWorksheetMap historyWorksheetMap = new HistoryWorksheetMap();
 	private Command previewCommand;
 	private final List<RedoCommandObject> redoStack = new ArrayList<>();
 	/**
@@ -90,28 +193,16 @@ public class CommandHistory {
 		worksheetId, commandName, inputParameters, hNodeId, tags, model
 	}
 
-	private void initialize() {
-		for (CommandTag tag : CommandTag.values()) {
-			history.put(tag, new ArrayList<ICommand>());
-		}
-	}
-
 	public CommandHistory() {
-		initialize();
 	}
 
 	public CommandHistory(List<ICommand> history, List<RedoCommandObject> redoStack) {
-		initialize();
 		for (ICommand c : history) {
-			this.history.get(c.getTagFromPriority()).add(c);
+			historyWorksheetMap.insertCommand(c);
 		}
 		for (RedoCommandObject c : redoStack) {
 			this.redoStack.add(c);
 		}
-	}
-
-	public boolean isUndoEnabled() {
-		return !history.isEmpty();
 	}
 
 	public boolean isRedoEnabled() {
@@ -119,30 +210,11 @@ public class CommandHistory {
 	}
 
 	public List<ICommand> _getHistory() {
-		List<ICommand> commands = new ArrayList<>();
-		commands.addAll(history.get(CommandTag.Import));
-		commands.addAll(history.get(CommandTag.Transformation));
-		commands.addAll(history.get(CommandTag.Selection));
-		commands.addAll(history.get(CommandTag.SemanticType));
-		commands.addAll(history.get(CommandTag.Modeling));
-		commands.addAll(history.get(CommandTag.Other));
-		return commands;
-	}
-
-	public List<ICommand> _getRedoStack() {
-		List<ICommand> commands = new ArrayList<ICommand>();
-		for (RedoCommandObject obj : redoStack) {
-			commands.add(obj.command);
-		}
-		return commands;
+		return historyWorksheetMap.getAllCommands();
 	}
 
 	public CommandHistory clone() {
-		List<ICommand> commands = new ArrayList<>();
-		for (CommandTag tag : CommandTag.values()) {
-			commands.addAll(history.get(tag));
-		}
-		return new CommandHistory(commands, redoStack);
+		return new CommandHistory(_getHistory(), redoStack);
 	}
 
 	/**
@@ -177,7 +249,7 @@ public class CommandHistory {
 			}
 			lastCommandWasUndo = false;
 
-			history.get(command.getTagFromPriority()).add(command);
+			historyWorksheetMap.insertCommand(command);
 			effects.add(new HistoryAddCommandUpdate(command));
 		}
 
@@ -412,7 +484,7 @@ public class CommandHistory {
 		UpdateContainer effects = new UpdateContainer();
 		for (ICommand c : commandsToUndo) {
 			for (CommandTag tag : CommandTag.values()) {
-				history.get(tag).remove(c);
+				historyWorksheetMap.removeCommand(c);
 			}
 			redoStack.add(new RedoCommandObject(c, getCommandJSON(workspace, c)));
 			effects.append(c.undoIt(workspace));
@@ -452,9 +524,9 @@ public class CommandHistory {
 						model = rco.historyObject.getString(HistoryArguments.model.name());
 					Command comm = cf.createCommand(inputParamArr, model, workspace);
 					effects.append(comm.doIt(workspace));
-					history.get(comm.getTagFromPriority()).add(comm);
+					historyWorksheetMap.insertCommand(comm);
 				}catch(Exception e) {
-					history.get(rco.command.getTagFromPriority()).add(rco.command);
+					historyWorksheetMap.insertCommand(rco.command);
 					effects.append(rco.command.doIt(workspace));
 				}
 				
@@ -502,7 +574,7 @@ public class CommandHistory {
 		if (redoStack.isEmpty()) {
 			return Collections.emptyList();
 		}
-		List<RedoCommandObject> result = new LinkedList<RedoCommandObject>();
+		List<RedoCommandObject> result = new LinkedList<>();
 		boolean foundCommand = false;
 		for (int i = redoStack.size() - 1; i >= 0; i--) {
 			RedoCommandObject c = redoStack.get(i);
@@ -541,10 +613,9 @@ public class CommandHistory {
 		}
 	}
 
-
 	public void removeCommands(Workspace workspace, String worksheetId) {
-		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
-		List<ICommand> history = _getHistory();
+		List<ICommand> commandsToBeRemoved = new ArrayList<>();
+		List<ICommand> history = historyWorksheetMap.getCommandsFromWorksheetId(worksheetId);
 		ListIterator<ICommand> commandItr = history.listIterator(history.size());
 		while(commandItr.hasPrevious()) {
 			ICommand command = commandItr.previous();
@@ -568,37 +639,17 @@ public class CommandHistory {
 				}
 			}
 		}
-		for (CommandTag tag : CommandTag.values()) {
-			this.history.get(tag).removeAll(commandsToBeRemoved);
-		}
+		this.historyWorksheetMap.removeCommand(commandsToBeRemoved);
 	}
 
 	public void removeCommands(String worksheetId) {
-		List<ICommand> commandsFromWorksheet = new ArrayList<ICommand>();
-		List<ICommand> history = _getHistory();
-		for(ICommand command: history) {
-			try {
-
-				Method m = command.getClass().getMethod("getWorksheetId");
-				if(m != null)
-				{
-					String id = (String) m.invoke(command, (Object[])null);
-					if (id.equals(worksheetId))
-						commandsFromWorksheet.add(command);
-
-				}
-			} catch (Exception e) {
-				logger.error("Unable to remove command " + command.getCommandName());
-			}
-		}
-		for (CommandTag tag : CommandTag.values()) {
-			this.history.get(tag).removeAll(commandsFromWorksheet);
-		}
+		List<ICommand> commandsFromWorksheet = historyWorksheetMap.getCommandsFromWorksheetId(worksheetId);
+		this.historyWorksheetMap.removeCommand(commandsFromWorksheet);
 	}
 
 	public List<Command> getCommandsFromWorksheetId(String worksheetId) {
-		List<Command> commandsFromWorksheet = new ArrayList<Command>();
-		List<ICommand> history = _getHistory();
+		List<Command> commandsFromWorksheet = new ArrayList<>();
+		List<ICommand> history = historyWorksheetMap.getCommandsFromWorksheetId(worksheetId);
 		for(ICommand command: history) {
 			if(command instanceof Command && command.isSavedInHistory() &&
 					(command.hasTag(CommandTag.Modeling)
@@ -615,30 +666,6 @@ public class CommandHistory {
 		return commandsFromWorksheet;
 	}
 
-	public ICommand getCommand(String commandId)
-	{
-		List<ICommand> history = _getHistory();
-		for(ICommand  c: history)
-		{
-			if(c.getId().equals(commandId))
-			{
-				return c;
-			}
-		}
-		return null;
-
-	}
-
-	public List<ICommand> getCommands(CommandTag tag) {
-		List<ICommand> retCommands = new ArrayList<ICommand>();
-		List<ICommand> history = _getHistory();
-		for(ICommand command: history) {
-			if(command.hasTag(tag))
-				retCommands.add(command);
-		}
-		return retCommands;
-	}
-
 	public void addPreviewCommand(Command c) {
 		previewCommand = c;
 	}
@@ -650,10 +677,6 @@ public class CommandHistory {
 	}
 
 	private static boolean isHistoryWriteEnabled = false;
-	public static boolean isHistoryEnabled()
-	{
-		return isHistoryWriteEnabled;
-	}
 
 	public static void setIsHistoryEnabled(boolean isHistoryWriteEnabled)
 	{

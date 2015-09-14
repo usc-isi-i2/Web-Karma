@@ -50,10 +50,6 @@ public interface ICommand extends IEntity
 
 	void saveInHistory(boolean flag);
 
-	void writeWorksheetHistoryAfterCommandExecutes(boolean flag);
-
-	boolean writeWorksheetHistoryAfterCommandExecutes();
-
 	void generateJson(String prefix, PrintWriter pw,
 	                  VWorkspace vWorkspace, HistoryType historyType);
 
@@ -67,23 +63,19 @@ public interface ICommand extends IEntity
 
 	List<CommandTag> getTags();
 
-	boolean appendToHistory();
-
-	void setAppendToHistory(boolean appendToHistory);
-
 	CommandTag getTagFromPriority();
 
 	String getModel();
 	
-	public enum HistoryType {
+	enum HistoryType {
 		undo, redo
 	}
 
-	public enum JsonKeys {
+	enum JsonKeys {
 		commandId, title, description, commandType, historyType
 	}
 
-	public enum CommandTag {
+	enum CommandTag {
 		Modeling, Transformation, Selection, SemanticType, Import, Other
 	}
 }
