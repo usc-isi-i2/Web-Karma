@@ -21,9 +21,14 @@ public class TestN3GenerationLocal {
 			String[] args = {new File( getTestResource("InputFileDirectoryLoaderLocal.properties").toURI()).getAbsolutePath()};
 			int res = ToolRunner.run(conf, new InputFileDirectoryLoader(),args);
 			assertEquals(0, res);
-			
-			String [] jobArgs = {"-files", new File(getTestResource("people-model.ttl").toURI()).getAbsolutePath().toString(), "-archives", new File( getTestResource("sample_karma_user_home.zip").toURI()).getAbsolutePath(), "-libjars", System.getProperty("user.home") + "/.m2/repository/edu/isi/karma-offline/0.0.1-SNAPSHOT/karma-offline-0.0.1-SNAPSHOT-shaded.jar", new File(getTestResource("N3ProcessorLocal.properties").toURI()).getAbsolutePath().toString()}; 
-			res = ToolRunner.run(conf, new N3Processor(), jobArgs);
+		}
+		
+		if(!new File("/tmp/merged_data").exists())
+		{
+
+			Configuration conf = new Configuration();
+			String [] jobArgs = {"-files", new File(getTestResource("people-model.ttl").toURI()).getAbsolutePath().toString(), "-libjars", System.getProperty("user.home") + "/.m2/repository/edu/isi/karma-offline/0.0.1-SNAPSHOT/karma-offline-0.0.1-SNAPSHOT-shaded.jar", new File(getTestResource("N3ProcessorLocal.properties").toURI()).getAbsolutePath().toString()}; 
+			int res = ToolRunner.run(conf, new N3Processor(), jobArgs);
 			assertEquals(0, res);
 		}
 	}
