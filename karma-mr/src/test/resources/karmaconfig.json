@@ -1,0 +1,11 @@
+[
+  {
+    "urls": "^http[s]?://[^/]*people.com\\.*",
+    "roots": [
+      {
+        "root": "http://lod.isi.edu/ontology/syllabus/Person1"
+      }
+    ],
+    "model-file": "target/test-classes/people-model.ttl"
+  }
+]
