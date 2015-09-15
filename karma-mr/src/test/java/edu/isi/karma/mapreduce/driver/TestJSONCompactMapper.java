@@ -25,7 +25,7 @@ public class TestJSONCompactMapper extends TestRDFMapReduce{
 		mapDriver.getConfiguration().set("jsonld.context.url", TestJSONCompactMapper.class.getClassLoader().getResource("bsbm.context.json").toURI().toString());
 		mapDriver.addAll(this.getNullTextPairsFromFile("data/bsbm.compact.input.json"));
 		mapDriver.addAllOutput(this.getPairsFromFile("output/bsbm.compact.output.json"));
-		mapDriver.runTest();
+		mapDriver.runTest(false);
 	}
 	
 }
