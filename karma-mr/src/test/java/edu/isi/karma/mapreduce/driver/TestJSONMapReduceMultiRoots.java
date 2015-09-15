@@ -2,6 +2,9 @@ package edu.isi.karma.mapreduce.driver;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONSerializer;
 
@@ -16,6 +19,7 @@ import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.apache.hadoop.mrunit.types.Pair;
 
 public class TestJSONMapReduceMultiRoots extends TestRDFMapReduce {
 
@@ -24,12 +28,11 @@ public class TestJSONMapReduceMultiRoots extends TestRDFMapReduce {
 	public void setUp() throws Exception {
 		Mapper<Writable, Text, Text, Text> mapper = new JSONMapper();
 		Reducer<Text,Text,Text,Text> reducer = new JSONReducer();
-
+		
 		mapDriver = MapDriver.newMapDriver(mapper);
+		
 		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
-		conf.set("read.karma.config", "true");
-		String string = TestJSONMapReduceMultiRoots.class.getClassLoader().getResource("karmaconfig.json").toURI().toString();
-		conf.set("karma.config.file", string);
+		
 		reduceDriver = ReduceDriver.newReduceDriver(reducer);
 		mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 	}
@@ -45,19 +48,25 @@ public class TestJSONMapReduceMultiRoots extends TestRDFMapReduce {
 		
 
 		org.apache.hadoop.conf.Configuration conf = mapReduceDriver.getConfiguration();
+		conf.set("read.karma.config", "true");
+		String string = TestJSONMapReduceMultiRoots.class.getClassLoader().getResource("karmaconfig.json").toURI().toString();
+		conf.set("karma.config.file", string);
+		mapDriver.addCacheFile(TestJSONMapReduceMultiRoots.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
 		conf.set("karma.input.type", "JSON");
 		conf.set("model.uri", TestJSONMapReduceMultiRoots.class.getClassLoader().getResource("calguns-model.ttl").toURI().toString());
 		conf.set("rdf.generation.root", "http://memexproxy.com/ontology/Thread1");
-		JSONArray jObj = (JSONArray) JSONSerializer.toJSON(IOUtils.toString(TestJSONMapReduceMultiRoots.class.getClassLoader().getResourceAsStream("extracted_calguns.json")));
+		JSONArray jObj = (JSONArray) JSONSerializer.toJSON(IOUtils.toString(TestJSONMapReduceMultiRoots.class.getClassLoader().getResourceAsStream("data/peoplev2.json")));
+		
+		List<Pair<Writable,Text>> inputs = new ArrayList<Pair<Writable,Text>>();
 		
 		for(int i=0;i<jObj.size();i++){
 		
-			mapReduceDriver.addInput(new Text(jObj.getJSONObject(i).getString("url")), new Text(jObj.getString(i)));
+			inputs.add(new Pair(new Text(jObj.getJSONObject(i).getString("url")), new Text(jObj.getString(i))));
 		}
 		
+		mapReduceDriver.addAll(inputs);
 		
-		
-		mapReduceDriver.addAllOutput(getPairsFromFile("calguns-post1-jsonld.json"));
+		mapReduceDriver.addAllOutput(getPairsFromFile("output/people.output.json"));
 		mapReduceDriver.runTest();
 		
 	}
