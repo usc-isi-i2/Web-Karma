@@ -103,7 +103,7 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 
 		mapReduceDriver.withInput(new Text("people.json"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
 		mapReduceDriver.addAllOutput(getPairsFromFile("output/people.output.ttl"));
-		mapReduceDriver.runTest();
+		mapReduceDriver.runTest(false);
 
 	}
 

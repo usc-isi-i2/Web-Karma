@@ -32,9 +32,6 @@ public class TestJSONMapReduceMultiRoots extends TestRDFMapReduce {
 		Reducer<Text,Text,Text,Text> reducer = new JSONReducer();
 		
 		mapDriver = MapDriver.newMapDriver(mapper);
-		
-		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
-		
 		reduceDriver = ReduceDriver.newReduceDriver(reducer);
 		mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 	}

@@ -137,7 +137,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 		String modelName=null;
 		if (jMatchedKarmaConfig.containsKey("model-uri")){
 			
-			//add a new model with uri as name. This will prevent hitting github million times(literally)
+			//add the new model and cache it
 			String modelURL = jMatchedKarmaConfig.getString("model-uri");
 			modelName=extractModelName(modelURL);
 			karma.addModel(modelName,null, jMatchedKarmaConfig.getString("model-uri"));
