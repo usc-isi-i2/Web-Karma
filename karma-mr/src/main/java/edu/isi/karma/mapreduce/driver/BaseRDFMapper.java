@@ -158,7 +158,7 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			modelName = model.substring(index+1);
 			modelName = modelName.substring(0, modelName.length()-4);
 		}else{
-			modelName=model;
+			modelName = model.substring(0, model.length()-4);
 		}
 		
 		return modelName;
