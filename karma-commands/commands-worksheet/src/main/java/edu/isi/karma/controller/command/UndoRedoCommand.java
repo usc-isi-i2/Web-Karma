@@ -27,10 +27,17 @@ import edu.isi.karma.rep.Workspace;
 public class UndoRedoCommand extends Command {
 
 	private final String commandIdArg;
+	private final String worksheetId;
 
-	UndoRedoCommand(String id, String model, String commandIdArg) {
+	UndoRedoCommand(String id, String model, String commandIdArg, String worksheetId) {
 		super(id, model);
 		this.commandIdArg = commandIdArg;
+		if (worksheetId.equals("null")) {
+			this.worksheetId = null;
+		}
+		else {
+			this.worksheetId = worksheetId;
+		}
 	}
 
 	@Override
@@ -56,7 +63,7 @@ public class UndoRedoCommand extends Command {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		UpdateContainer undoEffects = workspace.getCommandHistory().undoOrRedoCommandsUntil(
-				workspace, commandIdArg);
+				workspace, commandIdArg, worksheetId);
 		UpdateContainer result = new UpdateContainer(new HistoryUpdate(
 				workspace.getCommandHistory()));
 		result.append(undoEffects);

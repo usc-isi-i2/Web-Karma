@@ -369,54 +369,6 @@ function parse(data) {
 				tableDataContainer.append(moreRowsDiv);
 			}
 			console.timeEnd('data update');
-		} else if (element["updateType"] == "HistoryAddCommandUpdate") {
-			var title = element.command.title;
-			if (element.command.description.length > 0) {
-				title = title + ": " + element.command.description;
-			}
-			var historyLabelDiv = $("<div>")
-					.append($("<label />")
-						.html(title)
-						.prepend(
-							$("<input>")
-							.attr("type", "checkbox")
-							.attr("value", element.command.commandId)
-							)
-						);
-			if (element.command["commandType"] == "notUndoable") {
-				historyLabelDiv = $("<div>")
-					.text(title);
-			}
-			var commandDiv = $("<div>").addClass("CommandDiv undo-state " + element.command.commandType).attr("id", element.command.commandId).css({
-				"position": "relative"
-			}).append(historyLabelDiv)
-				.append(
-					$("<div>")
-					.addClass("iconDiv")
-					.append(
-						$("<img>")
-						.attr("src", "images/edit_undo.png")
-						)
-					.bind('click', clickUndoButton)
-					.qtip({
-				content: {
-					text: 'Undo'
-				},
-				style: {
-					classes: 'ui-tooltip-light ui-tooltip-shadow'
-				}
-			})).hover(
-				// hover in function
-				commandDivHoverIn,
-				// hover out function
-				commandDivHoverOut);
-			if (element.command["commandType"] == "notUndoable")
-				$("div.iconDiv", commandDiv).remove();
-			var commandHistoryDiv = $("div#commandHistory");
-			// Remove the commands on redo stack
-			$(".redo-state").remove();
-
-			commandHistoryDiv.append(commandDiv);
 		} else if (element["updateType"] == "HistoryUpdate") {
 			$("div#commandHistory div.CommandDiv").remove();
 			$.each(element["commands"], function(index, command) {
@@ -450,6 +402,12 @@ function parse(data) {
 					commandDivHoverIn,
 					// hover out function
 					commandDivHoverOut);
+				if (command.worksheet) {
+					commandDiv.attr("worksheetId", command.worksheet);
+				}
+				else {
+					commandDiv.attr("worksheetId", "null");
+				}
 				if (command["commandType"] == "notUndoable")
 					$("div.iconDiv", commandDiv).remove();
 

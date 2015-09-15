@@ -27,14 +27,15 @@ import edu.isi.karma.rep.Workspace;
 public class UndoRedoCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		commandId
+		commandId, worksheetId
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
 		String commandId = request.getParameter(Arguments.commandId.name());
-		return new UndoRedoCommand(getNewId(workspace), Command.NEW_MODEL, commandId);
+		String worksheetId = request.getParameter(Arguments.worksheetId.name());
+		return new UndoRedoCommand(getNewId(workspace), Command.NEW_MODEL, commandId, worksheetId);
 	}
 
 	@Override

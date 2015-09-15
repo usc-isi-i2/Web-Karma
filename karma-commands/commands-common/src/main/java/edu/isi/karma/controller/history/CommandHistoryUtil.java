@@ -3,8 +3,8 @@ package edu.isi.karma.controller.history;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -66,7 +66,7 @@ public class CommandHistoryUtil {
 				if (outputCommands != null) {
 					List<Command> edges = dag.get(command);
 					if (edges == null)
-						edges = new ArrayList<Command>();
+						edges = new ArrayList<>();
 					for (Command tmp : outputCommands) {
 						if (tmp != command)
 							edges.add(tmp);
@@ -78,7 +78,7 @@ public class CommandHistoryUtil {
 			for (String output : outputs) {
 				List<Command> tmp = outputMapping.get(output);
 				if (tmp == null)
-					tmp = new ArrayList<Command>();
+					tmp = new ArrayList<>();
 				tmp.add(command);
 				outputMapping.put(output, tmp);
 			}
@@ -162,30 +162,33 @@ public class CommandHistoryUtil {
 
 	public UpdateContainer replayHistory() {
 		CommandHistory commandHistory = workspace.getCommandHistory();
-		commandHistory.removeCommands(workspace, worksheetId);
+		UpdateContainer uc = new UpdateContainer();
+		uc.append(commandHistory.removeCommands(workspace, worksheetId));
 		JSONArray redoCommandsArray = new JSONArray();
 		for (Command refined : commands)
 			redoCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
 		commands.clear();
-		UpdateContainer uc = new UpdateContainer();
 		commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
 		return uc;
 	}
 
 	public List<Command> getCommands() {
-		return new ArrayList<Command>(commands);
+		return new ArrayList<>(commands);
 	}
 
 	private List<Command> getCommandsFromHistoryJSON(JSONArray historyJSON, UpdateContainer uc) {
-		List<Command> commands = new ArrayList<Command>();
+		List<Command> commands = new ArrayList<>();
 		for (int i = 0; i < historyJSON.length(); i++) {
 			JSONObject commObject = historyJSON.getJSONObject(i);
 			JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 			String commandName = (String)commObject.get(HistoryArguments.commandName.name());
 			WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
-			ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
+			UpdateContainer errors = ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, false);
+			if (errors != null) {
+				uc.append(errors);
+			}
 			String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
-			Set<String> newOutputColumns = new HashSet<String>();
+			Set<String> newOutputColumns = new HashSet<>();
 			if (tmp != null) {
 				JSONArray array = new JSONArray(tmp);
 				for (int j = 0; j < array.length(); j++) {
@@ -198,18 +201,23 @@ public class CommandHistoryUtil {
 			if(cf != null) {
 				try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
 					String model = Command.NEW_MODEL;
-					if(commObject.has(HistoryArguments.model.name()))
+					if(commObject.has(HistoryArguments.model.name())) {
 						model = commObject.getString(HistoryArguments.model.name());
+					}
 					Command comm = cf.createCommand(inputParamArr, model, workspace);
 					comm.setOutputColumns(newOutputColumns);
 					if(comm != null){
 						commands.add(comm);
 						//TODO consolidate update
-						uc.append(workspace.getCommandHistory().doCommand(comm, workspace, true));
+						try {
+							uc.append(workspace.getCommandHistory().doCommand(comm, workspace, true));
+						} catch (Exception e) {
+							uc.add(new TrivialErrorUpdate("Error occurred in command " + comm.getCommandName()));
+						}
 					}
 
 				} catch (Exception ignored) {
-
+					logger.error("Error in executing command", ignored);
 				}
 			}
 		}

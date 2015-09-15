@@ -56,7 +56,7 @@ public class UpdateContainer {
 	}
 
 	public void add(AbstractUpdate update) {
-		updates.add(update);
+		append(new UpdateContainer(update));
 	}
 
 	public void append(UpdateContainer updateContainer) {
