@@ -62,7 +62,6 @@ public class TestJSONMapReduceMultiRoots extends TestRDFMapReduce {
 		List<Pair<Writable,Text>> inputs = new ArrayList<Pair<Writable,Text>>();
 		
 		for(int i=0;i<jObj.size();i++){
-		System.out.println(jObj.getJSONObject(i).getString("url"));
 			inputs.add(new Pair<Writable,Text>(new Text(jObj.getJSONObject(i).getString("url")), new Text(jObj.getString(i))));
 		}
 		

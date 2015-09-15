@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,10 +36,12 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 	protected String delimiter = null;
 	protected boolean hasHeader = false;
 	boolean readKarmaConfig = false;
-	JSONArray jKarmaConfig = null;
+	protected JSONArray jKarmaConfig = null;
+	protected HashMap<String, Pattern> urlPatterns=null;
 	@Override
 	public void setup(Context context) throws IOException {
 
+		urlPatterns = new HashMap<String, Pattern>();
 		karma = new BaseKarma();
 		String inputTypeString = context.getConfiguration().get(
 				"karma.input.type");
@@ -163,6 +166,16 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 		
 		return modelName;
 	}
+	
+	protected Pattern getMatchedURLPattern(String pattern){
+		
+		if(urlPatterns.containsKey(pattern.trim())){
+			return urlPatterns.get(pattern.trim());
+		}
+		Pattern p = Pattern.compile(pattern.trim());
+		urlPatterns.put(pattern.trim(), p);
+		return p;
+	}
 
 	protected void checkResultsAndWriteToContext(Writable key, Text value,String modelName,Context context) throws IOException, InterruptedException{
 		String results = generateJSONLD(key, value,modelName);
@@ -179,10 +192,11 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 	protected JSONObject matchKeyToKarmaConfig(String key){
 		
 		JSONObject jMatchedKarmaConfig = null;
+		Pattern p = null;
 		if(jKarmaConfig != null){
 			for(int i=0;i<jKarmaConfig.size();i++){
 				if(jKarmaConfig.getJSONObject(i).containsKey("urls")){
-					Pattern p = Pattern.compile(jKarmaConfig.getJSONObject(i).getString("urls").trim());
+					p = getMatchedURLPattern(jKarmaConfig.getJSONObject(i).getString("urls").trim());
 					Matcher m = p.matcher(key.trim());
 					if(m.find()){
 						jMatchedKarmaConfig = jKarmaConfig.getJSONObject(i);
