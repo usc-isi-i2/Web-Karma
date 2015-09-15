@@ -186,8 +186,6 @@ public class WorksheetR2RMLJenaModelParser {
 				
 			}
 		}
-		
-		kr2rmlMapping.getAuxInfo().printTriplesMap();
 	}
 	
 	private SourceTypes getSourceType(Resource mappingResource)

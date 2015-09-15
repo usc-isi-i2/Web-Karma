@@ -54,14 +54,15 @@ public class TestJSONMapReduceMultiRoots extends TestRDFMapReduce {
 		mapReduceDriver.addCacheFile(modelFileString);
 		System.out.println(conf.get(MRJobConfig.CACHE_FILES));
 		conf.set("karma.input.type", "JSON");
-		conf.set("model.uri", TestJSONMapReduceMultiRoots.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
+		//use the empty file the actual file is picked from the config file
+		conf.set("model.uri", TestJSONMapReduceMultiRoots.class.getClassLoader().getResource("people-model-empty.ttl").toURI().toString());
 		
 		JSONArray jObj = (JSONArray) JSONSerializer.toJSON(IOUtils.toString(TestJSONMapReduceMultiRoots.class.getClassLoader().getResourceAsStream("data/peoplev2.json")));
 		
 		List<Pair<Writable,Text>> inputs = new ArrayList<Pair<Writable,Text>>();
 		
 		for(int i=0;i<jObj.size();i++){
-		
+		System.out.println(jObj.getJSONObject(i).getString("url"));
 			inputs.add(new Pair<Writable,Text>(new Text(jObj.getJSONObject(i).getString("url")), new Text(jObj.getString(i))));
 		}
 		

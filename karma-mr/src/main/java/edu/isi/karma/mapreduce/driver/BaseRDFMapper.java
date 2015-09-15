@@ -226,7 +226,6 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 			if (karma.getContextId() != null) {
 				request.setContextName(karma.getContextId().getName());
 			}
-			
 			karma.getGenerator().generateRDF(request);
 
 			results = sw.toString();

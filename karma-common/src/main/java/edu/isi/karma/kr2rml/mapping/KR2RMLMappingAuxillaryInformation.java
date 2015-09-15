@@ -21,14 +21,9 @@
 
 package edu.isi.karma.kr2rml.mapping;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,15 +104,4 @@ public class KR2RMLMappingAuxillaryInformation {
 		}
 		return depth;
 	}	
-	
-	public void printTriplesMap() throws FileNotFoundException, UnsupportedEncodingException{
-		Set<String> keys = graphNodeIdToTriplesMapIdMap.keySet();
-		PrintWriter writer = new PrintWriter("/tmp/triplesmap.map", "UTF-8");
-		for(String key:keys){
-			
-			writer.write(key + "---->" + graphNodeIdToTriplesMapIdMap.get(key));
-			writer.write("\n");
-		}
-		writer.close();
-	}
 }

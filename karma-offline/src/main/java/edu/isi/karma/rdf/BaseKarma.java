@@ -174,7 +174,6 @@ public class BaseKarma {
 	
 	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
 		try{
-
 			if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()){
 				KR2RMLMapping kr2rmlMapping = generator.getModelParser(modelName).parse();
 				String triplesMapId = kr2rmlMapping.translateGraphNodeIdToTriplesMapId(rdfGenerationRoot);
