@@ -21,7 +21,6 @@ public class PythonRepository {
 	private ConcurrentHashMap<String, PyCode> scripts = new ConcurrentHashMap<String, PyCode>();
 	private ConcurrentHashMap<String, PyCode> libraryScripts = new ConcurrentHashMap<String, PyCode>();
 	private ConcurrentHashMap<String, Long> fileNameTolastTimeRead = new ConcurrentHashMap<String, Long>();
-	private List<String> localKeys = Arrays.asList("workspaceid", "selectionName", "command", "worksheetId", "selection", "nodeid");
 	private boolean libraryHasBeenLoaded = false;
 	private boolean reloadLibrary = true;
 	private PyStringMap initialLocals = new PyStringMap();
@@ -176,18 +175,8 @@ public class PythonRepository {
 		return repositoryPath;
 	}
 
-	private void resetRuntimeLocal() {
-		for (String key : localKeys) {
-			try {
-				this.interpreter.getLocals().__delitem__(key);
-			} catch (Exception e) {
-				//Key is missing, do nothing
-			}
-		}
-	}
-
 	public PythonInterpreter getInterpreter() {
-		resetRuntimeLocal();
+		interpreter.cleanup();
 		return this.interpreter;
 	}
 }
