@@ -26,6 +26,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Condition;
 import java.util.Random;
 import java.util.Set;
 
@@ -58,6 +61,8 @@ public class SemanticTypeUtil {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(SemanticTypeUtil.class);
+	
+	private static TrainingFactory trainingFactory = null;
 
 	private static boolean isSemanticTypeTrainingEnabled = true;
 	
@@ -118,20 +123,81 @@ public class SemanticTypeUtil {
 		return subset;
 	}
 	
-	public void trainOnColumn(Workspace workspace, Worksheet worksheet, SemanticType newType, SuperSelection sel) {
-		HNodePath currentColumnPath = null;
-		List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
-		for (HNodePath path : paths) {
-			if (path.getLeaf().getId().equals(newType.getHNodeId())) {
-				currentColumnPath = path;
-				break;
-			}
+	private class TrainingFactory extends Thread {
+		
+		private ArrayList<TrainingJob> tasks;
+		private Lock lock;
+		private Condition taskAvailable;
+		
+		TrainingFactory() {
+			this.tasks = new ArrayList<TrainingJob>();
+			this.lock = new ReentrantLock();
+			this.taskAvailable = this.lock.newCondition();
+			this.start();
 		}
 		
-		ArrayList<String> examples = getTrainingExamples(workspace, worksheet, currentColumnPath, sel);
-		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
-		String label = newType.getModelLabelString();
-		modelHandler.addType(label, examples);
+		void addTrainingJob(TrainingJob trainingJob) {
+			this.lock.lock();
+			if (this.tasks.add(trainingJob)) {
+				this.taskAvailable.signalAll();
+			}
+			this.lock.unlock();
+		}
+		
+		public void run() {
+			while (true) {
+				this.lock.lock();
+				try {
+					while (this.tasks.isEmpty()) {
+						this.taskAvailable.await();
+					}
+					
+					TrainingJob trainingJob = this.tasks.remove(0);
+					this.lock.unlock();
+					Workspace workspace = trainingJob.workspace;
+					Worksheet worksheet = trainingJob.worksheet;
+					SemanticType newType = trainingJob.newType;
+					SuperSelection sel = trainingJob.sel;
+
+					HNodePath currentColumnPath = null;
+					List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
+					for (HNodePath path : paths) {
+						if (path.getLeaf().getId().equals(newType.getHNodeId())) {
+							currentColumnPath = path;
+							break;
+						}
+					}
+
+					ArrayList<String> examples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet, currentColumnPath, sel);
+					ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
+					String label = newType.getModelLabelString();
+					modelHandler.addType(label, examples);
+
+				} catch (InterruptedException ie) {
+					ie.printStackTrace();
+					this.lock.unlock();
+				}
+			}
+		}
+
+	}
+	
+	private class TrainingJob {
+		public Workspace workspace;
+		public Worksheet worksheet;
+		public SemanticType newType;
+		public SuperSelection sel;
+		TrainingJob(Workspace workspace, Worksheet worksheet, SemanticType newType, SuperSelection sel) {
+			this.workspace = workspace;
+			this.worksheet = worksheet;
+			this.newType = newType;
+			this.sel = sel;
+		}
+	}
+	
+	public void trainOnColumn(Workspace workspace, Worksheet worksheet, SemanticType newType, SuperSelection sel) {
+		trainingFactory = trainingFactory == null ? new TrainingFactory() : trainingFactory;
+		trainingFactory.addTrainingJob(new TrainingJob(workspace, worksheet, newType, sel));
 	}
 	
 	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, String hNodeId, int numSuggestions, SuperSelection sel) {

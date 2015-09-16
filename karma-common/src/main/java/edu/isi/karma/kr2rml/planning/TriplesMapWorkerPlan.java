@@ -63,7 +63,7 @@ public class TriplesMapWorkerPlan {
 	private boolean generateContext;
 
 	private Map<String, String> hNodeToContextUriMap;
-	
+
 	private Map<TriplesMapGraph, List<String>> graphTriplesMapsProcessingOrder;
 	public TriplesMapWorkerPlan(RepFactory factory, TriplesMap triplesMap, 
 			KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, 
@@ -95,10 +95,11 @@ public class TriplesMapWorkerPlan {
 		{
 			if(graph.getTriplesMapIds().contains(triplesMap.getId()))
 			{
-					links = graph.getAllNeighboringTriplesMap(triplesMap.getId());
-					break;
+				links = graph.getAllNeighboringTriplesMap(triplesMap.getId());
+				break;
 			}
 		}
+	
 		for(TriplesMapLink link : links) {
 			try {
 				if(link.getSourceMap().getId().compareTo(triplesMap.getId()) ==0  && !link.isFlipped() ||

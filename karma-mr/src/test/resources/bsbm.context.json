@@ -1,0 +1,38 @@
+{
+  "@context": {
+  	"@base": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/",
+    "@vocab": "http://www4.wiwiss.fu-berlin.de/bizer/bsbm/v01/vocabulary/",
+    "a": "@type",
+    "comment": {
+      "@id": "http://www.w3.org/2000/01/rdf-schema#comment"
+    },
+    "publisher": {
+      "@id": "http://purl.org/dc/elements/1.1/publisher"
+    },
+    "homepage": {
+      "@id": "http://xmlns.com/foaf/0.1/homepage"
+    },
+    "date": {
+      "@id": "http://purl.org/dc/elements/1.1/date"
+    },
+    "title": {
+      "@id": "http://purl.org/dc/elements/1.1/title"
+    },
+    "reviewer": {
+      "@id": "http://purl.org/stuff/rev#reviewer"
+    },
+    "text":{
+      "@id": "http://purl.org/stuff/rev#text"
+    },
+    "label":{
+      "@id": "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "mbox_sha1sum":{
+    	"@id": "http://xmlns.com/foaf/0.1/mbox_sha1sum"	
+    },
+    "name":{
+    	"@id": "http://xmlns.com/foaf/0.1/name"
+    }
+
+   }
+}

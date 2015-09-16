@@ -116,4 +116,21 @@ public class KR2RMLMapping extends R2RMLMapping{
 	public String getWorksheetHistoryString() {
 		return worksheetHistoryString;
 	}
+	
+	public String translateGraphNodeIdToTriplesMapId(String nodeId){
+		String triplesMapId = null;
+		
+		triplesMapId = auxInfo.getGraphNodeIdToTriplesMapIdMap().get(nodeId);
+		if(triplesMapId != null){
+			return triplesMapId;
+		}
+		
+		//check if the nodeId provided is actually a triplesMapId
+		if(triplesMapIndex.containsKey(nodeId)){
+			return nodeId;
+		}
+		
+		return triplesMapId;
+		
+	}
 }

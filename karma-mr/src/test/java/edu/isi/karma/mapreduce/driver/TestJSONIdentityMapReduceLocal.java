@@ -14,6 +14,14 @@ public class TestJSONIdentityMapReduceLocal {
 	
 	@Test
 	public void test() throws Exception {
+		if(!new File("/tmp/loaded_data").exists())
+		{
+			
+			Configuration conf = new Configuration();
+			String[] args = {new File( getTestResource("InputFileDirectoryLoaderLocal.properties").toURI()).getAbsolutePath()};
+			int res = ToolRunner.run(conf, new InputFileDirectoryLoader(),args);
+			assertEquals(0, res);
+		}
 		if(!new File("/tmp/merged_data").exists())
 		{
 			
