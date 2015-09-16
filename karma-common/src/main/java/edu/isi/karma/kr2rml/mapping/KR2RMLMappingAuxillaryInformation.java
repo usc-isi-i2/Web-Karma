@@ -24,7 +24,6 @@ package edu.isi.karma.kr2rml.mapping;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +37,7 @@ public class KR2RMLMappingAuxillaryInformation {
 	private Map<String, String> blankNodesUriPrefixMap;
 	private Map<String, List<PredicateObjectMap>> columnNameToPredObjMLinks;
 	private Map<String, String> subjectMapIdToTemplateAnchor;
+	private Map<String, String> graphNodeIdToTriplesMapIdMap;
 	
 	public KR2RMLMappingAuxillaryInformation() {
 		this.triplesMapGraphMerger = new TriplesMapGraphMerger();
@@ -45,6 +45,7 @@ public class KR2RMLMappingAuxillaryInformation {
 		this.blankNodesColumnCoverage = new HashMap<String, List<String>>();
 		this.columnNameToPredObjMLinks = new HashMap<String, List<PredicateObjectMap>>();
 		this.subjectMapIdToTemplateAnchor = new HashMap<String, String>();
+		this.graphNodeIdToTriplesMapIdMap = new HashMap<String, String>();
 	}
 
 	public TriplesMapGraphMerger getTriplesMapGraph() {
@@ -65,6 +66,10 @@ public class KR2RMLMappingAuxillaryInformation {
 	
 	public Map<String, String> getSubjectMapIdToTemplateAnchor() {
 		return subjectMapIdToTemplateAnchor;
+	}
+	
+	public Map<String, String> getGraphNodeIdToTriplesMapIdMap(){
+		return graphNodeIdToTriplesMapIdMap;
 	}
 
 	//TODO move this

@@ -170,8 +170,13 @@ public class TriplesMapGraph {
 		return newGraph;
 	}
 	
+<<<<<<< HEAD
  	public TriplesMapGraph copyGraph() {
  		TriplesMapGraph newGraph = new TriplesMapGraph();
+=======
+	public TriplesMapGraph copyGraph() {
+		TriplesMapGraph newGraph = new TriplesMapGraph();
+>>>>>>> atf-multiroots
 		for(TriplesMap triplesMap : triplesMapIndex.values())
 		{
 			newGraph.addTriplesMap(triplesMap);
@@ -179,9 +184,22 @@ public class TriplesMapGraph {
 		for(TriplesMapLink link : links)
 		{
 			newGraph.addLink(new TriplesMapLink(link.getSourceMap(), link.getTargetMap(), link.getPredicateObjectMapLink()));
+<<<<<<< HEAD
+=======
 		}
 		return newGraph;
 	}
+	public TriplesMapGraph shallowCopyGraph() {
+		TriplesMapGraph newGraph = new TriplesMapGraph();
+		newGraph.links.addAll(links);
+		for (Entry<String, List<TriplesMapLink>> entry : neighboringTriplesMapCache.entrySet()) {
+			
+			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new LinkedList<TriplesMapLink>(entry.getValue()));
+>>>>>>> atf-multiroots
+		}
+		return newGraph;
+	}
+<<<<<<< HEAD
 	public TriplesMapGraph shallowCopyGraph() {
 		TriplesMapGraph newGraph = new TriplesMapGraph();
  		newGraph.links.addAll(links);
@@ -193,6 +211,8 @@ public class TriplesMapGraph {
  		return newGraph;
  	}
 
+=======
+>>>>>>> atf-multiroots
 	public void killTriplesMap(List<String> tripleMapToKill, RootStrategy strategy) {
 		if (tripleMapToKill.size() == 0) {
 			return;

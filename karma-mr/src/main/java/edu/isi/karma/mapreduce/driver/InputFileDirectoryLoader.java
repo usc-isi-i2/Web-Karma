@@ -45,8 +45,11 @@ public class InputFileDirectoryLoader extends Configured implements Tool{
                 Writer.valueClass(Text.class), Writer.file(outputPath));
         for(File document : f.listFiles())
         {
-        	String contents = FileUtils.readFileToString(document);
-        	writer.append(new Text(document.getName()), new Text(contents));
+        	if(document.isFile())
+        	{
+        		String contents = FileUtils.readFileToString(document);
+        		writer.append(new Text(document.getName()), new Text(contents));
+        	}
         }
         writer.close();
         return 0;
