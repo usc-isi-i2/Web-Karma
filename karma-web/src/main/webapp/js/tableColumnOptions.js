@@ -60,11 +60,11 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 		},
 		//{name:"Generate Cluster Values", func:clusterValues, leafOnly:true, leafExcluded: false},
 		//{name:"Merge Cluster Values", func:mergeValues, leafOnly:true, leafExcluded: false},
-		{
-			name: "divider",
-			leafOnly: true,
-			leafExcluded: false
-		},
+//		{
+//			name: "divider",
+//			leafOnly: true,
+//			leafExcluded: false
+//		},
 /*
 		{
 			name: "Invoke Service",
