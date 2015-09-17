@@ -228,6 +228,10 @@ function parse(data) {
 
 					mainDiv.data("worksheetVisible", true);
 
+					var historyDiv = $("<div>").attr("id", "commandHistory_" + worksheet["worksheetId"]).addClass("ui-corner-top").addClass("commandHistory");
+					historyDiv.append($("<div>").attr("id", "commandHistoryTitle_" + worksheet["worksheetId"]).addClass("ui-corner-top").addClass("titleCommand").append((new HistoryOptions(worksheet["worksheetId"])).generateJS()));
+					historyDiv.append($("<div>").attr("id", "commandHistoryBody_" + worksheet["worksheetId"]).addClass("commandHistoryBody").append($("<ul>").addClass("nav").addClass("nav-list")));
+
 					titleDiv
 						.append((new WorksheetOptions(worksheet["worksheetId"], worksheet["title"])).generateJS())
 						.append($("<div>")
@@ -251,7 +255,8 @@ function parse(data) {
 									});
 									visible = !visible;
 									mainDiv.data("worksheetVisible", visible);
-
+									$(".commandHistoryBody", historyDiv).toggle();
+									
 									// Change the corners
 									titleDiv.toggleClass("ui-corner-top");
 									titleDiv.toggleClass("ui-corner-all");
@@ -270,19 +275,17 @@ function parse(data) {
 					);
 					mainDiv.append(titleDiv);
 					mainDiv.append(headerDiv);
-					// Add the table (if it does not exists)
-					var tableDiv = $("<div>").attr("id", worksheet["worksheetId"] + "TableDiv").addClass("TableDiv").mouseleave(function() {
-						$("div#tableCellMenuButtonDiv").hide();
-						$("div#columnHeadingMenuButtonDiv").hide();
-					});
-
-					$("#tablesWorkspace").append(mainDiv).append("<br>");
+					
+					var wsRowDiv = $("<div>").addClass("row").addClass("commHistoryAndWorkspace").attr("id", worksheet["worksheetId"] + "_row");
+					wsRowDiv.append($("<div>").addClass("col-sm-2").append(historyDiv));
+					wsRowDiv.append($("<div>").addClass("col-sm-10").append(mainDiv));
+					$("#tablesWorkspace").append(wsRowDiv).append("<br>");
 				} else {
 
 				}
 			});
 		} else if (element["updateType"] == "WorksheetDeleteUpdate") {
-			var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
+			var worksheetPanel = $("div#" + element["worksheetId"] + "_row");
 			worksheetPanel.remove();
 			$.sticky("Worksheet deleted");
 		} else if (element["updateType"] == "WorksheetHeadersUpdate") {
@@ -370,111 +373,11 @@ function parse(data) {
 			}
 			console.timeEnd('data update');
 		} else if (element["updateType"] == "HistoryAddCommandUpdate") {
-			var title = element.command.title;
-			if (element.command.description.length > 0) {
-				title = title + ": " + element.command.description;
-			}
-			var historyLabelDiv = $("<div>")
-					.append($("<label />")
-						.html(title)
-						.prepend(
-							$("<input>")
-							.attr("type", "checkbox")
-							.attr("value", element.command.commandId)
-							)
-						);
-			if (element.command["commandType"] == "notUndoable") {
-				historyLabelDiv = $("<div>")
-					.text(title);
-			}
-			var commandDiv = $("<div>").addClass("CommandDiv undo-state " + element.command.commandType).attr("id", element.command.commandId).css({
-				"position": "relative"
-			}).append(historyLabelDiv)
-				.append(
-					$("<div>")
-					.addClass("iconDiv")
-					.append(
-						$("<img>")
-						.attr("src", "images/edit_undo.png")
-						)
-					.bind('click', clickUndoButton)
-					.qtip({
-				content: {
-					text: 'Undo'
-				},
-				style: {
-					classes: 'ui-tooltip-light ui-tooltip-shadow'
-				}
-			})).hover(
-				// hover in function
-				commandDivHoverIn,
-				// hover out function
-				commandDivHoverOut);
-			if (element.command["commandType"] == "notUndoable")
-				$("div.iconDiv", commandDiv).remove();
-			var commandHistoryDiv = $("div#commandHistory");
-			// Remove the commands on redo stack
-			$(".redo-state").remove();
-
-			commandHistoryDiv.append(commandDiv);
+			processHistoryCommand(element.command);
 		} else if (element["updateType"] == "HistoryUpdate") {
-			$("div#commandHistory div.CommandDiv").remove();
+			$(".commandHistoryBody ul").empty();
 			$.each(element["commands"], function(index, command) {
-				var title = command.title;
-				if (command.description.length > 0) {
-					title = title + ": " + command.description;
-				}
-				var historyLabelDiv = $("<div>")
-					.append($("<label />")
-						.html(title)
-						.prepend(
-							$("<input>")
-							.attr("type", "checkbox")
-							.attr("value", command.commandId)
-							)
-						);
-				if (command["commandType"] == "notUndoable") {
-					historyLabelDiv = $("<div>")
-					.text(title);
-				}
-				var commandDiv = $("<div>").addClass("CommandDiv " + command.commandType).attr("id", command.commandId).css({
-					"position": "relative"
-				})
-				.append(historyLabelDiv)
-				.append($("<div>")
-					.addClass("iconDiv")
-					.bind('click', clickUndoButton)
-					)
-				.hover(
-					// hover in function
-					commandDivHoverIn,
-					// hover out function
-					commandDivHoverOut);
-				if (command["commandType"] == "notUndoable")
-					$("div.iconDiv", commandDiv).remove();
-
-				if (command.historyType == "redo") {
-					$(commandDiv).addClass("redo-state");
-					$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_redo.png")).qtip({
-						content: {
-							text: 'Redo'
-						},
-						style: {
-							classes: 'ui-tooltip-light ui-tooltip-shadow'
-						}
-					});
-				} else {
-					$(commandDiv).addClass("undo-state");
-					$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_undo.png")).qtip({
-						content: {
-							text: 'Undo'
-						},
-						style: {
-							classes: 'ui-tooltip-light ui-tooltip-shadow'
-						}
-					});;
-				}
-				$("div#commandHistory").append(commandDiv);
+				processHistoryCommand(command);
 			});
 		} else if (element["updateType"] == "NodeChangedUpdate") {
 			var cellDiv = $("div#" + element.nodeId);
@@ -710,6 +613,9 @@ function parse(data) {
 		} else if (element["updateType"] == "AlignmentSVGVisualizationUpdate") {
 			window.setTimeout(function() {
 				D3ModelManager.getInstance().displayModel(element);
+				worksheetId = element["worksheetId"];
+				var wsHeight = $("div#" + worksheetId).height();
+				$("div#commandHistoryBody_" + worksheetId).css({ "max-height": (wsHeight-30) + 'px' });
 			}, 100);
 			
 		} else if (element["updateType"] == "KarmaInfo") {
@@ -817,6 +723,69 @@ function parse(data) {
 			show: true
 		});
 
+	}
+}
+
+function processHistoryCommand(command) {
+	var title = command.title;
+	if (command.description.length > 0) {
+		title = title + ": " + command.description;
+	}
+
+	var historyLabelDiv = $("<div>").addClass("checkbox")
+		.append($("<label />")
+			.html(title)
+			.prepend(
+				$("<input>")
+				.attr("type", "checkbox")
+				.attr("value", command.commandId)
+				)
+			);
+	if (command["commandType"] == "notUndoable") {
+		historyLabelDiv = $("<div>")
+		.text(title);
+	}
+	var commandDiv = $("<li>").addClass("CommandDiv").addClass(command.commandType).attr("id", command.commandId)
+	.append(historyLabelDiv)
+	.append($("<div>")
+		.addClass("iconDiv")
+		.bind('click', clickUndoButton)
+		)
+	.hover(
+		// hover in function
+		commandDivHoverIn,
+		// hover out function
+		commandDivHoverOut);
+	if (command["commandType"] == "notUndoable")
+		$("div.iconDiv", commandDiv).remove();
+
+	if (command.historyType == "redo") {
+		$(commandDiv).addClass("redo-state");
+		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_redo.png")).qtip({
+			content: {
+				text: 'Redo'
+			},
+			style: {
+				classes: 'ui-tooltip-light ui-tooltip-shadow'
+			}
+		});
+	} else {
+		$(commandDiv).addClass("undo-state");
+		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_undo.png")).qtip({
+			content: {
+				text: 'Undo'
+			},
+			style: {
+				classes: 'ui-tooltip-light ui-tooltip-shadow'
+			}
+		});;
+	}
+	if(command["worksheetId"]) {
+		var commandHistoryDiv = $("ul", $("div#commandHistoryBody_" + command["worksheetId"]));
+		// Remove the commands on redo stack
+		$(".redo-state").remove();
+
+		commandHistoryDiv.append(commandDiv);
 	}
 }
 

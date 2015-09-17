@@ -39,7 +39,7 @@ import edu.isi.karma.view.VWorkspace;
  */
 public abstract class WorksheetCommand extends Command {
 	public enum JsonKeys {
-		commandId, title, description, commandType, historyType, worksheet
+		commandId, title, description, commandType, historyType, worksheetId
 	}
 	
 	protected final String worksheetId;
@@ -70,7 +70,7 @@ public abstract class WorksheetCommand extends Command {
 		String newPref = prefix + "  ";
 		generateCommandJSONAttributes(prefix, pw, vWorkspace, historyType);
 		pw.println("," + newPref
-				+ JSONUtil.jsonLast(JsonKeys.worksheet, worksheetId));
+				+ JSONUtil.jsonLast(JsonKeys.worksheetId, worksheetId));
 		pw.println(prefix + "}");
 	}
 }

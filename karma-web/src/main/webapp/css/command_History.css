@@ -19,47 +19,63 @@
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
 
-#commHistoryAndWorkspace{
+.commHistoryAndWorkspace{
 	position:relative;
 }
-#commandHistory{
+.commandHistory{
 	background-color: #F0F0F0;
-	min-height: 500px;
-	overflow:auto;
 }
-#titleCommand{
+.commandHistoryBody {
+	min-height: 200px;
+	max-height: 600px;
+	overflow:auto;	
+}
+
+.historyCheckbox {
+	margin-top: 0px;
+	margin-bottom: 0x;
+}
+
+.titleCommand{
 	background-color: #050505;
-	font-family: Arial, sans-serif;
-	font-size: 18px;
-	color: white;
-	margin-bottom:8px;
+	color: #999;
 	text-align: center;
 	padding: 5px;
 }
 
+.titleCommand a {
+	color: #999;
+}
+
+.titleCommand a:hover, .titleCommand a:focus {
+	color: #fff;
+}
+.CommandDiv {
+	padding-left: 10px;
+}
 .CommandDiv.undo-state {
 	background-color: #AFAFAF;
-	padding: 4px;
 	border: solid 1px;
 	border-color:white;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
-	color: white;
+	color: #999;
 }
 .CommandDiv.undoselected {
 	background-color: #ADADAD;
 }
-
+.CommandDiv.undoable {
+	color: #fff;
+}
 .CommandDiv.redo-state {
 	background-color: #ADADAD;
-	padding: 4px;
 	border: solid 1px;
 	border-color:white;
-	font-family: Arial, sans-serif;
-	font-size: 12px;
 	color: white;
 }
-
+.CommandDiv .checkbox {
+	margin-top: 1px;
+	margin-bottom: 1px;
+	color: #000;
+}
 .CommandDiv.redoselected {
 	background-color: #3D3D3D;
 }
@@ -74,7 +90,7 @@
 
 .iconDiv {
 	position: absolute;
-	top:2px; 
+	top:6px; 
 	right:3px; 
 	visibility: hidden;
 	cursor: pointer;
