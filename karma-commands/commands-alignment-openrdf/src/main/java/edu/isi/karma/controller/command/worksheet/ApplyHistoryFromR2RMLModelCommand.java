@@ -43,7 +43,6 @@ import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.AlignmentSVGVisualizationUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.kr2rml.KR2RMLVersion;
@@ -164,7 +163,6 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 			System.out.println(editor.getHistoryJSON().toString(4));
 			UpdateContainer hc = histExecutor.executeAllCommands(historyJson);
 			if(hc != null) {
-				hc.removeUpdateByClass(HistoryAddCommandUpdate.class);
 				hc.removeUpdateByClass(InfoUpdate.class);
 				hc.removeUpdateByClass(ErrorUpdate.class);
 				hc.removeUpdateByClass(AlignmentSVGVisualizationUpdate.class);

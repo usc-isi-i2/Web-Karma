@@ -29,17 +29,19 @@ function parse(data) {
 
 	// Check for errors
 	$.each(data["elements"], function(i, element) {
-		if (element["updateType"] == "ReloadPageUpdate") {
-			//Need to reload the page
-			location.reload();
-		}
-		if (element["updateType"] == "KarmaError") {
-			if (error[element["Error"]]) {
-				//ignore;
-			} else {
-				$.sticky("<span class='karmaError'>" + element["Error"] + "</span>");
-				isError = true;
-				error[element["Error"]] = true;
+		if(element) {
+			if (element["updateType"] == "ReloadPageUpdate") {
+				//Need to reload the page
+				location.reload();
+			}
+			if (element["updateType"] == "KarmaError") {
+				if (error[element["Error"]]) {
+					//ignore;
+				} else {
+					$.sticky("<span class='karmaError'>" + element["Error"] + "</span>");
+					isError = true;
+					error[element["Error"]] = true;
+				}
 			}
 		}
 	});
@@ -53,12 +55,14 @@ function parse(data) {
 
 	var dataElements = new Array();
 	$.each(data["elements"], function(i, element) {
-		if (element["updateType"] == "UISettings") {
-			$.workspaceGlobalInformation.UISettings = element["settings"];
-		} else if (element["updateType"] == "WorksheetCleaningUpdate") {
-			cleaningUpdates[element["worksheetId"]] = element;
-		} else {
-			dataElements.push(element);
+		if(element) {
+			if (element["updateType"] == "UISettings") {
+				$.workspaceGlobalInformation.UISettings = element["settings"];
+			} else if (element["updateType"] == "WorksheetCleaningUpdate") {
+				cleaningUpdates[element["worksheetId"]] = element;
+			} else {
+				dataElements.push(element);
+			}
 		}
 	});
 	data["elements"] = dataElements;
@@ -69,12 +73,16 @@ function parse(data) {
 
 	// Loop through each update from the server and take required action for the GUI
 	$.each(data["elements"], function(i, element) {
-		if (element["worksheetId"]) {
-			var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
-			var wsVisible = worksheetPanel.data("worksheetVisible");
-			if (!wsVisible) {
-				return;
+		if(element) {
+			if (element["worksheetId"]) {
+				var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
+				var wsVisible = worksheetPanel.data("worksheetVisible");
+				if (!wsVisible) {
+					return;
+				}
 			}
+		} else {
+			return;
 		}
 		if (element["updateType"] == "WorksheetListUpdate") {
 
@@ -782,10 +790,13 @@ function processHistoryCommand(command) {
 	}
 	if(command["worksheetId"]) {
 		var commandHistoryDiv = $("ul", $("div#commandHistoryBody_" + command["worksheetId"]));
+		commandDiv.attr("worksheetId", command.worksheetId);
 		// Remove the commands on redo stack
 		$(".redo-state").remove();
 
 		commandHistoryDiv.append(commandDiv);
+	} else {
+		commandDiv.attr("worksheetId", "null");
 	}
 }
 

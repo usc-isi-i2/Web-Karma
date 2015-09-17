@@ -52,6 +52,7 @@
 }
 .CommandDiv {
 	padding-left: 10px;
+	padding-right: 5px;
 }
 .CommandDiv.undo-state {
 	background-color: #AFAFAF;
@@ -74,10 +75,11 @@
 .CommandDiv .checkbox {
 	margin-top: 1px;
 	margin-bottom: 1px;
+	padding-right: 10px;
 	color: #000;
 }
 .CommandDiv.redoselected {
-	background-color: #3D3D3D;
+	background-color: #8B8989;
 }
 
 .CommandDiv.notUndoable {
@@ -90,7 +92,7 @@
 
 .iconDiv {
 	position: absolute;
-	top:6px; 
+	top:2px; 
 	right:3px; 
 	visibility: hidden;
 	cursor: pointer;

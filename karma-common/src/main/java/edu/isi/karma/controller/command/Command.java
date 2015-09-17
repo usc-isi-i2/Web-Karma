@@ -62,9 +62,6 @@ public abstract class Command extends Entity implements ICommand
 	 * Flag to tell if the command history should be written after this command
 	 * has been executed
 	 */
-	private boolean writeWorksheetHistoryAfterCommandExecutes = true;
-
-	private boolean appendToHistory = false;
 	protected Set<String> inputColumns = new HashSet<String>();
 	protected Set<String> outputColumns = new HashSet<String>();
 	/**
@@ -121,16 +118,6 @@ public abstract class Command extends Entity implements ICommand
 		this.saveInHistory = flag;
 	}
 
-	@Override
-	public void writeWorksheetHistoryAfterCommandExecutes(boolean flag) {
-		this.writeWorksheetHistoryAfterCommandExecutes = flag;
-	}
-
-	@Override
-	public boolean writeWorksheetHistoryAfterCommandExecutes() {
-		return this.writeWorksheetHistoryAfterCommandExecutes;
-	}
-
 	/**
 	 * @param prefix
 	 * @param pw
@@ -183,16 +170,6 @@ public abstract class Command extends Entity implements ICommand
 	@Override
 	public List<CommandTag> getTags() {
 		return tags;
-	}
-
-	@Override
-	public boolean appendToHistory() {
-		return appendToHistory;
-	}
-
-	@Override
-	public void setAppendToHistory(boolean appendToHistory) {
-		this.appendToHistory = appendToHistory;
 	}
 
 	@Override

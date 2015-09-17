@@ -46,7 +46,6 @@ import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -147,7 +146,6 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		historyUtil.consolidateHistory();	
 		if (oldCommands.size() != historyUtil.getCommands().size()) {
 			uc.append(historyUtil.replayHistory());
-			uc.removeUpdateByClass(HistoryAddCommandUpdate.class);
 			uc.removeUpdateByClass(InfoUpdate.class);
 			uc.removeUpdateByClass(ErrorUpdate.class);
 			uc.add(new HistoryUpdate(workspace.getCommandHistory()));
