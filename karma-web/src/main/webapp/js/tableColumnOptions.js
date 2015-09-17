@@ -1890,34 +1890,53 @@ var AggregationDialog = (function() {
 			});
 
 			dialog.on('show.bs.modal', function(e) {
-				$("#aggregationConstructorError").hide();
-				$("#aggregationNewColumnError").hide();
+				hideError();
 				editor.getSession().setValue("");
 				$("#aggregationConstructor").val("");
 				$("#aggregationNewColumnName").val("");
 			});
 		}
 
+		function showError(e) {
+			err = $(".error", dialog);
+			err.html(e);
+			err.show();
+		}
+		
+		function hideError() {
+			err = $(".error", dialog);
+			err.hide();
+		}
+		
 		function saveDialog(e) {
+			hideError();
 			var constructor = $("#aggregationConstructor").val();
 			var newColumnName = $("#aggregationNewColumnName").val();
-			if (constructor) {
-				$("#aggregationConstructorError").hide();
+			
+			if (newColumnName) {
+				
 			}
 			else {
-				$("#aggregationConstructorError").show();
+				showError("Please enter the column name");
 				return;
 			}
-			if (newColumnName) {
-				$("#aggregationNewColumnError").hide();
+			if (constructor) {
+				
 			}
 			else {
-				$("#aggregationNewColumnError").show();
+				showError("Please enter the constructor");
+				return;
+			}
+			var pythonCode = editor.getValue();
+			if(pythonCode) {
+				
+			} else {
+				showError("Please enter the tranformation code for Aggregation");
 				return;
 			}
 			var info = generateInfoObject(worksheetId, columnId, "AggregationPythonCommand");
 			var newInfo = info['newInfo'];
-			newInfo.push(getParamObject("pythonCode", editor.getValue(), "other"));
+			newInfo.push(getParamObject("pythonCode", pythonCode, "other"));
 			newInfo.push(getParamObject("constructor", constructor, "other"));
 			newInfo.push(getParamObject("newColumnName", newColumnName, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
