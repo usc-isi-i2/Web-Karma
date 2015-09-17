@@ -61,7 +61,7 @@ function HistoryOptions(wsId) {
 	}
 
 	function extractHistoryCheckboxes() {
-		var checkboxes = $("#commandHistory").find(":checked");
+		var checkboxes = $("#commandHistoryBody_" + worksheetId).find(":checked");
 		var response = "";
 		for (var i = 0; i < checkboxes.length; i++) {
 			if (i == 0) {
