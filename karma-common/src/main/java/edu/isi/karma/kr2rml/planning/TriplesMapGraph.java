@@ -170,8 +170,8 @@ public class TriplesMapGraph {
 		return newGraph;
 	}
 	
- 	public TriplesMapGraph copyGraph() {
- 		TriplesMapGraph newGraph = new TriplesMapGraph();
+	public TriplesMapGraph copyGraph() {
+		TriplesMapGraph newGraph = new TriplesMapGraph();
 		for(TriplesMap triplesMap : triplesMapIndex.values())
 		{
 			newGraph.addTriplesMap(triplesMap);
@@ -184,15 +184,14 @@ public class TriplesMapGraph {
 	}
 	public TriplesMapGraph shallowCopyGraph() {
 		TriplesMapGraph newGraph = new TriplesMapGraph();
- 		newGraph.links.addAll(links);
- 		for (Entry<String, List<TriplesMapLink>> entry : neighboringTriplesMapCache.entrySet()) {
+		newGraph.links.addAll(links);
+		for (Entry<String, List<TriplesMapLink>> entry : neighboringTriplesMapCache.entrySet()) {
 			
- 			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new LinkedList<TriplesMapLink>(entry.getValue()));
- 		}
- 		newGraph.triplesMapIndex.putAll(triplesMapIndex);
- 		return newGraph;
- 	}
-
+			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new LinkedList<TriplesMapLink>(entry.getValue()));
+		}
+		newGraph.triplesMapIndex.putAll(triplesMapIndex);
+		return newGraph;
+	}
 	public void killTriplesMap(List<String> tripleMapToKill, RootStrategy strategy) {
 		if (tripleMapToKill.size() == 0) {
 			return;

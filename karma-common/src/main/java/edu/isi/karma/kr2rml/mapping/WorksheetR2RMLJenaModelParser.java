@@ -21,8 +21,10 @@
 
 package edu.isi.karma.kr2rml.mapping;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -43,6 +45,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import edu.isi.karma.kr2rml.KR2RMLVersion;
 import edu.isi.karma.kr2rml.ObjectMap;
@@ -83,7 +86,13 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 	
 	public synchronized Model getModel() throws IOException {
-		loadModel();
+		if(this.model == null){
+			loadModel();
+		}
+		return model;
+	}
+	
+	public Model getModelFromCache(){
 		return model;
 	}
 
@@ -153,7 +162,29 @@ public class WorksheetR2RMLJenaModelParser {
 		
 		// Calculate the nodes covered by each InternalNode
 		calculateColumnNodesCoveredByBlankNodes(kr2rmlMapping, subjectResources);
+		createGraphNodeToTriplesNodeMap(kr2rmlMapping);
 		return mapping = kr2rmlMapping;
+		}
+	}
+	
+	
+	private void createGraphNodeToTriplesNodeMap(KR2RMLMapping kr2rmlMapping) throws FileNotFoundException, UnsupportedEncodingException{
+		
+		StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), (RDFNode)null);
+		Resource subject = null;
+		Map<String,String> graphNodeIdToTriplesMapIdMap = kr2rmlMapping.getAuxInfo().getGraphNodeIdToTriplesMapIdMap();
+		while (itr.hasNext()) {
+			Statement subjMapToNodeIdStmt = itr.next();
+			String nodeId = subjMapToNodeIdStmt.getObject().toString();
+			subject = subjMapToNodeIdStmt.getSubject();
+			if (subject != null) {
+				StmtIterator itr2 = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
+				while (itr2.hasNext()) {
+					String triplesMapId = itr2.next().getSubject().toString();
+					graphNodeIdToTriplesMapIdMap.put(nodeId, triplesMapId);
+				}
+				
+			}
 		}
 	}
 	

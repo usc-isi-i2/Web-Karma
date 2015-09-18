@@ -1,6 +1,7 @@
 package edu.isi.karma.mapreduce.driver;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -19,12 +20,12 @@ public class TestJSONCompactMapper extends TestRDFMapReduce{
 	}
 
 	@Test
-	public void testMapper() throws IOException 
+	public void testMapper() throws IOException, URISyntaxException 
 	{
-		mapDriver.getConfiguration().set("jsonld.context.file", "/users/slepicka/projects/eswc-2015-nosparql/benchmark-tools/bsbm.context.json");
+		mapDriver.getConfiguration().set("jsonld.context.url", TestJSONCompactMapper.class.getClassLoader().getResource("bsbm.context.json").toURI().toString());
 		mapDriver.addAll(this.getNullTextPairsFromFile("data/bsbm.compact.input.json"));
 		mapDriver.addAllOutput(this.getPairsFromFile("output/bsbm.compact.output.json"));
-		mapDriver.runTest();
+		mapDriver.runTest(false);
 	}
 	
 }

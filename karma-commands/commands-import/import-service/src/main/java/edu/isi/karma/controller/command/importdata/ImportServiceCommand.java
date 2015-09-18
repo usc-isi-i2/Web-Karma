@@ -25,6 +25,7 @@ package edu.isi.karma.controller.command.importdata;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.sources.InvocationManager;
+import edu.isi.karma.util.HTTPUtil;
 
 public class ImportServiceCommand extends ImportCommand {
 
@@ -83,14 +85,9 @@ public class ImportServiceCommand extends ImportCommand {
 
         UpdateContainer c = new UpdateContainer();
 
-        List<String> urls = new ArrayList<String>();
-        urls.add(serviceUrl);
-        List<String> ids = new ArrayList<String>();
-        ids.add("1");
         try {
-            InvocationManager invocatioManager = new InvocationManager(null, ids, urls, encoding);
-            String json = invocatioManager.getServiceJson(includeInputAttributes);
-			logger.debug(json);
+        	Object json = HTTPUtil.executeAndParseHTTPGetService(serviceUrl, includeInputAttributes);
+			logger.debug(json.toString());
             Import imp = new JsonImport(json, worksheetName, workspace, encoding, -1);
 
             Worksheet wsht = imp.generateWorksheet();

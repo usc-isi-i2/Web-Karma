@@ -44,7 +44,7 @@ public class TestTypeFilterToJSONReducer extends TestRDFMapReduce{
 
 		reduceDriver.withAll(inputs);
 		reduceDriver.addAllOutput(this.getPairsFromFile("output/people.flat.reduced.output.json"));
-		reduceDriver.runTest();
+		reduceDriver.runTest(false);
 
 	}
 

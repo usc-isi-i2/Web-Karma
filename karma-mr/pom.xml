@@ -13,7 +13,9 @@
 
     <artifactId>karma-mr</artifactId>
 
- 	
+ 	<properties>
+    	<karmaMrSkipTests>true</karmaMrSkipTests>
+  	</properties>
         
 	<repositories>
 		<repository>
@@ -119,7 +121,12 @@
 		        <artifactId>maven-surefire-plugin</artifactId>
 		        <version>2.17</version>
 		        <configuration>
-		        	<skipTests>true</skipTests>
+		        	<skipTests>${karmaMrSkipTests}</skipTests>
+  					<forkMode>always</forkMode>
+  					<!-- YARN is finicky -->
+		        	<environmentVariables>
+     					<JAVA_HOME>${env.JAVA_HOME}</JAVA_HOME>
+  					</environmentVariables>
 		        </configuration>
 	    	</plugin>
 		</plugins>

@@ -37,33 +37,33 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 	}
 
 	@Test
-	public void testMap() throws IOException {
+	public void testMap() throws IOException, URISyntaxException {
 
 		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
-		conf.set("model.file", "src/test/resources/people-model.ttl");
-		mapDriver.withInput(new Text("people.json"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
+		conf.set("model.uri", TestN3MapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
+		mapDriver.withInput(new Text("people.json"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
 		assertTrue(results.size() > 1);
 	}
 
 	@Test
-	public void testMapWithInputTypeSpecified() throws IOException {
+	public void testMapWithInputTypeSpecified() throws IOException, URISyntaxException {
 
 		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
-		conf.set("model.file", "src/test/resources/people-model.ttl");
+		conf.set("model.uri", TestN3MapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
 		conf.set("karma.input.type", "JSON");
-		mapDriver.withInput(new Text("people.somethingsomething"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
+		mapDriver.withInput(new Text("people.somethingsomething"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
 		assertTrue(results.size() > 1);
 	}
 
 	@Test
-	public void testMapWithBadInputTypeSpecified() throws IOException {
+	public void testMapWithBadInputTypeSpecified() throws IOException, URISyntaxException {
 
 		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
-		conf.set("model.file", "src/test/resources/people-model.ttl");
+		conf.set("model.uri", TestN3MapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
 		conf.set("karma.input.type", "XML");
-		mapDriver.withInput(new Text("people.somethingsomething"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
+		mapDriver.withInput(new Text("people.somethingsomething"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
 		assertTrue(results.size() == 0);
 	}
@@ -101,9 +101,9 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 		org.apache.hadoop.conf.Configuration conf = mapReduceDriver.getConfiguration();
 		conf.set("model.uri", TestN3MapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
 
-		mapReduceDriver.withInput(new Text("people.json"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
+		mapReduceDriver.withInput(new Text("people.json"), new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
 		mapReduceDriver.addAllOutput(getPairsFromFile("output/people.output.ttl"));
-		mapReduceDriver.runTest();
+		mapReduceDriver.runTest(false);
 
 	}
 

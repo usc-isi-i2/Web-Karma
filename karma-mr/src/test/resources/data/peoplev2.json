@@ -5,7 +5,8 @@
 		"title" : "Prof" ,
 		"homepage" : "http://www.isi.edu/~szekely" ,
 		"depiction" : "http://www.isi.edu/~szekely/assets/img/staff/pedro.jpeg" ,
-		"twitter" : "szeke"
+		"twitter" : "szeke",
+		"url" : "http://www.people.com/pszekely"
 	} ,
 
 	{
@@ -14,6 +15,7 @@
 		"title" : "Prof" ,
 		"homepage" : "http://www.isi.edu/~ambite" ,
 		"depiction" : "http://drop.isi.edu/sites/default/files/imagecache/profile_photo/photos/users/picture-32.jpg" ,
+		"url" : "http://www.people.com/ambite"
 	} ,
 
 	{
@@ -22,7 +24,8 @@
 		"title" : "Prof" ,
 		"homepage" : "http://www.isi.edu/~knoblock" ,
 		"depiction" : "http://www.isi.edu/integration/people/knoblock/img/CraigKnoblock.jpg" ,
-		"twitter" : "caknoblock"
+		"twitter" : "caknoblock",
+		"url" : "http://www.people.com/knoblock"
 	} ,
 
 	{
@@ -30,7 +33,8 @@
 		"email" : "kozareva@isi.edu" ,
 		"title" : "Prof" ,
 		"homepage" : "http://www.isi.edu/~kozareva" ,
-		"depiction" : "http://www.isi.edu/~kozareva/imagenes/zori_mini.jpg" 
+		"depiction" : "http://www.isi.edu/~kozareva/imagenes/zori_mini.jpg" ,
+		"url" : "http://www.people.com/kozareva"
 	} ,
 
 	{
@@ -39,7 +43,8 @@
 		"title" : "Mr" ,
 		"homepage" : "http://www-scf.usc.edu/~taheriya/" ,
 		"depiction" : "http://www-scf.usc.edu/~taheriya/images/image24958.jpg" ,
-		"twitter" : "taheriyan"
+		"twitter" : "taheriyan",
+		"url" : "http://www.people.com/mohsen"
 	} ,
 
 	{
@@ -47,14 +52,16 @@
 		"email" : "bowu@isi.edu" ,
 		"title" : "Mr" ,
 		"homepage" : "http://www-scf.usc.edu/~wubo/" ,
-		"depiction" : "http://www-scf.usc.edu/~wubo/_MG_0004-Edit.jpg" 
+		"depiction" : "http://www-scf.usc.edu/~wubo/_MG_0004-Edit.jpg" ,
+		"url" : "http://www.peopler.com/wu"
 	} ,
 
 	{
 		"name" : "Jason Slepicka" ,
 		"email" : "slepicka@isi.edu" ,
 		"title" : "Mr" ,
-		"depiction" : "https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80" 
+		"depiction" : "https://lh4.googleusercontent.com/-uonc-uQiTGw/AAAAAAAAAAI/AAAAAAAAATk/V_iGc4e8Vwk/photo.jpg?sz=80",
+		"url" : "http://www.people.com/slepicka" 
 	} 
 
 ]

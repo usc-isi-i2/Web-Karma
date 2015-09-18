@@ -55,7 +55,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 		else {
 			this.implMethod = GlueMethod.Longest;
 		}
-		hNodeName = new ArrayList<String>();
+		hNodeName = new ArrayList<>();
 		addTag(CommandTag.Transformation);
 	}
 
