@@ -158,7 +158,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 
 	function aggregation() {
 		hideDropdown();
-		AggregationDialog.getInstance().show(wsId, wsColumnId);
+		AggregationDialog.getInstance().show(wsId, wsColumnId, wsColumnTitle);
 	}
 
 	function invertRows() {
@@ -1871,7 +1871,7 @@ var AggregationDialog = (function() {
 
 	function PrivateConstructor() {
 		var dialog = $("#aggregationTransformDialog");
-		var worksheetId, columnId;
+		var worksheetId, columnId, columnName;
 		var editor;
 
 		function init() {
@@ -1892,8 +1892,9 @@ var AggregationDialog = (function() {
 			dialog.on('show.bs.modal', function(e) {
 				hideError();
 				editor.getSession().setValue("");
-				$("#aggregationConstructor").val("");
+				$("#aggregationConstructor").val("concat('" + columnName + "', ';')");
 				$("#aggregationNewColumnName").val("");
+				$(".modal-title", dialog).html("Aggregate Column: " + columnName);
 			});
 		}
 
@@ -1928,12 +1929,12 @@ var AggregationDialog = (function() {
 				return;
 			}
 			var pythonCode = editor.getValue();
-			if(pythonCode) {
-				
-			} else {
-				showError("Please enter the tranformation code for Aggregation");
-				return;
-			}
+//			if(pythonCode) {
+//				
+//			} else {
+//				showError("Please enter the tranformation code for Aggregation");
+//				return;
+//			}
 			var info = generateInfoObject(worksheetId, columnId, "AggregationPythonCommand");
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("pythonCode", pythonCode, "other"));
@@ -1945,9 +1946,10 @@ var AggregationDialog = (function() {
 			hide();
 		};
 
-		function show(wsId, colId) {
+		function show(wsId, colId, colName) {
 			worksheetId = wsId;
 			columnId = colId;
+			columnName = colName;
 			dialog.modal({
 				keyboard: true,
 				show: true,

@@ -401,14 +401,18 @@
 					    </div>
 					  </div>
 					  <div class="form-group">
-					    <label for="aggregationConstructor" class="col-sm-4">Contructor</label>
+					    <label for="aggregationConstructor" class="col-sm-4">Function</label>
 					    <div class="col-sm-8">
-					      <input type="text" class="form-control" id="aggregationConstructor" placeholder="">
+					      <input type="text" class="form-control" id="aggregationConstructor" placeholder="method(columnName)">
 					    </div>
 					  </div>
 				 	</br>
-					<div id="transformCodeEditorAggregation"></div>
-					</br>
+				 	<div class="form-group">
+					    <label for="transformCodeEditorAggregation" class="col-sm-12">Code for Custom Functions</label>
+					    <div class="col-sm-12">
+					      <div id="transformCodeEditorAggregation"></div>
+					    </div>
+					  </div>
 					<div class="error" id="aggregationError" style="display: none"></div>
 					</form>
 				  </div> <!-- /.modal-body -->
