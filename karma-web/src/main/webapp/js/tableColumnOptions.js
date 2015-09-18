@@ -883,6 +883,10 @@ var PyTransformDialog = (function() {
 			$('#btnPreview', dialog).on('click', function(e) {
 				previewTransform();
 			});
+			
+			$("#pythonTransformNewColumnName", dialog).keypress(function(e) {
+				$('input:radio[name=pyTransformType]').val(["new"]);
+			});
 		}
 
 		function hideError() {
