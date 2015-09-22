@@ -387,28 +387,34 @@
 
 <div class="modal fade" id="aggregationTransformDialog" tabindex="-1">
   <div class="modal-dialog">
-		<form class="bs-example bs-example-form" role="form">
 			<div class="modal-content">
 				 <div class="modal-header">
 					  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					   <h4 class="modal-title">Aggregation</h4>
 				  </div>
 				  <div class="modal-body">
+				  	<form class="form-horizontal">
+					  <div class="form-group">
+					    <label for="aggregationNewColumnName" class="col-sm-4">Name of new Column</label>
+					    <div class="col-sm-8">
+					      <input type="text" class="form-control" id="aggregationNewColumnName" placeholder="New Column Name">
+					    </div>
+					  </div>
+					  <div class="form-group">
+					    <label for="aggregationConstructor" class="col-sm-4">Function</label>
+					    <div class="col-sm-8">
+					      <input type="text" class="form-control" id="aggregationConstructor" placeholder="method(columnName)">
+					    </div>
+					  </div>
 				 	</br>
-					<div id="transformCodeEditorAggregation"></div>
-					</br>
-					<div class="form-group">
-						<label>
-							<div class="col-sm-5">New Column Name:</div>
-							<div class="col-sm-6"><input class="form-control" type="text" id="aggregationNewColumnName" /></div>
-							<div class="error" id="aggregationNewColumnError" style="display: none">Please enter a new column name!</div>
-						</label>
-						<label>
-							<div class="col-sm-5">Constructor:</div>
-							<div class="col-sm-6"><input class="form-control" type="text" id="aggregationConstructor" /></div>
-							<div class="error" id="aggregationConstructorError" style="display: none">Please enter a constructor!</div>
-						</label>
-					</div>
+				 	<div class="form-group">
+					    <label for="transformCodeEditorAggregation" class="col-sm-12">Code for Custom Functions</label>
+					    <div class="col-sm-12">
+					      <div id="transformCodeEditorAggregation"></div>
+					    </div>
+					  </div>
+					<div class="error" id="aggregationError" style="display: none"></div>
+					</form>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

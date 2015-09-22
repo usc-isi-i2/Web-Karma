@@ -158,7 +158,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 
 	function aggregation() {
 		hideDropdown();
-		AggregationDialog.getInstance().show(wsId, wsColumnId);
+		AggregationDialog.getInstance().show(wsId, wsColumnId, wsColumnTitle);
 	}
 
 	function invertRows() {
@@ -882,6 +882,10 @@ var PyTransformDialog = (function() {
 
 			$('#btnPreview', dialog).on('click', function(e) {
 				previewTransform();
+			});
+			
+			$("#pythonTransformNewColumnName", dialog).keypress(function(e) {
+				$('input:radio[name=pyTransformType]').val(["new"]);
 			});
 		}
 
@@ -1871,7 +1875,7 @@ var AggregationDialog = (function() {
 
 	function PrivateConstructor() {
 		var dialog = $("#aggregationTransformDialog");
-		var worksheetId, columnId;
+		var worksheetId, columnId, columnName;
 		var editor;
 
 		function init() {
@@ -1890,34 +1894,54 @@ var AggregationDialog = (function() {
 			});
 
 			dialog.on('show.bs.modal', function(e) {
-				$("#aggregationConstructorError").hide();
-				$("#aggregationNewColumnError").hide();
+				hideError();
 				editor.getSession().setValue("");
-				$("#aggregationConstructor").val("");
+				$("#aggregationConstructor").val("concat('" + columnName + "', ';')");
 				$("#aggregationNewColumnName").val("");
+				$(".modal-title", dialog).html("Aggregate Column: " + columnName);
 			});
 		}
 
+		function showError(e) {
+			err = $(".error", dialog);
+			err.html(e);
+			err.show();
+		}
+		
+		function hideError() {
+			err = $(".error", dialog);
+			err.hide();
+		}
+		
 		function saveDialog(e) {
+			hideError();
 			var constructor = $("#aggregationConstructor").val();
 			var newColumnName = $("#aggregationNewColumnName").val();
-			if (constructor) {
-				$("#aggregationConstructorError").hide();
-			}
-			else {
-				$("#aggregationConstructorError").show();
-				return;
-			}
+			
 			if (newColumnName) {
-				$("#aggregationNewColumnError").hide();
+				
 			}
 			else {
-				$("#aggregationNewColumnError").show();
+				showError("Please enter the column name");
 				return;
 			}
+			if (constructor) {
+				
+			}
+			else {
+				showError("Please enter the constructor");
+				return;
+			}
+			var pythonCode = editor.getValue();
+//			if(pythonCode) {
+//				
+//			} else {
+//				showError("Please enter the tranformation code for Aggregation");
+//				return;
+//			}
 			var info = generateInfoObject(worksheetId, columnId, "AggregationPythonCommand");
 			var newInfo = info['newInfo'];
-			newInfo.push(getParamObject("pythonCode", editor.getValue(), "other"));
+			newInfo.push(getParamObject("pythonCode", pythonCode, "other"));
 			newInfo.push(getParamObject("constructor", constructor, "other"));
 			newInfo.push(getParamObject("newColumnName", newColumnName, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
@@ -1926,9 +1950,10 @@ var AggregationDialog = (function() {
 			hide();
 		};
 
-		function show(wsId, colId) {
+		function show(wsId, colId, colName) {
 			worksheetId = wsId;
 			columnId = colId;
+			columnName = colName;
 			dialog.modal({
 				keyboard: true,
 				show: true,
