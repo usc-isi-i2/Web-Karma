@@ -391,6 +391,12 @@ function parse(data) {
 		} else if(element["updateType"] == "HistoryLastCommandUpdate") {
 			var historyOptions = HistoryManager.getInstance().getHistoryOptions(element["command"]["worksheetId"]);
 			historyOptions.setLastCommand(element.command);
+			$(".CommandDiv").removeClass("lastRun");
+			if(element.command.worksheetId) {
+				historyBody = $("#commandHistoryBody_" + element.command.worksheetId);
+				runItem = $("#" + element.command.commandId, historyBody);
+				runItem.addClass("lastRun");
+			}
 		} else if (element["updateType"] == "NodeChangedUpdate") {
 			var cellDiv = $("div#" + element.nodeId);
 			$(cellDiv).text(element.displayValue);
@@ -756,45 +762,8 @@ function processHistoryCommand(command) {
 				.attr("value", command.commandId)
 				)
 			);
-//	if (command["commandType"] == "notUndoable") {
-//		historyLabelDiv = $("<div>")
-//		.text(title);
-//	}
 	var commandDiv = $("<li>").addClass("CommandDiv").addClass(command.commandType).attr("id", command.commandId)
-	.append(historyLabelDiv)
-//	.append($("<div>")
-//		.addClass("iconDiv")
-//		.bind('click', clickUndoButton)
-//		)
-//	.hover(
-//		// hover in function
-//		commandDivHoverIn,
-//		// hover out function
-//		commandDivHoverOut);
-//	if (command["commandType"] == "notUndoable")
-//		$("div.iconDiv", commandDiv).remove();
-//
-//	if (command.historyType == "redo") {
-//		$(commandDiv).addClass("redo-state");
-//		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_redo.png")).qtip({
-//			content: {
-//				text: 'Redo'
-//			},
-//			style: {
-//				classes: 'ui-tooltip-light ui-tooltip-shadow'
-//			}
-//		});
-//	} else {
-		$(commandDiv).addClass("undo-state");
-//		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_undo.png")).qtip({
-//			content: {
-//				text: 'Undo'
-//			},
-//			style: {
-//				classes: 'ui-tooltip-light ui-tooltip-shadow'
-//			}
-//		});;
-//	}
+								.append(historyLabelDiv).addClass("undo-state");
 	if(command["worksheetId"]) {
 		var commandHistoryDiv = $("ul", $("div#commandHistoryBody_" + command["worksheetId"]));
 		commandDiv.attr("worksheetId", command.worksheetId);

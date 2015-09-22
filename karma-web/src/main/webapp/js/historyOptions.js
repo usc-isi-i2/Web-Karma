@@ -136,11 +136,11 @@ function HistoryOptions(wsId) {
 	
 	function showOption(id) {
 		$("#" + id, historyOptionsDiv).show();
-	}
+	};
 	
 	function hideOption(id) {
 		$("#" + id, historyOptionsDiv).hide();
-	}
+	};
 	
 	this.setLastCommand = function(command) {
 		lastCommand = command;
@@ -149,7 +149,7 @@ function HistoryOptions(wsId) {
 		} else {
 			hideOption("undoDeleteHistory");
 		}
-	}
+	};
 	
 	this.generateJS = function() {
 		var div =
