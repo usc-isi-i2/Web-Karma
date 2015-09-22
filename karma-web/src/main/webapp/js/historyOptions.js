@@ -45,6 +45,12 @@ function HistoryOptions(wsId) {
 	
 	var options = [
 		{
+			name: "Refresh",
+			id: "refreshHistory",
+			func: refreshHistory,
+			visible: true
+		},
+		{
 			name: "Export Commands",
 			id: "exportCommands",
 			func: exportHistory,
@@ -118,6 +124,17 @@ function HistoryOptions(wsId) {
 		sendRequest(edits);
 	}
 	
+	function refreshHistory() {
+		hideDropdown();
+		var info = generateInfoObject(worksheetId, "", "ReplayHistoryCommand");
+
+		var newInfo = info['newInfo'];
+		newInfo.push(getParamObject("worksheetId", worksheetId, "other"));
+		info["newInfo"] = JSON.stringify(newInfo);
+		showLoading(info["worksheetId"]);
+		sendRequest(info, worksheetId);
+	}
+	
 	function extractHistoryCheckboxes() {
 		var checkboxes = $("#commandHistoryBody_" + worksheetId).find(":checked");
 		var response = "";
@@ -172,7 +189,7 @@ function HistoryOptions(wsId) {
 		//console.log("There are " + options.length + " menu items");
 		for (var i = 0; i < options.length; i++) {
 			var option = options[i];
-			var li = $("<li>").css("float", "left");
+			var li = $("<li>").css("text-align", "left");
 			//console.log("Got option" +  option);
 			var title = option.name;
 			if(option.id) {
