@@ -237,7 +237,8 @@ function parse(data) {
 					mainDiv.data("worksheetVisible", true);
 
 					var historyDiv = $("<div>").attr("id", "commandHistory_" + worksheet["worksheetId"]).addClass("ui-corner-top").addClass("commandHistory");
-					historyDiv.append($("<div>").attr("id", "commandHistoryTitle_" + worksheet["worksheetId"]).addClass("ui-corner-top").addClass("titleCommand").append((new HistoryOptions(worksheet["worksheetId"])).generateJS()));
+					var historyOptions = HistoryManager.getInstance().getHistoryOptions(worksheet["worksheetId"]);
+					historyDiv.append($("<div>").attr("id", "commandHistoryTitle_" + worksheet["worksheetId"]).addClass("ui-corner-top").addClass("titleCommand").append(historyOptions.generateJS()));
 					historyDiv.append($("<div>").attr("id", "commandHistoryBody_" + worksheet["worksheetId"]).addClass("commandHistoryBody").append($("<ul>").addClass("nav").addClass("nav-list")));
 
 					titleDiv
@@ -387,6 +388,9 @@ function parse(data) {
 			$.each(element["commands"], function(index, command) {
 				processHistoryCommand(command);
 			});
+		} else if(element["updateType"] == "HistoryLastCommandUpdate") {
+			var historyOptions = HistoryManager.getInstance().getHistoryOptions(element["command"]["worksheetId"]);
+			historyOptions.setLastCommand(element.command);
 		} else if (element["updateType"] == "NodeChangedUpdate") {
 			var cellDiv = $("div#" + element.nodeId);
 			$(cellDiv).text(element.displayValue);
@@ -736,6 +740,9 @@ function parse(data) {
 
 function processHistoryCommand(command) {
 	var title = command.title;
+	if(title == "Delete History") {
+		return;
+	}
 	if (command.description.length > 0) {
 		title = title + ": " + command.description;
 	}
@@ -749,45 +756,45 @@ function processHistoryCommand(command) {
 				.attr("value", command.commandId)
 				)
 			);
-	if (command["commandType"] == "notUndoable") {
-		historyLabelDiv = $("<div>")
-		.text(title);
-	}
+//	if (command["commandType"] == "notUndoable") {
+//		historyLabelDiv = $("<div>")
+//		.text(title);
+//	}
 	var commandDiv = $("<li>").addClass("CommandDiv").addClass(command.commandType).attr("id", command.commandId)
 	.append(historyLabelDiv)
-	.append($("<div>")
-		.addClass("iconDiv")
-		.bind('click', clickUndoButton)
-		)
-	.hover(
-		// hover in function
-		commandDivHoverIn,
-		// hover out function
-		commandDivHoverOut);
-	if (command["commandType"] == "notUndoable")
-		$("div.iconDiv", commandDiv).remove();
-
-	if (command.historyType == "redo") {
-		$(commandDiv).addClass("redo-state");
-		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_redo.png")).qtip({
-			content: {
-				text: 'Redo'
-			},
-			style: {
-				classes: 'ui-tooltip-light ui-tooltip-shadow'
-			}
-		});
-	} else {
+//	.append($("<div>")
+//		.addClass("iconDiv")
+//		.bind('click', clickUndoButton)
+//		)
+//	.hover(
+//		// hover in function
+//		commandDivHoverIn,
+//		// hover out function
+//		commandDivHoverOut);
+//	if (command["commandType"] == "notUndoable")
+//		$("div.iconDiv", commandDiv).remove();
+//
+//	if (command.historyType == "redo") {
+//		$(commandDiv).addClass("redo-state");
+//		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_redo.png")).qtip({
+//			content: {
+//				text: 'Redo'
+//			},
+//			style: {
+//				classes: 'ui-tooltip-light ui-tooltip-shadow'
+//			}
+//		});
+//	} else {
 		$(commandDiv).addClass("undo-state");
-		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_undo.png")).qtip({
-			content: {
-				text: 'Undo'
-			},
-			style: {
-				classes: 'ui-tooltip-light ui-tooltip-shadow'
-			}
-		});;
-	}
+//		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_undo.png")).qtip({
+//			content: {
+//				text: 'Undo'
+//			},
+//			style: {
+//				classes: 'ui-tooltip-light ui-tooltip-shadow'
+//			}
+//		});;
+//	}
 	if(command["worksheetId"]) {
 		var commandHistoryDiv = $("ul", $("div#commandHistoryBody_" + command["worksheetId"]));
 		commandDiv.attr("worksheetId", command.worksheetId);

@@ -102,7 +102,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.notInHistory;
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.PrintWriter;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,11 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 				if(model != null) {
 					JSONObject json = model.getAsJSONObject(ontMgr, alignment);
 					pw.print(json.toString());
+				} else {
+					JSONObject obj = new JSONObject();
+					JSONArray arr = new JSONArray();
+					obj.put("Labels", arr);
+					pw.println(obj.toString());
 				}
 				
 			}

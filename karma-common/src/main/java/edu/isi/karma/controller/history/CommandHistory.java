@@ -563,4 +563,13 @@ public class CommandHistory {
 	public static IHistorySaver getHistorySaver(String workspaceId) {
 		return historySavers.get(workspaceId);
 	}
+	
+	public ICommand getCommand(String commandId) {
+		for(ICommand command : worksheetCommandHistory.getAllCommands()) {
+			if(command.getId().equals(commandId)) {
+				return command;
+			}
+		}
+		return null;
+	}
 }

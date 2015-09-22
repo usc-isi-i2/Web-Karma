@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.HistoryUpdate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.ErrorUpdate;
+import edu.isi.karma.controller.update.HistoryLastCommandUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.VWorkspaceRegistry;
@@ -99,6 +101,7 @@ public class RequestController extends HttpServlet {
 				if (command.getCommandType() != CommandType.notInHistory) {
 					updateContainer.add(new HistoryUpdate(vWorkspace.getWorkspace().getCommandHistory()));
 				}
+				updateContainer.add(new HistoryLastCommandUpdate(command));
 				updateContainer.applyUpdates(vWorkspace);
 				responseString = updateContainer.generateJson(vWorkspace);
 			} catch(Exception e) {
@@ -108,6 +111,7 @@ public class RequestController extends HttpServlet {
 
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(responseString);
+		response.setContentType("application/json");
 		response.flushBuffer();
 	}
 

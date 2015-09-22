@@ -54,7 +54,7 @@ public class ExportOrDeleteHistoryCommand extends WorksheetSelectionCommand {
             return CommandType.undoable;
         }
         else {
-            return CommandType.notUndoable;
+            return CommandType.notInHistory;
         }
     }
 

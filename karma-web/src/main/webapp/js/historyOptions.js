@@ -1,16 +1,66 @@
+var HistoryManager = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var options;
+		
+		function init() {
+			options = [];
+		}
+		
+		function getHistoryOptions(worksheetId) {
+			if(options[worksheetId]) {
+			} else { 
+				options[worksheetId] = new HistoryOptions(worksheetId);
+			}
+			return options[worksheetId];	
+		};
+		
+		return { //Return back the public methods
+			init: init,
+			getHistoryOptions: getHistoryOptions
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+	
+	return {
+		getInstance: getInstance
+	};
+
+})();
+
+
 function HistoryOptions(wsId) {
 
 	var worksheetId = wsId;
 	var historyOptionsDiv;
-
+	var lastCommand;
+	
 	var options = [
 		{
-			name: "Delete Commands",
-			func: deleteHistory
-		},
-	    {
 			name: "Export Commands",
-			func: exportHistory
+			id: "exportCommands",
+			func: exportHistory,
+			visible: true
+		},
+		{
+			name: "Delete Commands",
+			id: "deleteCommands",
+			func: deleteHistory,
+			visible: true
+		},
+		{
+			name: "Undo Delete",
+			id:"undoDeleteHistory",
+			func: undoDeleteHistory,
+			visible: false
 		}
 	];
 		
@@ -60,6 +110,14 @@ function HistoryOptions(wsId) {
 		sendRequest(info, worksheetId);
 	}
 
+	function undoDeleteHistory() {
+		var edits = generateInfoObject("", "", "UndoRedoCommand");
+		edits["commandId"] = lastCommand.commandId;
+		edits["worksheetId"] = lastCommand.worksheetId;
+		showWaitingSignOnScreen();
+		sendRequest(edits);
+	}
+	
 	function extractHistoryCheckboxes() {
 		var checkboxes = $("#commandHistoryBody_" + worksheetId).find(":checked");
 		var response = "";
@@ -75,6 +133,24 @@ function HistoryOptions(wsId) {
 		return response;
 	}
 	
+	
+	function showOption(id) {
+		$("#" + id, historyOptionsDiv).show();
+	}
+	
+	function hideOption(id) {
+		$("#" + id, historyOptionsDiv).hide();
+	}
+	
+	this.setLastCommand = function(command) {
+		lastCommand = command;
+		if(command.title == "Delete History") {
+			showOption("undoDeleteHistory");
+		} else {
+			hideOption("undoDeleteHistory");
+		}
+	}
+	
 	this.generateJS = function() {
 		var div =
 			$("<div>")
@@ -87,7 +163,7 @@ function HistoryOptions(wsId) {
 				.attr("id", "optionsButton" + worksheetId)
 				.data("worksheetId", worksheetId)
 				.attr("data-toggle", "dropdown")
-				.text("Command History")
+				.text("Commands")
 				.append($("<span>").addClass("caret"))
 			);
 
@@ -96,9 +172,17 @@ function HistoryOptions(wsId) {
 		//console.log("There are " + options.length + " menu items");
 		for (var i = 0; i < options.length; i++) {
 			var option = options[i];
-			var li = $("<li>");
+			var li = $("<li>").css("float", "left");
 			//console.log("Got option" +  option);
 			var title = option.name;
+			if(option.id) {
+				li.attr("id", option.id)
+			}
+			if(option.visible) {
+				li.show();
+			} else {
+				li.hide();
+			}
 			if (title == "divider")
 				li.addClass("divider");
 			else {
