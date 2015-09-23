@@ -185,16 +185,25 @@
 					</div>
 					<div class="error" style="display: none">Please provide a new unique column name!</div>
 					<br/>
-					<div id="transformCodeEditor"></div>
+					<div class="row">
+						<div class="col-sm-1"><button type="button" class="btn btn-default" id="btnPrevCache">&lt;</button></div>
+						<div class="col-sm-9"><div id="transformCodeEditor"></div></div>
+						<div class="col-sm-1"><button type="button" class="btn btn-default" id="btnNextCache">&gt;</button></div>
+					</div>
 					<br/>
 					<div class="form-group">
-						<label>
-							<div class="col-sm-5">On Error:</div>
-							<div class="col-sm-6"><input class="form-control" type="text" id="pythonTransformErrorDefaultValue" /></div>
-							<div class="col-sm-5">Use JSON Output:</div>
-							<div class="col-sm-6"><input class="form-control" type="checkbox" id="pythonTransformUseJSONOutput" /></div>
-						</label>
+					  <label for="pythonTransformErrorDefaultValue" class="col-sm-4">On Error</label>
+					  <div class="col-sm-8">
+					    <input type="text" class="form-control" id="pythonTransformErrorDefaultValue">
+					  </div>
 					</div>
+					<div class="form-group">
+					  <label for="pythonTransformUseJSONOutput" class="col-sm-4">Use JSON Output:</label>
+					  <div class="col-sm-8">
+					    <input type="checkbox" id="pythonTransformUseJSONOutput">
+					  </div>
+					</div>
+					<br/><br/><br/>
 					<button type="button" class="btn btn-default" id="btnErrors">View Errors</button>
 					<button type="button" class="btn btn-default" id="btnPreview">Preview results for top 5 rows</button>
 					<br>
