@@ -310,7 +310,9 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 				// extract test column distribution
 				List<Double> testExamples = new ArrayList<Double>();
 				for (String example: examples) {
-					testExamples.add(Double.parseDouble(example));
+					if(example.matches(numericRegEx)) {
+						testExamples.add(Double.parseDouble(example));
+					}
 				}				
 
 				List<SemanticTypeLabel> result = test.predictLabelsForColumn(numPredictions, trainingLabelToExamplesMap, testExamples);
