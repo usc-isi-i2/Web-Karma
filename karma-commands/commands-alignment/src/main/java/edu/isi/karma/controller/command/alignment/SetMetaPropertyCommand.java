@@ -331,7 +331,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		// worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(),
 		// newSynonymTypes);
 
-		if(trainAndShowUpdates ||
+		if ((!this.isExecutedInBatch() && trainAndShowUpdates) ||
 				(this.isExecutedInBatch() && modelingConfiguration.getTrainOnApplyHistory())) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}
