@@ -142,16 +142,6 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 
 	@Override
 	public void finishRow() {
-
-	}
-
-	@Override
-	public void flush() {
-		outWriter.flush();
-	}
-
-	@Override
-	public void close() {
 		for(ConcurrentHashMap<String, JSONObject> records : this.rootObjectsByTriplesMapId.values())
 		{
 			for(JSONObject value : records.values())
@@ -176,6 +166,25 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				outWriter.print(value.toString(4));
 			}
 		}
+		for(Entry<String, ConcurrentHashMap<String, JSONObject>> entry : this.rootObjectsByTriplesMapId.entrySet())
+		{
+			entry.getValue().clear();
+		}
+		for(Entry<String, ConcurrentHashMap<String, JSONObject>> entry : this.generatedObjectsByTriplesMapId.entrySet())
+		{
+			entry.getValue().clear();
+		}
+		this.generatedObjectsWithoutTriplesMap.clear();
+	}
+
+	@Override
+	public void flush() {
+		outWriter.flush();
+	}
+
+	@Override
+	public void close() {
+
 		outWriter.println("");
 		outWriter.println("]");
 		outWriter.close();
