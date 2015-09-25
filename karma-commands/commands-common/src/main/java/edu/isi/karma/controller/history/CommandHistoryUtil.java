@@ -6,8 +6,12 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.controller.update.WorksheetDeleteUpdate;
+import edu.isi.karma.controller.update.WorksheetListUpdate;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
@@ -21,31 +25,11 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class CommandHistoryUtil {
-	private final static Set<CommandConsolidator> consolidators = new HashSet<CommandConsolidator>();
 	private final List<Command> commands = new ArrayList<Command>();
 	private Workspace workspace;
 	private String worksheetId;
 	HashMap<String, CommandFactory> commandFactoryMap;
 	static Logger logger = Logger.getLogger(CommandHistoryUtil.class);
-	static {
-		Reflections reflections = new Reflections("edu.isi.karma");
-		Set<Class<? extends CommandConsolidator>> subTypes =
-				reflections.getSubTypesOf(CommandConsolidator.class);
-		for (Class<? extends CommandConsolidator> subType : subTypes)
-		{
-			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface()) {
-				try {
-					consolidators.add(subType.newInstance());
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 
 	public CommandHistoryUtil(List<Command> commands, Workspace workspace, String worksheetId) {
 		this.worksheetId = worksheetId;
@@ -126,47 +110,24 @@ public class CommandHistoryUtil {
 		return terminalColumns;
 	}
 
-	public List<Command> consolidateHistory() throws CommandException {
-		List<Command> refinedCommands = new ArrayList<Command>(commands);
-		for (CommandConsolidator con : consolidators) {
-			refinedCommands = con.consolidateCommand(refinedCommands, workspace);
-		}
-		if (!checkDependency(refinedCommands))
-			return commands;
-		this.commands.clear();
-		this.commands.addAll(refinedCommands);
-		return commands;
-
-	}
-
-	private boolean checkDependency(List<Command> commands) {
-		Set<String> OutputHNodeIds = new HashSet<String>();
-		for (HNode hnode : workspace.getFactory().getAllHNodes()) {
-			if (hnode.getHNodeType() == HNodeType.Regular)
-				OutputHNodeIds.add(hnode.getId());
-		}
-		boolean dependency = true;
-		for (Command command : commands) {
-			if (command.getInputColumns().size() > 0) {
-				for (String hNodeId : command.getInputColumns()) {
-					if (!OutputHNodeIds.contains(hNodeId))
-						dependency = false;
-				}
-			}
-			if (command.getOutputColumns().size() > 0) {
-				OutputHNodeIds.addAll(command.getOutputColumns());
-			}
-		}
-		return dependency;
-	}
-
 	public UpdateContainer replayHistory() {
-		CommandHistory commandHistory = workspace.getCommandHistory();
 		UpdateContainer uc = new UpdateContainer();
-		uc.append(commandHistory.removeCommands(workspace, worksheetId));
 		JSONArray redoCommandsArray = new JSONArray();
-		for (Command refined : commands)
+		for (Command refined : commands) {
 			redoCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
+		}
+		Worksheet oldWorksheet = workspace.getFactory().getWorksheet(worksheetId);
+		oldWorksheet.getImportMethod().createWorksheet(oldWorksheet.getTitle(), workspace, oldWorksheet.getEncoding());
+		try {
+			Worksheet newWorksheet = oldWorksheet.getImportMethod().generateWorksheet();
+			AlignmentManager.Instance().createAlignment(workspace.getId(), newWorksheet.getId(), workspace.getOntologyManager());
+			workspace.removeWorksheet(worksheetId);
+			uc.add(new WorksheetDeleteUpdate(worksheetId));
+			this.worksheetId = newWorksheet.getId();
+			uc.add(new WorksheetListUpdate());
+		} catch (Exception e) {
+
+		}
 		commands.clear();
 		commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
 		return uc;
@@ -242,6 +203,10 @@ public class CommandHistoryUtil {
 				commandItr.remove();
 			}
 		}
+	}
+
+	public String getWorksheetId() {
+		return worksheetId;
 	}
 
 }

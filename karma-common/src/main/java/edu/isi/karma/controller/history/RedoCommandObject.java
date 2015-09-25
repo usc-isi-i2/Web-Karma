@@ -1,6 +1,8 @@
 package edu.isi.karma.controller.history;
 
 import edu.isi.karma.controller.command.ICommand;
+import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -8,17 +10,18 @@ import org.json.JSONObject;
  */
 public class RedoCommandObject {
     private ICommand command;
-    private JSONObject historyObject;
-    RedoCommandObject(ICommand command, JSONObject historyObject) {
+    private Pair<ICommand,JSONArray> consolidatedCommand;
+
+    RedoCommandObject(ICommand command, Pair<ICommand,JSONArray> consolidatedCommand) {
         this.command = command;
-        this.historyObject = historyObject;
+        this.consolidatedCommand = consolidatedCommand;
     }
 
     public ICommand getCommand() {
         return command;
     }
 
-    public JSONObject getHistoryObject() {
-        return historyObject;
+    public Pair<ICommand,JSONArray> getConsolidatedCommand() {
+        return consolidatedCommand;
     }
 }

@@ -33,11 +33,13 @@ public abstract class Import {
         	worksheetName = worksheetName.substring(0, MAX_WORKSHEET_NAME_LEN) + "...";
         this.worksheet = factory.createWorksheet(worksheetName, workspace, encoding);
         this.workspace = workspace;
+        this.worksheet.setImportMethod(this);
     }
 
     public Import(RepFactory factory, Worksheet worksheet) {
         this.factory = factory;
         this.worksheet = worksheet;
+        this.worksheet.setImportMethod(this);
     }
 
     public RepFactory getFactory() {
@@ -50,6 +52,7 @@ public abstract class Import {
     
     public void createWorksheet(String worksheetName, Workspace workspace, String encoding) {
     	this.worksheet = factory.createWorksheet(worksheetName, workspace, encoding);
+        this.worksheet.setImportMethod(this);
     }
     
     /*

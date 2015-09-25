@@ -1,6 +1,8 @@
 package edu.isi.karma.controller.history;
 
 import edu.isi.karma.controller.command.ICommand;
+import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONArray;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -13,8 +15,9 @@ public class WorksheetCommandHistory {
 
     private class CommandTagListMap {
         private final Map<ICommand.CommandTag, List<ICommand> > commandTagListHashMap = new HashMap<>();
-        private final List<RedoCommandObject> redoStack = new ArrayList<>();
-
+        private RedoCommandObject lastRedoCommand;
+        private RedoCommandObject currentCommand;
+        private boolean stale;
         public CommandTagListMap() {
             for (ICommand.CommandTag tag : ICommand.CommandTag.values()) {
                 commandTagListHashMap.put(tag, new ArrayList<ICommand>());
@@ -32,9 +35,9 @@ public class WorksheetCommandHistory {
             return commands;
         }
 
-        public List<RedoCommandObject> getRedoStackCommands() {
-            List<RedoCommandObject> commands = new ArrayList<>();
-            commands.addAll(redoStack);
+        public List<ICommand> getCommands(ICommand.CommandTag commandTag) {
+            List<ICommand> commands = new ArrayList<>();
+            commands.addAll(commandTagListHashMap.get(commandTag));
             return commands;
         }
 
@@ -46,10 +49,6 @@ public class WorksheetCommandHistory {
             for (ICommand.CommandTag tag : ICommand.CommandTag.values()) {
                 commandTagListHashMap.get(tag).removeAll(commands);
             }
-        }
-
-        public void insertCommandToRedoStack(RedoCommandObject command) {
-            redoStack.add(command);
         }
     }
 
@@ -67,16 +66,6 @@ public class WorksheetCommandHistory {
         }
     }
 
-    public void removeCommandFromRedoStack(String worksheetId, List<RedoCommandObject> commands) {
-        if (worksheetId == null) {
-            worksheetId = IMPORT_COMMANDS;
-        }
-        CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
-        if (commandTagListMap != null) {
-            commandTagListMap.redoStack.removeAll(commands);
-        }
-    }
-
     public void insertCommandToHistory(ICommand command) {
         String worksheetId = getWorksheetId(command);
         if (worksheetId == null) {
@@ -90,29 +79,52 @@ public class WorksheetCommandHistory {
         commandTagListMap.addCommandToHistory(command);
     }
 
-    public void insertCommandToRedoStack(List<RedoCommandObject> commands) {
-        for (RedoCommandObject command : commands) {
-            String worksheetId = getWorksheetId(command.getCommand());
-            if (worksheetId == null) {
-                worksheetId = IMPORT_COMMANDS;
-            }
-            CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
-            if (commandTagListMap == null) {
-                commandTagListMap = new CommandTagListMap();
-                historyWorksheetMap.put(worksheetId, commandTagListMap);
-            }
-            commandTagListMap.insertCommandToRedoStack(command);
-        }
+    public void setLastRedoCommandObject(RedoCommandObject command) {
 
+        String worksheetId = getWorksheetId(command.getCommand());
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
+        if (commandTagListMap == null) {
+            commandTagListMap = new CommandTagListMap();
+            historyWorksheetMap.put(worksheetId, commandTagListMap);
+        }
+        if (commandTagListMap.lastRedoCommand == null) {
+            commandTagListMap.lastRedoCommand = command;
+        }
     }
 
-    public void clearRedoStack(String worksheetId) {
+    public void setCurrentCommand(ICommand command, Pair<ICommand,JSONArray> consolidatedCommand) {
+        String worksheetId = getWorksheetId(command);
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
+        if (commandTagListMap == null) {
+            commandTagListMap = new CommandTagListMap();
+            historyWorksheetMap.put(worksheetId, commandTagListMap);
+        }
+        commandTagListMap.currentCommand = new RedoCommandObject(command, consolidatedCommand);
+    }
+
+    public void setStale(String worksheetId, boolean stale) {
         if (worksheetId == null) {
             worksheetId = IMPORT_COMMANDS;
         }
         CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
         if (commandTagListMap != null) {
-            commandTagListMap.redoStack.clear();
+            commandTagListMap.stale = stale;
+        }
+    }
+
+    public void clearRedoCommand(String worksheetId) {
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
+        if (commandTagListMap != null) {
+            commandTagListMap.lastRedoCommand = null;
         }
     }
 
@@ -135,14 +147,6 @@ public class WorksheetCommandHistory {
         return commands;
     }
 
-    public List<RedoCommandObject> getAllRedoStackCommands() {
-        List<RedoCommandObject> commands = new ArrayList<>();
-        for (Map.Entry<String, CommandTagListMap> entry : historyWorksheetMap.entrySet()) {
-            commands.addAll(entry.getValue().getRedoStackCommands());
-        }
-        return commands;
-    }
-
     public List<ICommand> getCommandsFromWorksheetId(String worksheetId) {
         List<ICommand> commands = new ArrayList<>();
         if (worksheetId == null) {
@@ -155,18 +159,75 @@ public class WorksheetCommandHistory {
         return commands;
     }
 
-    public List<RedoCommandObject> getRedoStack(String worksheetId) {
+    public List<ICommand> getCommandsFromWorksheetIdAndCommandTag(String worksheetId, ICommand.CommandTag commandTag) {
+        List<ICommand> commands = new ArrayList<>();
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap map = historyWorksheetMap.get(worksheetId);
+        if (map != null) {
+            commands.addAll(map.getCommands(commandTag));
+        }
+        return commands;
+    }
+
+    public RedoCommandObject getLastRedoCommandObject(String worksheetId) {
         if (worksheetId == null) {
             worksheetId = IMPORT_COMMANDS;
         }
         CommandTagListMap map = historyWorksheetMap.get(worksheetId);
         if (map == null) {
-            return Collections.emptyList();
+            return null;
         }
-        return map.redoStack;
+        return map.lastRedoCommand;
+    }
+
+    public RedoCommandObject getCurrentRedoCommandObject(String worksheetId) {
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap map = historyWorksheetMap.get(worksheetId);
+        if (map == null) {
+            return null;
+        }
+        return map.currentCommand;
+    }
+
+    public boolean isStale(String worksheetId) {
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
+        if (commandTagListMap != null) {
+            return commandTagListMap.stale;
+        }
+        return false;
     }
 
     public List<String> getAllWorksheetId() {
         return new ArrayList<>(historyWorksheetMap.keySet());
+    }
+
+    @Override
+    public WorksheetCommandHistory clone() {
+        //TODO Clone the WorksheetCommandHistory
+        WorksheetCommandHistory worksheetCommandHistory = new WorksheetCommandHistory();
+        for (ICommand command : getAllCommands()) {
+            worksheetCommandHistory.insertCommandToHistory(command);
+        }
+        for (String worksheetId : getAllWorksheetId()) {
+            CommandTagListMap newMap = worksheetCommandHistory.historyWorksheetMap.get(worksheetId);
+            CommandTagListMap oldMap = this.historyWorksheetMap.get(worksheetId);
+            if (oldMap != null && newMap != null) {
+                if (oldMap.currentCommand != null) {
+                    newMap.currentCommand = new RedoCommandObject(oldMap.currentCommand.getCommand(), oldMap.currentCommand.getConsolidatedCommand());
+                }
+                if (oldMap.lastRedoCommand != null) {
+                    newMap.lastRedoCommand = new RedoCommandObject(oldMap.lastRedoCommand.getCommand(), oldMap.lastRedoCommand.getConsolidatedCommand());
+                }
+                newMap.stale = oldMap.stale;
+            }
+        }
+        return worksheetCommandHistory;
     }
 }

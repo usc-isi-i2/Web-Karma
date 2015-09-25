@@ -62,8 +62,8 @@ public class UndoRedoCommand extends Command {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		UpdateContainer undoEffects = workspace.getCommandHistory().undoOrRedoCommandsUntil(
-				workspace, commandIdArg, worksheetId);
+		UpdateContainer undoEffects = workspace.getCommandHistory().undoOrRedoCommand(
+				workspace, worksheetId);
 		UpdateContainer result = new UpdateContainer(new HistoryUpdate(
 				workspace.getCommandHistory()));
 		result.append(undoEffects);

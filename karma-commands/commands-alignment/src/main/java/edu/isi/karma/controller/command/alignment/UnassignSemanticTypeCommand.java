@@ -20,11 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -94,10 +90,6 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		inputColumns.clear();
-		outputColumns.clear();
-		inputColumns.add(hNodeId);
-		outputColumns.add(hNodeId);
 		// Save the old SemanticType object for undo
 		SemanticTypes types = worksheet.getSemanticTypes();
 		oldSemanticType = types.getSemanticTypeForHNodeId(hNodeId);
@@ -198,6 +190,16 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 
 	public SemanticType getOldSemanticType() {
 		return oldSemanticType;
+	}
+
+	@Override
+	public Set<String> getInputColumns() {
+		return new HashSet<>(Arrays.asList(hNodeId));
+	}
+
+	@Override
+	public Set<String> getOutputColumns() {
+		return new HashSet<>(Arrays.asList(hNodeId));
 	}
 
 }
