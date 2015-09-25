@@ -454,7 +454,7 @@ public class Alignment implements OntologyUpdateListener {
 		if (node != null) {
 			this.graphBuilder.getForcedNodes().remove(node);
 			node.setForced(false);
-			if (this.steinerTree.containsVertex(node)) {
+			if (this.steinerTree != null && this.steinerTree.containsVertex(node)) {
 				Set<LabeledLink> links = this.steinerTree.edgesOf(node);
 				if (links != null) {
 					for (LabeledLink l : links) {
@@ -473,7 +473,7 @@ public class Alignment implements OntologyUpdateListener {
 		
 		Node node = this.getNodeById(nodeId);
 		if (node != null) {
-			if (this.steinerTree.containsVertex(node)) {
+			if (this.steinerTree != null && this.steinerTree.containsVertex(node)) {
 				Set<LabeledLink> inLinks = this.steinerTree.edgesOf(node);
 				if (inLinks == null || inLinks.isEmpty())
 					return true;
@@ -494,7 +494,10 @@ public class Alignment implements OntologyUpdateListener {
 		if (link != null) {
 //			return this.graphBuilder.removeLink(link);
 			if (this.graphBuilder.removeLink(link))
-				this.steinerTree.removeEdge(link);
+				if (this.steinerTree != null) {
+					this.steinerTree.removeEdge(link);
+					return true;
+				}
 		}
 		logger.debug("Cannot find the link " + linkId + " in the graph.");
 		return false;
