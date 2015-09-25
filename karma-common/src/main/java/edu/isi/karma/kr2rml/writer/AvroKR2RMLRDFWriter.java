@@ -293,9 +293,9 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		}
 		
 	}
-
+	
 	@Override
-	public void close() {
+	public void finishRow() {
 		for(ConcurrentHashMap<String, GenericRecord> records : this.rootObjectsByTriplesMapId.values())
 		{
 			
@@ -310,6 +310,22 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 			}
 			
 		}
+		for(Entry<String, ConcurrentHashMap<String, GenericRecord>> entry : this.rootObjectsByTriplesMapId.entrySet())
+		{
+			entry.getValue().clear();
+		}
+		for(Entry<String, ConcurrentHashMap<String, GenericRecord>> entry : this.generatedObjectsByTriplesMapId.entrySet())
+		{
+			entry.getValue().clear();
+		}
+		this.generatedObjectsWithoutTriplesMap.clear();
+		
+	};
+	
+
+	@Override
+	public void close() {
+		
 		try {
 			dfw.flush();
 			output.flush();
