@@ -42,7 +42,7 @@ public class UndoRedoCommand extends Command {
 
 	@Override
 	public String getCommandName() {
-		return "Undo/Redo";
+		return UndoRedoCommand.class.getSimpleName();
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class UndoRedoCommand extends Command {
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		// not undoable.
-		return new UpdateContainer();
+		return null;
 	}
 
 }

@@ -1,17 +1,13 @@
 package edu.isi.karma.controller.command.alignment;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandType;
-import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.*;
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
+import org.json.JSONArray;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Frank on 9/3/15.
@@ -19,9 +15,10 @@ import java.util.Set;
 public class ExportOrDeleteHistoryCommand extends WorksheetSelectionCommand {
     private boolean isDelete;
     private final Set<String> commandSet = new HashSet<>();
-    private CommandHistory history;
+    private JSONArray historyCommandsBackup;
     private String tripleStoreUrl;
     private String requestUrl;
+    private String volatileWorksheetId;
     public ExportOrDeleteHistoryCommand(String id, String model,
                                         String worksheetId, String selectionId,
                                         String commandSet, String tripleStoreUrl,
@@ -31,6 +28,8 @@ public class ExportOrDeleteHistoryCommand extends WorksheetSelectionCommand {
         this.tripleStoreUrl = tripleStoreUrl;
         this.requestUrl = requestUrl;
         this.isDelete = isDelete;
+        volatileWorksheetId = worksheetId;
+        historyCommandsBackup = new JSONArray();
     }
 
     @Override
@@ -54,22 +53,27 @@ public class ExportOrDeleteHistoryCommand extends WorksheetSelectionCommand {
             return CommandType.undoable;
         }
         else {
-            return CommandType.notUndoable;
+            return CommandType.notInHistory;
         }
     }
 
     @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
-        history = workspace.getCommandHistory().clone();
-        CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
+        List<Command> commands = workspace.getCommandHistory().getCommandsFromWorksheetId(volatileWorksheetId);
+        for (Command command : commands) {
+            historyCommandsBackup.put(workspace.getCommandHistory().getCommandJSON(workspace, command));
+        }
+        CommandHistoryUtil historyUtil = new CommandHistoryUtil(commands, workspace, volatileWorksheetId);
         if (isDelete) {
             historyUtil.removeCommands(commandSet);
-            return historyUtil.replayHistory();
+            UpdateContainer updateContainer = historyUtil.replayHistory();
+            this.volatileWorksheetId = historyUtil.getWorksheetId();
+            return updateContainer;
         }
         historyUtil.retainCommands(commandSet);
         UpdateContainer updateContainer = new UpdateContainer();
         updateContainer.append(historyUtil.replayHistory());
-        Command command = new GenerateR2RMLModelCommandFactory().createCommand(model, workspace, worksheetId, tripleStoreUrl, selectionId);
+        Command command = new GenerateR2RMLModelCommandFactory().createCommand(model, workspace, volatileWorksheetId, tripleStoreUrl, selectionId);
         ((GenerateR2RMLModelCommand)command).setRESTserverAddress(requestUrl);
         updateContainer.append(command.doIt(workspace));
         return updateContainer;
@@ -77,7 +81,14 @@ public class ExportOrDeleteHistoryCommand extends WorksheetSelectionCommand {
 
     @Override
     public UpdateContainer undoIt(Workspace workspace) {
-        CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
-        return  historyUtil.replayHistory();
+        CommandHistoryUtil historyUtil = new CommandHistoryUtil(Collections.EMPTY_LIST, workspace, volatileWorksheetId);
+        UpdateContainer updateContainer = historyUtil.replayHistory(historyCommandsBackup);
+        this.volatileWorksheetId = historyUtil.getWorksheetId();
+        return updateContainer;
+    }
+
+    @Override
+    public String getWorksheetId() {
+        return volatileWorksheetId;
     }
 }

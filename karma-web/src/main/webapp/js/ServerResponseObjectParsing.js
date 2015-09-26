@@ -237,7 +237,8 @@ function parse(data) {
 					mainDiv.data("worksheetVisible", true);
 
 					var historyDiv = $("<div>").attr("id", "commandHistory_" + worksheet["worksheetId"]).addClass("ui-corner-top").addClass("commandHistory");
-					historyDiv.append($("<div>").attr("id", "commandHistoryTitle_" + worksheet["worksheetId"]).addClass("ui-corner-top").addClass("titleCommand").append((new HistoryOptions(worksheet["worksheetId"])).generateJS()));
+					var historyOptions = HistoryManager.getInstance().getHistoryOptions(worksheet["worksheetId"]);
+					historyDiv.append($("<div>").attr("id", "commandHistoryTitle_" + worksheet["worksheetId"]).addClass("ui-corner-top").addClass("titleCommand").append(historyOptions.generateJS()));
 					historyDiv.append($("<div>").attr("id", "commandHistoryBody_" + worksheet["worksheetId"]).addClass("commandHistoryBody").append($("<ul>").addClass("nav").addClass("nav-list")));
 
 					titleDiv
@@ -387,6 +388,8 @@ function parse(data) {
 			$.each(element["commands"], function(index, command) {
 				processHistoryCommand(command);
 			});
+		} else if(element["updateType"] == "HistoryLastCommandUpdate") {
+			
 		} else if (element["updateType"] == "NodeChangedUpdate") {
 			var cellDiv = $("div#" + element.nodeId);
 			$(cellDiv).text(element.displayValue);
@@ -752,26 +755,14 @@ function processHistoryCommand(command) {
 				.attr("value", command.commandId)
 				)
 			);
-	if (command["commandType"] == "notUndoable" || command['historyType'] == "normal") {
-		historyLabelDiv = $("<div>")
-		.text(title);
-	}
+	
 	var commandDiv = $("<li>").addClass("CommandDiv").addClass(command.commandType).attr("id", command.commandId)
-	.append(historyLabelDiv)
-	.append($("<div>")
-		.addClass("iconDiv")
-		.bind('click', clickUndoButton)
-		)
-	.hover(
-		// hover in function
-		commandDivHoverIn,
-		// hover out function
-		commandDivHoverOut);
-	if (command["commandType"] == "notUndoable" || command['historyType'] == "normal")
-		$("div.iconDiv", commandDiv).remove();
-
+								.append(historyLabelDiv).addClass("undo-state");
+	if (command.historyType == "undo" || command.historyType == "optimized") {
+		commandDiv.addClass("lastRun");
+	}
 	if (command.historyType == "redo") {
-		$(commandDiv).addClass("redo-state");
+		commandDiv.append($("<div>").addClass("iconDiv").bind('click', clickUndoButton));
 		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_redo.png")).qtip({
 			content: {
 				text: 'Redo'
@@ -780,8 +771,8 @@ function processHistoryCommand(command) {
 				classes: 'ui-tooltip-light ui-tooltip-shadow'
 			}
 		});
-	} else if (command.historyType == "undo" || command.historyType == "optimized") {
-		$(commandDiv).addClass("undo-state");
+	} else if ((command.historyType == "undo" || command.historyType == "optimized") && command.commandType != "notUndoable") {
+		commandDiv.append($("<div>").addClass("iconDiv").bind('click', clickUndoButton));
 		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_undo.png")).qtip({
 			content: {
 				text: 'Undo'

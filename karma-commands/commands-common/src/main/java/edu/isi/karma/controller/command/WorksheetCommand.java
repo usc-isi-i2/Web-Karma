@@ -55,12 +55,12 @@ public abstract class WorksheetCommand extends Command {
 
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
 	{
-		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), getWorksheetId());
 		if(null != alignment)
 		{
-			alignment.updateColumnNodesInAlignment(workspace.getWorksheet(worksheetId));
+			alignment.updateColumnNodesInAlignment(workspace.getWorksheet(getWorksheetId()));
 		}
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(getWorksheetId(), workspace);
 	}
 	
 	@Override
@@ -70,7 +70,7 @@ public abstract class WorksheetCommand extends Command {
 		String newPref = prefix + "  ";
 		generateCommandJSONAttributes(prefix, pw, vWorkspace, historyType);
 		pw.println("," + newPref
-				+ JSONUtil.jsonLast(JsonKeys.worksheetId, worksheetId));
+				+ JSONUtil.jsonLast(JsonKeys.worksheetId, getWorksheetId()));
 		pw.println(prefix + "}");
 	}
 }

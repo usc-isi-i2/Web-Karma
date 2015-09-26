@@ -66,6 +66,9 @@
 .CommandDiv.undoable {
 	color: #fff;
 }
+.CommandDiv.lastRun {
+	background-color: rgb(255, 255, 150);
+}
 .CommandDiv.redo-state {
 	background-color: #ADADAD;
 	border: solid 1px;
@@ -83,7 +86,7 @@
 }
 
 .CommandDiv.notUndoable {
-	background-color: black;
+	/* background-color: black; */
 }
 .iconDiv img {
 	height: 20px; 
@@ -94,6 +97,6 @@
 	position: absolute;
 	top:2px; 
 	right:3px; 
-	visibility: hidden;
+	visibility: visible;
 	cursor: pointer;
 }

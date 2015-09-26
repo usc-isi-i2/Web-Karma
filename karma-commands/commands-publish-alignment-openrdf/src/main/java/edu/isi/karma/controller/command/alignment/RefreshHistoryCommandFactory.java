@@ -11,13 +11,11 @@ import org.json.JSONException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by Frank on 9/3/15.
+ * Created by chengyey on 9/25/15.
  */
-public class ExportOrDeleteHistoryCommandFactory extends JSONInputCommandFactory {
+public class RefreshHistoryCommandFactory extends JSONInputCommandFactory {
     private enum Arguments {
-        worksheetId, selectionName,
-        commandList, isDelete,
-        tripleStoreUrl, requestUrl
+        worksheetId, selectionName
     }
     @Override
     public Command createCommand(HttpServletRequest request, Workspace workspace) {
@@ -25,21 +23,17 @@ public class ExportOrDeleteHistoryCommandFactory extends JSONInputCommandFactory
     }
 
     @Override
-    public Class<? extends Command> getCorrespondingCommand() {
-        return ExportOrDeleteHistoryCommand.class;
+    public Command createCommand(JSONArray inputJson, String model, Workspace workspace) throws JSONException, KarmaException {
+        String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
+        this.normalizeSelectionId(worksheetId, inputJson, workspace);
+        String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
+        Command command = new RefreshHistoryCommand(getNewId(workspace), model, worksheetId, selectionName);
+        command.setInputParameterJson(inputJson.toString());
+        return command;
     }
 
     @Override
-    public Command createCommand(JSONArray inputJson, String model, Workspace workspace) throws JSONException, KarmaException {
-        String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
-        String commandList = CommandInputJSONUtil.getStringValue(Arguments.commandList.name(), inputJson);
-        boolean isDelete = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.isDelete.name(), inputJson));
-        this.normalizeSelectionId(worksheetId, inputJson, workspace);
-        String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-        String tripleStoreUrl = CommandInputJSONUtil.getStringValue(Arguments.tripleStoreUrl.name(), inputJson);
-        String requestUrl = CommandInputJSONUtil.getStringValue(Arguments.requestUrl.name(), inputJson);
-        Command command = new ExportOrDeleteHistoryCommand(getNewId(workspace), model, worksheetId, selectionName, commandList, tripleStoreUrl, requestUrl, isDelete);
-        command.setInputParameterJson(inputJson.toString());
-        return command;
+    public Class<? extends Command> getCorrespondingCommand() {
+        return RefreshHistoryCommand.class;
     }
 }

@@ -111,11 +111,15 @@ public class CommandHistoryUtil {
 	}
 
 	public UpdateContainer replayHistory() {
-		UpdateContainer uc = new UpdateContainer();
 		JSONArray redoCommandsArray = new JSONArray();
 		for (Command refined : commands) {
 			redoCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
 		}
+		return replayHistory(redoCommandsArray);
+	}
+
+	public UpdateContainer replayHistory(JSONArray redoCommandsArray) {
+		UpdateContainer uc = new UpdateContainer();
 		Worksheet oldWorksheet = workspace.getFactory().getWorksheet(worksheetId);
 		oldWorksheet.getImportMethod().createWorksheet(oldWorksheet.getTitle(), workspace, oldWorksheet.getEncoding());
 		try {
@@ -125,11 +129,14 @@ public class CommandHistoryUtil {
 			uc.add(new WorksheetDeleteUpdate(worksheetId));
 			this.worksheetId = newWorksheet.getId();
 			uc.add(new WorksheetListUpdate());
+			commands.clear();
+			commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
+			workspace.getCommandHistory().clearCurrentCommand(worksheetId);
+			workspace.getCommandHistory().clearRedoCommand(worksheetId);
 		} catch (Exception e) {
-
+			commands.clear();
+			logger.error("Fail to replay history", e);
 		}
-		commands.clear();
-		commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
 		return uc;
 	}
 

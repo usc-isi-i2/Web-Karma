@@ -161,6 +161,7 @@ public class CommandHistory {
 
 
 		if (command.getCommandType() != CommandType.notInHistory) {
+			worksheetId = worksheetCommandHistory.getWorksheetId(command);
 			worksheetCommandHistory.clearRedoCommand(worksheetId);
 			worksheetCommandHistory.setCurrentCommand(command, consolidatedCommand);
 			if (consolidatedCommand == null) {
@@ -420,7 +421,7 @@ public class CommandHistory {
 				else {
 					pw.println(prefix + ",");
 				}
-				if (command == currentCommand.getCommand()) {
+				if (currentCommand != null && command == currentCommand.getCommand()) {
 					command.generateJson(prefix, pw, vWorkspace,
 							Command.HistoryType.undo);
 					found = true;
@@ -486,6 +487,18 @@ public class CommandHistory {
 		worksheetCommandHistory.setStale(worksheetId, stale);
 	}
 
+	public void clearCurrentCommand(String worksheetId) {
+		worksheetCommandHistory.clearCurrentCommand(worksheetId);
+	}
+
+	public void clearRedoCommand(String worksheetId) {
+		worksheetCommandHistory.clearRedoCommand(worksheetId);
+	}
+
+	public void removeWorksheetHistory(String worksheetId) {
+		worksheetCommandHistory.removeWorksheet(worksheetId);
+	}
+
 	public Command getPreviewCommand(String commandId) {
 		if (previewCommand.getId().equals(commandId))
 			return previewCommand;
@@ -506,4 +519,5 @@ public class CommandHistory {
 	public static IHistorySaver getHistorySaver(String workspaceId) {
 		return historySavers.get(workspaceId);
 	}
+
 }

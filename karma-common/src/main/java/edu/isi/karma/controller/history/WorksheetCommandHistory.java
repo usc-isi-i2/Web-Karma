@@ -128,6 +128,20 @@ public class WorksheetCommandHistory {
         }
     }
 
+    public void clearCurrentCommand(String worksheetId) {
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
+        if (commandTagListMap != null) {
+            commandTagListMap.currentCommand = null;
+        }
+    }
+
+    public void removeWorksheet(String worksheetId) {
+        historyWorksheetMap.remove(worksheetId);
+    }
+
     public String getWorksheetId(ICommand c) {
         try {
             Method getWorksheetIdMethod = c.getClass().getMethod("getWorksheetId");
@@ -210,8 +224,10 @@ public class WorksheetCommandHistory {
 
     @Override
     public WorksheetCommandHistory clone() {
-        //TODO Clone the WorksheetCommandHistory
         WorksheetCommandHistory worksheetCommandHistory = new WorksheetCommandHistory();
+        for (String worksheetId : getAllWorksheetId()) {
+            worksheetCommandHistory.historyWorksheetMap.put(worksheetId, new CommandTagListMap());
+        }
         for (ICommand command : getAllCommands()) {
             worksheetCommandHistory.insertCommandToHistory(command);
         }
