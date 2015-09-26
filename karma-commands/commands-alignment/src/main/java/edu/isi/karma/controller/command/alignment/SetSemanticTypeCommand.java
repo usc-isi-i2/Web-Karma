@@ -327,8 +327,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		
 		//new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		
-		
-		if(trainAndShowUpdates ||
+		if ((!this.isExecutedInBatch() && trainAndShowUpdates) ||
 				(this.isExecutedInBatch() && modelingConfiguration.getTrainOnApplyHistory())) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
 		}  

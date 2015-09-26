@@ -68,6 +68,10 @@ public class AggregationPythonCommand extends WorksheetSelectionCommand {
         PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ServletContextParameterMap.ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
         PythonInterpreter interpreter = repo.getInterpreter();
         repo.initializeInterpreter(interpreter);
+        interpreter.getLocals().__setitem__("workspaceid", new PyString(workspace.getId()));
+        interpreter.getLocals().__setitem__("selectionName", new PyString(selectionId));
+        interpreter.getLocals().__setitem__("command", Py.java2py(this));
+        interpreter.getLocals().__setitem__("worksheetId", new PyString(worksheetId));
         if (!pythonCode.trim().isEmpty()) {
             interpreter.exec(pythonCode);
         }
@@ -82,19 +86,17 @@ public class AggregationPythonCommand extends WorksheetSelectionCommand {
         CloneTableUtils.getDatatable(worksheet.getDataTable(), parentHTable, parentTables, selection);
         for (Table parentTable : parentTables) {
             for (Row parentRow : parentTable.getRows(0, parentTable.getNumRows(), selection)) {
+                interpreter.getLocals().__setitem__("nodeid", new PyString(parentRow.getNode(hTable.getParentHNode().getId()).getId()));
                 Table nestedTable = parentRow.getNode(hTable.getParentHNode().getId()).getNestedTable();
                 String instanceName = "aggregation" + System.currentTimeMillis();
                 interpreter.exec(instanceName + " = " + constructor);
                 if (nestedTable != null) {
                     for (Row nestedRow : nestedTable.getRows(0, nestedTable.getNumRows(), selection)) {
-                        interpreter.getLocals().__setitem__("workspaceid", new PyString(workspace.getId()));
-                        interpreter.getLocals().__setitem__("selectionName", new PyString(selectionId));
-                        interpreter.getLocals().__setitem__("command", Py.java2py(this));
-                        interpreter.getLocals().__setitem__("worksheetId", new PyString(worksheetId));
                         interpreter.getLocals().__setitem__("nodeid", new PyString(nestedRow.getNode(hNodeId).getId()));
                         interpreter.exec(String.format("%s.accumulate(%s.transform())", instanceName, instanceName));
                     }
                 }
+                interpreter.getLocals().__setitem__("nodeid", new PyString(parentRow.getNode(hTable.getParentHNode().getId()).getId()));
                 PyObject returnVal = interpreter.eval(String.format("%s.getResult()", instanceName));
                 parentRow.getNode(newHNodeId).setValue(PythonTransformationHelper.getPyObjectValueAsString(returnVal), Node.NodeStatus.original, factory);
             }

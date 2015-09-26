@@ -106,7 +106,7 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		columnNode.setForced(false);
 		if (columnNode != null) {
 			Set<LabeledLink> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());
-			if(links == null)
+			if(links == null || !links.iterator().hasNext())
 			{
 				logger.error("No semantic type to unassign!");
 				return new UpdateContainer(new ErrorUpdate("No semantic type to unassign!"));
@@ -115,6 +115,13 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 //			String domainNodeId = currentLink.getSource().getId();
 			// Remove the existing link
 			alignment.removeLink(currentLink.getId());
+			
+			Node domain = currentLink.getSource();
+			if (domain != null) {
+				String domainId = domain.getId();
+				if (alignment.isNodeIsolatedInTree(domainId))
+					alignment.removeNodeOnlyFromTree(domainId);
+			}
 			// Remove the column node
 //			alignment.removeNode(columnNode.getId());
 			// Remove the source node
