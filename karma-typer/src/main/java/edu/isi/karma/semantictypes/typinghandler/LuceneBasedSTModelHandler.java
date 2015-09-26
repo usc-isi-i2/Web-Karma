@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.slf4j.Logger;
@@ -49,7 +47,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	public LuceneBasedSTModelHandler(String contextId) {
 		allowedCharacters = allowedCharacters();
 		this.contextId = contextId;
-		logger.warn("inside STModelHandler constructor");
+		logger.debug("inside STModelHandler constructor");
 	}
 
 	/**
