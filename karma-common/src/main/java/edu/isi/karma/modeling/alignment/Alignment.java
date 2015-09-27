@@ -835,9 +835,15 @@ public class Alignment implements OntologyUpdateListener {
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");
+			if (this.steinerTree == null)
+			{
+				this.steinerTree = 
+						new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+			}
 			this.addForcedNodes();
 			this.addForcedLinks(); //add new semantic type to the tree
 //			this.removeDeletedLinks();
+			this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(this.steinerTree));
 			return ;
 		}
 
