@@ -94,8 +94,6 @@ function HistoryOptions(wsId) {
 		var newInfo = info['newInfo'];
 		newInfo.push(getParamObject("commandList", response, "other"));
 		newInfo.push(getParamObject("isDelete", "true", "other"));
-		newInfo.push(getParamObject("tripleStoreUrl", $('#txtModel_URL').text(), "other"));
-		newInfo.push(getParamObject("requestUrl", window.location.href.replace("/#", ""), "other"));
 		info["newInfo"] = JSON.stringify(newInfo);
 		showLoading(info["worksheetId"]);
 		sendRequest(info, worksheetId);
@@ -109,8 +107,6 @@ function HistoryOptions(wsId) {
 		var newInfo = info['newInfo'];
 		newInfo.push(getParamObject("commandList", response, "other"));
 		newInfo.push(getParamObject("isDelete", "false", "other"));
-		newInfo.push(getParamObject("tripleStoreUrl", $('#txtModel_URL').text(), "other"));
-		newInfo.push(getParamObject("requestUrl", window.location.href.replace("/#", ""), "other"));
 		info["newInfo"] = JSON.stringify(newInfo);
 		showLoading(info["worksheetId"]);
 		sendRequest(info, worksheetId);

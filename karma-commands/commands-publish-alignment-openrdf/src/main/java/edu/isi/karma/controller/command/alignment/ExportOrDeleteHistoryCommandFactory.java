@@ -16,8 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ExportOrDeleteHistoryCommandFactory extends JSONInputCommandFactory {
     private enum Arguments {
         worksheetId, selectionName,
-        commandList, isDelete,
-        tripleStoreUrl, requestUrl
+        commandList, isDelete
     }
     @Override
     public Command createCommand(HttpServletRequest request, Workspace workspace) {
@@ -36,9 +35,7 @@ public class ExportOrDeleteHistoryCommandFactory extends JSONInputCommandFactory
         boolean isDelete = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.isDelete.name(), inputJson));
         this.normalizeSelectionId(worksheetId, inputJson, workspace);
         String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-        String tripleStoreUrl = CommandInputJSONUtil.getStringValue(Arguments.tripleStoreUrl.name(), inputJson);
-        String requestUrl = CommandInputJSONUtil.getStringValue(Arguments.requestUrl.name(), inputJson);
-        Command command = new ExportOrDeleteHistoryCommand(getNewId(workspace), model, worksheetId, selectionName, commandList, tripleStoreUrl, requestUrl, isDelete);
+        Command command = new ExportOrDeleteHistoryCommand(getNewId(workspace), model, worksheetId, selectionName, commandList, isDelete);
         command.setInputParameterJson(inputJson.toString());
         return command;
     }

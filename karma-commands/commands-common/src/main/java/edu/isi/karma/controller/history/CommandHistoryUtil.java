@@ -40,8 +40,8 @@ public class CommandHistoryUtil {
 	}
 	private Map<Command, List<Command> > generateGraph() {
 
-		Map<Command, List<Command> > dag = new HashMap<Command, List<Command>>();
-		Map<String, List<Command> > outputMapping = new HashMap<String, List<Command> >();
+		Map<Command, List<Command> > dag = new HashMap<>();
+		Map<String, List<Command> > outputMapping = new HashMap<>();
 
 		for (Command command : commands) {
 			Set<String> inputs = command.getInputColumns();
@@ -214,6 +214,14 @@ public class CommandHistoryUtil {
 
 	public String getWorksheetId() {
 		return worksheetId;
+	}
+
+	public JSONArray getCommandsJSON() {
+		JSONArray commandsArray = new JSONArray();
+		for (Command command : commands) {
+			commandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, command));
+		}
+		return commandsArray;
 	}
 
 }

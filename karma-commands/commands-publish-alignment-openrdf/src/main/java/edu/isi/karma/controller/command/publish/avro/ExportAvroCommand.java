@@ -101,7 +101,7 @@ public class ExportAvroCommand extends WorksheetSelectionCommand {
 			mappingGen = new KR2RMLMappingGenerator(
 					workspace, worksheet, alignment, 
 					worksheet.getSemanticTypes(), rdfPrefix, rdfNamespace,
-					false, errorReport);
+					false);
 		} catch (KarmaException e)
 		{
 			logger.error("Error occured while generating RDF!", e);

@@ -185,7 +185,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
 
 					alignment, worksheet.getSemanticTypes(), rdfSourcePrefix, rdfSourceNamespace, 
-					Boolean.valueOf(addInverseProperties), errorReport);
+					Boolean.valueOf(addInverseProperties));
 		}
 		catch (KarmaException e)
 		{
