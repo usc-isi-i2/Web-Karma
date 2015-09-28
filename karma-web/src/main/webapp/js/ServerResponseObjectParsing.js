@@ -765,7 +765,7 @@ function processHistoryCommand(command) {
 		}
 	}
 	
-	if(title == "Delete History") {
+	if(title == "Delete History" || title == "Export History") {
 		return;
 	}
 	if(command["worksheetId"]) {
