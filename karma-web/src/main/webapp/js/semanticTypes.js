@@ -1571,7 +1571,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 
 				$("#columnName", dialog).text(columnLabel);
 
-				initialLinks = getAllLinksForNode(worksheetId, alignmentId, columnUri);
+				initialLinks = getAllLinksForNode(worksheetId, alignmentId, columnId);
 				$.each(initialLinks, function(index2, link) {
 					addLink(link);
 				});
@@ -1896,9 +1896,9 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 				"uri": "FakeURI"
 			};
 			var target = {
-				"id": columnUri,
+				"id": columnId,
 				"label": columnLabel,
-				"uri": columnDomain
+				"uri": columnUri
 			};
 			var prop = {
 				"id": "FakeId",
@@ -1915,9 +1915,9 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 
 		function addOutgoingLink(e) {
 			var source = {
-				"id": columnUri,
+				"id": columnId,
 				"label": columnLabel,
-				"uri": columnDomain
+				"uri": columnUri
 			};
 			var target = {
 				"id": "FakeId",
