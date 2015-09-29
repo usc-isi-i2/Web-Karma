@@ -154,6 +154,9 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					return new UpdateContainer(new ErrorUpdate("" +
 							"Error occured while setting semantic type!"));
 				}
+				if(sourceId.endsWith(" (add)")) // for backward compatibility with previous models 
+					sourceId = sourceId.substring(0, sourceId.length()-5).trim();
+
 
 				if (edgeUri.trim().isEmpty()) {
 					logger.error("fulltype is emty");
