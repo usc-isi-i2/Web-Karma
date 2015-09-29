@@ -1,18 +1,18 @@
 /*******************************************************************************
  * Copyright 2012 University of Southern California
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * 	http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * This code was developed by the Information Integration Group as part 
  * of the Karma project at the Information Sciences Institute of the 
  * University of Southern California.  For more information, publications, 
@@ -20,8 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -60,23 +59,21 @@ import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 
 	private final String hNodeId;
-	private final boolean trainAndShowUpdates;
-	private final String rdfLiteralType;
+	private boolean trainAndShowUpdates;
+	private String rdfLiteralType;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	private SynonymSemanticTypes oldSynonymTypes;
 	private JSONArray typesArr;
 	private SynonymSemanticTypes newSynonymTypes;
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
-//	private DefaultLink newLink;
 	private String labelName = "";
 	private SemanticType oldType;
 	private SemanticType newType;
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
-	protected SetSemanticTypeCommand(String id, String model, String worksheetId, String hNodeId, 
-			JSONArray typesArr, boolean trainAndShowUpdates, 
-			String rdfLiteralType, String selectionId) {
+	protected SetSemanticTypeCommand(String id, String model, String worksheetId, String hNodeId,
+									 JSONArray typesArr, boolean trainAndShowUpdates,
+									 String rdfLiteralType, String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
@@ -85,7 +82,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 
 		addTag(CommandTag.SemanticType);
 	}
-	
+
 	@Override
 	public String getCommandName() {
 		return this.getClass().getSimpleName();
@@ -118,7 +115,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			HNode hn = workspace.getFactory().getHNode(hNodeId);
 			labelName = hn.getColumnName();
 		}catch(Exception e) {
-			
+
 		}
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
@@ -130,18 +127,18 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			alignment = new Alignment(ontMgr);
 			AlignmentManager.Instance().addAlignmentToMap(alignmentId, alignment);
 		}
-		
+
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
 		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
-		
+
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
 		for (int i = 0; i < typesArr.length(); i++) {
 			try {
 				LabeledLink newLink = null;
 				JSONObject type = typesArr.getJSONObject(i);
-				
+
 				String domainValue;
 				// For property semantic types, domain uri goes to "domainValue" and link uri goes to "fullTypeValue".
 				// For class semantic type, class uri goes "fullTypeValue" and "domainValue" is empty.
@@ -150,20 +147,17 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				else
 					domainValue = type.getString("Domain"); //For backward compatibility to older models
 				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
-//				logger.trace("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
-//				logger.trace("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
-				
+
 				// Look if the domain value exists. If it exists, then it is a domain of a data property. If not
 				// then the value in FullType has the the value which indicates if a new class instance is needed
 				// or an existing class instance should be used (this is the case when just the class is chosen as a sem type).
-//				Label domainName = null;
-				
+
 				boolean isClassSemanticType = false;
 				boolean semanticTypeAlreadyExists = false;
 				Node domain = null;
 				String domainUriOrId;
 				Label linkLabel;
-				
+
 				// if domain value is empty, semantic type is a class semantic type
 				if (domainValue.equals("")) {
 					isClassSemanticType = true;
@@ -178,19 +172,15 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 						continue;
 					}
 				}
-				
+
 				if(domainUriOrId.endsWith(" (add)")) {
 					domainUriOrId = domainUriOrId.substring(0, domainUriOrId.length() - 5).trim();
 				}
-				
+
 				domain = alignment.getNodeById(domainUriOrId);
 				logger.info("Got domain for domainUriOrId:" + domainUriOrId + " ::" + domain);
 				if (domain == null) {
 					Label label = ontMgr.getUriLabel(domainUriOrId);
-//					if (label == null) {
-//						logger.error("URI/ID does not exist in the ontology or model: " + domainUriOrId);
-//						continue;
-//					}
 					if (label == null) {
 						if(type.has(ClientJsonKeys.DomainUri.name())) {
 							label = new Label(type.getString(ClientJsonKeys.DomainUri.name()));
@@ -204,13 +194,13 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 							if (label == null) {
 								logger.error("No graph node found for the node: " + domainValue);
 								return new UpdateContainer(new ErrorUpdate("" +
-								"Error occured while setting semantic type!"));
+										"Error occured while setting semantic type!"));
 							}
 						}
 					}
 					domain = alignment.addInternalNode(label);
 				}
-					
+
 				// Check if a semantic type already exists for the column
 				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 				columnNode.setRdfLiteralType(rdfLiteralType);
@@ -223,47 +213,37 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 				}
 
-				if (true) { //type.getBoolean(ClientJsonKeys.isPrimary.name())) {
-					
-					if (isClassSemanticType) {
-						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
-							newLink = oldIncomingLinkToColumnNode;
-							// do nothing;
-						} else if (semanticTypeAlreadyExists) {
-							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-//							alignment.removeNode(oldDomainNode.getId());
-							newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
-						} else {
-							newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
-						}
-					} 
-					// Property semantic type
-					else {
 
-						// When only the link changes between the class node and the internal node (domain)
-						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
-							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
-						}
-						// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed 
-						else if (semanticTypeAlreadyExists) {
-							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-//							alignment.removeNode(oldDomainNode.getId());
-							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
-						} else {
-							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
-						}						
+				if (isClassSemanticType) {
+					if (semanticTypeAlreadyExists && oldDomainNode == domain) {
+						newLink = oldIncomingLinkToColumnNode;
+						// do nothing;
+					} else if (semanticTypeAlreadyExists) {
+						alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+						newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
+					} else {
+						newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
 					}
-				} 
-//				else { // Synonym semantic type
-//					SemanticType synType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
-//					typesList.add(synType);
-//				}
-				
-				// Create the semantic type object
+				}
+				// Property semantic type
+				else {
+
+					// When only the link changes between the class node and the internal node (domain)
+					if (semanticTypeAlreadyExists && oldDomainNode == domain) {
+						alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+						newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
+					}
+					// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed
+					else if (semanticTypeAlreadyExists) {
+						alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+						newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
+					} else {
+						newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
+					}
+				}
+
 				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
-//				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
-				
+
 				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
 				boolean duplicateSemanticType = false;
 				if (userSemanticTypes != null) {
@@ -276,7 +256,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				}
 				if (!duplicateSemanticType)
 					columnNode.assignUserType(newType);
-				
+
 				if(newLink != null) {
 					alignment.changeLinkStatus(newLink.getId(),
 							LinkStatus.ForcedByUser);
@@ -301,7 +281,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				logger.error("JSON Exception occured", e);
 			}
 		}
-		
+
 		UpdateContainer c = new UpdateContainer();
 
 		// Save the old SemanticType object and CRF Model for undo
@@ -317,59 +297,15 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(), newSynonymTypes);
 		}
 
-		// Identify the outliers if the semantic type exists in the crfmodel
-//		List<String> existingLabels = new ArrayList<String>();
-//		crfModelHandler.getLabels(existingLabels);
-//		if (existingLabels.contains(newType.getCrfModelLabelString())) {
-//			identifyOutliers(worksheet, vWorkspace, crfModelHandler, newType);
-//			c.add(new TagsUpdate());
-//		}
-		
-		//new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
-		
 		if ((!this.isExecutedInBatch() && trainAndShowUpdates) ||
 				(this.isExecutedInBatch() && modelingConfiguration.getTrainOnApplyHistory())) {
 			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
-		}  
-		
-		
+		}
+
+
 		c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
-
-//	private void identifyOutliers(Worksheet worksheet,
-//			VWorkspace vWorkspace, CRFModelHandler crfModelHandler, SemanticType type) {
-//		Tag outlierTag = vWorkspace.getWorkspace().getTagsContainer().getTag(TagName.Outlier);
-//		Map<ColumnFeature, Collection<String>> features = new HashMap<ColumnFeature, Collection<String>>();
-//		
-//		// Get the HNodePath
-//		List<HNodePath> allPaths = worksheet.getHeaders().getAllPaths();
-//		for (HNodePath currentPath:allPaths) {
-//			if (currentPath.getLeaf().getId().equals(hNodeId)) {
-////				List<String> columnNamesList = new ArrayList<String>();
-////				columnNamesList.add(currentPath.getLeaf().getColumnName());
-////				features.put(ColumnFeature.ColumnHeaderName, columnNamesList);
-//				String typeString = newType.isClass() ? newType.getType().getUri() : newType.getDomain().getUri() + "|" + newType.getType().getUri();
-//				SemanticTypeUtil.identifyOutliers(worksheet, typeString, currentPath, outlierTag, features, crfModelHandler);
-//				break;
-//			}
-//		}
-//		
-//	}
-
-//	private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
-//		String columnName = hNode.getColumnName();
-//		return alignment.getColumnNodeByHNodeId(hNodeId);
-//		
-//		if (columnNode == null) {
-//			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
-//		} else {
-//			// Remove old column node if it exists
-//			alignment.removeNode(columnNode.getId());
-//			columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType);
-//		}
-//		return columnNode;
-//	}
 
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
@@ -386,11 +322,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		AlignmentManager.Instance().addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
-		
-//		logger.trace("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-//		GraphUtil.printGraph(oldAlignment.getGraph());
-//		GraphUtil.printGraph(oldAlignment.getSteinerTree());
-		
+
 		// Get the alignment update if any
 		try {
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -400,6 +332,23 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					"Error occured while unsetting the semantic type!"));
 		}
 		return c;
+	}
+
+	public void updateField(SetSemanticTypeCommand command) {
+		this.typesArr = new JSONArray(command.typesArr.toString());
+		this.trainAndShowUpdates = command.trainAndShowUpdates;
+		this.rdfLiteralType = command.rdfLiteralType;
+
+	}
+
+	@Override
+	public Set<String> getInputColumns() {
+		return new HashSet<>(Arrays.asList(hNodeId));
+	}
+
+	@Override
+	public Set<String> getOutputColumns() {
+		return new HashSet<>(Arrays.asList(hNodeId));
 	}
 
 }

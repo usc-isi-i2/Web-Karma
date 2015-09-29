@@ -742,9 +742,6 @@ function processHistoryCommand(command) {
 	if (command.description.length > 0) {
 		title = title + ": " + command.description;
 	}
-	if (command['historyType'] == "optimized") {
-		title += " (optimized)"
-	}
 
 	var historyLabelDiv = $("<div>").addClass("checkbox")
 		.append($("<label />")
@@ -758,7 +755,7 @@ function processHistoryCommand(command) {
 	
 	var commandDiv = $("<li>").addClass("CommandDiv").addClass(command.commandType).attr("id", command.commandId)
 								.append(historyLabelDiv).addClass("undo-state");
-	if (command.historyType == "undo" || command.historyType == "optimized") {
+	if (command.historyType == "undo" || command.historyType == "lastRun") {
 		commandDiv.addClass("lastRun");
 	}
 	if (command.historyType == "redo") {
@@ -771,7 +768,7 @@ function processHistoryCommand(command) {
 				classes: 'ui-tooltip-light ui-tooltip-shadow'
 			}
 		});
-	} else if ((command.historyType == "undo" || command.historyType == "optimized") && command.commandType != "notUndoable") {
+	} else if (command.historyType == "undo" && command.commandType != "notUndoable") {
 		commandDiv.append($("<div>").addClass("iconDiv").bind('click', clickUndoButton));
 		$("div.iconDiv", commandDiv).append($("<img>").attr("src", "images/edit_undo.png")).qtip({
 			content: {

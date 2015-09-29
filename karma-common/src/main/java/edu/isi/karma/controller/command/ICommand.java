@@ -68,7 +68,7 @@ public interface ICommand extends IEntity
 	String getModel();
 	
 	enum HistoryType {
-		undo, redo, normal, optimized
+		undo, redo, normal, lastRun
 	}
 
 	enum JsonKeys {

@@ -10,9 +10,9 @@ import org.json.JSONObject;
  */
 public class RedoCommandObject {
     private ICommand command;
-    private Pair<ICommand,JSONArray> consolidatedCommand;
+    private Pair<ICommand,Object> consolidatedCommand;
 
-    RedoCommandObject(ICommand command, Pair<ICommand,JSONArray> consolidatedCommand) {
+    RedoCommandObject(ICommand command, Pair<ICommand,Object> consolidatedCommand) {
         this.command = command;
         this.consolidatedCommand = consolidatedCommand;
     }
@@ -21,7 +21,7 @@ public class RedoCommandObject {
         return command;
     }
 
-    public Pair<ICommand,JSONArray> getConsolidatedCommand() {
+    public Pair<ICommand,Object> getConsolidatedCommand() {
         return consolidatedCommand;
     }
 }

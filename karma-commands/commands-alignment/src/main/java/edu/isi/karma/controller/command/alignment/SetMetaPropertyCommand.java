@@ -21,7 +21,10 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONException;
@@ -122,10 +125,6 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		inputColumns.clear();
-		outputColumns.clear();
-		inputColumns.add(hNodeId);
-		outputColumns.add(hNodeId);
 		logCommand(logger, workspace);
 		try {
 			HNode hn = workspace.getFactory().getHNode(hNodeId);
@@ -396,33 +395,14 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		return args;
 	}
 	
-	// private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
-	// String columnName = hNode.getColumnName();
-	// ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-	//
-	// if (columnNode == null) {
-	// columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType,
-	// null);
-	// } else {
-	// // Remove old column node if it exists
-	// alignment.removeNode(columnNode.getId());
-	// columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType,
-	// null);
-	// }
-	// return columnNode;
-	// }
-	
-//	@Override
-//	public Set<String> getInputColumns() {
-//		Set<String> t = new HashSet<String>();
-//		t.add(hNodeId);
-//		return t;
-//	}
-//	
-//	@Override
-//	public Set<String> getOutputColumns() {
-//		Set<String> t = new HashSet<String>();
-//		return t;
-//	}
+	@Override
+	public Set<String> getInputColumns() {
+		return new HashSet<>(Arrays.asList(hNodeId));
+	}
+
+	@Override
+	public Set<String> getOutputColumns() {
+		return new HashSet<>(Arrays.asList(hNodeId));
+	}
 
 }

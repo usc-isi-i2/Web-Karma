@@ -133,7 +133,7 @@ public class CommandHistory {
 	public UpdateContainer doCommand(Command command, Workspace workspace, boolean saveToHistory)
 			throws CommandException {
 		UpdateContainer effects = new UpdateContainer();
-		Pair<ICommand, JSONArray> consolidatedCommand = null;
+		Pair<ICommand, Object> consolidatedCommand = null;
 		String consolidatorName = null;
 		String worksheetId = worksheetCommandHistory.getWorksheetId(command);
 		List<ICommand> potentialConsolidateCommands = worksheetCommandHistory.getCommandsFromWorksheetIdAndCommandTag(worksheetId, command.getTagFromPriority());
@@ -149,9 +149,13 @@ public class CommandHistory {
 			if (consolidatorName.equals("PyTransformConsolidator")) {
 				effects.append(consolidatedCommand.getLeft().doIt(workspace));
 			}
-			if (consolidatorName.equals("SemanticTypesConsolidator")) {
+			if (consolidatorName.equals("UnassignSemanticTypesConsolidator")) {
 				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(consolidatedCommand.getLeft()));
 				effects.append(command.doIt(workspace));
+			}
+			if (consolidatorName.equals("SemanticTypesConsolidator")) {
+				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
+				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
 			}
 		}
 		else {
@@ -377,7 +381,7 @@ public class CommandHistory {
 		UpdateContainer container = new UpdateContainer();
 		if (lastCommand == null) {
 			worksheetCommandHistory.setLastRedoCommandObject(currentCommand);
-			Pair<ICommand, JSONArray> pair = currentCommand.getConsolidatedCommand();
+			Pair<ICommand, Object> pair = currentCommand.getConsolidatedCommand();
 			if (pair == null) {
 				container.append(currentCommand.getCommand().undoIt(workspace));
 				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(currentCommand.getCommand()));
@@ -386,7 +390,7 @@ public class CommandHistory {
 					pair.getLeft().setInputParameterJson(pair.getRight().toString());
 					try {
 						Method method = pair.getLeft().getClass().getMethod("setTransformationCode", String.class);
-						method.invoke(pair.getLeft(), HistoryJsonUtil.getStringValue("transformationCode", pair.getRight()));
+						method.invoke(pair.getLeft(), HistoryJsonUtil.getStringValue("transformationCode", (JSONArray)pair.getRight()));
 						container.append(pair.getLeft().doIt(workspace));
 					} catch (Exception e) {
 						logger.warn("Method invocation failure", e);
@@ -412,7 +416,6 @@ public class CommandHistory {
 			Iterator<ICommand> histIt = worksheetCommandHistory.getCommandsFromWorksheetId(worksheetId).iterator();
 			RedoCommandObject currentCommand = worksheetCommandHistory.getCurrentRedoCommandObject(worksheetId);
 			RedoCommandObject redoCommandObject = worksheetCommandHistory.getLastRedoCommandObject(worksheetId);
-			boolean found = false;
 			while (histIt.hasNext()) {
 				ICommand command = histIt.next();
 				if (isFirst) {
@@ -421,24 +424,22 @@ public class CommandHistory {
 				else {
 					pw.println(prefix + ",");
 				}
-				if (currentCommand != null && command == currentCommand.getCommand()) {
+				if (currentCommand != null && command == currentCommand.getCommand() && command.getCommandName().equals("ExportOrDeleteHistoryCommand")) {
 					command.generateJson(prefix, pw, vWorkspace,
 							Command.HistoryType.undo);
-					found = true;
+				}
+				else if (currentCommand != null && command == currentCommand.getCommand()) {
+					command.generateJson(prefix, pw, vWorkspace,
+							Command.HistoryType.lastRun);
+				}
+				else if (currentCommand != null && currentCommand.getConsolidatedCommand() != null && currentCommand.getConsolidatedCommand().getKey() == command) {
+					command.generateJson(prefix, pw, vWorkspace,
+							Command.HistoryType.lastRun);
 				}
 				else {
 					command.generateJson(prefix, pw, vWorkspace,
 							Command.HistoryType.normal);
 				}
-			}
-			if (!found && currentCommand != null && redoCommandObject == null) {
-				if (isFirst) {
-					isFirst = false;
-				}
-				else {
-					pw.println(prefix + ",");
-				}
-				currentCommand.getCommand().generateJson(prefix, pw, vWorkspace, Command.HistoryType.optimized);
 			}
 			if (redoCommandObject != null) {
 				if (isFirst) {

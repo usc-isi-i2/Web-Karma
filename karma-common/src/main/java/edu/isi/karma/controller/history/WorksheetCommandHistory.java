@@ -66,6 +66,22 @@ public class WorksheetCommandHistory {
         }
     }
 
+    public void replaceCommandFromHistory(ICommand oldCommand, ICommand newCommand) {
+        String worksheetId = getWorksheetId(oldCommand);
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
+        if (commandTagListMap != null) {
+            for (Map.Entry<ICommand.CommandTag, List<ICommand>> entry : commandTagListMap.commandTagListHashMap.entrySet()) {
+                int index = entry.getValue().indexOf(oldCommand);
+                if (index != -1) {
+                    entry.getValue().set(index, newCommand);
+                }
+            }
+        }
+    }
+
     public void insertCommandToHistory(ICommand command) {
         String worksheetId = getWorksheetId(command);
         if (worksheetId == null) {
@@ -95,7 +111,7 @@ public class WorksheetCommandHistory {
         }
     }
 
-    public void setCurrentCommand(ICommand command, Pair<ICommand,JSONArray> consolidatedCommand) {
+    public void setCurrentCommand(ICommand command, Pair<ICommand,Object> consolidatedCommand) {
         String worksheetId = getWorksheetId(command);
         if (worksheetId == null) {
             worksheetId = IMPORT_COMMANDS;
