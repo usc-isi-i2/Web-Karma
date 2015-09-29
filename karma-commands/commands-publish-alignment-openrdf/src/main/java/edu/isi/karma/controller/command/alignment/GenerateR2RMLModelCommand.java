@@ -118,7 +118,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.notInHistory;
 	}
 
 
