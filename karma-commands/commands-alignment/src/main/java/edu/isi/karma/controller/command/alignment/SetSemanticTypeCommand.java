@@ -45,12 +45,11 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
@@ -142,74 +141,57 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				LabeledLink newLink = null;
 				JSONObject type = typesArr.getJSONObject(i);
 				
-				String domainValue;
-				// For property semantic types, domain uri goes to "domainValue" and link uri goes to "fullTypeValue".
-				// For class semantic type, class uri goes "fullTypeValue" and "domainValue" is empty.
+				String sourceId = "";
 				if(type.has(ClientJsonKeys.DomainId.name()))
-					domainValue = type.getString(ClientJsonKeys.DomainId.name());
-				else
-					domainValue = type.getString("Domain"); //For backward compatibility to older models
-				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
-//				logger.trace("FULL TYPE:" + type.getString(ClientJsonKeys.FullType.name()));
-//				logger.trace("Domain: " + type.getString(ClientJsonKeys.Domain.name()));
+					sourceId = type.getString(ClientJsonKeys.DomainId.name());
 				
-				// Look if the domain value exists. If it exists, then it is a domain of a data property. If not
-				// then the value in FullType has the the value which indicates if a new class instance is needed
-				// or an existing class instance should be used (this is the case when just the class is chosen as a sem type).
-//				Label domainName = null;
+				String edgeUri = "";
+				if(type.has(ClientJsonKeys.FullType.name()))
+					edgeUri = type.getString(ClientJsonKeys.FullType.name());
 				
-				boolean isClassSemanticType = false;
-				boolean semanticTypeAlreadyExists = false;
-				Node domain = null;
-				String domainUriOrId;
-				Label linkLabel;
-				
-				// if domain value is empty, semantic type is a class semantic type
-				if (domainValue.equals("")) {
-					isClassSemanticType = true;
-					domainUriOrId = fullTypeValue;
-					linkLabel = ClassInstanceLink.getFixedLabel();
-				} else {
-					isClassSemanticType = false;
-					domainUriOrId = domainValue;
-					linkLabel = ontMgr.getUriLabel(fullTypeValue);
-					if (linkLabel == null) {
-						logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
-						continue;
-					}
+				if (sourceId.trim().isEmpty()) {
+					logger.error("domain id is emty");
+					return new UpdateContainer(new ErrorUpdate("" +
+							"Error occured while setting semantic type!"));
+				}
+
+				if (edgeUri.trim().isEmpty()) {
+					logger.error("fulltype is emty");
+					return new UpdateContainer(new ErrorUpdate("" +
+							"Error occured while setting semantic type!"));
 				}
 				
-				if(domainUriOrId.endsWith(" (add)"))
-					domainUriOrId = domainUriOrId.substring(0, domainUriOrId.length()-5).trim();
-				
-				domain = alignment.getNodeById(domainUriOrId);
-				logger.info("Got domain for domainUriOrId:" + domainUriOrId + " ::" + domain);
-				if (domain == null) {
-					Label label = ontMgr.getUriLabel(domainUriOrId);
-//					if (label == null) {
-//						logger.error("URI/ID does not exist in the ontology or model: " + domainUriOrId);
-//						continue;
-//					}
-					if (label == null) {
-						if(type.has(ClientJsonKeys.DomainUri.name())) {
-							label = new Label(type.getString(ClientJsonKeys.DomainUri.name()));
-						} else {
-							//This part of the code is for backward compatibility. Newer models should have domainUri
-							int len = domainValue.length();
-							if ((len > 1) && Character.isDigit(domainValue.charAt(len-1))) {
-								String newDomainValue = domainValue.substring(0, len-1);
-								label = ontMgr.getUriLabel(newDomainValue);
-							}
-							if (label == null) {
-								logger.error("No graph node found for the node: " + domainValue);
-								return new UpdateContainer(new ErrorUpdate("" +
-								"Error occured while setting semantic type!"));
-							}
-						}
-					}
-					domain = alignment.addInternalNode(label);
+				Label linkLabel = ontMgr.getUriLabel(edgeUri);
+				if (linkLabel == null) {
+					logger.error("link label cannot be found in the ontology.");
+					return new UpdateContainer(new ErrorUpdate("" +
+							"Error occured while setting semantic type!"));					
 				}
+
+				Node source = alignment.getNodeById(sourceId);
+				if (source == null) {
 					
+					String sourceUri = "";
+					if(type.has(ClientJsonKeys.DomainUri.name())) 
+						sourceUri = type.getString(ClientJsonKeys.DomainUri.name());
+						
+					if (sourceUri.trim().isEmpty()) {
+						logger.error("source uri is emty");
+						return new UpdateContainer(new ErrorUpdate("" +
+								"Error occured while setting semantic type!"));
+					}
+
+					Label edgelabel = ontMgr.getUriLabel(sourceUri);
+					source = new InternalNode(sourceId, edgelabel);
+					source = alignment.addInternalNode((InternalNode)source);
+					if (source == null) {
+						logger.error("could not add the source " + sourceId + " to the graph.");
+						return new UpdateContainer(new ErrorUpdate("" +
+								"Error occured while setting semantic type!"));						
+					}
+				}
+				
+				boolean semanticTypeAlreadyExists = false;
 				// Check if a semantic type already exists for the column
 				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 				columnNode.setRdfLiteralType(rdfLiteralType);
@@ -222,46 +204,130 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 					oldDomainNode = oldIncomingLinkToColumnNode.getSource();
 				}
 
-				if (true) { //type.getBoolean(ClientJsonKeys.isPrimary.name())) {
-					
-					if (isClassSemanticType) {
-						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
-							newLink = oldIncomingLinkToColumnNode;
-							// do nothing;
-						} else if (semanticTypeAlreadyExists) {
-							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-//							alignment.removeNode(oldDomainNode.getId());
-							newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
-						} else {
-							newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
-						}
-					} 
-					// Property semantic type
-					else {
+				// When only the link changes between the class node and the internal node (domain)
+				if (semanticTypeAlreadyExists && oldDomainNode == source) {
+					alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+					newLink = alignment.addDataPropertyLink(source, columnNode, linkLabel);
+				}
+				// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed 
+				else if (semanticTypeAlreadyExists) {
+					alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+					if (alignment.isNodeIsolatedInTree(oldDomainNode.getId()))
+						alignment.removeNode(oldDomainNode.getId());
+					newLink = alignment.addDataPropertyLink(source, columnNode, linkLabel);
+				} else {
+					newLink = alignment.addDataPropertyLink(source, columnNode, linkLabel);
+				}		
+				
+				newType = new SemanticType(hNodeId, linkLabel, source.getLabel(), SemanticType.Origin.User, 1.0);
 
-						// When only the link changes between the class node and the internal node (domain)
-						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
-							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
-						}
-						// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed 
-						else if (semanticTypeAlreadyExists) {
-							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-//							alignment.removeNode(oldDomainNode.getId());
-							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
-						} else {
-							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
-						}						
-					}
-				} 
+//				String domainValue;
+//				if(type.has(ClientJsonKeys.DomainId.name()))
+//					domainValue = type.getString(ClientJsonKeys.DomainId.name());
+//				else
+//					domainValue = type.getString("Domain"); //For backward compatibility to older models
+//				String fullTypeValue = type.getString(ClientJsonKeys.FullType.name());
+//
+//				boolean isClassSemanticType = false;
+//				boolean semanticTypeAlreadyExists = false;
+//				Node domain = null;
+//				String domainUriOrId;
+//				Label linkLabel;
+//				
+//				// if domain value is empty, semantic type is a class semantic type
+//				if (domainValue.equals("")) {
+//					isClassSemanticType = true;
+//					domainUriOrId = fullTypeValue;
+//					linkLabel = ClassInstanceLink.getFixedLabel();
+//				} else {
+//					isClassSemanticType = false;
+//					domainUriOrId = domainValue;
+//					linkLabel = ontMgr.getUriLabel(fullTypeValue);
+//					if (linkLabel == null) {
+//						logger.error("URI/ID does not exist in the ontology or model: " + fullTypeValue);
+//						continue;
+//					}
+//				}
+//				
+//				if(domainUriOrId.endsWith(" (add)"))
+//					domainUriOrId = domainUriOrId.substring(0, domainUriOrId.length()-5).trim();
+//				
+//				domain = alignment.getNodeById(domainUriOrId);
+//				logger.info("Got domain for domainUriOrId:" + domainUriOrId + " ::" + domain);
+//				if (domain == null) {
+//					Label label = ontMgr.getUriLabel(domainUriOrId);
+//					if (label == null) {
+//						if(type.has(ClientJsonKeys.DomainUri.name())) {
+//							label = new Label(type.getString(ClientJsonKeys.DomainUri.name()));
+//						} else {
+//							//This part of the code is for backward compatibility. Newer models should have domainUri
+//							int len = domainValue.length();
+//							if ((len > 1) && Character.isDigit(domainValue.charAt(len-1))) {
+//								String newDomainValue = domainValue.substring(0, len-1);
+//								label = ontMgr.getUriLabel(newDomainValue);
+//							}
+//							if (label == null) {
+//								logger.error("No graph node found for the node: " + domainValue);
+//								return new UpdateContainer(new ErrorUpdate("" +
+//								"Error occured while setting semantic type!"));
+//							}
+//						}
+//					}
+//					domain = alignment.addInternalNode(label);
+//				}
+//					
+//				// Check if a semantic type already exists for the column
+//				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+//				columnNode.setRdfLiteralType(rdfLiteralType);
+//				List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinksInGraph(columnNode.getId());
+//				LabeledLink oldIncomingLinkToColumnNode = null;
+//				Node oldDomainNode = null;
+//				if (columnNodeIncomingLinks != null && !columnNodeIncomingLinks.isEmpty()) { // SemanticType already assigned
+//					semanticTypeAlreadyExists = true;
+//					oldIncomingLinkToColumnNode = columnNodeIncomingLinks.get(0);
+//					oldDomainNode = oldIncomingLinkToColumnNode.getSource();
+//				}
+//
+//				if (true) { //type.getBoolean(ClientJsonKeys.isPrimary.name())) {
+//					
+//					if (isClassSemanticType) {
+//						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
+//							newLink = oldIncomingLinkToColumnNode;
+//							// do nothing;
+//						} else if (semanticTypeAlreadyExists) {
+//							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+////							alignment.removeNode(oldDomainNode.getId());
+//							newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
+//						} else {
+//							newLink = alignment.addClassInstanceLink(domain, columnNode, LinkKeyInfo.None);
+//						}
+//					} 
+//					// Property semantic type
+//					else {
+//
+//						// When only the link changes between the class node and the internal node (domain)
+//						if (semanticTypeAlreadyExists && oldDomainNode == domain) {
+//							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+//							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
+//						}
+//						// When there was an existing semantic type and the new domain is a new node in the graph and semantic type already existed 
+//						else if (semanticTypeAlreadyExists) {
+//							alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+////							alignment.removeNode(oldDomainNode.getId());
+//							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
+//						} else {
+//							newLink = alignment.addDataPropertyLink(domain, columnNode, linkLabel);
+//						}						
+//					}
+//				} 
 //				else { // Synonym semantic type
 //					SemanticType synType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
 //					typesList.add(synType);
 //				}
-				
-				// Create the semantic type object
-				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
-//				newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
+//				
+//				// Create the semantic type object
+//				newType = new SemanticType(hNodeId, linkLabel, domain.getLabel(), SemanticType.Origin.User, 1.0);
+////			newType = new SemanticType(hNodeId, classNode.getLabel(), null, SemanticType.Origin.User, 1.0,isPartOfKey);
 				
 				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
 				boolean duplicateSemanticType = false;

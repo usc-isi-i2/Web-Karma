@@ -230,6 +230,23 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
+	public InternalNode addInternalNode(InternalNode node) {
+		
+		Node n = this.getNodeById(node.getId());
+		if (n == null) {
+			if (this.graphBuilder.addNodeAndUpdate(node)) {
+				this.nodeIdFactory.addNodeId(node.getId(), node.getUri());
+				return node;
+			} else {
+				logger.error("error in adding the internal node " + node.getId() + " to the graph");
+				return null;
+			}
+		}
+		if (n instanceof InternalNode)
+			return (InternalNode)n;
+		return null;
+	}
+	
 	public InternalNode addInternalNode(Label label) {
 		
 		String id = nodeIdFactory.getNodeId(label.getUri());
@@ -238,45 +255,52 @@ public class Alignment implements OntologyUpdateListener {
 		return null;	
 	}
 	
-	public InternalNode addForcedInternalNode(Label label) {
-		
-		final Set<String> steinerTreeNodeIds = new HashSet<String>();
-
-		for (Node node: this.getSteinerTree().vertexSet()) {
-			if (node.getType() == NodeType.InternalNode) {
-				steinerTreeNodeIds.add(node.getId());
-			}
-		}
-		
-		String nodeUri = label.getUri();
-		int graphLastIndex = this.getLastIndexOfNodeUri(nodeUri);
-		String nodeId;
-		// If the node exists in graph but not in tree then use the graph node id
-		boolean alreadyInGraph = false;
-		if (graphLastIndex != -1) {
-			int i = 1;
-			for (; i <= graphLastIndex && steinerTreeNodeIds.contains(nodeUri + i); i++) ;
-			if (i <= graphLastIndex) {
-				alreadyInGraph = true;
-				nodeId = nodeUri + i;
-				Node node = this.getNodeById(nodeId);
-				node.setForced(true);
-				this.graphBuilder.getForcedNodes().add(node);
-				return (InternalNode)node;
-			}
-		} 
-		
-		if (!alreadyInGraph) {
-			nodeId = nodeIdFactory.getNodeId(label.getUri());;
-			InternalNode node = new InternalNode(nodeId, label);
-			node.setForced(true);
-			if (this.graphBuilder.addNodeAndUpdate(node)) 
-				return node;
-		}
-		
-		
-		return null;
+	public void addToForcedNodes(Node node) {
+		node.setForced(true);
+		this.graphBuilder.getForcedNodes().add(node);
 	}
+	
+//	public InternalNode addForcedInternalNode(Label label) {
+//		
+//		final Set<String> steinerTreeNodeIds = new HashSet<String>();
+//
+//		for (Node node: this.getSteinerTree().vertexSet()) {
+//			if (node.getType() == NodeType.InternalNode) {
+//				steinerTreeNodeIds.add(node.getId());
+//			}
+//		}
+//		
+//		String nodeUri = label.getUri();
+//		int graphLastIndex = this.getLastIndexOfNodeUri(nodeUri);
+//		String nodeId;
+//		// If the node exists in graph but not in tree then use the graph node id
+//		boolean alreadyInGraph = false;
+//		if (graphLastIndex != -1) {
+//			int i = 1;
+//			for (; i <= graphLastIndex && steinerTreeNodeIds.contains(nodeUri + i); i++) ;
+//			nodeId = nodeUri + i;
+//
+//			if (i <= graphLastIndex) {
+//				alreadyInGraph = true;
+//				nodeId = nodeUri + i;
+//				Node node = this.getNodeById(nodeId);
+//				node.setForced(true);
+//				this.graphBuilder.getForcedNodes().add(node);
+//				return (InternalNode)node;
+//			}
+//		} 
+//		
+//		if (!alreadyInGraph) {
+//			nodeId = nodeIdFactory.getNodeId(label.getUri());;
+//			InternalNode node = new InternalNode(nodeId, label);
+//			node.setForced(true);
+//			if (this.graphBuilder.addNodeAndUpdate(node)) 
+//				return node;
+//		}
+//		
+//		
+//		return null;
+//	}
 	
 	public LiteralNode addLiteralNode(String value, String type, boolean isUri) {
 		
@@ -304,7 +328,7 @@ public class Alignment implements OntologyUpdateListener {
 	public void deleteForcedInternalNode(String nodeId) {
 		Node node = getNodeById(nodeId);
 		if(node != null) {
-			this.removeNodeOnlyFromTree(nodeId);
+			this.removeNode(nodeId);
 //			if (this.graphBuilder.removeNode(node))
 //				this.steinerTree.removeVertex(node);
 		}
@@ -414,46 +438,28 @@ public class Alignment implements OntologyUpdateListener {
 		} else
 			this.graphBuilder.changeLinkStatus(link, newStatus);
 	}
-	
-//	/**
-//	 * This method removes a node from the graph and also all the links and the nodes that 
-//	 * are added to the graph by adding the specified node.
-//	 * This method is useful when the user changes the semantic type assigned to a column.
-//	 * The GUI needs to call the method by sending a Column Node  
-//	 * @param nodeId
-//	 */
+
+//	// deletes the node directly from the graph (it also deleted all its incoming and outgoing links)
 //	public boolean removeNode(String nodeId) {
-//
+//		
 //		Node node = this.getNodeById(nodeId);
-//		if (node == null) {
-//			logger.debug("Cannot find the node " + nodeId + " in the graph.");
-//			return false;
+//		if (node != null) {
+//			if (this.graphBuilder.removeNode(node)) {
+//				this.steinerTree.removeVertex(node);
+//				return true;
+//			}
 //		}
-//			
-//		this.graphBuilder.removeNode(node);
-//
+//		logger.debug("Cannot find the link " + nodeId + " in the graph.");
 //		return false;
 //	}
-
+	
+	// only deletes the node from the model, not the alignment graph
 	public boolean removeNode(String nodeId) {
 		
 		Node node = this.getNodeById(nodeId);
 		if (node != null) {
-			if (this.graphBuilder.removeNode(node)) {
-				this.steinerTree.removeVertex(node);
-				return true;
-			}
-		}
-		logger.debug("Cannot find the link " + nodeId + " in the graph.");
-		return false;
-	}
-	
-	public boolean removeNodeOnlyFromTree(String nodeId) {
-		
-		Node node = this.getNodeById(nodeId);
-		if (node != null) {
-			this.graphBuilder.getForcedNodes().remove(node);
 			node.setForced(false);
+			this.graphBuilder.getForcedNodes().remove(node);
 			if (this.steinerTree != null && this.steinerTree.containsVertex(node)) {
 				Set<LabeledLink> links = this.steinerTree.edgesOf(node);
 				if (links != null) {

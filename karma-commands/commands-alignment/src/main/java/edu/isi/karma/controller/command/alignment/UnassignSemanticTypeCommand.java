@@ -128,7 +128,7 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 			if (domain != null) {
 				String domainId = domain.getId();
 				if (alignment.isNodeIsolatedInTree(domainId))
-					alignment.removeNodeOnlyFromTree(domainId);
+					alignment.removeNode(domainId);
 			}
 			// Remove the column node
 //			alignment.removeNode(columnNode.getId());

@@ -2444,7 +2444,7 @@ var AddNodeDialog = (function() {
 				var result = [];
 				$.each(classes, function(index, clazz) {
 					if (clazz.id) {
-						if (!clazz.id.match(/ \(add\)$/))
+						if (!clazz.label.match(/ \(add\)$/))
 							return;
 					}
 					result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
@@ -2480,7 +2480,7 @@ var AddNodeDialog = (function() {
 			}
 			newInfo.push(getParamObject("label", label, "other"));
 			newInfo.push(getParamObject("uri", selectedClass.uri, "other"));
-
+			newInfo.push(getParamObject("id", selectedClass.id, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(worksheetId);
 
