@@ -424,11 +424,7 @@ public class CommandHistory {
 				else {
 					pw.println(prefix + ",");
 				}
-				if (currentCommand != null && command == currentCommand.getCommand() && command.getCommandName().equals("ExportOrDeleteHistoryCommand")) {
-					command.generateJson(prefix, pw, vWorkspace,
-							Command.HistoryType.undo);
-				}
-				else if (currentCommand != null && command == currentCommand.getCommand()) {
+				if (currentCommand != null && command == currentCommand.getCommand()) {
 					command.generateJson(prefix, pw, vWorkspace,
 							Command.HistoryType.lastRun);
 				}
