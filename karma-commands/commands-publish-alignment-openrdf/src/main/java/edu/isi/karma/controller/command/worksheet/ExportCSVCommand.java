@@ -207,7 +207,7 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
 		
 				alignment, worksheet.getSemanticTypes(), "s", graphUri, 
-				false, errorReport);
+				false);
 		}
 		catch (KarmaException e)
 		{

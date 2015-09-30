@@ -68,18 +68,18 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 	
 	@Override
 	public void saveAlignment(Alignment alignment) throws Exception {
-		saveAlignment(alignment, null, null);
+		saveAlignment(alignment, null, null, false);
 	}
 	
 	public void saveAlignment(Alignment alignment, JSONArray history)  throws Exception {
-		saveAlignment(alignment, history, null);
+		saveAlignment(alignment, history, null, false);
 	}
 	
 	public void saveAlignment(Alignment alignment, String modelFilename)  throws Exception {
-		saveAlignment(alignment, null, modelFilename);
+		saveAlignment(alignment, null, modelFilename, false);
 	}
 	
-	public void saveAlignment(Alignment alignment, JSONArray history, String modelFilename) throws Exception {
+	public void saveAlignment(Alignment alignment, JSONArray history, String modelFilename, boolean onlyHistory) throws Exception {
 		long start = System.currentTimeMillis();
 		
 		String workspaceId = AlignmentManager.Instance().getWorkspaceId(alignment);
@@ -95,10 +95,9 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		logger.info("Time to get alignment info for saving: " + (end1-start) + "msec");
 		
 		// Generate the KR2RML data structures for the RDF generation
-		final ErrorReport errorReport = new ErrorReport();
 		if (worksheet != null)
 			alignmentMappingGenerator = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
-					worksheet.getSemanticTypes(), prefix, namespace, false, history, errorReport);
+					worksheet.getSemanticTypes(), prefix, namespace, false, history, onlyHistory);
 		
 		long end2 = System.currentTimeMillis();
 		logger.info("Time to generate mappings:" + (end2-end1) + "msec");

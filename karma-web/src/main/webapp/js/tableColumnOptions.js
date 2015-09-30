@@ -838,6 +838,7 @@ var PyTransformDialog = (function() {
 		var dialog = $("#pyTransformDialog");
 		var worksheetId, columnId, columnName;
 		var editor;
+		var cacheIndex, initPyCode;
 
 		function init() {
 			editor = ace.edit("transformCodeEditor");
@@ -854,12 +855,13 @@ var PyTransformDialog = (function() {
 			dialog.on('show.bs.modal', function(e) {
 				hideError();
 				var hNode = $("td#" + columnId);
-
+				
 				if (hNode.data("pythonTransformation"))
-					editor.getSession().setValue(hNode.data("pythonTransformation"));
+					initPyCode = hNode.data("pythonTransformation"); 
 				else
-					editor.getSession().setValue("return getValue(\"" + columnName + "\")");
+					initPyCode = "return getValue(\"" + columnName + "\")";
 
+				editor.getSession().setValue(initPyCode);
 				$("#pythonTransformEditColumnName").html(columnName);
 				$("#pythonTransformNewColumnName").val("");
 				// $("#pythonTransformNewColumnName").attr('disabled','disabled');
@@ -867,6 +869,8 @@ var PyTransformDialog = (function() {
 				$("#btnError", dialog).button('disable');
 				$("input").removeAttr('disabled');
 				$("#pythonPreviewResultsTable").hide();
+				
+				cacheIndex = -1;
 			});
 
 			// Initialize handler for Save button
@@ -874,6 +878,32 @@ var PyTransformDialog = (function() {
 			$('#btnSave', dialog).on('click', function(e) {
 				e.preventDefault();
 				saveDialog(e);
+			});
+			
+			$('#btnNextCache', dialog).on('click', function(e) {
+				e.preventDefault();
+				if(cacheIndex != -1) {
+					cacheIndex -=1;
+					if (cacheIndex < 0)  {
+						cacheIndex = -1;
+						editor.getSession().setValue(initPyCode);
+					} else {
+						pyCode = PyTransformCache.getInstance().get(cacheIndex);
+						editor.getSession().setValue(pyCode);
+					}
+				} else {
+					editor.getSession().setValue(initPyCode);
+				}
+			});
+			
+			$('#btnPrevCache', dialog).on('click', function(e) {
+				e.preventDefault();
+				cacheIndex += 1;
+				maxVal = PyTransformCache.getInstance().length() - 1;
+				if(cacheIndex > maxVal) cacheIndex = maxVal;
+				pyCode = PyTransformCache.getInstance().get(cacheIndex);
+				if(pyCode)
+					editor.getSession().setValue(pyCode);
 			});
 
 			$('#btnErrors', dialog).on('click', function(event) {
@@ -1040,6 +1070,8 @@ var PyTransformDialog = (function() {
 			// useExistingColumnName, "useExistingColumnName"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
+			PyTransformCache.getInstance().add(editor.getValue());
+			
 			showLoading(worksheetId)
 			sendRequest(info, worksheetId);
 		}
@@ -2011,3 +2043,55 @@ function MergeValues(worksheetId, columnId) {
 
 	sendRequest(info, worksheetId);
 }
+
+
+var PyTransformCache = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var values;
+		var max_size;
+		
+		function init() {
+			values = [];
+			max_size = 10;
+		}
+		
+		function add(value) {
+			values.unshift(value);
+			if(values.length > max_size) {
+				values.pop();
+			}
+		}
+		
+		function length() {
+			return values.length;
+		} 
+		
+		function get(index) {
+			if(index < 0) return values[0];
+			if(index > values.length-1) return values[length-1];
+			return values[index];
+		}
+		
+		return { //Return back the public methods
+			init: init,
+			add: add,
+			length: length,
+			get: get
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+	
+	return {
+		getInstance: getInstance
+	};
+
+})();

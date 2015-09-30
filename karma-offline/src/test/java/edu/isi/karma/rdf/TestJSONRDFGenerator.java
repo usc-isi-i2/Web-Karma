@@ -66,7 +66,7 @@ public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 		rdfGen.generateRDF(request);
 		String rdf = sw.toString();
 		assertNotEquals(rdf.length(), 0);
-		String[] lines = rdf.split(System.getProperty("line.separator"));
+		String[] lines = rdf.split("(\r\n|\n)");
 		assertEquals(expectedNumberOfLines, lines.length);
 	}
 

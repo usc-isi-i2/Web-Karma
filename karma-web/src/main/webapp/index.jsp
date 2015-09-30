@@ -211,17 +211,9 @@ and related projects, please see: http://www.isi.edu/integration
 		      </div> <!--  end of navbar -->
 
 		      <div class="row">
-			      <div id="commHistoryAndWorkspace">
-			      	<div class="col-sm-2">
-			      		
-				      	<div class="ui-corner-top" id="commandHistory">
-				      		<div id="titleCommand" class="ui-corner-top"><span>Command History</span></div>
-				      	</div>
-			      	</div>
-			      	<div class="col-sm-10">
-			      		<div id="tablesWorkspace"></div>
-			      	 </div>
-			      </div>
+		      	<div class="col-sm-12">
+			      	<div id="tablesWorkspace"></div>
+			     </div>
 		      </div>
 		      
 		      <jsp:include page="fileImport.jsp"></jsp:include>
@@ -377,6 +369,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/UnconnectedNodesLayout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/saveSvgAsPng.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/historyOptions.js?<jsp:include page='version.jsp' />"></script>
         
         <%
         if(UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()) {
@@ -512,7 +505,7 @@ and related projects, please see: http://www.isi.edu/integration
                 footerHeight = $footer.height();
                 footerTop = ($(window).scrollTop()+$(window).height()-footerHeight)+"px";
        
-                console.log("Height:" + footerHeight + ",top=" + footerTop + ":scrollTop:" + $(window).scrollTop() + ":winHeight:" + $(window).height());
+                //console.log("Height:" + footerHeight + ",top=" + footerTop + ":scrollTop:" + $(window).scrollTop() + ":winHeight:" + $(window).height());
                 
                if ( ($(document.body).height()+footerHeight) < $(window).height()) {
                    $footer.css({

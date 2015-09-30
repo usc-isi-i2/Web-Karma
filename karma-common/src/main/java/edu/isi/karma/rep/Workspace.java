@@ -119,6 +119,7 @@ public class Workspace extends Entity {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				getId(), id);
 		AlignmentManager.Instance().removeAlignment(alignmentId);
+		this.commandHistory.removeWorksheetHistory(id);
 		this.worksheets.remove(id);
 	}
 	

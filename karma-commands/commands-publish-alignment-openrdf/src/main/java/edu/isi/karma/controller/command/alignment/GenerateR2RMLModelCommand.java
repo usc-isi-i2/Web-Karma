@@ -46,7 +46,6 @@ import edu.isi.karma.controller.history.CommandHistoryUtil;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
-import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -74,7 +73,6 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private String tripleStoreUrl;
-	private String graphContext;
 	private String RESTserverAddress;
 	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
 
@@ -86,10 +84,9 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 
-	protected GenerateR2RMLModelCommand(String id, String model, String worksheetId, String url, String context, String selectionId) {
+	protected GenerateR2RMLModelCommand(String id, String model, String worksheetId, String url, String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
-		this.graphContext = context;
 	}
 
 	public String getTripleStoreUrl() {
@@ -98,14 +95,6 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	public void setTripleStoreUrl(String tripleStoreUrl) {
 		this.tripleStoreUrl = tripleStoreUrl;
-	}
-
-	public String getGraphContext() {
-		return graphContext;
-	}
-
-	public void setGraphContext(String graphContext) {
-		this.graphContext = graphContext;
 	}
 
 	public void setRESTserverAddress(String RESTserverAddress) {
@@ -129,7 +118,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.notUndoable;
+		return CommandType.notInHistory;
 	}
 
 
@@ -137,6 +126,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
+		String worksheetId = this.worksheetId;
 		UpdateContainer uc = new UpdateContainer();
 		//save the preferences 
 		savePreferences(workspace);
@@ -154,15 +144,11 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 					Property.oldCommandHistory, oldCommandsArray.toString());
 		}
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
-		historyUtil.consolidateHistory();	
-		if (!oldCommands.equals(historyUtil.getCommands())) {
+		if (history.isStale(worksheetId)) {
 			uc.append(historyUtil.replayHistory());
-			uc.removeUpdateByClass(HistoryAddCommandUpdate.class);
-			uc.removeUpdateByClass(InfoUpdate.class);
-			uc.removeUpdateByClass(ErrorUpdate.class);
-			historyUtil.consolidateHistory();
-			uc.add(new HistoryUpdate(workspace.getCommandHistory()));
-
+			worksheetId = historyUtil.getWorksheetId();
+			worksheet = workspace.getWorksheet(worksheetId);
+			selection = getSuperSelection(worksheet);
 		}
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();
@@ -321,6 +307,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, graphName);
 				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, tripleStoreUrl);
 			}
+			final String temp = worksheetId;
 			if (result) {
 				logger.info("Saved model to triple store");
 				uc.add(new AbstractUpdate() {
@@ -332,7 +319,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 							outputObject.put(JsonKeys.fileUrl.name(), contextParameters.getParameterValue(
 									ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
-							outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
+							outputObject.put(JsonKeys.worksheetId.name(), temp);
 							pw.println(outputObject.toString());
 						} catch (JSONException e) {
 							logger.error("Error occured while generating JSON!");

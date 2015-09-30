@@ -54,7 +54,12 @@ public class RepFactory {
 	}
         
 	public void replaceWorksheet(String id, Worksheet worksheet) {
-		if (worksheets.containsKey(id)) {
+		Worksheet oldWorksheet = worksheets.get(id);
+		if (oldWorksheet != null) {
+			removeHTableRecursive(oldWorksheet.getHeaders());
+			removeDataTableRecursive(oldWorksheet.getDataTable());
+			oldWorksheet.getMetadataContainer().setColumnMetadata(null);
+			oldWorksheet.setMetadataContainer(null);
 			worksheets.put(id, worksheet);
 			hTables.put(worksheet.getHeaders().getId(), worksheet.getHeaders());
 		}

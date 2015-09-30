@@ -23,38 +23,30 @@
  */
 package edu.isi.karma.controller.history;
 
-import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.ICommand;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
-import edu.isi.karma.controller.update.HistoryAddCommandUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
-import edu.isi.karma.webserver.ExecutionController;
-import edu.isi.karma.webserver.WorkspaceRegistry;
+import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * @author szekely
@@ -62,18 +54,8 @@ import edu.isi.karma.webserver.WorkspaceRegistry;
  */
 public class CommandHistory {
 
-	private class RedoCommandObject {
-		private ICommand command;
-		private JSONObject historyObject;
-		RedoCommandObject(ICommand command, JSONObject historyObject) {
-			this.command = command;
-			this.historyObject = historyObject;
-		}
-	}
-	
-	private final List<ICommand> history = new ArrayList<ICommand>();
+	private WorksheetCommandHistory worksheetCommandHistory = new WorksheetCommandHistory();
 	private Command previewCommand;
-	private final List<RedoCommandObject> redoStack = new ArrayList<RedoCommandObject>();
 	/**
 	 * If the last command was undo, and then we do a command that goes on the
 	 * history, then we need to send the browser the full history BEFORE we send
@@ -81,7 +63,6 @@ public class CommandHistory {
 	 * history may contain undoable commands, and the browser does not know how
 	 * to reset the history.
 	 */
-	private boolean lastCommandWasUndo = false;
 
 	/**
 	 * Used to keep a pointer to the command which require user-interaction
@@ -92,45 +73,45 @@ public class CommandHistory {
 
 	private static HashMap<String, IHistorySaver> historySavers = new HashMap<>();
 
+	private final static Set<CommandConsolidator> consolidators = new HashSet<>();
+
+	static {
+		Reflections reflections = new Reflections("edu.isi.karma");
+		Set<Class<? extends CommandConsolidator>> subTypes =
+				reflections.getSubTypesOf(CommandConsolidator.class);
+		for (Class<? extends CommandConsolidator> subType : subTypes)
+		{
+			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface()) {
+				try {
+					consolidators.add(subType.newInstance());
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	public enum HistoryArguments {
 		worksheetId, commandName, inputParameters, hNodeId, tags, model
 	}
 
 	public CommandHistory() {
-
 	}
 
-	public CommandHistory(List<ICommand> history, List<RedoCommandObject> redoStack) {
-		for (ICommand c : history) {
-			this.history.add(c);
-		}
-		for (RedoCommandObject c : redoStack) {
-			this.redoStack.add(c);
-		}
-	}
-
-	public boolean isUndoEnabled() {
-		return !history.isEmpty();
-	}
-
-	public boolean isRedoEnabled() {
-		return !redoStack.isEmpty();
+	public CommandHistory(WorksheetCommandHistory worksheetCommandHistory) {
+		this.worksheetCommandHistory = worksheetCommandHistory;
 	}
 
 	public List<ICommand> _getHistory() {
-		return history;
-	}
-
-	public List<ICommand> _getRedoStack() {
-		List<ICommand> commands = new ArrayList<ICommand>();
-		for (RedoCommandObject obj : redoStack) {
-			commands.add(obj.command);
-		}
-		return commands;
+		return worksheetCommandHistory.getAllCommands();
 	}
 
 	public CommandHistory clone() {
-		return new CommandHistory(history, redoStack);
+		return new CommandHistory(worksheetCommandHistory.clone());
 	}
 
 	/**
@@ -152,46 +133,79 @@ public class CommandHistory {
 	public UpdateContainer doCommand(Command command, Workspace workspace, boolean saveToHistory)
 			throws CommandException {
 		UpdateContainer effects = new UpdateContainer();
-		effects.append(command.doIt(workspace));
+		Pair<ICommand, Object> consolidatedCommand = null;
+		String consolidatorName = null;
+		String worksheetId = worksheetCommandHistory.getWorksheetId(command);
+		List<ICommand> potentialConsolidateCommands = worksheetCommandHistory.getCommandsFromWorksheetIdAndCommandTag(worksheetId, command.getTagFromPriority());
+		for (CommandConsolidator consolidator : consolidators) {
+			consolidatedCommand = consolidator.consolidateCommand(potentialConsolidateCommands, command, workspace);
+			if (consolidatedCommand != null) {
+				consolidatorName = consolidator.getConsolidatorName();
+				break;
+			}
+		}
+		if (consolidatedCommand != null) {
+			worksheetCommandHistory.setStale(worksheetId, true);
+			if (consolidatorName.equals("PyTransformConsolidator")) {
+				effects.append(consolidatedCommand.getLeft().doIt(workspace));
+			}
+			if (consolidatorName.equals("UnassignSemanticTypesConsolidator")) {
+				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(consolidatedCommand.getLeft()));
+				effects.append(command.doIt(workspace));
+			}
+			if (consolidatorName.equals("SemanticTypesConsolidator")) {
+				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
+				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
+			}
+		}
+		else {
+			effects.append(command.doIt(workspace));
+		}
 		command.setExecuted(true);
 
 
 		if (command.getCommandType() != CommandType.notInHistory) {
-			redoStack.clear();
-
-			// Send the history before the command we just executed.
-			if (lastCommandWasUndo && !(instanceOf(command, "UndoRedoCommand"))) {
-				effects.append(new UpdateContainer(new HistoryUpdate(this)));
+			worksheetId = worksheetCommandHistory.getWorksheetId(command);
+			worksheetCommandHistory.clearRedoCommand(worksheetId);
+			worksheetCommandHistory.setCurrentCommand(command, consolidatedCommand);
+			if (consolidatedCommand == null) {
+				worksheetCommandHistory.insertCommandToHistory(command);
 			}
-			lastCommandWasUndo = false;
-
-			history.add(command);
-			effects.add(new HistoryAddCommandUpdate(command));
+			effects.add(new HistoryUpdate(this));
 		}
 
 		if(saveToHistory) {
 			// Save the modeling commands
 			if (!(instanceOf(command, "ResetKarmaCommand"))) {
 				try {
-					if(isHistoryWriteEnabled && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
-							|| command.hasTag(CommandTag.Transformation)) && historySavers.get(workspace.getId()) != null) {
+					if(isHistoryWriteEnabled && command.isSavedInHistory() &&
+							(command.hasTag(CommandTag.Modeling)
+							|| command.hasTag(CommandTag.Transformation)
+							|| command.hasTag(CommandTag.Selection)
+							|| command.hasTag(CommandTag.SemanticType)
+							) && historySavers.get(workspace.getId()) != null) {
 						writeHistoryPerWorksheet(workspace, historySavers.get(workspace.getId()));
 					}
 				} catch (Exception e) {
 					logger.error("Error occured while writing history!" , e);
-					e.printStackTrace();
+					logger.error("Error with this command: {}, Input params: {}", command.getCommandName(), command.getInputParameterJson());
 				}
 			}
 		}
+
 		return effects;
 	}
 
 	private void writeHistoryPerWorksheet(Workspace workspace, IHistorySaver historySaver) throws Exception {
 		String workspaceId = workspace.getId();
 		HashMap<String, JSONArray> comMap = new HashMap<String, JSONArray>();
-		for(ICommand command : history) {
-			if(command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
-					|| command.hasTag(CommandTag.Transformation))) {
+		for(ICommand command : _getHistory()) {
+			if(command.isSavedInHistory() &&
+					(command.hasTag(CommandTag.Modeling)
+					|| command.hasTag(CommandTag.Transformation)
+					|| command.hasTag(CommandTag.Selection)
+					|| command.hasTag(CommandTag.SemanticType)
+					)) {
 				JSONArray json = new JSONArray(command.getInputParameterJson());
 				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
 				if(workspace.getWorksheet(worksheetId) != null)
@@ -356,252 +370,130 @@ public class CommandHistory {
 
 	/**
 	 * @param workspace
-	 * @param commandId
 	 *            is the id of a command that should be either in the undo or
 	 *            redo histories. If it is in none, then nothing will be done.
 	 * @return the effects of the undone or redone commands.
 	 * @throws CommandException
 	 */
-	public UpdateContainer undoOrRedoCommandsUntil(Workspace workspace,
-			String commandId) throws CommandException {
-		List<ICommand> commandsToUndo = getCommandsUntil(history, commandId);
-		if (!commandsToUndo.isEmpty()) {
-			lastCommandWasUndo = true;
-			return undoCommands(workspace, commandsToUndo);
-		} else {
-			List<RedoCommandObject> commandsToRedo = getCommandsUntil(commandId);
-			if (!commandsToRedo.isEmpty()) {
-				return redoCommands(workspace, commandsToRedo);
+	public UpdateContainer undoOrRedoCommand(Workspace workspace, String worksheetId) throws CommandException {
+		RedoCommandObject currentCommand = worksheetCommandHistory.getCurrentRedoCommandObject(worksheetId);
+		RedoCommandObject lastCommand = worksheetCommandHistory.getLastRedoCommandObject(worksheetId);
+		UpdateContainer container = new UpdateContainer();
+		if (lastCommand == null) {
+			worksheetCommandHistory.setLastRedoCommandObject(currentCommand);
+			Pair<ICommand, Object> pair = currentCommand.getConsolidatedCommand();
+			if (pair == null) {
+				container.append(currentCommand.getCommand().undoIt(workspace));
+				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(currentCommand.getCommand()));
 			} else {
-				return new UpdateContainer();
-			}
-		}
-	}
-
-	/**
-	 * Undo all commands in the given list.
-	 * 
-	 * @param workspace
-	 * @param commandsToUndo
-	 * 
-	 * @return UpdateContainer with the effects of all undone commands.
-	 */
-	private UpdateContainer undoCommands(Workspace workspace,
-			List<ICommand> commandsToUndo) {
-
-		UpdateContainer effects = new UpdateContainer();
-		for (ICommand c : commandsToUndo) {
-			history.remove(c);
-			redoStack.add(new RedoCommandObject(c, getCommandJSON(workspace, c)));
-			effects.append(c.undoIt(workspace));
-		}
-		return effects;
-	}
-
-	/**
-	 * Redo all the commands in the given list.
-	 * 
-	 * @param workspace
-	 * @param commandsToRedo
-	 * @return
-	 * @throws CommandException
-	 */
-	private UpdateContainer redoCommands(Workspace workspace,
-			List<RedoCommandObject> commandsToRedo) throws CommandException {
-		if (!redoStack.isEmpty()) {
-
-			UpdateContainer effects = new UpdateContainer();
-			Iterator<RedoCommandObject> itr = commandsToRedo.iterator();
-			while (itr.hasNext()) {
-				RedoCommandObject rco = itr.next();
-				redoStack.remove(rco);
-				try {
-					JSONArray array = new JSONArray(rco.command.getInputParameterJson());
-					String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), array);
-					WorksheetCommandHistoryExecutor executor = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
-					ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspace.getId());
-					HashMap<String, CommandFactory> commandFactoryMap = ctrl.getCommandFactoryMap();
-					JSONArray inputParamArr = (JSONArray)rco.historyObject.get(HistoryArguments.inputParameters.name());
-					String commandName = (String)rco.historyObject.get(HistoryArguments.commandName.name());
-					executor.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
-					CommandFactory cf = commandFactoryMap.get(rco.historyObject.get(HistoryArguments.commandName.name()));
-					String model = Command.NEW_MODEL;
-					if(rco.historyObject.has(HistoryArguments.model.name()))
-						model = rco.historyObject.getString(HistoryArguments.model.name());
-					Command comm = cf.createCommand(inputParamArr, model, workspace);
-					effects.append(comm.doIt(workspace));
-					history.add(comm);
-				}catch(Exception e) {
-					history.add(rco.command);
-					effects.append(rco.command.doIt(workspace));
+				if (pair.getLeft().getCommandName().equals("SubmitPythonTransformationCommand")) {
+					pair.getLeft().setInputParameterJson(pair.getRight().toString());
+					try {
+						Method method = pair.getLeft().getClass().getMethod("setTransformationCode", String.class);
+						method.invoke(pair.getLeft(), HistoryJsonUtil.getStringValue("transformationCode", (JSONArray)pair.getRight()));
+						container.append(pair.getLeft().doIt(workspace));
+					} catch (Exception e) {
+						logger.warn("Method invocation failure", e);
+					}
 				}
-				
-			}
-			return effects;
-		} else {
-			return new UpdateContainer();
-		}
-	}
-
-	/**
-	 * @param commands
-	 *            , a list of commands.
-	 * @param commandId
-	 *            , the id of a command.
-	 * @return the sublist of commands from the start until and including a
-	 *         command with the given id. If the command with the given id is
-	 *         not in the list, return the empty list.
-	 */
-	private List<ICommand> getCommandsUntil(List<ICommand> commands,
-			String commandId) {
-		if (commands.isEmpty()) {
-			return Collections.emptyList();
-		}
-		List<ICommand> result = new LinkedList<ICommand>();
-		boolean foundCommand = false;
-		for (int i = commands.size() - 1; i >= 0; i--) {
-			ICommand c = commands.get(i);
-			if (c.getCommandType() == CommandType.undoable) {
-				result.add(c);
-			}
-			if (c.getId().equals(commandId)) {
-				foundCommand = true;
-				break;
+				else if (pair.getLeft().getCommandName().equals("SetSemanticTypeCommand") || pair.getLeft().getCommandName().equals("SetMetaPropertyCommand")) {
+					container.append(pair.getLeft().doIt(workspace));
+					worksheetCommandHistory.insertCommandToHistory(pair.getLeft());
+				}
 			}
 		}
-		if (foundCommand) {
-			return result;
-		} else {
-			return Collections.emptyList();
+		else {
+			container.append(doCommand((Command) lastCommand.getCommand(), workspace));
 		}
-	}
-	
-	private List<RedoCommandObject> getCommandsUntil(String commandId) {
-		if (redoStack.isEmpty()) {
-			return Collections.emptyList();
-		}
-		List<RedoCommandObject> result = new LinkedList<RedoCommandObject>();
-		boolean foundCommand = false;
-		for (int i = redoStack.size() - 1; i >= 0; i--) {
-			RedoCommandObject c = redoStack.get(i);
-			if (c.command.getCommandType() == CommandType.undoable) {
-				result.add(c);
-			}
-			if (c.command.getId().equals(commandId)) {
-				foundCommand = true;
-				break;
-			}
-		}
-		if (foundCommand) {
-			return result;
-		} else {
-			return Collections.emptyList();
-		}
+		container.add(new HistoryUpdate(this));
+		return container;
 	}
 
 	public void generateFullHistoryJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		Iterator<ICommand> histIt = history.iterator();
-		while (histIt.hasNext()) {
-			histIt.next().generateJson(prefix, pw, vWorkspace,
-					Command.HistoryType.undo);
-			if (histIt.hasNext() || isRedoEnabled()) {
-				pw.println(prefix + ",");
-			}
-		}
-
-		for(int i = redoStack.size()-1; i>=0; i--) {
-			ICommand redoComm = redoStack.get(i).command;
-			redoComm.generateJson(prefix, pw, vWorkspace,
-					Command.HistoryType.redo);
-			if(i != 0)
-				pw.println(prefix + ",");
-		}
-	}
-
-
-	public void removeCommands(Workspace workspace, String worksheetId) {
-		List<ICommand> commandsToBeRemoved = new ArrayList<ICommand>();
-		ListIterator<ICommand> commandItr = history.listIterator(history.size());
-		while(commandItr.hasPrevious()) {
-			ICommand command = commandItr.previous();
-			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
-					|| command.hasTag(CommandTag.Transformation))) {
-				JSONArray json = new JSONArray(command.getInputParameterJson());
-				if (HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json).equals(worksheetId)) {
-					commandsToBeRemoved.add(command);
-					Command tmp = (Command)command;
-					if (tmp.getCommandType() == CommandType.undoable) {
-						try {
-							tmp.undoIt(workspace);
-						}catch(Exception e) {
-
-						}
-					}
+		boolean isFirst = true;
+		for (String worksheetId : worksheetCommandHistory.getAllWorksheetId()) {
+			Iterator<ICommand> histIt = worksheetCommandHistory.getCommandsFromWorksheetId(worksheetId).iterator();
+			RedoCommandObject currentCommand = worksheetCommandHistory.getCurrentRedoCommandObject(worksheetId);
+			RedoCommandObject redoCommandObject = worksheetCommandHistory.getLastRedoCommandObject(worksheetId);
+			while (histIt.hasNext()) {
+				ICommand command = histIt.next();
+				if (isFirst) {
+					isFirst = false;
+				}
+				else {
+					pw.println(prefix + ",");
+				}
+				if (currentCommand != null && command == currentCommand.getCommand()) {
+					command.generateJson(prefix, pw, vWorkspace,
+							Command.HistoryType.lastRun);
+				}
+				else if (currentCommand != null && currentCommand.getConsolidatedCommand() != null && currentCommand.getConsolidatedCommand().getKey() == command) {
+					command.generateJson(prefix, pw, vWorkspace,
+							Command.HistoryType.lastRun);
+				}
+				else {
+					command.generateJson(prefix, pw, vWorkspace,
+							Command.HistoryType.normal);
 				}
 			}
+			if (redoCommandObject != null) {
+				if (isFirst) {
+					isFirst = false;
+				}
+				else {
+					pw.println(prefix + ",");
+				}
+				redoCommandObject.getCommand().generateJson(prefix, pw, vWorkspace,
+						Command.HistoryType.redo);
+			}
 		}
-		history.removeAll(commandsToBeRemoved);
 	}
 
 	public void removeCommands(String worksheetId) {
-		List<ICommand> commandsFromWorksheet = new ArrayList<ICommand>();
-		for(ICommand command: history) {
-			try {
-
-				Method m = command.getClass().getMethod("getWorksheetId");
-				if(m != null)
-				{
-					String id = (String) m.invoke(command, (Object[])null);
-					if (id.equals(worksheetId))
-						commandsFromWorksheet.add(command);
-
-				}
-			} catch (Exception e) {
-				logger.error("Unable to remove command " + command.getCommandName());
-			}
-		}
-		history.removeAll(commandsFromWorksheet);
+		List<ICommand> commandsFromWorksheet = worksheetCommandHistory.getCommandsFromWorksheetId(worksheetId);
+		this.worksheetCommandHistory.removeCommandFromHistory(commandsFromWorksheet);
 	}
 
 	public List<Command> getCommandsFromWorksheetId(String worksheetId) {
-		List<Command> commandsFromWorksheet = new ArrayList<Command>();
-		for(ICommand command: history) {
-			if(command instanceof Command && command.isSavedInHistory() && (command.hasTag(CommandTag.Modeling) 
-					|| command.hasTag(CommandTag.Transformation))) {
-				JSONArray json = new JSONArray(command.getInputParameterJson());
-				if (HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json).equals(worksheetId))
-					commandsFromWorksheet.add((Command)command);
+		List<Command> commandsFromWorksheet = new ArrayList<>();
+		List<ICommand> history = worksheetCommandHistory.getCommandsFromWorksheetId(worksheetId);
+		for(ICommand command : history) {
+			if(command instanceof Command && command.isSavedInHistory() &&
+					(command.hasTag(CommandTag.Modeling)
+					|| command.hasTag(CommandTag.Transformation)
+					|| command.hasTag(CommandTag.Selection)
+					|| command.hasTag(CommandTag.SemanticType)
+					)) {
+				commandsFromWorksheet.add((Command) command);
 			}
 
 		}
 		return commandsFromWorksheet;
 	}
 
-	public ICommand getCommand(String commandId)
-	{
-		for(ICommand  c: this.history)
-		{
-			if(c.getId().equals(commandId))
-			{
-				return c;
-			}
-		}
-		return null;
-
-	}
-
-	public List<ICommand> getCommands(CommandTag tag) {
-		List<ICommand> retCommands = new ArrayList<ICommand>();
-		for(ICommand command: history) {
-			if(command.hasTag(tag))
-				retCommands.add(command);
-		}
-		return retCommands;
-	}
-
 	public void addPreviewCommand(Command c) {
 		previewCommand = c;
+	}
+
+	public boolean isStale(String worksheetId) {
+		return worksheetCommandHistory.isStale(worksheetId);
+	}
+
+	public void setStale(String worksheetId, boolean stale) {
+		worksheetCommandHistory.setStale(worksheetId, stale);
+	}
+
+	public void clearCurrentCommand(String worksheetId) {
+		worksheetCommandHistory.clearCurrentCommand(worksheetId);
+	}
+
+	public void clearRedoCommand(String worksheetId) {
+		worksheetCommandHistory.clearRedoCommand(worksheetId);
+	}
+
+	public void removeWorksheetHistory(String worksheetId) {
+		worksheetCommandHistory.removeWorksheet(worksheetId);
 	}
 
 	public Command getPreviewCommand(String commandId) {
@@ -611,10 +503,6 @@ public class CommandHistory {
 	}
 
 	private static boolean isHistoryWriteEnabled = false;
-	public static boolean isHistoryEnabled()
-	{
-		return isHistoryWriteEnabled;
-	}
 
 	public static void setIsHistoryEnabled(boolean isHistoryWriteEnabled)
 	{
@@ -628,4 +516,5 @@ public class CommandHistory {
 	public static IHistorySaver getHistorySaver(String workspaceId) {
 		return historySavers.get(workspaceId);
 	}
+
 }

@@ -43,19 +43,17 @@ public class GenerateR2RMLModelCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String tripleStoreUrl = request.getParameter(Arguments.tripleStoreUrl.name());
-		String context = request.getParameter(Arguments.graphContext.name());
 		String RESTserverAddress = request.getRequestURL().substring(0, request.getRequestURL().lastIndexOf("/RequestController"));
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		GenerateR2RMLModelCommand cmd = new GenerateR2RMLModelCommand(getNewId(workspace), 
-				Command.NEW_MODEL, worksheetId, tripleStoreUrl, context, 
+				Command.NEW_MODEL, worksheetId, tripleStoreUrl,
 				selectionName);
 		cmd.setRESTserverAddress(RESTserverAddress);
 		return cmd;
 	}
 	
-	public Command createCommand(String model, Workspace workspace, String worksheetId, String tripleStoreUrl, String context, String selectionId)
-			throws JSONException, KarmaException {
-		return new GenerateR2RMLModelCommand(getNewId(workspace), model, worksheetId, tripleStoreUrl, context, selectionId);
+	public Command createCommand(String model, Workspace workspace, String worksheetId, String tripleStoreUrl, String selectionId) {
+		return new GenerateR2RMLModelCommand(getNewId(workspace), model, worksheetId, tripleStoreUrl, selectionId);
 	}
 
 	@Override

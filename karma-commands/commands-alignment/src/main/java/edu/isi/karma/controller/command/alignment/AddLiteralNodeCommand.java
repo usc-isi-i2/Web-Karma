@@ -54,7 +54,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 		this.isUri = isUri;
 		this.nodeId = nodeId;
 
-		addTag(CommandTag.Modeling);
+		addTag(CommandTag.SemanticType);
 	}
 
 	@Override

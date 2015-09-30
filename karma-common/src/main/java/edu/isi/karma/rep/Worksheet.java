@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 
 import edu.isi.karma.controller.command.selection.SelectionManager;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
 import edu.isi.karma.rep.metadata.MetadataContainer;
@@ -48,6 +49,7 @@ public class Worksheet extends RepEntity {
     private SelectionManager selMgr;
     private Object msger = null;//used for holding session cleaning data
 	private Object dpp = null; // data preprocessing for cleaning
+    private Import importMethod;
     @Override
     public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
         pw.print(prefix);
@@ -236,4 +238,12 @@ public class Worksheet extends RepEntity {
 		this.msger = null;
 		this.dpp = null;
 	}
+
+    public void setImportMethod(Import importMethod) {
+        this.importMethod = importMethod;
+    }
+
+    public Import getImportMethod() {
+        return this.importMethod;
+    }
 }

@@ -52,3 +52,9 @@ td{
 .topLevelTableCell {
 	background-color: #FFFFFF;
 }
+#btnPrevCache {
+	margin-top: 25px;
+}
+#btnNextCache {
+	margin-top: 25px;
+}

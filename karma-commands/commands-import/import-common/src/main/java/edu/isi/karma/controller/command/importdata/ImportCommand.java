@@ -39,11 +39,13 @@ public abstract class ImportCommand extends Command {
     public ImportCommand(String id, String model) {
         super(id, model);
         this.revisionId = null;
+        addTag(CommandTag.Import);
     }
 
     public ImportCommand(String id, String model, String revisionId) {
         super(id, model);
         this.revisionId = revisionId;
+        addTag(CommandTag.Import);
     }
 
     public String getRevisionId() {

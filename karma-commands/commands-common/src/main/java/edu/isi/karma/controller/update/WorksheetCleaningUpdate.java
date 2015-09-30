@@ -22,13 +22,7 @@
 package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -228,7 +222,7 @@ AbstractUpdate {
 	public boolean equals(Object o) {
 		if (o instanceof WorksheetCleaningUpdate) {
 			WorksheetCleaningUpdate t = (WorksheetCleaningUpdate)o;
-			return t.worksheetId.equals(worksheetId) && t.selection.equals(selection);
+			return t.worksheetId.equals(worksheetId);
 		}
 		return false;
 	}

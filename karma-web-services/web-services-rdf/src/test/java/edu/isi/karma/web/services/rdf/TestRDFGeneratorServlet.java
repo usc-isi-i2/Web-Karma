@@ -64,7 +64,7 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
 		
-		String[] lines = response.split(System.getProperty("line.separator"));
+		String[] lines = response.split("(\r\n|\n)");
 		assertEquals(17, lines.length);
 	}
 	
@@ -83,12 +83,12 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		formParams.add(FormParameters.HEADER_START_INDEX, "1");
 		formParams.add(FormParameters.DATA_START_INDEX, "2");
 		String response = webRes.type(MediaType.APPLICATION_FORM_URLENCODED)
-				.post(String.class, formParams);;
+				.post(String.class, formParams);
 		String sampleRow = "\"uri\": \"http://lod.isi.edu/cs548/person/Szekely\"";
 		int idx = response.indexOf(sampleRow);
 		assert(idx != -1);
 		
-		String[] lines = response.split(System.getProperty("line.separator"));
+		String[] lines = response.split("(\r\n|\n)");
 		assertEquals(438, lines.length);
 	}
 	
@@ -112,7 +112,7 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
 		
-		String[] lines = response.split(System.getProperty("line.separator"));
+		String[] lines = response.split("(\r\n|\n)");
 		assertEquals(275, lines.length);
 	}
 	
@@ -136,7 +136,7 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
 		
-		String[] lines = response.split(System.getProperty("line.separator"));
+		String[] lines = response.split("(\r\n|\n)");
 		assertEquals(275, lines.length);
 	}
 	
@@ -160,7 +160,7 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
 		
-		String[] lines = response.split(System.getProperty("line.separator"));
+		String[] lines = response.split("(\r\n|\n)");
 		assertEquals(275, lines.length);
 	}
 	
@@ -203,7 +203,7 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		int idx = response.indexOf(sampleTriple);
 		assert(idx != -1);
 		
-		String[] lines = response.split(System.getProperty("line.separator"));
+		String[] lines = response.split("(\r\n|\n)");
 		assertEquals(17, lines.length);
 	}
 

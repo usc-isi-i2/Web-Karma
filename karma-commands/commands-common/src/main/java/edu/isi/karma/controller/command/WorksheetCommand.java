@@ -20,11 +20,15 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
+import java.io.PrintWriter;
+
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.JSONUtil;
+import edu.isi.karma.view.VWorkspace;
 
 
 /**
@@ -34,7 +38,10 @@ import edu.isi.karma.rep.Workspace;
  * 
  */
 public abstract class WorksheetCommand extends Command {
-
+	public enum JsonKeys {
+		commandId, title, description, commandType, historyType, worksheetId
+	}
+	
 	protected final String worksheetId;
 	protected WorksheetCommand(String id, String model, String worksheetId) {
 		super(id, model);
@@ -48,11 +55,22 @@ public abstract class WorksheetCommand extends Command {
 
 	public UpdateContainer computeAlignmentAndSemanticTypesAndCreateUpdates(Workspace workspace)
 	{
-		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
+		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), getWorksheetId());
 		if(null != alignment)
 		{
-			alignment.updateColumnNodesInAlignment(workspace.getWorksheet(worksheetId));
+			alignment.updateColumnNodesInAlignment(workspace.getWorksheet(getWorksheetId()));
 		}
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
+		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(getWorksheetId(), workspace);
+	}
+	
+	@Override
+	public void generateJson(String prefix, PrintWriter pw,
+	                         VWorkspace vWorkspace, HistoryType historyType) {
+		pw.println(prefix + "{");
+		String newPref = prefix + "  ";
+		generateCommandJSONAttributes(prefix, pw, vWorkspace, historyType);
+		pw.println("," + newPref
+				+ JSONUtil.jsonLast(JsonKeys.worksheetId, getWorksheetId()));
+		pw.println(prefix + "}");
 	}
 }
