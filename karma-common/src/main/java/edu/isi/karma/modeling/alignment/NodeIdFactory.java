@@ -47,6 +47,24 @@ public class NodeIdFactory {
 		}
 		return id;
 	}
+	
+	public void addNodeId(String id, String uri) {
+		String newIndexStr = id.replace(uri, "");
+		int newIndex = -1;
+		try {
+			newIndex = Integer.parseInt(newIndexStr);
+		} catch (Exception e) {
+			return;
+		}
+		int index;
+		if (nodeUris.containsKey(uri)) {
+			index = nodeUris.get(uri).intValue();
+			if (newIndex > index)
+				nodeUris.put(uri, newIndex);			
+		} else {
+			nodeUris.put(uri, newIndex);
+		}		
+	}
 
 	public boolean duplicateUri(String uriString) {
 		return this.nodeUris.containsKey(uriString);

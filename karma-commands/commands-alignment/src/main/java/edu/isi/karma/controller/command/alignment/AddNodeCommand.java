@@ -14,6 +14,7 @@ import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -29,6 +30,7 @@ public class AddNodeCommand extends WorksheetCommand {
 	private String nodeUri;
 	private String nodeLabel;
 	private String alignmentId;
+	private String nodeId;
 	
 	private static Logger logger = LoggerFactory.getLogger(AddNodeCommand.class);
 	
@@ -36,11 +38,12 @@ public class AddNodeCommand extends WorksheetCommand {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected AddNodeCommand(String id, String model, String worksheetId, String alignmentId, String uri, String label) {
+	protected AddNodeCommand(String id, String model, String worksheetId, String alignmentId, String nodeId, String uri, String label) {
 		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 		this.nodeUri = uri;
 		this.nodeLabel = label;
+		this.nodeId = nodeId;
 		
 		addTag(CommandTag.SemanticType);
 	}
@@ -79,7 +82,10 @@ public class AddNodeCommand extends WorksheetCommand {
 				.getGraph().clone();
 
 		try {
-			alignment.addForcedInternalNode(new Label(nodeUri));
+			InternalNode node = new InternalNode(nodeId, new Label(nodeUri));
+			Node addedNode = alignment.addInternalNode(node);
+			if (addedNode != null)
+				alignment.addToForcedNodes(addedNode);
 			if(!this.isExecutedInBatch())
 				alignment.align();
 			

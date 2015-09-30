@@ -15,7 +15,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class AddNodeCommandFactory extends JSONInputCommandFactory {
 
 	enum Arguments {
-		worksheetId, label, uri
+		worksheetId, label, uri, id
 	}
 
 	@Override
@@ -35,8 +35,9 @@ public class AddNodeCommandFactory extends JSONInputCommandFactory {
 				Arguments.label.name(), inputJson);
 		String uri = HistoryJsonUtil.getStringValue(
 				Arguments.uri.name(), inputJson);
-
-		AddNodeCommand cmd = new AddNodeCommand(getNewId(workspace), model, worksheetId, alignmentId, uri, label);
+		String nodeId = HistoryJsonUtil.getStringValue(
+				Arguments.id.name(), inputJson);
+		AddNodeCommand cmd = new AddNodeCommand(getNewId(workspace), model, worksheetId, alignmentId, nodeId, uri, label);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
