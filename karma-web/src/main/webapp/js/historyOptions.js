@@ -45,19 +45,19 @@ function HistoryOptions(wsId) {
 	
 	var options = [
 		{
-			name: "Refresh",
+			name: "Reapply",
 			id: "refreshHistory",
 			func: refreshHistory,
 			visible: true
 		},
 		{
-			name: "Export Commands",
+			name: "Export",
 			id: "exportCommands",
 			func: exportHistory,
 			visible: true
 		},
 		{
-			name: "Delete Commands",
+			name: "Delete",
 			id: "deleteCommands",
 			func: deleteHistory,
 			visible: true
