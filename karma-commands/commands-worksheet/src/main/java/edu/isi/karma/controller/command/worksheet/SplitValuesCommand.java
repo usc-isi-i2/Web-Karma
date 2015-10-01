@@ -44,6 +44,7 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private final String delimiter;
 	private String columnName;
+	private String columnAbsoluteName;
 	private String newColName;
 	private String newHNodeId;
 	private Command splitCommaCommand;
@@ -74,7 +75,7 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		return columnName;
+		return columnAbsoluteName;
 	}
 
 	@Override
@@ -90,6 +91,8 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 		// Get the HNode
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		columnName = hNode.getColumnName();
+		columnAbsoluteName = hNode.getAbsoluteColumnName(workspace.getFactory());
+		
 		// The column should not have a nested table but check to make sure!
 		if (hNode.hasNestedTable()) {
 			c.add(new ErrorUpdate("Cannot split column with nested table!"));

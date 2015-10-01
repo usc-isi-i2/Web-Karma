@@ -753,9 +753,19 @@ function processHistoryCommand(command) {
 	} else if(title == "Unfold") {
 		spanClass = "glyphicon-folder-open";
 	} else if(title == "Glue") {
-		spanClass = "glyphicon-compressed";
+		spanClass = "glyphicon-erase";
 	} else if(title == "GroupBy") {
 		spanClass = "glyphicon-duplicate";
+	} else if(title == "Add New Column") {
+		spanClass = "glyphicon-plus";
+	} else if(title == "Rename Column") {
+		spanClass = "glyphicon-pencil";
+	} else if(title == "Split By Comma") {
+		spanClass = "glyphicon-resize-full";
+	} else if(title == "Add Row") {
+		spanClass = "glyphicon-menu-hamburger";
+	} else if(title == "Aggregation") {
+		spanClass = "glyphicon-compressed";
 	}
 	
 	if(spanClass != "") {

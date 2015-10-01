@@ -316,7 +316,7 @@
 						<h4>Select Column:</h4>
 						<div id="unfoldDialogColumns"></div>
 						<div id="unfoldOtherColumns">
-							<input type="checkbox">Use Other Columns</input>
+							<input type="checkbox">&nbsp;Use Other Columns</input>
 						</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">

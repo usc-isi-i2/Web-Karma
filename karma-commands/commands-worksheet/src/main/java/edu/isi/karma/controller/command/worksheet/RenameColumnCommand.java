@@ -41,6 +41,7 @@ import edu.isi.karma.rep.Workspace;
 
 public class RenameColumnCommand extends WorksheetCommand {
 	final private String newColumnName;
+	private String newColumnAbsoluteName;
 	final private String hNodeId;
 	private String oldColumnName;
 
@@ -50,6 +51,7 @@ public class RenameColumnCommand extends WorksheetCommand {
 	public RenameColumnCommand(String id, String model, String newColumnName, String hNodeId, String worksheetId) {
 		super(id, model, worksheetId);
 		this.newColumnName = newColumnName;
+		this.newColumnAbsoluteName = newColumnName;
 		this.hNodeId = hNodeId;
 	}
 
@@ -66,9 +68,7 @@ public class RenameColumnCommand extends WorksheetCommand {
 	
 	@Override
 	public String getDescription() {
-		if (newColumnName.length() > 20)
-			return newColumnName.substring(0, 19) + "...";
-		return newColumnName;
+		return newColumnAbsoluteName;
 	}
 
 	@Override
@@ -83,6 +83,7 @@ public class RenameColumnCommand extends WorksheetCommand {
 		
 		// Change the column name
 		columnNode.setColumnName(newColumnName);
+		newColumnAbsoluteName = columnNode.getAbsoluteColumnName(workspace.getFactory());
 		
 		CommandHistory history = workspace.getCommandHistory();
 		List<ICommand>  allCommands = history._getHistory();

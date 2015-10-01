@@ -61,7 +61,8 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 	private String hTableId;
 	private final String newColumnName;
 	private final String defaultValue;
-
+	private String newColumnAbsoluteName;
+	
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
@@ -77,7 +78,7 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 		this.hTableId = hTableId;
 		this.newColumnName=newColumnName;
 		this.defaultValue = defaultValue;
-		
+		this.newColumnAbsoluteName = newColumnName;
 		addTag(CommandTag.Transformation);
 	}
 
@@ -93,8 +94,8 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		if (newColumnName != null)
-			return newColumnName;
+		if (newColumnAbsoluteName != null)
+			return newColumnAbsoluteName;
 		else
 			return "";
 	}
@@ -157,6 +158,7 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			inputColumns.add(hNodeId);
 			outputColumns.add(newHNodeId);
+			newColumnAbsoluteName = ndid.getAbsoluteColumnName(workspace.getFactory());
 			return c;
 		} catch (Exception e) {
 			logger.error("Error in AddColumnCommand" + e.toString());

@@ -30,6 +30,8 @@ public class AggregationPythonCommand extends WorksheetSelectionCommand {
     private String pythonCode;
     private String constructor;
     private String newColumnName;
+    private String newColumnAbsoluteName;
+    
     public AggregationPythonCommand(String id, String model, String worksheetId,
                                     String selectionId, String hNodeId,
                                     String pythonCode, String constructor,
@@ -54,7 +56,7 @@ public class AggregationPythonCommand extends WorksheetSelectionCommand {
 
     @Override
     public String getDescription() {
-        return constructor;
+        return newColumnAbsoluteName + ": " + constructor;
     }
 
     @Override
@@ -82,6 +84,9 @@ public class AggregationPythonCommand extends WorksheetSelectionCommand {
         HTable hTable = hNode.getHTable(factory);
         HTable parentHTable = hTable.getParentHNode().getHTable(factory);
         newHNodeId = parentHTable.addHNode(newColumnName, HNode.HNodeType.Transformation, worksheet, factory).getId();
+        HNode newHNode = factory.getHNode(newHNodeId);
+        newColumnAbsoluteName = newHNode.getAbsoluteColumnName(factory);
+        
         List<Table> parentTables = new ArrayList<>();
         CloneTableUtils.getDatatable(worksheet.getDataTable(), parentHTable, parentTables, selection);
         for (Table parentTable : parentTables) {

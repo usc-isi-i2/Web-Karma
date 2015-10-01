@@ -1475,13 +1475,14 @@ var UnfoldDialog = (function() {
 					//console.log(columnName);
 					//console.log(id);
 					var row = $("<div>").addClass("radio");
-					var label = $("<label>").text(columnName);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "radio")
 						.attr("id", "selectcolumns")
 						.attr("value", id)
 						.attr("name", "unfoldColumn");
 					label.append(input);
+					label.append($("<span>").text(columnName));
 					row.append(label);
 					dialogContent.append(row);
 				}
@@ -1586,12 +1587,13 @@ var FoldDialog2 = (function() {
 					//console.log(columnName);
 					//console.log(id);
 					var row = $("<div>").addClass("checkbox");
-					var label = $("<label>").text(columnName);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "checkbox")
 						.attr("id", "selectcolumns")
 						.attr("value", id)
 					label.append(input);
+					label.append($("<span>").text(columnName));
 					row.append(label);
 					dialogContent.append(row);
 				}
@@ -1703,12 +1705,13 @@ var GlueDialog = (function() {
 					//console.log(columnName);
 					//console.log(id);
 					var row = $("<div>").addClass("checkbox");
-					var label = $("<label>").text(columnName);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "checkbox")
 						.attr("id", "selectcolumns")
 						.attr("value", id);
 					label.append(input);
+					label.append($("<span>").text(columnName));
 					row.append(label);
 					dialogContent.append(row);
 				}
