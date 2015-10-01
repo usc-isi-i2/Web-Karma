@@ -112,7 +112,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		outputColumns.add(hNodeId);
 		try {
 			HNode hn = workspace.getFactory().getHNode(hNodeId);
-			labelName = hn.getColumnName();
+			labelName = hn.getAbsoluteColumnName(workspace.getFactory()); //hn.getColumnName();
 		}catch(Exception e) {
 
 		}

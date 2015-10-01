@@ -100,3 +100,12 @@
 	visibility: visible;
 	cursor: pointer;
 }
+
+.command_glyphicon {
+	margin-right: 5px;
+}
+
+.CommandDiv label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

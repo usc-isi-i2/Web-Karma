@@ -61,7 +61,8 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	protected String pythonNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
-
+	private String newColumnAbsoluteName;
+	
 	public SubmitPythonTransformationCommand(String id, String model, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, 
 			String errorDefaultValue, String selectionId, boolean isJSONOutput) {
@@ -82,7 +83,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	@Override
 	public String getDescription() {
-		return newColumnName;
+		return newColumnAbsoluteName;
 	}
 
 	@Override
@@ -152,8 +153,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			logger.error("Error occured during python transformation.",e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while creating new column for applying Python transformation to the column."));
 		}
-		try
-		{
+		try {
+			HNode newNode = f.getHNode(addColCmd.getNewHNodeId());
+			newColumnAbsoluteName = newNode.getAbsoluteColumnName(f);
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 					hNode, ctrl, addColCmd.getNewHNodeId());
 			if (isJSONOutput) {

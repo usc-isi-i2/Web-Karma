@@ -737,8 +737,36 @@ function parse(data) {
 
 function processHistoryCommand(command) {
 	var title = command.title;
+	var spanClass = "";
+	if(title == "Python Transformation") {
+		spanClass = "glyphicon-wrench";
+	} else if(title == "Set Semantic Type") {
+		spanClass = "glyphicon-tags";
+	} else if(title == "Change Links") {
+		spanClass = "glyphicon-link"; //"glyphicon-random";
+	} else if(title == "Add Literal Node") {
+		spanClass = "glyphicon-text-background"
+	} else if(title == "Set Worksheet Properties") {
+		spanClass = "glyphicon-file";
+	} else if(title == "Fold") {
+		spanClass = "glyphicon-folder-close"; //"glyphicon-envelope"
+	} else if(title == "Unfold") {
+		spanClass = "glyphicon-folder-open";
+	} else if(title == "Glue") {
+		spanClass = "glyphicon-compressed";
+	} else if(title == "GroupBy") {
+		spanClass = "glyphicon-duplicate";
+	}
+	
+	if(spanClass != "") {
+		title = "<span class=\"glyphicon command_glyphicon " + spanClass + "\" aria-hidden=\"true\" title=\"" + title + "\"></span>";
+	}
+	//glyphicon glyphicon-scissors
+	
 	if (command.description.length > 0) {
-		title = title + ": " + command.description;
+		if(spanClass == "")
+			title = title + ": ";
+		title = title + "<span title=\"" + command.description + "\">" + command.description + "</span>";
 	}
 
 	var historyLabelDiv = $("<div>").addClass("checkbox")

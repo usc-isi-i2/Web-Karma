@@ -129,7 +129,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		logCommand(logger, workspace);
 		try {
 			HNode hn = workspace.getFactory().getHNode(hNodeId);
-			labelName = hn.getColumnName();
+			labelName = hn.getAbsoluteColumnName(workspace.getFactory());
 		}catch(Exception e) {
 
 		}

@@ -58,7 +58,22 @@ public class SetWorksheetPropertiesCommand extends WorksheetCommand {
 
 	@Override
 	public String getDescription() {
-		return worksheet.getTitle();
+		JSONObject propertiesJson = new JSONObject(properties);
+		String desc = "";
+		String sep = "";
+		if (propertiesJson.getBoolean(Property.hasServiceProperties.name())) {
+			desc = "Service";
+			sep = ", ";
+		}
+		if (propertiesJson.getBoolean("hasPrefix")) {
+			desc = desc + sep + "Prefix: " + propertiesJson.getString(Property.prefix.name());
+			sep = ", ";
+		}
+		if (propertiesJson.getBoolean("hasBaseURI")) {
+			desc = desc + sep + "Base URI: " + propertiesJson.getString(Property.baseURI.name());
+			sep = ", ";
+		}
+		return desc;
 	}
 
 	@Override
