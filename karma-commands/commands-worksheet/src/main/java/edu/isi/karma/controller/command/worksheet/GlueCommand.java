@@ -40,6 +40,8 @@ public class GlueCommand extends WorksheetSelectionCommand {
 		Longest, Shortest, CrossProduct
 	}
 	List<String> hNodeName;
+	private String hNodeParentName;
+	
 	private static Logger logger = LoggerFactory
 			.getLogger(GlueCommand.class);
 
@@ -71,9 +73,11 @@ public class GlueCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder(hNodeParentName);
+		String sep = " &gt; ";
 		for (String name : hNodeName) {
-			builder.append(name + " ");
+			builder.append(sep + name);
+			sep = ", ";
 		}
 		return builder.substring(0, builder.length());
 	}
@@ -97,9 +101,13 @@ public class GlueCommand extends WorksheetSelectionCommand {
 			ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
 		else
 			ht = oldws.getHeaders();
+		
 		for (int i = 0; i < checked.length(); i++) {
 			JSONObject t = (checked.getJSONObject(i));
 			HNode hNode = ht.getHNode(t.getString("value"));
+			if(i == 0)
+				this.hNodeParentName = hNode.getParentColumnName(factory);
+			
 			if (hNode != null) {
 				hnodes.add(hNode);
 				hNodeName.add(hNode.getColumnName());

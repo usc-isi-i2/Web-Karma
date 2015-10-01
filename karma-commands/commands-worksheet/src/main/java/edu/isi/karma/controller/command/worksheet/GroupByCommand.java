@@ -46,7 +46,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 	private String hNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(GroupByCommand.class);
-
+	private String label;
 	public enum JsonKeys {
 		updateType, hNodeId, worksheetId
 	}
@@ -71,7 +71,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		return "GroupBy";
+		return label;
 	}
 
 	@Override
@@ -110,7 +110,14 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 			if (!found)
 				valuehnodes.add(oldhnode);
 		}
-
+		
+		this.label = factory.getHNode(hNodeId).getParentColumnName(factory);
+		String sep = " &gt; ";
+		for (HNode keynode : keyhnodes) {
+			this.label += sep + keynode.getColumnName();
+			sep = ", ";
+		}
+		
 		Worksheet newws = null;
 		if (ht == oldws.getHeaders())
 			newws = groupByTopLevel(oldws, workspace, hnodeIDs, keyhnodes, valuehnodes, factory);

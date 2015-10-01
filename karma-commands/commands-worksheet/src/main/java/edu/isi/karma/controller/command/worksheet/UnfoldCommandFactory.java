@@ -25,8 +25,8 @@ public class UnfoldCommandFactory extends JSONInputCommandFactory{
 		String keyHNodeid = CommandInputJSONUtil.getStringValue(Arguments.keyhNodeId.name(), inputJson);
 		String valueHNodeid = CommandInputJSONUtil.getStringValue(Arguments.valuehNodeId.name(), inputJson);
 		boolean notOtherColumn = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.notOtherColumn.name(), inputJson));
-		String keyName = workspace.getFactory().getHNode(keyHNodeid).getColumnName();
-		String valueName = workspace.getFactory().getHNode(valueHNodeid).getColumnName();
+		String keyName = workspace.getFactory().getHNode(keyHNodeid).getAbsoluteColumnName(workspace.getFactory());
+		String valueName = workspace.getFactory().getHNode(valueHNodeid).getAbsoluteColumnName(workspace.getFactory());
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), model, worksheetId, 

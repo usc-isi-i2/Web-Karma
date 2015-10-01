@@ -1367,12 +1367,13 @@ var GroupByDialog = (function() {
 					//console.log(columnName);
 					//console.log(id);
 					var row = $("<div>").addClass("checkbox");
-					var label = $("<label>").text(columnName);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "checkbox")
 						.attr("id", "selectcolumns")
 						.attr("value", id);
 					label.append(input);
+					label.append($("<span>").text(columnName));
 					row.append(label);
 					dialogContent.append(row);
 				}

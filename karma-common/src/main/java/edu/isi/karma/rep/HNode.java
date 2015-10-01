@@ -90,6 +90,17 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 		return name;
 	}
 	
+	public String getParentColumnName(RepFactory f) {
+		if(this.hTableId != null) {
+			HTable table = getHTable(f);
+			HNode parent = table.getParentHNode();
+			if(parent != null) {
+				return parent.getAbsoluteColumnName(f);
+			}
+		}
+		return "";
+	}
+	
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}

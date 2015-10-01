@@ -79,7 +79,7 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		return keyName + " with " + valueName;
+		return keyName + " <b>with</b> " + valueName;
 	}
 
 	@Override

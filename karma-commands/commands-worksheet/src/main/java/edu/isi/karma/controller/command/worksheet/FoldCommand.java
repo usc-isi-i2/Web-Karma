@@ -41,7 +41,8 @@ public class FoldCommand extends WorksheetSelectionCommand {
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
-
+	private String label;
+	
 	private static Logger logger = LoggerFactory
 			.getLogger(FoldCommand.class);
 
@@ -70,11 +71,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		String t = "";
-		for (HNode hnode : hnodes) {
-			t += hnode.getColumnName() + " ";
-		}
-		return "" + t;
+		return this.label;
 	}
 
 	@Override
@@ -130,6 +127,17 @@ public class FoldCommand extends WorksheetSelectionCommand {
 				}
 			}
 		}
+		
+		this.label = "";
+		if(hnodes.size() > 0)
+			this.label = hnodes.get(0).getParentColumnName(Repfactory);
+		String sep = " &gt; ";
+		for(HNode hnode : hnodes) {
+			this.label += sep + hnode.getColumnName();
+			sep = ", ";
+		}
+		
+		
 		//System.out.println("HNodeID: " + htable.getHNodeIdFromColumnName("homeworks"));
 		//HNodeIds.add(htable.getHNodeIdFromColumnName("homeworks"));
 		
