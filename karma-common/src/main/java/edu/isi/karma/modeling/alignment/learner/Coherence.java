@@ -13,7 +13,7 @@ public abstract class Coherence {
 	protected List<CoherenceItem> items;
 	protected int itemsCount;
 
-	protected static int NUM_OF_MAX_SIZE_PATTERNS = 5;
+	protected static int NUM_OF_MAX_SIZE_PATTERNS = 50;
 	protected Map<String, Integer> patternSize;
 	protected Map<String, String> patternGuid;
 	protected String[] maxPatterns;
@@ -93,7 +93,7 @@ public abstract class Coherence {
 				patternIndex.put(p, i);
 			} else if (numOfElementsInMaxPatterns < NUM_OF_MAX_SIZE_PATTERNS) {
 				int i = 0;
-				while (i < numOfElementsInMaxPatterns && size < patternSize.get(maxPatterns[i]) )
+				while (i < numOfElementsInMaxPatterns && size <= patternSize.get(maxPatterns[i]) )
 					i++;
 				for (int j = numOfElementsInMaxPatterns; j > i; j--) {
 					maxPatterns[j] = maxPatterns[j-1];
@@ -102,7 +102,7 @@ public abstract class Coherence {
 				maxPatterns[i] = p;
 				patternIndex.put(p, i);
 				numOfElementsInMaxPatterns ++;
-			} else if (size > patternSize.get(maxPatterns[NUM_OF_MAX_SIZE_PATTERNS - 1])) {
+			} else if (maxPatterns[NUM_OF_MAX_SIZE_PATTERNS - 1] != null && size > patternSize.get(maxPatterns[NUM_OF_MAX_SIZE_PATTERNS - 1])) {
 					int i = numOfElementsInMaxPatterns - 1;
 					patternIndex.remove(maxPatterns[i]);
 					while (i > 0 && size > patternSize.get(maxPatterns[i])) {

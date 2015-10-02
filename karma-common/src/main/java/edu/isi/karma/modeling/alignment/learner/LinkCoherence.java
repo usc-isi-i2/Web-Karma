@@ -4,7 +4,6 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
-import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
@@ -33,11 +32,12 @@ public class LinkCoherence extends Coherence {
 				return;
 		}
 		this.itemsCount ++;
-		if (link.getTarget() instanceof InternalNode) {
-			InternalNode in = (InternalNode)link.getTarget();	
-			if (model.outgoingEdgesOf(in) == null || model.outgoingEdgesOf(in).isEmpty())
-				return;
-		}
+		// don't remember why I skipped the nodes that don't have any outgoing link.
+//		if (link.getTarget() instanceof InternalNode) {
+//			InternalNode in = (InternalNode)link.getTarget();	
+//			if (model.outgoingEdgesOf(in) == null || model.outgoingEdgesOf(in).isEmpty())
+//				return;
+//		}
 		if (link.getModelIds() == null || link.getModelIds().isEmpty()) 
 			return;
 		updateCoherence(link.getModelIds());
