@@ -14,6 +14,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 	var linkClickListener = null;
 	var nodeClickListener = null;
+	var anchorClickListener = null;
 	
 	var test = [];
 	//var tableData = [];                            //store table data
@@ -537,6 +538,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.call(drag)
 			.on("click", function(d){
+				if(anchorClickListener != null && d.original.nodeType == "ColumnNode")
+					anchorClickListener(d.original, d3.event);
 				var offset = Math.max(xOffset - leftPanelWidth,0);
 				if (d.outside.isOutside && !d.noLayer){					
 					if (d.position.x < offset){		
@@ -1744,7 +1747,11 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	this.setLinkClickListener = function(listener) {
 		linkClickListener = listener
 	}
-
+	
+	this.setAnchorClickListener = function(listener) {
+		anchorClickListener = listener;
+	}
+	
 	this.onscroll = function(event){
 		//console.log(window.pageXOffset);
 		if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){
