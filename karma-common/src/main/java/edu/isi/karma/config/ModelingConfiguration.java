@@ -197,7 +197,7 @@ public class ModelingConfiguration {
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				knownModelsAlignment = true;
 				out.println();
-				out.println("knownmodels.alignment=true");
+				out.println("knownmodels.alignment=false");
 				out.close();
 			}
 			
