@@ -52,10 +52,10 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 
 //	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	protected SplitByCommaCommand(String id, String worksheetId,
+	protected SplitByCommaCommand(String id, String model, String worksheetId,
 			String hNodeId, String delimiter, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
 		
@@ -100,7 +100,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 		split.split(oldNodeValueMap, oldNodeStatusMap);
 		splitValueHNodeId = split.getSplitValueHNodeId();
 
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk), workspace.getContextId()));
 		
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -145,7 +145,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 			node.setValue(oldNodeValueMap.get(node), oldNodeStatusMap.get(node), workspace.getFactory());
 		}
 
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk));
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(wk), workspace.getContextId());
 		
 	}
 }

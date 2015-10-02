@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
+
+//TODO create a registry for this
 public class KR2RMLConfiguration {
 	private static final Logger logger = LoggerFactory.getLogger(KR2RMLConfiguration.class);
 	private static Properties properties;
@@ -21,11 +23,16 @@ public class KR2RMLConfiguration {
 	private static String defaultKR2RMLProperties = "template.terms.no.minimum.for.blank.nodes=false"+ newLine;
 	
 	// WK-226 Adds the ability to generate blank nodes with out satisfying any column terms
-	private static Boolean noMinimumNumberOfSatisifiedTerms = null;
+	private Boolean noMinimumNumberOfSatisifiedTerms = null;
+	private ServletContextParameterMap contextParameters;
 	
-	public static void load() {
+	public KR2RMLConfiguration(ServletContextParameterMap contextParameters)
+	{
+		this.contextParameters = contextParameters;
+	}
+	public void load(ServletContextParameterMap contextParameters) {
 		try {
-			properties = loadParams();
+			properties = loadParams(contextParameters);
 
 			if (properties.getProperty("template.terms.no.minimum.for.blank.nodes") != null)
 				setNoMinimumNumberOfSatisifiedTerms(Boolean.parseBoolean(properties
@@ -37,11 +44,11 @@ public class KR2RMLConfiguration {
 		}
 	}
 
-	private static Properties loadParams() throws IOException {
+	private Properties loadParams(ServletContextParameterMap contextParameters) throws IOException {
 		Properties prop = new Properties();
 
 		File file = new File(
-				ServletContextParameterMap
+				contextParameters
 						.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY)
 						+ "/kr2ml.properties");
 		logger.info("Load kr2rml.properties: " + file.getAbsolutePath() + ":"
@@ -68,17 +75,17 @@ public class KR2RMLConfiguration {
 		return prop;
 	}
 
-	public static Boolean getNoMinimumNumberOfSatisifiedTerms() {
+	public Boolean getNoMinimumNumberOfSatisifiedTerms() {
 		if(noMinimumNumberOfSatisifiedTerms == null)
 		{
-			load();
+			load(contextParameters);
 		}
 		return noMinimumNumberOfSatisifiedTerms;
 	}
 
-	public static void setNoMinimumNumberOfSatisifiedTerms(
+	public void setNoMinimumNumberOfSatisifiedTerms(
 			Boolean noMinimumNumberOfSatisifiedTerms) {
-		KR2RMLConfiguration.noMinimumNumberOfSatisifiedTerms = noMinimumNumberOfSatisifiedTerms;
+		this.noMinimumNumberOfSatisifiedTerms = noMinimumNumberOfSatisifiedTerms;
 	}
 
 }

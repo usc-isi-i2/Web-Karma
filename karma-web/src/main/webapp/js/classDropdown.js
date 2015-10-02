@@ -111,7 +111,7 @@ var ClassDropdownMenu = (function() {
 			var newInfo = info['newInfo'];
 			var label = columnLabel;
 			newInfo.push(getParamObject("label", label, "other"));
-			newInfo.push(getParamObject("id", columnUri, "other"));
+			newInfo.push(getParamObject("id", columnId, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(worksheetId);
 			sendRequest(info, worksheetId);

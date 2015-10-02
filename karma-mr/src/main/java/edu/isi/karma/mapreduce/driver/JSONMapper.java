@@ -8,6 +8,8 @@ import java.util.Iterator;
 import org.apache.hadoop.io.Text;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
@@ -17,6 +19,9 @@ public class JSONMapper extends BaseRDFMapper {
 	private Text reusableOutputValue = new Text("");
 	private Text reusableOutputKey = new Text("");
 	private String atId = "@id";
+	
+	private static Logger LOG = LoggerFactory.getLogger(JSONMapper.class);
+	
 	@Override
 	protected KR2RMLRDFWriter configureRDFWriter(StringWriter sw) {
 		PrintWriter pw = new PrintWriter(sw);
@@ -32,18 +37,26 @@ public class JSONMapper extends BaseRDFMapper {
 	@Override
 	protected void writeRDFToContext(Context context, String results)
 			throws IOException, InterruptedException {
-		JSONArray generatedObjects = new JSONArray(results);
-		for(int i = 0; i < generatedObjects.length(); i++)
-		{
-			if (generatedObjects.getJSONObject(i).has(atId)) {
-				reusableOutputKey.set(generatedObjects.getJSONObject(i).getString(atId));
+	
+			JSONArray generatedObjects = new JSONArray(results);
+			for(int i = 0; i < generatedObjects.length(); i++)
+			{
+				try{
+					if (generatedObjects.getJSONObject(i).has(atId)) {
+						reusableOutputKey.set(generatedObjects.getJSONObject(i).getString(atId));
+					}
+					else {
+						reusableOutputKey.set(generatedObjects.getJSONObject(i).toString());
+					}
+					reusableOutputValue.set(generatedObjects.getJSONObject(i).toString());
+					context.write(reusableOutputKey, new Text(reusableOutputValue));
+				}catch(ArrayIndexOutOfBoundsException ae){
+					LOG.error("************ARRAYEXCEPTION*********:" + ae.getMessage() + "SOURCE: " + generatedObjects.getJSONObject(i).toString());
+					//TODO figure the below line out, fails when a thread has multiple posts
+					//throw new ArrayIndexOutOfBoundsException("************ARRAYEXCEPTION*********:" + ae.getMessage() + "SOURCE: " + generatedObjects.getJSONObject(i).toString());
+				}
 			}
-			else {
-				reusableOutputKey.set(generatedObjects.getJSONObject(i).toString());
-			}
-			reusableOutputValue.set(generatedObjects.getJSONObject(i).toString());
-			context.write(reusableOutputKey, new Text(reusableOutputValue));
-		}
+		
 	}
 
 	private String getAtId(JSONObject c) {

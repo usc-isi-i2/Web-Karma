@@ -20,11 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -63,11 +59,11 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
 
-	public UnassignSemanticTypeCommand(String id, String hNodeId, String worksheetId) {
-		super(id, worksheetId);
+	public UnassignSemanticTypeCommand(String id, String model, String hNodeId, String worksheetId) {
+		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
-		
-		addTag(CommandTag.Modeling);
+
+		addTag(CommandTag.SemanticType);
 	}
 
 	@Override
@@ -94,10 +90,6 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
-		inputColumns.clear();
-		outputColumns.clear();
-		inputColumns.add(hNodeId);
-		outputColumns.add(hNodeId);
 		// Save the old SemanticType object for undo
 		SemanticTypes types = worksheet.getSemanticTypes();
 		oldSemanticType = types.getSemanticTypeForHNodeId(hNodeId);
@@ -110,10 +102,11 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		
 		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
+		columnNode.unassignUserType(oldSemanticType);
 		columnNode.setForced(false);
 		if (columnNode != null) {
 			Set<LabeledLink> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());
-			if(links == null)
+			if(links == null || !links.iterator().hasNext())
 			{
 				logger.error("No semantic type to unassign!");
 				return new UpdateContainer(new ErrorUpdate("No semantic type to unassign!"));
@@ -122,6 +115,13 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 //			String domainNodeId = currentLink.getSource().getId();
 			// Remove the existing link
 			alignment.removeLink(currentLink.getId());
+			
+			Node domain = currentLink.getSource();
+			if (domain != null) {
+				String domainId = domain.getId();
+				if (alignment.isNodeIsolatedInTree(domainId))
+					alignment.removeNode(domainId);
+			}
 			// Remove the column node
 //			alignment.removeNode(columnNode.getId());
 			// Remove the source node
@@ -193,6 +193,20 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 			return new UpdateContainer(new ErrorUpdate("Error occured during undo of unassigning the semantic type!"));
 		}
 		return c;
+	}
+
+	public SemanticType getOldSemanticType() {
+		return oldSemanticType;
+	}
+
+	@Override
+	public Set<String> getInputColumns() {
+		return new HashSet<>(Arrays.asList(hNodeId));
+	}
+
+	@Override
+	public Set<String> getOutputColumns() {
+		return new HashSet<>(Arrays.asList(hNodeId));
 	}
 
 }

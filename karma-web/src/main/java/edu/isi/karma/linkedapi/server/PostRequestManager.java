@@ -1,9 +1,24 @@
 package edu.isi.karma.linkedapi.server;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+
 import edu.isi.karma.model.serialization.MimeType;
 import edu.isi.karma.model.serialization.SerializationLang;
 import edu.isi.karma.model.serialization.WebServiceLoader;
@@ -17,18 +32,6 @@ import edu.isi.karma.rep.sources.InvocationManager;
 import edu.isi.karma.rep.sources.Table;
 import edu.isi.karma.rep.sources.WebService;
 import edu.isi.karma.webserver.KarmaException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 public class PostRequestManager extends LinkedApiRequestManager {
@@ -46,8 +49,10 @@ public class PostRequestManager extends LinkedApiRequestManager {
 			InputStream inputStream,
 			String inputLang,
 			String returnType,
-			HttpServletResponse response) throws IOException {
-		super(serviceId, null, returnType, response);
+			HttpServletResponse response,
+			String contextId
+			) throws IOException {
+		super(serviceId, null, returnType, response, contextId);
 		this.inputStream = inputStream;
 		this.inputLang = inputLang;
 		this.inputJenaModel = ModelFactory.createDefaultModel();

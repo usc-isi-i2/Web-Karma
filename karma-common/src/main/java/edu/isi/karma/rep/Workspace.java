@@ -30,11 +30,11 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.CommandPreferences;
 import edu.isi.karma.controller.history.CommandHistory;
-import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.rep.metadata.TagsContainer;
+import edu.isi.karma.semantictypes.typinghandler.HybridSTModelHandler;
 import edu.isi.karma.semantictypes.typinghandler.LuceneBasedSTModelHandler;
 
 /**
@@ -75,26 +75,31 @@ public class Workspace extends Entity {
 	/**
 	 * The CRF Model for the workspace
 	 */
-	private final ISemanticTypeModelHandler semTypeModelHandler = new LuceneBasedSTModelHandler();
+	private final ISemanticTypeModelHandler semTypeModelHandler;
 	
 	private final CommandPreferences commandPreferences;
 
 	private final String commandPreferencesId;
+	
+	private final String contextId;
 
-	private KarmaMetadataManager metadataManager;
 	/**
 	 * In the future we may need to keep track of user info.
 	 */
-	protected Workspace(String id) {
+	protected Workspace(String id, String contextId) {
 		super(id);
-		commandPreferences = new CommandPreferences(this.getId());
+		commandPreferences = new CommandPreferences(this.getId(), contextId);
 		commandPreferencesId=this.getId();
+		this.contextId = contextId;
+		this.semTypeModelHandler = new LuceneBasedSTModelHandler(contextId);
 	}
 	
-	protected Workspace(String id, String cachedPreferencesId) {
+	protected Workspace(String id, String cachedPreferencesId, String contextId) {
 		super(id);
-		this.commandPreferences = new CommandPreferences(cachedPreferencesId);
+		this.commandPreferences = new CommandPreferences(cachedPreferencesId, contextId);
 		this.commandPreferencesId = cachedPreferencesId;
+		this.contextId = contextId;
+		this.semTypeModelHandler = new HybridSTModelHandler(contextId);
 	}
 
 	public CommandHistory getCommandHistory() {
@@ -114,6 +119,7 @@ public class Workspace extends Entity {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				getId(), id);
 		AlignmentManager.Instance().removeAlignment(alignmentId);
+		this.commandHistory.removeWorksheetHistory(id);
 		this.worksheets.remove(id);
 	}
 	
@@ -136,7 +142,7 @@ public class Workspace extends Entity {
 	public OntologyManager getOntologyManager() {
 		if(ontologyManager == null)
 		{
-			ontologyManager = new OntologyManager();
+			ontologyManager = new OntologyManager(contextId);
 		}
 		return ontologyManager;
 	}
@@ -152,14 +158,8 @@ public class Workspace extends Entity {
 	public String getCommandPreferencesId() {
 		return commandPreferencesId;
 	}
-
-	public void setMetadataManager(
-			KarmaMetadataManager metadataManager) {
-		this.metadataManager = metadataManager;
-		
-	}
-	public KarmaMetadataManager getMetadataManager()
+	public String getContextId()
 	{
-		return this.metadataManager;
+		return contextId;
 	}
 }

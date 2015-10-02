@@ -57,6 +57,7 @@ import edu.isi.karma.util.AbstractJDBCUtil;
 import edu.isi.karma.util.DBType;
 import edu.isi.karma.util.JDBCUtilFactory;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 
 public class DatabaseTableRDFGenerator extends RdfGenerator {
@@ -69,11 +70,12 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	private String password;
 	private String dBorSIDName;
 	private String encoding;
+	private ServletContextParameterMap contextParameters;
 	private static int DATABASE_TABLE_FETCH_SIZE = 10000;
 	
 	public DatabaseTableRDFGenerator(DBType dbType, String hostname,
 			int portnumber, String username, String password,
-			String dBorSIDName, String encoding, String selectionName) {
+			String dBorSIDName, String encoding, String selectionName, ServletContextParameterMap contextParameters) {
 		super(selectionName);
 		this.dbType = dbType;
 		this.hostname = hostname;
@@ -82,6 +84,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		this.password = password;
 		this.dBorSIDName = dBorSIDName;
 		this.encoding = encoding;
+		this.contextParameters = contextParameters;
 	}
 	
 	public void generateRDFFromSQL(String query, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, ContextIdentifier contextId, String baseURI)
@@ -93,11 +96,22 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		generateRDF(wkname, query, writers, id, baseURI);
 	}
 	
-	public void generateRDFFromTable(String tablename, List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, ContextIdentifier contextId, String baseURI)
+	public void generateRDFFromTable(String tablename, String topkrows,
+			List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id, 
+			ContextIdentifier contextId, String baseURI)
 			throws IOException, JSONException, KarmaException, SQLException, ClassNotFoundException {
 		initializeWriter(id, contextId, writers);
 		AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 		String query = "Select * FROM " + dbUtil.escapeTablename(tablename);
+		if (topkrows != null) {
+			if (dbType == DBType.SQLServer) {
+				query = "Select TOP " + topkrows + " * FROM " + dbUtil.escapeTablename(tablename);
+			} else if (dbType == DBType.MySQL) {
+				query = "Select * FROM " + dbUtil.escapeTablename(tablename) + " LIMIT " + topkrows;
+			} else if (dbType == DBType.Oracle) {
+				query = "Select * FROM " + dbUtil.escapeTablename(tablename) + " WHERE ROWNUM <= " + topkrows;
+			}
+		}
 		generateRDF(tablename, query, writers, id, baseURI);
 	}
 	
@@ -150,7 +164,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		}
 		
 		// Prepare required Karma objects
-	     Workspace workspace = initializeWorkspace();
+	     Workspace workspace = initializeWorkspace(contextParameters);
  	
 		RepFactory factory = workspace.getFactory();
 		Worksheet wk = factory.createWorksheet(wkname, workspace, encoding);
@@ -168,7 +182,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			    
 			    parserTest = new WorksheetR2RMLJenaModelParser(id);
 				mapping = parserTest.parse();
-			    workspace = initializeWorkspace();
+			    workspace = initializeWorkspace(contextParameters);
 			    factory = workspace.getFactory();
 				wk = factory.createWorksheet(wkname, workspace, encoding);
 				headersList = addHeaders(wk, columnNames, factory);
@@ -209,7 +223,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 			return;
 		// RDF generation object initialization
 		KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(wk,
-				workspace.getFactory(), writers, false,
+				workspace, writers, false,
 				mapping, errorReport, selection);
 
 		// Generate the rdf

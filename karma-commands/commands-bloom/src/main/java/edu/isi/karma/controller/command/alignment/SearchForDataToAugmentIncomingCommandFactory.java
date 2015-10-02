@@ -21,7 +21,8 @@ public class SearchForDataToAugmentIncomingCommandFactory extends CommandFactory
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String columnUri = request.getParameter(Arguments.columnUri.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new SearchForDataToAugmentIncomingCommand(getNewId(workspace), url, 
+		return new SearchForDataToAugmentIncomingCommand(getNewId(workspace), 
+				Command.NEW_MODEL, url, 
 				context, nodeUri, worksheetId, columnUri, 
 				selectionName);
 	}

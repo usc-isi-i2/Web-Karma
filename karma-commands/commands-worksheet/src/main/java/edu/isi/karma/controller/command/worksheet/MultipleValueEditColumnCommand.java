@@ -24,8 +24,8 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(MultipleValueEditColumnCommand.class);
 	
-	protected MultipleValueEditColumnCommand(String id, String worksheetId, String hNodeID, Map<String, String> rowValueMap) {
-		super(id, worksheetId);
+	protected MultipleValueEditColumnCommand(String id, String model, String worksheetId, String hNodeID, Map<String, String> rowValueMap) {
+		super(id, model, worksheetId);
 		this.hNodeID = hNodeID;
 		this.newRowValueMap = rowValueMap;
 	}
@@ -65,7 +65,7 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 			String newCellValue = newRowValueMap.get(rowID);
 			row.setValue(hNodeID, newCellValue, factory);
 		}
-		return WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(this.worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
+		return WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(this.worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 			String oldCellValue = oldRowValueMap.get(rowID);
 			row.setValue(hNodeID, oldCellValue, factory);
 		}
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
 	}
 
 }

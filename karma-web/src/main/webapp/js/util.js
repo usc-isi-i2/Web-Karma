@@ -586,6 +586,7 @@ function changeKarmaHome(homeDir) {
 	var info = generateInfoObject("", "", "SetKarmaHomeCommand");
 	info["directory"] = homeDir;
 	var result = true;
+	$.cookie("karmaHome", homeDir);
 	$.ajax({
 		url: "RequestController",
 		type: "POST",
@@ -616,6 +617,11 @@ function refreshWorksheet(worksheetId, updates) {
 	info["updates"] = JSON.stringify(updates);
 	showLoading(info["worksheetId"]);
 	sendRequest(info, worksheetId);
+}
+
+function isValidUrl(url) {
+	var re = /^(ht|f)tps?:\/\/(([a-z0-9-\.]+\.[a-z]{2,4})|(localhost))\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/;
+    return re.test(url);
 }
 
 //Make All Modal Dialogs Resizeable

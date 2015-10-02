@@ -34,6 +34,7 @@ import edu.isi.karma.modeling.alignment.IAlignmentSaver;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -67,18 +68,18 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 	
 	@Override
 	public void saveAlignment(Alignment alignment) throws Exception {
-		saveAlignment(alignment, null, null);
+		saveAlignment(alignment, null, null, false);
 	}
 	
 	public void saveAlignment(Alignment alignment, JSONArray history)  throws Exception {
-		saveAlignment(alignment, history, null);
+		saveAlignment(alignment, history, null, false);
 	}
 	
 	public void saveAlignment(Alignment alignment, String modelFilename)  throws Exception {
-		saveAlignment(alignment, null, modelFilename);
+		saveAlignment(alignment, null, modelFilename, false);
 	}
 	
-	public void saveAlignment(Alignment alignment, JSONArray history, String modelFilename) throws Exception {
+	public void saveAlignment(Alignment alignment, JSONArray history, String modelFilename, boolean onlyHistory) throws Exception {
 		long start = System.currentTimeMillis();
 		
 		String workspaceId = AlignmentManager.Instance().getWorkspaceId(alignment);
@@ -94,10 +95,9 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		logger.info("Time to get alignment info for saving: " + (end1-start) + "msec");
 		
 		// Generate the KR2RML data structures for the RDF generation
-		final ErrorReport errorReport = new ErrorReport();
 		if (worksheet != null)
 			alignmentMappingGenerator = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
-					worksheet.getSemanticTypes(), prefix, namespace, false, history, errorReport);
+					worksheet.getSemanticTypes(), prefix, namespace, false, history, onlyHistory);
 		
 		long end2 = System.currentTimeMillis();
 		logger.info("Time to generate mappings:" + (end2-end1) + "msec");
@@ -136,10 +136,11 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 
 	@Override
 	public String getHistoryFilepath(String worksheetId) {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		String modelFilename = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 				worksheet.getTitle() +  "-auto-model.ttl"; 
-		String modelFileLocalPath = ServletContextParameterMap.getParameterValue(
+		String modelFileLocalPath = contextParameters.getParameterValue(
 				ContextParameter.R2RML_USER_DIR) +  modelFilename;
 		return modelFileLocalPath;
 	}

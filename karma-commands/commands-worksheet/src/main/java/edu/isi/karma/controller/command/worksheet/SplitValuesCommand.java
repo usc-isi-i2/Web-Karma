@@ -44,17 +44,18 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private final String delimiter;
 	private String columnName;
+	private String columnAbsoluteName;
 	private String newColName;
 	private String newHNodeId;
 	private Command splitCommaCommand;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	protected SplitValuesCommand(String id, String worksheetId,
+	protected SplitValuesCommand(String id, String model, String worksheetId,
 			String hNodeId, String delimiter, String newColName, 
 			String newHNodeId,
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.delimiter = delimiter;
 		this.newColName = newColName;
@@ -74,7 +75,7 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		return columnName;
+		return columnAbsoluteName;
 	}
 
 	@Override
@@ -90,6 +91,8 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 		// Get the HNode
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
 		columnName = hNode.getColumnName();
+		columnAbsoluteName = hNode.getAbsoluteColumnName(workspace.getFactory());
+		
 		// The column should not have a nested table but check to make sure!
 		if (hNode.hasNestedTable()) {
 			c.add(new ErrorUpdate("Cannot split column with nested table!"));
@@ -97,7 +100,8 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 		}
 		
 		if (columnName.equals(newColName)) {
-			splitCommaCommand = new SplitByCommaCommand(workspace.getFactory().getNewId("C"), worksheetId, hNodeId, delimiter, selectionId);
+			splitCommaCommand = new SplitByCommaCommand(workspace.getFactory().getNewId("C"), 
+					model, worksheetId, hNodeId, delimiter, selectionId);
 			return splitCommaCommand.doIt(workspace);
 		}
 
@@ -137,7 +141,7 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 			c.add(new ErrorUpdate("Cannot split column! csv reader error"));
 			return c;
 		}
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, selection));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, selection, workspace.getContextId()));
 
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -156,6 +160,6 @@ public class SplitValuesCommand extends WorksheetSelectionCommand {
 		HTable hTable = factory.getHTable(hNode.getHTableId());
 		hTable.removeHNode(newHNodeId, factory.getWorksheet(worksheetId));
 		hNode.removeNestedTable();
-		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, selection);
+		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, selection, workspace.getContextId());
 	}
 }

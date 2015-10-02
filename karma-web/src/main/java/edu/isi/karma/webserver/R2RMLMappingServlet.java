@@ -24,7 +24,7 @@ public class R2RMLMappingServlet extends HttpServlet{
 	 */
 	private static final long serialVersionUID = -979319404654953710L;
 	private String serverAddress = "";
-	private final String R2RML_PUBLISH_DIR = ServletContextParameterMap.getParameterValue(ContextParameter.WEBAPP_PATH) + "/publish/R2RML";
+	private final String R2RML_PUBLISH_DIR = ContextParametersRegistry.getInstance().getDefault().getParameterValue(ContextParameter.WEBAPP_PATH) + "/publish/R2RML";
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		serverAddress = request.getRequestURL().toString();

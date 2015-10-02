@@ -21,65 +21,33 @@
 
 package edu.isi.karma.kr2rml.mapping;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-
-import org.jgrapht.graph.DirectedWeightedMultigraph;
-import org.json.JSONArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.isi.karma.controller.history.CommandHistory;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.kr2rml.ErrorReport;
-import edu.isi.karma.kr2rml.KR2RMLVersion;
-import edu.isi.karma.kr2rml.KR2RMLWorksheetHistoryCompatibilityVerifier;
-import edu.isi.karma.kr2rml.ObjectMap;
-import edu.isi.karma.kr2rml.Predicate;
-import edu.isi.karma.kr2rml.PredicateObjectMap;
-import edu.isi.karma.kr2rml.Prefix;
-import edu.isi.karma.kr2rml.RefObjectMap;
-import edu.isi.karma.kr2rml.SubjectMap;
+import edu.isi.karma.kr2rml.*;
 import edu.isi.karma.kr2rml.formatter.KR2RMLColumnNameFormatterFactory;
 import edu.isi.karma.kr2rml.planning.TriplesMap;
 import edu.isi.karma.kr2rml.planning.TriplesMapLink;
-import edu.isi.karma.kr2rml.template.ColumnTemplateTerm;
-import edu.isi.karma.kr2rml.template.PythonTransformationToTemplateTermSetBuilder;
-import edu.isi.karma.kr2rml.template.StringTemplateTerm;
-import edu.isi.karma.kr2rml.template.TemplateTerm;
-import edu.isi.karma.kr2rml.template.TemplateTermSet;
+import edu.isi.karma.kr2rml.template.*;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.ClassInstanceLink;
-import edu.isi.karma.rep.alignment.ColumnNode;
-import edu.isi.karma.rep.alignment.ColumnSubClassLink;
-import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
-import edu.isi.karma.rep.alignment.DisplayModel;
-import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Label;
-import edu.isi.karma.rep.alignment.LabeledLink;
-import edu.isi.karma.rep.alignment.LiteralNode;
-import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
-import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
+import edu.isi.karma.rep.alignment.*;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURITokenizer;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator;
 import edu.isi.karma.transformation.tokenizer.PythonTransformationToken;
 import edu.isi.karma.webserver.KarmaException;
+import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.json.JSONArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class KR2RMLMappingGenerator {
 
@@ -101,13 +69,13 @@ public class KR2RMLMappingGenerator {
 	
 	public KR2RMLMappingGenerator(Workspace workspace, Worksheet worksheet, Alignment alignment, 
 			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
-			boolean generateInverse, ErrorReport errorReport) throws KarmaException{
-		this(workspace, worksheet, alignment, semanticTypes, sourcePrefix, sourceNamespace, generateInverse, null, errorReport);
+			boolean generateInverse) throws KarmaException{
+		this(workspace, worksheet, alignment, semanticTypes, sourcePrefix, sourceNamespace, generateInverse, null, false);
 	}
 	
 	public KR2RMLMappingGenerator(Workspace workspace, Worksheet worksheet, Alignment alignment, 
 			SemanticTypes semanticTypes, String sourcePrefix, String sourceNamespace, 
-			boolean generateInverse, JSONArray history, ErrorReport errorReport) throws KarmaException{
+			boolean generateInverse, JSONArray history, boolean onlyHistory) throws KarmaException{
 
 		this.workspace = workspace;
 		this.worksheet = worksheet;
@@ -127,11 +95,15 @@ public class KR2RMLMappingGenerator {
 		this.steinerTreeRoot = alignment.GetTreeRoot();
 		
 		// Generate the R2RML data structures
-		generateMappingFromSteinerTree(generateInverse);
+		if (!onlyHistory) {
+			generateMappingFromSteinerTree(generateInverse);
+		}
 		
 		addWorksheetHistory(history);
 		addSourceType(worksheet);
-		addColumnNameFormatter();
+		if (!onlyHistory) {
+			addColumnNameFormatter();
+		}
 		determineIfMappingIsR2RMLCompatible(worksheet);
 	}
 

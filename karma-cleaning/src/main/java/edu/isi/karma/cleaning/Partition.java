@@ -16,8 +16,10 @@ public class Partition implements GrammarTreeNode {
 	public String label; // the class label of current partition
 	public String cls;
 	public String program = "";
-	public Partition()
+	public String contextId;
+	public Partition(String contextId)
 	{	
+		this.contextId = contextId;
 	}
 	public Partition(Traces t,Vector<Vector<TNode>> orgNodes, Vector<Vector<TNode>> tarNodes)
 	{
@@ -35,7 +37,7 @@ public class Partition implements GrammarTreeNode {
 		this.tarNodes = tar;
 		Vector<Traces> ts = new Vector<Traces>();
 		for (int i = 0; i < orgNodes.size(); i++) {
-			Traces t = new Traces(orgNodes.get(i), tarNodes.get(i));
+			Traces t = new Traces(orgNodes.get(i), tarNodes.get(i),contextId);
 			ts.add(t);
 		}
 		Traces iterTraces = ts.get(0);
@@ -73,7 +75,7 @@ public class Partition implements GrammarTreeNode {
 		ntar.addAll(this.tarNodes);
 		ntar.addAll(b.tarNodes);
 		if (mt != null) {
-			Partition p = new Partition();
+			Partition p = new Partition(contextId);
 			p.setExamples(norg, ntar);
 			p.setTraces(mt);
 			return p;

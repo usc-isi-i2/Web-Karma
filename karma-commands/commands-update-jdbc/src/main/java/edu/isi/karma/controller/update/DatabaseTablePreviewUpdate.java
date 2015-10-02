@@ -20,18 +20,19 @@
  ******************************************************************************/
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.util.AbstractJDBCUtil;
-import edu.isi.karma.util.DBType;
-import edu.isi.karma.util.JDBCUtilFactory;
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONStringer;
 import org.json.JSONWriter;
 
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import edu.isi.karma.util.AbstractJDBCUtil;
+import edu.isi.karma.util.DBType;
+import edu.isi.karma.util.JDBCUtilFactory;
+import edu.isi.karma.view.VWorkspace;
 
 public class DatabaseTablePreviewUpdate extends AbstractUpdate {
 

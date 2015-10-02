@@ -21,9 +21,9 @@
 
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.rep.Workspace;
-
 import javax.servlet.http.HttpServletRequest;
+
+import edu.isi.karma.rep.Workspace;
 
 public class ResetKarmaCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -35,7 +35,8 @@ public class ResetKarmaCommandFactory extends CommandFactory {
 		boolean forgetSemanticTypes = Boolean.parseBoolean(request.getParameter(Arguments.forgetSemanticTypes.name()));
 		boolean forgetModels = Boolean.parseBoolean(request.getParameter(Arguments.forgetModels.name()));
 		boolean forgetAlignment = Boolean.parseBoolean(request.getParameter(Arguments.forgetAlignment.name()));
-		return new ResetKarmaCommand(getNewId(workspace), forgetSemanticTypes, forgetModels, forgetAlignment);
+		return new ResetKarmaCommand(getNewId(workspace), Command.NEW_MODEL,
+				forgetSemanticTypes, forgetModels, forgetAlignment);
 	}
 
 	@Override

@@ -1,0 +1,4 @@
+_:schema_Product1_ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4_N12_1b6453892473a467d07372d45eb05abc2031647a_N14 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://schema.org/Product> .
+_:schema_Product1_ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4_N12_1b6453892473a467d07372d45eb05abc2031647a_N14 <http://schema.org/name> "4" .
+_:schema_Product1_ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4_N12_1b6453892473a467d07372d45eb05abc2031647a_N14 <http://memexproxy.com/ontology/activityCount> "5" .
+

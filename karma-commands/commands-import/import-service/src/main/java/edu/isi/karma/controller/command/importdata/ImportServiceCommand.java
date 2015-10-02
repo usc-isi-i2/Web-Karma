@@ -25,6 +25,7 @@ package edu.isi.karma.controller.command.importdata;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,7 @@ import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.sources.InvocationManager;
+import edu.isi.karma.util.HTTPUtil;
 
 public class ImportServiceCommand extends ImportCommand {
 
@@ -49,9 +51,9 @@ public class ImportServiceCommand extends ImportCommand {
     private boolean includeInputAttributes;
     private String encoding;
 
-	protected ImportServiceCommand(String id, String ServiceUrl, String worksheetName,
+	protected ImportServiceCommand(String id, String model, String ServiceUrl, String worksheetName,
             boolean includeInputAttributes, String encoding) {
-        super(id);
+        super(id, model);
         this.serviceUrl = ServiceUrl;
         this.worksheetName = worksheetName;
         this.includeInputAttributes = includeInputAttributes;
@@ -83,21 +85,16 @@ public class ImportServiceCommand extends ImportCommand {
 
         UpdateContainer c = new UpdateContainer();
 
-        List<String> urls = new ArrayList<String>();
-        urls.add(serviceUrl);
-        List<String> ids = new ArrayList<String>();
-        ids.add("1");
         try {
-            InvocationManager invocatioManager = new InvocationManager(null, ids, urls, encoding);
-            String json = invocatioManager.getServiceJson(includeInputAttributes);
-			logger.debug(json);
+        	Object json = HTTPUtil.executeAndParseHTTPGetService(serviceUrl, includeInputAttributes);
+			logger.debug(json.toString());
             Import imp = new JsonImport(json, worksheetName, workspace, encoding, -1);
 
             Worksheet wsht = imp.generateWorksheet();
             c.add(new ImportServiceCommandPreferencesUpdate(serviceUrl, worksheetName));
 
             c.add(new WorksheetListUpdate());
-            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
+            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
             return c;
         } catch (Exception e) {
             logger.error("Error occured while creating worksheet from web-service: " + serviceUrl);

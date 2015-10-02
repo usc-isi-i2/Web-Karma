@@ -11,10 +11,12 @@ public class ParseTreeNode {
 	}
 	ParseTreeNode parent;
 	ArrayList<ParseTreeNode> children = new ArrayList<ParseTreeNode>();
-	public ParseTreeNode(nodetype type, String value)
+	String contextId;
+	public ParseTreeNode(nodetype type, String value, String contextId)
 	{
 		this.type = type;
 		this.value = value;
+		this.contextId = contextId;
 	}
 	public void addChildren(ParseTreeNode node)
 	{
@@ -70,7 +72,7 @@ public class ParseTreeNode {
 	{
 		try
 		{
-		ProgramRule ptmp = new ProgramRule(this.value);
+		ProgramRule ptmp = new ProgramRule(this.value, contextId);
 		String res = "";
 		res = ptmp.transform(input);
 		//recursively evaluate the children nodes.

@@ -40,13 +40,15 @@ public class GlueCommand extends WorksheetSelectionCommand {
 		Longest, Shortest, CrossProduct
 	}
 	List<String> hNodeName;
+	private String hNodeParentName;
+	
 	private static Logger logger = LoggerFactory
 			.getLogger(GlueCommand.class);
 
-	protected GlueCommand(String id,String worksheetId, 
+	protected GlueCommand(String id, String model, String worksheetId, 
 			String hNodeId, String selectionId, 
 			String hNodeIdList, String implMethod) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hNodeIdList = hNodeIdList;
 		if (implMethod != null && !implMethod.isEmpty()) {
@@ -55,7 +57,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 		else {
 			this.implMethod = GlueMethod.Longest;
 		}
-		hNodeName = new ArrayList<String>();
+		hNodeName = new ArrayList<>();
 		addTag(CommandTag.Transformation);
 	}
 
@@ -71,9 +73,11 @@ public class GlueCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder(hNodeParentName);
+		String sep = " &gt; ";
 		for (String name : hNodeName) {
-			builder.append(name + " ");
+			builder.append(sep + name);
+			sep = ", ";
 		}
 		return builder.substring(0, builder.length());
 	}
@@ -97,9 +101,13 @@ public class GlueCommand extends WorksheetSelectionCommand {
 			ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
 		else
 			ht = oldws.getHeaders();
+		
 		for (int i = 0; i < checked.length(); i++) {
 			JSONObject t = (checked.getJSONObject(i));
 			HNode hNode = ht.getHNode(t.getString("value"));
+			if(i == 0)
+				this.hNodeParentName = hNode.getParentColumnName(factory);
+			
 			if (hNode != null) {
 				hnodes.add(hNode);
 				hNodeName.add(hNode.getColumnName());
@@ -112,12 +120,12 @@ public class GlueCommand extends WorksheetSelectionCommand {
 		try{
 			UpdateContainer c =  new UpdateContainer();
 			c.add(new WorksheetListUpdate());
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws)));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws), workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			return c;
 		} catch (Exception e) {
-			logger.error("Error in UnfoldCommand" + e.toString());
+			logger.error("Error in GlueCommand" + e.toString());
 			e.printStackTrace();
 			Util.logException(logger, e);
 			return new UpdateContainer(new ErrorUpdate(e.getMessage()));
@@ -133,26 +141,26 @@ public class GlueCommand extends WorksheetSelectionCommand {
 		ndid.removeNestedTable();
 		//remove the new column
 		currentTable.removeHNode(newhNodeId, worksheet);
-		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+		uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 		uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return uc;
 	}
 
-	private void glueNestedTable(Worksheet oldws, Workspace workspace, HTable ht, List<HNode> hnodes, RepFactory factory) {
-		SuperSelection selection = getSuperSelection(oldws);
+	private void glueNestedTable(Worksheet worksheet, Workspace workspace, HTable ht, List<HNode> hnodes, RepFactory factory) {
+		SuperSelection selection = getSuperSelection(worksheet);
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
 		List<Table> parentTables = new ArrayList<Table>();
-		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables, selection);
+		CloneTableUtils.getDatatable(worksheet.getDataTable(), parentHT,parentTables, selection);
 		ArrayList<Row> parentRows = new ArrayList<Row>();
 		for (Table tmp : parentTables) {
 			for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 				parentRows.add(row);
 			}
 		}
-		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), HNodeType.Transformation, oldws, factory);
+		HNode newNode = ht.addHNode(ht.getNewColumnName("Glue"), HNodeType.Transformation, worksheet, factory);
 		outputColumns.add(newNode.getId());
 		newhNodeId = newNode.getId();
-		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
+		HTable newht = newNode.addNestedTable(newNode.getColumnName(), worksheet, factory);
 		List<HNode> childHNodes = new ArrayList<HNode>();
 		for (HNode hnode : hnodes) {
 			if (hnode.hasNestedTable()) {
@@ -161,7 +169,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 				}
 			}
 		}
-		Map<String, String> mapping = CloneTableUtils.cloneHTable(ht, newht, oldws, factory, childHNodes, selection);
+		Map<String, String> mapping = CloneTableUtils.cloneHTable(newht, worksheet, factory, childHNodes, true);
 		for (Entry<String, String> entry : mapping.entrySet()) {
 			outputColumns.add(entry.getValue());
 		}
@@ -197,7 +205,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 				}
 			}
 		}
-		Map<String, String> mapping = CloneTableUtils.cloneHTable(oldws.getHeaders(), newht, oldws, factory, childHNodes, selection);
+		Map<String, String> mapping = CloneTableUtils.cloneHTable(newht, oldws, factory, childHNodes, true);
 		for (Entry<String, String> entry : mapping.entrySet()) {
 			outputColumns.add(entry.getValue());
 		}
@@ -209,12 +217,12 @@ public class GlueCommand extends WorksheetSelectionCommand {
 
 	}
 
-	private void generateRows(List<HNode> hnodes, SuperSelection selection, Row row, 
+	private void generateRows(List<HNode> hNodes, SuperSelection selection, Row row,
 			Table nestedTable, RepFactory factory, Map<String, String> mapping, 
-			List<HNode> childHNodes, HTable newht) {
+			List<HNode> childHNodes, HTable newHTable) {
 		if (implMethod != GlueMethod.CrossProduct) {
 			int max = implMethod == GlueMethod.Longest ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-			for (HNode hnode : hnodes) {
+			for (HNode hnode : hNodes) {
 				if (!hnode.hasNestedTable())
 					continue;
 				Node tmp = row.getNeighbor(hnode.getId());
@@ -229,7 +237,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 			List<Row> newRows = new ArrayList<Row>();
 			for (int i = 0; i < max; i++)
 				newRows.add(nestedTable.addRow(factory));
-			for (HNode hnode : hnodes) {
+			for (HNode hnode : hNodes) {
 				if (!hnode.hasNestedTable())
 					continue;
 				Node tmp = row.getNeighbor(hnode.getId());
@@ -238,14 +246,14 @@ public class GlueCommand extends WorksheetSelectionCommand {
 					if (i >= max) {
 						break;
 					}
-					CloneTableUtils.cloneDataTableExistingRow(nestedRow, newRows.get(i), nestedTable, hnode.getNestedTable(), newht, childHNodes, factory, mapping, selection);
+					CloneTableUtils.cloneDataTableExistingRow(nestedRow, newRows.get(i), childHNodes, factory, mapping, selection);
 					i++;
 				}
 			}
 		}
 		else {
 			List<List<Row>> tablesToCross = new ArrayList<List<Row>>();
-			for (HNode hnode : hnodes) {
+			for (HNode hnode : hNodes) {
 				if (!hnode.hasNestedTable())
 					continue;
 				Node tmp = row.getNeighbor(hnode.getId());
@@ -261,8 +269,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 				Row r = nestedTable.addRow(factory);
 				for (int i = 0; i < tablesToCross.size(); i++) {
 					Row nestedRow = tablesToCross.get(i).get(enumeration[i]);
-					HNode hnode = factory.getHNode(nestedRow.getBelongsToTable().getNestedTableInNode().getHNodeId());
-					CloneTableUtils.cloneDataTableExistingRow(nestedRow, r, nestedTable, hnode.getNestedTable(), newht, childHNodes, factory, mapping, selection);
+					CloneTableUtils.cloneDataTableExistingRow(nestedRow, r, childHNodes, factory, mapping, selection);
 				}
 				enumeration[0]++;
 				for (int i = 0; i < tablesToCross.size(); i++) {

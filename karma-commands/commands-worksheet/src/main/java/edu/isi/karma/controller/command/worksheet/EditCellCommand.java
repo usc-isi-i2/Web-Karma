@@ -49,9 +49,9 @@ public class EditCellCommand extends WorksheetSelectionCommand {
 
 	private final CellValue newValueArg;
 	
-	EditCellCommand(String id, String worksheetId, String nodeIdArg,
+	EditCellCommand(String id, String model, String worksheetId, String nodeIdArg,
 			String newValueArg, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.nodeIdArg = nodeIdArg;
 		this.newValueArg = new StringCellValue(newValueArg);
 	}
@@ -86,7 +86,7 @@ public class EditCellCommand extends WorksheetSelectionCommand {
 		node.setValue(newValueArg, Node.NodeStatus.edited,
 				workspace.getFactory());
 		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel);
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel, workspace.getContextId());
 		uc.add(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, newValueArg, Node.NodeStatus.edited));
 		return uc;
@@ -97,7 +97,7 @@ public class EditCellCommand extends WorksheetSelectionCommand {
 		Node node = workspace.getFactory().getNode(nodeIdArg);
 		SuperSelection sel = getSuperSelection(workspace);
 		node.setValue(previousValue, previousStatus, workspace.getFactory());
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel);
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, sel, workspace.getContextId());
 		uc.add(new NodeChangedUpdate(worksheetId,
 				nodeIdArg, previousValue, previousStatus));
 		return uc;

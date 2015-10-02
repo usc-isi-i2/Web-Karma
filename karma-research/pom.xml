@@ -24,6 +24,11 @@
 		    <version>${project.version}</version>
 	    </dependency>
 		<dependency>
+		    <groupId>edu.isi</groupId>
+		    <artifactId>karma-offline</artifactId>
+		    <version>${project.version}</version>
+	    </dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>

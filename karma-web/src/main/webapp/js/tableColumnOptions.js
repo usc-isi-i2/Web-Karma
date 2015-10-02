@@ -37,9 +37,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			name: "divider",
 			leafOnly: false,
 			leafExcluded: false
-		},
-
-		{
+		}, {
 			name: "Extract Entities",
 			func: extractEntities,
 			leafOnly: true,
@@ -49,8 +47,12 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			func: pyTransform,
 			leafOnly: false,
 			leafExcluded: false
-		}, 
-		{
+		}, {
+			name: "Aggregation",
+			func: aggregation,
+			leafOnly: true,
+			leafExcluded: false
+		}, {
 			name: "Transform",
 			func: transform,
 			leafOnly: true,
@@ -58,18 +60,19 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 		},
 		//{name:"Generate Cluster Values", func:clusterValues, leafOnly:true, leafExcluded: false},
 		//{name:"Merge Cluster Values", func:mergeValues, leafOnly:true, leafExcluded: false},
-		{
-			name: "divider",
-			leafOnly: true,
-			leafExcluded: false
-		},
-
+//		{
+//			name: "divider",
+//			leafOnly: true,
+//			leafExcluded: false
+//		},
+/*
 		{
 			name: "Invoke Service",
 			func: invokeService,
 			leafOnly: true,
 			leafExcluded: false
 		},
+*/
 		//{name:"Show Chart", func:showChart, leafOnly:true, leafExcluded: false},
 		{
 			name: "divider",
@@ -83,12 +86,12 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			leafOnly: false,
 			leafExcluded: true
 		}, {
-			name: "Unfold",
+			name: "Unfold Columns",
 			func: Unfold,
 			leafOnly: true,
 			leafExcluded: false
 		}, {
-			name: "Fold",
+			name: "Fold Columns",
 			func: Fold,
 			leafOnly: false,
 			leafExcluded: true
@@ -151,6 +154,11 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 		hideDropdown();
 		$("#pyTransformSelectionDialog").data("operation", "Subtract");
 		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
+	}
+
+	function aggregation() {
+		hideDropdown();
+		AggregationDialog.getInstance().show(wsId, wsColumnId, wsColumnTitle);
 	}
 
 	function invertRows() {
@@ -830,6 +838,7 @@ var PyTransformDialog = (function() {
 		var dialog = $("#pyTransformDialog");
 		var worksheetId, columnId, columnName;
 		var editor;
+		var cacheIndex, initPyCode;
 
 		function init() {
 			editor = ace.edit("transformCodeEditor");
@@ -846,12 +855,13 @@ var PyTransformDialog = (function() {
 			dialog.on('show.bs.modal', function(e) {
 				hideError();
 				var hNode = $("td#" + columnId);
-
+				
 				if (hNode.data("pythonTransformation"))
-					editor.getSession().setValue(hNode.data("pythonTransformation"));
+					initPyCode = hNode.data("pythonTransformation"); 
 				else
-					editor.getSession().setValue("return getValue(\"" + columnName + "\")");
+					initPyCode = "return getValue(\"" + columnName + "\")";
 
+				editor.getSession().setValue(initPyCode);
 				$("#pythonTransformEditColumnName").html(columnName);
 				$("#pythonTransformNewColumnName").val("");
 				// $("#pythonTransformNewColumnName").attr('disabled','disabled');
@@ -859,6 +869,8 @@ var PyTransformDialog = (function() {
 				$("#btnError", dialog).button('disable');
 				$("input").removeAttr('disabled');
 				$("#pythonPreviewResultsTable").hide();
+				
+				cacheIndex = -1;
 			});
 
 			// Initialize handler for Save button
@@ -867,6 +879,32 @@ var PyTransformDialog = (function() {
 				e.preventDefault();
 				saveDialog(e);
 			});
+			
+			$('#btnNextCache', dialog).on('click', function(e) {
+				e.preventDefault();
+				if(cacheIndex != -1) {
+					cacheIndex -=1;
+					if (cacheIndex < 0)  {
+						cacheIndex = -1;
+						editor.getSession().setValue(initPyCode);
+					} else {
+						pyCode = PyTransformCache.getInstance().get(cacheIndex);
+						editor.getSession().setValue(pyCode);
+					}
+				} else {
+					editor.getSession().setValue(initPyCode);
+				}
+			});
+			
+			$('#btnPrevCache', dialog).on('click', function(e) {
+				e.preventDefault();
+				cacheIndex += 1;
+				maxVal = PyTransformCache.getInstance().length() - 1;
+				if(cacheIndex > maxVal) cacheIndex = maxVal;
+				pyCode = PyTransformCache.getInstance().get(cacheIndex);
+				if(pyCode)
+					editor.getSession().setValue(pyCode);
+			});
 
 			$('#btnErrors', dialog).on('click', function(event) {
 				$("#pyTransformErrorWindow").show();
@@ -874,6 +912,10 @@ var PyTransformDialog = (function() {
 
 			$('#btnPreview', dialog).on('click', function(e) {
 				previewTransform();
+			});
+			
+			$("#pythonTransformNewColumnName", dialog).keypress(function(e) {
+				$('input:radio[name=pyTransformType]').val(["new"]);
 			});
 		}
 
@@ -1028,6 +1070,8 @@ var PyTransformDialog = (function() {
 			// useExistingColumnName, "useExistingColumnName"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
+			PyTransformCache.getInstance().add(editor.getValue());
+			
 			showLoading(worksheetId)
 			sendRequest(info, worksheetId);
 		}
@@ -1323,12 +1367,13 @@ var GroupByDialog = (function() {
 					//console.log(columnName);
 					//console.log(id);
 					var row = $("<div>").addClass("checkbox");
-					var label = $("<label>").text(columnName);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "checkbox")
 						.attr("id", "selectcolumns")
 						.attr("value", id);
 					label.append(input);
+					label.append($("<span>").text(columnName));
 					row.append(label);
 					dialogContent.append(row);
 				}
@@ -1431,13 +1476,14 @@ var UnfoldDialog = (function() {
 					//console.log(columnName);
 					//console.log(id);
 					var row = $("<div>").addClass("radio");
-					var label = $("<label>").text(columnName);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "radio")
 						.attr("id", "selectcolumns")
 						.attr("value", id)
 						.attr("name", "unfoldColumn");
 					label.append(input);
+					label.append($("<span>").text(columnName));
 					row.append(label);
 					dialogContent.append(row);
 				}
@@ -1542,12 +1588,13 @@ var FoldDialog2 = (function() {
 					//console.log(columnName);
 					//console.log(id);
 					var row = $("<div>").addClass("checkbox");
-					var label = $("<label>").text(columnName);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "checkbox")
 						.attr("id", "selectcolumns")
 						.attr("value", id)
 					label.append(input);
+					label.append($("<span>").text(columnName));
 					row.append(label);
 					dialogContent.append(row);
 				}
@@ -1659,12 +1706,13 @@ var GlueDialog = (function() {
 					//console.log(columnName);
 					//console.log(id);
 					var row = $("<div>").addClass("checkbox");
-					var label = $("<label>").text(columnName);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "checkbox")
 						.attr("id", "selectcolumns")
 						.attr("value", id);
 					label.append(input);
+					label.append($("<span>").text(columnName));
 					row.append(label);
 					dialogContent.append(row);
 				}
@@ -1858,6 +1906,122 @@ var PyTransformSelectionDialog = (function() {
 
 })();
 
+var AggregationDialog = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var dialog = $("#aggregationTransformDialog");
+		var worksheetId, columnId, columnName;
+		var editor;
+
+		function init() {
+			editor = ace.edit("transformCodeEditorAggregation");
+			editor.setTheme("ace/theme/dreamweaver");
+			editor.getSession().setMode("ace/mode/python");
+			editor.getSession().setUseWrapMode(true);
+			editor.getSession().setUseSoftTabs(false);
+			dialog.on("resize", function(event, ui) {
+				editor.resize();
+			});
+
+			$('#btnSave', dialog).on('click', function(e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+
+			dialog.on('show.bs.modal', function(e) {
+				hideError();
+				editor.getSession().setValue("");
+				$("#aggregationConstructor").val("concat('" + columnName + "', ';')");
+				$("#aggregationNewColumnName").val("");
+				$(".modal-title", dialog).html("Aggregate Column: " + columnName);
+			});
+		}
+
+		function showError(e) {
+			err = $(".error", dialog);
+			err.html(e);
+			err.show();
+		}
+		
+		function hideError() {
+			err = $(".error", dialog);
+			err.hide();
+		}
+		
+		function saveDialog(e) {
+			hideError();
+			var constructor = $("#aggregationConstructor").val();
+			var newColumnName = $("#aggregationNewColumnName").val();
+			
+			if (newColumnName) {
+				
+			}
+			else {
+				showError("Please enter the column name");
+				return;
+			}
+			if (constructor) {
+				
+			}
+			else {
+				showError("Please enter the constructor");
+				return;
+			}
+			var pythonCode = editor.getValue();
+//			if(pythonCode) {
+//				
+//			} else {
+//				showError("Please enter the tranformation code for Aggregation");
+//				return;
+//			}
+			var info = generateInfoObject(worksheetId, columnId, "AggregationPythonCommand");
+			var newInfo = info['newInfo'];
+			newInfo.push(getParamObject("pythonCode", pythonCode, "other"));
+			newInfo.push(getParamObject("constructor", constructor, "other"));
+			newInfo.push(getParamObject("newColumnName", newColumnName, "other"));
+			info["newInfo"] = JSON.stringify(newInfo);
+			showLoading(worksheetId);
+			sendRequest(info, worksheetId);	
+			hide();
+		};
+
+		function show(wsId, colId, colName) {
+			worksheetId = wsId;
+			columnId = colId;
+			columnName = colName;
+			dialog.modal({
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
+			});
+		};
+
+		function hide() {
+			dialog.modal('hide');
+		}
+
+		return { // Return back the public methods
+			show: show,
+			init: init
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
+
+
+})();
+
 
 function ClusterValues(worksheetId, columnId) {
 
@@ -1883,3 +2047,55 @@ function MergeValues(worksheetId, columnId) {
 
 	sendRequest(info, worksheetId);
 }
+
+
+var PyTransformCache = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var values;
+		var max_size;
+		
+		function init() {
+			values = [];
+			max_size = 10;
+		}
+		
+		function add(value) {
+			values.unshift(value);
+			if(values.length > max_size) {
+				values.pop();
+			}
+		}
+		
+		function length() {
+			return values.length;
+		} 
+		
+		function get(index) {
+			if(index < 0) return values[0];
+			if(index > values.length-1) return values[length-1];
+			return values[index];
+		}
+		
+		return { //Return back the public methods
+			init: init,
+			add: add,
+			length: length,
+			get: get
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+	
+	return {
+		getInstance: getInstance
+	};
+
+})();

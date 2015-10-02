@@ -515,3 +515,10 @@ span#applyHistoryButton {
 .tableDropdown .dropdown-menu {
 	text-align: left;
 }
+
+#btnPrevCache {
+	margin-top: 25px;
+}
+#btnNextCache {
+	margin-top: 25px;
+}

@@ -66,14 +66,15 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 			propId = propUri;
 		}
 			
-		return new SetMetaPropertyCommand(getNewId(workspace), worksheetId, hNodeId, 
+		return new SetMetaPropertyCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, hNodeId, 
 				prop, propUri, propId, true, rdfLiteralType, 
 				selectionName);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
+
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(HistoryJsonUtil.getStringValue(Arguments.metaPropertyName.name(), inputJson));
@@ -85,24 +86,23 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 			propUri = HistoryJsonUtil.getStringValue(ArgumentsOld.metaPropertyValue.name(), inputJson);
 			propId = propUri;
 		}
+		boolean train = HistoryJsonUtil.getBooleanValue(Arguments.trainAndShowUpdates.name(), inputJson);
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), worksheetId, 
-				hNodeId, prop, propUri, propId, true, rdfLiteralType, 
+		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), model, worksheetId, 
+				hNodeId, prop, propUri, propId, train, rdfLiteralType, 
 				selectionName);
 		
-		// Change the train flag, so that it does not train while reading from history
-		HistoryJsonUtil.setArgumentValue(Arguments.trainAndShowUpdates.name(), false, inputJson);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;
 	}
 	
-	public Command createCommand(Workspace workspace, String hNodeId, String worksheetId, String metaPropertyName, 
-			String propUri, String propId, String rdfLiteralType, String selectionId) {
+	public Command createCommand(String model, Workspace workspace, String hNodeId, String worksheetId, String metaPropertyName, 
+			String propUri, String propId, boolean train, String rdfLiteralType, String selectionId) {
 		METAPROPERTY_NAME prop = METAPROPERTY_NAME.valueOf(metaPropertyName);
-		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), worksheetId, 
-				hNodeId, prop, propUri, propId, true, rdfLiteralType, selectionId);
+		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), model, worksheetId, 
+				hNodeId, prop, propUri, propId, train, rdfLiteralType, selectionId);
 		return comm;
 	}
 

@@ -54,15 +54,16 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 
-	private StringBuilder descStr = new StringBuilder();
+	private StringBuilder addDescStr = new StringBuilder();
+	private StringBuilder delDescStr = new StringBuilder();
 
 	public enum JsonKeys {
 		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri
 	}
 
-	public ChangeInternalNodeLinksCommand(String id, String worksheetId,
+	public ChangeInternalNodeLinksCommand(String id, String model, String worksheetId,
 			String alignmentId, JSONArray initialEdges, JSONArray newEdges) {
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 		this.initialEdges = initialEdges;
 		this.newEdges = newEdges;
@@ -82,7 +83,17 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 	@Override
 	public String getDescription() {
-		return descStr.toString();
+		String addStr = addDescStr.toString();
+		String delStr = delDescStr.toString();
+		String res = "";
+		if(addStr.length() > 0)
+			res += "Add: " + addStr;
+		if(delStr.length() > 0) {
+			if(res.length() > 0)
+				res += ", ";
+			res += "Delete: " + delStr;
+		}
+		return res;
 	}
 
 	@Override
@@ -110,6 +121,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		// First delete the links that are not present in newEdges and present
 		// in intialEdges
 		try {
+			refineInitialEdges(alignment);
 			deleteLinks(worksheet, alignment);
 			addNewLinks(alignment, ontMgr);
 			
@@ -121,6 +133,22 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		}
 
 		return this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
+	}
+
+	private void refineInitialEdges(Alignment alignment) {
+		int j = initialEdges.length() - 1;
+		while (j >= 0) {
+			JSONObject initialEdge = initialEdges.getJSONObject(j);
+			String edgeUri = initialEdge.getString(JsonKeys.edgeId.name());
+			String sourceId = initialEdge.getString(JsonKeys.edgeSourceId.name());
+			String targetId = initialEdge.getString(JsonKeys.edgeTargetId.name());
+			String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
+			if (alignment.getLinkById(linkId) == null) { // the link is not even in the graph
+				initialEdges.remove(j);
+			}
+			j--;
+		}
+
 	}
 
 	private void addNewLinks(Alignment alignment, OntologyManager ontMgr)
@@ -155,51 +183,61 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 			}
 			
 			String sourceId = newEdge.has(JsonKeys.edgeSourceId.name()) ? newEdge.getString(JsonKeys.edgeSourceId.name()) : null;
-			
 			Node sourceNode = null;
-			Node targetNode = null;
 			if(sourceId != null) {
 				if(sourceId.endsWith(" (add)"))
 					sourceId = sourceId.substring(0, sourceId.length()-5).trim();
 				sourceNode = alignment.getNodeById(sourceId);
 			} 
+			
 			String targetId = newEdge.has(JsonKeys.edgeTargetId.name()) ? newEdge.getString(JsonKeys.edgeTargetId.name()) : null;
+			Node targetNode = null;
 			if(targetId != null) {
 				if(targetId.endsWith(" (add)"))
 					targetId = targetId.substring(0, targetId.length()-5).trim();
 				targetNode = alignment.getNodeById(targetId);;
 			}
+			
 			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
 			String sourceUri = newEdge.has(JsonKeys.edgeSourceUri.name()) ? newEdge.getString(JsonKeys.edgeSourceUri.name()) : null;
 			String targetUri = newEdge.has(JsonKeys.edgeTargetUri.name()) ? newEdge.getString(JsonKeys.edgeTargetUri.name()) : null;
 			
-			
 			if (sourceNode == null && sourceUri != null) {
 				sourceNode = alignment.addInternalNode(new Label(sourceUri));
+				sourceId = sourceNode.getId();
 			} 
 			
 			if (targetNode == null && targetUri != null) {
 				targetNode = alignment.addInternalNode(new Label(targetUri));
+				targetId = targetNode.getId();
 			} 
 
-			Label linkLabel = ontMgr.getUriLabel(edgeUri);
-
-			LabeledLink newLink = alignment.addObjectPropertyLink(sourceNode,
-					targetNode, linkLabel);
-			alignment.changeLinkStatus(newLink.getId(),
-					LinkStatus.ForcedByUser);
+			
+			String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
+			LabeledLink newLink = alignment.getLinkById(linkId);
+			if (newLink != null) {
+				alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
+			} else {
+				Label linkLabel = ontMgr.getUriLabel(edgeUri);
+				newLink = alignment.addObjectPropertyLink(sourceNode,
+						targetNode, linkLabel);
+				linkId = newLink.getId();
+			}
+				
+			alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
 
 
 			// Add info to description string
 			if (i == newEdges.length() - 1) {
-				descStr.append(newLink.getLabel().getDisplayName());
+				addDescStr.append(newLink.getLabel().getDisplayName());
 			} else {
-				descStr.append(newLink.getLabel().getDisplayName() + ",");
+				addDescStr.append(newLink.getLabel().getDisplayName() + ",");
 			}
 		}
 	}
 
 	private void deleteLinks(Worksheet worksheet, Alignment alignment) throws JSONException {
+		String sep = "";
 		for (int i = 0; i < initialEdges.length(); i++) {
 			JSONObject initialEdge = initialEdges.getJSONObject(i);
 
@@ -219,7 +257,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 					)
 					exists = true;
 			}
-
+						
 			if (!exists) {
 				String targetId = initialEdge.getString(JsonKeys.edgeTargetId.name());
 				String linkId = LinkIdFactory.getLinkId(
@@ -227,6 +265,11 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 						initialEdge.getString(JsonKeys.edgeSourceId.name()),
 						targetId);
 
+				// Add info to description string
+				LabeledLink delLink = alignment.getLinkById(linkId);
+				delDescStr.append(sep + delLink.getLabel().getDisplayName());
+				sep = ", ";
+				
 				// alignment.changeLinkStatus(linkId, LinkStatus.Normal);
 				alignment.removeLink(linkId);
 				
@@ -236,7 +279,12 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 					worksheet.getSemanticTypes().unassignColumnSemanticType(cNode.getHNodeId());
 				}
 			}
+			
+			
+			
 		}
+		
+		
 	}
 
 	@Override

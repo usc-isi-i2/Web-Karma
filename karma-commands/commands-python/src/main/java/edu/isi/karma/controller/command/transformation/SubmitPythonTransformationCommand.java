@@ -61,11 +61,12 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	protected String pythonNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitPythonTransformationCommand.class);
-
-	public SubmitPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
+	private String newColumnAbsoluteName;
+	
+	public SubmitPythonTransformationCommand(String id, String model, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, 
 			String errorDefaultValue, String selectionId, boolean isJSONOutput) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
+		super(id, model, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
 		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
@@ -82,7 +83,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 
 	@Override
 	public String getDescription() {
-		return newColumnName;
+		return newColumnAbsoluteName;
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 						.getCommandFactoryMap().get(
 								AddColumnCommand.class.getSimpleName());
 				addColCmd = (AddColumnCommand) addColumnFac.createCommand(
-						addColumnInput, workspace);
+						addColumnInput, this.model, workspace);
 				addColCmd.saveInHistory(false);
 				addColCmd.setExecutedInBatch(this.isExecutedInBatch());
 				addColCmd.doIt(workspace);
@@ -152,8 +153,9 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			logger.error("Error occured during python transformation.",e);
 			return new UpdateContainer(new ErrorUpdate("Error occured while creating new column for applying Python transformation to the column."));
 		}
-		try
-		{
+		try {
+			HNode newNode = f.getHNode(addColCmd.getNewHNodeId());
+			newColumnAbsoluteName = newNode.getAbsoluteColumnName(f);
 			UpdateContainer c = applyPythonTransformation(workspace, worksheet, f,
 					hNode, ctrl, addColCmd.getNewHNodeId());
 			if (isJSONOutput) {
@@ -234,7 +236,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			resetColumnValues(workspace);
 		}
 
-		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+		UpdateContainer c = (WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		// TODO is it necessary to compute alignment and semantic types for everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
@@ -250,7 +252,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		Collection<Node> nodes = new ArrayList<Node>();
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 		for(Node node : nodes) {
-			originalColumnValues.add(node.serializeToJSON(selection, f));
+			originalColumnValues.add(node.serializeToJSON(selection, f).toString());
 		}
 	}
 

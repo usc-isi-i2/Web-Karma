@@ -39,8 +39,7 @@ public abstract class TopKSteinertrees {
 	
 	//maps node names to ids
 	public static Map<String, Integer> nodeToId= new HashMap<String, Integer>();
-	
-	
+
 	
 	
 	/**

@@ -41,7 +41,8 @@ public class FoldCommand extends WorksheetSelectionCommand {
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
-
+	private String label;
+	
 	private static Logger logger = LoggerFactory
 			.getLogger(FoldCommand.class);
 
@@ -49,9 +50,9 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		updateType, hNodeId, worksheetId
 	}
 
-	protected FoldCommand(String id,String worksheetId, 
+	protected FoldCommand(String id, String model, String worksheetId, 
 			String hTableId, String hNodeId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.hTableId = hTableId;
 		
@@ -70,11 +71,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		String t = "";
-		for (HNode hnode : hnodes) {
-			t += hnode.getColumnName() + " ";
-		}
-		return "" + t;
+		return this.label;
 	}
 
 	@Override
@@ -130,6 +127,17 @@ public class FoldCommand extends WorksheetSelectionCommand {
 				}
 			}
 		}
+		
+		this.label = "";
+		if(hnodes.size() > 0)
+			this.label = hnodes.get(0).getParentColumnName(Repfactory);
+		String sep = " &gt; ";
+		for(HNode hnode : hnodes) {
+			this.label += sep + hnode.getColumnName();
+			sep = ", ";
+		}
+		
+		
 		//System.out.println("HNodeID: " + htable.getHNodeIdFromColumnName("homeworks"));
 		//HNodeIds.add(htable.getHNodeIdFromColumnName("homeworks"));
 		
@@ -169,12 +177,12 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		try{
 			AddValuesCommandFactory factory = new AddValuesCommandFactory();
 			//hNodeId = hnodes.get(0).getId();
-			cmd = factory.createCommand(input, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation, selection.getName());
+			cmd = factory.createCommand(input, model, workspace, hNodeId, worksheetId, hTableId, worksheet.getHeaders().getNewColumnName("fold"), HNodeType.Transformation, selection.getName());
 			cmd.doIt(workspace);
 			outputColumns.addAll(cmd.getOutputColumns());
 			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			UpdateContainer c =  new UpdateContainer();		
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {
@@ -190,7 +198,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		//remove the new column
 		//currentTable.removeHNode(newHNodeId, worksheet);
 		UpdateContainer c =  new UpdateContainer();		
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

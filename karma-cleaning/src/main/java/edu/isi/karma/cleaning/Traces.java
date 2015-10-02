@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import edu.isi.karma.webserver.ContextParametersRegistry;
+
 public class Traces implements GrammarTreeNode {
 	public static final int time_limit = 20;
 	public Vector<TNode> orgNodes;
@@ -20,11 +22,13 @@ public class Traces implements GrammarTreeNode {
 	// keep all the segment expression to prevent repeated construction
 	public static HashMap<String, Segment> AllSegs = new HashMap<String, Segment>();
 	public String program = "null";
-	public Traces()
+	public String contextId;
+	public Traces(String contextId)
 	{
-		
+		this.contextId = contextId;
 	}
-	public Traces(Vector<TNode> org, Vector<TNode> tar) {
+	public Traces(Vector<TNode> org, Vector<TNode> tar, String contextId) {
+		this.contextId = contextId;
 		this.orgNodes = org;
 		this.tarNodes = tar;
 		this.createTraces();
@@ -155,7 +159,7 @@ public class Traces implements GrammarTreeNode {
 			if (AllSegs.containsKey(key)) {
 				seg = AllSegs.get(key);
 			} else {
-				seg = new Segment(pos, cnt, tvec);
+				seg = new Segment(pos, cnt, tvec, contextId);
 				AllSegs.put(key, seg);
 			}
 			segs.add(seg);
@@ -408,9 +412,9 @@ public class Traces implements GrammarTreeNode {
 			boolean loop = s.isinloop || t.isinloop;
 			Segment r;
 			if (s.isConstSegment() && t.isConstSegment())
-				r = new Segment(sec, loop);
+				r = new Segment(sec, loop, contextId);
 			else
-				r = new Segment(sec, loop);
+				r = new Segment(sec, loop, contextId);
 			return r;
 		}
 		if (x.getNodeType().compareTo("loop") == 0
@@ -443,9 +447,9 @@ public class Traces implements GrammarTreeNode {
 				if (s.loopbody.isConstSegment() && t.loopbody.isConstSegment())
 					loopbody = s.loopbody;
 				else {
-					loopbody = new Segment(sec, true);
+					loopbody = new Segment(sec, true, contextId);
 				}
-				r = new Loop(loopbody, t.looptype);
+				r = new Loop(loopbody, t.looptype, contextId);
 			} else {
 				return null;
 			}
@@ -697,22 +701,22 @@ public class Traces implements GrammarTreeNode {
 			} else if (i == curStartPos + itercnt * span - 1) {
 				Vector<GrammarTreeNode> body = gt.get(0);
 				if (span == 1) {
-					Loop loop = new Loop((Segment) body.get(0), Loop.LOOP_BOTH);
+					Loop loop = new Loop((Segment) body.get(0), Loop.LOOP_BOTH, contextId);
 					res.add(loop);
 					continue;
 				}
 				for (int j = 0; j < body.size(); j++) {
 					if (j == 0) {
 						Loop loop = new Loop((Segment) body.get(j),
-								Loop.LOOP_START);
+								Loop.LOOP_START, contextId);
 						res.add(loop);
 					} else if (j == body.size() - 1) {
 						Loop loop = new Loop((Segment) body.get(j),
-								Loop.LOOP_END);
+								Loop.LOOP_END, contextId);
 						res.add(loop);
 					} else {
 						Loop loop = new Loop((Segment) body.get(j),
-								Loop.LOOP_MID);
+								Loop.LOOP_MID, contextId);
 						res.add(loop);
 					}
 				}
@@ -883,7 +887,6 @@ public class Traces implements GrammarTreeNode {
 			System.out.println("" + loopline.get(key));
 		}
 	}
-
 	public void emptyState() {
 		for (GrammarTreeNode t : this.totalOrderVector) {
 			t.emptyState();

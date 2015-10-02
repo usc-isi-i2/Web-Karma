@@ -48,6 +48,8 @@ import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SubClassLink;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.util.RandomGUID;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class ModelLearningGraphSparse extends ModelLearningGraph {
 
@@ -71,7 +73,7 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 
 
 	@Override
-	public Set<InternalNode> addModel(SemanticModel model) {
+	public Set<InternalNode> addModel(SemanticModel model, boolean useOriginalWeights) {
 
 		HashMap<Node, Node> visitedNodes;
 		Node source, target;
@@ -196,11 +198,12 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 	public static void main(String[] args) {
 
 		/** Check if any ontology needs to be preloaded **/
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters("/Users/mohsen/Documents/Academic/ISI/_GIT/Web-Karma/");
 		String preloadedOntDir = "/Users/mohsen/Documents/Academic/ISI/_GIT/Web-Karma/preloaded-ontologies/";
 		File ontDir = new File(preloadedOntDir);
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
-			OntologyManager mgr = new OntologyManager();
+			OntologyManager mgr = new OntologyManager(contextParameters.getId());
 			for (File ontology: ontologies) {
 				if (ontology.getName().endsWith(".owl") || ontology.getName().endsWith(".rdf")) {
 					logger.info("Loading ontology file: " + ontology.getAbsolutePath());

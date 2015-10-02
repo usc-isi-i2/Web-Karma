@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
-import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
@@ -52,6 +52,7 @@ import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
@@ -70,6 +71,7 @@ import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SubClassLink;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 
 
 
@@ -83,14 +85,15 @@ public class Alignment implements OntologyUpdateListener {
 	private Node root = null;
 	private NodeIdFactory nodeIdFactory;
 	private Set<ColumnNode> sourceColumnNodes;
-
+	private String contextId;
 
 	public Alignment(OntologyManager ontologyManager) {
 
+		this.contextId = ontologyManager.getContextId();
 		this.ontologyManager = ontologyManager;
 		this.ontologyManager.subscribeListener(this);
 		this.sourceColumnNodes = new HashSet<ColumnNode>(); 
-		if (ModelingConfiguration.isLearnAlignmentEnabled()) {
+		if (ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getKnownModelsAlignment()) {
 			this.graphBuilder = 
 					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilderClone();
 		} else {
@@ -130,6 +133,10 @@ public class Alignment implements OntologyUpdateListener {
 	public DirectedWeightedMultigraph<Node, LabeledLink> getSteinerTree() {
 		if (this.steinerTree == null) align();
 		// GraphUtil.printGraph(this.steinerTree);
+		
+		if (this.steinerTree == null)
+			steinerTree = new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+		
 		return this.steinerTree;
 	}
 	
@@ -223,6 +230,23 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
+	public InternalNode addInternalNode(InternalNode node) {
+		
+		Node n = this.getNodeById(node.getId());
+		if (n == null) {
+			if (this.graphBuilder.addNodeAndUpdate(node)) {
+				this.nodeIdFactory.addNodeId(node.getId(), node.getUri());
+				return node;
+			} else {
+				logger.error("error in adding the internal node " + node.getId() + " to the graph");
+				return null;
+			}
+		}
+		if (n instanceof InternalNode)
+			return (InternalNode)n;
+		return null;
+	}
+	
 	public InternalNode addInternalNode(Label label) {
 		
 		String id = nodeIdFactory.getNodeId(label.getUri());
@@ -231,13 +255,52 @@ public class Alignment implements OntologyUpdateListener {
 		return null;	
 	}
 	
-	public InternalNode addForcedInternalNode(Label label) {
-		String id = nodeIdFactory.getNodeId(label.getUri());
-		InternalNode node = new InternalNode(id, label);
+	public void addToForcedNodes(Node node) {
 		node.setForced(true);
-		if (this.graphBuilder.addNodeAndUpdate(node)) return node;
-		return null;
+		this.graphBuilder.getForcedNodes().add(node);
 	}
+	
+//	public InternalNode addForcedInternalNode(Label label) {
+//		
+//		final Set<String> steinerTreeNodeIds = new HashSet<String>();
+//
+//		for (Node node: this.getSteinerTree().vertexSet()) {
+//			if (node.getType() == NodeType.InternalNode) {
+//				steinerTreeNodeIds.add(node.getId());
+//			}
+//		}
+//		
+//		String nodeUri = label.getUri();
+//		int graphLastIndex = this.getLastIndexOfNodeUri(nodeUri);
+//		String nodeId;
+//		// If the node exists in graph but not in tree then use the graph node id
+//		boolean alreadyInGraph = false;
+//		if (graphLastIndex != -1) {
+//			int i = 1;
+//			for (; i <= graphLastIndex && steinerTreeNodeIds.contains(nodeUri + i); i++) ;
+//			nodeId = nodeUri + i;
+//
+//			if (i <= graphLastIndex) {
+//				alreadyInGraph = true;
+//				nodeId = nodeUri + i;
+//				Node node = this.getNodeById(nodeId);
+//				node.setForced(true);
+//				this.graphBuilder.getForcedNodes().add(node);
+//				return (InternalNode)node;
+//			}
+//		} 
+//		
+//		if (!alreadyInGraph) {
+//			nodeId = nodeIdFactory.getNodeId(label.getUri());;
+//			InternalNode node = new InternalNode(nodeId, label);
+//			node.setForced(true);
+//			if (this.graphBuilder.addNodeAndUpdate(node)) 
+//				return node;
+//		}
+//		
+//		
+//		return null;
+//	}
 	
 	public LiteralNode addLiteralNode(String value, String type, boolean isUri) {
 		
@@ -245,7 +308,8 @@ public class Alignment implements OntologyUpdateListener {
 		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
 		
 		String id = nodeIdFactory.getNodeId(value);
-		
+		if(isUri && value.startsWith("\"") && value.endsWith("\""))
+			value = value.substring(1, value.length()-1);
 		LiteralNode node = new LiteralNode(id, value, literalType, isUri);
 		if(this.graphBuilder.addNode(node)) return node;
 		return null;
@@ -264,7 +328,9 @@ public class Alignment implements OntologyUpdateListener {
 	public void deleteForcedInternalNode(String nodeId) {
 		Node node = getNodeById(nodeId);
 		if(node != null) {
-			this.graphBuilder.removeNode(node);
+			this.removeNode(nodeId);
+//			if (this.graphBuilder.removeNode(node))
+//				this.steinerTree.removeVertex(node);
 		}
 	}
 	
@@ -372,27 +438,57 @@ public class Alignment implements OntologyUpdateListener {
 		} else
 			this.graphBuilder.changeLinkStatus(link, newStatus);
 	}
-	
-//	/**
-//	 * This method removes a node from the graph and also all the links and the nodes that 
-//	 * are added to the graph by adding the specified node.
-//	 * This method is useful when the user changes the semantic type assigned to a column.
-//	 * The GUI needs to call the method by sending a Column Node  
-//	 * @param nodeId
-//	 */
+
+//	// deletes the node directly from the graph (it also deleted all its incoming and outgoing links)
 //	public boolean removeNode(String nodeId) {
-//
+//		
 //		Node node = this.getNodeById(nodeId);
-//		if (node == null) {
-//			logger.debug("Cannot find the node " + nodeId + " in the graph.");
-//			return false;
+//		if (node != null) {
+//			if (this.graphBuilder.removeNode(node)) {
+//				this.steinerTree.removeVertex(node);
+//				return true;
+//			}
 //		}
-//			
-//		this.graphBuilder.removeNode(node);
-//
+//		logger.debug("Cannot find the link " + nodeId + " in the graph.");
 //		return false;
 //	}
-
+	
+	// only deletes the node from the model, not the alignment graph
+	public boolean removeNode(String nodeId) {
+		
+		Node node = this.getNodeById(nodeId);
+		if (node != null) {
+			node.setForced(false);
+			this.graphBuilder.getForcedNodes().remove(node);
+			if (this.steinerTree != null && this.steinerTree.containsVertex(node)) {
+				Set<LabeledLink> links = this.steinerTree.edgesOf(node);
+				if (links != null) {
+					for (LabeledLink l : links) {
+						this.changeLinkStatus(l.getId(), LinkStatus.Normal);
+					}
+				}
+				this.steinerTree.removeVertex(node);
+				return true;
+			}
+		}
+		logger.debug("Cannot find the link " + nodeId + " in the graph.");
+		return false;
+	}
+	
+	public boolean isNodeIsolatedInTree(String nodeId) {
+		
+		Node node = this.getNodeById(nodeId);
+		if (node != null) {
+			if (this.steinerTree != null && this.steinerTree.containsVertex(node)) {
+				Set<LabeledLink> inLinks = this.steinerTree.edgesOf(node);
+				if (inLinks == null || inLinks.isEmpty())
+					return true;
+			}
+		}
+		logger.debug("Cannot find the link " + nodeId + " in the graph.");
+		return false;
+	}
+	
 	/**
 	 * This method just deletes the specified link from the graph and leaves the rest of the graph untouched.
 	 * @param linkId
@@ -401,8 +497,14 @@ public class Alignment implements OntologyUpdateListener {
 	public boolean removeLink(String linkId) {
 		
 		LabeledLink link = this.getLinkById(linkId);
-		if (link != null)
-			return this.graphBuilder.removeLink(link);
+		if (link != null) {
+//			return this.graphBuilder.removeLink(link);
+			if (this.graphBuilder.removeLink(link))
+				if (this.steinerTree != null) {
+					this.steinerTree.removeEdge(link);
+					return true;
+				}
+		}
 		logger.debug("Cannot find the link " + linkId + " in the graph.");
 		return false;
 	}
@@ -426,7 +528,31 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getPossibleLinks(sourceId, targetId);
 	}
 
-	public List<LabeledLink> getIncomingLinks(String nodeId) {
+	public Set<LabeledLink> getIncomingLinksInTree(String nodeId) {
+		Set<LabeledLink> results = new HashSet<LabeledLink>();
+		
+		if (steinerTree == null)
+			return results;
+		
+		if (steinerTree.vertexSet().isEmpty())
+			return results;
+		
+		Node node = null;
+		for (Node n : steinerTree.vertexSet()) {
+			if (n.getId().equals(nodeId)) {
+				node = n;
+				break;
+			}
+		}
+		
+		if (node == null)
+			return results;
+		
+		results = this.steinerTree.incomingEdgesOf(node);
+		return results;
+	}
+	
+	public List<LabeledLink> getIncomingLinksInGraph(String nodeId) {
 		
 		List<LabeledLink> possibleLinks  = new ArrayList<LabeledLink>();
 		List<DefaultLink> tempDefault = null;
@@ -474,25 +600,36 @@ public class Alignment implements OntologyUpdateListener {
 		}
 		
 		Collections.sort(possibleLinks, new LinkPriorityComparator());
-		
-//		for (Link l : possibleLinks) {
-//			StringBuilder sb = new StringBuilder();
-//			sb.append(l.getId() + " === ");
-//			sb.append(l.getSource().getId() + " === ");
-//			sb.append(l.getSource().getLabel().getNs() + " === ");
-//			sb.append(l.getSource().getLocalId() + " === ");
-//			sb.append(l.getSource().getDisplayId());
-//			sb.append("\n");
-//			sb.append(l.getTarget().getId() + " === ");
-//			sb.append(l.getLabel().getUri() + " === ");
-//			sb.append("\n");
-//			logger.debug(sb.toString());
-//		}
+
 		logger.debug("Finished obtaining the incoming links.");
 		return possibleLinks;
 	}
 	
-	public List<LabeledLink> getOutgoingLinks(String nodeId) {
+	public Set<LabeledLink> getOutgoingLinksInTree(String nodeId) {
+		Set<LabeledLink> results = new HashSet<LabeledLink>();
+		
+		if (steinerTree == null)
+			return results;
+		
+		if (steinerTree.vertexSet().isEmpty())
+			return results;
+		
+		Node node = null;
+		for (Node n : steinerTree.vertexSet()) {
+			if (n.getId().equals(nodeId)) {
+				node = n;
+				break;
+			}
+		}
+		
+		if (node == null)
+			return results;
+		
+		results = this.steinerTree.outgoingEdgesOf(node);
+		return results;
+	}
+	
+	public List<LabeledLink> getOutgoingLinksInGraph(String nodeId) {
 		
 		List<LabeledLink> possibleLinks  = new ArrayList<LabeledLink>();
 		List<DefaultLink> tempDefault = null;
@@ -543,13 +680,14 @@ public class Alignment implements OntologyUpdateListener {
 		
 		// Change the status of previously preferred links to normal
 		Set<LabeledLink> linksInPreviousTree = this.getLinksByStatus(LinkStatus.PreferredByUI);
+		Set<LabeledLink> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
+
 		if (linksInPreviousTree != null) {
 			LabeledLink[] links = linksInPreviousTree.toArray(new LabeledLink[0]);
 			for (LabeledLink link : links)
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.Normal);
 		}
 		
-		Set<LabeledLink> linksForcedByUser = this.getLinksByStatus(LinkStatus.ForcedByUser);
 		for (LabeledLink link: this.steinerTree.edgeSet()) {
 			if (linksForcedByUser == null || !linksForcedByUser.contains(link)) {
 				this.graphBuilder.changeLinkStatus(link, LinkStatus.PreferredByUI);
@@ -558,7 +696,6 @@ public class Alignment implements OntologyUpdateListener {
 		}
 	}
 	
-	// FIXME: What if a column node has more than one domain?
 	public List<Node> computeSteinerNodes() {
 		Set<Node> steinerNodes = new HashSet<Node>();
 		
@@ -567,8 +704,12 @@ public class Alignment implements OntologyUpdateListener {
 		Set<ColumnNode> columnNodes = this.sourceColumnNodes;
 		if (columnNodes != null) {
 			for (ColumnNode n : columnNodes) {
-				steinerNodes.add(n);
-				if (n.hasUserType()) {
+				
+				if (n.getSemanticTypeStatus() == ColumnSemanticTypeStatus.UserAssigned ||
+						n.getSemanticTypeStatus() == ColumnSemanticTypeStatus.AutoAssigned)
+					steinerNodes.add(n);
+				
+				if (n.getSemanticTypeStatus() == ColumnSemanticTypeStatus.UserAssigned) {
 					HashMap<SemanticType, LabeledLink> domainLinks = 
 							GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), n, n.getUserSemanticTypes());
 					if (domainLinks != null) {
@@ -622,7 +763,7 @@ public class Alignment implements OntologyUpdateListener {
 				logger.debug("\t" + link.getId());
 		}
 		
-		if (!ModelingConfiguration.getManualAlignment() && ModelingConfiguration.isLearnAlignmentEnabled())
+		if (ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getKnownModelsAlignment())
 			learnFromKnownSemanticModels();
 		else
 			learnFromOntology();
@@ -647,6 +788,8 @@ public class Alignment implements OntologyUpdateListener {
 
 	public void cleanup() {
 		this.ontologyManager.unsubscribeListener(this);
+		this.steinerTree = null;
+		this.graphBuilder = new GraphBuilder(ontologyManager, false);
 	}
 	
 	private void learnFromOntology() {
@@ -675,21 +818,18 @@ public class Alignment implements OntologyUpdateListener {
 			return;
 		}
 
-		logger.info("*** steiner tree before post processing step ***");
-		logger.info(GraphUtil.defaultGraphToString(tree));
+		logger.debug("*** steiner tree before post processing step ***");
+		logger.debug(GraphUtil.defaultGraphToString(tree));
 		TreePostProcess treePostProcess = new TreePostProcess(this.graphBuilder, tree, getLinksByStatus(LinkStatus.ForcedByUser), true);
 
 		this.steinerTree = treePostProcess.getTree();
 		this.root = treePostProcess.getRoot();
 
-		logger.info("*** steiner tree after post processing step ***");
-		logger.info(GraphUtil.labeledGraphToString(this.steinerTree));
+		logger.debug("*** steiner tree after post processing step ***");
+		logger.debug(GraphUtil.labeledGraphToString(this.steinerTree));
 	}
 	
 	private void learnFromKnownSemanticModels() {
-		
-		if (!ModelingConfiguration.isLearnAlignmentEnabled())
-			return;
 		
 		List<Node> steinerNodes = this.computeSteinerNodes();
 		if (steinerNodes == null || steinerNodes.isEmpty()) {
@@ -701,6 +841,15 @@ public class Alignment implements OntologyUpdateListener {
 		SemanticModel model = modelLearner.getModel();
 		if (model == null) {
 			logger.error("could not learn any model for this source!");
+			if (this.steinerTree == null)
+			{
+				this.steinerTree = 
+						new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+			}
+			this.addForcedNodes();
+			this.addForcedLinks(); //add new semantic type to the tree
+//			this.removeDeletedLinks();
+			this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(this.steinerTree));
 			return ;
 		}
 
@@ -711,13 +860,38 @@ public class Alignment implements OntologyUpdateListener {
 		Set<LabeledLink> forcedLinks = getLinksByStatus(LinkStatus.ForcedByUser);
 		if (forcedLinks != null)
 		for (LabeledLink link : forcedLinks) {
-			if (!this.steinerTree.containsEdge(link) &&
-					this.steinerTree.containsVertex(link.getSource()) &&
-					this.steinerTree.containsVertex(link.getTarget())) {
-						this.steinerTree.addEdge(link.getSource(), link.getTarget(), link);
+			if (!this.steinerTree.containsEdge(link)) {
+				if (!this.steinerTree.containsVertex(link.getSource())) {
+					this.steinerTree.addVertex(link.getSource());
+				}
+				if (!this.steinerTree.containsVertex(link.getTarget())) {
+					this.steinerTree.addVertex(link.getTarget());
+				}
+				this.steinerTree.addEdge(link.getSource(), link.getTarget(), link);
 			}
 		}
 	}
+	
+	private void addForcedNodes() {
+		Set<Node> forcedNodes = this.graphBuilder.getForcedNodes();
+		if (forcedNodes != null)
+		for (Node node : forcedNodes) {
+			if (!this.steinerTree.containsVertex(node)) {
+				this.steinerTree.addVertex(node);
+			}
+		}
+	}
+	
+//	private void removeDeletedLinks() {
+//		Set<LabeledLink> treeLinks = this.steinerTree.edgeSet();
+//		if (treeLinks != null) {
+//			LabeledLink[] linksArray = treeLinks.toArray(new LabeledLink[0]);
+//			for (LabeledLink l : linksArray) {
+//				if (this.getLinkById(l.getId()) == null)
+//					this.steinerTree.removeEdge(l);
+//			}
+//		}
+//	}
 	
 	public void updateAlignment(SemanticModel model, List<SemanticType> semanticTypes) {
 		
@@ -776,6 +950,7 @@ public class Alignment implements OntologyUpdateListener {
 			
 			this.getGraphBuilder().addLink(source, target, newLink); // returns false if link already exists
 			tree.addEdge(source, target, newLink);
+			tree.setEdgeWeight(newLink, l.getWeight());
 						
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
@@ -786,6 +961,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 
 		this.steinerTree = tree;
+		this.addForcedNodes();
 		this.addForcedLinks();
 		this.root = TreePostProcess.selectRoot(GraphUtil.asDefaultGraph(tree));
 

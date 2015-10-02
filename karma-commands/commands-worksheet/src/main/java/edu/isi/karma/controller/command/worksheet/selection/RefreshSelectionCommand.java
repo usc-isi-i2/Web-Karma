@@ -32,11 +32,11 @@ import edu.isi.karma.util.CommandInputJSONUtil;
 public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
-	public RefreshSelectionCommand(String id, String worksheetId, 
+	public RefreshSelectionCommand(String id, String model, String worksheetId, 
 			String selectionId, String hNodeId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
-		addTag(CommandTag.Transformation);
+		addTag(CommandTag.Selection);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("selectionName", superSel.getName(), ParameterType.other));
 			Command t = null;
 			try {
-				t = new OperateSelectionCommandFactory().createCommand(inputJSON, workspace);
+				t = new OperateSelectionCommandFactory().createCommand(inputJSON, model, workspace);
 			}catch(Exception e) {
 				
 			}
@@ -89,7 +89,7 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 				history._getHistory().add(t);
 			history._getHistory().addAll(tmp);
 		}
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel);
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel, workspace.getContextId());
 		uc.add(new HistoryUpdate(history));
 		return uc;
 	}
@@ -134,7 +134,10 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 		WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
 		ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
 		try {
-			Command c = new OperateSelectionCommandFactory().createCommand(inputParamArr, workspace);
+			String model = Command.NEW_MODEL;
+			if(obj.has(HistoryArguments.model.name()))
+				model = obj.getString(HistoryArguments.model.name());
+			Command c = new OperateSelectionCommandFactory().createCommand(inputParamArr, model, workspace);
 			return c;
 		} catch (Exception e) {
 			return null;

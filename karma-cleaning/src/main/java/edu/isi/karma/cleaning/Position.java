@@ -21,15 +21,16 @@ public class Position implements GrammarTreeNode {
 	public static Interpretor itInterpretor = null;
 	public int fixedlength = 0;
 	public String program = "null";
-
+	public String contextId;
 	public Position(Vector<Integer> absPos, Vector<TNode> lcxt,
 			Vector<TNode> rcxt, Vector<String> orgStrings,
-			Vector<String> tarStrings, boolean loop) {
+			Vector<String> tarStrings, boolean loop, String contextId) {
+		this.contextId = contextId;
 		this.absPosition = absPos;
 		this.orgStrings.addAll(orgStrings);
 		this.tarStrings.addAll(tarStrings);
 		if (itInterpretor == null)
-			itInterpretor = new Interpretor();
+			itInterpretor = new Interpretor(contextId);
 		// occurance of a reg pattern
 		this.counters.add(-1);
 		this.counters.add(1);
@@ -225,7 +226,7 @@ public class Position implements GrammarTreeNode {
 			bStrings.addAll(b.tarStrings);
 		}
 		return new Position(tmpIntegers, g_lcxtNodes, g_rcxtNodes, aStrings,
-				bStrings, loop);
+				bStrings, loop, contextId);
 	}
 
 	public void setinLoop(boolean res) {
@@ -314,7 +315,7 @@ public class Position implements GrammarTreeNode {
 					while (r.indexOf("None") == -1) {
 						String tmpRule = rule.replace("counter",
 								String.valueOf(cnt));
-						ProgramRule programRule = new ProgramRule(tmpRule);
+						ProgramRule programRule = new ProgramRule(tmpRule, contextId);
 						String val = programRule.transform(this.orgStrings
 								.get(j));
 						if (val.indexOf("None") != -1)
@@ -344,7 +345,7 @@ public class Position implements GrammarTreeNode {
 				}
 
 			} else {
-				ProgramRule pr = new ProgramRule(rule);
+				ProgramRule pr = new ProgramRule(rule, contextId);
 				boolean isValid = true;
 				for (int k = 0; k < this.orgStrings.size(); k++) {
 					String val = String.valueOf(pr.transform(this.orgStrings

@@ -50,6 +50,7 @@ import edu.isi.karma.imp.csv.CSVFileImport;
 import edu.isi.karma.imp.json.JsonImport;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -77,8 +78,8 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
 	 * @param csvFileName
 	 * @param isTesting A boolean flag to identify if it is the training or testing phase
 	 * */
-	protected InvokeDataMiningServiceCommand(String id, String worksheetId, String miningUrl, String fileName) {
-		super(id, worksheetId);
+	protected InvokeDataMiningServiceCommand(String id, String model, String worksheetId, String miningUrl, String fileName) {
+		super(id, model, worksheetId);
 		this.dataMiningURL = miningUrl;
 		this.csvFileName = fileName;
 	}
@@ -105,13 +106,14 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
 	
 	private UpdateContainer processCSV(HttpEntity entity, Workspace workspace) {
 		UpdateContainer uc = null;
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		try {
         	BufferedInputStream buf;
         	byte[] buffer = new byte[10240];
         	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy_HmsS");
         	String ts = sdf.format(Calendar.getInstance().getTime());
         	final String fName = "table_service_results_"+ts;
-        	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) + fName; 
+        	final String fileName = contextParameters.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) + fName; 
         	FileOutputStream fw = new FileOutputStream(fileName);
         	// get the file from the service
         	buf = new BufferedInputStream(entity.getContent());
@@ -124,7 +126,7 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
         	Import impCSV = new CSVFileImport(1, 2, ',', ' ', "UTF-8", -1, new File(fileName), workspace, null);
         	Worksheet wsht = impCSV.generateWorksheet();
         	uc = new UpdateContainer();
-            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
+            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
             new File(fileName).delete();
 
         } catch (Exception e1) {
@@ -137,6 +139,7 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
 	
 	
 	private UpdateContainer processJSON(HttpEntity entity, Workspace workspace) {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		UpdateContainer uc = null;
 		try {
         	BufferedInputStream buf;
@@ -144,7 +147,7 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
         	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy_HmsS");
         	String ts = sdf.format(Calendar.getInstance().getTime());
         	final String fName = "table_service_results_"+ts;
-        	final String fileName = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  fName;
+        	final String fileName = contextParameters.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  fName;
         	FileOutputStream fw = new FileOutputStream(fileName);
         	// get the file from the service
         	buf = new BufferedInputStream(entity.getContent());
@@ -160,7 +163,7 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
             logger.info("Creating worksheet with json : " + wsht.getId());
             uc = new UpdateContainer();
             uc.add(new WorksheetListUpdate());
-            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
+            uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
         	
         	logger.info("Created : " + fileName);
             new File(fileName).delete();
@@ -175,8 +178,8 @@ public class InvokeDataMiningServiceCommand extends WorksheetCommand {
 	
 	@Override
 	public UpdateContainer doIt(Workspace workspace) {
-		
-		final String csvFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		final String csvFileLocalPath = contextParameters.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
 				this.csvFileName;
 		UpdateContainer uc = new UpdateContainer();
 		try {

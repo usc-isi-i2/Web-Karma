@@ -20,11 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.geospatial;
 
-import de.micromata.opengis.kml.v_2_2_0.Coordinate;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import de.micromata.opengis.kml.v_2_2_0.Coordinate;
 
 public class LineString {
 	private final List<Coordinate> coordinatesList;

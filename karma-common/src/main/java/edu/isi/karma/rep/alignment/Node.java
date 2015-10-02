@@ -39,7 +39,7 @@ public abstract class Node implements Comparable<Node> {
 	private Label label;
 	private NodeType type;
 	private Set<String> modelIds;
-	private boolean isForced;
+	protected boolean isForced;
 	
 	public Node(String id, Label label, NodeType type) {
 		
@@ -103,6 +103,8 @@ public abstract class Node implements Comparable<Node> {
 	}
 	
 	public Set<String> getModelIds() {
+		if (this.modelIds == null)
+			return new HashSet<String>();
 		return modelIds;
 	}
 

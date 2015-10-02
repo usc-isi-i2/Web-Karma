@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
@@ -24,7 +25,7 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 
 	@Before
 	public void setUp() throws Exception {
-		Mapper<Text, Text, Text, Text> mapper = new JSONMapper();
+		Mapper<Writable, Text, Text, Text> mapper = new JSONMapper();
 		Reducer<Text,Text,Text,Text> reducer = new JSONReducer();
 
 		mapDriver = MapDriver.newMapDriver(mapper);
@@ -34,6 +35,8 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 		reduceDriver = ReduceDriver.newReduceDriver(reducer);
 		mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 	}
+	
+	
 
 	@After
 	public void tearDown() throws Exception {
@@ -42,7 +45,7 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 	@Test
 	public void testMap() throws IOException {
 
-		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
+		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
 		assertTrue(results.size() > 1);
 	}
@@ -66,12 +69,12 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 	public void testMapReduce() throws IOException, URISyntaxException
 	{
 		org.apache.hadoop.conf.Configuration conf = mapReduceDriver.getConfiguration();
+		conf.set("karma.input.type", "JSON");
 		conf.set("model.uri", TestJSONMapReduce.class.getClassLoader().getResource("people-model.ttl").toURI().toString());
 		conf.set("rdf.generation.root", "http://isi.edu/integration/karma/dev#TriplesMap_c6f9c495-90e4-4c83-aa62-0ab1841a1871");
-		mapReduceDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/people.json"))));
+		mapReduceDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
 		mapReduceDriver.addAllOutput(getPairsFromFile("output/people.output.json"));
 		mapReduceDriver.runTest();
 	}
-
 
 }

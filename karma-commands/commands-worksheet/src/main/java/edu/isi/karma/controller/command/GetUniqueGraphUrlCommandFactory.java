@@ -20,9 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.rep.Workspace;
-
 import javax.servlet.http.HttpServletRequest;
+
+import edu.isi.karma.rep.Workspace;
 
 public class GetUniqueGraphUrlCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -33,6 +33,7 @@ public class GetUniqueGraphUrlCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 
 		GetUniqueGraphUrlCommand comm = new GetUniqueGraphUrlCommand(getNewId(workspace),
+				Command.NEW_MODEL,
 				request.getParameter(Arguments.worksheetId.name()),
 				request.getParameter(Arguments.tripleStoreUrl.name()),
 				request.getParameter(Arguments.graphUri.name())

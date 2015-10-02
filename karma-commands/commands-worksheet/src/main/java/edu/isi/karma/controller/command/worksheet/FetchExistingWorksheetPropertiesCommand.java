@@ -49,8 +49,8 @@ public class FetchExistingWorksheetPropertiesCommand extends WorksheetCommand {
 		updateType, properties
 	}
 
-	public FetchExistingWorksheetPropertiesCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public FetchExistingWorksheetPropertiesCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override

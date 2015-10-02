@@ -19,7 +19,7 @@ public class RepeatPythonTransformationCommandFactory extends
 		worksheetId, hNodeId, selectionName
 	}
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
@@ -33,7 +33,8 @@ public class RepeatPythonTransformationCommandFactory extends
 		if (transformCode == null) {
 			throw new KarmaException("Transform code is null");
 		}
-		RepeatPythonTransformationCommand cmd = new RepeatPythonTransformationCommand(getNewId(workspace), worksheetId, 
+		RepeatPythonTransformationCommand cmd = new RepeatPythonTransformationCommand(
+				getNewId(workspace), model, worksheetId, 
 				hNodeId, transformCode, selectionName);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;

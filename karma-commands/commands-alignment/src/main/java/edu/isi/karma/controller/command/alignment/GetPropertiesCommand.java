@@ -49,8 +49,8 @@ public class GetPropertiesCommand extends WorksheetCommand {
 	
 	private static Logger logger = LoggerFactory.getLogger(GetPropertiesCommand.class.getSimpleName());
 	
-	protected GetPropertiesCommand(String id, String worksheetId, INTERNAL_PROP_RANGE propertiesRange, String classURI, String domainURI, String rangeURI) {
-		super(id, worksheetId);
+	protected GetPropertiesCommand(String id, String model, String worksheetId, INTERNAL_PROP_RANGE propertiesRange, String classURI, String domainURI, String rangeURI) {
+		super(id, model, worksheetId);
 		this.propertiesRange = propertiesRange;
 		this.classURI = classURI;
 		this.domainURI = domainURI;

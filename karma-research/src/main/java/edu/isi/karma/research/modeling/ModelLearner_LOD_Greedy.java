@@ -37,6 +37,7 @@ import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.ColumnSemanticTypeStatus;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
@@ -44,8 +45,8 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
-import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelLearner_LOD_Greedy {
 
@@ -216,7 +217,7 @@ public class ModelLearner_LOD_Greedy {
 		HashMultimap<String, ColumnNode> typeColumnNodes = HashMultimap.create();
 		List<String> types = new LinkedList<String>();
 		for (ColumnNode cn : columnNodes) {
-			if (!cn.hasUserType())
+			if (cn.getSemanticTypeStatus() != ColumnSemanticTypeStatus.UserAssigned) 
 				continue;
 			SemanticType st = cn.getUserSemanticTypes().get(0);
 			String domain = st.getDomain() == null ? null : st.getDomain().getUri();
@@ -356,9 +357,7 @@ public class ModelLearner_LOD_Greedy {
 		List<ColumnNode> columnNodes = new LinkedList<ColumnNode>();
 		for (SemanticType st : types) {
 			ColumnNode cn = new ColumnNode(null, null, null, null);
-			List<SemanticType> userTypes = new ArrayList<SemanticType>();
-			userTypes.add(st);
-			cn.setUserSemanticTypes(userTypes);
+			cn.assignUserType(st);
 			columnNodes.add(cn);
 		}
 		
@@ -386,9 +385,8 @@ public class ModelLearner_LOD_Greedy {
 	public static void main(String[] args) throws Exception {
 		
 //		simpleTest();
-		
-		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
-		OntologyManager ontologyManager = new OntologyManager();
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
 		File ff = new File(Params.ONTOLOGY_DIR);
 		File[] files = ff.listFiles();
 		if (files == null) {

@@ -29,9 +29,11 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 
 public class SteinerNodes implements Comparable<SteinerNodes> {
 
@@ -47,8 +49,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private int semanticTypesCount;
 	private int nonModelNodesCount; // nodes that do not belong to any pattern
 	private Map<ColumnNode, SemanticTypeMapping> columnNodeInfo;
-
-	public SteinerNodes() {
+	private String contextId;
+	public SteinerNodes(String contextId) {
+		this.contextId = contextId;
 		this.nodes = new HashSet<Node>();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		this.columnNodeInfo = new HashMap<ColumnNode, SemanticTypeMapping>();
@@ -60,7 +63,8 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		this.score = 0.0;
 	}
 	
-	public SteinerNodes(SteinerNodes steinerNodes) {
+	public SteinerNodes(SteinerNodes steinerNodes,String contextId) {
+		this.contextId = contextId;
 		this.nodes = new HashSet<Node>(steinerNodes.getNodes());
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>(steinerNodes.getMappingToSourceColumns());
 		this.columnNodeInfo = new HashMap<ColumnNode, SemanticTypeMapping>(steinerNodes.getColumnNodeInfo());
@@ -197,6 +201,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 		int minSize = this.semanticTypesCount;
 		int maxSize = this.semanticTypesCount * 2;
 		
+		if (maxSize - minSize == 0)
+			return 0.0;
+		
 		//feature scaling: (x - min) / (max - min)
 		// here: x: reduction in size --- min reduction: 0 --- max reduction: maxSize - minSize 
 		return (double)(maxSize - this.getNodesCount()) / 
@@ -245,14 +252,16 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	private void computeScore() {
 		
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome());
+		
 		double confidence = this.confidence.getConfidenceValue();
 		double sizeReduction = this.getSizeReduction();
 		double coherence = this.nodeCoherence.getCoherenceValue();
 		//int frequency = this.getFrequency();
 		
-		double alpha = ModelingConfiguration.getScoringConfidenceCoefficient();
-		double beta = ModelingConfiguration.getScoringCoherenceSCoefficient();
-		double gamma = ModelingConfiguration.getScoringSizeCoefficient();
+		double alpha = modelingConfiguration.getScoringConfidenceCoefficient();
+		double beta = modelingConfiguration.getScoringCoherenceSCoefficient();
+		double gamma = modelingConfiguration.getScoringSizeCoefficient();
 //		
 //		this.score = alpha * coherence + 
 //				beta * distanceToMaxSize + 

@@ -22,11 +22,11 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class ImportDatabaseTableCommandFactory extends CommandFactory {
 
@@ -41,7 +41,7 @@ public class ImportDatabaseTableCommandFactory extends CommandFactory {
 
         String interactionType = request.getParameter("interactionType");
 
-        ImportDatabaseTableCommand comm = new ImportDatabaseTableCommand(getNewId(workspace));
+        ImportDatabaseTableCommand comm = new ImportDatabaseTableCommand(getNewId(workspace), Command.NEW_MODEL);
 
         if (request.getParameter("revisedWorksheet") != null) {
             comm = new ImportDatabaseTableCommand(getNewId(workspace), request.getParameter("revisedWorksheet"));

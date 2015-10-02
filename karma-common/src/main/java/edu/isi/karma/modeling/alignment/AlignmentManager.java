@@ -21,7 +21,6 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -67,7 +66,6 @@ public class AlignmentManager {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspaceId, worksheetId);
 		
-//		Workspace workspace = WorkspaceManager.getInstance().getWorkspace(workspaceId);
 		Worksheet worksheet = WorkspaceManager.getInstance().getWorkspace(workspaceId).getWorksheet(worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		

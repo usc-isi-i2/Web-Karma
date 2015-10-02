@@ -21,9 +21,9 @@ public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
 
 	private JSONArray updates;
 	
-	protected RefreshWorksheetCommand(String id, String worksheetId, 
+	protected RefreshWorksheetCommand(String id, String model, String worksheetId, 
 			JSONArray updates, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.updates = updates;
 	}
 
@@ -75,7 +75,7 @@ public class RefreshWorksheetCommand extends WorksheetSelectionCommand {
 					uc.add(new RegenerateWorksheetUpdate(worksheetId));
 					break;
 				case "all":
-					uc = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, sel);
+					uc = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, sel, workspace.getContextId());
 					break;
 				case "cleaning":
 					uc.add(new WorksheetCleaningUpdate(worksheetId, false, sel));

@@ -19,17 +19,17 @@ public class UnfoldCommandFactory extends JSONInputCommandFactory{
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String keyHNodeid = CommandInputJSONUtil.getStringValue(Arguments.keyhNodeId.name(), inputJson);
 		String valueHNodeid = CommandInputJSONUtil.getStringValue(Arguments.valuehNodeId.name(), inputJson);
 		boolean notOtherColumn = Boolean.parseBoolean(CommandInputJSONUtil.getStringValue(Arguments.notOtherColumn.name(), inputJson));
-		String keyName = workspace.getFactory().getHNode(keyHNodeid).getColumnName();
-		String valueName = workspace.getFactory().getHNode(valueHNodeid).getColumnName();
+		String keyName = workspace.getFactory().getHNode(keyHNodeid).getAbsoluteColumnName(workspace.getFactory());
+		String valueName = workspace.getFactory().getHNode(valueHNodeid).getAbsoluteColumnName(workspace.getFactory());
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), worksheetId, 
+		UnfoldCommand unfoldCmd = new UnfoldCommand(getNewId(workspace), model, worksheetId, 
 				keyHNodeid, valueHNodeid, notOtherColumn, 
 				selectionName);
 		unfoldCmd.setInputParameterJson(inputJson.toString());

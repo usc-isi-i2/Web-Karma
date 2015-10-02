@@ -47,13 +47,13 @@ public class AddColumnCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String defaultValue = request.getParameter(Arguments.defaultValue.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new AddColumnCommand(getNewId(workspace), worksheetId, 
+		return new AddColumnCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, 
 				hTableId, hNodeId, newColumnName, defaultValue, 
 				selectionName);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		/** Parse the input arguments and create proper data structures to be passed to the command **/
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
@@ -63,7 +63,7 @@ public class AddColumnCommandFactory extends JSONInputCommandFactory {
 		String defaultValue = CommandInputJSONUtil.getStringValue(Arguments.defaultValue.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		AddColumnCommand colCmd = new AddColumnCommand(getNewId(workspace), worksheetId,
+		AddColumnCommand colCmd = new AddColumnCommand(getNewId(workspace), model, worksheetId,
 				hTableId, hNodeID, newColumnName, defaultValue, 
 				selectionName
 				);

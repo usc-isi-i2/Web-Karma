@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.UserConfigMetadata;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -23,7 +24,6 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class UIConfiguration {
 
-	private static UIConfiguration instance = null;
 	private boolean googleEarthEnabled = true;
 	private int maxLoadedClasses=-1;
 	private int maxLoadedProperties=-1;
@@ -47,13 +47,9 @@ public class UIConfiguration {
 											  + propModelForceLayout + newLine
 			;
 	
-	public static UIConfiguration Instance() {
-		if(instance == null)
-			instance = new UIConfiguration();
-		return instance;
-	}
-	
-	private UIConfiguration() {
+	private String contextId;
+	public UIConfiguration(String contextId) {
+		this.contextId = contextId;
 		this.loadConfig();
 	}
 	
@@ -61,19 +57,23 @@ public class UIConfiguration {
 		Properties uiProperties = new Properties();
 		
         try {
-        	String userConfigDir = ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) ;
+        	
+        	final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+        	String userConfigDir = contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) ;
         	logger.info("UICOnfiguration:" + userConfigDir);
         	if(userConfigDir == null || userConfigDir.length() == 0) {
 				try {
-					KarmaMetadataManager mgr = new KarmaMetadataManager();
-					mgr.register(new UserConfigMetadata(), new UpdateContainer());
+					
+					//TODO this should never be necessary. why did this happen?
+					KarmaMetadataManager mgr = new KarmaMetadataManager(contextParameters);
+					mgr.register(new UserConfigMetadata(contextParameters), new UpdateContainer());
 				} catch (KarmaException e) {
 					logger.error("Could not register with KarmaMetadataManager", e);
 				}
         		
         	}
-        	logger.info("Load File:" + ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/ui.properties");
-        	File file = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/ui.properties");
+        	logger.info("Load File:" + contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/ui.properties");
+        	File file = new File(contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/ui.properties");
     		if(!file.exists()) {
     			file.createNewFile();
     			OutputStreamWriter fw = new OutputStreamWriter(new FileOutputStream(file), "UTF-8");

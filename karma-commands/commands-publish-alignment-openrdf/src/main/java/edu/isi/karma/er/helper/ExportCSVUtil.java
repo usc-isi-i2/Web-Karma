@@ -101,7 +101,7 @@ public class ExportCSVUtil {
 			// Generate the KR2RML data structures for the RDF generation
 			final ErrorReport errorReport = new ErrorReport();
 			KR2RMLMappingGenerator mappingGen = new KR2RMLMappingGenerator(workspace, worksheet, alignment, 
-					worksheet.getSemanticTypes(), prefix, namespace, true, errorReport);
+					worksheet.getSemanticTypes(), prefix, namespace, true);
 	
 			// Generate the Spqrql query for the columns starting from the given root node
 			SPARQLGeneratorUtil genObj = new SPARQLGeneratorUtil();

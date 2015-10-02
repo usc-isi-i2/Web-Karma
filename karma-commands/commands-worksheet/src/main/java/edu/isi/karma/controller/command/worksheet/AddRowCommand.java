@@ -53,8 +53,8 @@ public class AddRowCommand extends WorksheetCommand {
 		updateType, hNodeId, worksheetId
 	}
 	
-	protected AddRowCommand(String id,String worksheetId, String hNodeId) {
-		super(id, worksheetId);
+	protected AddRowCommand(String id, String model, String worksheetId, String hNodeId) {
+		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
 		
 		addTag(CommandTag.Transformation);
@@ -88,7 +88,7 @@ public class AddRowCommand extends WorksheetCommand {
 		try{
 			worksheet.addRow(workspace.getFactory());
 			UpdateContainer c =  new UpdateContainer();		
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		} catch (Exception e) {

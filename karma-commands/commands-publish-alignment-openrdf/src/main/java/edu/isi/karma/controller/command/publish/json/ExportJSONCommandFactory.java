@@ -25,7 +25,7 @@ public class ExportJSONCommandFactory extends JSONInputCommandFactory {
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String alignmentNodeId = HistoryJsonUtil.getStringValue(Arguments.alignmentNodeId.name(), inputJson);
@@ -35,7 +35,7 @@ public class ExportJSONCommandFactory extends JSONInputCommandFactory {
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		ExportJSONCommand comm = new ExportJSONCommand(
-				getNewId(workspace), alignmentNodeId, worksheetId, 
+				getNewId(workspace), model, alignmentNodeId, worksheetId, 
 				selectionName, contextFromModel, contextJSON, contextURL);
 		comm.setInputParameterJson(inputJson.toString());
 		return comm;

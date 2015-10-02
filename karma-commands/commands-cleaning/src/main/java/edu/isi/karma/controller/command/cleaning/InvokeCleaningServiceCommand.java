@@ -53,16 +53,18 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class InvokeCleaningServiceCommand extends WorksheetSelectionCommand {
 
 	private String hNodeId;
 
-	public InvokeCleaningServiceCommand(String id, String hNodeId,
+	public InvokeCleaningServiceCommand(String id, String model, String hNodeId,
 			String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -118,9 +120,11 @@ public class InvokeCleaningServiceCommand extends WorksheetSelectionCommand {
 			// String url =
 			// "http://localhost:8080/cleaningService/IdentifyData";
 //			String url = "http://localhost:8070/myWS/IdentifyData";
-			String url = ServletContextParameterMap.getParameterValue(
-					ContextParameter.CLEANING_SERVICE_URL);
-
+			String workspaceId = workspace.getId();
+			String url = ContextParametersRegistry.getInstance()
+											.getContextParameters(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspaceId))
+											.getParameterValue(ContextParameter.CLEANING_SERVICE_URL);
+			
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = null;
 			HttpResponse response = null;

@@ -172,14 +172,26 @@ public class TriplesMapGraph {
 	
 	public TriplesMapGraph copyGraph() {
 		TriplesMapGraph newGraph = new TriplesMapGraph();
+		for(TriplesMap triplesMap : triplesMapIndex.values())
+		{
+			newGraph.addTriplesMap(triplesMap);
+		}
+		for(TriplesMapLink link : links)
+		{
+			newGraph.addLink(new TriplesMapLink(link.getSourceMap(), link.getTargetMap(), link.getPredicateObjectMapLink()));
+		}
+		return newGraph;
+	}
+	public TriplesMapGraph shallowCopyGraph() {
+		TriplesMapGraph newGraph = new TriplesMapGraph();
 		newGraph.links.addAll(links);
 		for (Entry<String, List<TriplesMapLink>> entry : neighboringTriplesMapCache.entrySet()) {
+			
 			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new LinkedList<TriplesMapLink>(entry.getValue()));
 		}
 		newGraph.triplesMapIndex.putAll(triplesMapIndex);
 		return newGraph;
 	}
-
 	public void killTriplesMap(List<String> tripleMapToKill, RootStrategy strategy) {
 		if (tripleMapToKill.size() == 0) {
 			return;

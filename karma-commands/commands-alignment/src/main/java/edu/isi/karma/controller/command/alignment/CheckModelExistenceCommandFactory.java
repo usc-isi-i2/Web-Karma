@@ -14,7 +14,7 @@ public class CheckModelExistenceCommandFactory extends CommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		return new CheckModelExistenceCommand(getNewId(workspace), worksheetId);
+		return new CheckModelExistenceCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId);
 	}
 
 	@Override

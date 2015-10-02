@@ -31,7 +31,7 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String incoming = request.getParameter(Arguments.incoming.name());
 		String sameAsPredicate = request.getParameter(Arguments.sameAsPredicate.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
+		return new AugmentDataCommand(getNewId(workspace), Command.NEW_MODEL, dataRepoUrl, worksheetId, 
 				columnUri, predicate, otherClass, 
 				hNodeId, Boolean.parseBoolean(incoming), 
 				sameAsPredicate, 
@@ -45,7 +45,7 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		String predicate = CommandInputJSONUtil.getStringValue(Arguments.predicate.name(), inputJson);
@@ -57,7 +57,7 @@ public class AugmentDataCommandFactory extends JSONInputCommandFactory{
 		String sameAsPredicate = CommandInputJSONUtil.getStringValue(Arguments.sameAsPredicate.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), dataRepoUrl, worksheetId, 
+		AugmentDataCommand cmd = new AugmentDataCommand(getNewId(workspace), model, dataRepoUrl, worksheetId, 
 				columnUri, predicate, otherClass, hNodeId, 
 				Boolean.parseBoolean(incoming), 
 				sameAsPredicate, 

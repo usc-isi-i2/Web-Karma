@@ -1,32 +1,34 @@
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.ArrayList;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.ICommand;
+import edu.isi.karma.controller.history.CommandConsolidator;
+import edu.isi.karma.rep.Workspace;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.json.JSONArray;
+
 import java.util.Iterator;
 import java.util.List;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.history.CommandConsolidator;
-import edu.isi.karma.rep.Workspace;
-
+/**
+ * Created by chengyey on 9/28/15.
+ */
 public class SemanticTypesConsolidator extends CommandConsolidator {
-
-	public List<Command> consolidateCommand(List<Command> commands,
-			Workspace workspace) {
-		List<Command> refinedCommands = new ArrayList<Command>();
-		for (Command command : commands) {
-			if (command instanceof UnassignSemanticTypeCommand) {
-				Iterator<Command> itr = refinedCommands.iterator();
-				while(itr.hasNext()) {
-					Command tmp = itr.next();
-					if (tmp.getOutputColumns().equals(command.getOutputColumns()) && (tmp instanceof SetSemanticTypeCommand || tmp instanceof SetMetaPropertyCommand)) {
-						tmp.getOutputColumns().clear();
-						command.getOutputColumns().clear();
-					}
-				}
-			}
-			refinedCommands.add(command);
-		}
-		return refinedCommands;
-	}
-
+    @Override
+    public Pair<ICommand, Object> consolidateCommand(List<ICommand> commands, ICommand newCommand, Workspace workspace) {
+        if (newCommand instanceof SetSemanticTypeCommand || newCommand instanceof SetMetaPropertyCommand) {
+            String model = newCommand.getModel();
+            Iterator<ICommand> itr = commands.iterator();
+            while(itr.hasNext()) {
+                ICommand tmp = itr.next();
+                if (tmp.getModel().equals(model)
+                        && ((Command)tmp).getOutputColumns().equals(((Command)newCommand).getOutputColumns())
+                        && (tmp instanceof SetSemanticTypeCommand)) {
+                    return new ImmutablePair<>(tmp, (Object)newCommand);
+                }
+            }
+        }
+        return null;
+    }
 }

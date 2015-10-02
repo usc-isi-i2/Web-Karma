@@ -41,7 +41,7 @@ public class GetAlternativeLinksCommandFactory extends CommandFactory {
 		ALTERNATIVE_LINKS_RANGE linksRange = ALTERNATIVE_LINKS_RANGE.valueOf(
 				request.getParameter(Arguments.linksRange.name()));
 		
-		return new GetAlternativeLinksCommand(getNewId(workspace), sourceNodeId,
+		return new GetAlternativeLinksCommand(getNewId(workspace), Command.NEW_MODEL, sourceNodeId,
 				targetNodeId, alignmentId, linksRange);
 	}
 

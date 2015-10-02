@@ -62,9 +62,6 @@ public abstract class Command extends Entity implements ICommand
 	 * Flag to tell if the command history should be written after this command
 	 * has been executed
 	 */
-	private boolean writeWorksheetHistoryAfterCommandExecutes = true;
-
-	private boolean appendToHistory = false;
 	protected Set<String> inputColumns = new HashSet<String>();
 	protected Set<String> outputColumns = new HashSet<String>();
 	/**
@@ -72,12 +69,25 @@ public abstract class Command extends Entity implements ICommand
 	 */
 	private List<CommandTag> tags = new ArrayList<CommandTag>();
 
+	private static final List<CommandTag> commandTagPriority = new ArrayList<>();
+
 	private String inputParameterJson;
 	
 	private boolean isExecutedInBatch = false;
+	protected String model;
+	public static final String NEW_MODEL = "new";
+
+	static {
+		commandTagPriority.add(CommandTag.Import);
+		commandTagPriority.add(CommandTag.Transformation);
+		commandTagPriority.add(CommandTag.Selection);
+		commandTagPriority.add(CommandTag.SemanticType);
+		commandTagPriority.add(CommandTag.Modeling);
+	}
 	
-	protected Command(String id) {
+	protected Command(String id, String model) {
 		super(id);
+		this.model = model;
 	}
 
 	@Override
@@ -108,16 +118,6 @@ public abstract class Command extends Entity implements ICommand
 		this.saveInHistory = flag;
 	}
 
-	@Override
-	public void writeWorksheetHistoryAfterCommandExecutes(boolean flag) {
-		this.writeWorksheetHistoryAfterCommandExecutes = flag;
-	}
-
-	@Override
-	public boolean writeWorksheetHistoryAfterCommandExecutes() {
-		return this.writeWorksheetHistoryAfterCommandExecutes;
-	}
-
 	/**
 	 * @param prefix
 	 * @param pw
@@ -129,6 +129,12 @@ public abstract class Command extends Entity implements ICommand
 	public void generateJson(String prefix, PrintWriter pw,
 	                         VWorkspace vWorkspace, HistoryType historyType) {
 		pw.println(prefix + "{");
+		generateCommandJSONAttributes(prefix, pw, vWorkspace, historyType);
+		pw.println(prefix + "}");
+	}
+
+	protected void generateCommandJSONAttributes(String prefix, PrintWriter pw,
+            VWorkspace vWorkspace, HistoryType historyType) {
 		String newPref = prefix + "  ";
 		pw.println(newPref + JSONUtil.json(JsonKeys.commandId, getId()));
 		pw.println(newPref + JSONUtil.json(JsonKeys.title, getTitle()));
@@ -139,9 +145,8 @@ public abstract class Command extends Entity implements ICommand
 		pw.println(newPref
 				+ JSONUtil.jsonLast(JsonKeys.commandType, getCommandType()
 						.name()));
-		pw.println(prefix + "}");
 	}
-
+	
 	@Override
 	public boolean hasTag(CommandTag tag) {
 		return tags.contains(tag);
@@ -168,15 +173,19 @@ public abstract class Command extends Entity implements ICommand
 	}
 
 	@Override
-	public boolean appendToHistory() {
-		return appendToHistory;
+	public String getModel() {
+		return model;
 	}
 
 	@Override
-	public void setAppendToHistory(boolean appendToHistory) {
-		this.appendToHistory = appendToHistory;
+	public CommandTag getTagFromPriority() {
+		for (CommandTag tag : commandTagPriority) {
+			if (hasTag(tag)) {
+				return tag;
+			}
+		}
+		return CommandTag.Other;
 	}
-
 	// /////////////////////////////////////////////////////////////////////////////
 	//
 	// Methods to help with logging and error reporting.

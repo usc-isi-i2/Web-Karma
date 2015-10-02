@@ -4,7 +4,13 @@
 
 <web-app>
   <display-name>RDF Generator Web Service</display-name>
-  	<servlet>
+  <listener>
+	  	<listener-class>
+	  		edu.isi.karma.web.services.rdf.RDFGeneratorServlet
+	  	</listener-class>
+	 </listener>
+	  
+  <servlet>
     	<servlet-name>RDFGeneratorServlet</servlet-name>
     	<servlet-class>
     	    com.sun.jersey.spi.container.servlet.ServletContainer
@@ -16,7 +22,8 @@
     	
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	  
+
+	
   <servlet-mapping>
     <servlet-name>RDFGeneratorServlet</servlet-name>
     <url-pattern>/rdf/*</url-pattern>

@@ -22,13 +22,7 @@
 package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +40,8 @@ import edu.isi.karma.util.HTTPUtil;
 import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
-import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetCleaningUpdate extends
@@ -129,9 +124,11 @@ AbstractUpdate {
 						logger.error("Empty values input for path" + path.toColumnNamePath());
 						continue;
 					}
-					String cleaningServiceURL = ServletContextParameterMap.getParameterValue(
-							ContextParameter.CLEANING_SERVICE_URL);
-
+					String workspaceId = vWorkspace.getWorkspace().getId();
+					String cleaningServiceURL = ContextParametersRegistry.getInstance()
+													.getContextParameters(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspaceId))
+													.getParameterValue(ContextParameter.CLEANING_SERVICE_URL);
+				
 					Map<String, String> formParams = new HashMap<String, String>();
 					formParams.put(JsonKeys.json.name(), requestJsonArray.toString());
 					String reqResponse = HTTPUtil.executeHTTPPostRequest(cleaningServiceURL, null,
@@ -225,7 +222,7 @@ AbstractUpdate {
 	public boolean equals(Object o) {
 		if (o instanceof WorksheetCleaningUpdate) {
 			WorksheetCleaningUpdate t = (WorksheetCleaningUpdate)o;
-			return t.worksheetId.equals(worksheetId) && t.selection.equals(selection);
+			return t.worksheetId.equals(worksheetId);
 		}
 		return false;
 	}

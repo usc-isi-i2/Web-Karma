@@ -22,13 +22,17 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 
-	public RefreshSuperSelectionCommand(String id, String worksheetId, 
+	private static Logger logger = LoggerFactory
+			.getLogger(WorksheetSelectionCommand.class);
+	public RefreshSuperSelectionCommand(String id, String model, String worksheetId,
 			String selectionId) {
-		super(id, worksheetId, selectionId);
-		addTag(CommandTag.Transformation);
+		super(id, model, worksheetId, selectionId);
+		addTag(CommandTag.Selection);
 	}
 	
 	private class SelectionWithPriority implements Comparable<SelectionWithPriority>{
@@ -84,13 +88,13 @@ public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("hNodeId", itr.next(), ParameterType.hNodeId));
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("selectionName", currentSel.getName(), ParameterType.other));
 			try {
-				Command c = new RefreshSelectionCommandFactory().createCommand(inputJSON, workspace);
+				Command c = new RefreshSelectionCommandFactory().createCommand(inputJSON, model, workspace);
 				c.doIt(workspace);
 			} catch (Exception e) {
-				
+				logger.error("Exception happened", e);
 			} 
 		}
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, currentSel);
+		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, currentSel, workspace.getContextId());
 		uc.add(new HistoryUpdate(workspace.getCommandHistory()));
 		return uc;
 	}

@@ -33,10 +33,10 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
 
@@ -46,10 +46,10 @@ public class SubmitEditPythonTransformationCommand extends SubmitPythonTransform
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitEditPythonTransformationCommand.class);
 
-	public SubmitEditPythonTransformationCommand(String id, String newColumnName, String transformationCode, 
+	public SubmitEditPythonTransformationCommand(String id, String model, String newColumnName, String transformationCode, 
 			String worksheetId, String hNodeId, 
 			String errorDefaultValue, String targetHNodeId, String selectionId, boolean isJSONOutput) {
-		super(id, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
+		super(id, model, newColumnName, transformationCode, worksheetId, hNodeId, errorDefaultValue, selectionId, isJSONOutput);
 		this.targetHNodeId = targetHNodeId;
 		this.pythonNodeId = targetHNodeId;
 		logger.debug("SubmitEditPythonTransformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);

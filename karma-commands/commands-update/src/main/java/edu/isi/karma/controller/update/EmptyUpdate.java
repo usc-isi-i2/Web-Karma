@@ -23,9 +23,9 @@
  */
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.view.VWorkspace;
-
 import java.io.PrintWriter;
+
+import edu.isi.karma.view.VWorkspace;
 
 
 /**

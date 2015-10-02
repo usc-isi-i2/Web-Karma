@@ -25,13 +25,13 @@ public class GroupByCommandFactory extends JSONInputCommandFactory {
 		String hTableId = request.getParameter(Arguments.hTableId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new GroupByCommand(getNewId(workspace), worksheetId, 
+		return new GroupByCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, 
 				hTableId, hNodeId, 
 				selectionName);
 	}
 
 	@Override
-	public Command createCommand(JSONArray inputJson, Workspace workspace)
+	public Command createCommand(JSONArray inputJson, String model, Workspace workspace)
 			throws JSONException, KarmaException {
 		/** Parse the input arguments and create proper data structures to be passed to the command **/
 		String hNodeID = CommandInputJSONUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
@@ -40,7 +40,7 @@ public class GroupByCommandFactory extends JSONInputCommandFactory {
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		//System.out.println(worksheetId);
-		GroupByCommand unfoldCmd = new GroupByCommand(getNewId(workspace), worksheetId,
+		GroupByCommand unfoldCmd = new GroupByCommand(getNewId(workspace), model, worksheetId,
 				hTableId, hNodeID, 
 				selectionName);
 		unfoldCmd.setInputParameterJson(inputJson.toString());

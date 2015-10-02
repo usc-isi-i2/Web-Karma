@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.alignment;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -43,8 +44,8 @@ public class GetClassesCommand extends WorksheetCommand {
 
 	private static Logger logger = LoggerFactory.getLogger(GetClassesCommand.class.getSimpleName());
 
-	protected GetClassesCommand(String id, String worksheetId, INTERNAL_NODES_RANGE range, String propertyURI) {
-		super(id, worksheetId);
+	protected GetClassesCommand(String id, String model, String worksheetId, INTERNAL_NODES_RANGE range, String propertyURI) {
+		super(id, model, worksheetId);
 		this.range = range;
 		this.propertyURI = propertyURI;
 	}
@@ -72,7 +73,7 @@ public class GetClassesCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 
-		Set<Node> nodeSet = null;
+		Map<Node,Boolean> nodeSet = null;
 		if (range == INTERNAL_NODES_RANGE.classesInModel) {
 			nodeSet = getClassesInModel(workspace);
 		} else if (range == INTERNAL_NODES_RANGE.allClasses) {
@@ -105,9 +106,9 @@ public class GetClassesCommand extends WorksheetCommand {
 		}
 
 		if (nodeSet == null) {
-			nodeSet = new HashSet<Node>();
+			nodeSet = new HashMap<Node,Boolean>();
 		}
-		final Set<Node> finalNodeSet = nodeSet;
+		final Map<Node,Boolean> finalNodeSet = nodeSet;
 
 		UpdateContainer upd = new UpdateContainer(new AbstractUpdate() {
 			@Override
@@ -118,7 +119,8 @@ public class GetClassesCommand extends WorksheetCommand {
 
 				try {
 					obj.put(JsonKeys.updateType.name(), "InternalNodesList");
-					for (Node node:finalNodeSet) {
+					for (Entry<Node,Boolean> entry:finalNodeSet.entrySet()) {
+						Node node = entry.getKey();
 						if (!(node instanceof InternalNode)) {
 							continue;
 						}
@@ -133,6 +135,8 @@ public class GetClassesCommand extends WorksheetCommand {
 						} else if(nodeLabel.getPrefix() == null && nodeLabel.getUri() != null) {
 							nodeLabelStr = nodeLabel.getUri() + "/" + nodeLabelStr;
 						}
+						if (entry.getValue().booleanValue() == false)
+							nodeLabelStr += " (add)";
 						nodeObj.put(JsonKeys.nodeLabel.name(), nodeLabelStr);
 						nodeObj.put(JsonKeys.nodeId.name(), node.getId());
 						nodeObj.put(JsonKeys.nodeUri.name(), nodeLabel.getUri());
@@ -149,7 +153,7 @@ public class GetClassesCommand extends WorksheetCommand {
 		return upd;
 	}
 
-	private Set<Node> getAllClasses(Workspace workspace) {
+	private Map<Node,Boolean> getAllClasses(Workspace workspace) {
 		final OntologyManager ontMgr = workspace.getOntologyManager();
 		HashMap<String, Label> allClasses = ontMgr.getClasses();
 
@@ -160,13 +164,20 @@ public class GetClassesCommand extends WorksheetCommand {
 		return getNodesUsingAlignment(workspace, nodeLabels);
 	}
 
-	private Set<Node> getClassesInModel(Workspace workspace) {
+	private Map<Node,Boolean> getClassesInModel(Workspace workspace) {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(
 				workspace.getId(), worksheetId);
-		return alignment.getSteinerTree().vertexSet();
+		Map<Node,Boolean> nodeSet = new HashMap<Node,Boolean>();
+		Set<Node> treeNodes = alignment.getSteinerTree().vertexSet();
+		if (treeNodes != null) {
+			for (Node n : treeNodes) {
+				nodeSet.put(n, true);
+			}
+		}
+		return nodeSet;
 	}
 
-	private Set<Node> getClassesWithProperty(Workspace workspace, String propertyURI) {
+	private Map<Node,Boolean> getClassesWithProperty(Workspace workspace, String propertyURI) {
 		final OntologyManager ontMgr = workspace.getOntologyManager();
 		final HashSet<String> domains = ontMgr.getDomainsOfProperty(
 				propertyURI, true);
@@ -186,8 +197,8 @@ public class GetClassesCommand extends WorksheetCommand {
 		return getNodesUsingAlignment(workspace, nodeLabels);
 	}
 
-	private Set<Node> getNodesUsingAlignment(Workspace workspace, Set<Label> nodeLabels) {
-		Set<Node> nodeSet = new HashSet<>();
+	private Map<Node, Boolean> getNodesUsingAlignment(Workspace workspace, Set<Label> nodeLabels) {
+		Map<Node,Boolean> nodeSet = new HashMap<Node,Boolean>();
 		
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(
 				workspace.getId(), worksheetId);
@@ -213,14 +224,16 @@ public class GetClassesCommand extends WorksheetCommand {
 			if (graphLastIndex != -1) {
 				int i = 1;
 				for (; i <= graphLastIndex && steinerTreeNodeIds.contains(nodeUri + i); i++) ;
-				nodeId = nodeUri + i + " (add)";
+				nodeId = nodeUri + i;
 			} else {
-				nodeId = nodeUri + "1 (add)";
+				nodeId = nodeUri + "1";
 			}
 
-
+			boolean alreadyInTheModel = false;
+			if (steinerTreeNodeIds.contains(nodeId))
+				alreadyInTheModel = true;
 			InternalNode node = new InternalNode(nodeId, nodeLabel);
-			nodeSet.add(node);
+			nodeSet.put(node, alreadyInTheModel);
 
 
 			// Populate the graph nodes also
@@ -229,7 +242,7 @@ public class GetClassesCommand extends WorksheetCommand {
 				if (graphNodes != null && graphNodes.size() != 0) {
 					for (Node graphNode: graphNodes) {
 						if (steinerTreeNodeIds.contains(graphNode.getId())) {
-							nodeSet.add(graphNode);
+							nodeSet.put(graphNode, true);
 						}
 					}
 				}

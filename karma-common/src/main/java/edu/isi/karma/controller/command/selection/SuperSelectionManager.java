@@ -8,11 +8,13 @@ import java.util.Map;
 import edu.isi.karma.webserver.KarmaException;
 
 public class SuperSelectionManager {
+	public static final String DEFAULT_SELECTION_NAME = "DEFAULT_SELECTION";
+	public static final String DEFAULT_SELECTION_TEST_NAME = "DEFAULT_TEST";
 	private Map<String, SuperSelection> selectionMapping = new HashMap<String, SuperSelection>();
-	public static final SuperSelection DEFAULT_SELECTION = new SuperSelection("DEFAULT_SELECTION");
+	public static final SuperSelection DEFAULT_SELECTION = new SuperSelection(DEFAULT_SELECTION_NAME);
 	public SuperSelectionManager() {
-		selectionMapping.put("DEFAULT_SELECTION", DEFAULT_SELECTION);
-		selectionMapping.put("DEFAULT_TEST", new SuperSelection("DEFAULT_TEST"));
+		selectionMapping.put(DEFAULT_SELECTION_NAME, DEFAULT_SELECTION);
+		selectionMapping.put(DEFAULT_SELECTION_TEST_NAME, new SuperSelection(DEFAULT_SELECTION_TEST_NAME));
 	}
 	
 	public SuperSelection defineSelection(String name) {

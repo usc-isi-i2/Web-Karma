@@ -20,11 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.importdata;
 
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class ImportServiceCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -34,7 +34,8 @@ public class ImportServiceCommandFactory extends CommandFactory {
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		return new ImportServiceCommand(getNewId(workspace), 
+		return new ImportServiceCommand(getNewId(workspace),
+				Command.NEW_MODEL,
 				request.getParameter(Arguments.serviceUrl.name()),
 				request.getParameter(Arguments.worksheetName.name()),
 				Boolean.parseBoolean(request.getParameter(Arguments.includeInputAttributes.name())),

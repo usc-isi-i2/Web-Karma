@@ -22,6 +22,9 @@
 package edu.isi.karma.rep.sources;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public abstract class Source {
 
@@ -47,7 +50,11 @@ public abstract class Source {
 	}
 	
 	public String getUri() {
-		return ModelingConfiguration.getKarmaSourcePrefix() + getId() + "#";
+		
+		//TODO this is not the right way to get the modeling configuration
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
+		return modelingConfiguration.getKarmaSourcePrefix() + getId() + "#";
 	}
 
 	public String getId() {

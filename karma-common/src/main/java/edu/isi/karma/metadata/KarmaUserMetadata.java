@@ -8,7 +8,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -17,17 +16,17 @@ public abstract class KarmaUserMetadata extends KarmaMetadata{
 
 	private static final Logger logger = LoggerFactory.getLogger(KarmaUserMetadata.class);
 	
-	public KarmaUserMetadata(Workspace workspace) throws KarmaException
+	public KarmaUserMetadata(ServletContextParameterMap contextParameters) throws KarmaException
 	{
-		super(workspace);
+		super(contextParameters);
 	}
 	
-	protected void createDirectoryForMetadata(ContextParameter parameter, String directory) throws KarmaException {
+	protected void createDirectoryForMetadata(ServletContextParameterMap contextParameters, ContextParameter parameter, String directory) throws KarmaException {
 		
-		String metadataDirPath = ServletContextParameterMap.getParameterValue(parameter);
-		String userDirPath = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
+		String metadataDirPath = contextParameters.getParameterValue(parameter);
+		String userDirPath = contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH);
 		metadataDirPath = userDirPath + directory;
-		ServletContextParameterMap.setParameterValue(parameter, metadataDirPath);
+		contextParameters.setParameterValue(parameter, metadataDirPath);
 		
 		logger.info("Set parameter: " + parameter + " -> " + metadataDirPath);
 		try{ 
@@ -79,6 +78,8 @@ public abstract class KarmaUserMetadata extends KarmaMetadata{
 		oldNames.put(ContextParameter.JSON_MODELS_DIR, "JSON");
 		oldNames.put(ContextParameter.R2RML_USER_DIR, "R2RML");
 		oldNames.put(ContextParameter.SEMTYPE_MODEL_DIRECTORY, "SemanticTypeModels");
+		oldNames.put(ContextParameter.TEXTUAL_SEMTYPE_MODEL_DIRECTORY, "TextualSemanticTypeModels");
+		oldNames.put(ContextParameter.NUMERIC_SEMTYPE_MODEL_DIRECTORY, "NumericSemanticTypeModels");
 		oldNames.put(ContextParameter.USER_CONFIG_DIRECTORY, "Config");
 		oldNames.put(ContextParameter.USER_PREFERENCES_DIRECTORY, "UserPrefs");
 		oldNames.put(ContextParameter.USER_UPLOADED_DIR, "UserUploadedFiles");

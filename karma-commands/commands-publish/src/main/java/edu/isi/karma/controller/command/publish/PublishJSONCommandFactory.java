@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
-
 import edu.isi.karma.rep.Workspace;
 
 public class PublishJSONCommandFactory  extends CommandFactory {
@@ -21,7 +20,7 @@ public class PublishJSONCommandFactory  extends CommandFactory {
 		boolean importAsWorksheet = false;
 		if(sImportAsWorksheet != null)
 			importAsWorksheet = Boolean.valueOf(sImportAsWorksheet);
-		return new PublishJSONCommand(getNewId(workspace), worksheetId, importAsWorksheet);
+		return new PublishJSONCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, importAsWorksheet);
 	}
 
 	@Override

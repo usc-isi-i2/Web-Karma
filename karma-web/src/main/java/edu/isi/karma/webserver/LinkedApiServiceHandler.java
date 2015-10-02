@@ -143,7 +143,8 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		if (resource != null && resource.trim().toString().equalsIgnoreCase("output"))
 			resourceType = ResourceType.Output;
 
-		new GetRequestManager(serviceId, resourceType, format, response).HandleRequest();
+		String contextId = ContextParametersRegistry.getInstance().getDefault().getId();
+		new GetRequestManager(serviceId, resourceType, format, response, contextId).HandleRequest();
 		
 		response.flushBuffer(); 
 	}
@@ -201,8 +202,8 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		if (formData != null) {
 			in = new ByteArrayInputStream(formData.getBytes());
 		} 
-		
-		new PostRequestManager(serviceId, in, inputLang, format, response).HandleRequest();
+		String contextId = ContextParametersRegistry.getInstance().getDefault().getId();
+		new PostRequestManager(serviceId, in, inputLang, format, response, contextId).HandleRequest();
 		
 		response.flushBuffer();
 	}

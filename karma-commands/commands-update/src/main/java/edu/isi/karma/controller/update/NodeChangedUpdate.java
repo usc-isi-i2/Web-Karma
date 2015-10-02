@@ -23,13 +23,13 @@
  */
 package edu.isi.karma.controller.update;
 
+import java.io.PrintWriter;
+
 import edu.isi.karma.rep.CellValue;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.view.ViewPreferences.ViewPreference;
-
-import java.io.PrintWriter;
 
 /**
  * Provides information about a value update to a single node.

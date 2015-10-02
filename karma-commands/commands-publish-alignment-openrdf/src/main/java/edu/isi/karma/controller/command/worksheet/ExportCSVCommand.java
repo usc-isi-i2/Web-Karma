@@ -51,6 +51,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
@@ -80,10 +81,10 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 	 * @param graph
 	 * @param nodes
 	 * */
-	protected ExportCSVCommand(String id, String worksheetId, String rootNode, String sparqlUrl, 
+	protected ExportCSVCommand(String id, String model, String worksheetId, String rootNode, String sparqlUrl, 
 			String graph, ArrayList<HashMap<String, String>> nodes,
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.rootNodeId = rootNode;
 		this.tripleStoreUrl = sparqlUrl;
 		this.graphUrl = graph;
@@ -107,12 +108,14 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) {
+		
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		UpdateContainer uc = new UpdateContainer();
 		// first check if current worksheet option is select - if yes, publish this worksheet with a new graphURi and 
 		// fetch data from this graph
 		if(this.graphUrl.equalsIgnoreCase("000")) {
-			uc = generateRDF(workspace);
+			uc = generateRDF(workspace, contextParameters);
 			if(uc != null) {
 				return uc;
 			}
@@ -121,7 +124,7 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 		// Prepare the model file path and names
 		final String csvFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + 
 				worksheet.getTitle().replaceAll("\\.", "_") +  "-export"+".csv"; 
-		final String modelFileLocalPath = ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
+		final String modelFileLocalPath = contextParameters.getParameterValue(ContextParameter.CSV_PUBLISH_DIR) +  
 				csvFileName;
 
 		HashMap<String, String> result = 
@@ -144,7 +147,7 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 					try {
 						outputObject.put(JsonKeys.updateType.name(), "ExportCSVUpdate");
 						outputObject.put(JsonKeys.fileUrl.name(), 
-								ServletContextParameterMap.getParameterValue(ContextParameter.CSV_PUBLISH_RELATIVE_DIR) + csvFileName);
+								contextParameters.getParameterValue(ContextParameter.CSV_PUBLISH_RELATIVE_DIR) + csvFileName);
 						outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
 						pw.println(outputObject.toString());
 					} catch (JSONException e) {
@@ -171,14 +174,14 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 		return null;
 	}
 
-	private UpdateContainer generateRDF(Workspace workspace) {
+	private UpdateContainer generateRDF(Workspace workspace, ServletContextParameterMap contextParameters) {
 		
 		// Prepare the file path and names
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy-kkmmssS");
 		String ts = sdf.format(Calendar.getInstance().getTime());
 		final String rdfFileName = workspace.getCommandPreferencesId() + worksheetId + "-" + ts+ ".ttl";
 		
-		generatedRDFFileName = ServletContextParameterMap.getParameterValue(ContextParameter.RDF_PUBLISH_DIR) + rdfFileName;
+		generatedRDFFileName = contextParameters.getParameterValue(ContextParameter.RDF_PUBLISH_DIR) + rdfFileName;
 		
 		final String graphUri = "http://localhost/"+workspace.getCommandPreferencesId() + "/" + worksheetId + "/" + ts;
 
@@ -204,7 +207,7 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 			mappingGen = new KR2RMLMappingGenerator(workspace, worksheet,
 		
 				alignment, worksheet.getSemanticTypes(), "s", graphUri, 
-				false, errorReport);
+				false);
 		}
 		catch (KarmaException e)
 		{
@@ -219,7 +222,7 @@ public class ExportCSVCommand extends WorksheetSelectionCommand {
 		// Generate the RDF using KR2RML data structures
 		try {
 			KR2RMLWorksheetRDFGenerator rdfGen = new KR2RMLWorksheetRDFGenerator(worksheet, 
-				workspace.getFactory(),
+				workspace,
 				generatedRDFFileName, false, mapping, errorReport, selection);
 		
 			rdfGen.generateRDF(true);

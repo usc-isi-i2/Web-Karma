@@ -23,6 +23,7 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumWriter;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -293,9 +294,9 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		}
 		
 	}
-
+	
 	@Override
-	public void close() {
+	public void finishRow() {
 		for(ConcurrentHashMap<String, GenericRecord> records : this.rootObjectsByTriplesMapId.values())
 		{
 			
@@ -310,6 +311,22 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 			}
 			
 		}
+		for(Entry<String, ConcurrentHashMap<String, GenericRecord>> entry : this.rootObjectsByTriplesMapId.entrySet())
+		{
+			entry.getValue().clear();
+		}
+		for(Entry<String, ConcurrentHashMap<String, GenericRecord>> entry : this.generatedObjectsByTriplesMapId.entrySet())
+		{
+			entry.getValue().clear();
+		}
+		this.generatedObjectsWithoutTriplesMap.clear();
+		
+	};
+	
+
+	@Override
+	public void close() {
+		
 		try {
 			dfw.flush();
 			output.flush();

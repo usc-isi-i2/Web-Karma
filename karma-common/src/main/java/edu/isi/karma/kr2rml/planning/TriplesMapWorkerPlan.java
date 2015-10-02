@@ -63,12 +63,14 @@ public class TriplesMapWorkerPlan {
 	private boolean generateContext;
 
 	private Map<String, String> hNodeToContextUriMap;
+
+	private Map<TriplesMapGraph, List<String>> graphTriplesMapsProcessingOrder;
 	public TriplesMapWorkerPlan(RepFactory factory, TriplesMap triplesMap, 
 			KR2RMLMapping kr2rmlMapping, URIFormatter uriFormatter, 
 			KR2RMLMappingColumnNameHNodeTranslator translator, 
 			boolean generateContext, 
 			Map<String, String> hNodeToContextUriMap, 
-			SuperSelection sel) throws HNodeNotFoundKarmaException
+			SuperSelection sel, Map<TriplesMapGraph, List<String>> graphTriplesMapsProcessingOrder) throws HNodeNotFoundKarmaException
 	{
 		this.factory = factory;
 		this.triplesMap = triplesMap;
@@ -78,6 +80,7 @@ public class TriplesMapWorkerPlan {
 		this.generateContext = generateContext;
 		this.hNodeToContextUriMap = hNodeToContextUriMap;
 		this.selection = sel;
+		this.graphTriplesMapsProcessingOrder = graphTriplesMapsProcessingOrder;
 		generate();
 	}
 	
@@ -87,7 +90,16 @@ public class TriplesMapWorkerPlan {
 		
 		internalLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
 		
-		List<TriplesMapLink> links = kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getTriplesMapGraph(triplesMap.getId()).getAllNeighboringTriplesMap(triplesMap.getId());
+		List<TriplesMapLink> links = null;
+		for(TriplesMapGraph graph : graphTriplesMapsProcessingOrder.keySet())
+		{
+			if(graph.getTriplesMapIds().contains(triplesMap.getId()))
+			{
+				links = graph.getAllNeighboringTriplesMap(triplesMap.getId());
+				break;
+			}
+		}
+	
 		for(TriplesMapLink link : links) {
 			try {
 				if(link.getSourceMap().getId().compareTo(triplesMap.getId()) ==0  && !link.isFlipped() ||

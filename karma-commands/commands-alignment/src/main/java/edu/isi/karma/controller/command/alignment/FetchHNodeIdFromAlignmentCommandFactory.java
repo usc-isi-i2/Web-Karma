@@ -14,7 +14,8 @@ public class FetchHNodeIdFromAlignmentCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String columnUri = request.getParameter(Arguments.columnUri.name());
 		String alignmentId = request.getParameter(Arguments.alignmentId.name());
-		return new FetchHNodeIdFromAlignmentCommand(getNewId(workspace), alignmentId, columnUri);
+		return new FetchHNodeIdFromAlignmentCommand(getNewId(workspace), 
+				Command.NEW_MODEL, alignmentId, columnUri);
 	}
 
 	@Override

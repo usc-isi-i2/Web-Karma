@@ -54,8 +54,8 @@ public class PublishModelCommand extends WorksheetCommand{
 	private static Logger logger = LoggerFactory
 			.getLogger(PublishModelCommand.class.getSimpleName());
 
-	public PublishModelCommand(String id, String worksheetId) {
-		super(id, worksheetId);
+	public PublishModelCommand(String id, String model, String worksheetId) {
+		super(id, model, worksheetId);
 	}
 
 	@Override
@@ -129,7 +129,7 @@ public class PublishModelCommand extends WorksheetCommand{
 		
 		try {
 			if (service != null) {
-				WebServicePublisher servicePublisher = new WebServicePublisher(service);
+				WebServicePublisher servicePublisher = new WebServicePublisher(service, workspace.getContextId());
 				servicePublisher.publish(Repository.Instance().LANG, true);
 				logger.info("Service model has successfully been published to repository: " + service.getId());
 				return new UpdateContainer(new InfoUpdate(

@@ -41,15 +41,17 @@ import edu.isi.karma.rep.Workspace;
 
 public class RenameColumnCommand extends WorksheetCommand {
 	final private String newColumnName;
+	private String newColumnAbsoluteName;
 	final private String hNodeId;
 	private String oldColumnName;
 
 	private static Logger logger = LoggerFactory
 			.getLogger(RenameColumnCommand.class);
 	
-	public RenameColumnCommand(String id, String newColumnName, String hNodeId, String worksheetId) {
-		super(id, worksheetId);
+	public RenameColumnCommand(String id, String model, String newColumnName, String hNodeId, String worksheetId) {
+		super(id, model, worksheetId);
 		this.newColumnName = newColumnName;
+		this.newColumnAbsoluteName = newColumnName;
 		this.hNodeId = hNodeId;
 	}
 
@@ -66,9 +68,7 @@ public class RenameColumnCommand extends WorksheetCommand {
 	
 	@Override
 	public String getDescription() {
-		if (newColumnName.length() > 20)
-			return newColumnName.substring(0, 19) + "...";
-		return newColumnName;
+		return newColumnAbsoluteName;
 	}
 
 	@Override
@@ -83,6 +83,7 @@ public class RenameColumnCommand extends WorksheetCommand {
 		
 		// Change the column name
 		columnNode.setColumnName(newColumnName);
+		newColumnAbsoluteName = columnNode.getAbsoluteColumnName(workspace.getFactory());
 		
 		CommandHistory history = workspace.getCommandHistory();
 		List<ICommand>  allCommands = history._getHistory();
@@ -100,7 +101,7 @@ public class RenameColumnCommand extends WorksheetCommand {
 		
 		
 		// Prepare the output to be sent
-		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
+		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
@@ -138,7 +139,7 @@ public class RenameColumnCommand extends WorksheetCommand {
 		
 		// Prepare the output to be sent
 	
-		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
+		UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

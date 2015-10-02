@@ -1,25 +1,29 @@
 package edu.isi.karma.metadata;
 
 import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphLoaderThread;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class ModelLearnerMetadata extends KarmaUserMetadata {
 
 	
-	public ModelLearnerMetadata(Workspace workspace) throws KarmaException
+	public ModelLearnerMetadata(ServletContextParameterMap contextParameters) throws KarmaException
 	{
-		super(workspace);
+		super(contextParameters);
 	}
 	
 	@Override
-	public void setup(UpdateContainer uc) {
+	public void setup(UpdateContainer uc, Workspace workspace) {
 		OntologyManager ontologyManager = workspace.getOntologyManager();
-		if (ModelingConfiguration.isLearnerEnabled())
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId()).getKarmaHome());
+		if (modelingConfiguration.isLearnerEnabled())
 			new ModelLearningGraphLoaderThread(ontologyManager).run();
 	}
 

@@ -11,14 +11,18 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class RepeatPythonTransformationCommand extends PythonTransformationCommand {
-	public RepeatPythonTransformationCommand(String id, String worksheetId, 
+	public RepeatPythonTransformationCommand(String id, String model, String worksheetId, 
 			String hNodeId, String transformCode, String selectionId) {
-		super(id, transformCode, worksheetId, hNodeId, "error", selectionId);
+		super(id, model, transformCode, worksheetId, hNodeId, "error", selectionId);
 	}
 
 	@Override
@@ -43,10 +47,12 @@ public class RepeatPythonTransformationCommand extends PythonTransformationComma
 
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		JSONArray transformedRows = new JSONArray();
 		JSONArray errorValues = new JSONArray();
-		PythonRepository.getInstance().resetLibrary();
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		repo.resetLibrary();
 		boolean isError = false;
 		try {
 			generateTransformedValues(workspace, 
@@ -57,14 +63,14 @@ public class RepeatPythonTransformationCommand extends PythonTransformationComma
 			}
 			JSONArray multiCellEditInput = getMultiCellValueEditInputJSON(transformedRows, hNodeId);
 			MultipleValueEditColumnCommandFactory mfc = new MultipleValueEditColumnCommandFactory();
-			MultipleValueEditColumnCommand mvecc =  (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, workspace);
+			MultipleValueEditColumnCommand mvecc =  (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, model, workspace);
 			mvecc.doIt(workspace);
 		}catch(Exception e) {
 			isError = true;
 		}
 		worksheet.getMetadataContainer().getColumnMetadata().addColumnOnError(hNodeId, isError);
 		UpdateContainer c = new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));		
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));		
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

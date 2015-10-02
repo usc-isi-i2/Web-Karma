@@ -49,9 +49,9 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 	
 	private static Logger logger = LoggerFactory.getLogger(ApplyModelFromTripleStoreCommand.class);
 	
-	public ApplyModelFromTripleStoreCommand(String id, String worksheetId, String modelName, 
+	public ApplyModelFromTripleStoreCommand(String id, String model, String worksheetId, String modelName, 
 			String sourceName) {
-		super(id, worksheetId);
+		super(id, model, worksheetId);
 		this.modelName = modelName;
 //		this.sourceName = sourceName;
 	}
@@ -117,7 +117,7 @@ public class ApplyModelFromTripleStoreCommand extends WorksheetCommand {
 			histExecutor.executeAllCommands(historyJson);
 			
 			// Add worksheet updates that could have resulted out of the transformation commands
-			UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION);
+			UpdateContainer c = WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			c.add(new InfoUpdate("Model successfully applied!"));
 			return c;

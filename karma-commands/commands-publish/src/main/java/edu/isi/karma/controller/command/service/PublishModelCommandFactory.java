@@ -21,11 +21,11 @@
 
 package edu.isi.karma.controller.command.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.rep.Workspace;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class PublishModelCommandFactory extends CommandFactory{
 	
@@ -38,7 +38,7 @@ public class PublishModelCommandFactory extends CommandFactory{
 			Workspace workspace) {
 
 		String worksheetId =request.getParameter(Arguments.worksheetId.name());
-		return new PublishModelCommand(getNewId(workspace), worksheetId);
+		return new PublishModelCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId);
 	}
 
 	@Override

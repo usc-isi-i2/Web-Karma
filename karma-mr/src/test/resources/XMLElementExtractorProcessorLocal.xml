@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="fs.default.name">file:///</entry>
+<entry key="mapred.job.tracker">local</entry>
+<entry key="input.directory">/tmp/zipped_assignments</entry>
+<entry key="output.directory">/tmp/extracted_assignments</entry>
+<entry key="karma.extraction.xml.tag">patent-assignment</entry>
+<entry key="karma.extraction.xml.prologue"><![CDATA[<something>]]></entry>
+<entry key="karma.extraction.xml.epilogue"><![CDATA[</something>]]></entry>
+</properties>

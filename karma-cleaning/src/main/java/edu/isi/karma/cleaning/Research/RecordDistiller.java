@@ -27,9 +27,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Vector;
 
+import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
-import au.com.bytecode.opencsv.CSVReader;
 
 public class RecordDistiller {
 	// {anchor:{"Id": , "Count": , "LefContext":[], "RigContext":[]}

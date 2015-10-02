@@ -46,15 +46,15 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 	private String hNodeId;
 	private static Logger logger = LoggerFactory
 			.getLogger(GroupByCommand.class);
-
+	private String label;
 	public enum JsonKeys {
 		updateType, hNodeId, worksheetId
 	}
 
-	protected GroupByCommand(String id,String worksheetId, 
+	protected GroupByCommand(String id, String model, String worksheetId, 
 			String hTableId, String hNodeId, 
 			String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		addTag(CommandTag.Transformation);
 	}
@@ -71,7 +71,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 
 	@Override
 	public String getDescription() {
-		return "GroupBy";
+		return label;
 	}
 
 	@Override
@@ -110,7 +110,14 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 			if (!found)
 				valuehnodes.add(oldhnode);
 		}
-
+		
+		this.label = factory.getHNode(hNodeId).getParentColumnName(factory);
+		String sep = " &gt; ";
+		for (HNode keynode : keyhnodes) {
+			this.label += sep + keynode.getColumnName();
+			sep = ", ";
+		}
+		
 		Worksheet newws = null;
 		if (ht == oldws.getHeaders())
 			newws = groupByTopLevel(oldws, workspace, hnodeIDs, keyhnodes, valuehnodes, factory);
@@ -123,9 +130,9 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			c.add(new WorksheetListUpdate());
 			if (newws == null)
-				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws)));
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(oldws.getId(), getSuperSelection(oldws), workspace.getContextId()));
 			if (newws != null) {
-				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId(), SuperSelectionManager.DEFAULT_SELECTION));
+				c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(newws.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
 				//c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(newws.getId()));
 				Alignment alignment = AlignmentManager.Instance().createAlignment(workspace.getId(), newws.getId(), workspace.getOntologyManager());
 				c.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(newws.getId(), workspace));
@@ -156,7 +163,7 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 			ndid.removeNestedTable();
 			//remove the new column
 			currentTable.removeHNode(newHNodeId, worksheet);
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		}
 		return c;
@@ -177,23 +184,18 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 				ids = new ArrayList<String>();
 			ids.add(row.getId());
 			hash.put(hashValue, ids);
-			//System.out.println("Hash: " + HashValueManager.getHashValue(row, hnodeIDs));
-		}	
-		//HTable newKeyTable = newht.getHNodeFromColumnName("Keys").addNestedTable("Table for keys", newws, factory);
-		//newValueTable.addHNode("Values", newws, factory);
-		//HTable newValueNestedTable = newValueTable.getHNodeFromColumnName("Values").addNestedTable("Table for nested values", newws, factory);
-		CloneTableUtils.cloneHTable(oldht, newht, newws, factory, keyhnodes, selection);
+		}
+		CloneTableUtils.cloneHTable(newht, newws, factory, keyhnodes, false);
 		newht.addHNode("Values", HNodeType.Transformation, newws, factory);
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", newws, factory);
-		CloneTableUtils.cloneHTable(oldht, newValueTable, newws, factory, valuehnodes, selection);
+		CloneTableUtils.cloneHTable(newValueTable, newws, factory, valuehnodes, false);
 		for (String key : hash.keySet()) {
-			//System.out.println("key: " + hash.get(key));
 			ArrayList<String> r = hash.get(key);
-			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), oldws.getHeaders(), newht, keyhnodes, factory, selection);
+			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), newht, keyhnodes, factory, selection);
 			for (String rowid : r) {
 				Row cur = factory.getRow(rowid);
 				Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
-				CloneTableUtils.cloneDataTable(cur, dataTable, oldws.getHeaders(), newValueTable, valuehnodes, factory, selection);
+				CloneTableUtils.cloneDataTable(cur, dataTable, newValueTable, valuehnodes, factory, selection);
 			}
 		}
 		newWorksheetId = newws.getId();
@@ -215,12 +217,12 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 		newHNodeId = newNode.getId();
 		outputColumns.add(newNode.getId());
 		HTable newht = newNode.addNestedTable(newNode.getColumnName(), oldws, factory);
-		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newht, oldws, factory, keyhnodes, selection).entrySet()) {
+		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(newht, oldws, factory, keyhnodes, false).entrySet()) {
 			outputColumns.add(entry.getValue());
 		}
 		outputColumns.add(newht.addHNode("Values", HNodeType.Transformation, oldws, factory).getId());
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", oldws, factory);
-		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(ht, newValueTable, oldws, factory, valuehnodes, selection).entrySet()) {
+		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(newValueTable, oldws, factory, valuehnodes, false).entrySet()) {
 			outputColumns.add(entry.getValue());
 		}
 		for (Row parentRow : parentRows) {
@@ -245,11 +247,11 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 			for (String key : hash.keySet()) {
 				ArrayList<String> r = hash.get(key);
 				Node node = parentRow.getNeighbor(newNode.getId());
-				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), ht, newht, keyhnodes, factory, selection);
+				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), newht, keyhnodes, factory, selection);
 				for (String rowid : r) {
 					Row cur = factory.getRow(rowid);
 					Table dataTable = lastRow.getNeighborByColumnName("Values", factory).getNestedTable();
-					CloneTableUtils.cloneDataTable(cur, dataTable, ht, newValueTable, valuehnodes, factory, selection);
+					CloneTableUtils.cloneDataTable(cur, dataTable, newValueTable, valuehnodes, factory, selection);
 				}
 			}
 		}

@@ -41,10 +41,10 @@ public class PreviewPythonTransformationResultsCommand extends PythonTransformat
 			.getLogger(PreviewPythonTransformationResultsCommand.class.getSimpleName());
 
 	
-	protected PreviewPythonTransformationResultsCommand(String id, String worksheetId, 
+	protected PreviewPythonTransformationResultsCommand(String id, String model, String worksheetId, 
 			String transformationCode, String errorDefaultValue, 
 			String hNodeId, String selectionId) {
-		super(id, transformationCode, worksheetId, hNodeId,  errorDefaultValue, selectionId);
+		super(id, model, transformationCode, worksheetId, hNodeId,  errorDefaultValue, selectionId);
 	}
 
 	@Override

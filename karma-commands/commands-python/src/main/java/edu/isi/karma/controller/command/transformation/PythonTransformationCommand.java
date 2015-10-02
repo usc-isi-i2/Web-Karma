@@ -46,6 +46,7 @@ import edu.isi.karma.controller.command.worksheet.MultipleValueEditColumnCommand
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.er.helper.PythonTransformationHelper;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Node;
@@ -53,6 +54,9 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 
 public abstract class PythonTransformationCommand extends WorksheetSelectionCommand {
@@ -69,9 +73,9 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		row, error
 	}
 
-	public PythonTransformationCommand(String id, String transformationCode,
+	public PythonTransformationCommand(String id, String model, String transformationCode,
 			String worksheetId, String hNodeId, String errorDefaultValue, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.transformationCode = transformationCode;
 		this.hNodeId = hNodeId;
 		this.errorDefaultValue = errorDefaultValue;
@@ -102,7 +106,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 			Worksheet worksheet, RepFactory f, HNode hNode,
 			JSONArray transformedRows, JSONArray errorValues, Integer limit)
 					throws JSONException, IOException {
-
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		SuperSelection selection = getSuperSelection(worksheet);
 		String trimmedTransformationCode = transformationCode.trim();
 		// Pedro: somehow we are getting empty statements, and these are causing
@@ -120,10 +124,10 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		logger.debug("Executing PyTransform {}\n",  transformMethodStmt);
 
 		// Prepare the Python interpreter
-		PythonRepository repo = PythonRepository.getInstance();
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonInterpreter interpreter = repo.getInterpreter();
 
-		PythonInterpreter interpreter = repo.interpreter;
-		repo.initializeInterperter(interpreter);
+		repo.initializeInterpreter(interpreter);
 		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
@@ -136,6 +140,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		PyObject locals = interpreter.getLocals();
 		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
 		locals.__setitem__("command", Py.java2py(this));
+		locals.__setitem__("worksheetId", new PyString(worksheet.getId()));
 		locals.__setitem__("selectionName", new PyString(selection.getName()));
 		
 		repo.compileAndAddToRepositoryAndExec(interpreter, transformMethodStmt);
@@ -204,7 +209,7 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		UpdateContainer c = (WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		// TODO is it necessary to compute alignment and semantic types for
 		// everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

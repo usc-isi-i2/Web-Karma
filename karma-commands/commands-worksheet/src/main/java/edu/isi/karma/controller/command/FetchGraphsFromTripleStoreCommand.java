@@ -20,19 +20,20 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
+import java.io.PrintWriter;
+import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.PrintWriter;
-import java.util.List;
 
 /**
  * Class responsible for fetching all the graphs in the tripleStore
@@ -50,8 +51,8 @@ public class FetchGraphsFromTripleStoreCommand extends Command {
 		return tripleStoreUrl;
 	}
 
-	protected FetchGraphsFromTripleStoreCommand(String id, String url){
-		super(id);
+	protected FetchGraphsFromTripleStoreCommand(String id, String model, String url){
+		super(id, model);
 		this.tripleStoreUrl=url;
 	}
 

@@ -52,7 +52,7 @@ import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.alignment.SemanticType;
-import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class WorksheetGeospatialContent {
@@ -63,24 +63,24 @@ public class WorksheetGeospatialContent {
 	private List<Polygon> polygons = new ArrayList<Polygon>();
 	private List<FeatureTable> polygonTable = new ArrayList<FeatureTable>();
 	
-	private static String SRID_PROPERTY = ServletContextParameterMap
+	private static String SRID_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.SRID_PROPERTY);
-	private static String WGS84_LAT_PROPERTY = ServletContextParameterMap
+	private static String WGS84_LAT_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.WGS84_LAT_PROPERTY);
-	private static String WGS84_LNG_PROPERTY = ServletContextParameterMap
+	private static String WGS84_LNG_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.WGS84_LNG_PROPERTY);
-	private static String POINT_POS_PROPERTY = ServletContextParameterMap
+	private static String POINT_POS_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.POINT_POS_PROPERTY);
-	private static String POS_LIST_PROPERTY = ServletContextParameterMap
+	private static String POS_LIST_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.POS_LIST_PROPERTY);
 
-	private static String SRID_CLASS = ServletContextParameterMap
+	private static String SRID_CLASS = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.SRID_CLASS);
-	private static String POINT_CLASS = ServletContextParameterMap
+	private static String POINT_CLASS = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.POINT_CLASS);
-	private static String LINE_CLASS = ServletContextParameterMap
+	private static String LINE_CLASS = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.LINE_CLASS);
-	private static String POLYGON_CLASS = ServletContextParameterMap
+	private static String POLYGON_CLASS = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.POLYGON_CLASS);
 
 	private static final Logger logger = LoggerFactory
@@ -100,6 +100,7 @@ public class WorksheetGeospatialContent {
 	}
 
 	private void populateGeospatialData() {
+		
 		List<String> coordinateHNodeIds = new ArrayList<String>();
 		CoordinateCase currentCase = CoordinateCase.NOT_PRESENT;
 		boolean latFound = false;
@@ -329,7 +330,7 @@ public class WorksheetGeospatialContent {
 	}
 
 	public File publishKML() throws FileNotFoundException {
-		File outputFile = new File(ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) + "KML/" + worksheet.getTitle() + ".kml");
+		File outputFile = new File(ContextParametersRegistry.getInstance().getDefault().getParameterValue(ContextParameter.KML_PUBLISH_DIR) + worksheet.getTitle() + ".kml");
 		final Kml kml = KmlFactory.createKml();
 		final Folder folder = kml.createAndSetFolder()
 				.withName(worksheet.getTitle()).withOpen(true);

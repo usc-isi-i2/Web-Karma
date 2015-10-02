@@ -40,9 +40,11 @@ public class RamblerTransformationOutput implements TransformationOutput {
 	private RamblerTransformationInputs input;
 	private HashMap<String, Transformation> transformations;
 	public boolean nullRule = false;
-
-	public RamblerTransformationOutput(RamblerTransformationInputs input) {
+	public String contextId;
+	public RamblerTransformationOutput(RamblerTransformationInputs input, String contextId) {
+		
 		this.input = input;
+		this.contextId = contextId;
 		transformations = new HashMap<String, Transformation>();
 		ExecutorService executor = Executors.newFixedThreadPool(1);
 		final Future<?> worker = executor.submit(new Runnable() {
@@ -72,7 +74,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			String[] tmp = { t.getBefore(), t.getAfter() };
 			exps.add(tmp);
 		}
-		ProgSynthesis psProgSynthesis = new ProgSynthesis();
+		ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 		psProgSynthesis.inite(exps, input.dpp, input.msg);
 		// add time out here
 		Collection<ProgramRule> rules = null;
@@ -82,7 +84,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		input.msg.updateWeights(psProgSynthesis.partiCluster.weights);
 
 		if (rules == null || rules.size() == 0) {
-			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY);
+			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY, contextId);
 			r.nullRule = true;
 			this.nullRule = true;
 			rules = new Vector<ProgramRule>();

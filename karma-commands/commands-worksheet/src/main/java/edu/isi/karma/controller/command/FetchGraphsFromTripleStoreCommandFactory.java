@@ -20,9 +20,9 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.rep.Workspace;
-
 import javax.servlet.http.HttpServletRequest;
+
+import edu.isi.karma.rep.Workspace;
 
 public class FetchGraphsFromTripleStoreCommandFactory extends CommandFactory {
 	private enum Arguments {
@@ -34,7 +34,7 @@ public class FetchGraphsFromTripleStoreCommandFactory extends CommandFactory {
 			Workspace workspace) {
 
 		FetchGraphsFromTripleStoreCommand comm = new FetchGraphsFromTripleStoreCommand(getNewId(workspace), 
-				request.getParameter(Arguments.tripleStoreUrl.name()));
+				Command.NEW_MODEL, request.getParameter(Arguments.tripleStoreUrl.name()));
 		
 		return comm;
 	}

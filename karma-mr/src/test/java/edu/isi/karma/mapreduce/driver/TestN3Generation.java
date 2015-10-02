@@ -28,7 +28,9 @@ public class TestN3Generation {
 		 clusterConf.addResource(dfsConf);
 		 clusterConf.set("yarn.nodemanager.vmem-check-enabled", "false");
 		 clusterConf.set("yarn.nodemanager.pmem-check-enabled", "false");
+		 
 		cluster = new MiniMRYarnCluster("simpleprocessor");
+		
 		cluster.init(clusterConf);
 		cluster.start();
 	}
@@ -44,12 +46,13 @@ public class TestN3Generation {
 
 	@Test
 	public void test() throws Exception {
+		
 		Configuration conf = cluster.getConfig();
 		String[] args = {new File( getTestResource("InputFileDirectoryLoader.properties").toURI()).getAbsolutePath()};
 		int res = ToolRunner.run(conf, new InputFileDirectoryLoader(),args);
 		assertEquals(0, res);
 		
-		String [] jobArgs = {"-files", new File(getTestResource("people-model.ttl").toURI()).getAbsolutePath().toString(), "-archives", new File( getTestResource("sample_karma_user_home.zip").toURI()).getAbsolutePath(), "-libjars", System.getProperty("user.home") + "/.m2/repository/edu/isi/karma-offline/0.0.1-SNAPSHOT/karma-offline-0.0.1-SNAPSHOT-shaded.jar", new File(getTestResource("N3Processor.properties").toURI()).getAbsolutePath().toString()}; 
+		String [] jobArgs = {"-files", new File(getTestResource("people-model.ttl").toURI()).getAbsolutePath().toString(), "-libjars", System.getProperty("user.home") + "/.m2/repository/edu/isi/karma-offline/0.0.1-SNAPSHOT/karma-offline-0.0.1-SNAPSHOT-shaded.jar", new File(getTestResource("N3Processor.properties").toURI()).getAbsolutePath().toString()}; 
 		res = ToolRunner.run(conf, new N3Processor(), jobArgs);
 		assertEquals(0, res);
 	}

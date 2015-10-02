@@ -26,8 +26,8 @@ public class GetHeadersCommand extends WorksheetCommand {
 	private String commandName;
 	private static Logger logger = LoggerFactory
 			.getLogger(FoldCommand.class);
-	protected GetHeadersCommand(String id, String worksheetId, String hNodeId, String commandName) {
-		super(id, worksheetId);
+	protected GetHeadersCommand(String id, String model, String worksheetId, String hNodeId, String commandName) {
+		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
 		this.commandName = commandName;
 		// TODO Auto-generated constructor stub

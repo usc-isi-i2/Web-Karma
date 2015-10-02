@@ -12,6 +12,7 @@ import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
@@ -21,8 +22,8 @@ public class SetKarmaHomeCommand extends Command {
 	enum PreferenceKeys {
 		directory
 	}
-	protected SetKarmaHomeCommand(String id, String directory) {
-		super(id);
+	protected SetKarmaHomeCommand(String id, String model, String directory) {
+		super(id, model);
 		if(!directory.endsWith(File.separator))
 			this.directory = directory + File.separator;
 		else
@@ -55,7 +56,8 @@ public class SetKarmaHomeCommand extends Command {
 	
 		File dir = new File(directory);
 		if(dir.exists()) {
-			ServletContextParameterMap.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, directory);
+			final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+			contextParameters.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, directory);
 			Preferences preferences = Preferences.userRoot().node("WebKarma");
 			preferences.put("KARMA_USER_HOME", directory);
 			

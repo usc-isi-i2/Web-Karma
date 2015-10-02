@@ -20,8 +20,8 @@ import edu.isi.karma.view.VWorkspace;
 public class FetchHNodeIdFromAlignmentCommand extends Command{
 	private String alignmentId;
 	private String columnUri;
-	public FetchHNodeIdFromAlignmentCommand(String id, String alignmentId, String columnUri) {
-		super(id);
+	public FetchHNodeIdFromAlignmentCommand(String id, String model, String alignmentId, String columnUri) {
+		super(id, model);
 		this.alignmentId = alignmentId;
 		this.columnUri = columnUri;
 	}

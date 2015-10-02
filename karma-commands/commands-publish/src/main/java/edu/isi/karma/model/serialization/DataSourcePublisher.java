@@ -21,6 +21,14 @@
 
 package edu.isi.karma.model.serialization;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -33,16 +41,9 @@ import edu.isi.karma.rep.metadata.SourceInformation;
 import edu.isi.karma.rep.metadata.SourceInformation.InfoAttribute;
 import edu.isi.karma.rep.sources.Attribute;
 import edu.isi.karma.rep.sources.DataSource;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Map;
 
 public class DataSourcePublisher extends SourcePublisher {
 
@@ -108,8 +109,9 @@ public class DataSourcePublisher extends SourcePublisher {
 	public void writeToFile(String lang) throws FileNotFoundException {
 		if (this.model == null)
 			model = exportToJenaModel();
-		
-		String source_desc_file = ServletContextParameterMap.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
+
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		String source_desc_file = contextParameters.getParameterValue(ContextParameter.USER_DIRECTORY_PATH) +
 									Repository.Instance().SOURCE_REPOSITORY_REL_DIR + 
 		 							this.source.getName() + "_" + this.source.getId() +
 									Repository.Instance().getFileExtension(lang);

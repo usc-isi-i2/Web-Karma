@@ -1,5 +1,13 @@
 package edu.isi.karma.kr2rml;
 
+import java.util.HashMap;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
@@ -11,14 +19,6 @@ import edu.isi.karma.transformation.tokenizer.PythonTransformationAsURIValidator
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
 
 public class KR2RMLWorksheetHistoryCompatibilityVerifier {
 
@@ -65,7 +65,10 @@ public class KR2RMLWorksheetHistoryCompatibilityVerifier {
 						JSONInputCommandFactory scf = (JSONInputCommandFactory)cf;
 						Command comm = null;
 						try {
-							comm = scf.createCommand(inputParamArr, workspace);
+							String model = Command.NEW_MODEL;
+							if(commObject.has(HistoryArguments.model.name()))
+								model = commObject.getString(HistoryArguments.model.name());
+							comm = scf.createCommand(inputParamArr, model, workspace);
 						} catch (JSONException | KarmaException e) {
 							logger.error("Unable to parse command from worksheet history");
 						}

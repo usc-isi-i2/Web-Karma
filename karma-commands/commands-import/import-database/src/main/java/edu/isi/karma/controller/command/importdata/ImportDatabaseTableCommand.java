@@ -67,18 +67,18 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
     	dbType, hostname, portnumber, username, dBorSIDName;
     }
     
-    protected ImportDatabaseTableCommand(String id) {
-        super(id);
+    protected ImportDatabaseTableCommand(String id, String model) {
+        super(id, model);
     }
 
-    protected ImportDatabaseTableCommand(String id, String revisedId) {
-        super(id, revisedId);
+    protected ImportDatabaseTableCommand(String id, String model, String revisedId) {
+        super(id, model, revisedId);
     }
 
-    public ImportDatabaseTableCommand(String id, String dbType,
+    public ImportDatabaseTableCommand(String id, String model, String dbType,
             String hostname, int portNumber, String userName, String password,
             String dBorSIDName) {
-        super(id);
+        super(id, model);
         this.dbType = DBType.valueOf(dbType);
         this.hostname = hostname;
         this.portnumber = portNumber;
@@ -87,10 +87,10 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
         this.dBorSIDName = dBorSIDName;
     }
 
-    public ImportDatabaseTableCommand(String id, String revisedId, String dbType,
+    public ImportDatabaseTableCommand(String id, String model, String revisedId, String dbType,
             String hostname, int portNumber, String userName, String password,
             String dBorSIDName) {
-        super(id, revisedId);
+        super(id, model, revisedId);
         this.dbType = DBType.valueOf(dbType);
         this.hostname = hostname;
         this.portnumber = portNumber;
@@ -184,7 +184,8 @@ public class ImportDatabaseTableCommand extends ImportCommand implements IPrevie
             // Create a new Database Import Command. The interface allows the user to import 
             // multiple tables
             ImportDatabaseTableCommand comm = new ImportDatabaseTableCommand(workspace.getFactory().getNewId("C"),
-                    dbType.name(), hostname, portnumber, username, password, dBorSIDName);
+                    model,
+            		dbType.name(), hostname, portnumber, username, password, dBorSIDName);
             workspace.getCommandHistory().addPreviewCommand(comm);
             NewDatabaseCommandUpdate upd = new NewDatabaseCommandUpdate(comm.getId());
             c.add(upd);

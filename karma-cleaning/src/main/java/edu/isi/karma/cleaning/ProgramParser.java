@@ -6,14 +6,9 @@ import edu.isi.karma.cleaning.ParseTreeNode.nodetype;
 
 public class ProgramParser {
 	public ParseTreeNode root = null;
-
-	public ProgramParser() {
-
-	}
-
-	public ProgramParser(String program) {
-		this.root = this.parse(program);
-
+	String contextId;
+	public ProgramParser(String contextId) {
+		this.contextId = contextId;
 	}
 
 	// parse the sub program with a sequence of segment
@@ -23,7 +18,7 @@ public class ProgramParser {
 		String[] tokens = nodeseq.split("\\+(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 		for (String tok : tokens) {
 			// segment expression
-			ParseTreeNode node = new ParseTreeNode(nodetype.segment, tok);
+			ParseTreeNode node = new ParseTreeNode(nodetype.segment, tok, contextId);
 			res.add(node);
 		}
 		return res;
@@ -53,14 +48,14 @@ public class ProgramParser {
 		int eposE = tok.length()-1;
 		String eposExpre = tok.substring(eposS, eposE);
 		ParseTreeNode sPosNode = new ParseTreeNode(nodetype.position,
-				sposExpre);
+				sposExpre,contextId);
 		ParseTreeNode ePosNode = new ParseTreeNode(nodetype.position,
-				eposExpre);
+				eposExpre,contextId);
 		seg.addChildren(sPosNode);
 		seg.addChildren(ePosNode);
 	}
 	public ParseTreeNode parse(String prog) {
-		ParseTreeNode root = new ParseTreeNode(nodetype.root, prog);
+		ParseTreeNode root = new ParseTreeNode(nodetype.root, prog,contextId);
 		// find segments
 		String[] tokens = prog.split("\\+(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 		for (String tok : tokens) {
@@ -68,7 +63,7 @@ public class ProgramParser {
 			if (tok.indexOf("loop(value,r") != -1) {
 				String exp = tok.substring(13, tok.length() - 2);
 				//create loop node
-				ParseTreeNode pTreeNode = new ParseTreeNode(nodetype.loop, tok);
+				ParseTreeNode pTreeNode = new ParseTreeNode(nodetype.loop, tok,contextId);
 				root.addChildren(pTreeNode);
 				ArrayList<ParseTreeNode> children = this.parseNodeSeq(exp);
 				for(ParseTreeNode n:children)
@@ -79,7 +74,7 @@ public class ProgramParser {
 
 			} else {
 				// segment expression
-				ParseTreeNode node = new ParseTreeNode(nodetype.segment, tok);
+				ParseTreeNode node = new ParseTreeNode(nodetype.segment, tok,contextId);
 				root.addChildren(node);
 				// find the startposition
 				this.parseSegment(node);

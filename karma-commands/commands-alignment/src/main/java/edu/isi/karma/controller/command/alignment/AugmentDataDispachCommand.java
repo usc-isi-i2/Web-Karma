@@ -13,15 +13,15 @@ public class AugmentDataDispachCommand extends WorksheetSelectionCommand {
 	private String predicateIncoming, predicateOutgoing;
 	private AugmentDataCommand incoming;
 	private AugmentDataCommand outgoing;
-	public AugmentDataDispachCommand(String id, String dataRepoUrl, String worksheetId, 
+	public AugmentDataDispachCommand(String id, String model, String dataRepoUrl, String worksheetId, 
 			String columnUri, String predicateIncoming, String otherClassIncoming, 
 			String predicateOutgoing, String otherClassOutgoing, 
 			String hNodeId, String sameAsPredicate, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.predicateIncoming = predicateIncoming;
 		this.predicateOutgoing = predicateOutgoing;
-		incoming = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateIncoming, otherClassIncoming, hNodeId, true, sameAsPredicate, selectionId);
-		outgoing = new AugmentDataCommand(id, dataRepoUrl, worksheetId, columnUri, predicateOutgoing, otherClassOutgoing, hNodeId, false, sameAsPredicate, selectionId);
+		incoming = new AugmentDataCommand(id, model, dataRepoUrl, worksheetId, columnUri, predicateIncoming, otherClassIncoming, hNodeId, true, sameAsPredicate, selectionId);
+		outgoing = new AugmentDataCommand(id, model, dataRepoUrl, worksheetId, columnUri, predicateOutgoing, otherClassOutgoing, hNodeId, false, sameAsPredicate, selectionId);
 		addTag(CommandTag.Transformation);
 	}
 	
@@ -76,7 +76,7 @@ public class AugmentDataDispachCommand extends WorksheetSelectionCommand {
 			incoming.doIt(workspace);
 		if (predicatesoutgoingarray.length() > 0)
 			outgoing.doIt(workspace);
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
@@ -90,7 +90,7 @@ public class AugmentDataDispachCommand extends WorksheetSelectionCommand {
 			incoming.undoIt(workspace);
 		if (predicatesoutgoingarray.length() > 0)
 			outgoing.undoIt(workspace);
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

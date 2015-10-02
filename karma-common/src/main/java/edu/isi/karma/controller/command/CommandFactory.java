@@ -50,7 +50,7 @@ public abstract class CommandFactory {
 	}
 
 	/* this is a hack to get around instanceof jsoninputcommandfactory */
-	public Command createCommand(JSONArray inputParamArr, Workspace workspace) throws JSONException, KarmaException
+	public Command createCommand(JSONArray inputParamArr, String model, Workspace workspace) throws JSONException, KarmaException
 	{
 		throw new UnsupportedOperationException("This is not supported on this command factory!");
 	}

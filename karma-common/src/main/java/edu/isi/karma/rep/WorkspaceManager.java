@@ -24,7 +24,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.semantictypes.typinghandler.HybridSTModelHandler;
 
 
 /**
@@ -39,6 +43,9 @@ public class WorkspaceManager {
 	
 	private static WorkspaceManager singleton = new WorkspaceManager();
 	
+	static Logger logger = LoggerFactory
+			.getLogger(WorkspaceManager.class.getSimpleName());
+	
 	public static WorkspaceManager getInstance() {
 		return singleton;
 	}
@@ -47,16 +54,16 @@ public class WorkspaceManager {
 		return new WorkspaceManager();
 	}
 	
-	public Workspace createWorkspace() {
+	public Workspace createWorkspace(String contextId) {
 		String id = getNewId("WSP");
-		Workspace wsp = new Workspace(id);
+		Workspace wsp = new Workspace(id, contextId);
 		workspaces.put(id, wsp);
 		return wsp;
 	}
 	
-	public Workspace createWorkspaceWithPreferencesId(String preferenceId) {
+	public Workspace createWorkspaceWithPreferencesId(String preferenceId, String contextId) {
 		String id = getNewId("WSP");
-		Workspace wsp = new Workspace(id, preferenceId);
+		Workspace wsp = new Workspace(id, preferenceId, contextId);
 		workspaces.put(id, wsp);
 		return wsp;
 	}

@@ -372,7 +372,6 @@
 		  <version>0.9.8</version>
 	  </dependency>
 
-
 	  <!--
 	<dependency>
 		<groupId>com.esotericsoftware.kryo</groupId>
@@ -512,9 +511,7 @@
 				 <!-- <mainClass>edu.isi.karma.webserver.ServerStart</mainClass> -->
 				</configuration>
 			  </plugin>
-			
-
-
+		      
 		</plugins>
 	</build>
 </project>

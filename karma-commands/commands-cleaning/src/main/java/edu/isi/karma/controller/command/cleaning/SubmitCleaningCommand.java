@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.cleaning.DataPreProcessor;
 import edu.isi.karma.cleaning.Messager;
-import edu.isi.karma.cleaning.UtilTools;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandFactory;
@@ -75,9 +74,9 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			.getLogger(SubmitCleaningCommand.class);
 	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
 
-	public SubmitCleaningCommand(String id, String hNodeId, String worksheetId,
+	public SubmitCleaningCommand(String id, String model, String hNodeId, String worksheetId,
 			String Examples, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model,worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.examples = GenerateCleaningRulesCommand.parseExample(Examples);
 
@@ -182,10 +181,10 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 			{
 				msg = new Messager();
 			}
-			RamblerTransformationOutput rtf = applyRamblerTransformation(rows,dpp,msg);
+			RamblerTransformationOutput rtf = applyRamblerTransformation(workspace, rows,dpp,msg);
 			if (rtf.getTransformations().keySet().size() <= 0) {
 				c.append(WorksheetUpdateFactory
-						.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+						.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 				c.add(new InfoUpdate("No Result Submitted"));
 				return c;
 			}
@@ -205,7 +204,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 		if (selectedPath != null) {
 			c.append(WorksheetUpdateFactory
-					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+					.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 			/** Add the alignment update **/
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(
 					workspace));
@@ -250,8 +249,9 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		return rvco;
 	}
 
-	private RamblerTransformationOutput applyRamblerTransformation(
+	private RamblerTransformationOutput applyRamblerTransformation(Workspace workspace,
 			HashMap<String, String> rows,DataPreProcessor dpp, Messager msg) {
+		
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
 		RamblerTransformationInputs inputs = new RamblerTransformationInputs(
 				examples, vc,dpp,msg);
@@ -262,7 +262,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		while (iterNum < 1 && !results) // try to find any rule during 1 times
 										// running
 		{
-			rtf = new RamblerTransformationOutput(inputs);
+			rtf = new RamblerTransformationOutput(inputs, workspace.getContextId());
 			if (rtf.getTransformations().keySet().size() > 0) {
 				results = true;
 			}
@@ -315,7 +315,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		JSONInputCommandFactory scf = (JSONInputCommandFactory) cf;
 
 		// TODO handle exceptions intelligently
-		Command comm = scf.createCommand(inputParamArr, workspace);
+		Command comm = scf.createCommand(inputParamArr, Command.NEW_MODEL, workspace);
 		if (comm != null) {
 			// logger.info("Executing command: " +
 			// commObject.get(HistoryArguments.commandName.name()));
@@ -337,7 +337,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 		// TODO handle exceptions intelligently
 		try {
-			comm1 = scf1.createCommand(inputParamArr0, workspace);
+			comm1 = scf1.createCommand(inputParamArr0, Command.NEW_MODEL, workspace);
 		} catch (JSONException e1) {
 			logger.error(
 					"Error creating new "
@@ -369,7 +369,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		currentTable.removeHNode(newHNodeId, worksheet);
 
 		UpdateContainer c = (WorksheetUpdateFactory
-				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+				.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 		// TODO is it necessary to compute alignment and semantic types for
 		// everything?
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));

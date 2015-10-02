@@ -1,58 +1,33 @@
 package edu.isi.karma.controller.history;
 
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.CommandException;
+import edu.isi.karma.controller.command.CommandFactory;
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
+import edu.isi.karma.controller.update.*;
+import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
+import edu.isi.karma.rep.Worksheet;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.util.CommandInputJSONUtil;
+import edu.isi.karma.webserver.ExecutionController;
+import edu.isi.karma.webserver.WorkspaceRegistry;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.reflections.Reflections;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.CommandFactory;
-import edu.isi.karma.controller.command.ICommand.CommandTag;
-import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNode.HNodeType;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.CommandInputJSONUtil;
-import edu.isi.karma.webserver.ExecutionController;
-import edu.isi.karma.webserver.WorkspaceRegistry;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 public class CommandHistoryUtil {
-	private final static Set<CommandConsolidator> consolidators = new HashSet<CommandConsolidator>();
 	private final List<Command> commands = new ArrayList<Command>();
 	private Workspace workspace;
 	private String worksheetId;
 	HashMap<String, CommandFactory> commandFactoryMap;
 	static Logger logger = Logger.getLogger(CommandHistoryUtil.class);
-	static {
-		Reflections reflections = new Reflections("edu.isi.karma");
-		Set<Class<? extends CommandConsolidator>> subTypes =
-				reflections.getSubTypesOf(CommandConsolidator.class);
-		for (Class<? extends CommandConsolidator> subType : subTypes)
-		{
-			if(!Modifier.isAbstract(subType.getModifiers()) && !subType.isInterface()) {
-				try {
-					consolidators.add(subType.newInstance());
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-	}
 
 	public CommandHistoryUtil(List<Command> commands, Workspace workspace, String worksheetId) {
 		this.worksheetId = worksheetId;
@@ -63,8 +38,8 @@ public class CommandHistoryUtil {
 	}
 	private Map<Command, List<Command> > generateGraph() {
 
-		Map<Command, List<Command> > dag = new HashMap<Command, List<Command>>();
-		Map<String, List<Command> > outputMapping = new HashMap<String, List<Command> >();
+		Map<Command, List<Command> > dag = new HashMap<>();
+		Map<String, List<Command> > outputMapping = new HashMap<>();
 
 		for (Command command : commands) {
 			Set<String> inputs = command.getInputColumns();
@@ -73,7 +48,7 @@ public class CommandHistoryUtil {
 				if (outputCommands != null) {
 					List<Command> edges = dag.get(command);
 					if (edges == null)
-						edges = new ArrayList<Command>();
+						edges = new ArrayList<>();
 					for (Command tmp : outputCommands) {
 						if (tmp != command)
 							edges.add(tmp);
@@ -85,7 +60,7 @@ public class CommandHistoryUtil {
 			for (String output : outputs) {
 				List<Command> tmp = outputMapping.get(output);
 				if (tmp == null)
-					tmp = new ArrayList<Command>();
+					tmp = new ArrayList<>();
 				tmp.add(command);
 				outputMapping.put(output, tmp);
 			}
@@ -133,66 +108,54 @@ public class CommandHistoryUtil {
 		return terminalColumns;
 	}
 
-	public List<Command> consolidateHistory() throws CommandException {
-		List<Command> refinedCommands = new ArrayList<Command>(commands);
-		for (CommandConsolidator con : consolidators) {
-			refinedCommands = con.consolidateCommand(refinedCommands, workspace);
-		}
-		if (!checkDependency(refinedCommands))
-			return commands;
-		this.commands.clear();
-		this.commands.addAll(refinedCommands);
-		return commands;
-
-	}
-
-	private boolean checkDependency(List<Command> commands) {
-		Set<String> OutputhNodeIds = new HashSet<String>();
-		for (HNode hnode : workspace.getFactory().getAllHNodes()) {
-			if (hnode.getHNodeType() == HNodeType.Regular)
-				OutputhNodeIds.add(hnode.getId());
-		}
-		boolean dependency = true;
-		for (Command command : commands) {
-			if (command.getInputColumns().size() > 0) {
-				for (String hNodeId : command.getInputColumns()) {
-					if (!OutputhNodeIds.contains(hNodeId))
-						dependency = false;
-				}
-			}
-			if (command.getOutputColumns().size() > 0) {
-				OutputhNodeIds.addAll(command.getOutputColumns());
-			}
-		}
-		return dependency;
-	}
-
 	public UpdateContainer replayHistory() {
-		CommandHistory commandHistory = workspace.getCommandHistory();
-		commandHistory.removeCommands(workspace, worksheetId);
 		JSONArray redoCommandsArray = new JSONArray();
-		for (Command refined : commands)
+		for (Command refined : commands) {
 			redoCommandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, refined));
-		commands.clear();
+		}
+		return replayHistory(redoCommandsArray);
+	}
+
+	public UpdateContainer replayHistory(JSONArray redoCommandsArray) {
 		UpdateContainer uc = new UpdateContainer();
-		commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
+		Worksheet oldWorksheet = workspace.getFactory().getWorksheet(worksheetId);
+		oldWorksheet.getImportMethod().createWorksheet(oldWorksheet.getTitle(), workspace, oldWorksheet.getEncoding());
+		try {
+			Worksheet newWorksheet = oldWorksheet.getImportMethod().generateWorksheet();
+			AlignmentManager.Instance().createAlignment(workspace.getId(), newWorksheet.getId(), workspace.getOntologyManager());
+			workspace.removeWorksheet(worksheetId);
+			uc.add(new WorksheetDeleteUpdate(worksheetId));
+			this.worksheetId = newWorksheet.getId();
+			uc.add(new WorksheetListUpdate());
+			uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
+			commands.clear();
+			commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
+			workspace.getCommandHistory().clearCurrentCommand(worksheetId);
+			workspace.getCommandHistory().clearRedoCommand(worksheetId);
+		} catch (Exception e) {
+			commands.clear();
+			logger.error("Fail to replay history", e);
+		}
 		return uc;
 	}
 
 	public List<Command> getCommands() {
-		return new ArrayList<Command>(commands);
+		return new ArrayList<>(commands);
 	}
 
 	private List<Command> getCommandsFromHistoryJSON(JSONArray historyJSON, UpdateContainer uc) {
-		List<Command> commands = new ArrayList<Command>();
+		List<Command> commands = new ArrayList<>();
 		for (int i = 0; i < historyJSON.length(); i++) {
 			JSONObject commObject = historyJSON.getJSONObject(i);
 			JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 			String commandName = (String)commObject.get(HistoryArguments.commandName.name());
 			WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
-			ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, true);
+			UpdateContainer errors = ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, false);
+			if (errors != null) {
+				uc.append(errors);
+			}
 			String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
-			Set<String> newOutputColumns = new HashSet<String>();
+			Set<String> newOutputColumns = new HashSet<>();
 			if (tmp != null) {
 				JSONArray array = new JSONArray(tmp);
 				for (int j = 0; j < array.length(); j++) {
@@ -204,38 +167,60 @@ public class CommandHistoryUtil {
 			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
 			if(cf != null) {
 				try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
-					Command comm = cf.createCommand(inputParamArr, workspace);
+					String model = Command.NEW_MODEL;
+					if(commObject.has(HistoryArguments.model.name())) {
+						model = commObject.getString(HistoryArguments.model.name());
+					}
+					Command comm = cf.createCommand(inputParamArr, model, workspace);
 					comm.setOutputColumns(newOutputColumns);
 					if(comm != null){
 						commands.add(comm);
 						//TODO consolidate update
-						uc.append(workspace.getCommandHistory().doCommand(comm, workspace, true));
+						try {
+							uc.append(workspace.getCommandHistory().doCommand(comm, workspace, true));
+						} catch (Exception e) {
+							uc.add(new TrivialErrorUpdate("Error occurred in command " + comm.getCommandName()));
+						}
 					}
 
 				} catch (Exception ignored) {
-
+					logger.error("Error in executing command", ignored);
 				}
 			}
 		}
 		return commands;
 	}
 
-	public void removeCommands(CommandTag tag) {
+	public void removeCommands(Set<String> commandIds) {
 		Iterator<Command> commandItr = commands.iterator();
 		while (commandItr.hasNext()) {
 			Command command = commandItr.next();
-			if(command.hasTag(tag))
+			if (commandIds.contains(command.getId())) {
 				commandItr.remove();
+			}
 		}
 	}
 
-	public void removeCommands(String hNodeId) {
+	public void retainCommands(Set<String> commandIds) {
 		Iterator<Command> commandItr = commands.iterator();
 		while (commandItr.hasNext()) {
 			Command command = commandItr.next();
-			if(command.getOutputColumns().contains(hNodeId))
+			if (!commandIds.contains(command.getId())) {
 				commandItr.remove();
+			}
 		}
+	}
+
+	public String getWorksheetId() {
+		return worksheetId;
+	}
+
+	public JSONArray getCommandsJSON() {
+		JSONArray commandsArray = new JSONArray();
+		for (Command command : commands) {
+			commandsArray.put(workspace.getCommandHistory().getCommandJSON(workspace, command));
+		}
+		return commandsArray;
 	}
 
 }

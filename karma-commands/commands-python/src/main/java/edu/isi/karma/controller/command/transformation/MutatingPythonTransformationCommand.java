@@ -45,13 +45,13 @@ import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.HNode.HNodeType;
-import edu.isi.karma.rep.Node.NodeStatus;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
@@ -64,10 +64,10 @@ public abstract class MutatingPythonTransformationCommand extends
 	protected final String newColumnName;
 	protected List<Node> affectedNodes = new LinkedList<Node>();
 	protected boolean isJSONOutput = false;
-	public MutatingPythonTransformationCommand(String id, String newColumnName,
+	public MutatingPythonTransformationCommand(String id, String model, String newColumnName,
 			String transformationCode, String worksheetId, String hNodeId,
 			String errorDefaultValue, String selectionId, boolean isJSONOutput) {
-		super(id, transformationCode, worksheetId, hNodeId,
+		super(id, model, transformationCode, worksheetId, hNodeId,
 				errorDefaultValue, selectionId);
 		this.newColumnName = newColumnName;
 		this.isJSONOutput = isJSONOutput;
@@ -94,7 +94,7 @@ public abstract class MutatingPythonTransformationCommand extends
 			JSONArray multiCellEditInput = getMultiCellValueEditInputJSON(transformedRows, newHNodeId);
 			MultipleValueEditColumnCommandFactory mfc = (MultipleValueEditColumnCommandFactory)
 					ctrl.getCommandFactoryMap().get(MultipleValueEditColumnCommand.class.getSimpleName());
-			MultipleValueEditColumnCommand mvecc = (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, workspace);
+			MultipleValueEditColumnCommand mvecc = (MultipleValueEditColumnCommand) mfc.createCommand(multiCellEditInput, model, workspace);
 			mvecc.doIt(workspace);
 			
 		} catch (Exception e) {
@@ -107,7 +107,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		worksheet.getMetadataContainer().getColumnMetadata().addColumnDerivedFrom(newHNodeId, hNodeId);
 		// Prepare the output container
 		UpdateContainer c = new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 		
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
@@ -167,7 +167,7 @@ public abstract class MutatingPythonTransformationCommand extends
 			obj3.put("value", array.toString());
 			obj3.put("type", "other");
 			input.put(obj3);
-			AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, newNode.getHTableId(), name, HNodeType.Transformation, getSuperSelection(workspace).getName());
+			AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, model, workspace, hNodeId, worksheetId, newNode.getHTableId(), name, HNodeType.Transformation, getSuperSelection(workspace).getName());
 			command.doIt(workspace);
 		}
 	}

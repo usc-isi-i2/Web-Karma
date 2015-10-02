@@ -4,6 +4,12 @@
  */
 package edu.isi.karma.controller.command.importdata;
 
+import java.io.IOException;
+
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -16,12 +22,6 @@ import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
-
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * This abstract class in an interface to all Commands that Import data
@@ -36,14 +36,16 @@ public abstract class ImportCommand extends Command {
     // Id of the revised worksheet, or null if no revision is present
     private String revisionId;
 
-    public ImportCommand(String id) {
-        super(id);
+    public ImportCommand(String id, String model) {
+        super(id, model);
         this.revisionId = null;
+        addTag(CommandTag.Import);
     }
 
-    public ImportCommand(String id, String revisionId) {
-        super(id);
+    public ImportCommand(String id, String model, String revisionId) {
+        super(id, model);
         this.revisionId = revisionId;
+        addTag(CommandTag.Import);
     }
 
     public String getRevisionId() {
@@ -66,7 +68,7 @@ public abstract class ImportCommand extends Command {
                 wsht.setRevisedWorksheet(revisedWorksheet);  
             }
             c.add(new WorksheetListUpdate());
-            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION));
+            c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(wsht.getId(), SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
         } catch (JSONException | IOException | KarmaException | NullPointerException | ClassNotFoundException e) {
             logger.error("Error occured while generating worksheet from " + getTitle() + "!", e);
             return new UpdateContainer(new ErrorUpdate(

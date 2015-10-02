@@ -17,23 +17,25 @@ import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
 import edu.isi.karma.modeling.alignment.learner.SteinerNodes;
 import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.steiner.topk.BANKSfromMM;
+import edu.isi.karma.modeling.steiner.topk.CustomizedBANKS;
 import edu.isi.karma.modeling.steiner.topk.Fact;
 import edu.isi.karma.modeling.steiner.topk.ResultGraph;
 import edu.isi.karma.modeling.steiner.topk.SteinerEdge;
 import edu.isi.karma.modeling.steiner.topk.SteinerNode;
-import edu.isi.karma.modeling.steiner.topk.TopKSteinertrees;
 import edu.isi.karma.rep.alignment.CompactObjectPropertyLink;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
 import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+
 
 public class GraphBuilderTopK extends GraphBuilder {
 	
@@ -81,6 +83,10 @@ public class GraphBuilderTopK extends GraphBuilder {
 			SteinerNode n1 = new SteinerNode(source.getId());
 			SteinerNode n2 = new SteinerNode(target.getId());
 			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)link.getWeight());
+			if (link instanceof LabeledLink) {
+				e.setModelIds(((LabeledLink)link).getModelIds());
+				e.setForced(((LabeledLink)link).getStatus() == LinkStatus.ForcedByUser);
+			}
 //			getTopKGraph().get(n1).add(e);
 			getTopKGraph().get(n2).add(e); // each node only stores its incoming links
 			return true;
@@ -93,6 +99,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 			SteinerNode n1 = new SteinerNode(source.getId());
 			SteinerNode n2 = new SteinerNode(target.getId());
 			SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight.doubleValue());
+			if (link instanceof LabeledLink) {
+				e.setModelIds(((LabeledLink)link).getModelIds());
+			}
 //			getTopKGraph().get(n1).add(e);
 			getTopKGraph().get(n2).add(e); // each node only stores its incoming links
 			return true;
@@ -112,19 +121,43 @@ public class GraphBuilderTopK extends GraphBuilder {
 			return false;
 	}
 	
+	public void changeLinkStatus(LabeledLink link, LinkStatus status) {
+		super.changeLinkStatus(link, status);
+		if (status == LinkStatus.PreferredByUI)
+			return;
+		
+		SteinerNode n1 = new SteinerNode(link.getSource().getId());
+		SteinerNode n2 = new SteinerNode(link.getTarget().getId());
+		SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)link.getWeight());
+		
+		if (getTopKGraph().get(n2).remove(e)) {
+			if (link instanceof LabeledLink) {
+				e.setModelIds(((LabeledLink)link).getModelIds());
+				e.setForced(status == LinkStatus.ForcedByUser);
+			}
+			getTopKGraph().get(n2).add(e);
+		}
+	}
+	
 	public void changeLinkWeight(DefaultLink link, double weight) {
 		super.changeLinkWeight(link, weight);
 		SteinerNode n1 = new SteinerNode(link.getSource().getId());
 		SteinerNode n2 = new SteinerNode(link.getTarget().getId());
 		SteinerEdge e = new SteinerEdge(n1, link.getId(), n2, (float)weight);
-//		getTopKGraph().get(n1).remove(e);
-		getTopKGraph().get(n2).remove(e);
-//		getTopKGraph().get(n1).add(e);
-		getTopKGraph().get(n2).add(e);
+		
+		if (getTopKGraph().get(n2).remove(e)) {
+			if (link instanceof LabeledLink) {
+				e.setModelIds(((LabeledLink)link).getModelIds());
+				e.setForced(((LabeledLink)link).getStatus() == LinkStatus.ForcedByUser);
+			}
+			getTopKGraph().get(n2).add(e);
+		}
 	}
 
 	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(Set<Node> steinerNodes, 
 			int k, 
+			Integer recursiveLevel,
+			Integer maxPermutations,
 			boolean onlyAddInternalNodes) 
 		throws Exception {
 		
@@ -138,17 +171,45 @@ public class GraphBuilderTopK extends GraphBuilder {
 		
 		TreeSet<SteinerNode> terminals= new TreeSet<SteinerNode>();
 		for (Node n : steinerNodes) {
-			if (onlyAddInternalNodes && !(n instanceof InternalNode))
+			if (onlyAddInternalNodes && !(n instanceof InternalNode)) {
 				continue;
+			}
 
 			terminals.add(new SteinerNode(n.getId()));
-		}
+		}		
 		
-//		DPBFfromMM N = new DPBFfromMM(terminals);
-		BANKSfromMM N = new BANKSfromMM(terminals);
-//		STARfromMM N = new STARfromMM(terminals);
-		TopKSteinertrees.graph = this.getTopKGraph();
-		TopKSteinertrees.nodes = this.getTopKGraphNodes();
+//		for (Node n : steinerNodes) {
+//			if (!(n instanceof InternalNode)) {
+//				Set<DefaultLink> incomingLinks = this.getGraph().incomingEdgesOf(n);
+//				if (incomingLinks != null && incomingLinks.size() == 1) {
+//					DefaultLink l = incomingLinks.iterator().next(); 
+//					if (l instanceof LabeledLink) {
+//						LabeledLink labeledLink = (LabeledLink)l;
+//						Node domain = labeledLink.getSource();
+//						if (domain != null && steinerNodes.contains(domain)) {
+//							Set<String> linkModelIds = labeledLink.getModelIds();
+//							Set<String> nodeModelIds = domain.getModelIds();
+//							if (nodeModelIds == null) {
+//								nodeModelIds = new HashSet<String>();
+//								domain.setModelIds(nodeModelIds);
+//							}
+//							if (linkModelIds != null)
+//								nodeModelIds.addAll(linkModelIds);
+//						}
+//					}
+//				}
+//			}
+//			terminals.add(new SteinerNode(n.getId()));
+//		}
+		
+
+//		BANKSfromMM N = new BANKSfromMM(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
+//		BANKSfromMM.graph = this.getTopKGraph();
+//		BANKSfromMM.nodes = this.getTopKGraphNodes();
+
+		CustomizedBANKS N = new CustomizedBANKS(terminals, recursiveLevel, maxPermutations, ontologyManager.getContextId());
+		CustomizedBANKS.graph = this.getTopKGraph();
+		CustomizedBANKS.nodes = this.getTopKGraphNodes();
 		
 		List<DirectedWeightedMultigraph<Node, LabeledLink>> results = new 
 				LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -159,8 +220,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 		if (terminals.size() > 0 && N.getResultQueue().isEmpty()) { 
 			// No edge in the tree, we still want to return a graph with only nodes
 			// no solution found! --> return a tree with just terminal nodes
-			ResultGraph emptyTree = new ResultGraph();
-			processedTree = getLabeledSteinerTree(emptyTree, terminals);
+//			ResultGraph emptyTree = new ResultGraph();
+//			processedTree = getLabeledSteinerTree(emptyTree, terminals);
+//			if (processedTree != null) results.add(processedTree);
 		}
 		
 		for(ResultGraph tree: N.getResultQueue()){
@@ -168,18 +230,20 @@ public class GraphBuilderTopK extends GraphBuilder {
 			processedTree = getLabeledSteinerTree(tree, terminals);
 			if (processedTree != null) results.add(processedTree);
 		}
-
+		
 		return results;
 	}
 	
 	public List<DirectedWeightedMultigraph<Node, LabeledLink>> getTopKSteinerTrees(
 			SteinerNodes steinerNodes, 
 			int k, 
+			Integer recursiveLevel,
+			Integer maxPermutations,
 			boolean onlyAddInternalNodes) 
 			throws Exception {
 
 		List<DirectedWeightedMultigraph<Node, LabeledLink>> results = 
-				getTopKSteinerTrees(steinerNodes.getNodes(), k, onlyAddInternalNodes);
+				getTopKSteinerTrees(steinerNodes.getNodes(), k, recursiveLevel, maxPermutations, onlyAddInternalNodes);
 		
 		// adding data property links
 		if (results != null && onlyAddInternalNodes) {
@@ -224,26 +288,19 @@ public class GraphBuilderTopK extends GraphBuilder {
 		double weight;
 		for (Fact f : initialTree.getFacts()) { 
 
-//			if (f.source().name().startsWith("helper_")) { // source node is helper
-//				continue;
-//			}
-//
-//			if (f.destination().name().startsWith("helper_")) { // target node is helper
-//				source = this.getIdToNodeMap().get(f.source().name());
-//				String targetId = getHelperNodeToTargetMap().get(f.destination()).getNodeId();
-//				target = this.getIdToNodeMap().get(targetId);
-//			} else 
-			{
-				source = this.getIdToNodeMap().get(f.source().name());
-				target = this.getIdToNodeMap().get(f.destination().name());
-			}
+			source = this.getIdToNodeMap().get(f.source().name());
+			target = this.getIdToNodeMap().get(f.destination().name());
 
-			
 			if (LinkIdFactory.getLinkUri(f.label().name).equals(Uris.DEFAULT_LINK_URI)) {
 				String id = LinkIdFactory.getLinkId(Uris.DEFAULT_LINK_URI, source.getId(), target.getId());					
 				l = new CompactObjectPropertyLink(id, ObjectPropertyType.None);
 			}
 			else l = this.getIdToLinkMap().get(f.label().name);
+			
+			if (l == null) {
+				logger.error("this should not happen! there is a bug!");
+			}
+			
 			weight = f.weight();
 			if (!visitedNodes.contains(source)) {
 				tree.addVertex(source);
@@ -254,6 +311,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 				visitedNodes.add(target);
 			}
 //			System.out.println(f.toString());
+			
 			tree.addEdge(source, target, l);
 			tree.setEdgeWeight(l, weight);
 		}
@@ -265,7 +323,9 @@ public class GraphBuilderTopK extends GraphBuilder {
 
 	public static void main(String[] args) throws Exception {
 		
-		ServletContextParameterMap.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters("/Users/mohsen/karma");
+		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
+
 
 		/** Check if any ontology needs to be preloaded **/
 		String preloadedOntDir = "/Users/mohsen/karma/preloaded-ontologies/";
@@ -273,7 +333,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		OntologyManager mgr = null;
 		if (ontDir.exists()) {
 			File[] ontologies = ontDir.listFiles();
-			mgr = new OntologyManager();
+			mgr = new OntologyManager(contextParameters.getId());
 			for (File ontology: ontologies) {
 				System.out.println(ontology.getName());
 				if (ontology.getName().endsWith(".owl") || 
@@ -336,7 +396,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		steinerNodes.add(n2);
 		steinerNodes.add(n3);
 		
-		List<DirectedWeightedMultigraph<Node, LabeledLink>> trees = gbtk.getTopKSteinerTrees(steinerNodes, 10, false);
+		List<DirectedWeightedMultigraph<Node, LabeledLink>> trees = gbtk.getTopKSteinerTrees(steinerNodes, 10, null, null, false);
 		for (DirectedWeightedMultigraph<Node, LabeledLink> tree : trees) {
 			System.out.println(GraphUtil.labeledGraphToString(tree));
 		}

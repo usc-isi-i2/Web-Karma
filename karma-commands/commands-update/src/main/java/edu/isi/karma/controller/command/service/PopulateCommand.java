@@ -68,8 +68,8 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 	private static Logger logger = LoggerFactory
 			.getLogger(PopulateCommand.class.getSimpleName());
 
-	public PopulateCommand(String id, String worksheetId, String selectionId) {
-		super(id, worksheetId, selectionId);
+	public PopulateCommand(String id, String model, String worksheetId, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 		
 		addTag(CommandTag.Transformation);
 	}
@@ -195,7 +195,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 			columnPaths.add(path);
 		}
 		
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace),workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 				
 		return c;
@@ -267,7 +267,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		workspace.getFactory().replaceWorksheet(this.worksheetId, this.worksheetBeforeInvocation);
 		
 		c.add(new ReplaceWorksheetUpdate(worksheetId, this.worksheetBeforeInvocation));
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, getSuperSelection(workspace)));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, getSuperSelection(workspace),workspace.getContextId()));
 		
 		return c;	
 		

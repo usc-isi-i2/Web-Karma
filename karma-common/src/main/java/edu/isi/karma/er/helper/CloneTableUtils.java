@@ -1,10 +1,6 @@
 package edu.isi.karma.er.helper;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,48 +17,50 @@ import edu.isi.karma.rep.Worksheet;
 
 public class CloneTableUtils {
 	
-	public static Map<String, String> cloneHTable(HTable oldht, HTable newht, Worksheet newws, RepFactory factory, List<HNode> hnodes, SuperSelection sel) {
-		Collections.sort(hnodes);
-		Map<String, String> tmp = new HashMap<String, String>();
-		for (HNode hnode : hnodes) {
-			HNode newhnode = null;
-			if (newht.getHNodeFromColumnName(hnode.getColumnName()) == null)
-				newhnode = newht.addHNode(hnode.getColumnName(), HNodeType.Transformation, newws, factory);
-			else
-				newhnode = newht.addHNode(newht.getNewColumnName(hnode.getColumnName()), HNodeType.Transformation, newws, factory);
-			tmp.put(hnode.getId(), newhnode.getId());
+	public static Map<String, String> cloneHTable(HTable newHTable, Worksheet newWorksheet, RepFactory factory, List<HNode> hNodes, boolean isFirst) {
+		Collections.sort(hNodes);
+		Map<String, String> tmp = new HashMap<>();
+		for (HNode hnode : hNodes) {
+			HNode newHNode;
+			if (!isFirst) {
+				newHNode = newHTable.addHNode(hnode.getColumnName(), HNodeType.Transformation, newWorksheet, factory);
+			}
+			else {
+				newHNode = newHTable.addHNode(hnode.getHNodePath(factory).toColumnNamePath().replace("/", "_"), HNodeType.Transformation, newWorksheet, factory);
+			}
+			tmp.put(hnode.getId(), newHNode.getId());
 			if (hnode.hasNestedTable()) {
-				HTable oldnested = hnode.getNestedTable();
-				HTable newnested = newhnode.addNestedTable(hnode.getNestedTable().getTableName(), newws, factory);		
-				tmp.putAll(cloneHTable(oldnested, newnested, newws, factory, new ArrayList<HNode>(oldnested.getHNodes()), sel));
+				HTable oldNested = hnode.getNestedTable();
+				HTable newNested = newHNode.addNestedTable(hnode.getNestedTable().getTableName(), newWorksheet, factory);
+				tmp.putAll(cloneHTable(newNested, newWorksheet, factory, new ArrayList<HNode>(oldNested.getHNodes()), false));
 			}
 		}
 		return tmp;
 	}
 
-	public static Row cloneDataTable(Row oldRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory, SuperSelection sel) {
-		Row newrow = newDataTable.addRow(factory);
-		for (HNode hnode : hnodes) {
+	public static Row cloneDataTable(Row oldRow, Table newDataTable, HTable newHTable, List<HNode> hNodes, RepFactory factory, SuperSelection sel) {
+		Row newRow = newDataTable.addRow(factory);
+		for (HNode hnode : hNodes) {
 			HNode newHNode = newHTable.getHNodeFromColumnName(hnode.getColumnName());
 			if (newHNode == null)
 				continue;
 			
 			Node oldNode = oldRow.getNode(hnode.getId());
-			Node newNode = newrow.getNode(newHNode.getId());
+			Node newNode = newRow.getNode(newHNode.getId());
 			if (oldNode == null)
 				continue;
 			if (!oldNode.hasNestedTable()) {
 				newNode.setValue(oldNode.getValue(), oldNode.getStatus(), factory);
 			}
 			else {					
-				cloneDataTable(oldNode.getNestedTable(), newNode.getNestedTable(), hnode.getNestedTable(), newHNode.getNestedTable(), hnode.getNestedTable().getSortedHNodes(), factory, sel);
+				cloneDataTable(oldNode.getNestedTable(), newNode.getNestedTable(), newHNode.getNestedTable(), hnode.getNestedTable().getSortedHNodes(), factory, sel);
 			}
 		}
-		return newrow;
+		return newRow;
 	}
 	
-	public static void cloneDataTableExistingRow(Row oldRow, Row newRow, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory, Map<String, String> mapping, SuperSelection sel) {
-		for (HNode hnode : hnodes) {
+	public static void cloneDataTableExistingRow(Row oldRow, Row newRow, List<HNode> hNodes, RepFactory factory, Map<String, String> mapping, SuperSelection sel) {
+		for (HNode hnode : hNodes) {
 			HNode newHNode = factory.getHNode(mapping.get(hnode.getId()));
 			Node oldNode = oldRow.getNode(hnode.getId());
 			Node newNode = newRow.getNode(newHNode.getId());
@@ -72,16 +70,16 @@ public class CloneTableUtils {
 				newNode.setValue(oldNode.getValue(), oldNode.getStatus(), factory);
 			}
 			else {					
-				cloneDataTable(oldNode.getNestedTable(), newNode.getNestedTable(), hnode.getNestedTable(), newHNode.getNestedTable(), hnode.getNestedTable().getSortedHNodes(), factory, sel);
+				cloneDataTable(oldNode.getNestedTable(), newNode.getNestedTable(), newHNode.getNestedTable(), hnode.getNestedTable().getSortedHNodes(), factory, sel);
 			}
 		}
 	}
 
-	public static void cloneDataTable(Table oldDataTable, Table newDataTable, HTable oldHTable, HTable newHTable, List<HNode> hnodes, RepFactory factory, SuperSelection sel) {
+	public static void cloneDataTable(Table oldDataTable, Table newDataTable, HTable newHTable, List<HNode> hNodes, RepFactory factory, SuperSelection sel) {
 		ArrayList<Row> rows = oldDataTable.getRows(0, oldDataTable.getNumRows(), sel);
 		for (Row row : rows) {
 			Row newrow = newDataTable.addRow(factory);
-			for (HNode hnode : hnodes) {
+			for (HNode hnode : hNodes) {
 				HNode newHNode = newHTable.getHNodeFromColumnName(hnode.getColumnName());
 				Node oldNode = row.getNode(hnode.getId());
 				Node newNode = newrow.getNode(newHNode.getId());
@@ -89,29 +87,29 @@ public class CloneTableUtils {
 					newNode.setValue(oldNode.getValue(), oldNode.getStatus(), factory);
 				}
 				else {					
-					cloneDataTable(oldNode.getNestedTable(), newNode.getNestedTable(), hnode.getNestedTable(), newHNode.getNestedTable(), hnode.getNestedTable().getSortedHNodes(), factory, sel);
+					cloneDataTable(oldNode.getNestedTable(), newNode.getNestedTable(), newHNode.getNestedTable(), hnode.getNestedTable().getSortedHNodes(), factory, sel);
 				}
 			}
 		}
 	}
 
-	public static void getDatatable(Table dt, HTable ht, List<Table> parentTables, SuperSelection sel) {
-		if (dt == null)
+	public static void getDatatable(Table dataTable, HTable headerTable, List<Table> parentTables, SuperSelection sel) {
+		if (dataTable == null)
 			return;
-		if (dt.getHTableId().compareTo(ht.getId()) == 0)
-			parentTables.add(dt);
+		if (dataTable.getHTableId().compareTo(headerTable.getId()) == 0)
+			parentTables.add(dataTable);
 		else {
-			for (Row row : dt.getRows(0, dt.getNumRows(), sel)) {
+			for (Row row : dataTable.getRows(0, dataTable.getNumRows(), sel)) {
 				for (Node n : row.getNodes()) {
-					getDatatable(n.getNestedTable(), ht, parentTables, sel);
+					getDatatable(n.getNestedTable(), headerTable, parentTables, sel);
 				}
 			}
 		}
 	}
 
-	public static Object cloneNodeToJSON(HNode hn, Node node, SuperSelection sel) {
+	public static Object cloneNodeToJSON(HNode hNode, Node node, SuperSelection sel) {
 		if (node.hasNestedTable()) {
-			HTable nestHT = hn.getNestedTable();
+			HTable nestHT = hNode.getNestedTable();
 			Table dataTable = node.getNestedTable();
 			JSONArray array = new JSONArray();
 			for (Row row : dataTable.getRows(0, dataTable.getNumRows(), sel)) {

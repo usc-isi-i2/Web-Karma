@@ -24,9 +24,11 @@ var D3ModelManager = (function() {
 
 	function PrivateConstructor() {
 		var models;
+		var modelJsons;
 		
 		function init() {
 			models = [];
+			modelJsons = [];
 			
 			window.onscroll = function(event){
 				for (var worksheetId in models) {
@@ -41,12 +43,16 @@ var D3ModelManager = (function() {
 			};
 		}
 		
-		function getModelManager(worksheetId, layoutElement, layoutClass, width) {
+		function getModelManager(worksheetId, layoutElement, layoutClass, width, force) {
 			if(models[worksheetId]) {
 				//This is temporary. Comment this out when the D3ModelLayout can handle updates.
-				//models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
+				if(force) {
+					models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
+					modelJsons[worksheetId] = {};
+				}
 			} else { 
 				models[worksheetId] = new D3ModelLayout(layoutElement, layoutClass, width, worksheetId);
+				modelJsons[worksheetId] = {};
 			}
 			return models[worksheetId];	
 		};
@@ -104,10 +110,21 @@ var D3ModelManager = (function() {
 			} else {
 				alignJson = json;
 			}
-			var layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w);
-			console.log(JSON.stringify(alignJson));
-			layout.generateLayoutForJson(alignJson);
-			
+			var layout;
+			try {
+				layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w);
+				console.log(JSON.stringify(alignJson));
+				modelJsons[worksheetId] = alignJson;
+				layout.generateLayoutForJson(alignJson);
+			} catch(err) {
+				console.log("Got exception in D3ModelLayout:" + err.message);
+				console.log(err.stack);
+				//Try again generating a new D3Layout
+				$(layoutElement).empty();
+				layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w, true);
+				console.log(JSON.stringify(alignJson));
+				layout.generateLayoutForJson(alignJson);
+			}
 			var alignmentId = json["alignmentId"];
 			$(mainWorksheetDiv).data("alignmentId", alignmentId);
 			$(mainWorksheetDiv).data("svgVis", {"svgVis":true});
@@ -123,8 +140,8 @@ var D3ModelManager = (function() {
 						id = d.nodeId;
 					else
 						id = d.id;
-					ClassDropdownMenu.getInstance().show(worksheetId, id, d.label, id, d.nodeDomain, nodeCategory,
-							alignmentId, d.nodeType, d.isUri, event);
+					ClassDropdownMenu.getInstance().show(worksheetId, id, d.label, d.nodeDomain, d.nodeDomain, nodeCategory, 
+						alignmentId, d.nodeType, d.isUri, event);
 				}
 
 			});
@@ -158,6 +175,13 @@ var D3ModelManager = (function() {
 						d.target.isUri,
 						event);
 			});
+			
+			layout.setAnchorClickListener(function(d, event) {
+				console.log("This function is called when the link is clicked");
+				console.log(d.nodeType);
+				console.log(d.nodeId);
+				console.log(d.id);
+			});
 		};
 		
 		function refreshModel(worksheetId) {
@@ -185,12 +209,24 @@ var D3ModelManager = (function() {
 			}
 		}
 		
+		function addToModel(worksheetId, nodes, links, edgeLinks) {
+			worksheetJson = modelJsons[worksheetId];
+			for(node in nodes)
+				worksheetJson.nodes.append(node);
+			for(link in links)
+				worksheetJson.links.append(link);
+			for(eLink in edgeLinks)
+				worksheetJson.edgeLinks.append(eLink);
+			displayModel(worksheetJson);
+		}
+		
 		return { //Return back the public methods
 			init: init,
 			getModelManager: getModelManager,
 			displayModel: displayModel,
 			refreshModel: refreshModel,
-			printModel: printModel
+			printModel: printModel,
+			addToModel: addToModel
 		};
 	};
 

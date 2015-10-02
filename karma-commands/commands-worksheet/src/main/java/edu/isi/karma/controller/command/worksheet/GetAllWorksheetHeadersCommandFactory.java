@@ -17,7 +17,7 @@ public class GetAllWorksheetHeadersCommandFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 
-		return new GetAllWorksheetHeadersCommand(getNewId(workspace), worksheetId);
+		return new GetAllWorksheetHeadersCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId);
 	}
 
 	@Override

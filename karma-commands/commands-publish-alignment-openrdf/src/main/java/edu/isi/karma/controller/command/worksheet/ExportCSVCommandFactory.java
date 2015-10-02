@@ -65,7 +65,7 @@ public class ExportCSVCommandFactory extends CommandFactory {
 			logger.error("Error parsing column list",e);
 		}
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		return new ExportCSVCommand(getNewId(workspace), worksheetId, nodeId, 
+		return new ExportCSVCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, nodeId, 
 				tripleStoreUrl, graphUrl, cols, 
 				selectionName);
 	}

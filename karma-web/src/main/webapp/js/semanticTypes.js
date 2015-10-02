@@ -1571,7 +1571,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 
 				$("#columnName", dialog).text(columnLabel);
 
-				initialLinks = getAllLinksForNode(worksheetId, alignmentId, columnUri);
+				initialLinks = getAllLinksForNode(worksheetId, alignmentId, columnId);
 				$.each(initialLinks, function(index2, link) {
 					addLink(link);
 				});
@@ -1896,9 +1896,9 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 				"uri": "FakeURI"
 			};
 			var target = {
-				"id": columnUri,
+				"id": columnId,
 				"label": columnLabel,
-				"uri": columnDomain
+				"uri": columnUri
 			};
 			var prop = {
 				"id": "FakeId",
@@ -1915,9 +1915,9 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 
 		function addOutgoingLink(e) {
 			var source = {
-				"id": columnUri,
+				"id": columnId,
 				"label": columnLabel,
-				"uri": columnDomain
+				"uri": columnUri
 			};
 			var target = {
 				"id": "FakeId",
@@ -2444,7 +2444,7 @@ var AddNodeDialog = (function() {
 				var result = [];
 				$.each(classes, function(index, clazz) {
 					if (clazz.id) {
-						if (!clazz.id.match(/ \(add\)$/))
+						if (!clazz.label.match(/ \(add\)$/))
 							return;
 					}
 					result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
@@ -2480,7 +2480,7 @@ var AddNodeDialog = (function() {
 			}
 			newInfo.push(getParamObject("label", label, "other"));
 			newInfo.push(getParamObject("uri", selectedClass.uri, "other"));
-
+			newInfo.push(getParamObject("id", selectedClass.id, "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(worksheetId);
 
@@ -2916,6 +2916,7 @@ var ExportJSONDialog = (function() {
 			}
 			else {
 				contextJSON = "";
+				contextURL = "";
 			}
 			newInfo.push(getParamObject("contextJSON", contextJSON, "other"));
 			newInfo.push(getParamObject("contextFromModel", contextFromModel, "other"));

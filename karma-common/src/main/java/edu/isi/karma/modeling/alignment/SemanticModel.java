@@ -52,8 +52,8 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import edu.isi.karma.controller.command.selection.SuperSelection;
-import edu.isi.karma.controller.command.selection.SuperSelectionManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
+//import edu.isi.karma.controller.command.selection.SuperSelectionManager;
+//import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
@@ -77,14 +77,30 @@ public class SemanticModel {
 	protected final static int maxPathLengthForEvaluation = 2;
 	protected Workspace workspace;
 	protected Worksheet worksheet;
-	private SuperSelection selection;
+//	private SuperSelection selection;
+	
+	protected Double accuracy;
+	protected Double mrr;
+	
+	public SemanticModel(String id,
+			DirectedWeightedMultigraph<Node, LabeledLink> graph, boolean suggestSemanticTypes) {
+
+		this.id = id;
+		this.graph = graph;
+
+		this.sourceColumns = this.getColumnNodes();
+		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		for (ColumnNode c : this.sourceColumns)
+			this.mappingToSourceColumns.put(c, c);
+	}
+	
 	public SemanticModel(String id,
 			DirectedWeightedMultigraph<Node, LabeledLink> graph) {
 
 		this.id = id;
 		this.graph = graph;
-		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
-		this.setLearnedTypesForColumnNodes();
+//		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
+//		this.setLearnedTypesForColumnNodes();
 		this.setUserTypesForColumnNodes();
 
 		this.sourceColumns = this.getColumnNodes();
@@ -101,10 +117,10 @@ public class SemanticModel {
 		this.worksheet = worksheet;
 		this.id = id;
 		this.graph = graph;
-		this.selection = sel;
-		this.setLearnedTypesForColumnNodes();
+//		this.selection = sel;
+//		this.setLearnedTypesForColumnNodes();
 		this.setUserTypesForColumnNodes();
-
+		
 		this.sourceColumns = this.getColumnNodes();
 		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
 		for (ColumnNode c : this.sourceColumns)
@@ -119,7 +135,7 @@ public class SemanticModel {
 		this.id = id;
 		this.graph = graph;
 		this.sourceColumns = sourceColumns;
-		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
+//		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
 		this.mappingToSourceColumns = mappingToSourceColumns;
 	}
 	
@@ -130,7 +146,7 @@ public class SemanticModel {
 		this.graph = semanticModel.getGraph();
 		this.sourceColumns = semanticModel.getSourceColumns();
 		this.mappingToSourceColumns = semanticModel.getMappingToSourceColumns();
-		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
+//		this.selection = SuperSelectionManager.DEFAULT_SELECTION;
 	}
 	
 	public String getId() {
@@ -165,6 +181,22 @@ public class SemanticModel {
 		return sourceColumns;
 	}
 	
+	public Double getAccuracy() {
+		return accuracy;
+	}
+
+	public void setAccuracy(Double accuracy) {
+		this.accuracy = accuracy;
+	}
+
+	public Double getMrr() {
+		return mrr;
+	}
+
+	public void setMrr(Double mrr) {
+		this.mrr = mrr;
+	}
+
 	public Set<InternalNode> getInternalNodes() {
 		Set<InternalNode> internalNodes = new HashSet<InternalNode>();
 		if (this.graph != null) {
@@ -185,22 +217,22 @@ public class SemanticModel {
 		return columnNodes;
 	}
 
-	private void setLearnedTypesForColumnNodes() {
-		
-		if (this.graph == null)
-			return;
-		
-		for (Node n : this.graph.vertexSet()) {
-			
-			if (!(n instanceof ColumnNode)) continue;
-			
-			ColumnNode cn = (ColumnNode)n;
-						
-			List<SemanticType> learnedSemanticTypes = 
-					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
-			cn.setLearnedSemanticTypes(learnedSemanticTypes);
-		}
-	}
+//	private void setLearnedTypesForColumnNodes() {
+//		
+//		if (this.graph == null)
+//			return;
+//		
+//		for (Node n : this.graph.vertexSet()) {
+//			
+//			if (!(n instanceof ColumnNode)) continue;
+//			
+//			ColumnNode cn = (ColumnNode)n;
+//						
+//			List<SemanticType> learnedSemanticTypes = 
+//					new SemanticTypeUtil().getColumnSemanticSuggestions(workspace, worksheet, cn, 4, selection);
+//			cn.setLearnedSemanticTypes(learnedSemanticTypes);
+//		}
+//	}
 	
 	private void setUserTypesForColumnNodes() {
 		
@@ -215,13 +247,11 @@ public class SemanticModel {
 						
 			Set<LabeledLink> incomingLinks = this.graph.incomingEdgesOf(n);
 			if (incomingLinks != null) {
-				List<SemanticType> userSemanticTypes = new ArrayList<SemanticType>();
 				for (LabeledLink link : incomingLinks) {
 					Node domain = link.getSource();
 					SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), domain.getLabel(), Origin.User, 1.0);
-					userSemanticTypes.add(st);
+					cn.assignUserType(st);
 				}
-				cn.setUserSemanticTypes(userSemanticTypes);
 			} else
 				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 		}
@@ -235,9 +265,13 @@ public class SemanticModel {
 	}
 
 	public ModelEvaluation evaluate(SemanticModel baseModel) {
+		return evaluate(baseModel, false, false);
+	}
+
+	public ModelEvaluation evaluate(SemanticModel baseModel, boolean ignoreSemanticTypes, boolean ignoreColumnNodes) {
 
 		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
-			return new ModelEvaluation(null, null, null);
+			return new ModelEvaluation(null, null, null, null);
 		
 		NodeIdFactory nodeIdFactory = new NodeIdFactory();
 		HashMap<Node,String> baseNodeIds = new HashMap<Node,String>();
@@ -248,32 +282,35 @@ public class SemanticModel {
 				baseNodeIds.put(n, n.getId());
 		}
 		
-		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds);
+		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds, ignoreSemanticTypes, ignoreColumnNodes);
 		Set<String> targetTriples = null;
 		List<HashMap<Node,String>> targetNodeIdSets = getPossibleNodeIdSets();
 		if (targetNodeIdSets == null)
 			return null;
 		
 		double bestFMeasure = 0.0;
-		double bestPrecision = 0.0, bestRecall = 0.0;
-		double precision, recall, fmeasure;
+		double bestPrecision = 0.0, bestRecall = 0.0, bestJaccard = 0.0;
+		double precision, recall, fmeasure, jaccard;
 		for (HashMap<Node,String> targetNodeIds : targetNodeIdSets) {
 //			System.out.println("==============================");
-			targetTriples = getTriples(this.getGraph(), targetNodeIds);
+			targetTriples = getTriples(this.getGraph(), targetNodeIds, ignoreSemanticTypes, ignoreColumnNodes);
 			precision = getPrecision(baseTriples, targetTriples);
 			recall = getRecall(baseTriples, targetTriples);
+			jaccard = getJaccard(baseTriples, targetTriples);
 			fmeasure = 2 * precision * recall / (precision + recall);
 			if (fmeasure > bestFMeasure) {
 				bestFMeasure = fmeasure;
 				bestPrecision = precision;
 				bestRecall = recall;
+				bestJaccard = jaccard;
 			}
 		}
 		
-		return new ModelEvaluation(0.0, bestPrecision, bestRecall);
+		return new ModelEvaluation(0.0, bestPrecision, bestRecall, bestJaccard);
 	}
 	
-	private Set<String> getTriples(DirectedWeightedMultigraph<Node, LabeledLink> g, HashMap<Node,String> nodeIds) {
+	private Set<String> getTriples(DirectedWeightedMultigraph<Node, LabeledLink> g, HashMap<Node,String> nodeIds, 
+			boolean ignoreSemanticTypes, boolean ignoreColumnNodes) {
 		
 		String separator = "|";
 		Set<String> triples = new HashSet<String>();
@@ -282,13 +319,15 @@ public class SemanticModel {
 		
 		String s, p, o, triple;
 		for (LabeledLink l : g.edgeSet()) {
-			// FIXME: this line skips the links corresponding to the semantic types
-//			if (!(l.getTarget() instanceof InternalNode))
-//				continue;
+			if (ignoreSemanticTypes && !(l.getTarget() instanceof InternalNode))
+				continue;
 			s = nodeIds.get(l.getSource());
 			o = nodeIds.get(l.getTarget());
 			p = l.getLabel().getUri();
-			triple = s + separator + p + separator + o;
+			if (ignoreColumnNodes) 
+				triple = s + separator + p;
+			else
+				triple = s + separator + p + separator + o;
 //			System.out.println(triple);
 			triples.add(triple);
 		}
@@ -400,7 +439,7 @@ public class SemanticModel {
 				List<List<String>> permList = new ArrayList<List<String>>();
 				permList.addAll(permutations);
 				
-				interval = interval / nodeGroup.size();
+				interval = interval / BigIntegerMath.factorial(nodeGroup.size()).intValue();
 				List<String> perm;
 				int k = 0, count = 1;
 				for (int i = 0; i < nodeIdSets.size(); i++) {
@@ -421,7 +460,7 @@ public class SemanticModel {
 	public ModelEvaluation evaluate_old(SemanticModel baseModel) {
 
 		if (baseModel == null || baseModel.getGraph() == null || this.getGraph() == null)
-			return new ModelEvaluation(null, null, null);
+			return new ModelEvaluation(null, null, null, null);
 		
 		Double distance = getDistance(baseModel);
 		
@@ -462,7 +501,7 @@ public class SemanticModel {
 		Double precision = getPrecision(basePathString, modelPathString);
 		Double recall = getRecall(basePathString, modelPathString);
 		
-		return new ModelEvaluation(distance, precision, recall);
+		return new ModelEvaluation(distance, precision, recall, null);
 	}
 	
 	private String getPathString(SemanticModel sm, GraphPath gp) {
@@ -686,6 +725,17 @@ public class SemanticModel {
 		return correctSize == 0 ? 0 : (double) intersection / (double) correctSize;	
 	}
 	
+	private Double getJaccard(Set<String> correct, Set<String> result) {
+		
+		if (correct == null || result == null)
+			return null;
+		
+		int intersection = Sets.intersection(correct, result).size();
+		int union = Sets.union(correct, result).size();
+		
+		return union == 0 ? 0.0 : (double) intersection / (double) union;	
+	}
+	
 	public void writeGraphviz(String filename, boolean showNodeMetaData, boolean showLinkMetaData) throws IOException {
 		GraphVizUtil.exportSemanticModelToGraphviz(this, GraphVizLabelType.LocalId, GraphVizLabelType.LocalUri, showNodeMetaData, showLinkMetaData, filename);
 	}
@@ -737,7 +787,7 @@ public class SemanticModel {
 		}
 		writer.name("graph");
 		if (this.graph == null) writer.value(nullStr);
-		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer);
+		else GraphUtil.writeGraph(GraphUtil.asDefaultGraph(this.graph), writer, false, false);
 //		else GraphUtil.writeGraph(workspace, worksheet, GraphUtil.asDefaultGraph(this.graph), writer);
 		writer.endObject();
 	}

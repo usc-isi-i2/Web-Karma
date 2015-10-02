@@ -65,9 +65,9 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	public String compResultString = "";
 	private static Logger logger = LoggerFactory.getLogger(GenerateCleaningRulesCommand.class);
 
-	public GenerateCleaningRulesCommand(String id, String worksheetId,
+	public GenerateCleaningRulesCommand(String id, String model, String worksheetId,
 			String hNodeId, String examples, String cellIDs, String selectionId) {
-		super(id, worksheetId, selectionId);
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.nodeIds = parseNodeIds(cellIDs);
 		ConfigParameters cfg = new ConfigParameters();
@@ -208,7 +208,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		}
 		while (iterNum < 1 && !results) // try to find an program within iterNum
 		{
-			rtf = new RamblerTransformationOutput(inputs);
+			rtf = new RamblerTransformationOutput(inputs, workspace.getContextId());
 			if (rtf.getTransformations().keySet().size() > 0) {
 				results = true;
 			}

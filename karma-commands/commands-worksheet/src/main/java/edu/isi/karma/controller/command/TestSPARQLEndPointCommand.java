@@ -20,17 +20,18 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command;
 
-import edu.isi.karma.controller.update.AbstractUpdate;
-import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.TripleStoreUtil;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
+import edu.isi.karma.controller.update.AbstractUpdate;
+import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.view.VWorkspace;
 
 /**
  * Class responsible for fetching all the graphs in the tripleStore
@@ -44,8 +45,8 @@ public class TestSPARQLEndPointCommand extends Command {
 	
 	private static Logger logger = LoggerFactory.getLogger(TestSPARQLEndPointCommand.class);
 	
-	protected TestSPARQLEndPointCommand(String id, String url){
-		super(id);
+	protected TestSPARQLEndPointCommand(String id, String model, String url){
+		super(id, model);
 		this.tripleStoreUrl=url;
 	}
 

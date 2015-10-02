@@ -15,12 +15,16 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.er.helper.PythonTransformationHelper;
 import edu.isi.karma.rep.Node;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class MiniSelection extends Selection {
 
@@ -38,19 +42,24 @@ public class MiniSelection extends Selection {
 		
 	}
 
-	public void updateSelection(){
+	public void updateSelection() {
 		if (this.status == SelectionStatus.UP_TO_DATE)
 			return;
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonInterpreter interpreter = repo.getInterpreter();
+		repo.initializeInterpreter(interpreter);
 		evalColumns.clear();
-		String transformId = Thread.currentThread().getName() + this.superSelectionName;
+		String transformId = String.format("%d_%d_%s", System.currentTimeMillis(), Thread.currentThread().getId(), this.superSelectionName);
+		PyCode code = null;
+		try {
+			code = getCompiledCode(pythonCode, interpreter, transformId);
+		}catch(IOException e) {
+			logger.error("Code error", e);
+		}
 		for (Entry<Row, Boolean> entry : this.selectedRowsCache.entrySet()) {
 			Row key = entry.getKey();
-			PythonInterpreter interpreter = new PythonInterpreter();
-			try {
-				entry.setValue(evaluatePythonExpression(key, getCompiledCode(pythonCode, interpreter, transformId), interpreter));
-			}catch(IOException e) {
-				entry.setValue(false);
-			}
+				entry.setValue(evaluatePythonExpression(key, code, interpreter));
 		}
 		this.status = SelectionStatus.UP_TO_DATE;
 	}
@@ -60,14 +69,15 @@ public class MiniSelection extends Selection {
 	}
 
 	private void populateSelection() {
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		List<Table> tables = new ArrayList<Table>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
-		String selectionId = Thread.currentThread().getId() + this.superSelectionName;
-		PythonRepository repo = PythonRepository.getInstance();
-		PythonInterpreter interpreter = repo.interpreter;
-		repo.initializeInterperter(interpreter);
-		PyCode code = null;
+		String selectionId = String.format("%d_%d_%s", System.currentTimeMillis(), Thread.currentThread().getId(), this.superSelectionName);//Thread.currentThread().getId() + this.superSelectionName;
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonInterpreter interpreter = repo.getInterpreter();
+		repo.initializeInterpreter(interpreter);
+		PyCode code;
 		try {
 			code = getCompiledCode(pythonCode, interpreter, selectionId);
 			interpreter.getLocals().__setitem__("selection", interpreter.get("selection"+selectionId));
@@ -101,7 +111,7 @@ public class MiniSelection extends Selection {
 	}
 
 	private PyCode getCompiledCode(String pythonCode, PythonInterpreter interpreter, String selectionId) throws IOException {
-
+		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		String trimmedSelectionCode = pythonCode.trim();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		if (trimmedSelectionCode.isEmpty()) {
@@ -109,19 +119,20 @@ public class MiniSelection extends Selection {
 		}
 		String selectionMethodStmt = PythonTransformationHelper
 				.getPythonSelectionMethodDefinitionState(worksheet,
-						trimmedSelectionCode,selectionId);
+						trimmedSelectionCode, selectionId);
 
 
 		logger.debug("Executing PySelection\n" + selectionMethodStmt);
 
 		// Prepare the Python interpreter
-		PythonRepository repo = PythonRepository.getInstance();
-
+		PythonRepository repo = PythonRepositoryRegistry.getInstance().getPythonRepository(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		
 		repo.compileAndAddToRepositoryAndExec(interpreter, selectionMethodStmt);
 		PyObject locals = interpreter.getLocals();
 		locals.__setitem__("workspaceid", new PyString(workspace.getId()));
 		locals.__setitem__("selectionName", new PyString(superSelectionName));
 		locals.__setitem__("command", Py.java2py(this));
+		locals.__setitem__("worksheetId", new PyString(worksheetId));
 		return repo.getSelectionCode();
 	}	
 

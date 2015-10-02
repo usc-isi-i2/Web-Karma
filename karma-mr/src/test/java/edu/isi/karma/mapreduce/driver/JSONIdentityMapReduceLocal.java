@@ -21,9 +21,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.isi.karma.mapreduce.driver.IdentityJSONMapper;
-import edu.isi.karma.mapreduce.driver.JSONReducer;
-
 public class JSONIdentityMapReduceLocal {
 	private static String filePath;
 	private static String dirName;

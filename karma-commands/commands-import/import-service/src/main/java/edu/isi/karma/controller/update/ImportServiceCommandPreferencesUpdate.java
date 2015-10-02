@@ -21,14 +21,15 @@
 
 package edu.isi.karma.controller.update;
 
-import edu.isi.karma.controller.command.importdata.ImportServiceCommandPreferencesKeys;
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
+import edu.isi.karma.controller.command.importdata.ImportServiceCommandPreferencesKeys;
+import edu.isi.karma.view.VWorkspace;
 
 public class ImportServiceCommandPreferencesUpdate extends AbstractUpdate {
 	private static Logger logger = LoggerFactory.getLogger(ImportServiceCommandPreferencesUpdate.class);
@@ -67,13 +68,6 @@ public class ImportServiceCommandPreferencesUpdate extends AbstractUpdate {
 			prefObject.put(ImportServiceCommandPreferencesKeys.WorksheetName.name(), worksheetName);
 			vWorkspace.getWorkspace().getCommandPreferences().setCommandPreferences(
 					"ImportServiceCommandPreferences", prefObject);
-			
-			/*
-			logger.debug("I Saved .....");
-			ViewPreferences prefs = vWorkspace.getPreferences();
-			JSONObject prefObject1 = prefs.getCommandPreferencesJSONObject("PublishDatabaseCommandPreferences");
-			logger.debug("I Saved ....."+prefObject1);
-			 */
 			
 		} catch (JSONException e) {
 			logger.error("Error in saving preferences", e);

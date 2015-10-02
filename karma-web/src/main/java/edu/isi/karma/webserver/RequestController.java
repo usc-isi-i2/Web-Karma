@@ -29,6 +29,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.update.HistoryUpdate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,35 +49,8 @@ public class RequestController extends HttpServlet {
 	private static Logger logger = LoggerFactory.getLogger(RequestController.class);
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		// initilaize the JETTY_PORT for the first request
-		if (ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT).isEmpty()) {
-			String port = String.valueOf(request.getServerPort());
-			String protocol = request.getProtocol().split("/")[0];
-			String host = protocol.toLowerCase() + "://" + request.getServerName();
-
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_PORT, port);
-			logger.info("JETTY_PORT initilized to " + port);
-
-
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.JETTY_HOST, host);
-			logger.info("JETTY_HOST initilized to " + host);
-
-			// also set PUBLIC_RDF_ADDRESS
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.PUBLIC_RDF_ADDRESS,
-					host + ":" + port + "/RDF/");
-
-			// also set CLEANING_SERVICE_URL
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL,
-					host + ":" + port
-					+ ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLEANING_SERVICE_URL));
-
-			ServletContextParameterMap.setParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL,
-					host + ":" + port
-					+ ServletContextParameterMap.getParameterValue(ServletContextParameterMap.ContextParameter.CLUSTER_SERVICE_URL));
-		}
-
 		String workspaceId = request.getParameter("workspaceId");
+		
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspaceId);
 		if (ctrl == null) {
 			logger.debug("No execution controller found. This sometime happens when the server is restarted and "
@@ -121,6 +97,9 @@ public class RequestController extends HttpServlet {
 			Command command = ctrl.getCommand(request);
 			try {
 				UpdateContainer updateContainer =ctrl.invokeCommand(command);
+				if (command.getCommandType() != CommandType.notInHistory) {
+					updateContainer.add(new HistoryUpdate(vWorkspace.getWorkspace().getCommandHistory()));
+				}
 				updateContainer.applyUpdates(vWorkspace);
 				responseString = updateContainer.generateJson(vWorkspace);
 			} catch(Exception e) {
@@ -130,6 +109,7 @@ public class RequestController extends HttpServlet {
 
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(responseString);
+		response.setContentType("application/json");
 		response.flushBuffer();
 	}
 

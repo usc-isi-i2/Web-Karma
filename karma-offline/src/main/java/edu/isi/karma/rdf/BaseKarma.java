@@ -5,24 +5,25 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
-
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.ContextIdentifier;
+import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.metadata.KarmaMetadataManager;
 import edu.isi.karma.metadata.PythonTransformationMetadata;
 import edu.isi.karma.metadata.UserConfigMetadata;
 import edu.isi.karma.metadata.UserPreferencesMetadata;
-import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
+import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 
 public class BaseKarma {
 	private static Logger LOG = LoggerFactory.getLogger(BaseKarma.class);
@@ -49,20 +50,7 @@ public class BaseKarma {
 			if (contextURI != null && !contextURI.isEmpty()) {
 				addContext(contextURI);
 			}
-			Model model = generator.getModelParser("model").getModel();
-			if (root != null && !root.isEmpty()) {
-				StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), root);
-				Resource subject = null;
-				while (itr.hasNext()) {
-					subject = itr.next().getSubject();
-				}
-				if (subject != null) {
-					itr = model.listStatements(null, model.getProperty(Uris.RR_SUBJECTMAP_URI), subject);
-					while (itr.hasNext()) {
-						rdfGenerationRoot = itr.next().getSubject().toString();
-					}
-				}
-			}
+			setRdfGenerationRoot(root, "model");
 		} catch (KarmaException | IOException e) {
 			LOG.error("Unable to complete Karma set up: " + e.getMessage());
 			throw new RuntimeException("Unable to complete Karma set up: "
@@ -87,18 +75,29 @@ public class BaseKarma {
 			}	
 		}
 		
+		ServletContextParameterMap contextParameters = new ServletContextParameterMap(null);
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		contextParametersRegistry.register(contextParameters);
+		
 		KarmaMetadataManager userMetadataManager;
-		userMetadataManager = new KarmaMetadataManager();
+		userMetadataManager = new KarmaMetadataManager(contextParameters);
 		UpdateContainer uc = new UpdateContainer();
-		userMetadataManager.register(new UserPreferencesMetadata(), uc);
-		userMetadataManager.register(new UserConfigMetadata(), uc);
-		userMetadataManager.register(new PythonTransformationMetadata(), uc);
-		PythonRepository.disableReloadingLibrary();
+		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
+		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
+		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
+		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 	}
 
 	private void addModel() throws MalformedURLException {
 		getModel();
 		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
+	}
+	
+	public void addModel(String modelName,String modelFile,String modelUri) throws MalformedURLException {
+		URL modelURL = getModel(modelFile,modelUri);
+		generator.addModel(new R2RMLMappingIdentifier(modelName,modelURL));
+		
 	}
 
 	private void addContext(String contextURI)    {
@@ -155,8 +154,39 @@ public class BaseKarma {
 		}
 		return modelURL;
 	}
+	
+	private URL getModel(String modelFile,String modelUri) throws MalformedURLException
+	{
+		URL newModelURL=null;
+		
+		if (modelUri != null) {
+			newModelURL = new URL(modelUri);
+		} else if (modelFile != null) {
+			newModelURL = new File(modelFile).toURI().toURL();
+		}
+	
+		return newModelURL;
+	}
 
 	public String getRdfGenerationRoot() {
 		return rdfGenerationRoot;
+	}
+	
+	public void setRdfGenerationRoot(String rdfGenerationRoot, String modelName) {
+		try{
+			if (rdfGenerationRoot != null && !rdfGenerationRoot.isEmpty()){
+				KR2RMLMapping kr2rmlMapping = generator.getModelParser(modelName).parse();
+				String triplesMapId = kr2rmlMapping.translateGraphNodeIdToTriplesMapId(rdfGenerationRoot);
+				if(triplesMapId != null){
+					this.rdfGenerationRoot = triplesMapId;
+				}else{
+					throw new RuntimeException("triplesMapId not found for rdfGenerationRoot:" + rdfGenerationRoot);
+				}
+			}
+		}
+		catch (KarmaException | JSONException | IOException e) {
+			throw new RuntimeException("Unable to set rdf generation root: " + e.getMessage());
+		}
+		
 	}
 }

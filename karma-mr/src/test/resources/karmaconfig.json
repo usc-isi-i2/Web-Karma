@@ -1,0 +1,20 @@
+[
+  {
+    "urls": "^http[s]?://[^/]*people.com\\.*",
+    "roots": [
+      {
+        "root": "http://lod.isi.edu/ontology/syllabus/Person1"
+      }
+    ],
+    "model-file": "target/test-classes/people-model.ttl"
+  },
+  {
+    "urls": "^http[s]?://[^/]*peopler.com/wu\\.*",
+    "roots": [
+      {
+        "root": "http://isi.edu/integration/karma/dev#TriplesMap_c6f9c495-90e4-4c83-aa62-0ab1841a1871"
+      }
+    ],
+    "model-file": "target/test-classes/people-model.ttl"
+  }
+]

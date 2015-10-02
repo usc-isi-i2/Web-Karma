@@ -63,8 +63,8 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 	private String sameAsPredicate;
 	private final Integer limit = 200;
 	Stack<Command> appliedCommands;
-	public AugmentDataCommand(String id, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String otherClass, String hNodeId, Boolean incoming, String sameAsPredicate, String selectionId) {
-		super(id, worksheetId, selectionId);
+	public AugmentDataCommand(String id, String model, String dataRepoUrl, String worksheetId, String columnUri, String predicate, String otherClass, String hNodeId, Boolean incoming, String sameAsPredicate, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 		this.predicate = predicate;
 		this.columnUri = columnUri;
 		this.otherClass = otherClass;
@@ -116,7 +116,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 		if (alignment.GetTreeRoot() != null)
 			hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(alignmentId, columnUri);
 		if (hNodeId == null) {
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			return c;
 		}
@@ -232,7 +232,8 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 				try {
 					OntologyManager ontMgr = workspace.getOntologyManager();
 					Label label = ontMgr.getUriLabel(incoming ? otherClass : predicate);
-					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, workspace, hNodeId, worksheetId, hnode.getHTableId(), label.getDisplayName(), HNodeType.AugmentData, selection.getName());
+					AddValuesCommand command = (AddValuesCommand) addFactory.createCommand(input, 
+							model, workspace, hNodeId, worksheetId, hnode.getHTableId(), label.getDisplayName(), HNodeType.AugmentData, selection.getName());
 					command.doIt(workspace);
 					outputColumns.addAll(command.getOutputColumns());
 					isNewNode |= command.isNewNode();
@@ -274,7 +275,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 
 
 				semanticTypesArray.put(semanticType);
-				Command sstCommand = sstFactory.createCommand(workspace, worksheetId, nestedHNodeId, false, semanticTypesArray, false, "", selection.getName());
+				Command sstCommand = sstFactory.createCommand(model, workspace, worksheetId, nestedHNodeId, false, semanticTypesArray, false, "", selection.getName());
 				appliedCommands.push(sstCommand);
 				sstCommand.doIt(workspace);
 				if(!resultClass.get(i).trim().isEmpty())
@@ -303,11 +304,11 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 						newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeId.name(), edgeUri);
 					}
 					newEdges.put(newEdge);
-					Command changeInternalNodeLinksCommand = cinlcf.createCommand(worksheetId, alignmentId, new JSONArray(), newEdges, workspace);
+					Command changeInternalNodeLinksCommand = cinlcf.createCommand(worksheetId, alignmentId, new JSONArray(), newEdges, model, workspace);
 					changeInternalNodeLinksCommand.doIt(workspace);
 					appliedCommands.push(changeInternalNodeLinksCommand);
-					Command setMetaDataCommand = smpcf.createCommand(workspace, nestedHNodeId, worksheetId, "isUriOfClass", 
-							targetUri, targetId, "", selection.getName());
+					Command setMetaDataCommand = smpcf.createCommand(model, workspace, nestedHNodeId, worksheetId, "isUriOfClass", 
+							targetUri, targetId, false, "", selection.getName());
 					setMetaDataCommand.doIt(workspace);
 					appliedCommands.push(setMetaDataCommand);
 				}
@@ -316,7 +317,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 		}
 
 		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}
@@ -328,7 +329,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 			Command command = appliedCommands.pop();
 			command.undoIt(workspace);
 		}
-		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+		c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

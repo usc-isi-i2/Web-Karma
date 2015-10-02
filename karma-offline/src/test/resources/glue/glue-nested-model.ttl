@@ -23,7 +23,7 @@ _:node18odpgdfax1 a km-dev:R2RMLMapping ;
 	km-dev:sourceName "test.json" ;
 	km-dev:modelPublicationTime "1400622298602"^^xsd:long ;
 	km-dev:modelVersion "1.1" ;
-	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"values\",\"value\":[{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"name\"}],\"type\":\"hNodeId\"}],\"type\":\"hNodeIdList\"}],\"commandName\":\"GlueCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"First\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/firstName\",\"DomainLabel\":\"foaf:Person1 (add)\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"Last\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/lastName\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/myersBriggs\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
+	km-dev:hasWorksheetHistory "[{\"tags\":[\"Transformation\"],\"inputParameters\":[{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"values\",\"value\":[{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"score\"}],\"type\":\"hNodeId\"},{\"name\":\"checked\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"name\"}],\"type\":\"hNodeId\"}],\"type\":\"hNodeIdList\"}],\"commandName\":\"GlueCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"test_name_First\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/firstName\",\"DomainLabel\":\"foaf:Person1 (add)\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"test_name_Last\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/lastName\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"},{\"tags\":[\"Modeling\"],\"inputParameters\":[{\"name\":\"hNodeId\",\"value\":[{\"columnName\":\"test\"},{\"columnName\":\"Glue_1\"},{\"columnName\":\"test_score_values\"}],\"type\":\"hNodeId\"},{\"name\":\"SemanticTypesArray\",\"value\":[{\"isPrimary\":true,\"FullType\":\"http://xmlns.com/foaf/0.1/myersBriggs\",\"DomainLabel\":\"foaf:Person1\",\"DomainId\":\"http://xmlns.com/foaf/0.1/Person1\",\"DomainUri\":\"http://xmlns.com/foaf/0.1/Person\"}],\"type\":\"other\"},{\"name\":\"worksheetId\",\"value\":\"W\",\"type\":\"worksheetId\"},{\"name\":\"isKey\",\"value\":false,\"type\":\"other\"},{\"name\":\"trainAndShowUpdates\",\"value\":false,\"type\":\"other\"},{\"name\":\"rdfLiteralType\",\"value\":\"\",\"type\":\"other\"}],\"commandName\":\"SetSemanticTypeCommand\"}]" .
 
 km-dev:TriplesMap_1 a rr:TriplesMap .
 
@@ -43,7 +43,7 @@ _:node18odpgdfax3 a rr:SubjectMap ;
 
 _:node18odpgdfax4 rr:predicate foaf:firstName .
 
-_:node18odpgdfax5 rr:column "[\"test\",\"Glue_1\",\"First\"]" ;
+_:node18odpgdfax5 rr:column "[\"test\",\"Glue_1\",\"test_name_First\"]" ;
 	a rr:ObjectMap .
 
 _:node18odpgdfax4 rr:objectMap _:node18odpgdfax5 .
@@ -54,7 +54,7 @@ _:node18odpgdfax4 a rr:PredicateObjectMap .
 
 _:node18odpgdfax6 rr:predicate foaf:lastName .
 
-_:node18odpgdfax7 rr:column "[\"test\",\"Glue_1\",\"Last\"]" ;
+_:node18odpgdfax7 rr:column "[\"test\",\"Glue_1\",\"test_name_Last\"]" ;
 	a rr:ObjectMap .
 
 _:node18odpgdfax6 rr:objectMap _:node18odpgdfax7 .
@@ -65,7 +65,7 @@ _:node18odpgdfax6 a rr:PredicateObjectMap .
 
 _:node18odpgdfax8 rr:predicate foaf:myersBriggs .
 
-_:node18odpgdfax9 rr:column "[\"test\",\"Glue_1\",\"values\"]" ;
+_:node18odpgdfax9 rr:column "[\"test\",\"Glue_1\",\"test_score_values\"]" ;
 	a rr:ObjectMap .
 
 _:node18odpgdfax8 rr:objectMap _:node18odpgdfax9 .

@@ -480,7 +480,9 @@ public class GraphUtil {
 	}
 	
 //	public static void exportJson(Workspace workspace, Worksheet worksheet, DirectedWeightedMultigraph<Node, DefaultLink> graph, String filename) throws IOException {
-	public static void exportJson(DirectedWeightedMultigraph<Node, DefaultLink> graph, String filename) throws IOException {
+	public static void exportJson(DirectedWeightedMultigraph<Node, DefaultLink> graph, String filename, 
+			boolean writeNodeAnnotations,
+			boolean writeLinkAnnotations) throws IOException {
 		logger.info("exporting the graph to json ...");
 		File file = new File(filename);
 		if (!file.exists()) {
@@ -489,9 +491,9 @@ public class GraphUtil {
 
 		FileOutputStream out = new FileOutputStream(file); 
 		JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
-		//writer.setIndent("    ");
+		writer.setIndent("    ");
 		try {
-			writeGraph(graph, writer);
+			writeGraph(graph, writer, writeNodeAnnotations, writeLinkAnnotations);
 //			writeGraph(workspace, worksheet, graph, writer);
 		} catch (Exception e) {
 			logger.error("error in writing the model in json!");
@@ -523,7 +525,9 @@ public class GraphUtil {
 	}
 	
 //	public static void writeGraph(Workspace workspace, Worksheet worksheet, DirectedWeightedMultigraph<Node, DefaultLink> graph, JsonWriter writer) throws IOException {
-	public static void writeGraph(DirectedWeightedMultigraph<Node, DefaultLink> graph, JsonWriter writer) throws IOException {
+	public static void writeGraph(DirectedWeightedMultigraph<Node, DefaultLink> graph, JsonWriter writer, 
+			boolean writeNodeAnnotations,
+			boolean writeLinkAnnotations) throws IOException {
 		
 		writer.beginObject();
 
@@ -531,7 +535,7 @@ public class GraphUtil {
 		writer.beginArray();
 		if (graph != null)
 			for (Node n : graph.vertexSet())
-				writeNode(writer, n);
+				writeNode(writer, n, writeNodeAnnotations);
 //				writeNode(workspace, worksheet, writer, n);
 		writer.endArray();
 		
@@ -539,7 +543,7 @@ public class GraphUtil {
 		writer.beginArray();
 		if (graph != null)
 			for (DefaultLink l : graph.edgeSet())
-				writeLink(writer, l);
+				writeLink(writer, l, writeLinkAnnotations);
 		writer.endArray();
 		
 		writer.endObject();
@@ -547,7 +551,7 @@ public class GraphUtil {
 	}
 	
 //	private static void writeNode(Workspace workspace, Worksheet worksheet, JsonWriter writer, Node node) throws IOException {
-	private static void writeNode(JsonWriter writer, Node node) throws IOException {
+	private static void writeNode(JsonWriter writer, Node node, boolean writeNodeAnnotations) throws IOException {
 		
 		if (node == null)
 			return;
@@ -596,12 +600,12 @@ public class GraphUtil {
 		}
 		
 		writer.name("modelIds");
-		if (node.getModelIds() == null) writer.value(nullStr);
+		if (!writeNodeAnnotations || node.getModelIds() == null) writer.value(nullStr);
 		else writeModelIds(writer, node.getModelIds());
 		writer.endObject();
 	}
 
-	private static void writeLink(JsonWriter writer, DefaultLink link) throws IOException {
+	private static void writeLink(JsonWriter writer, DefaultLink link, boolean writeLinkAnnotations) throws IOException {
 		
 		if (link == null)
 			return;
@@ -629,7 +633,8 @@ public class GraphUtil {
 			writer.name("status").value(l.getStatus().toString());
 			writer.name("keyInfo").value(l.getKeyType().toString());
 			writer.name("modelIds");
-			writeModelIds(writer, l.getModelIds());
+			if (!writeLinkAnnotations || l.getModelIds() == null) writer.value(nullStr);
+			else writeModelIds(writer, l.getModelIds());
 		}
 		writer.endObject();
 	}
@@ -805,7 +810,10 @@ public class GraphUtil {
 				userSemanticTypes = new ArrayList<SemanticType>();
 				userSemanticTypes.add(userSelectedSemanticType);
     		}
-    		((ColumnNode)n).setUserSemanticTypes(userSemanticTypes);
+    		if (userSemanticTypes != null) {
+	    		for (SemanticType st : userSemanticTypes)
+	    			((ColumnNode)n).assignUserType(st);
+    		}
     		((ColumnNode)n).setLearnedSemanticTypes(learnedSemanticTypes);
     	} else if (type == NodeType.LiteralNode) {
     		n = new LiteralNode(id, value, datatype, isUri);

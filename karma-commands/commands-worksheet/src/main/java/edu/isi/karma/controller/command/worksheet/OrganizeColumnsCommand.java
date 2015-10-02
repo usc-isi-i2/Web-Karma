@@ -22,8 +22,8 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 	private ArrayList<VHNode> prevOrderedColumns;
 	private JSONArray orderedColumns;
 
-	protected OrganizeColumnsCommand(String id, String workspaceId, String worksheetId, org.json.JSONArray orderedColumns) {
-		super(id, worksheetId);
+	protected OrganizeColumnsCommand(String id, String model, String workspaceId, String worksheetId, org.json.JSONArray orderedColumns) {
+		super(id, model, worksheetId);
 		this.workspaceId = workspaceId;
 		this.orderedColumns = orderedColumns;
 
@@ -55,7 +55,7 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 		orderColumns(orderedColumns);
 
 		UpdateContainer c =  new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 
 		return c;
@@ -67,7 +67,7 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 			orderColumns(prevOrderedColumns);
 		}
 		UpdateContainer c =  new UpdateContainer();
-		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION));
+		c.append(WorksheetUpdateFactory.createWorksheetHierarchicalUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
 	}

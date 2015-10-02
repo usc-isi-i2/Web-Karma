@@ -32,11 +32,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
+import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.rdf.GenericRDFGenerator.InputType;
+import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 
 
@@ -46,7 +48,7 @@ import edu.isi.karma.webserver.KarmaException;
  */
 public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 
-	protected final GenericRDFGenerator rdfGen = new GenericRDFGenerator(null);
+	protected final GenericRDFGenerator rdfGen = new GenericRDFGenerator(SuperSelectionManager.DEFAULT_SELECTION_TEST_NAME);
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGenerator.class);
 	
 	protected void executeBasicJSONTest(String filename, String modelName, boolean generateProvenance, int expectedNumberOfLines) throws IOException, URISyntaxException,
@@ -60,10 +62,11 @@ public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 		request.setAddProvenance(generateProvenance);
 		request.setDataType(InputType.JSON);
 		request.addWriters(writers);
+		request.setContextParameters(ContextParametersRegistry.getInstance().getDefault());
 		rdfGen.generateRDF(request);
 		String rdf = sw.toString();
 		assertNotEquals(rdf.length(), 0);
-		String[] lines = rdf.split(System.getProperty("line.separator"));
+		String[] lines = rdf.split("(\r\n|\n)");
 		assertEquals(expectedNumberOfLines, lines.length);
 	}
 

@@ -44,7 +44,6 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Row;
@@ -71,8 +70,8 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 	
 	private Worksheet worksheetBeforeInvocation = null;
 
-	InvokeServiceCommand(String id, String worksheetId, String hNodeId, String selectionId) {
-		super(id, worksheetId, selectionId);
+	InvokeServiceCommand(String id, String model, String worksheetId, String hNodeId, String selectionId) {
+		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 	}
 
@@ -91,7 +90,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 		Cloner cloner = new Cloner();
 		this.worksheetBeforeInvocation = cloner.deepClone(wk);
 		
-		OntologyManager ontMgr = workspace.getOntologyManager();
+		workspace.getOntologyManager();
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		if (alignment == null) {
@@ -164,7 +163,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 		UpdateContainer c = new UpdateContainer();
 		try {
 			// Add the visualization update
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace),workspace.getContextId()));
 			c.add(new SemanticTypesUpdate(wk, worksheetId));
 			c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
 		} catch (Exception e) {
@@ -217,7 +216,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 			workspace.getFactory().replaceWorksheet(worksheetId, worksheetBeforeInvocation);
 			c.add(new ReplaceWorksheetUpdate(worksheetId, worksheetBeforeInvocation));
 			c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
-			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace)));
+			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(workspace), workspace.getContextId()));
 			c.add(new SemanticTypesUpdate(wk, worksheetId));
 			c.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		} catch (Exception e) {
