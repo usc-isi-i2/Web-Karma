@@ -101,7 +101,7 @@ public class ModelingConfiguration {
 //			"manual.alignment=false" + newLine + 
 			"# turning off the next two flags is equal to manual alignment" + newLine + 
 			"ontology.alignment=false" + newLine + 
-			"knownmodels.alignment=true" + newLine + 
+			"knownmodels.alignment=false" + newLine + 
 			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
