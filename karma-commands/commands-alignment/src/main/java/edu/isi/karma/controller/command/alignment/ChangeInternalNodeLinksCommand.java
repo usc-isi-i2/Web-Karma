@@ -54,7 +54,8 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 
-	private StringBuilder descStr = new StringBuilder();
+	private StringBuilder addDescStr = new StringBuilder();
+	private StringBuilder delDescStr = new StringBuilder();
 
 	public enum JsonKeys {
 		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri
@@ -82,7 +83,17 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 	@Override
 	public String getDescription() {
-		return descStr.toString();
+		String addStr = addDescStr.toString();
+		String delStr = delDescStr.toString();
+		String res = "";
+		if(addStr.length() > 0)
+			res += "Add: " + addStr;
+		if(delStr.length() > 0) {
+			if(res.length() > 0)
+				res += ", ";
+			res += "Delete: " + delStr;
+		}
+		return res;
 	}
 
 	@Override
@@ -218,14 +229,15 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 			// Add info to description string
 			if (i == newEdges.length() - 1) {
-				descStr.append(newLink.getLabel().getDisplayName());
+				addDescStr.append(newLink.getLabel().getDisplayName());
 			} else {
-				descStr.append(newLink.getLabel().getDisplayName() + ",");
+				addDescStr.append(newLink.getLabel().getDisplayName() + ",");
 			}
 		}
 	}
 
 	private void deleteLinks(Worksheet worksheet, Alignment alignment) throws JSONException {
+		String sep = "";
 		for (int i = 0; i < initialEdges.length(); i++) {
 			JSONObject initialEdge = initialEdges.getJSONObject(i);
 
@@ -245,7 +257,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 					)
 					exists = true;
 			}
-
+						
 			if (!exists) {
 				String targetId = initialEdge.getString(JsonKeys.edgeTargetId.name());
 				String linkId = LinkIdFactory.getLinkId(
@@ -253,6 +265,11 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 						initialEdge.getString(JsonKeys.edgeSourceId.name()),
 						targetId);
 
+				// Add info to description string
+				LabeledLink delLink = alignment.getLinkById(linkId);
+				delDescStr.append(sep + delLink.getLabel().getDisplayName());
+				sep = ", ";
+				
 				// alignment.changeLinkStatus(linkId, LinkStatus.Normal);
 				alignment.removeLink(linkId);
 				
@@ -262,7 +279,12 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 					worksheet.getSemanticTypes().unassignColumnSemanticType(cNode.getHNodeId());
 				}
 			}
+			
+			
+			
 		}
+		
+		
 	}
 
 	@Override
