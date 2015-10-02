@@ -136,7 +136,7 @@ public class ModelingConfiguration {
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
 			"" + newLine + 
-			"learner.enabled=true" + newLine + 
+			"learner.enabled=false" + newLine + 
 			"" + newLine + 
 			"add.ontology.paths=false" + newLine + 
 			"" + newLine + 
@@ -197,7 +197,7 @@ public class ModelingConfiguration {
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				knownModelsAlignment = true;
 				out.println();
-				out.println("knownmodels.alignment=true");
+				out.println("knownmodels.alignment=false");
 				out.close();
 			}
 			
@@ -211,7 +211,7 @@ public class ModelingConfiguration {
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				learnerEnabled = true;
 				out.println();
-				out.println("learner.enabled=true");
+				out.println("learner.enabled=false");
 				out.close();
 			}
 
