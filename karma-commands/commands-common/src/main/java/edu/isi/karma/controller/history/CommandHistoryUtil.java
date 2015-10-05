@@ -6,6 +6,7 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.update.*;
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -14,6 +15,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -122,7 +124,7 @@ public class CommandHistoryUtil {
 		oldWorksheet.getImportMethod().createWorksheet(oldWorksheet.getTitle(), workspace, oldWorksheet.getEncoding());
 		try {
 			Worksheet newWorksheet = oldWorksheet.getImportMethod().generateWorksheet();
-			AlignmentManager.Instance().createAlignment(workspace.getId(), newWorksheet.getId(), workspace.getOntologyManager());
+			Alignment alignment = AlignmentManager.Instance().createAlignment(workspace.getId(), newWorksheet.getId(), workspace.getOntologyManager());
 			workspace.removeWorksheet(worksheetId);
 			uc.add(new WorksheetDeleteUpdate(worksheetId));
 			this.worksheetId = newWorksheet.getId();
@@ -130,6 +132,20 @@ public class CommandHistoryUtil {
 			uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
 			commands.clear();
 			commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
+			for(Command command : commands) {
+				command.setExecutedInBatch(true);
+				try {
+					uc.append(workspace.getCommandHistory().doCommand(command, workspace, true));
+				} catch (Exception e) {
+					uc.add(new TrivialErrorUpdate("Error occurred in command " + command.getCommandName()));
+				}
+				command.setExecutedInBatch(false);
+			}
+			if(alignment != null) {
+				alignment.align();
+				uc.removeUpdateByClass(AlignmentSVGVisualizationUpdate.class);
+				uc.add(new AlignmentSVGVisualizationUpdate(worksheetId));
+			}
 			workspace.getCommandHistory().clearCurrentCommand(worksheetId);
 			workspace.getCommandHistory().clearRedoCommand(worksheetId);
 		} catch (Exception e) {
@@ -175,12 +191,6 @@ public class CommandHistoryUtil {
 					comm.setOutputColumns(newOutputColumns);
 					if(comm != null){
 						commands.add(comm);
-						//TODO consolidate update
-						try {
-							uc.append(workspace.getCommandHistory().doCommand(comm, workspace, true));
-						} catch (Exception e) {
-							uc.add(new TrivialErrorUpdate("Error occurred in command " + comm.getCommandName()));
-						}
 					}
 
 				} catch (Exception ignored) {
