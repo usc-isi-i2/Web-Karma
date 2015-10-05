@@ -264,11 +264,13 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 		// decide if test column is textual or numeric
 		boolean isNumeric = false;
 		int countNumeric = 0;
-		for (String example: examples) {
-			if (example.matches(numericRegEx)) {
-				countNumeric++;
-			}			
-		}
+		
+		//Dipsy: commented right now for turning off numeric typer
+//		for (String example: examples) {
+//			if (example.matches(numericRegEx)) {
+//				countNumeric++;
+//			}			
+//		}
 		double fractionNumeric = ((double)(countNumeric+0.0))/((double)(examples.size()+0.0));
 		if (fractionNumeric >= testThreshold) {
 			isNumeric = true;
@@ -423,9 +425,10 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 				trimmedExample = getSanitizedString(example);
 				if (trimmedExample.length() != 0) {
 					cleanedList.add(trimmedExample);
-					if (trimmedExample.matches(numericRegEx)) {
-						countNumeric++;
-					}
+					//Dipsy: commented right now for turning off numeric typer
+//					if (trimmedExample.matches(numericRegEx)) {
+//						countNumeric++;
+//					}
 				}
 			}
 		}
