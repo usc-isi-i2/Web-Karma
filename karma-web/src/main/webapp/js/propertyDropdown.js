@@ -112,43 +112,45 @@ var PropertyDropdownMenu = (function() {
 		}
 
 		function generateJS() {
-			var ul = $("<ul>");
-			ul.attr("role", "menu")
-				.addClass("dropdown-menu")
-				.css("display", "block")
-				.css("position", "static")
-				.css("margin-bottom", "5px");
+			var btnArr = [];
 			for (var i = 0; i < options.length; i++) {
 				var option = options[i];
-				var li = $("<li>");
 				if (option[0] == "divider") {
-					li.addClass("divider");
-				} else {
-					var a = $("<a>")
-						.attr("href", "#")
-						.attr("tabindex", "-1")
-						.text(option[0])
-						.click(option[1]);
-					li.append(a);
+					continue;
 				}
-				ul.append(li);
+				var btn = $("<button>")
+								.addClass("btn").addClass("btn-default")
+								.text(option[0])
+								.click(option[1]);
+				btnArr.push(btn);
 			}
-
 			var div = $("<div>")
-				.attr("id", menuId)
-				.addClass("dropdown")
-				.addClass("clearfix")
-				.addClass("contextMenu")
-				.append(ul);
+						.attr("id", menuId)
+						.addClass("btn-group")
+						.attr("role", "group")
+						.append(btnArr);
 
 			var container = $("body div.container");
 			container.append(div);
 		}
 
-		function disableItem(itemIdx) {
-			var div = $("#" + menuId);
-			var li = $("li:eq(" + itemIdx + ")", div);
-			li.addClass("disabled");
+		function enableAllItems() {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				btn.removeClass("disabled");
+			}
+		}
+		
+		function disableItem(value) {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				if(btn.text() == value) {
+					btn.addClass("disabled");
+					break;
+				}
+			}
 		}
 
 
@@ -174,22 +176,13 @@ var PropertyDropdownMenu = (function() {
 			sourceNodeType = p_sourceNodeType;
 			targetNodeType = p_targetNodeType;
 
+			enableAllItems();
 			if (p_sourceNodeType == "ColumnNode" || p_sourceNodeType == "LiteralNode") {
-				for (var i = 0; i < options.length; i++) {
-					if (options[i][0] == "Change From") {
-						disableItem(i);
-						break;
-					}
-				}
+				disableItem ("Change From");
 			}
 
 			if (p_targetNodeType == "ColumnNode" || p_targetNodeType == "LiteralNode") {
-				for (var i = 0; i < options.length; i++) {
-					if (options[i][0] == "Change To") {
-						disableItem(i);
-						break;
-					}
-				}
+				disableItem("Change To");
 			}
 			
 			
@@ -197,8 +190,8 @@ var PropertyDropdownMenu = (function() {
 			$("#" + menuId).css({
 				display: "block",
 				position: "absolute",
-				left: event.pageX,
-				top: event.pageY
+				left: event.pageX - 40,
+				top: event.pageY - 40
 			});
 
 			window.setTimeout(function() {
