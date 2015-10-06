@@ -30,9 +30,11 @@ public class KSTest {
 	    	for(int i = 0; i < trainExamples.size(); i++){
 	        sample2[i] = trainExamples.get(i);
 	    	} 	
-	    	pValue = test.kolmogorovSmirnovTest(sample1, sample2);
-	    	SemanticTypeLabel pred = new SemanticTypeLabel(label, (float)pValue);
-	    	sortedPredictions.add(pred);
+	    	if (sample1.length > 1 && sample2.length > 1) {
+		    	pValue = test.kolmogorovSmirnovTest(sample1, sample2);
+		    	SemanticTypeLabel pred = new SemanticTypeLabel(label, (float)pValue);
+		    	sortedPredictions.add(pred);
+	    	}
 	    }
 	    
 		// sorting based on p-Value
