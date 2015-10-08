@@ -1,0 +1,902 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY edm "http://www.europeana.eu/schemas/edm/">
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY skos "http://www.w3.org/2004/02/skos/core#" >
+    <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
+    <!ENTITY dcterms "http://purl.org/dc/terms/" >
+    <!ENTITY ore "http://www.openarchives.org/ore/terms/" >
+    <!ENTITY foaf "http://xmlns.com/foaf/0.1/" >
+    <!ENTITY wgs84_pos "http://www.w3.org/2003/01/geo/wgs84_pos#" >
+    <!ENTITY dcmitype "http://purl.org/dc/dcmitype/" >
+    <!ENTITY crm "http://www.cidoc-crm.org/rdfs/cidoc-crm#" >
+    <!ENTITY frbr_core "http://purl.org/vocab/frbr/core#" >
+    <!ENTITY frbroo "http://iflastandards.info/ns/fr/frbr/frbroo/" >
+    <!ENTITY abc "http://metadata.net/harmony/abc#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY DOLCE-Lite "http://www.loa-cnr.it/ontologies/DOLCE-Lite.owl#" >
+]>
+
+<rdf:RDF xmlns="http://www.europeana.eu/schemas/edm/"
+     xml:base="http://www.europeana.eu/schemas/edm/"
+     xmlns:edm="http://www.europeana.eu/schemas/edm/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:voaf="http://purl.org/vocommons/voaf#"
+     xmlns:vann="http://purl.org/vocab/vann/"
+     xmlns:adms="http://www.w3.org/ns/adms#"
+     xmlns:radion="http://www.w3.org/ns/radion#"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:dcterms="http://purl.org/dc/terms/"
+     xmlns:ore="http://www.openarchives.org/ore/terms/"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:wgs84_pos="http://www.w3.org/2003/01/geo/wgs84_pos#"
+     xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+     xmlns:crm="http://www.cidoc-crm.org/cidoc-crm/"
+     xmlns:frbr_core="http://purl.org/vocab/frbr/core#"
+     xmlns:frbroo="http://iflastandards.info/ns/fr/frbr/frbroo/"
+     xmlns:abc="http://metadata.net/harmony/abc#"
+     xmlns:DOLCE-Lite="http://www.loa-cnr.it/ontologies/DOLCE-Lite.owl#">
+
+    <owl:Ontology rdf:about="">
+      <rdf:type rdf:resource="http://purl.org/vocommons/voaf#Vocabulary"/>
+      <vann:preferredNamespacePrefix>edm</vann:preferredNamespacePrefix>
+      <vann:preferredNamespaceUri>http://www.europeana.eu/schemas/edm/</vann:preferredNamespaceUri>
+      <dc:title xml:lang="en">Europeana Data Model (EDM) vocabulary</dc:title>
+      <dc:description xml:lang="en">The Europeana Data Model (EDM) is aimed at being an integration medium for collecting, connecting and enriching the descriptions provided by Europeana data providers. The RDF vocabulary for http://www.europeana.eu/schemas/edm/ defines the elements introduced by EDM (as opposed to the ones EDM re-uses from other namespaces).</dc:description>
+      <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2010-03-25</dcterms:issued>
+      <dc:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2013-05-20</dc:modified>
+      <owl:versionInfo>5.2.4</owl:versionInfo>
+      <radion:versionNotes xml:lang="en">The present specification is based on the document "Definition of the Europeana Data Model elements", originally edited by Carlo Meghini. It is aligned with the version 5.2.4 of these EDM Definitions.</radion:versionNotes>
+      <dc:creator><foaf:Person rdf:about="http://data.semanticweb.org/person/antoine-isaac" foaf:name="Antoine Isaac"/></dc:creator>
+      <dc:contributor><foaf:Organization foaf:name="Participants of Europeana Version 1.0 Work Package on Further Specification of Functionality and Interoperability aspects of Europeana (WP3)"/></dc:contributor>
+      <dc:contributor><foaf:Person rdf:about="http://www.image.ece.ntua.gr/~ndroso/" foaf:name="Nasos Drosopoulos"/></dc:contributor>
+      <dc:contributor><foaf:Person rdf:about="http://www.image.ntua.gr/~tzouvaras/" foaf:name="Vassilis Tzouvaras"/></dc:contributor>
+      <dc:contributor><foaf:Person rdf:about="http://www.ibi.hu-berlin.de/institut/personen/iwanowa" foaf:name="Julia Iwanowa"/></dc:contributor>
+      <dc:contributor><foaf:Person foaf:name="Hugo Manguinhas"/></dc:contributor>
+      <dc:contributor><foaf:Person rdf:about="http://www.ics.forth.gr/isl/people/people_individual.jsp?Person_ID=2" foaf:name="Martin Doerr"/></dc:contributor>
+      <dc:publisher><foaf:Organization rdf:about="http://europeana.eu" foaf:name="Europeana"/></dc:publisher>
+      <foaf:homepage rdf:resource="http://pro.europeana.eu/edm-documentation"/>
+      <adms:relatedWebPage rdf:resource="http://europeanalabs.eu/wiki/EDMPrototypingTask11"/>
+      <vann:example rdf:resource="http://data.europeana.eu"/>
+      <vann:example rdf:resource="http://pro.europeana.eu/case-studies-edm"/>
+      <vann:changes xml:lang="en">
+=======
+Changes between ontology file EDM version 5.2.4 (edm, was once EDM-v524-120820)
+and ontology file EDM version 5.2.3 (EDM-v523-120123)
+=======
+1. edm:isShownAt made a sub-property of edm:hasView
+2. added edm:begin and edm:end and their mappings to CRM
+3. added owl:Class declarations added for compatibility with some OWL-DL reasoners (feedback from Pedro Szekely, ISI)
+4. added "of" at the end of the label for edm:isNextInSequence
+5. added vocabulary metadata to follow Linked Open Vocabularies (http://lov.okfn.org/) and ADMS (https://joinup.ec.europa.eu/asset/adms/release/100) guidelines
+6. removed a domain axiom on edm:hasMet
+7. added edm:collectionName and edm:europeanaProxy
+8. removed version number from file name
+9. generalisation of Country, DataProvider and Provider
+10. updated CRM namespace and CRM class and property identifiers
+11. added FRBRoo mappings
+      </vann:changes>
+      <voaf:toDoList xml:lang="en">
+=======
+Remaining TODOs for ontology file EDM version 5.2.4
+=======
+- finish and check FRBRoo mappings according to the recommendations of the EDM-FRBRoo task force. Also include implicit mappings and mappings for elements outside the EDM namespace?
+- try to capture formal cardinality constraints resulting from "Obligation and Occurrence" documentation, which should be attached to non-EDM constructs (esp. ore:Aggregation)
+- continue adding documentation values (skos:scopeNote, skos:example, etc, according to 1.), starting from edm:InformationResource. Add all Europeana examples and rationale notes for non-EDM constructs
+- use specific EDM-doc properties for "rationale" and "obligation and occurrence". Use skos:definition for "Europeana definition", skos:example for "Example", skos:note for "Europeana note"
+      </voaf:toDoList>
+    </owl:Ontology>
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // EDM Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- http://www.europeana.eu/schemas/edm/Agent -->
+
+    <owl:Class rdf:about="&edm;Agent">
+        <rdfs:label xml:lang="en">Agent</rdfs:label>
+        <skos:definition>This class comprises people, either individually or in groups, who have the
+potential to perform intentional actions for which they can be held responsible.</skos:definition>
+        <skos:example>Leonardo da Vinci, the British Museum, W3C</skos:example>
+        <rdfs:subClassOf rdf:resource="&edm;NonInformationResource"/>
+        <owl:equivalentClass rdf:resource="&crm;E39_Actor"/>
+	<skos:scopeNote>Rationale: This class is a domain of edm:wasPresentAt</skos:scopeNote>
+    </owl:Class>
+    
+
+    <!-- http://www.europeana.eu/schemas/edm/EuropeanaAggregation -->
+
+    <owl:Class rdf:about="&edm;EuropeanaAggregation">
+        <rdfs:label>Europeana Aggregation</rdfs:label>
+        <skos:definition>The set of resources related to a single Cultural Heritage Object that
+collectively represent that object in Europeana. Such set consists of: all
+descriptions about the object that Europeana collects from (possibly different) content providers, including thumbnails and other forms of abstractions, as well as of the description of the object Europeana builds.</skos:definition>
+        <rdfs:subClassOf rdf:resource="&edm;EuropeanaObject"/>
+        <rdfs:subClassOf rdf:resource="&ore;Aggregation"/>
+	<owl:equivalentClass>
+	  <owl:Restriction>
+	    <owl:cardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:cardinality>
+	    <owl:onProperty rdf:resource="&edm;aggregatedCHO"/>
+	  </owl:Restriction>
+	</owl:equivalentClass>
+        <skos:note xml:lang="en">An instance of EuropeanaAggregation is created at ingestion time for each different Cultural Heritage Object recognized by Europeana. Such instance is associated to the Cultural Heritage Object that it is about, by the property edm:aggregatedCHO</skos:note>
+	<skos:scopeNote xml:lang="en">Obligation and Occurence: The relation between the Cultural Heritage Objects represented in Europeana and the instances of the class EuropeanaAggregation is one-to-one, in the data maintained by Europeana: every Cultural Heritage Object is represented by an instance of EuropeanaAggregation, and every instance of EuropeanaAggregation represent a Cultural Heritage Object.</skos:scopeNote>
+        <skos:example xml:lang="en">The painting Mona Lisa is a Cultural Heritage Object represented in Europeana by one EuropeanaAggregation instance</skos:example>
+        <skos:example xml:lang="en">The journal "Le Temps" is a Cultural Heritage Object represented in Europeana by one EuropeanaAggregation instance</skos:example>
+        <skos:example xml:lang="en">The 56th issue of "Le Temps" is a (different) Cultural Heritage Object represented in Europeana by another EuropeanaAggregation instance</skos:example>
+	<skos:scopeNote xml:lang="en">Rationale: This class is used in Europeana to gather in a single conceptual unit all the information about a Cultural Heritage Object, necessary for all operations on these objects.</skos:scopeNote>
+    </owl:Class>
+
+    <!-- http://www.europeana.eu/schemas/edm/EuropeanaObject -->
+
+    <owl:Class rdf:about="&edm;EuropeanaObject">
+        <rdfs:label xml:lang="en">Europeana Object</rdfs:label>
+        <skos:definition xml:lang="en">Any object that is the result of Europeana’s activities</skos:definition>
+        <rdfs:subClassOf rdf:resource="&edm;WebResource"/>
+        <skos:example xml:lang="en">Any instance of the class EuropeanaAggregation</skos:example>
+        <skos:example xml:lang="en">An annotation created by a user through the Europeana portal</skos:example>
+        <skos:example xml:lang="en">Any content created by the users through the service made available by Europeana for that purpose</skos:example>
+	<skos:scopeNote xml:lang="en">Rationale: This class is used to tag objects that are the result of activity of Europeana, and, as such, objects on which Europeana holds rights</skos:scopeNote>
+    </owl:Class>
+
+    <!-- http://www.europeana.eu/schemas/edm/Event -->
+
+    <owl:Class rdf:about="&edm;Event">
+        <rdfs:label xml:lang="en">Event</rdfs:label>
+        <skos:definition xml:lang="en">An event is a change "of states in cultural, social or physical systems,
+ regardless of scale, brought about by a series or group of coherent physical,
+cultural, technological or legal phenomena" (E5 Event in CIDOC CRM) or a "set of coherent phenomena or cultural manifestations bounded in time and  space" (E4 Period in CIDOC CRM)
+</skos:definition>
+        <rdfs:subClassOf rdf:resource="&edm;NonInformationResource"/>
+        <owl:equivalentClass rdf:resource="&crm;E4_Period"/>
+        <owl:equivalentClass rdf:resource="&abc;Temporality"/>
+        <owl:equivalentClass rdf:resource="&frbr_core;Event"/>
+        <owl:equivalentClass rdf:resource="&frbroo;F8_Event"/>
+	<rdfs:subClassOf>
+	  <owl:Restriction>
+	    <owl:cardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:cardinality>
+	    <owl:onProperty rdf:resource="&edm;happenedAt"/>
+	  </owl:Restriction>
+	</rdfs:subClassOf>
+        <skos:note xml:lang="en">Events are identified either by the content provider or by Europeana enrichment at ingestion time</skos:note>
+        <skos:example xml:lang="en">the act of painting Mona Lisa</skos:example>
+        <skos:example xml:lang="en">the 2nd World War</skos:example>
+        <skos:example xml:lang="en">the change of custody of Mona Lisa</skos:example>
+	<skos:scopeNote xml:lang="en">Rationale:This class is a domain of edm:happenedAt and the domain of edm:occurredAt</skos:scopeNote>
+   </owl:Class>
+
+    <!-- http://www.europeana.eu/schemas/edm/InformationResource -->
+
+    <owl:Class rdf:about="&edm;InformationResource">
+        <rdfs:label xml:lang="en">Information Resource</rdfs:label>
+        <skos:definition xml:lang="en">An information resource is a resource whose essential characteristics can be conveyed in a single message. It can be associated with a URI, it can have a representation, for example: a text is an InformationResource.</skos:definition>
+        <owl:equivalentClass rdf:resource="&crm;E89_Propositional_Object"/>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&frbr_core;Work"/>
+                    <rdf:Description rdf:about="&frbr_core;Expression"/>
+                    <rdf:Description rdf:about="&frbr_core;Manifestation"/>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&frbroo;F1_Work"/>
+                    <rdf:Description rdf:about="&frbroo;F2_Expression"/>
+                    <rdf:Description rdf:about="&frbroo;F3_Manifestation_Product_Type"/>
+                    <rdf:Description rdf:about="&frbroo;F4_Manifestation_Singleton"/>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+    <!-- http://www.europeana.eu/schemas/edm/NonInformationResource -->
+
+    <owl:Class rdf:about="&edm;NonInformationResource">
+        <rdfs:label xml:lang="en">Non-Information Resource</rdfs:label>
+        <skos:definition xml:lang="en">All resources that are not information resources.</skos:definition>
+	<owl:complementOf rdf:resource="&edm;InformationResource"/>
+    </owl:Class>
+
+    <!-- http://www.europeana.eu/schemas/edm/PhysicalThing -->
+
+    <owl:Class rdf:about="&edm;PhysicalThing">
+        <rdfs:label xml:lang="en">Physical Thing</rdfs:label>
+        <skos:definition xml:lang="en">A persistent physical item such as a painting, a building, a book or a stone.
+Persons are not items. This class represents Cultural Heritage Objects known to Europeana to be physical things (such as Mona Lisa) as well as all physical things Europeana refers to in the descriptions of Cultural Heritage Objects (such as the Rosetta Stone).</skos:definition>
+        <rdfs:subClassOf rdf:resource="&edm;NonInformationResource"/>
+        <owl:equivalentClass rdf:resource="&crm;E18_Physical_Thing"/>
+    </owl:Class>
+    
+    <!-- http://www.europeana.eu/schemas/edm/Place -->
+
+    <owl:Class rdf:about="&edm;Place">
+        <rdfs:label xml:lang="en">Place</rdfs:label>
+        <skos:definition xml:lang="en">An "extent in space, in particular on the surface of the earth, in the pure sense of physics: independent from temporal phenomena and matter" (CIDOC CRM)</skos:definition>
+        <rdfs:subClassOf rdf:resource="&edm;NonInformationResource"/>
+        <owl:equivalentClass rdf:resource="&DOLCE-Lite;space-region"/>
+        <owl:equivalentClass rdf:resource="&abc;Place"/>
+        <owl:equivalentClass rdf:resource="&crm;E53_Place"/>
+        <owl:equivalentClass rdf:resource="&frbr_core;Place"/>
+        <owl:equivalentClass rdf:resource="&frbroo;F9_Place"/>
+    </owl:Class>
+
+    <!-- http://www.europeana.eu/schemas/edm/ProvidedCHO -->
+
+    <owl:Class rdf:about="&edm;ProvidedCHO">
+        <rdfs:label xml:lang="en">Provided CHO</rdfs:label>
+        <skos:definition xml:lang="en">This class comprises the Cultural Heritage objects that Europeana collects descriptions about.</skos:definition>
+	<rdfs:subClassOf>
+	  <owl:Restriction>
+	    <owl:cardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:cardinality>
+	    <owl:onProperty>
+	      <rdf:Property>
+		<owl:inverseOf rdf:resource="&edm;aggregatedCHO"/>
+	      </rdf:Property>
+	    </owl:onProperty>
+	  </owl:Restriction>
+	</rdfs:subClassOf>
+        <skos:note xml:lang="en">This class has been mostly motivated by the need to assign a type to the “central node” in the EDM pattern, during the ingestion process, related to the XML expression of EDM at that stage. It was especially intended to fit the cases where edm:PhysicalThing  cannot be used as the type of the resource standing for the real-world object (independently of any specific data contributor perspective).</skos:note>
+        <skos:example xml:lang="en">Mona Lisa, Winged Victory of Samothrace</skos:example>
+	<skos:scopeNote xml:lang="en">Rationale: This class is the range of edm:aggregatedCHO. A resource of type ProvidedCHO can be the subject of statements using edm:isRelatedTo or any more specific property.</skos:scopeNote>
+    </owl:Class>
+
+    <!-- http://www.europeana.eu/schemas/edm/TimeSpan -->
+
+    <owl:Class rdf:about="&edm;TimeSpan">
+        <rdfs:label xml:lang="en">Time Span</rdfs:label>
+        <skos:definition xml:lang="en">The class of "abstract temporal extents, in the sense of Galilean physics,
+ having a beginning, an end and a duration" (CIDOC CRM)</skos:definition>
+        <rdfs:subClassOf rdf:resource="&edm;NonInformationResource"/>
+        <rdfs:subClassOf rdf:resource="&dcterms;PeriodOfTime"/>
+        <owl:equivalentClass rdf:resource="&abc;Time"/>
+        <owl:equivalentClass rdf:resource="&DOLCE-Lite;time-interval"/>
+        <owl:equivalentClass rdf:resource="&crm;E52_Time-Span"/>
+    </owl:Class>
+    
+    <!-- http://www.europeana.eu/schemas/edm/WebResource -->
+
+    <owl:Class rdf:about="&edm;WebResource">
+        <rdfs:label xml:lang="en">Web Resource</rdfs:label>
+        <skos:definition xml:lang="en">Information Resources that have at least one Web Representation and at least
+a URI.</skos:definition>
+        <rdfs:subClassOf rdf:resource="&edm;InformationResource"/>
+    </owl:Class>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // EDM Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- http://www.europeana.eu/schemas/edm/aggregatedCHO -->
+
+    <owl:ObjectProperty rdf:about="&edm;aggregatedCHO">
+        <rdfs:label xml:lang="en">Aggregated Cultural Heritage Object</rdfs:label>
+        <skos:definition xml:lang="en">This property associates an ORE aggregation with the cultural heritage object(s) (CHO for short) it is about.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&ore;aggregates"/>
+        <rdfs:subPropertyOf rdf:resource="&dc;subject"/>
+	<rdfs:subPropertyOf rdf:resource="&crm;P129_is_about"/>
+        <rdfs:domain rdf:resource="&ore;Aggregation"/>
+        <rdfs:range rdf:resource="&edm;ProvidedCHO"/>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/begin -->
+
+    <owl:DatatypeProperty rdf:about="&edm;begin">
+        <rdfs:label xml:lang="en">Begin</rdfs:label>
+        <skos:definition xml:lang="en">This property denotes the start date of a period of time.</skos:definition>
+	<rdfs:subPropertyOf rdf:resource="&edm;isRelatedTo"/>
+         <rdfs:domain>
+	    <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&edm;Agent"/>
+		    <rdf:Description rdf:about="&edm;TimeSpan"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+    </owl:DatatypeProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/collectionName -->
+
+    <owl:ObjectProperty rdf:about="&edm;collectionName">
+        <rdfs:label xml:lang="en">Collection Name</rdfs:label>
+        <skos:definition xml:lang="en">This property holds the collection identifier given to the dataset in Europeana.</skos:definition>
+        <skos:note xml:lang="en">The value of this property is provided by Europeana as part of the ingestion process.</skos:note>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/currentLocation -->
+
+    <owl:ObjectProperty rdf:about="&edm;currentLocation">
+        <rdfs:label xml:lang="en">Current Location</rdfs:label>
+        <skos:definition xml:lang="en">The geographic location and/or name of the repository, building, site, or other entity whose boundaries presently include the resource.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dcterms;spatial"/>
+        <owl:equivalentProperty rdf:resource="&wgs84_pos;location"/>
+        <owl:equivalentProperty rdf:resource="&crm;P55_has_current_location"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&edm;ProvidedCHO"/>
+		    <owl:Class>
+		      <owl:intersectionOf rdf:parseType="Collection">
+			<rdf:Description rdf:about="&ore;Proxy"/>
+			<owl:Restriction>
+			  <owl:onProperty rdf:resource="&ore;proxyFor"/>
+			  <owl:someValuesFrom rdf:resource="&edm;ProvidedCHO"/>
+			</owl:Restriction>
+		      </owl:intersectionOf>
+		    </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="&edm;Place"/>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/end -->
+
+    <owl:DatatypeProperty rdf:about="&edm;end">
+        <rdfs:label xml:lang="en">End</rdfs:label>
+        <skos:definition xml:lang="en">This property denotes the end date of a period of time.</skos:definition>
+	<rdfs:subPropertyOf rdf:resource="&edm;isRelatedTo"/>
+         <rdfs:domain>
+	    <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&edm;Agent"/>
+		    <rdf:Description rdf:about="&edm;TimeSpan"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+    </owl:DatatypeProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/europeanaProxy -->
+
+    <owl:ObjectProperty rdf:about="&edm;europeanaProxy">
+        <rdfs:label xml:lang="en">Europeana Proxy</rdfs:label>
+        <skos:definition xml:lang="en">This property serves only as a flag to indicate that a proxy is a Europeana proxy (as opposed to a provider proxy).  It is for internal use only.</skos:definition>
+        <skos:note xml:lang="en">By default, any proxy without this flag can be interpreted as having the value false and  is a provider proxy.</skos:note>
+    </owl:ObjectProperty>   
+
+    <!-- http://www.europeana.eu/schemas/edm/happenedAt -->
+
+    <owl:ObjectProperty rdf:about="&edm;happenedAt">
+        <rdfs:label xml:lang="en">Happened At</rdfs:label>
+        <skos:definition xml:lang="en">This property associates an event with the place at which the event
+happened.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;relation"/>
+        <owl:equivalentProperty rdf:resource="&crm;P7_took_place_at"/>
+        <rdfs:domain rdf:resource="&edm;Event"/>
+        <rdfs:range rdf:resource="&edm;Place"/>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.europeana.eu/schemas/edm/hasMet -->
+
+    <rdf:Property rdf:about="&edm;hasMet">
+        <rdfs:label xml:lang="en">Has Met</rdfs:label>
+        <skos:definition xml:lang="en">edm:hasMet relates a resource with the objects or phenomena that have happened to or have happened together with the resource under consideration. We can abstractly think of history and the present as a series of “meetings” between people and other things in space-time. Therefore we name this relationship as the things the object “has met” in the course of its existence. These meetings are events in the proper sense, in which other people and things participate in any role.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;relation"/>
+    </rdf:Property>
+    
+    <!-- http://www.europeana.eu/schemas/edm/hasType -->
+
+    <owl:ObjectProperty rdf:about="&edm;hasType">
+        <rdfs:label xml:lang="en">Has Type</rdfs:label>
+        <skos:definition xml:lang="en">This property relates a resource with the concepts it belongs to in a suitable
+type system such as MIME or any thesaurus that captures categories of objects in a given field (e.g., the “Objects” facet in Getty’s Art and Architecture Thesaurus). It does not capture aboutness.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;isRelatedTo"/>
+        <owl:equivalentProperty rdf:resource="&crm;P2_has_type"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&edm;ProvidedCHO"/>
+		    <owl:Class>
+		      <owl:intersectionOf rdf:parseType="Collection">
+			<rdf:Description rdf:about="&ore;Proxy"/>
+			<owl:Restriction>
+			  <owl:onProperty rdf:resource="&ore;proxyFor"/>
+			  <owl:someValuesFrom rdf:resource="&edm;ProvidedCHO"/>
+			</owl:Restriction>
+		      </owl:intersectionOf>
+		    </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="&edm;NonInformationResource"/>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.europeana.eu/schemas/edm/hasView -->
+
+    <owl:ObjectProperty rdf:about="&edm;hasView">
+        <rdfs:label xml:lang="en">Has View</rdfs:label>
+        <skos:definition xml:lang="en">This property relates a ORE aggregation about a CHO with a web resource
+providing a view of that CHO. Examples of view are: a thumbnail, a textual
+abstract and a table of contents. The ORE aggregation may be a Europeana
+Aggregation, in which case the view is an object owned by Europeana (i.e., an instance of edm:EuropeanaObject) or an aggregation contributed by a content provider. In order to capture both these cases, the domain of edm:hasView is ore:Aggregation and its range is edm:WebResource</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&ore;aggregates"/>
+        <rdfs:domain rdf:resource="&ore;Aggregation"/>
+        <rdfs:range rdf:resource="&edm;WebResource"/>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/incorporates -->
+
+    <owl:ObjectProperty rdf:about="&edm;incorporates">
+        <rdfs:label xml:lang="en">Incorporates</rdfs:label>
+        <skos:definition xml:lang="en">This property captures the use of some resource to add value to another
+resource. Such resources may be nested, such as performing a theater play text, and then recording the performance, or creating an artful edition of a collection of poems or just aggregating various poems in an anthology. There may be no single part that contains ultimately the incorporated object, which may be dispersed in the presentation. Therefore, incorporated resources do in general not form proper parts. Incorporated resources are not part of the same resource, but are taken from other resources, and have an independent history. Therefore edm:incorporates is not a sub-property of dcterm:hasPart.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;isSimilarTo"/>
+        <owl:equivalentProperty rdf:resource="&frbroo;R14_incorporates"/>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/isAnnotationOf -->
+
+    <owl:ObjectProperty rdf:about="&edm;isAnnotationOf">
+        <rdfs:label xml:lang="en">Is Annotation Of</rdfs:label>
+        <skos:definition xml:lang="en">This property relates an annotation (a Europeana object) with the resource
+that it annotates.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;subject"/>
+        <rdfs:subPropertyOf rdf:resource="&crm;P67_refers_to"/>
+        <rdfs:domain rdf:resource="&edm;EuropeanaObject"/>
+        <rdfs:range>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&edm;ProvidedCHO"/>
+		    <owl:Class>
+		      <owl:intersectionOf rdf:parseType="Collection">
+			<rdf:Description rdf:about="&ore;Proxy"/>
+			<owl:Restriction>
+			  <owl:onProperty rdf:resource="&ore;proxyFor"/>
+			  <owl:someValuesFrom rdf:resource="&edm;ProvidedCHO"/>
+			</owl:Restriction>
+		      </owl:intersectionOf>
+		    </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:range>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.europeana.eu/schemas/edm/isDerivativeOf -->
+
+    <rdf:Property rdf:about="&edm;isDerivativeOf">
+        <rdfs:label xml:lang="en">Is Derivative Of</rdfs:label>
+        <skos:definition xml:lang="en">This property captures a narrower notion of derivation than edm:isSimilarTo, in the sense that it relates a resource to another one, obtained by reworking, reducing, expanding, parts or the whole contents of the former, and possibly adding some minor parts. Versions have an even narrower meaning, in that it requires common identity between the related resources. Translations, summaries, abstractions etc. do not qualify as versions, but do qualify as derivatives.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;isSimilarTo"/>
+        <owl:equivalentProperty rdf:resource="&frbroo;R2_is_derivative_of"/>
+    </rdf:Property>
+    
+    <!-- http://www.europeana.eu/schemas/edm/isNextInSequence -->
+
+    <owl:ObjectProperty rdf:about="&edm;isNextInSequence">
+        <rdfs:label xml:lang="en">Is Next In Sequence Of</rdfs:label>
+        <skos:definition xml:lang="en">edm:isNextInSequence relates two resources S and R that are ordered parts of the same resource A, and such that S comes immediately after R in the order created by their being parts of A.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;relation"/>
+    </owl:ObjectProperty>
+    
+
+    <!-- http://www.europeana.eu/schemas/edm/isRelatedTo -->
+
+    <rdf:Property rdf:about="&edm;isRelatedTo">
+        <rdfs:label xml:lang="en">Is Related To</rdfs:label>
+        <skos:definition xml:lang="en">edm:isRelatedTo is the most general contextual property in EDM. Contextual
+properties have typically to do either with the things that have happened to or together with the object under consideration, or what the object refers to by its shape, form or features in a figural or encoded form. For sake of simplicity, we include in the contextual relationships also the scholarly classification, which may have either to do with the role and cultural connections of the object in the past, or its kind of structure, substance or contents as it can be verified at present.</skos:definition>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&edm;ProvidedCHO"/>
+		    <owl:Class>
+		      <owl:intersectionOf rdf:parseType="Collection">
+			<rdf:Description rdf:about="&ore;Proxy"/>
+			<owl:Restriction>
+			  <owl:onProperty rdf:resource="&ore;proxyFor"/>
+			  <owl:someValuesFrom rdf:resource="&edm;ProvidedCHO"/>
+			</owl:Restriction>
+		      </owl:intersectionOf>
+		    </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+    </rdf:Property>
+    
+    <!-- http://www.europeana.eu/schemas/edm/isRepresentationOf -->
+
+    <owl:ObjectProperty rdf:about="&edm;isRepresentationOf">
+        <rdfs:label xml:lang="en">Is Representation Of</rdfs:label>
+        <skos:definition xml:lang="en">This property associates an information resource to the resource (if any) that it represents</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;subject"/>
+        <rdfs:domain rdf:resource="&edm;InformationResource"/>
+	<rdfs:subPropertyOf rdf:resource="&crm;P138_represents"/>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/isSimilarTo -->
+
+    <rdf:Property rdf:about="&edm;isSimilarTo">
+        <rdfs:label xml:lang="en">Is Similar To</rdfs:label>
+        <skos:definition xml:lang="en">The most generic derivation property, covering also the case of questionable derivation. Is Similar To asserts that parts of the contents of one resource exhibit common features with respect to ideas, shapes, structures, colors, words, plots, topics with the contents of the related resource. Those common features may be attributed to a common origin or influence (in particular for derivation), but also to more generic cultural or psychological factors.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;relation"/>
+        <owl:equivalentProperty rdf:resource="&crm;P130_shows_features_of"/>
+    </rdf:Property>
+    
+    <!-- http://www.europeana.eu/schemas/edm/isSuccessorOf -->
+
+    <owl:ObjectProperty rdf:about="&edm;isSuccessorOf">
+        <rdfs:label xml:lang="en">Is Successor Of</rdfs:label>
+        <skos:definition xml:lang="en">This property captures the relation between the continuation of a resource and that resource. This applies to a story, a serial, a journal etc. No content of the successor resource is identical or has a similar form with that of the precursor. The similarity is only in the context, subjects and figures of a plot. Successors typically form part of a common whole – such as a trilogy, a journal, etc.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;isSimilarTo"/>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.europeana.eu/schemas/edm/landingPage -->
+
+    <owl:ObjectProperty rdf:about="&edm;landingPage">
+        <rdfs:label xml:lang="en">Landing Page</rdfs:label>
+        <skos:definition xml:lang="en">This property captures the relation between a Europeana aggregation representing a cultural heritage object and a (reference) Web resource giving access to that object. Europeana provides the value for this property.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&ore;aggregates"/>
+        <rdfs:range rdf:resource="&edm;WebResource"/>
+    </owl:ObjectProperty>
+
+   <!-- http://www.europeana.eu/schemas/edm/occurredAt -->
+
+    <owl:ObjectProperty rdf:about="&edm;occurredAt">
+        <rdfs:label xml:lang="en">Occured At</rdfs:label>
+        <skos:definition xml:lang="en">This property associates an event to the smallest known time span that
+overlaps with the occurrence of that event</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;relation"/>
+        <owl:equivalentProperty rdf:resource="&crm;P4_has_time-span"/>
+        <rdfs:domain rdf:resource="&edm;Event"/>
+        <rdfs:range rdf:resource="&edm;TimeSpan"/>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/preview -->
+
+    <owl:ObjectProperty rdf:about="&edm;preview">
+        <rdfs:label xml:lang="en">Preview</rdfs:label>
+        <skos:definition xml:lang="en">The URL of a thumbnail representing the digital object, generated by Europeana.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;hasView"/>
+        <rdfs:range rdf:resource="&edm;WebResource"/>
+    </owl:ObjectProperty>   
+
+    <!-- http://www.europeana.eu/schemas/edm/realizes -->
+
+    <owl:ObjectProperty rdf:about="&edm;realizes">
+        <rdfs:label xml:lang="en">Realizes</rdfs:label>
+        <skos:definition xml:lang="en">This property describes a relation between a physical thing and the information resource that is contained in it, visible at it or otherwise carried by it, if applicable.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;isRelatedTo"/>
+        <owl:equivalentProperty rdf:resource="&crm;P128_carries"/>
+        <rdfs:domain rdf:resource="&edm;PhysicalThing"/>
+        <rdfs:range rdf:resource="&edm;InformationResource"/>
+    </owl:ObjectProperty>
+
+
+    <!-- http://www.europeana.eu/schemas/edm/wasPresentAt -->
+
+    <owl:ObjectProperty rdf:about="&edm;wasPresentAt">
+        <rdfs:label xml:lang="en">Was Present At</rdfs:label>
+        <skos:definition xml:lang="en">This property associates the people, things or information resources with an event at which they were present</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;relation"/>
+        <owl:equivalentProperty rdf:resource="&crm;P12i_was_present_at"/>
+        <rdfs:domain>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="&edm;Agent"/>
+                    <rdf:Description rdf:about="&edm;InformationResource"/>
+                    <rdf:Description rdf:about="&edm;PhysicalThing"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:domain>
+        <rdfs:range rdf:resource="&edm;Event"/>
+    </owl:ObjectProperty>
+    
+
+    <!--****************************************************************************************************************************** -->
+    <!-- Specifications for properties appearing as ESE elements -->
+    <!--****************************************************************************************************************************** -->
+
+    <!-- http://www.europeana.eu/schemas/edm/country -->
+
+    <rdf:Property rdf:about="&edm;country">
+        <rdfs:label xml:lang="en">Country</rdfs:label>
+        <rdfs:subPropertyOf rdf:resource="&crm;P12_occurred_in_the_presence_of"/>
+    </rdf:Property>
+
+    <!-- http://www.europeana.eu/schemas/edm/dataProvider -->
+
+    <rdf:Property rdf:about="&edm;dataProvider">
+        <rdfs:label xml:lang="en">Data Provider</rdfs:label>
+        <skos:definition xml:lang="en">The name or identifier of the organisation who contributes data indirectly to an aggregation service (e.g. Europeana).</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dcterms;provenance"/>
+        <rdfs:domain rdf:resource="&ore;Aggregation"/>
+        <rdfs:range rdf:resource="&edm;Agent"/>
+    </rdf:Property> 
+
+    <!-- http://www.europeana.eu/schemas/edm/isShownAt -->
+
+    <owl:ObjectProperty rdf:about="&edm;isShownAt">
+        <rdfs:label xml:lang="en">Is Shown At</rdfs:label>
+        <skos:definition xml:lang="en">An unambiguous URL reference to the digital object on the provider’s web site in its full information context.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;hasView"/>
+        <rdfs:range rdf:resource="&edm;WebResource"/>
+    </owl:ObjectProperty>
+    
+    <!-- http://www.europeana.eu/schemas/edm/isShownBy -->
+
+    <owl:ObjectProperty rdf:about="&edm;isShownBy">
+        <rdfs:label xml:lang="en">Is Shown By</rdfs:label>
+        <skos:definition xml:lang="en">An unambiguous URL reference to the digital object on the provider’s web site in the best available resolution/quality.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;hasView"/>
+        <rdfs:range rdf:resource="&edm;WebResource"/>
+    </owl:ObjectProperty>    
+
+    <!-- http://www.europeana.eu/schemas/edm/language -->
+
+    <rdf:Property rdf:about="&edm;language">
+        <rdfs:label xml:lang="en">Europeana Language</rdfs:label>
+        <skos:definition xml:lang="en">The value for this element is added by the Data Ingestion Team as part of the ingestion process, based on the language of the data provider.</skos:definition>
+    </rdf:Property>
+
+    <!-- http://www.europeana.eu/schemas/edm/object -->
+
+    <owl:ObjectProperty rdf:about="&edm;object">
+        <rdfs:label xml:lang="en">Object</rdfs:label>
+        <skos:definition xml:lang="en">The URL of a thumbnail representing the digital object or, if there is no such
+thumbnail, the URL of the digital object in the best resolution available on the
+web site of the data provider from which a thumbnail could be generated. This will often be the same URL as given in edm:isShownBy.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;hasView"/>
+        <rdfs:range rdf:resource="&edm;WebResource"/>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/provider -->
+
+    <rdf:Property rdf:about="&edm;provider">
+        <rdfs:label xml:lang="en">Provider</rdfs:label>
+        <skos:definition xml:lang="en">The name or identifier of the organization who delivers data directly to an aggregation service (e.g. Europeana)</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&edm;hasMet"/>
+        <rdfs:range rdf:resource="&edm;Agent"/>
+    </rdf:Property>
+
+    <!-- http://www.europeana.eu/schemas/edm/rights -->
+
+    <owl:ObjectProperty rdf:about="&edm;rights">
+        <rdfs:label xml:lang="en">Europeana Rights</rdfs:label>
+        <skos:definition xml:lang="en">Information about copyright of the digital object as specified by isShownBy
+and isShownAt</skos:definition>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/type -->
+
+    <owl:DatatypeProperty rdf:about="&edm;type">
+        <rdfs:label xml:lang="en">Europeana Type</rdfs:label>
+        <skos:definition xml:lang="en">The Europeana material type of the resource</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;type"/>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf rdf:parseType="Resource">
+                    <rdf:first>TEXT</rdf:first>
+                    <rdf:rest rdf:parseType="Resource">
+                        <rdf:first>IMAGE</rdf:first>
+                        <rdf:rest rdf:parseType="Resource">
+                            <rdf:first>SOUND</rdf:first>
+                            <rdf:rest rdf:parseType="Resource">
+                               <rdf:first>VIDEO</rdf:first>
+                               <rdf:rest rdf:parseType="Resource">
+				 <rdf:first>3D</rdf:first>
+				 <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+			       </rdf:rest>
+			    </rdf:rest>
+			</rdf:rest>
+		    </rdf:rest>
+		</owl:oneOf>
+	    </rdfs:Datatype>
+         </rdfs:range>
+    </owl:DatatypeProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/ugc -->
+
+    <owl:DatatypeProperty rdf:about="&edm;ugc">
+        <rdfs:label xml:lang="en">UGC</rdfs:label>
+        <skos:definition xml:lang="en">This element is used to identify user generated content (also called user created content).  It should be applied to all digitised or born digital content contributed by the general public and collected by Europeana through a crowdsourcing initiative or project.</skos:definition>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf rdf:parseType="Resource">
+                    <rdf:first>TRUE</rdf:first>
+		    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+		</owl:oneOf>
+	    </rdfs:Datatype>
+         </rdfs:range>
+    </owl:DatatypeProperty>
+    
+    <!-- http://www.europeana.eu/schemas/edm/unstored -->
+
+    <rdf:Property rdf:about="&edm;unstored">
+        <rdfs:label xml:lang="en">Unstored</rdfs:label>
+        <skos:definition xml:lang="en">This is a container element which includes all relevant information that
+otherwise cannot be mapped to another element in the ESE.</skos:definition>
+    </rdf:Property>
+    
+    <!-- http://www.europeana.eu/schemas/edm/uri -->
+
+    <owl:ObjectProperty rdf:about="&edm;uri">
+        <rdfs:label xml:lang="en">Europeana URI</rdfs:label>
+        <skos:definition xml:lang="en">This is a tag created by a user through the Europeana interface.</skos:definition>
+    </owl:ObjectProperty>
+
+    <!-- http://www.europeana.eu/schemas/edm/userTag -->
+
+    <rdf:Property rdf:about="&edm;userTag">
+        <rdfs:label xml:lang="en">User Tag</rdfs:label>
+        <skos:definition xml:lang="en">This is a tag created by a user through the Europeana interface.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dc;description"/>
+    </rdf:Property>
+    
+    <!-- http://www.europeana.eu/schemas/edm/year -->
+
+    <rdf:Property rdf:about="&edm;year">
+        <rdfs:label xml:lang="en">Europeana Year</rdfs:label>
+        <skos:definition xml:lang="en">A point of time associated with an event in the life of the original analog or
+born digital object.</skos:definition>
+        <rdfs:subPropertyOf rdf:resource="&dcterms;temporal"/>
+    </rdf:Property>    
+
+
+    <!--****************************************************************************************************************************** -->
+    <!-- Class mappings for non-EDM elements -->
+    <!--****************************************************************************************************************************** -->
+
+    <rdf:Description rdf:about="&skos;Concept">
+        <rdfs:subClassOf rdf:resource="&edm;NonInformationResource"/>
+    </rdf:Description>
+
+    <!--****************************************************************************************************************************** -->
+    <!-- Property mappings for non-EDM elements -->
+    <!--****************************************************************************************************************************** -->
+
+    <rdf:Description rdf:about="&crm;P79_beginning_is_qualified_by">
+        <rdfs:subPropertyOf rdf:resource="&edm;begin"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="&crm;P80_end_is_qualified_by">
+        <rdfs:subPropertyOf rdf:resource="&edm;end"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/contributor -->
+
+    <rdf:Description rdf:about="&dc;contributor">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasMet"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/coverage -->
+
+    <rdf:Description rdf:about="&dc;coverage">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasMet"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/creator -->
+
+    <rdf:Description rdf:about="&dc;creator">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasMet"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/date -->
+
+    <rdf:Description rdf:about="&dc;date">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasMet"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/format -->
+
+    <rdf:Description rdf:about="&dc;format">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasType"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/terms/hasFormat -->
+    
+    <rdf:Description rdf:about="&dcterms;hasFormat">
+        <rdfs:subPropertyOf>
+            <rdf:Property>
+                <owl:inverseOf rdf:resource="&edm;isDerivativeOf"/>
+	    </rdf:Property>
+	</rdfs:subPropertyOf>
+    </rdf:Description>        
+
+    <!-- http://purl.org/dc/terms/hasVersion -->
+
+    <rdf:Description rdf:about="&dcterms;hasVersion">
+        <rdfs:subPropertyOf>
+            <rdf:Property>
+                <owl:inverseOf rdf:resource="&edm;isDerivativeOf"/>
+	    </rdf:Property>
+	</rdfs:subPropertyOf>
+    </rdf:Description> 
+
+    <!-- http://purl.org/dc/terms/isFormatOf -->
+
+    <rdf:Description rdf:about="&dcterms;isFormatOf">
+        <rdfs:subPropertyOf rdf:resource="&edm;isDerivativeOf"/>
+    </rdf:Description>
+    
+    <!-- http://purl.org/dc/terms/isReplacedBy -->
+    
+    <rdf:Description rdf:about="&dcterms;isReplacedBy">
+        <rdfs:subPropertyOf>
+            <rdf:Property>
+                <owl:inverseOf rdf:resource="&edm;isDerivativeOf"/>
+	    </rdf:Property>
+	</rdfs:subPropertyOf>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/terms/isVersionOf -->
+
+    <rdf:Description rdf:about="&dcterms;isVersionOf">
+        <rdfs:subPropertyOf rdf:resource="&edm;isDerivativeOf"/>
+    </rdf:Description>
+    
+    <!-- http://purl.org/dc/elements/1.1/language -->
+    
+    <rdf:Description rdf:about="&dc;language">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasType"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/publisher -->
+
+    <rdf:Description rdf:about="&dc;publisher">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasMet"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/relation -->
+
+    <rdf:Description rdf:about="&dc;relation">
+        <rdfs:subPropertyOf rdf:resource="&edm;isRelatedTo"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/terms/replaces -->
+    
+    <rdf:Description rdf:about="&dcterms;replaces">
+        <rdfs:subPropertyOf rdf:resource="&edm;isDerivativeOf"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/source -->
+
+    <rdf:Description rdf:about="&dc;source">
+        <rdfs:subPropertyOf rdf:resource="&edm;isDerivativeOf"/>
+    </rdf:Description>
+
+    <!-- http://purl.org/dc/elements/1.1/subject -->
+
+    <rdf:Description rdf:about="&dc;subject">
+        <rdfs:subPropertyOf rdf:resource="&edm;isRelatedTo"/>
+    </rdf:Description>  
+
+    <!-- http://purl.org/dc/terms/tableOfContents -->
+    
+    <rdf:Description rdf:about="&dcterms;tableOfContents">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasView"/>
+    </rdf:Description>   
+
+    <!-- http://purl.org/dc/elements/1.1/type -->
+
+    <rdf:Description rdf:about="&dc;type">
+        <rdfs:subPropertyOf rdf:resource="&edm;hasType"/>
+    </rdf:Description>
+
+    <!--****************************************************************************************************************************** -->
+    <!-- Class declarations added for compatibility with some OWL-DL reasoners -->
+    <!--****************************************************************************************************************************** -->
+
+    <owl:Class rdf:about="&skos;Concept"/>
+    <owl:Class rdf:about="&ore;Aggregation"/>
+    <owl:Class rdf:about="&ore;Proxy"/>
+
+   </rdf:RDF>
+
+

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#" 
+	xmlns:dct="http://purl.org/dc/terms/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#" 
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:cnt="http://www.w3.org/2011/content#" 
+	xmlns="http://www.w3.org/2011/content#"
+	xml:base="http://www.w3.org/2011/content"
+>
+
+	<owl:Ontology rdf:about="">
+		<rdfs:label xml:lang="en">Representing Content in RDF</rdfs:label>
+		<rdfs:comment xml:lang="en">Representing Content in RDF as defined by http://www.w3.org/TR/Content-in-RDF/</rdfs:comment>
+		<owl:versionInfo xml:lang="en">Working Draft 29 April 2011</owl:versionInfo>
+		<rdfs:isDefinedBy rdf:resource="http://www.w3.org/TR/Content-in-RDF/" />
+		<rdfs:seeAlso rdf:resource="http://www.w3.org/WAI/intro/earl" />
+		<owl:imports rdf:resource="http://purl.org/dc/terms/" />
+	</owl:Ontology>
+
+	<!-- Classes -->
+
+	<rdfs:Class rdf:about="#Content">
+		<rdfs:label xml:lang="en">Content</rdfs:label>
+		<rdfs:comment xml:lang="en">The content.</rdfs:comment>
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+	</rdfs:Class>
+
+	<rdfs:Class rdf:ID="ContentAsBase64">
+		<rdfs:label xml:lang="en">Base64 content</rdfs:label>
+		<rdfs:comment xml:lang="en">The base64 encoded content (can be used for binary content).</rdfs:comment>
+		<rdfs:subClassOf rdf:resource="#Content" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+	</rdfs:Class>
+
+	<rdfs:Class rdf:ID="ContentAsText">
+		<rdfs:label xml:lang="en">Text content</rdfs:label>
+		<rdfs:comment xml:lang="en">The text content (can be used for text content).</rdfs:comment>
+		<rdfs:subClassOf rdf:resource="#Content" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+	</rdfs:Class>
+
+	<rdfs:Class rdf:ID="ContentAsXML">
+		<rdfs:label xml:lang="en">XML content</rdfs:label>
+		<rdfs:comment xml:lang="en">The XML content (can only be used for XML-wellformed content).</rdfs:comment>
+		<rdfs:subClassOf rdf:resource="#Content" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+	</rdfs:Class>
+
+	<rdfs:Class rdf:ID="DoctypeDecl">
+		<rdfs:label xml:lang="en">Document type declaration</rdfs:label>
+		<rdfs:comment xml:lang="en">The document type declaration.</rdfs:comment>
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+	</rdfs:Class>
+
+	<!-- Properties -->
+
+	<rdf:Property rdf:ID="bytes">
+		<rdfs:label xml:lang="en">Base64 encoded byte sequence</rdfs:label>
+		<rdfs:comment xml:lang="en">The Base64 encoded byte sequence of the content.</rdfs:comment>
+		<rdfs:domain rdf:resource="#ContentAsBase64" />
+    	<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#base64Binary" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="characterEncoding">
+		<rdfs:domain rdf:resource="#Content" />
+		<rdfs:label xml:lang="en">Character encoding</rdfs:label>
+		<rdfs:comment xml:lang="en">The character encoding used to create a character sequence from a byte sequence or vice versa.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="chars">
+		<rdfs:domain rdf:resource="#ContentAsText" />
+		<rdfs:label xml:lang="en">Character sequence</rdfs:label>
+		<rdfs:comment xml:lang="en">The character sequence of the text content.</rdfs:comment>
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="declaredEncoding">
+		<rdfs:label xml:lang="en">XML character encoding</rdfs:label>
+		<rdfs:comment xml:lang="en">The character encoding declared in the XML declaration.</rdfs:comment>
+		<rdfs:domain rdf:resource="#ContentAsXML" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="doctypeName">
+		<rdfs:label xml:lang="en">Document type name</rdfs:label>
+		<rdfs:comment xml:lang="en">The document type name.</rdfs:comment>
+		<rdfs:domain rdf:resource="#DoctypeDecl" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="dtDecl">
+		<rdfs:label xml:lang="en">Document type declaration</rdfs:label>
+		<rdfs:comment xml:lang="en">The document type declaration.</rdfs:comment>
+		<rdfs:domain rdf:resource="#ContentAsXML" />
+		<rdfs:range rdf:resource="#DoctypeDecl" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="internalSubset">
+		<rdfs:label xml:lang="en">Internal DTD subset</rdfs:label>
+		<rdfs:comment xml:lang="en">The internal document type definition subset within the document type declarations.</rdfs:comment>
+		<rdfs:domain rdf:resource="#DoctypeDecl" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="leadingMisc">
+		<rdfs:label xml:lang="en">XML leading misc</rdfs:label>
+		<rdfs:comment xml:lang="en">The XML content preceding the document type declaration.</rdfs:comment>
+		<rdfs:domain rdf:resource="#ContentAsXML" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#XMLLiteral" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="publicId">
+		<rdfs:label xml:lang="en">Public ID</rdfs:label>
+		<rdfs:comment xml:lang="en">The document type declarations's public identifier.</rdfs:comment>
+		<rdfs:domain rdf:resource="#DoctypeDecl" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="rest">
+		<rdfs:label xml:lang="en">XML rest</rdfs:label>
+		<rdfs:comment xml:lang="en">The XML content following the document type declaration.</rdfs:comment>
+		<rdfs:domain rdf:resource="#ContentAsXML" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#XMLLiteral" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="standalone">
+		<rdfs:label xml:lang="en">XML standalone document declaration</rdfs:label>
+		<rdfs:comment xml:lang="en">The standalone declaration in the XML declaration.</rdfs:comment>
+		<rdfs:domain rdf:resource="#ContentAsXML" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="systemId">
+		<rdfs:label xml:lang="en">System ID</rdfs:label>
+		<rdfs:comment xml:lang="en">The document type declarations's system identifier (typed: xsd:anyURI)</rdfs:comment>
+		<rdfs:domain rdf:resource="#DoctypeDecl" />
+		<rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+
+	<rdf:Property rdf:ID="version">
+		<rdfs:label xml:lang="en">XML version</rdfs:label>
+		<rdfs:comment xml:lang="en">The XML version declared in the XML declaration.</rdfs:comment>
+		<rdfs:domain rdf:resource="#ContentAsXML" />
+		<rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal" />
+		<rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty" />
+	</rdf:Property>
+</rdf:RDF>
