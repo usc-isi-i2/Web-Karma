@@ -343,6 +343,35 @@ function parseClassJSON(clazz, result, allLabels) {
 	//	}
 }
 
+function getSuggestedSemanticTypes(worksheetId, columnId, classUri) {
+	var info = generateInfoObject(worksheetId, columnId, "GetSemanticSuggestionsCommand");
+	var newInfo = info['newInfo']; // Used for commands that take JSONArray as input and are saved in the history
+	if(classUri) {
+		info["classUri"] = classUri;
+		newInfo.push(getParamObject("classUri", info["classUri"], "other"));
+	}
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var result;
+	var returned = $.ajax({
+		url: "RequestController",
+		type: "POST",
+		data: info,
+		dataType: "json",
+		async: false,
+		complete: function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			hideLoading(info["worksheetId"]);
+			result = json.elements[0];
+		},
+		error: function(xhr, textStatus) {
+			alert("Error occured with fetching new rows! " + textStatus);
+			hideLoading(info["worksheetId"]);
+		}
+	});
+	return result;
+}
+
 function getAllDataAndObjectProperties(worksheetId) {
 	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "allDataAndObjectProperties";

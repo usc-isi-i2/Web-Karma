@@ -174,6 +174,24 @@ var D3ModelManager = (function() {
 						d.targetNodeId,
 						d.target.isUri,
 						event);
+				PropertySuggestDropdown.getInstance().show(
+						worksheetId,
+						alignmentId,
+						d.id,
+						d.linkUri,
+						d.sourceNodeId,
+						sourceObj.nodeType,
+						sourceObj.label,
+						sourceObj.nodeDomain,
+						d.sourceNodeId,
+						d.source.isUri,
+						d.targetNodeId,
+						targetObj.nodeType,
+						targetObj.label,
+						targetObj.nodeDomain,
+						d.targetNodeId,
+						d.target.isUri,
+						event);
 			});
 			
 			layout.setAnchorClickListener(function(d, event) {

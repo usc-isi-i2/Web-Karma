@@ -18,8 +18,8 @@ var PropertyDropdownMenu = (function() {
 			["Delete", deleteLink],
 			["divider", null],
 			["Change From", changeFrom],
-			["Change To", changeTo],
-			["Change Link", changeLink]
+			["Change To", changeTo]
+			// ,["Change Link", changeLink]
 		];
 
 		function init() {

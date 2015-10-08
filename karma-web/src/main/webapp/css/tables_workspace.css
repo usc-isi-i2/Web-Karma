@@ -522,3 +522,20 @@ span#applyHistoryButton {
 #btnNextCache {
 	margin-top: 25px;
 }
+
+#propertySuggestDropdown ul {
+	overflow: auto;
+	max-height: 200px;
+}
+
+.dropdownInput .input-group-addon {
+	width: 0%;
+}
+
+.dropdownInput {
+	padding-left: 20px;
+    width: 100%;
+    padding-right: 10px;
+}
+
+
