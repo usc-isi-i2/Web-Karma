@@ -50,13 +50,11 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 		
 		
 		readKarmaConfig = Boolean.parseBoolean(context.getConfiguration().get("read.karma.config"));
-		
-		String configFilePath = context.getConfiguration().get("karma.config.file");
-		
-		File configFile = new File(configFilePath);
-		
+
 		if(readKarmaConfig)
 		{
+			String configFilePath = context.getConfiguration().get("karma.config.file");
+			File configFile = new File(configFilePath);
 			if(!configFile.exists()){
 				throw new FileNotFoundException("File at :" + configFilePath + " doesn't exist.");
 			}
