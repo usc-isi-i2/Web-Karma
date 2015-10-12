@@ -538,4 +538,10 @@ span#applyHistoryButton {
     padding-right: 10px;
 }
 
+.dropdown-menu>.propertyDropdown_suggestion>a {
+	font-weight: bold;
+}
 
+.dropdown-menu>.propertyDropdown_compatible>a {
+	/* color: gray; */
+}

@@ -154,7 +154,7 @@ var PropertySuggestDropdown = (function() {
 			
 
 			if(targetNodeType == "ColumnNode") {
-				allTypes.push({"label": "uri", "uri": "http://isi.edu/integration/karma/dev#classLink"});
+				allTypes.push({"label": "uri of " + sourceLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
 				allTypes.push({"label": "divider", "uri": "divider"});
 			}
 
@@ -197,6 +197,7 @@ var PropertySuggestDropdown = (function() {
 			if(targetNodeType == "ColumnNode") {
 				var semSuggestions = getSuggestedSemanticTypes(worksheetId, targetId, sourceDomain);
 				var items = [];
+				var uriFound = false;
 				if(semSuggestions != null) {
 					$.each(semSuggestions["Labels"], function(index, type) {
 						if(type["DisplayLabel"] == "km-dev:columnSubClassOfLink" ||
@@ -204,8 +205,27 @@ var PropertySuggestDropdown = (function() {
 								type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
 							return;
 						}
-						items.push({"label": type["DisplayLabel"], "uri": type["FullType"]});
+						if(type["DisplayLabel"] == "uri" || type["DisplayLabel"] == "km-dev:classLink") {
+							uriFound = true;
+							type["DisplayLabel"] = "uri of " + sourceLabel;
+						}
+						items.push({"label": type["DisplayLabel"], "uri": type["FullType"], "class": "propertyDropdown_suggestion"});
 					});
+				}
+
+				var compatibleTypes = [];
+				if(!uriFound)
+					compatibleTypes.push({"label": "uri of " + sourceLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
+
+				compatibleTypes = compatibleTypes.concat(getAllPropertiesForClass(worksheetId, sourceDomain));
+			
+				if(compatibleTypes.length > 0 && items.length > 0)
+					items.push({"label": "divider", "uri": "divider"});
+				$.each(compatibleTypes, function(index, type) {
+					items.push({"label": type["label"], "uri": type["uri"], "class": "propertyDropdown_compatible"});
+				});	
+				
+				if(items.length > 0) {
 					items.push({"label": "divider", "uri": "divider"});
 					items.push({"label": "More...", "uri": "More..."});
 					renderMenu(items, true);
@@ -213,13 +233,30 @@ var PropertySuggestDropdown = (function() {
 					populateAllProperties();
 				}
 			} else {
-				populateAllProperties();
+				var compatibleTypes = getAllPropertiesForDomainRange(worksheetId, sourceDomain, targetDomain);
+				var items = [];
+				if(compatibleTypes != null) {
+					$.each(compatibleTypes, function(index, type) {
+						items.push({"label": type["label"], "uri": type["uri"], "class": "propertyDropdown_compatible"});
+					});	
+
+				}
+				
+				if(items.length > 0) {
+					items.push({"label": "divider", "uri": "divider"});
+					items.push({"label": "More...", "uri": "More..."});
+					renderMenu(items, true);
+				} else {
+					populateAllProperties();
+				}
 			}
 		}
 
 		function renderMenu(menuItems, storeSet) {
 			var ul = $("ul", $("#" + menuId));
 			ul.find("li:gt(0)").remove();
+			ul.scrollTop(1);
+
 			if(storeSet)
 				displayMenuItems = menuItems;
 
@@ -227,21 +264,19 @@ var PropertySuggestDropdown = (function() {
 				var label = item["label"];
 				var uri = item["uri"];
 
+				var li = $("<li>");
 				if(label == "divider") {
-					var li = $("<li>").addClass("divider");
-					ul.append(li);
+					li.addClass("divider");
+					
 				} else {
 					if (label == "km-dev:classLink") {
-						var li = $("<li>");
 						var a = $("<a>")
 							.attr("href", "#")
 							.attr("tabindex", "-1")
 							.text("uri")
 							.click(selectPropertyFromMenu);
 						li.append(a);
-						ul.append(li);
 					} else {
-						var li = $("<li>");
 						var a = $("<a>")
 							.attr("href", "#")
 							.attr("tabindex", "-1")
@@ -249,10 +284,13 @@ var PropertySuggestDropdown = (function() {
 							.data('uri', uri)
 							.click(selectPropertyFromMenu);
 						li.append(a);
-						ul.append(li);
 					}
 				}
+				if(item["class"])
+					li.addClass(item["class"]);
+				ul.append(li);
 			});
+
 		}
 
 
@@ -278,8 +316,13 @@ var PropertySuggestDropdown = (function() {
 			sourceNodeType = p_sourceNodeType;
 			targetNodeType = p_targetNodeType;
 
+			$("#input_" + menuId).val('');
 			populateMenu();
 
+			window.setTimeout(function() {
+				var ul = $("ul", $("#" + menuId));
+				ul.scrollTop(1);
+			}, 10);
 			//console.log("Click for opening Menu");
 			$("#" + menuId).css({
 				display: "block",
