@@ -13,6 +13,11 @@ var ClassDropdownMenu = (function() {
 
 			//Title, function to call, needs file upload     
 			{
+				name: "Duplicate Node",
+				func: duplicateNode,
+				nodeType: "InternalNode"
+			},
+			{
 				name: "Add Incoming Link",
 				func: addIncomingLink
 			}, {
@@ -151,6 +156,19 @@ var ClassDropdownMenu = (function() {
 
 		function invokeMLService() {
 			ExportCSVModelDialog.getInstance().show(worksheetId, alignmentId, columnId, "invokeMLService");
+		}
+
+		function duplicateNode() {
+			var info = generateInfoObject(worksheetId, "", "AddNodeCommand");
+			var newInfo = info['newInfo'];
+			newInfo.push(getParamObject("label", "", "other"));
+			newInfo.push(getParamObject("uri", columnUri, "other"));
+			newInfo.push(getParamObject("id", "", "other"));
+			info["newInfo"] = JSON.stringify(newInfo);
+			showLoading(worksheetId);
+
+			var returned = sendRequest(info, worksheetId);
+			hide();
 		}
 
 		function generateJS() {
