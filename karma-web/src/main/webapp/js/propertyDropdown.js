@@ -139,6 +139,7 @@ var PropertyDropdownMenu = (function() {
 			for(var i=0; i<btns.length; i++) {
 				var btn = $(btns[i]);
 				btn.removeClass("disabled");
+				btn.prop("disabled", false);
 			}
 		}
 		
@@ -148,6 +149,7 @@ var PropertyDropdownMenu = (function() {
 				var btn = $(btns[i]);
 				if(btn.text() == value) {
 					btn.addClass("disabled");
+					btn.prop("disabled", true);
 					break;
 				}
 			}
