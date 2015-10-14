@@ -142,6 +142,9 @@ var D3ModelManager = (function() {
 						id = d.id;
 					ClassDropdownMenu.getInstance().show(worksheetId, id, d.label, d.nodeDomain, d.nodeDomain, nodeCategory, 
 						alignmentId, d.nodeType, d.isUri, event);
+
+					ClassSuggestDropdown.getInstance().show(worksheetId, id, d.label, d.nodeDomain, d.nodeDomain, nodeCategory, 
+						alignmentId, d.nodeType, d.isUri, event);
 				}
 
 			});

@@ -224,7 +224,7 @@ var ClassDropdownMenu = (function() {
 			$("#" + menuId).css({
 				display: "block",
 				position: "absolute",
-				left: event.pageX,
+				left: event.pageX + 300,
 				top: event.pageY
 			});
 

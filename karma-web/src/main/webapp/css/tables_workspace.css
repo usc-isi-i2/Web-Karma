@@ -545,3 +545,9 @@ span#applyHistoryButton {
 .dropdown-menu>.propertyDropdown_compatible>a {
 	/* color: gray; */
 }
+
+#classSuggestDropdown ul {
+	overflow: auto;
+	width: 300px;
+	max-height: 250px;
+}

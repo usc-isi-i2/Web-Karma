@@ -364,6 +364,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/classUI.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertyUI.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/classDropdown.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/classSuggestDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertyDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertySuggestDropdown.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
