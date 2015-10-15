@@ -13,7 +13,7 @@ Install vagrant - http://www.vagrantup.com/downloads
  3. ```vagrant up```
  4. Open localhost:8080 in a browser
 
-The karma folder in Web-Karma/vagrant is set as KARMA_HOME. If you want to use a customised karma home, copy your karma folder to Web-Karma/vagrant.
+The karma folder in Web-Karma/vagrant is set as KARMA_HOME. To use a custom karma home, copy your karma folder to Web-Karma/vagrant.
 
 Notes:
 Since the Guest OS is behind a NAT, we set the SPARK_LOCAL_IP using the tun0 interface as the IP address.  This is done in the spark-env.sh file
