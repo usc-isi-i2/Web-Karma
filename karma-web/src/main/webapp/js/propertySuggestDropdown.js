@@ -12,6 +12,7 @@ var PropertySuggestDropdown = (function() {
 		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
 		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
 		var allPropertiesCache;
+		var semanticSuggestions;
 
 		function init() {
 			allPropertiesCache = null;
@@ -151,9 +152,17 @@ var PropertySuggestDropdown = (function() {
 			}
 
 			var allTypes = [];
-			
+			var uriFound = false;
+			$.each(semanticSuggestions, function(index, type) {
+				allTypes.push({"label": type["label"], "uri": type["uri"], "class": type["class"]});
+				if(type["uri"] == "http://isi.edu/integration/karma/dev#classLink")
+					uriFound = true;
+			});
 
-			if(targetNodeType == "ColumnNode") {
+			if(allTypes.length > 0) 
+				allTypes.push({"label": "divider", "uri": "divider"});
+
+			if(targetNodeType == "ColumnNode" && uriFound == false) {
 				allTypes.push({"label": "uri of " + sourceLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
 				allTypes.push({"label": "divider", "uri": "divider"});
 			}
@@ -194,6 +203,7 @@ var PropertySuggestDropdown = (function() {
 		}
 
 		function populateMenu() {
+			semanticSuggestions = []
 			if(targetNodeType == "ColumnNode") {
 				var semSuggestions = getSuggestedSemanticTypes(worksheetId, targetId, sourceDomain);
 				var items = [];
@@ -213,11 +223,15 @@ var PropertySuggestDropdown = (function() {
 					});
 				}
 
-				var compatibleTypes = [];
-				if(!uriFound)
-					compatibleTypes.push({"label": "uri of " + sourceLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
+				semanticSuggestions = semanticSuggestions.concat(items);
 
-				compatibleTypes = compatibleTypes.concat(getAllPropertiesForClass(worksheetId, sourceDomain));
+				if(!uriFound) {
+					if(items.length > 0)
+						items.push({"label": "divider", "uri": "divider"});
+					items.push({"label": "uri of " + sourceLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
+				}
+
+				var compatibleTypes = getAllPropertiesForClass(worksheetId, sourceDomain);
 			
 				if(compatibleTypes.length > 0 && items.length > 0)
 					items.push({"label": "divider", "uri": "divider"});
