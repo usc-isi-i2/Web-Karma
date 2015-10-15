@@ -1,5 +1,19 @@
-# vagrant-memex
-DARPA MEMEX project Vagrant VM
+# vagrant-karma
+Web Karma Vagrant VM
+
+##Prerequisites:
+Install vagrant - http://www.vagrantup.com/downloads
+
+
+
+
+##Instructions to run karma:
+ #1. ```git clone https://github.com/usc-isi-i2/Web-Karma.git```
+ #2. ```cd Web-Karma/vagrant```
+ #3. ```vagrant up```
+ #4. Open localhost:8080 in a browser
+
+There is karma folder which is set as the KARMA_HOME
 
 Notes:
 Since the Guest OS is behind a NAT, we set the SPARK_LOCAL_IP using the tun0 interface as the IP address.  This is done in the spark-env.sh file
