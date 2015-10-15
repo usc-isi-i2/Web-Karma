@@ -8,10 +8,10 @@ Install vagrant - http://www.vagrantup.com/downloads
 
 
 ##Instructions to run karma:
- #1. ```git clone https://github.com/usc-isi-i2/Web-Karma.git```
- #2. ```cd Web-Karma/vagrant```
- #3. ```vagrant up```
- #4. Open localhost:8080 in a browser
+ 1. ```git clone https://github.com/usc-isi-i2/Web-Karma.git```
+ 2. ```cd Web-Karma/vagrant```
+ 3. ```vagrant up```
+ 4. Open localhost:8080 in a browser
 
 There is karma folder which is set as the KARMA_HOME
 
