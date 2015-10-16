@@ -15,7 +15,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var linkClickListener = null;
 	var nodeClickListener = null;
 	var anchorClickListener = null;
-	
+	var anchorMouseListener = null;
+
 	var test = [];
 	//var tableData = [];                            //store table data
 	//var columnPos = [];                            //position for each column
@@ -358,6 +359,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("fill", function(d){
 				if (d.type == "nodeLabel"){
 					if (d.node.isForcedByUser) return "rgb(42,98,126)";
+					if (d.node.isTemporary) return "#888";
 					return "#555";
 				}
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
@@ -575,20 +577,22 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				d.position.y = height - nodeRadius - d.layer * unitLinkLength;
 			})
 			.on("mouseover", function(d){
+				if(anchorMouseListener != null && d.original.nodeType == "ColumnNode")
+					anchorMouseListener(d.original, d3.event);
 				d3.select(this)
 					.transition()
 					.duration(500)
 					.attr("opacity", 1)
 					.attr("r", nodeRadius * 1.5);
 
-				d3.select("#nodeLabel" + d.id)
-					.attr("opacity", 1);			
-				d.showLabel = true;
-				if (d.parent){
-					d3.select("#nodeLabel" + d.parent)
-						.attr("opacity", 1);
-					nodesData[d.parent].showLabel = true;
-				}
+				// d3.select("#nodeLabel" + d.id)
+				// 	.attr("opacity", 1);			
+				// d.showLabel = true;
+				// if (d.parent){
+				// 	d3.select("#nodeLabel" + d.parent)
+				// 		.attr("opacity", 1);
+				// 	nodesData[d.parent].showLabel = true;
+				// }
 				if (nodesChildren[d.id] == undefined){
 					return;
 				}
@@ -1093,6 +1097,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			node.showLabel = false;
 			node.original = d;
 			node.isForcedByUser = d.isForcedByUser;
+			node.isTemporary = d.isTemporary;
 			if (d.column || d.column == 0){
 				//columnPos.push(d.xPos);
 				node.nodeId = d.hNodeId;
@@ -1750,6 +1755,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	
 	this.setAnchorClickListener = function(listener) {
 		anchorClickListener = listener;
+	}
+
+	this.setAnchorMouseListener = function(listener) {
+		anchorMouseListener = listener;
 	}
 	
 	this.onscroll = function(event){

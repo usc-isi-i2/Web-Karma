@@ -25,11 +25,17 @@ var D3ModelManager = (function() {
 	function PrivateConstructor() {
 		var models;
 		var modelJsons;
-		
+		var modelNodesMap;
+		var modelLinksMap;
+		var savedJsons;
+
 		function init() {
 			models = [];
 			modelJsons = [];
-			
+			modelNodesMap = [];
+			modelLinksMap = [];
+			savedJsons = [];
+
 			window.onscroll = function(event){
 				for (var worksheetId in models) {
 					models[worksheetId].onscroll(event);
@@ -115,6 +121,27 @@ var D3ModelManager = (function() {
 				layout = getModelManager(worksheetId, layoutElement, "col-sm-10", w);
 				console.log(JSON.stringify(alignJson));
 				modelJsons[worksheetId] = alignJson;
+				wsModelNodesMap = [];
+				wsModelLinksMap = [];
+				maxId = -1;
+				$.each(alignJson.anchors, function(index, node) {
+					wsModelNodesMap[node.nodeId] = node;
+					if(node.id > maxId) maxId = node.id;
+				});
+				$.each(alignJson.nodes, function(index, node) {
+					wsModelNodesMap[node.nodeId] = node;
+					if(node.id > maxId) maxId = node.id;
+				});
+				wsModelNodesMap["MAX_ID"] = maxId;
+				$.each(alignJson.links, function(index, link) {
+					wsModelLinksMap[link.id] = link;
+				});
+				$.each(alignJson.edgeLinks, function(index, link) {
+					wsModelLinksMap[link.id] = link;
+				});
+				modelNodesMap[worksheetId] = wsModelNodesMap;
+				modelLinksMap[worksheetId] = wsModelLinksMap;
+
 				layout.generateLayoutForJson(alignJson);
 			} catch(err) {
 				console.log("Got exception in D3ModelLayout:" + err.message);
@@ -159,24 +186,26 @@ var D3ModelManager = (function() {
 					sourceObj = d.source;
 					targetObj = d.target;
 				}
-				PropertyDropdownMenu.getInstance().show(
-						worksheetId,
-						alignmentId,
-						d.id,
-						d.linkUri,
-						d.sourceNodeId,
-						sourceObj.nodeType,
-						sourceObj.label,
-						sourceObj.nodeDomain,
-						d.sourceNodeId,
-						d.source.isUri,
-						d.targetNodeId,
-						targetObj.nodeType,
-						targetObj.label,
-						targetObj.nodeDomain,
-						d.targetNodeId,
-						d.target.isUri,
-						event);
+				if(d.linkStatus != "TemporaryLink") {
+					PropertyDropdownMenu.getInstance().show(
+							worksheetId,
+							alignmentId,
+							d.id,
+							d.linkUri,
+							d.sourceNodeId,
+							sourceObj.nodeType,
+							sourceObj.label,
+							sourceObj.nodeDomain,
+							d.sourceNodeId,
+							d.source.isUri,
+							d.targetNodeId,
+							targetObj.nodeType,
+							targetObj.label,
+							targetObj.nodeDomain,
+							d.targetNodeId,
+							d.target.isUri,
+							event);
+				}
 				PropertySuggestDropdown.getInstance().show(
 						worksheetId,
 						alignmentId,
@@ -197,11 +226,14 @@ var D3ModelManager = (function() {
 						event);
 			});
 			
-			layout.setAnchorClickListener(function(d, event) {
-				console.log("This function is called when the link is clicked");
+			layout.setAnchorMouseListener(function(d, event) {
+				console.log("This function is called when the anchor has mouse over");
 				console.log(d.nodeType);
 				console.log(d.nodeId);
 				console.log(d.id);
+				
+				AnchorDropdownMenu.getInstance().show(worksheetId, d.nodeId, d.label, d.nodeDomain, d.nodeDomain, "", 
+						alignmentId, d.nodeType, d.isUri, event);
 			});
 		};
 		
@@ -230,24 +262,125 @@ var D3ModelManager = (function() {
 			}
 		}
 		
+		function getNodes(worksheetId) {
+			var result = [];
+			$.each(modelJsons[worksheetId].nodes, function(index, node) {
+				result.push({
+					"id": node.nodeId,
+					"uri": node.nodeDomain,
+					"label": node.label
+				})
+			});
+			return result;
+		}
+
+		function getLinks(worksheetId) {
+			worksheetNodes = modelNodesMap[worksheetId];
+			var result = [];
+			$.each(modelJsons[worksheetId].links, function(index, link) {
+				var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
+				var targetNodeOrg = worksheetNodes[link.targetNodeId]
+				result.push({
+					"id": link.id,
+					"uri": link.linkUri,
+					"source": link.sourceNodeId,
+					"target": link.targetNodeId,
+					"sourceNode": {"id":sourceNodeOrg.nodeId, "uri":sourceNodeOrg.nodeDomain, "label":sourceNodeOrg.label},
+					"targetNode": {"id":targetNodeOrg.nodeId, "uri":targetNodeOrg.nodeDomain, "label":targetNodeOrg.label},
+					"label":link.label,
+					"type":link.linkType
+				})
+			});
+			$.each(modelJsons[worksheetId].edgeLinks, function(index, link) {
+				var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
+				var targetNodeOrg = worksheetNodes[link.targetNodeId]
+				result.push({
+					"id": link.id,
+					"uri": link.linkUri,
+					"source": link.sourceNodeId,
+					"target": link.targetNodeId,
+					"sourceNode": {"id":sourceNodeOrg.nodeId, "uri":sourceNodeOrg.nodeDomain, "label":sourceNodeOrg.label},
+					"targetNode": {"id":targetNodeOrg.nodeId, "uri":targetNodeOrg.nodeDomain, "label":targetNodeOrg.label},
+					"label":link.label,
+					"type":link.linkType
+				})
+			});
+			return result;
+		}
+
 		function addToModel(worksheetId, nodes, links, edgeLinks) {
 			worksheetJson = modelJsons[worksheetId];
-			for(node in nodes)
-				worksheetJson.nodes.append(node);
-			for(link in links)
-				worksheetJson.links.append(link);
-			for(eLink in edgeLinks)
-				worksheetJson.edgeLinks.append(eLink);
-			displayModel(worksheetJson);
+			worksheetNodes = modelNodesMap[worksheetId];
+			worksheetLinks = modelLinksMap[worksheetId];
+			wsMaxId = worksheetNodes["MAX_ID"];
+
+			$.each(nodes, function(index, node) {
+				var wsNode = worksheetNodes[node.id];
+				if(wsNode) {
+					//node found, do nothing
+				} else {
+					wsNode = {
+						"id": wsMaxId+1,
+						"isForcedByUser": false,
+						"isTemporary": true,
+						"nodeId": node.id,
+						"nodeDomain": node.uri,
+						"isUri": false,
+						"label": node.label,
+						"nodeType": "InternalNode"
+					}
+					worksheetNodes[node.id] = wsNode;
+					worksheetJson.nodes.push(wsNode);
+					wsMaxId += 1;
+				}
+			});
+
+			$.each(links, function(index, link) {
+				var wsLink = worksheetLinks[link.id];
+				if(wsLink) {
+					//Ignore, link is already there
+				} else {
+					wsLink = {
+						"id": link.id,
+						"linkUri": link.uri,
+						"source": worksheetNodes[link.source].id,
+					    "sourceNodeId": link.source,
+					    "target": worksheetNodes[link.target].id,
+					    "linkType": link.type,
+					    "linkStatus": "TemporaryLink",
+					    "label": link.label,
+					    "targetNodeId": link.target
+
+					}
+					worksheetJson.links.push(wsLink);
+					worksheetLinks[link.id] = wsLink;
+				}
+			});
+
+			displayModel({"worksheetId": worksheetId, "alignObject": worksheetJson});
 		}
 		
+		function saveModel(worksheetId) {
+			worksheetJson = modelJsons[worksheetId];
+			savedJsons[worksheetId] = $.extend(true, {}, worksheetJson);
+		}
+
+		function restoreSavedModel(worksheetId) {
+			worksheetJson = savedJsons[worksheetId];
+			displayModel({"worksheetId": worksheetId, "alignObject": worksheetJson});
+		}
+
 		return { //Return back the public methods
 			init: init,
 			getModelManager: getModelManager,
 			displayModel: displayModel,
 			refreshModel: refreshModel,
 			printModel: printModel,
-			addToModel: addToModel
+			addToModel: addToModel,
+			getNodes: getNodes,
+			getLinks: getLinks,
+			saveModel: saveModel,
+			restoreSavedModel: restoreSavedModel
 		};
 	};
 
