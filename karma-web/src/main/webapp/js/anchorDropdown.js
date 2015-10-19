@@ -81,9 +81,17 @@ var AnchorDropdownMenu = (function() {
 			}, 10);
 		}
 
-		function restoreD3Model() {
-			D3ModelManager.getInstance().restoreSavedModel(worksheetId);
-			$(document).off('click', restoreD3Model);
+		function restoreD3Model(event) {
+			// console.log("CLICK ON:" + event.target);
+			// console.log("CLICK ON:" + $(event.target).attr("id"));
+
+			if($(event.target).attr("id") == "div#svgDiv_" + worksheetId ||
+				$(event.target.farthestViewportElement).attr("id") == "div#svgDiv_" + worksheetId) {
+				return;
+			} else {
+				D3ModelManager.getInstance().restoreSavedModel(worksheetId);
+				$(document).off('click', restoreD3Model);
+			}
 		}
 
 		function generateJS() {

@@ -194,12 +194,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			if (!d.outside.isOutside || d.noLayer){
 	  			d3.select(this).classed("fixed", d.fixed = true);
 			}
+			d3.event.sourceEvent.stopPropagation();
 	  	})
 	    .on("dragend", function(d) {
 	  		if (!d.outside.isOutside || d.noLayer){
 	  			d.position.x = d.x;
 	  			d.position.y = d.y;
 	  		}
+	  		d3.event.sourceEvent.stopPropagation();
 		});
 	//draw nodes and links
 
@@ -263,10 +265,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("opacity", 0)
 			.remove();
 
-		var test = labels.append("circle")
-			.attr("r", 0)
-			//.attr("fill", "black");
-		
 		labelFrame = labels
 			.append("g")
 			.attr("class", function(d){
@@ -332,6 +330,17 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return -(d.width / 2);
 			})
 			.attr("y", -3);
+
+		test2 = labels.append("circle")
+			.filter(function(d, i){
+				//console.log(JSON.stringify(d));
+				return d.type == "linkLabel" && d.node.original.linkStatus == "TemporaryLink";
+			})
+			.attr("fill", "black")
+			.classed("node", true)
+			.attr("r", 5)
+			.attr("opacity", 0.7)
+			
 
 		labelBoard = labelFrame
 			.filter(function(d, i){
@@ -413,6 +422,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.on("click", function(d){
 				console.log(d.node.labelWidth);
+				d3.event.stopPropagation();
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
 					if(linkClickListener != null)
 						linkClickListener(d.node.original, d3.event);
@@ -540,6 +550,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.call(drag)
 			.on("click", function(d){
+				d3.event.stopPropagation();
 				if(anchorClickListener != null && d.original.nodeType == "ColumnNode")
 					anchorClickListener(d.original, d3.event);
 				var offset = Math.max(xOffset - leftPanelWidth,0);
