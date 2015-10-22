@@ -611,6 +611,74 @@ function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
 	return result;
 }
 
+function changeLinks(worksheetId, alignmentId, oldEdges, newEdges) {
+	var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
+	// Prepare the input for command
+	var newInfo = info['newInfo'];
+	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+
+	// Put the old edge information
+	var initialEdges = [];
+	$.each(oldEdges, function(index, edge) {
+		var oldEdgeObj = {};
+		oldEdgeObj["edgeSourceId"] = edge.source.id;
+		oldEdgeObj["edgeTargetId"] = edge.target.id;
+		oldEdgeObj["edgeId"] = edge.uri;
+		initialEdges.push(oldEdgeObj);
+	});
+	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+	info["initialEdges"] = initialEdges;
+
+	// Put the new edge information
+	var newEdgesArr = [];
+	$.each(newEdges, function(index, edge) {
+		var newEdgeObj = {};
+		newEdgeObj["edgeSourceId"] = edge.source.id;
+		newEdgeObj["edgeSourceUri"] = edge.source.uri;
+		newEdgeObj["edgeTargetId"] = edge.target.id;
+		newEdgeObj["edgeTargetUri"] = edge.target.uri;
+		newEdgeObj["edgeId"] = edge.uri;
+		newEdgesArr.push(newEdgeObj);
+	});
+	newInfo.push(getParamObject("newEdges", newEdgesArr, "other"));
+	info["newEdges"] = newEdgesArr;
+
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(worksheetId);
+	return sendRequest(info, worksheetId);
+}
+
+function setSemanticType(worksheetId, columnId, type) {
+	var info = generateInfoObject(worksheetId, columnId, "");
+	var newInfo = info['newInfo']; 
+	if(type.label == "uri") {
+		info["command"] = "SetMetaPropertyCommand";
+		info["metaPropertyName"] = "isUriOfClass";
+		info["metaPropertyUri"] = type.source.uri
+		info["metaPropertyId"] = type.source.id;
+		newInfo.push(getParamObject("metaPropertyName", info["metaPropertyName"], "other"));
+		newInfo.push(getParamObject("metaPropertyUri", info["metaPropertyUri"], "other"));
+		newInfo.push(getParamObject("metaPropertyId", info["metaPropertyId"], "other"));
+	} else {
+		info["command"] = "SetSemanticTypeCommand";
+		var semTypesArray = new Array();
+		var newType = new Object();
+		newType["FullType"] = type.uri;
+		newType["DomainUri"] = type.source.uri;
+		newType["DomainId"] = type.source.id;
+		newType["DomainLabel"] = type.source.label;
+		semTypesArray.push(newType);
+		info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
+		newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
+	}
+	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
+	newInfo.push(getParamObject("rdfLiteralType", '', "other"));
+
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var returned = sendRequest(info, worksheetId);
+}
+
 function changeKarmaHome(homeDir) {
 	var info = generateInfoObject("", "", "SetKarmaHomeCommand");
 	info["directory"] = homeDir;

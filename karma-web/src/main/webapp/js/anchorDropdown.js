@@ -6,7 +6,7 @@ var AnchorDropdownMenu = (function() {
 	function PrivateConstructor() {
 		var menuId = "anchorDropdownMenu";
 		var worksheetId, columnId;
-		var columnUri, columnLabel, columnDomain, columnCategory, alignmentId;
+		var columnUri, columnLabel, columnDomain, columnCategory, columnType, alignmentId;
 
 		var options = [
 			["Suggest", suggestSemanticTypes]
@@ -37,7 +37,7 @@ var AnchorDropdownMenu = (function() {
 				});
 				var wsLinks = D3ModelManager.getInstance().getLinks(worksheetId);
 				$.each(wsLinks, function(index, link) {
-					var linkTypeId = link.sourceNode.uri;
+					var linkTypeId = link.source.uri;
 					seenLinks.push(linkTypeId);
 				});
 
@@ -73,8 +73,65 @@ var AnchorDropdownMenu = (function() {
 					}
 				});
 			}
+
+			//Add the blank node and link
+			nodes.push({"id":"BlankNode1", "uri":"BlankNode", "label":" "});
+				var linkId = "BlankNode1--rdfs:label--" + columnId;
+				links.push({"id":linkId, "source":"BlankNode1", "target":columnId, 
+									"uri":"http://www.w3.org/2000/01/rdf-schema#label", 
+									"label":"label", "type":"DataPropertyLink"});
+
+			//Register the link approve listener	
+			D3ModelManager.getInstance().setLinkApproveListener(worksheetId, function(link, event) {
+				console.log("This function is called when a link is approved");
+				if(link.target.type == "ColumnNode") {
+					//Set the semantic type
+					var type = {
+						"uri": link.uri,
+						"label": link.label,
+						"source": link.source
+					}
+					setSemanticType(worksheetId, link.target.id, type);
+				} else {
+					var newEdges = [];
+					var edge = {
+						"uri": link.uri,
+						"label": link.label,
+						"source": link.source,
+						"target": link.target
+					}
+					newEdges.push(edge);
+					changeLinks(worksheetId, alignmentId, [], newEdges);
+				}
+			});
+
+			//Register the blank node listener
+			D3ModelManager.getInstance().setNodeDragDropListener(worksheetId, function(source, target, event) {
+				if(source.uri == "BlankNode") {
+					if(columnType == "ColumnNode") {
+						//Set the semantic type
+						var type = {
+							"uri": "http://www.w3.org/2000/01/rdf-schema#label",
+							"label": "label",
+							"source": target
+						}
+						setSemanticType(worksheetId, columnId, type);
+					} else {
+						var newEdges = [];
+						var edge = {
+							"uri": "http://www.w3.org/2000/01/rdf-schema#label",
+							"label": "label",
+							"source": target,
+							"target": {"id":columnId, "uri":columnUri, "label":columnLabel, "type":columnType}
+						}
+						newEdges.push(edge);
+						changeLinks(worksheetId, alignmentId, [], newEdges);
+					}
+				}
+			});
+
 			D3ModelManager.getInstance().saveModel(worksheetId);
-			D3ModelManager.getInstance().addToModel(worksheetId, nodes, links, []);
+			D3ModelManager.getInstance().addToModel(worksheetId, nodes, links, [], true);
 			$(document).off('click', restoreD3Model);
 			window.setTimeout(function() {
 				$(document).on('click', restoreD3Model);
@@ -128,7 +185,7 @@ var AnchorDropdownMenu = (function() {
 			columnDomain = p_columnDomain;
 			columnCategory = p_columnCategory;
 			alignmentId = p_alignmentId;
-			
+			columnType = p_nodeType;
 			
 			//console.log("Click for opening Menu");
 			$("#" + menuId).css({

@@ -16,6 +16,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var nodeClickListener = null;
 	var anchorClickListener = null;
 	var anchorMouseListener = null;
+	var linkApproveClickListener = null;
+	var nodeDragDropListener = null;
 
 	var test = [];
 	//var tableData = [];                            //store table data
@@ -194,14 +196,27 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			if (!d.outside.isOutside || d.noLayer){
 	  			d3.select(this).classed("fixed", d.fixed = true);
 			}
-			d3.event.sourceEvent.stopPropagation();
 	  	})
 	    .on("dragend", function(d) {
+	    	if(d.isTemporary) {
+	    		originalNode = d.original;
+	    		d3.select(event.target).call(function(d) {
+	    			if(d.length > 0) {
+	    				if(d[0].length > 0 && d[0][0].__data__) {
+	    					data = d[0][0].__data__;
+	    					if(data.node) {
+	    						if(nodeDragDropListener != null) {
+	    							nodeDragDropListener(originalNode, data.node.original, event);
+	    						}
+	    					}
+	    				} 
+	    			}
+	    		});
+	    	}
 	  		if (!d.outside.isOutside || d.noLayer){
 	  			d.position.x = d.x;
 	  			d.position.y = d.y;
 	  		}
-	  		d3.event.sourceEvent.stopPropagation();
 		});
 	//draw nodes and links
 
@@ -264,6 +279,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.duration(transitionDisapearTime)
 			.attr("opacity", 0)
 			.remove();
+
+		
+		var test = labels.append("circle")
+			.attr("r", 0)
 
 		labelFrame = labels
 			.append("g")
@@ -331,17 +350,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.attr("y", -3);
 
-		test2 = labels.append("circle")
-			.filter(function(d, i){
-				//console.log(JSON.stringify(d));
-				return d.type == "linkLabel" && d.node.original.linkStatus == "TemporaryLink";
-			})
-			.attr("fill", "black")
-			.classed("node", true)
-			.attr("r", 5)
-			.attr("opacity", 0.7)
-			
-
 		labelBoard = labelFrame
 			.filter(function(d, i){
 				return i % 2 == 1;
@@ -388,6 +396,38 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			});
 			
 		labelBoard.moveToBack();
+
+		labelApproveBoard = labels
+			.filter(function(d, i){
+				//console.log(JSON.stringify(d));
+				return d.type == "linkLabel" && d.node.original.linkStatus == "TemporaryLink";
+			})
+			.append("rect")
+			.attr("fill", "transparent")
+			.classed("clickBoard", true)
+			.attr("r", 5)
+			.attr("opacity", 1)
+			.attr("stroke-width", 2)
+			.attr("stroke", "red")
+			.attr("width", function(d){
+				return 12;
+			})
+			.attr("height", function(d){
+				return 12;
+			})
+			.attr("x", function(d){
+				var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
+				return w/2;
+			})
+			.attr("y", function(d){
+				var h = Math.ceil(this.parentNode.childNodes[1].getBBox().height);
+				return -h;
+			})
+			.on("click", function(d){
+				if(linkApproveClickListener != null)
+						linkApproveClickListener(d.node.original, d3.event);
+			});
+
 		labelClickBoard = labels
 			.filter(function(d, i){
 				return (i % 2 == 1) && d.node.type != "anchor";
@@ -421,8 +461,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return -h;
 			})
 			.on("click", function(d){
-				console.log(d.node.labelWidth);
-				d3.event.stopPropagation();
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
 					if(linkClickListener != null)
 						linkClickListener(d.node.original, d3.event);
@@ -550,7 +588,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.call(drag)
 			.on("click", function(d){
-				d3.event.stopPropagation();
 				if(anchorClickListener != null && d.original.nodeType == "ColumnNode")
 					anchorClickListener(d.original, d3.event);
 				var offset = Math.max(xOffset - leftPanelWidth,0);
@@ -596,14 +633,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					.attr("opacity", 1)
 					.attr("r", nodeRadius * 1.5);
 
-				// d3.select("#nodeLabel" + d.id)
-				// 	.attr("opacity", 1);			
-				// d.showLabel = true;
-				// if (d.parent){
-				// 	d3.select("#nodeLabel" + d.parent)
-				// 		.attr("opacity", 1);
-				// 	nodesData[d.parent].showLabel = true;
-				// }
+				d3.select("#nodeLabel" + d.id)
+					.attr("opacity", 1);			
+				d.showLabel = true;
+				if (d.parent){
+					d3.select("#nodeLabel" + d.parent)
+						.attr("opacity", 1);
+					nodesData[d.parent].showLabel = true;
+				}
 				if (nodesChildren[d.id] == undefined){
 					return;
 				}
@@ -1772,6 +1809,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		anchorMouseListener = listener;
 	}
 	
+	this.setLinkApproveClickListener = function(listener) {
+		linkApproveClickListener = listener;
+	}
+
+	this.setNodeDragDropListener = function(listener) {
+		nodeDragDropListener = listener;
+	}
+
 	this.onscroll = function(event){
 		//console.log(window.pageXOffset);
 		if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){

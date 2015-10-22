@@ -28,68 +28,32 @@ var PropertySuggestDropdown = (function() {
 		}
 
 		function changeLink(label, uri) {
-			var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
-			// Prepare the input for command
-			var newInfo = info['newInfo'];
-			newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-
-			// Put the old edge information
-			var initialEdges = [];
+			oldEdges = [];
 			var oldEdgeObj = {};
-			oldEdgeObj["edgeSourceId"] = sourceId;
-			oldEdgeObj["edgeTargetId"] = targetId;
-			oldEdgeObj["edgeId"] = propertyUri;
-			initialEdges.push(oldEdgeObj);
-			newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
-			info["initialEdges"] = initialEdges;
+			oldEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
+			oldEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
+			oldEdgeObj["uri"] = propertyUri;
+			oldEdges.push(oldEdgeObj);
 
 			// Put the new edge information
 			var newEdges = [];
 			var newEdgeObj = {};
-			newEdgeObj["edgeSourceId"] = sourceId;
-			newEdgeObj["edgeSourceUri"] = sourceDomain;
-			newEdgeObj["edgeTargetId"] = targetId;
-			newEdgeObj["edgeTargetUri"] = targetDomain;
-			newEdgeObj["edgeId"] = uri;
+			newEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
+			newEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
+			newEdgeObj["uri"] = uri
 			newEdges.push(newEdgeObj);
-			newInfo.push(getParamObject("newEdges", newEdges, "other"));
-			info["newEdges"] = newEdges;
 
-			info["newInfo"] = JSON.stringify(newInfo);
-			showLoading(worksheetId);
-			var returned = sendRequest(info, worksheetId);
+			changeLinks(worksheetId, alignmentId, oldEdges, newEdges);
 			hide();
 		}
 
 		function changeSemanticType(label, uri) {
-			var info = generateInfoObject(worksheetId, targetId, "");
-			var newInfo = info['newInfo']; 
-			if(label == "uri") {
-				info["command"] = "SetMetaPropertyCommand";
-				info["metaPropertyName"] = "isUriOfClass";
-				info["metaPropertyUri"] = sourceDomain;
-				info["metaPropertyId"] = sourceId;
-				newInfo.push(getParamObject("metaPropertyName", info["metaPropertyName"], "other"));
-				newInfo.push(getParamObject("metaPropertyUri", info["metaPropertyUri"], "other"));
-				newInfo.push(getParamObject("metaPropertyId", info["metaPropertyId"], "other"));
-			} else {
-				info["command"] = "SetSemanticTypeCommand";
-				var semTypesArray = new Array();
-				var newType = new Object();
-				newType["FullType"] = uri;
-				newType["DomainUri"] = sourceDomain;
-				newType["DomainId"] = sourceId;
-				newType["DomainLabel"] = sourceLabel;
-				semTypesArray.push(newType);
-				info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
-				newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
+			var type = {
+				"label": label,
+				"uri": uri,
+				"source": {"id": sourceId, "uri":sourceDomain, "label": sourceLabel}
 			}
-			newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
-			newInfo.push(getParamObject("rdfLiteralType", '', "other"));
-
-			info["newInfo"] = JSON.stringify(newInfo);
-			showLoading(info["worksheetId"]);
-			var returned = sendRequest(info, worksheetId);
+			setSemanticType(worksheetId, targetId, type);
 			hide();
 		}
 
