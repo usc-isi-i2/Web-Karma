@@ -13,3 +13,5 @@ sudo ln -s /usr/local/apache-maven-3.3.3/bin/* /usr/local/bin/
 
 cd /home/vagrant/
 git clone https://github.com/usc-isi-i2/Web-Karma.git
+
+export KARMA_UPDATE=1

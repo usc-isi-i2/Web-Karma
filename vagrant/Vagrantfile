@@ -18,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, :path => "basebox-create.sh", :privileged => false
 
   config.vm.box_download_insecure = "true"
-  config.vm.provision :shell, :run => "always", :path => "deploy.sh", :privileged => false
+  config.vm.provision :shell, :run => "always", :path => "deploy.sh", :privileged => false, :args => ENV['KARMA_UPDATE']
 
   config.vm.hostname = "karma-user"
   config.vm.synced_folder "./karma", "/home/vagrant/karma"
