@@ -68,6 +68,8 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 				}
 				
 				jKarmaConfig = (JSONArray) JSONSerializer.toJSON(sbConfig.toString());
+				
+				br.close();
 			}
 		}
 	

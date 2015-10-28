@@ -26,8 +26,10 @@
 package edu.isi.karma.imp.json;
 
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.json.JSONArray;
@@ -68,6 +70,7 @@ public class JsonImport extends Import {
 		}
 		
 	}
+	
 	public JsonImport(Object json, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) {
 		super(worksheetName, workspace, encoding);
@@ -76,14 +79,21 @@ public class JsonImport extends Import {
 		this.maxNumLines = maxNumLines;
 	}
 
-	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,
-			String encoding, int maxNumLines, JSONArray tree) {
+	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,String encoding, int maxNumLines, JSONArray tree,boolean isJSONLines) {
+		
 		super(worksheetName, workspace, encoding);
 		FileObject fo = new FileObject(jsonFile, encoding);
-		this.json = fo;
+
+		if(isJSONLines){
+			this.json = convertJLToJSONArray(fo);
+		}
+		else{
+			this.json = fo;
+		}
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 		this.columnsJson = tree;
+		
 	}
 
 	public JsonImport(String jsonString, String worksheetName,
@@ -113,6 +123,27 @@ public class JsonImport extends Import {
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 		this.columnsJson = columnsJson;
+	}
+	
+	public JSONArray convertJLToJSONArray(FileObject file) {
+		
+		JSONArray jArray = new JSONArray();
+		try{
+		
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file.file),file.encoding));
+			String line=null;
+			
+			while((line = br.readLine()) != null){
+				jArray.put(new JSONObject(line.trim()));
+				//jArray.put((JSONObject)JSONSerializer.toJSON(line.trim()));
+			}
+			
+			br.close();
+		}
+		catch(IOException ioe){
+			logger.error("Error while reading json lines file:" + ioe.getMessage());
+		}
+		return jArray;
 	}
 
 	@Override
