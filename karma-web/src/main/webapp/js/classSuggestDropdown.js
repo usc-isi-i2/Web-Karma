@@ -65,6 +65,31 @@ var ClassSuggestDropdown = (function() {
 			if(label == 'More...') {
 				populateAll();
 				e.stopPropagation();
+			} else if(columnUri == "BlankNode" || columnCategory == "temporary") {
+				var links = D3ModelManager.getInstance().getCurrentLinksToNode(worksheetId, columnId);
+				$.each(links, function(index, link) {
+					if(link.target.type == "ColumnNode") {
+						//Set Semantic Type
+						var type = {
+							"uri": link.uri,
+							"label": link.label,
+							"source": {"uri": target.data('uri'), "id": target.data('id'), "label": target.text()}
+						}
+						setSemanticType(worksheetId, link.target.id, type);
+					} else {
+						//Change Links Command
+						var newEdges = [];
+						var edge = {
+							"uri": link.uri,
+							"label": link.label,
+							"target": link.target,
+							"source": {"uri": target.data('uri'), "id": target.data('id'), "label": target.text()}
+						}
+						newEdges.push(edge);
+						changeLinks(worksheetId, alignmentId, [], newEdges);
+					}
+				});
+
 			} else {
 				uri = target.data('uri');
 				id = target.data('id');

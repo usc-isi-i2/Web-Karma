@@ -24,10 +24,14 @@ var D3ModelManager = (function() {
 
 	function PrivateConstructor() {
 		var models;
+
 		var modelJsons;
 		var modelNodesMap;
 		var modelLinksMap;
 		var savedJsons;
+		var savedNodesMap;
+		var savedLinksMap;
+
 		var linkApproveListeners;
 		var nodeDragDropListeners;
 
@@ -37,6 +41,9 @@ var D3ModelManager = (function() {
 			modelNodesMap = [];
 			modelLinksMap = [];
 			savedJsons = [];
+			savedNodesMap = [];
+			savedLinksMap = [];
+
 			linkApproveListeners = [];
 			nodeDragDropListeners = [];
 
@@ -170,6 +177,8 @@ var D3ModelManager = (function() {
 					var nodeCategory = "";
 					if (d.isForcedByUser)
 						nodeCategory = "forcedAdded";
+					else if(d.isTemporary)
+						nodeCategory = "temporary";
 					var id;
 					if(d.nodeId)
 						id = d.nodeId;
@@ -292,16 +301,28 @@ var D3ModelManager = (function() {
 		
 		function getNodes(worksheetId) {
 			var result = [];
-			$.each(modelJsons[worksheetId].nodes, function(index, node) {
+			if(savedJsons[worksheetId]) {
+				worksheetJson = savedJsons[worksheetId];
+			} else {
+				worksheetJson = modelJsons[worksheetId];
+			}
+			$.each(worksheetJson.nodes, function(index, node) {
 				result.push(getNodeRep(node));
 			});
 			return result;
 		}
 
 		function getLinks(worksheetId) {
-			worksheetNodes = modelNodesMap[worksheetId];
+			if(savedJsons[worksheetId]) {
+				worksheetJson = savedJsons[worksheetId];
+				worksheetNodes = savedNodesMap[worksheetId];
+			} else {
+				worksheetJson = modelJsons[worksheetId];
+				worksheetNodes = modelNodesMap[worksheetId];
+			}
+
 			var result = [];
-			$.each(modelJsons[worksheetId].links, function(index, link) {
+			$.each(worksheetJson.links, function(index, link) {
 				var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
 				var targetNodeOrg = worksheetNodes[link.targetNodeId]
 				result.push({
@@ -313,7 +334,7 @@ var D3ModelManager = (function() {
 					"target": getNodeRep(targetNodeOrg)
 				});
 			});
-			$.each(modelJsons[worksheetId].edgeLinks, function(index, link) {
+			$.each(worksheetJson.edgeLinks, function(index, link) {
 				var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
 				var targetNodeOrg = worksheetNodes[link.targetNodeId]
 				result.push({
@@ -328,12 +349,77 @@ var D3ModelManager = (function() {
 			return result;
 		}
 
-		function addToModel(worksheetId, nodes, links, edgeLinks) {
+
+		function getCurrentLinksToNode(worksheetId, nodeId) {
+			
 			worksheetJson = modelJsons[worksheetId];
 			worksheetNodes = modelNodesMap[worksheetId];
-			worksheetLinks = modelLinksMap[worksheetId];
+
+			var result = [];
+			$.each(worksheetJson.links, function(index, link) {
+				if(link.sourceNodeId == nodeId || link.targetNodeId == nodeId) {
+					var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
+					var targetNodeOrg = worksheetNodes[link.targetNodeId]
+					result.push({
+						"id": link.id,
+						"uri": link.linkUri,
+						"label":link.label,
+						"type":link.linkType,
+						"source": getNodeRep(sourceNodeOrg),
+						"target": getNodeRep(targetNodeOrg)
+					});
+				}
+			});
+			$.each(worksheetJson.edgeLinks, function(index, link) {
+				if(link.sourceNodeId == nodeId || link.targetNodeId == nodeId) {
+					var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
+					var targetNodeOrg = worksheetNodes[link.targetNodeId]
+					result.push({
+						"id": link.id,
+						"uri": link.linkUri,
+						"label":link.label,
+						"type":link.linkType,
+						"source": getNodeRep(sourceNodeOrg),
+						"target": getNodeRep(targetNodeOrg)
+					});
+				}
+			});
+			return result;
+		}
+
+		function changeTemporaryLink(worksheetId, linkId, newPropertyUri, newPropertyLabel) {
+			worksheetJson = modelJsons[worksheetId];
+
+			$.each(worksheetJson.links, function(index, link) {
+				if(link.id == linkId) {
+					link.linkUri = newPropertyUri;
+					link.label = newPropertyLabel;
+					link.id = link.sourceNodeId + "--" + newPropertyUri + "--" +
+							link.targetNodeId
+				}
+			});
+
+			displayModel({"worksheetId": worksheetId, "alignObject": worksheetJson});
+		}
+
+		function addToModel(worksheetId, nodes, links, edgeLinks) {
+			if(savedJsons[worksheetId]) {
+				worksheetJson = $.extend(true, {}, savedJsons[worksheetId]);
+				worksheetNodes = $.extend(true, {}, savedNodesMap[worksheetId]);
+				worksheetLinks = $.extend(true, {}, savedLinksMap[worksheetId]);
+			} else {
+				worksheetJson = modelJsons[worksheetId];
+				worksheetNodes = modelNodesMap[worksheetId];
+				worksheetLinks = modelLinksMap[worksheetId];
+			}
+			
 			wsMaxId = worksheetNodes["MAX_ID"];
 			
+			//1. Save the worksheetJson
+			savedJsons[worksheetId] = $.extend(true, {}, worksheetJson);
+			savedLinksMap[worksheetId] = $.extend(true, {}, worksheetLinks);
+			savedNodesMap[worksheetId] = $.extend(true, {}, worksheetNodes);
+
 			$.each(nodes, function(index, node) {
 				var wsNode = worksheetNodes[node.id];
 				if(wsNode) {
@@ -380,14 +466,10 @@ var D3ModelManager = (function() {
 			displayModel({"worksheetId": worksheetId, "alignObject": worksheetJson});
 		}
 		
-		function saveModel(worksheetId) {
-			worksheetJson = modelJsons[worksheetId];
-			savedJsons[worksheetId] = $.extend(true, {}, worksheetJson);
-		}
-
 		function restoreSavedModel(worksheetId) {
 			worksheetJson = savedJsons[worksheetId];
 			displayModel({"worksheetId": worksheetId, "alignObject": worksheetJson});
+			delete savedJsons[worksheetId];
 		}
 
 		function setLinkApproveListener(worksheetId, listener) {
@@ -407,7 +489,8 @@ var D3ModelManager = (function() {
 			addToModel: addToModel,
 			getNodes: getNodes,
 			getLinks: getLinks,
-			saveModel: saveModel,
+			getCurrentLinksToNode: getCurrentLinksToNode,
+			changeTemporaryLink: changeTemporaryLink,
 			restoreSavedModel: restoreSavedModel,
 			setLinkApproveListener: setLinkApproveListener,
 			setNodeDragDropListener: setNodeDragDropListener

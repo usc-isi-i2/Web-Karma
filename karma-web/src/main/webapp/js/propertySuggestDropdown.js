@@ -99,6 +99,11 @@ var PropertySuggestDropdown = (function() {
 			if(label == 'More...') {
 				populateAllProperties();
 				e.stopPropagation();
+			} else if(sourceDomain == "BlankNode") {
+				uri = target.data('uri');
+				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, uri, label);
+				e.stopPropagation();
+				hide();
 			} else {
 				uri = target.data('uri');
 				if(targetNodeType == "ColumnNode") {
@@ -127,7 +132,10 @@ var PropertySuggestDropdown = (function() {
 				allTypes.push({"label": "divider", "uri": "divider"});
 
 			if(targetNodeType == "ColumnNode" && uriFound == false) {
-				allTypes.push({"label": "uri of " + sourceLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
+				uriLabel = "uri";
+				if(sourceLabel != " ")
+					uriLabel += " of " + sourceLabel;
+				allTypes.push({"label": uriLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
 				allTypes.push({"label": "divider", "uri": "divider"});
 			}
 
@@ -168,6 +176,10 @@ var PropertySuggestDropdown = (function() {
 
 		function populateMenu() {
 			semanticSuggestions = []
+			uriLabel = "uri";
+			if(sourceLabel != " ")
+				uriLabel += " of " + sourceLabel;
+
 			if(targetNodeType == "ColumnNode") {
 				var semSuggestions = getSuggestedSemanticTypes(worksheetId, targetId, sourceDomain);
 				var items = [];
@@ -181,7 +193,7 @@ var PropertySuggestDropdown = (function() {
 						}
 						if(type["DisplayLabel"] == "uri" || type["DisplayLabel"] == "km-dev:classLink") {
 							uriFound = true;
-							type["DisplayLabel"] = "uri of " + sourceLabel;
+							type["DisplayLabel"] = uriLabel;
 						}
 						items.push({"label": type["DisplayLabel"], "uri": type["FullType"], "class": "propertyDropdown_suggestion"});
 					});
@@ -192,7 +204,7 @@ var PropertySuggestDropdown = (function() {
 				if(!uriFound) {
 					if(items.length > 0)
 						items.push({"label": "divider", "uri": "divider"});
-					items.push({"label": "uri of " + sourceLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
+					items.push({"label": uriLabel		, "uri": "http://isi.edu/integration/karma/dev#classLink"});
 				}
 
 				var compatibleTypes = getAllPropertiesForClass(worksheetId, sourceDomain);

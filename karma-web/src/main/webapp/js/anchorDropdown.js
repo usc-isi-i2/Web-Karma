@@ -7,7 +7,6 @@ var AnchorDropdownMenu = (function() {
 		var menuId = "anchorDropdownMenu";
 		var worksheetId, columnId;
 		var columnUri, columnLabel, columnDomain, columnCategory, columnType, alignmentId;
-
 		var options = [
 			["Suggest", suggestSemanticTypes]
 		];
@@ -130,7 +129,7 @@ var AnchorDropdownMenu = (function() {
 				}
 			});
 
-			D3ModelManager.getInstance().saveModel(worksheetId);
+			
 			D3ModelManager.getInstance().addToModel(worksheetId, nodes, links, [], true);
 			$(document).off('click', restoreD3Model);
 			window.setTimeout(function() {
@@ -142,8 +141,8 @@ var AnchorDropdownMenu = (function() {
 			// console.log("CLICK ON:" + event.target);
 			// console.log("CLICK ON:" + $(event.target).attr("id"));
 
-			if($(event.target).attr("id") == "div#svgDiv_" + worksheetId ||
-				$(event.target.farthestViewportElement).attr("id") == "div#svgDiv_" + worksheetId) {
+			if(event && ($(event.target).attr("id") == "div#svgDiv_" + worksheetId ||
+				$(event.target.farthestViewportElement).attr("id") == "div#svgDiv_" + worksheetId)) {
 				return;
 			} else {
 				D3ModelManager.getInstance().restoreSavedModel(worksheetId);
@@ -186,12 +185,12 @@ var AnchorDropdownMenu = (function() {
 			columnCategory = p_columnCategory;
 			alignmentId = p_alignmentId;
 			columnType = p_nodeType;
-			
+
 			//console.log("Click for opening Menu");
 			$("#" + menuId).css({
 				display: "block",
 				position: "absolute",
-				left: event.pageX,
+				left: event.pageX - 30,
 				top: event.pageY
 			});
 
