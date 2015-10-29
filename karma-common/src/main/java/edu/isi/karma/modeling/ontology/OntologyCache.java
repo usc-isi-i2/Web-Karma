@@ -160,7 +160,8 @@ public class OntologyCache {
 		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId);
 
 
-		if (!modelingConfiguration.getOntologyAlignment()) {
+		if (!modelingConfiguration.getCompatibleProperties() &&
+				!modelingConfiguration.getOntologyAlignment()) {
 			float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 			logger.info("time to build the ontology cache (manual alignment): " + elapsedTimeSec);
 			return;
