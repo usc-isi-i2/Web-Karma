@@ -83,6 +83,11 @@ var AnchorDropdownMenu = (function() {
 			//Register the link approve listener	
 			D3ModelManager.getInstance().setLinkApproveListener(worksheetId, function(link, event) {
 				console.log("This function is called when a link is approved");
+				if(link.source.uri == "BlankNode") {
+					//event.stopPropogation();
+					alert("Please select the Class Node");
+					return;
+				}
 				if(link.target.type == "ColumnNode") {
 					//Set the semantic type
 					var type = {
@@ -135,6 +140,13 @@ var AnchorDropdownMenu = (function() {
 			window.setTimeout(function() {
 				$(document).on('click', restoreD3Model);
 			}, 10);
+			window.setTimeout(function() {
+				$(document).on('keydown', function(e) {
+					if (e.keyCode == 27) {
+				        restoreD3Model();
+				    }
+				});
+			}, 10)
 		}
 
 		function restoreD3Model(event) {

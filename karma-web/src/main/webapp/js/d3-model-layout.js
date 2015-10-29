@@ -410,18 +410,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("stroke-width", 2)
 			.attr("stroke", "red")
 			.attr("width", function(d){
-				return 12;
+				return 8;
 			})
 			.attr("height", function(d){
-				return 12;
+				return 8;
 			})
 			.attr("x", function(d){
 				var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
-				return w/2;
+				return -4;
 			})
 			.attr("y", function(d){
 				var h = Math.ceil(this.parentNode.childNodes[1].getBBox().height);
-				return -h;
+				return -h+15;
 			})
 			.on("click", function(d){
 				if(linkApproveClickListener != null)
