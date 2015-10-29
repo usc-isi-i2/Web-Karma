@@ -135,7 +135,6 @@ public class JsonImport extends Import {
 			
 			while((line = br.readLine()) != null){
 				jArray.put(new JSONObject(line.trim()));
-				//jArray.put((JSONObject)JSONSerializer.toJSON(line.trim()));
 			}
 			
 			br.close();
