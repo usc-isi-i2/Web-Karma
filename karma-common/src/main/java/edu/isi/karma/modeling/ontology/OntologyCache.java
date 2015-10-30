@@ -32,8 +32,11 @@ import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import edu.isi.karma.config.ModelingConfiguration;
@@ -159,13 +162,16 @@ public class OntologyCache {
 		logger.info("number of properties explicitly defined as owl:ObjectProperty:" + (properties.size() - dataProperties.size()) );
 		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId);
 
-
 		if (!modelingConfiguration.getCompatibleProperties() &&
 				!modelingConfiguration.getOntologyAlignment()) {
 			float elapsedTimeSec = (System.currentTimeMillis() - start)/1000F;
 			logger.info("time to build the ontology cache (manual alignment): " + elapsedTimeSec);
 			return;
 		}
+		
+		// specific purpose function to manage domains and ranges in schema.org ontology
+		logger.info("check for schema.org domainIncludes & rangeInclude ...");
+		this.processSchemaOrgOntology();
 			
 		// build hashmaps for indirect subclass and subproperty relationships
 		logger.info("build subclass hashmaps ...");
@@ -577,6 +583,55 @@ public class OntologyCache {
 			}
 		}
 	}
+	
+	/***
+	 * This is a function specific for schema.org ontology.
+	 * The goal is to process domainIncludes and renageInclude predicates.
+	 * The function adds the domain and range of a property to the Jena model.
+	 */
+	private void processSchemaOrgOntology() {
+		
+		StmtIterator itr = ontHandler.getOntModel().listStatements();
+		HashMap<OntProperty, Resource> domains = new HashMap<OntProperty, Resource>();
+		HashMap<OntProperty, Resource> ranges = new HashMap<OntProperty, Resource>();
+		
+		while (itr.hasNext()) {
+			Statement stmt = itr.next();
+
+		    Resource  subject   = stmt.getSubject();     // get the subject
+		    Property  predicate = stmt.getPredicate();   // get the predicate
+		    RDFNode   object    = stmt.getObject();      // get the object
+
+		    if (subject == null || predicate == null || object == null)
+		    	continue;
+		    
+			// domain
+			if (predicate.getURI().equalsIgnoreCase(Uris.SCHEMA_DOMAIN_INCLUDES)) {
+				OntProperty p = ontHandler.getOntModel().getOntProperty(subject.getURI());
+				if (p != null && object.isResource()) {
+					domains.put(p,(Resource)object);
+				}
+			}
+			
+			//range
+			if (predicate.getURI().equalsIgnoreCase(Uris.SCHEMA_RANGE_INCLUDES)) {
+				OntProperty p = ontHandler.getOntModel().getOntProperty(subject.getURI());
+				if (p != null && object.isResource()) {
+					ranges.put(p,(Resource)object);
+				}
+			}
+		}
+		
+		for (Entry<OntProperty,Resource> entry : domains.entrySet()) {
+			entry.getKey().addDomain(entry.getValue());
+		}
+
+		for (Entry<OntProperty,Resource> entry : ranges.entrySet()) {
+			entry.getKey().addRange(entry.getValue());
+		}
+		
+	}
+	
 	
 //	private boolean isTopLevelClass(String c) {
 //		
