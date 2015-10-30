@@ -1,10 +1,13 @@
-var ClassDropdownMenu = (function() {
+var ClassFunctions = (function() {
 
 	var instance = null;
 
 
 	function PrivateConstructor() {
-		var menuId = "classDropdownMenu";
+		var menuId = "classFunctionsMenu";
+		var parentId = "classDialog";
+		var hideFunction;
+
 		var worksheetId, columnId;
 		var columnUri, columnLabel, columnDomain, columnCategory, alignmentId;
 		var nodeType, isUri; //LiteralNode or InternalNode
@@ -41,8 +44,8 @@ var ClassDropdownMenu = (function() {
 				name: "Delete",
 				func: deleteNode,
 				category: "forcedAdded"
-			}, {
-				name: "divider"
+			// }, {
+			// 	name: "divider"
 			}, {
 				name: "Export CSV",
 				func: exportCSV
@@ -65,18 +68,12 @@ var ClassDropdownMenu = (function() {
 		}
 
 		function hide() {
-			$("#" + menuId).hide();
-			$(document).off('click', hide);
-			$(document).off('keydown', hideOnEsc);
-		}
-
-		function hideOnEsc(event) {
-			if (event.keyCode === 27) { // ESC
-				hide();
-			}
+			if(hideFunction)
+				hideFunction();
 		}
 
 		function manageLinks() {
+			hide();
 			console.log("showIncomingOutgoingLinks");
 			ManageIncomingOutgoingLinksDialog.getInstance().show(worksheetId,
 				columnId, alignmentId,
@@ -84,6 +81,7 @@ var ClassDropdownMenu = (function() {
 		}
 
 		function addIncomingLink() {
+			hide();
 			console.log("addIncomingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
@@ -93,11 +91,13 @@ var ClassDropdownMenu = (function() {
 		};
 
 		function searchData() {
+			hide();
 			AugmentDataDialog.getInstance(worksheetId,
 				columnDomain, columnUri, alignmentId).show();
 		}
 
 		function addOutgoingLink() {
+			hide();
 			console.log("addOutgoingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
@@ -106,6 +106,7 @@ var ClassDropdownMenu = (function() {
 		}
 
 		function addOutgoingLiteral() {
+			hide();
 			console.log("addOutgoingLiteral");
 			AddLiteralNodeDialog.getInstance().showWithProperty(worksheetId, columnId, columnDomain);
 		}
@@ -125,14 +126,17 @@ var ClassDropdownMenu = (function() {
 
 		function editNode() {
 			console.log("Edit Node");
+			hide();
 			AddLiteralNodeDialog.getInstance().showEdit(worksheetId, columnId);
 		}
 		
 		function exportCSV() {
+			hide();
 			ExportCSVModelDialog.getInstance().show(worksheetId, alignmentId, columnId, "exportCSV");
 		};
 
 		function exportJSON() {
+			hide();
 			console.log("exportJSON");
 			// var info = generateInfoObject(worksheetId, "", "ExportJSONCommand");
 			// var newInfo = info['newInfo'];
@@ -145,6 +149,7 @@ var ClassDropdownMenu = (function() {
 		}
 
 		function exportAvro() {
+			hide();
 			console.log("exportAvro");
 			var info = generateInfoObject(worksheetId, "", "ExportAvroCommand");
 			var newInfo = info['newInfo'];
@@ -155,6 +160,7 @@ var ClassDropdownMenu = (function() {
 		}
 
 		function invokeMLService() {
+			hide();
 			ExportCSVModelDialog.getInstance().show(worksheetId, alignmentId, columnId, "invokeMLService");
 		}
 
@@ -172,16 +178,16 @@ var ClassDropdownMenu = (function() {
 		}
 
 		function generateJS() {
-			var ul = $("<ul>");
-			ul.attr("role", "menu")
-				.addClass("dropdown-menu")
-				.css("display", "block")
-				.css("position", "static")
-				.css("margin-bottom", "5px");
+			var ul = $("<ul>").addClass("list-group");
 			for (var i = 0; i < options.length; i++) {
 				var option = options[i];
-				var li = $("<li>");
+				var li = $("<li>").addClass("list-group-item");
+				if(i % 2 == 0)
+					li.addClass("list-even");
+				else
+					li.addClass("list-odd");
 				if (option.name == "divider") {
+					continue;
 					li.addClass("divider");
 				} else {
 					var a = $("<a>")
@@ -198,17 +204,14 @@ var ClassDropdownMenu = (function() {
 
 			var div = $("<div>")
 				.attr("id", menuId)
-				.addClass("dropdown")
-				.addClass("clearfix")
-				.addClass("contextMenu")
 				.append(ul);
 
-			var container = $("body div.container");
+			var container = $("#classDialogFunctions");
 			container.append(div);
 		}
 
 		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, 
-				p_alignmentId, p_nodeType, p_isUri,
+				p_alignmentId, p_nodeType, p_isUri, hideFunc,
 				event) {
 			worksheetId = p_worksheetId;
 			columnLabel = p_columnLabel;
@@ -219,14 +222,7 @@ var ClassDropdownMenu = (function() {
 			alignmentId = p_alignmentId;
 			nodeType = p_nodeType;
 			isUri = p_isUri;
-			
-			//console.log("Click for opening Menu");
-			$("#" + menuId).css({
-				display: "block",
-				position: "absolute",
-				left: event.pageX + 300,
-				top: event.pageY
-			});
+			hideFunction = hideFunc;
 
 			//if(columnCategory.length > 0) {
 			$("li", $("#" + menuId)).each(function(index) {
@@ -271,13 +267,6 @@ var ClassDropdownMenu = (function() {
 				else
 					$(this).hide();
 			});
-			//}
-
-			window.setTimeout(function() {
-				$(document).on('click', hide);
-				$(document).on('keydown', hideOnEsc);
-
-			}, 100);
 		};
 
 

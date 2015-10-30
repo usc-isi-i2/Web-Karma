@@ -223,6 +223,52 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
        
+<div class="modal fade" id="classDialog" tabindex="-1">
+  <div class="modal-dialog modal-wide">
+		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title"><span id="classDialog_title"></span></h4>
+			  </div>
+			  <div class="modal-body">
+			  		<div class="main">
+			  			<div class="row">
+			  				<div class="col-sm-2" id="classDialogFunctions"></div>
+			  				<div class="col-sm-10" id="classDialogSuggestions">
+			  				<ul class="nav nav-tabs" role="tablist">
+							    <li role="presentation" class="active"><a href="#recommended" aria-controls="recommended" role="tab" data-toggle="tab">Recommended</a></li>
+							    <li role="presentation"><a href="#compatible" aria-controls="compatible" role="tab" data-toggle="tab">Compatible</a></li>
+							    <li role="presentation"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">All</a></li>
+							  </ul>
+
+							  <!-- Tab panes -->
+							  <div class="tab-content">
+							    <div role="tabpanel" class="tab-pane active" id="recommended">
+							    	<ul class="list-unstyled row"></ul>
+							    </div>
+							    <div role="tabpanel" class="tab-pane" id="compatible">
+							    	<ul class="list-unstyled row"></ul>
+							    </div>
+							    <div role="tabpanel" class="tab-pane" id="all">
+							    	<ul class="list-unstyled row"></ul>
+							    	<div class="input-group col-sm-offset-6">
+									  	<input type="text" class="form-control" aria-describedby="basic-input_classDialog-addOn" id="input_classDialog">
+  										<span class="input-group-addon glyphicon glyphicon-search" id="basic-input_classDialog-addOn" style="top:0px"></span>
+									</div>
+
+							    </div>
+							  </div>
+			  				</div>
+			  			</div>
+			  		</div>
+					<div class="error" style="display: none"></div>
+			  </div>
+			 </form>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <div class="modal fade" id="addNodeDialog" tabindex="-1">
   <div class="modal-dialog">
 		<div class="modal-content">

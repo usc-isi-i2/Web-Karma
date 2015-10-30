@@ -1,10 +1,11 @@
-var ClassSuggestDropdown = (function() {
+var ClassDialog = (function() {
 
 	var instance = null;
 
 
 	function PrivateConstructor() {
-		var menuId = "classSuggestDropdown";
+		var dialog = $("#classDialog");
+
 		var worksheetId, columnId;
 		var columnUri, columnLabel, columnDomain, columnCategory, alignmentId;
 		var nodeType, isUri; //LiteralNode or InternalNode
@@ -12,50 +13,27 @@ var ClassSuggestDropdown = (function() {
 
 		function init() {
 			allClassCache = null;
-			generateJS();
 			window.setTimeout(function() {
 				allClassCache = getAllClasses(worksheetId);
 			}, 10);
+			$('input', dialog).on('keyup', filterDropdown);
 		}
 
 		function hide() {
-			$("#" + menuId).hide();
-			$(document).off('click', hide);
+			dialog.modal('hide');
 		}
 
-		function generateJS() {
-			var ul = $("<ul>");
-			ul.attr("role", "menu")
-				.addClass("dropdown-menu")
-				.css("display", "block")
-				.css("position", "static")
-				.css("margin-bottom", "5px");
-		
-			var box = $("<div>").addClass("input-group").addClass("dropdownInput");
-			var search = $("<span>").addClass("input-group-addon").append($("<span>").addClass("glyphicon").addClass("glyphicon-search"));
-			var input = $("<input>").attr("type", "text").addClass("form-control").attr("id", "input_" + menuId).addClass("typeahead").attr("autocomplete", "off").val('');
-			box.append(search).append(input);
-
-			var div = $("<div>")
-				.attr("id", menuId)
-				.addClass("dropdown")
-				.addClass("clearfix")
-				.addClass("contextMenu")
-				.append(ul);
-
-			var li = $("<li>");
-			li.append(box);
-			ul.append(li);
-
-			var container = $("body div.container");
-			container.append(div);
-
-			$('.dropdownInput input').click(function(e){e.stopPropagation; return false;}); 
-			$('.dropdownInput input')
-			        .on('keyup', filterDropdown);
+		function hideError() {
+			$("div.error", dialog).hide();
 		}
 
-	
+		function showError(err) {
+			if (err) {
+				$("div.error", dialog).text(err);
+			}
+			$("div.error", dialog).show();
+		}
+
 		function selectFromMenu(e) {
 			target = $(e.target);
 			label = target.text();
@@ -65,6 +43,7 @@ var ClassSuggestDropdown = (function() {
 			if(label == 'More...') {
 				populateAll();
 				e.stopPropagation();
+				return;
 			} else if(columnUri == "BlankNode" || columnCategory == "temporary") {
 				var links = D3ModelManager.getInstance().getCurrentLinksToNode(worksheetId, columnId);
 				$.each(links, function(index, link) {
@@ -104,8 +83,8 @@ var ClassSuggestDropdown = (function() {
 				info["newInfo"] = JSON.stringify(newInfo);
 				showLoading(worksheetId);
 				var returned = sendRequest(info, worksheetId);
-				hide();
 			}
+			hide();
 		}
 
 		function populateAll() {
@@ -120,11 +99,11 @@ var ClassSuggestDropdown = (function() {
 				allTypes.push({"label": type["label"], "uri": type["uri"], "id": type["id"]});
 			});
 
-			renderMenu(allTypes, true);
+			renderMenu($("#all", dialog), allTypes, true);
 		}
 
 		function filterDropdown(e) {
-			query = $("#input_" + menuId).val();
+			query = $("input", dialog).val();
 			switch(e.keyCode) {
 		        case 40: // down arrow
 		        case 38: // up arrow
@@ -136,18 +115,18 @@ var ClassSuggestDropdown = (function() {
 		        case 9: // tab
 		        case 13: // enter
 		          if (!this.shown) return;
-		          this.select();
+		          // this.select();
 		          break;
 
 		        case 27: // escape
-		          this.hide();
+		          hide();
 		          break;
 		        default:
-		          	items = displayMenuItems;
+		          	items = allClassCache;
 		          	items = $.grep(items, function (item) {
 			        	return (item["label"].toLowerCase().indexOf(query.toLowerCase()) != -1);
 			      	});
-			      	renderMenu(items, false);
+			      	renderMenu($("#all", dialog), items, false);
 		      }
 		}
 
@@ -159,21 +138,16 @@ var ClassSuggestDropdown = (function() {
 				$.each(inTypes, function(index, type) {
 					items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
 				});	
-
 			}
 			
-			if(items.length > 0) {
-				items.push({"label": "divider", "uri": "divider"});
-				items.push({"label": "More...", "uri": "More..."});
-				renderMenu(items, true);
-			} else {
-				populateAll();
-			}
+			renderMenu($("#recommended", dialog), items, true);
+			renderMenu($("#compatible", dialog), items, true);
+			populateAll();
 		}
 
-		function renderMenu(menuItems, storeSet) {
-			var ul = $("ul", $("#" + menuId));
-			ul.find("li:gt(0)").remove();
+		function renderMenu(div, menuItems, storeSet) {
+			var ul = $("ul", div);
+			ul.empty();
 			ul.scrollTop(1);
 
 			if(storeSet)
@@ -183,7 +157,7 @@ var ClassSuggestDropdown = (function() {
 				var label = item["label"];
 				var uri = item["uri"];
 
-				var li = $("<li>");
+				var li = $("<li>").addClass("col-xs-4")
 				if(label == "divider") {
 					li.addClass("divider");
 					
@@ -219,24 +193,26 @@ var ClassSuggestDropdown = (function() {
 			nodeType = p_nodeType;
 			isUri = p_isUri;
 
-			$("#input_" + menuId).val('');
+			$("input", dialog).val('');
 			populateMenu();
 
-			window.setTimeout(function() {
-				var ul = $("ul", $("#" + menuId));
-				ul.scrollTop(1);
-			}, 10);
-			//console.log("Click for opening Menu");
-			$("#" + menuId).css({
-				display: "block",
-				position: "absolute",
-				left: event.pageX,
-				top: event.pageY
-			});
+			$("#classDialog_title", dialog).html("Change Class: " + columnLabel);
+			if(columnCategory != "temporary") {
+				$("#classDialogFunctions", dialog).show();
+				ClassFunctions.getInstance().show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, 
+													p_alignmentId, p_nodeType, p_isUri, hide, 
+													event);
+				$("#classDialogSuggestions").removeClass("col-sm-12").addClass("col-sm-10");
+			} else {
+				$("#classDialogFunctions", dialog).hide();
+				$("#classDialogSuggestions").removeClass("col-sm-10").addClass("col-sm-12");
+			}
 
-			window.setTimeout(function(e) {
-				$(document).on('click', hide);
-			}, 10);
+			dialog.modal({
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
+			});
 		};
 
 

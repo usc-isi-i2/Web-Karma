@@ -136,10 +136,10 @@ var AnchorDropdownMenu = (function() {
 
 			
 			D3ModelManager.getInstance().addToModel(worksheetId, nodes, links, [], true);
-			$(document).off('click', restoreD3Model);
-			window.setTimeout(function() {
-				$(document).on('click', restoreD3Model);
-			}, 10);
+			// $(document).off('click', restoreD3Model);
+			// window.setTimeout(function() {
+			// 	$(document).on('click', restoreD3Model);
+			// }, 10);
 			window.setTimeout(function() {
 				$(document).on('keydown', function(e) {
 					if (e.keyCode == 27) {

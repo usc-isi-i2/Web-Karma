@@ -80,6 +80,19 @@ var D3ModelManager = (function() {
 
 		function displayModel(json) {
 			var worksheetId = json["worksheetId"];
+			displayModelInternal(json);
+			
+			worksheetJson = modelJsons[worksheetId];
+			worksheetNodes = modelNodesMap[worksheetId];
+			worksheetLinks = modelLinksMap[worksheetId];
+
+			savedJsons[worksheetId] = $.extend(true, {}, worksheetJson);
+			savedLinksMap[worksheetId] = $.extend(true, {}, worksheetLinks);
+			savedNodesMap[worksheetId] = $.extend(true, {}, worksheetNodes);
+		}
+
+		function displayModelInternal(json) {
+			var worksheetId = json["worksheetId"];
 			var mainWorksheetDiv = $("div#" + worksheetId);
 			var wsVisible = mainWorksheetDiv.data("worksheetVisible");
 			if (!wsVisible) {
@@ -184,11 +197,9 @@ var D3ModelManager = (function() {
 						id = d.nodeId;
 					else
 						id = d.id;
-					ClassDropdownMenu.getInstance().show(worksheetId, id, d.label, d.nodeDomain, d.nodeDomain, nodeCategory, 
+					ClassDialog.getInstance().show(worksheetId, id, d.label, d.nodeDomain, d.nodeDomain, nodeCategory, 
 						alignmentId, d.nodeType, d.isUri, event);
 
-					ClassSuggestDropdown.getInstance().show(worksheetId, id, d.label, d.nodeDomain, d.nodeDomain, nodeCategory, 
-						alignmentId, d.nodeType, d.isUri, event);
 				}
 
 			});
@@ -399,7 +410,7 @@ var D3ModelManager = (function() {
 				}
 			});
 
-			displayModel({"worksheetId": worksheetId, "alignObject": worksheetJson});
+			displayModelInternal({"worksheetId": worksheetId, "alignObject": worksheetJson});
 		}
 
 		function addToModel(worksheetId, nodes, links, edgeLinks) {
@@ -463,12 +474,12 @@ var D3ModelManager = (function() {
 				}
 			});
 
-			displayModel({"worksheetId": worksheetId, "alignObject": worksheetJson});
+			displayModelInternal({"worksheetId": worksheetId, "alignObject": worksheetJson});
 		}
 		
 		function restoreSavedModel(worksheetId) {
 			worksheetJson = savedJsons[worksheetId];
-			displayModel({"worksheetId": worksheetId, "alignObject": worksheetJson});
+			displayModelInternal({"worksheetId": worksheetId, "alignObject": worksheetJson});
 			delete savedJsons[worksheetId];
 		}
 
