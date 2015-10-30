@@ -26,10 +26,9 @@
 package edu.isi.karma.imp.json;
 
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
 import org.json.JSONArray;
@@ -79,13 +78,13 @@ public class JsonImport extends Import {
 		this.maxNumLines = maxNumLines;
 	}
 
-	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,String encoding, int maxNumLines, JSONArray tree,boolean isJSONLines) {
+	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,String encoding, int maxNumLines, JSONArray tree,boolean isJSONLines) throws FileNotFoundException, Exception {
 		
 		super(worksheetName, workspace, encoding);
 		FileObject fo = new FileObject(jsonFile, encoding);
 
 		if(isJSONLines){
-			this.json = convertJLToJSONArray(fo);
+			this.json = JSONUtil.convertJSONLinesToJSONArray(new FileInputStream(fo.file), fo.encoding);
 		}
 		else{
 			this.json = fo;
@@ -125,25 +124,6 @@ public class JsonImport extends Import {
 		this.columnsJson = columnsJson;
 	}
 	
-	public JSONArray convertJLToJSONArray(FileObject file) {
-		
-		JSONArray jArray = new JSONArray();
-		try{
-		
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file.file),file.encoding));
-			String line=null;
-			
-			while((line = br.readLine()) != null){
-				jArray.put(new JSONObject(line.trim()));
-			}
-			
-			br.close();
-		}
-		catch(IOException ioe){
-			logger.error("Error while reading json lines file:" + ioe.getMessage());
-		}
-		return jArray;
-	}
 
 	@Override
 	public Worksheet generateWorksheet() throws JSONException {

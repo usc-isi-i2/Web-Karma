@@ -5,6 +5,7 @@ import java.io.File;
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONArray;
+
 import edu.isi.karma.controller.command.IPreviewable;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.imp.Import;
@@ -30,13 +31,23 @@ public class ImportJSONLinesFileCommand extends ImportFileCommand implements IPr
 
 	@Override
 	protected Import createImport(Workspace workspace, int sampleSize) {
-		return new JsonImport(getFile(), getFile().getName(), workspace, encoding, sampleSize, null,true);
+		try {
+			return new JsonImport(getFile(), getFile().getName(), workspace, encoding, sampleSize, null,true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
 	protected Import createImport(Workspace workspace) {
 		JSONArray tree = generateSelectTree(columnsJson, true);
-		return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree,true);
+		try {
+			return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree,true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}	
 	}
 	
 	@Override

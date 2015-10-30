@@ -317,6 +317,7 @@ public class OfflineRdfGenerator {
 				&& !inputType.equalsIgnoreCase("JSON")
 				&& !inputType.equalsIgnoreCase("SQL")
 				&& !inputType.equalsIgnoreCase("AVRO")
+				&& !inputType.equalsIgnoreCase("JL")
 				) {
 			logger.error("Invalid source type: " + inputType
 					+ ". Please choose from: DB, SQL, CSV, XML, JSON, AVRO.");
@@ -570,6 +571,8 @@ public class OfflineRdfGenerator {
 			inputType = InputType.XML;
 		else if(this.inputType.equalsIgnoreCase("AVRO"))
 			inputType = InputType.AVRO;
+		else if(this.inputType.equalsIgnoreCase("JL"))
+			inputType = InputType.JL;
 		Model model = rdfGenerator.getModelParser(sourceName).getModel();
 		if (rootTripleMap != null && !rootTripleMap.isEmpty()) {
 			StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), rootTripleMap);
