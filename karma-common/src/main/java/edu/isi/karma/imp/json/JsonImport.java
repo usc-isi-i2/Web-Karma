@@ -28,6 +28,7 @@ package edu.isi.karma.imp.json;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
 import org.json.JSONArray;
@@ -68,6 +69,7 @@ public class JsonImport extends Import {
 		}
 		
 	}
+	
 	public JsonImport(Object json, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) {
 		super(worksheetName, workspace, encoding);
@@ -76,14 +78,21 @@ public class JsonImport extends Import {
 		this.maxNumLines = maxNumLines;
 	}
 
-	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,
-			String encoding, int maxNumLines, JSONArray tree) {
+	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,String encoding, int maxNumLines, JSONArray tree,boolean isJSONLines) throws FileNotFoundException, Exception {
+		
 		super(worksheetName, workspace, encoding);
 		FileObject fo = new FileObject(jsonFile, encoding);
-		this.json = fo;
+
+		if(isJSONLines){
+			this.json = JSONUtil.convertJSONLinesToJSONArray(new FileInputStream(fo.file), fo.encoding);
+		}
+		else{
+			this.json = fo;
+		}
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 		this.columnsJson = tree;
+		
 	}
 
 	public JsonImport(String jsonString, String worksheetName,
@@ -114,6 +123,7 @@ public class JsonImport extends Import {
 		this.maxNumLines = maxNumLines;
 		this.columnsJson = columnsJson;
 	}
+	
 
 	@Override
 	public Worksheet generateWorksheet() throws JSONException {

@@ -59,6 +59,7 @@ public class ModelingConfiguration {
 	private Boolean trainOnApplyHistory;
 	private Boolean predictOnApplyHistory;
 
+	private Boolean compatibleProperties;
 	private Boolean ontologyAlignment;
 	private Boolean knownModelsAlignment;
 
@@ -100,6 +101,7 @@ public class ModelingConfiguration {
 			"" + newLine + 
 //			"manual.alignment=false" + newLine + 
 			"# turning off the next two flags is equal to manual alignment" + newLine + 
+			"compatible.properties=true" + newLine + 
 			"ontology.alignment=false" + newLine + 
 			"knownmodels.alignment=false" + newLine + 
 			"" + newLine + 
@@ -172,7 +174,20 @@ public class ModelingConfiguration {
 			trainOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("train.on.apply.history", "false"));
 			predictOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("predict.on.apply.history", "false"));
 
+//			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("compatible.properties", "true"));
 
+			String compatiblePropertiesStr = modelingProperties.getProperty("compatible.properties");
+			if(compatiblePropertiesStr != null)
+				compatibleProperties = Boolean.parseBoolean(compatiblePropertiesStr);
+			else {
+				//need to add this property to the end
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				compatibleProperties = true;
+				out.println();
+				out.println("compatible.properties=true");
+				out.close();
+			}
+			
 //			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("ontology.alignment", "false"));
 
 			String ontologyAlignmentStr = modelingProperties.getProperty("ontology.alignment");
@@ -357,6 +372,17 @@ public class ModelingConfiguration {
 		this.predictOnApplyHistory = predictOnApplyHistory;
 	}
 
+	public Boolean getCompatibleProperties() {
+		if (compatibleProperties == null) {
+			load();
+		}
+		return compatibleProperties;
+	}
+	
+	public void setCompatibleProperties(Boolean compatibleProperties) {
+		this.compatibleProperties = compatibleProperties;
+	}
+	
 	public Boolean getOntologyAlignment() {
 		if (ontologyAlignment == null) {
 			load();
@@ -484,12 +510,6 @@ public class ModelingConfiguration {
 	public void setAddOntologyPaths(Boolean addOntologyPaths) {
 		this.addOntologyPaths = addOntologyPaths;
 	}
-	
-//	public static boolean isLearnAlignmentEnabled() {
-//		if (learnAlignmentEnabled == null)
-//			load();
-//		return learnAlignmentEnabled;
-//	}
 	
 	public boolean isStoreOldHistoryEnabled() {
 		if (storeOldHistory == null)

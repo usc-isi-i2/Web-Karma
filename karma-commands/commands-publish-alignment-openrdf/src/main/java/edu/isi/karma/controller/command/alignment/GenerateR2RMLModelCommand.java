@@ -149,6 +149,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			worksheetId = historyUtil.getWorksheetId();
 			worksheet = workspace.getWorksheet(worksheetId);
 			selection = getSuperSelection(worksheet);
+			historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		}
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();

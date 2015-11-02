@@ -49,8 +49,14 @@ public class PostGISUtil extends AbstractJDBCUtil {
 		ArrayList<String> tableNames = new ArrayList<String>();
 		DatabaseMetaData dmd = conn.getMetaData();
 		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE"});
-		while (rs.next())
-			tableNames.add(rs.getString(3));
+		String schemaName, tableName;
+		while (rs.next()) {
+			schemaName = rs.getString(2);
+			tableName = rs.getString(3);
+			if (schemaName != null && schemaName.trim().length() > 0)
+				tableName = schemaName + "." + tableName;
+			tableNames.add(tableName);
+		}
 		Collections.sort(tableNames);
 		return tableNames;
 	}
@@ -116,7 +122,7 @@ public class PostGISUtil extends AbstractJDBCUtil {
 
 	@Override
 	public String escapeTablename(String name) {
-		return "\"" + name + "\"";
+		return name;//"\"" + name + "\"";
 	}
 	
 	@Override

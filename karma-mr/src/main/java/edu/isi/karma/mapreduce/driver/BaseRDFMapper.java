@@ -1,31 +1,23 @@
 package edu.isi.karma.mapreduce.driver;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import edu.isi.karma.rdf.BaseKarma;
+import edu.isi.karma.rdf.RDFGeneratorRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
-import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
-import edu.isi.karma.rdf.BaseKarma;
-import edu.isi.karma.rdf.RDFGeneratorRequest;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 
@@ -58,19 +50,17 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 		
 		
 		readKarmaConfig = Boolean.parseBoolean(context.getConfiguration().get("read.karma.config"));
-		
-		String configFilePath = context.getConfiguration().get("karma.config.file");
-		
-		FileSystem fs = FileSystem.get(context.getConfiguration());
-		
+
 		if(readKarmaConfig)
 		{
-			if(!fs.exists(new Path(configFilePath))){
+			String configFilePath = context.getConfiguration().get("karma.config.file");
+			File configFile = new File(configFilePath);
+			if(!configFile.exists()){
 				throw new FileNotFoundException("File at :" + configFilePath + " doesn't exist.");
 			}
 			else{
 				StringBuilder sbConfig = new StringBuilder();
-				BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(new Path(configFilePath))));
+				BufferedReader br = new BufferedReader(new FileReader(configFile));
 				String line=null;
 				
 				while((line = br.readLine()) != null){
@@ -78,6 +68,8 @@ public abstract class BaseRDFMapper extends Mapper<Writable, Text, Text, Text> {
 				}
 				
 				jKarmaConfig = (JSONArray) JSONSerializer.toJSON(sbConfig.toString());
+				
+				br.close();
 			}
 		}
 	

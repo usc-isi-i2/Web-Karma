@@ -963,18 +963,8 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 					.attr('id', cell["nodeId"])
 					.data("expandedValue", cell["expandedValue"])
 					.attr("title", cell["expandedValue"]) //for tooltip
-				;
-
-				dataDiv3.editable({
-					type: 'text',
-					success: function(response, newValue) {
-						console.log("Set new value:" + newValue);
-						submitTableCellEdit(worksheetId, cell["nodeId"], newValue);
-					},
-					showbuttons: 'bottom',
-					mode: 'popup',
-					inputclass: 'worksheetInputEdit'
-				});
+					.click(tableCellClick);
+				
 				dataDiv.append(dataDiv3);
 				td.addClass(cell["columnClass"]);
 			}
@@ -984,6 +974,23 @@ function addWorksheetDataRecurse(worksheetId, rows, dataTable, isOdd) {
 		dataTable.append(rowTr);
 	});
 	return;
+}
+
+function tableCellClick(e) {
+	var dataDiv3 = $(e.target);
+	if (!dataDiv3.hasClass("editable")) {
+		dataDiv3.editable({
+			type: 'text',
+			success: function(response, newValue) {
+				console.log("Set new value:" + newValue);
+				submitTableCellEdit(worksheetId, cell["nodeId"], newValue);
+			},
+			showbuttons: 'bottom',
+			mode: 'popup',
+			inputclass: 'worksheetInputEdit'
+		});
+		dataDiv3.editable('toggle');
+	}
 }
 
 function submitTableCellEdit(worksheetId, nodeId, value) {
