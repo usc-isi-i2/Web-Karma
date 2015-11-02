@@ -460,9 +460,11 @@ var D3ModelManager = (function() {
 		}
 		
 		function restoreSavedModel(worksheetId) {
-			worksheetJson = savedJsons[worksheetId];
-			displayModelInternal({"worksheetId": worksheetId, "alignObject": worksheetJson});
-			delete savedJsons[worksheetId];
+			if(savedJsons[worksheetId]) {
+				worksheetJson = savedJsons[worksheetId];
+				displayModelInternal({"worksheetId": worksheetId, "alignObject": worksheetJson});
+				delete savedJsons[worksheetId];
+			}
 		}
 
 		function setLinkApproveListener(worksheetId, listener) {
