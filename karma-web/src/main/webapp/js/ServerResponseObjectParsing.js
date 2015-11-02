@@ -743,7 +743,7 @@ function processHistoryCommand(command) {
 	} else if(title == "Set Semantic Type") {
 		spanClass = "glyphicon-tags";
 	} else if(title == "Change Links") {
-		spanClass = "glyphicon-link"; //"glyphicon-random";
+		spanClass = "glyphicon-link"; //"";
 	} else if(title == "Add Literal Node") {
 		spanClass = "glyphicon-text-background"
 	} else if(title == "Set Worksheet Properties") {
@@ -766,6 +766,8 @@ function processHistoryCommand(command) {
 		spanClass = "glyphicon-menu-hamburger";
 	} else if(title == "Aggregation") {
 		spanClass = "glyphicon-compressed";
+	} else if(title == "Change Node") {
+		spanClass = "glyphicon-random";
 	}
 	
 	if(spanClass != "") {

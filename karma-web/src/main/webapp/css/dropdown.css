@@ -46,3 +46,34 @@
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
 }
+
+#classDialog .tab-pane, #propertyDialog .tab-pane {
+    height: 450px;
+}
+
+#classDialog .tab-pane ul, #propertyDialog .tab-pane ul {
+    height: 400px;
+    overflow: auto;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#classDialog .tab-pane a, #propertyDialog .tab-pane a {
+    color: #555;
+}
+
+li.list-group-item.list-odd, button.btn.list-odd {
+    background-color: #eee;
+}
+
+li.list-group-item.list-odd a {
+   color: #555;
+}
+
+li.list-group-item.list-even, button.btn.list-even {
+    background-color: #ddd;
+}
+
+li.list-group-item.list-even a{
+    color: #555;
+}
