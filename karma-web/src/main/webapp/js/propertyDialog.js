@@ -120,7 +120,12 @@ var PropertyDialog = (function() {
 		}
 
 		function populateCompatibleProperties() {
-			var compatibleTypes = getAllPropertiesForClass(worksheetId, sourceDomain);
+			var compatibleTypes;
+			if(targetNodeType == "ColumnNode") {
+				compatibleTypes = getAllPropertiesForClass(worksheetId, sourceDomain);
+			} else {
+				compatibleTypes = getAllPropertiesForDomainRange(worksheetId, sourceDomain, targetDomain);
+			}
 			renderMenu($("#property_compatible", dialog), compatibleTypes);	
 		}
 
