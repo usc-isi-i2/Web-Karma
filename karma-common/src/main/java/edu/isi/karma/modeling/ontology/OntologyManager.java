@@ -146,12 +146,23 @@ public class OntologyManager  {
 			return false;
 		}
 		
+		/***
+		 *  values for lang are 
+			"RDF/XML", 
+			"N-TRIPLE", 
+			"TURTLE" (or "TTL") and 
+			"N3". 
+			null represents the default language, "RDF/XML". 
+			"RDF/XML-ABBREV" is a synonym for "RDF/XML". 
+		 */
 		
 		InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
 		if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
 			ontHandler.getOntModel().read(s, null, "N3");
 		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
 			ontHandler.getOntModel().read(s, null, "TURTLE");
+		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("NT"))
+			ontHandler.getOntModel().read(s, null, "N-TRIPLE");
 		else
 			ontHandler.getOntModel().read(s, null); // default lang = "RDF/XML"
 		
@@ -784,4 +795,14 @@ public class OntologyManager  {
 		if (sourceUri == null || targetUri == null) return false;
 		return (this.ontCache.getObjectPropertiesWithoutDomainAndRange().size() > 0);
 	}
+	
+//	public static void main(String[] args) throws IOException {
+//		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome("/Users/mohsen/karma-rodi/");
+//		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma-rodi/config");
+//		OntologyManager ontManager = new OntologyManager(contextParameters.getId());
+//		ontManager.doImport(new File("/Users/mohsen/karma-rodi/preloaded-ontologies/schema.nt"), "UTF-8");
+//		ontManager.updateCache();
+//		System.out.println("done.");
+//	}
 }
+

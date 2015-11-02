@@ -55,12 +55,22 @@ public class ImportJSONFileCommand extends ImportFileCommand implements IPreview
 	@Override
 	protected Import createImport(Workspace workspace) {
 		JSONArray tree = generateSelectTree(columnsJson, true);
-		return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree);
+		try {
+			return new JsonImport(getFile(), getFile().getName(), workspace, encoding, maxNumLines, tree,false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	@Override
 	protected Import createImport(Workspace workspace, int sampleSize) {
-		return new JsonImport(getFile(), getFile().getName(), workspace, encoding, sampleSize, null);
+		try {
+			return new JsonImport(getFile(), getFile().getName(), workspace, encoding, sampleSize, null,false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	@Override

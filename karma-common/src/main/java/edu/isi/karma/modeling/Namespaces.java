@@ -41,4 +41,5 @@ public interface Namespaces {
 	public static final String PROV = "http://www.w3.org/ns/prov#";
 	public static final String RML = "http://mmlab.be/rml#";
 	public static final String QL = "http://mmlab.be/ql#";
+	public static final String SCHEMA = "http://schema.org/";
 }

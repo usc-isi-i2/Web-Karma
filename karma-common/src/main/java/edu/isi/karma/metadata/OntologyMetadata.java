@@ -41,6 +41,7 @@ public class OntologyMetadata extends KarmaUserMetadata {
 				if (ontology.getName().endsWith(".owl") || 
 						ontology.getName().endsWith(".rdf") || 
 						ontology.getName().endsWith(".n3") || 
+						ontology.getName().endsWith(".nt") || 
 						ontology.getName().endsWith(".ttl") || 
 						ontology.getName().endsWith(".xml")) {
 					if(ontology.getName().matches("catalog\\-v[0-9]{3}\\.xml")) {

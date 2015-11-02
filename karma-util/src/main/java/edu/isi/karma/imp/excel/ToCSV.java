@@ -680,10 +680,9 @@ public class ToCSV {
 					csvLine.add("");
 				} else {
 					if (cell.getCellType() != Cell.CELL_TYPE_FORMULA) {
-						csvLine.add(this.formatter.formatCellValue(cell));
+						csvLine.add(this.formatter.formatCellValue(cell).replace("\n", " ").replace("\r", " "));
 					} else {
-						csvLine.add(this.formatter.formatCellValue(cell,
-								this.evaluator));
+						csvLine.add(this.formatter.formatCellValue(cell,this.evaluator).replace("\n", " ").replace("\r", " "));
 					}
 				}
 			}

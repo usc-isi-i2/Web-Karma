@@ -54,6 +54,10 @@ public abstract class Uris {
 	public static final String DATAPROPERTY_OF_COLUMN_LINK_URI = Namespaces.KARMA_DEV + "dataPropertyOfColumnLink";
 	public static final String OBJECTPROPERTY_SPECIALIZATION_LINK_URI = Namespaces.KARMA_DEV + "objectPropertySpecialization";
 	
+	//SCHEMA.ORG domain and range predicates
+	public static final String SCHEMA_DOMAIN_INCLUDES = Namespaces.SCHEMA + "domainIncludes";
+	public static final String SCHEMA_RANGE_INCLUDES = Namespaces.SCHEMA + "rangeIncludes";
+	
 	// R2RML Vocabulary URIs
 	public static final String RR_TRIPLESMAP_CLASS_URI = Namespaces.RR + "TriplesMap";
 	public static final String RR_SUBJECTMAP_CLASS_URI = Namespaces.RR+ "SubjectMap";

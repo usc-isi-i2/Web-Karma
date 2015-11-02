@@ -6,6 +6,7 @@ import edu.isi.karma.controller.command.CommandFactory;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 import edu.isi.karma.controller.update.*;
+import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -14,6 +15,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.WorkspaceRegistry;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -70,7 +72,7 @@ public class CommandHistoryUtil {
 	}
 
 	public Set<String> generateInputColumns() {
-		Map<Command, List<Command> > dag = generateGraph(); 
+		Map<Command, List<Command> > dag = generateGraph();
 		Set<String> inputColumns = new HashSet<String>();
 		for (Command t : commands) {
 			if (t.getCommandName().equals("SetSemanticTypeCommand") || t.getCommandName().equals("SetMetaPropertyCommand")) {
@@ -100,7 +102,7 @@ public class CommandHistoryUtil {
 				terminalColumns.addAll(getParents(t, dag));
 				for (String hNodeId : c.getInputColumns()) {
 					HNode hn = workspace.getFactory().getHNode(hNodeId);
-					if (hn.getHNodeType() == HNodeType.Regular)
+					if (hn != null && hn.getHNodeType() == HNodeType.Regular)
 						terminalColumns.add(hNodeId);
 				}
 			}
@@ -122,14 +124,32 @@ public class CommandHistoryUtil {
 		oldWorksheet.getImportMethod().createWorksheet(oldWorksheet.getTitle(), workspace, oldWorksheet.getEncoding());
 		try {
 			Worksheet newWorksheet = oldWorksheet.getImportMethod().generateWorksheet();
-			AlignmentManager.Instance().createAlignment(workspace.getId(), newWorksheet.getId(), workspace.getOntologyManager());
+			Alignment alignment = AlignmentManager.Instance().createAlignment(workspace.getId(), newWorksheet.getId(), workspace.getOntologyManager());
 			workspace.removeWorksheet(worksheetId);
 			uc.add(new WorksheetDeleteUpdate(worksheetId));
 			this.worksheetId = newWorksheet.getId();
 			uc.add(new WorksheetListUpdate());
 			uc.append(WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId()));
 			commands.clear();
-			commands.addAll(getCommandsFromHistoryJSON(redoCommandsArray, uc));
+			for (int i = 0; i < redoCommandsArray.length(); i++) {
+				JSONObject commandObject = redoCommandsArray.getJSONObject(i);
+				Command command = getCommandFromHistoryJSON(commandObject, uc);
+				if (command != null) {
+					commands.add(command);
+					command.setExecutedInBatch(true);
+					try {
+						uc.append(workspace.getCommandHistory().doCommand(command, workspace, true));
+					} catch (Exception e) {
+						uc.add(new TrivialErrorUpdate("Error occurred in command " + command.getCommandName()));
+					}
+					command.setExecutedInBatch(false);
+				}
+			}
+			if(alignment != null) {
+				alignment.align();
+				uc.removeUpdateByClass(AlignmentSVGVisualizationUpdate.class);
+				uc.add(new AlignmentSVGVisualizationUpdate(worksheetId));
+			}
 			workspace.getCommandHistory().clearCurrentCommand(worksheetId);
 			workspace.getCommandHistory().clearRedoCommand(worksheetId);
 		} catch (Exception e) {
@@ -143,52 +163,42 @@ public class CommandHistoryUtil {
 		return new ArrayList<>(commands);
 	}
 
-	private List<Command> getCommandsFromHistoryJSON(JSONArray historyJSON, UpdateContainer uc) {
-		List<Command> commands = new ArrayList<>();
-		for (int i = 0; i < historyJSON.length(); i++) {
-			JSONObject commObject = historyJSON.getJSONObject(i);
-			JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
-			String commandName = (String)commObject.get(HistoryArguments.commandName.name());
-			WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
-			UpdateContainer errors = ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, false);
-			if (errors != null) {
-				uc.append(errors);
-			}
-			String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
-			Set<String> newOutputColumns = new HashSet<>();
-			if (tmp != null) {
-				JSONArray array = new JSONArray(tmp);
-				for (int j = 0; j < array.length(); j++) {
-					JSONObject obj = new JSONObject(array.get(j).toString());
-					newOutputColumns.add(obj.get("value").toString());
-				}
-			}
-			System.out.println(inputParamArr.toString(4));
-			CommandFactory cf = commandFactoryMap.get(commObject.get(HistoryArguments.commandName.name()));
-			if(cf != null) {
-				try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
-					String model = Command.NEW_MODEL;
-					if(commObject.has(HistoryArguments.model.name())) {
-						model = commObject.getString(HistoryArguments.model.name());
-					}
-					Command comm = cf.createCommand(inputParamArr, model, workspace);
-					comm.setOutputColumns(newOutputColumns);
-					if(comm != null){
-						commands.add(comm);
-						//TODO consolidate update
-						try {
-							uc.append(workspace.getCommandHistory().doCommand(comm, workspace, true));
-						} catch (Exception e) {
-							uc.add(new TrivialErrorUpdate("Error occurred in command " + comm.getCommandName()));
-						}
-					}
-
-				} catch (Exception ignored) {
-					logger.error("Error in executing command", ignored);
-				}
+	private Command getCommandFromHistoryJSON(JSONObject historyJSON, UpdateContainer uc) {
+		JSONArray inputParamArr = (JSONArray) historyJSON.get(HistoryArguments.inputParameters.name());
+		String commandName = (String)historyJSON.get(HistoryArguments.commandName.name());
+		WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
+		UpdateContainer errors = ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, false);
+		if (errors != null) {
+			uc.append(errors);
+		}
+		String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
+		Set<String> newOutputColumns = new HashSet<>();
+		if (tmp != null) {
+			JSONArray array = new JSONArray(tmp);
+			for (int j = 0; j < array.length(); j++) {
+				JSONObject obj = new JSONObject(array.get(j).toString());
+				newOutputColumns.add(obj.get("value").toString());
 			}
 		}
-		return commands;
+		System.out.println(inputParamArr.toString(4));
+		CommandFactory cf = commandFactoryMap.get(historyJSON.get(HistoryArguments.commandName.name()));
+		if(cf != null) {
+			try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency
+				String model = Command.NEW_MODEL;
+				if(historyJSON.has(HistoryArguments.model.name())) {
+					model = historyJSON.getString(HistoryArguments.model.name());
+				}
+				Command comm = cf.createCommand(inputParamArr, model, workspace);
+				comm.setOutputColumns(newOutputColumns);
+				if(comm != null){
+					return comm;
+				}
+
+			} catch (Exception ignored) {
+				logger.error("Error in executing command", ignored);
+			}
+		}
+		return null;
 	}
 
 	public void removeCommands(Set<String> commandIds) {

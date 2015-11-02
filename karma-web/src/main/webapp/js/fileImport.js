@@ -42,6 +42,8 @@ var FileFormatSelectionDialog = (function() {
 					$(":radio[name=FileFormatSelection][value=Ontology]").prop("checked", true);
 				} else if (fileName.match(".json$")) {
 					$(":radio[name=FileFormatSelection][value=JSONFile]").prop("checked", true);
+				} else if (fileName.match(".jl$")) {
+					$(":radio[name=FileFormatSelection][value=JSONLinesFile]").prop("checked", true);
 				} else if (fileName.match(".avro$")) {
 					$(":radio[name=FileFormatSelection][value=AvroFile]").prop("checked", true);
 				}
@@ -92,7 +94,7 @@ var FileFormatSelectionDialog = (function() {
 			}
 			var RequireFilter = $("input:checkbox[name='FilterCheck']", dialog).prop('checked');
 			RequireFilter = RequireFilter &&
-				(selectedFormat === "JSONFile" || selectedFormat === "XMLFile");
+				(selectedFormat === "JSONFile" || selectedFormat === "XMLFile" || selectedFormat === "JSONLinesFile");
 			urlString += "&filter=" + RequireFilter;
 			urlString += "&isPreview=true";
 			urlString += "&command=";
@@ -156,6 +158,7 @@ var FileOptionsDialog = (function() {
 		var savePreset;
 		var optionSettings = {
 			"JSONFile": ["colEncoding", "colMaxNumLines"],
+			"JSONLinesFile": ["colEncoding", "colMaxNumLines"],
 			"CSVFile": ["colDelimiterSelector", "colTextQualifier", "colHeaderStartIndex", "colStartRowIndex", "colEncoding", "colMaxNumLines"],
 			"XMLFile": ["colEncoding", "colMaxNumLines"],
 			"ExcelFile": ["colEncoding", "colMaxNumLines"],
@@ -209,7 +212,7 @@ var FileOptionsDialog = (function() {
 			$.each(optionSetting, function(index, val) {
 				$("#" + val).show();
 			});
-			if (format == "JSONFile" || format == "XMLFile" || format == "AvroFile") {
+			if (format == "JSONFile" || format == "XMLFile" || format == "AvroFile" || format == "JSONLinesFile") {
 				$('#lblMaxNumLines').text("Objects to import");
 				$(".help-block", $("#colMaxNumLines")).text("Enter 0 to import all objects");
 			} else {
@@ -288,7 +291,9 @@ var FileOptionsDialog = (function() {
 		function reloadOptions(execute) {
 			var format = dialog.data("format");
 			var optionSetting = optionSettings[format];
+			console.log(format);
 			var options = generateInfoObject("", "", "Import" + format + "Command");
+			
 			options["commandId"] = dialog.data("commandId");
 			if ($.inArray("colDelimiterSelector", optionSetting) != -1)
 				options["delimiter"] = $("#delimiterSelector").val();
@@ -302,7 +307,7 @@ var FileOptionsDialog = (function() {
 				options["encoding"] = $("#encoding").val();
 			if ($.inArray("colMaxNumLines", optionSetting) != -1)
 				options["maxNumLines"] = $("#maxNumLines").val();
-
+			
 			options["interactionType"] = "generatePreview";
 			options["isUserInteraction"] = true;
 			var RequireFilter = dialog.data("isFilterSelected");

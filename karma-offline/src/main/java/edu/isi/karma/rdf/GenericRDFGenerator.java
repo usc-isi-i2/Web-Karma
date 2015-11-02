@@ -73,7 +73,8 @@ public class GenericRDFGenerator extends RdfGenerator {
 		JSON,
 		XML,
 		AVRO,
-		EXCEL
+		EXCEL,
+		JL
 	};
 	
 	public GenericRDFGenerator() {
@@ -320,6 +321,10 @@ public class GenericRDFGenerator extends RdfGenerator {
 				}
 				case AVRO : {
 					worksheet = generateWorksheetFromAvroStream(sourceName, is, inputParameters, workspace);
+					break;
+				}
+				case JL: {
+					worksheet = generateWorksheetFromJLStream(sourceName, is, inputParameters, workspace);
 				}
 				
 			}
@@ -438,5 +443,18 @@ public class GenericRDFGenerator extends RdfGenerator {
 		AvroImport imp = new AvroImport(is, sourceName, workspace, encoding, maxNumLines);
 		worksheet = imp.generateWorksheet();
 		return worksheet;
+	}
+	
+	private Worksheet generateWorksheetFromJLStream(String sourceName, InputStream is, InputProperties inputTypeParams,
+			Workspace workspace) throws Exception{
+		Worksheet worksheet;
+		String encoding = (String)inputTypeParams.get(InputProperty.ENCODING);
+		int maxNumLines = (inputTypeParams.get(InputProperty.MAX_NUM_LINES) != null)? (int)inputTypeParams.get(InputProperty.MAX_NUM_LINES) : -1;
+		Object json=JSONUtil.convertJSONLinesToJSONArray(is,encoding);
+		
+		JsonImport imp = new JsonImport(json, sourceName, workspace, encoding, maxNumLines);
+		worksheet = imp.generateWorksheet();
+		return worksheet;
+		
 	}
 }

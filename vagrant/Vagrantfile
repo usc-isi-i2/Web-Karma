@@ -1,0 +1,32 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+VAGRANT_COMMAND = ARGV[0]
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 4096
+    v.cpus = 2
+  end
+
+  # Original starting point of the base box, and deploy script
+  config.vm.box = "bento/centos-6.7"
+  config.vm.provision :shell, :path => "basebox-create.sh", :privileged => false
+
+  config.vm.box_download_insecure = "true"
+  config.vm.provision :shell, :run => "always", :path => "deploy.sh", :privileged => false, :args => ENV['KARMA_UPDATE']
+
+  config.vm.hostname = "karma-user"
+  config.vm.synced_folder "./karma", "/home/vagrant/karma"
+
+  #  iPython Notebook forwarded port
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+
+  # To use the same network as the Host OS is
+  #config.vm.network "public_network"
+
+end
