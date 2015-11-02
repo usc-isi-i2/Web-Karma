@@ -237,24 +237,70 @@
 			  				<div class="col-sm-2" id="classDialogFunctions"></div>
 			  				<div class="col-sm-10" id="classDialogSuggestions">
 			  				<ul class="nav nav-tabs" role="tablist">
-							    <li role="presentation" class="active"><a href="#recommended" aria-controls="recommended" role="tab" data-toggle="tab">Recommended</a></li>
-							    <li role="presentation"><a href="#compatible" aria-controls="compatible" role="tab" data-toggle="tab">Compatible</a></li>
-							    <li role="presentation"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">All</a></li>
+							    <li role="presentation" class="active"><a href="#class_recommended" aria-controls="class_recommended" role="tab" data-toggle="tab">Recommended</a></li>
+							    <li role="presentation"><a href="#class_compatible" aria-controls="class_compatible" role="tab" data-toggle="tab">Compatible</a></li>
+							    <li role="presentation"><a href="#class_all" aria-controls="class_all" role="tab" data-toggle="tab">All</a></li>
 							  </ul>
 
 							  <!-- Tab panes -->
 							  <div class="tab-content">
-							    <div role="tabpanel" class="tab-pane active" id="recommended">
+							    <div role="tabpanel" class="tab-pane active" id="class_recommended">
 							    	<ul class="list-unstyled row"></ul>
 							    </div>
-							    <div role="tabpanel" class="tab-pane" id="compatible">
+							    <div role="tabpanel" class="tab-pane" id="class_compatible">
 							    	<ul class="list-unstyled row"></ul>
 							    </div>
-							    <div role="tabpanel" class="tab-pane" id="all">
+							    <div role="tabpanel" class="tab-pane" id="class_all">
 							    	<ul class="list-unstyled row"></ul>
 							    	<div class="input-group col-sm-offset-6">
 									  	<input type="text" class="form-control" aria-describedby="basic-input_classDialog-addOn" id="input_classDialog">
   										<span class="input-group-addon glyphicon glyphicon-search" id="basic-input_classDialog-addOn" style="top:0px"></span>
+									</div>
+
+							    </div>
+							  </div>
+			  				</div>
+			  			</div>
+			  		</div>
+					<div class="error" style="display: none"></div>
+			  </div>
+			 </form>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="propertyDialog" tabindex="-1">
+  <div class="modal-dialog modal-wide">
+		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title"><span id="propertyDialog_title"></span></h4>
+			  </div>
+			  <div class="modal-body">
+			  		<div class="main">
+			  			<div class="row">
+			  				<div class="col-sm-2" id="propertyDialogFunctions"></div>
+			  				<div class="col-sm-10" id="propertyDialogSuggestions">
+			  				<ul class="nav nav-tabs" role="tablist">
+							    <li role="presentation" class="active"><a href="#property_recommended" aria-controls="property_recommended" role="tab" data-toggle="tab">Recommended</a></li>
+							    <li role="presentation"><a href="#property_compatible" aria-controls="property_compatible" role="tab" data-toggle="tab">Compatible</a></li>
+							    <li role="presentation"><a href="#property_all" aria-controls="property_all" role="tab" data-toggle="tab">All</a></li>
+							  </ul>
+
+							  <!-- Tab panes -->
+							  <div class="tab-content">
+							    <div role="tabpanel" class="tab-pane active" id="property_recommended">
+							    	<ul class="list-unstyled row"></ul>
+							    </div>
+							    <div role="tabpanel" class="tab-pane" id="property_compatible">
+							    	<ul class="list-unstyled row"></ul>
+							    </div>
+							    <div role="tabpanel" class="tab-pane" id="property_all">
+							    	<ul class="list-unstyled row"></ul>
+							    	<div class="input-group col-sm-offset-6">
+									  	<input type="text" class="form-control" aria-describedby="basic-input_propertyDialog-addOn" id="input_propertyDialog">
+  										<span class="input-group-addon glyphicon glyphicon-search" id="basic-input_propertyDialog-addOn" style="top:0px"></span>
 									</div>
 
 							    </div>

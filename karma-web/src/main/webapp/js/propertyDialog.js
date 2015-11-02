@@ -1,10 +1,11 @@
-var PropertySuggestDropdown = (function() {
+var PropertyDialog = (function() {
 
 	var instance = null;
 
 
 	function PrivateConstructor() {
-		var menuId = "propertySuggestDropdown";
+		var dialog = $("#propertyDialog");
+
 		var worksheetId;
 		var alignmentId;
 		var propertyId;
@@ -12,19 +13,28 @@ var PropertySuggestDropdown = (function() {
 		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
 		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
 		var allPropertiesCache;
-		var semanticSuggestions;
 
 		function init() {
 			allPropertiesCache = null;
-			generateJS();
 			window.setTimeout(function() {
 				allPropertiesCache = getAllDataAndObjectProperties(worksheetId);
 			}, 10);
+			$('input', dialog).on('keyup', filterDropdown);
 		}
 
 		function hide() {
-			$("#" + menuId).hide();
-			$(document).off('click', hide);
+			dialog.modal('hide');
+		}
+
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+
+		function showError(err) {
+			if (err) {
+				$("div.error", dialog).text(err);
+			}
+			$("div.error", dialog).show();
 		}
 
 		function changeLink(label, uri) {
@@ -57,39 +67,6 @@ var PropertySuggestDropdown = (function() {
 			hide();
 		}
 
-		function generateJS() {
-			var ul = $("<ul>");
-			ul.attr("role", "menu")
-				.addClass("dropdown-menu")
-				.css("display", "block")
-				.css("position", "static")
-				.css("margin-bottom", "5px");
-		
-			var box = $("<div>").addClass("input-group").addClass("dropdownInput");
-			var search = $("<span>").addClass("input-group-addon").append($("<span>").addClass("glyphicon").addClass("glyphicon-search"));
-			var input = $("<input>").attr("type", "text").addClass("form-control").attr("id", "input_" + menuId).addClass("typeahead").attr("autocomplete", "off").val('');
-			box.append(search).append(input);
-
-			var div = $("<div>")
-				.attr("id", menuId)
-				.addClass("dropdown")
-				.addClass("clearfix")
-				.addClass("contextMenu")
-				.append(ul);
-
-			var li = $("<li>");
-			li.append(box);
-			ul.append(li);
-
-			var container = $("body div.container");
-			container.append(div);
-
-			$('.dropdownInput input').click(function(e){e.stopPropagation; return false;}); 
-			$('.dropdownInput input')
-			        .on('keyup', filterDropdown);
-		}
-
-	
 		function selectPropertyFromMenu(e) {
 			target = $(e.target);
 			label = target.text();
@@ -99,11 +76,11 @@ var PropertySuggestDropdown = (function() {
 			if(label == 'More...') {
 				populateAllProperties();
 				e.stopPropagation();
+				return;
 			} else if(sourceDomain == "BlankNode") {
 				uri = target.data('uri');
 				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, uri, label);
 				e.stopPropagation();
-				hide();
 			} else {
 				uri = target.data('uri');
 				if(targetNodeType == "ColumnNode") {
@@ -112,6 +89,7 @@ var PropertySuggestDropdown = (function() {
 					changeLink(label, uri);	
 				}
 			}
+			hide();
 		}
 
 		function populateAllProperties() {
@@ -122,12 +100,7 @@ var PropertySuggestDropdown = (function() {
 
 			var allTypes = [];
 			var uriFound = false;
-			$.each(semanticSuggestions, function(index, type) {
-				allTypes.push({"label": type["label"], "uri": type["uri"], "class": type["class"]});
-				if(type["uri"] == "http://isi.edu/integration/karma/dev#classLink")
-					uriFound = true;
-			});
-
+			
 			if(allTypes.length > 0) 
 				allTypes.push({"label": "divider", "uri": "divider"});
 
@@ -136,55 +109,28 @@ var PropertySuggestDropdown = (function() {
 				if(sourceLabel != " ")
 					uriLabel += " of " + sourceLabel;
 				allTypes.push({"label": uriLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
-				allTypes.push({"label": "divider", "uri": "divider"});
+				// allTypes.push({"label": "divider", "uri": "divider"});
 			}
 
 			$.each(allPropertiesCache, function(index, type) {
 				allTypes.push({"label": type["label"], "uri": type["uri"]});
 			});
 
-			renderMenu(allTypes, true);
+			renderMenu($("#property_all", dialog), allTypes);
 		}
 
-		function filterDropdown(e) {
-			query = $("#input_" + menuId).val();
-			switch(e.keyCode) {
-		        case 40: // down arrow
-		        case 38: // up arrow
-		        case 16: // shift
-		        case 17: // ctrl
-		        case 18: // alt
-		          break;
-
-		        case 9: // tab
-		        case 13: // enter
-		          if (!this.shown) return;
-		          this.select();
-		          break;
-
-		        case 27: // escape
-		          this.hide();
-		          break;
-		        default:
-		          	items = displayMenuItems;
-		          	items = $.grep(items, function (item) {
-			        	return (item["label"].toLowerCase().indexOf(query.toLowerCase()) != -1);
-			      	});
-			      	renderMenu(items, false);
-		      }
+		function populateCompatibleProperties() {
+			var compatibleTypes = getAllPropertiesForClass(worksheetId, sourceDomain);
+			renderMenu($("#property_compatible", dialog), compatibleTypes);	
 		}
 
-		function populateMenu() {
-			semanticSuggestions = []
-			uriLabel = "uri";
-			if(sourceLabel != " ")
-				uriLabel += " of " + sourceLabel;
+		function populateSuggestedProperties() {
+			var items = [];
 
 			if(targetNodeType == "ColumnNode") {
 				var semSuggestions = getSuggestedSemanticTypes(worksheetId, targetId, sourceDomain);
-				var items = [];
 				var uriFound = false;
-				if(semSuggestions != null) {
+				if(semSuggestions != null && semSuggestions["Labels"]) {
 					$.each(semSuggestions["Labels"], function(index, type) {
 						if(type["DisplayLabel"] == "km-dev:columnSubClassOfLink" ||
 								type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
@@ -198,63 +144,54 @@ var PropertySuggestDropdown = (function() {
 						items.push({"label": type["DisplayLabel"], "uri": type["FullType"], "class": "propertyDropdown_suggestion"});
 					});
 				}
-
-				semanticSuggestions = semanticSuggestions.concat(items);
-
-				if(!uriFound) {
-					if(items.length > 0)
-						items.push({"label": "divider", "uri": "divider"});
-					items.push({"label": uriLabel		, "uri": "http://isi.edu/integration/karma/dev#classLink"});
-				}
-
-				var compatibleTypes = getAllPropertiesForClass(worksheetId, sourceDomain);
-			
-				if(compatibleTypes.length > 0 && items.length > 0)
-					items.push({"label": "divider", "uri": "divider"});
-				$.each(compatibleTypes, function(index, type) {
-					items.push({"label": type["label"], "uri": type["uri"], "class": "propertyDropdown_compatible"});
-				});	
-				
-				if(items.length > 0) {
-					items.push({"label": "divider", "uri": "divider"});
-					items.push({"label": "More...", "uri": "More..."});
-					renderMenu(items, true);
-				} else {
-					populateAllProperties();
-				}
-			} else {
-				var compatibleTypes = getAllPropertiesForDomainRange(worksheetId, sourceDomain, targetDomain);
-				var items = [];
-				if(compatibleTypes != null) {
-					$.each(compatibleTypes, function(index, type) {
-						items.push({"label": type["label"], "uri": type["uri"], "class": "propertyDropdown_compatible"});
-					});	
-
-				}
-				
-				if(items.length > 0) {
-					items.push({"label": "divider", "uri": "divider"});
-					items.push({"label": "More...", "uri": "More..."});
-					renderMenu(items, true);
-				} else {
-					populateAllProperties();
-				}
 			}
+
+			renderMenu($("#property_recommended", dialog), items);	
 		}
 
-		function renderMenu(menuItems, storeSet) {
-			var ul = $("ul", $("#" + menuId));
-			ul.find("li:gt(0)").remove();
-			ul.scrollTop(1);
+		function filterDropdown(e) {
+			query = $("input", dialog).val();
+			switch(e.keyCode) {
+		        case 40: // down arrow
+		        case 38: // up arrow
+		        case 16: // shift
+		        case 17: // ctrl
+		        case 18: // alt
+		          break;
 
-			if(storeSet)
-				displayMenuItems = menuItems;
+		        case 9: // tab
+		        case 13: // enter
+		          if (!this.shown) return;
+		          break;
+
+		        case 27: // escape
+		          hide();
+		          break;
+		        default:
+		          	items = allPropertiesCache;
+		          	items = $.grep(items, function (item) {
+			        	return (item["label"].toLowerCase().indexOf(query.toLowerCase()) != -1);
+			      	});
+			      	renderMenu($("#property_all", dialog), items);
+		      }
+		}
+
+		function populateMenu() {
+			window.setTimeout(populateSuggestedProperties, 10);
+			window.setTimeout(populateCompatibleProperties, 11);
+			populateAllProperties();
+		}
+
+		function renderMenu(div, menuItems) {
+			var ul = $("ul", div);
+			ul.empty();
+			ul.scrollTop(1);
 
 			$.each(menuItems, function(index, item) {
 				var label = item["label"];
 				var uri = item["uri"];
 
-				var li = $("<li>");
+				var li = $("<li>").addClass("col-xs-4");
 				if(label == "divider") {
 					li.addClass("divider");
 					
@@ -284,13 +221,14 @@ var PropertySuggestDropdown = (function() {
 		}
 
 
-		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri,
+		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, p_propertyLabel, p_propertyStatus,
 			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
 			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
 			event) {
 			worksheetId = p_worksheetId;
 			alignmentId = p_alignmentId;
 			propertyId = p_propertyId;
+			linkStatus = p_propertyStatus;
 			propertyUri = p_propertyUri;
 			sourceNodeId = p_sourceNodeId;
 			sourceLabel = p_sourceLabel;
@@ -306,24 +244,27 @@ var PropertySuggestDropdown = (function() {
 			sourceNodeType = p_sourceNodeType;
 			targetNodeType = p_targetNodeType;
 
-			$("#input_" + menuId).val('');
+			$("input", dialog).val('');
 			populateMenu();
 
-			window.setTimeout(function() {
-				var ul = $("ul", $("#" + menuId));
-				ul.scrollTop(1);
-			}, 10);
-			//console.log("Click for opening Menu");
-			$("#" + menuId).css({
-				display: "block",
-				position: "absolute",
-				left: event.pageX,
-				top: event.pageY
-			});
+			$("#propertyDialog_title", dialog).html("Change Property: " + p_propertyLabel);
+			if(linkStatus != "TemporaryLink") {
+				$("#propertyDialogFunctions", dialog).show();
+				PropertyFunctions.getInstance().show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, 
+													p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
+													p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
+													hide, event);
+				$("#propertyDialogSuggestions").removeClass("col-sm-12").addClass("col-sm-10");
+			} else {
+				$("#propertyDialogFunctions", dialog).hide();
+				$("#propertyDialogSuggestions").removeClass("col-sm-10").addClass("col-sm-12");
+			}
 
-			window.setTimeout(function(e) {
-				$(document).on('click', hide);
-			}, 10);
+			dialog.modal({
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
+			});
 		};
 
 

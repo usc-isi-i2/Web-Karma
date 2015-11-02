@@ -99,7 +99,29 @@ var ClassDialog = (function() {
 				allTypes.push({"label": type["label"], "uri": type["uri"], "id": type["id"]});
 			});
 
-			renderMenu($("#all", dialog), allTypes, true);
+			renderMenu($("#class_all", dialog), allTypes);
+		}
+
+		function populateRecommended() {
+			var inTypes = getClassesInModel(worksheetId);
+			var items = [];
+			if(inTypes != null) {
+				$.each(inTypes, function(index, type) {
+					items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
+				});	
+			}
+			renderMenu($("#class_recommended", dialog), items);
+		}
+
+		function populateCompatible() {
+			var inTypes = getClassesInModel(worksheetId);
+			var items = [];
+			if(inTypes != null) {
+				$.each(inTypes, function(index, type) {
+					items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
+				});	
+			}
+			renderMenu($("#class_compatible", dialog), items);
 		}
 
 		function filterDropdown(e) {
@@ -126,32 +148,20 @@ var ClassDialog = (function() {
 		          	items = $.grep(items, function (item) {
 			        	return (item["label"].toLowerCase().indexOf(query.toLowerCase()) != -1);
 			      	});
-			      	renderMenu($("#all", dialog), items, false);
+			      	renderMenu($("#class_all", dialog), items);
 		      }
 		}
 
 		function populateMenu() {
-		
-			var inTypes = getClassesInModel(worksheetId);
-			var items = [];
-			if(inTypes != null) {
-				$.each(inTypes, function(index, type) {
-					items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
-				});	
-			}
-			
-			renderMenu($("#recommended", dialog), items, true);
-			renderMenu($("#compatible", dialog), items, true);
+			populateRecommended();
+			populateCompatible();
 			populateAll();
 		}
 
-		function renderMenu(div, menuItems, storeSet) {
+		function renderMenu(div, menuItems) {
 			var ul = $("ul", div);
 			ul.empty();
 			ul.scrollTop(1);
-
-			if(storeSet)
-				displayMenuItems = menuItems;
 
 			$.each(menuItems, function(index, item) {
 				var label = item["label"];

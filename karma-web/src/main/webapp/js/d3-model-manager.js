@@ -214,31 +214,13 @@ var D3ModelManager = (function() {
 					sourceObj = d.source;
 					targetObj = d.target;
 				}
-				if(d.linkStatus != "TemporaryLink") {
-					PropertyDropdownMenu.getInstance().show(
-							worksheetId,
-							alignmentId,
-							d.id,
-							d.linkUri,
-							d.sourceNodeId,
-							sourceObj.nodeType,
-							sourceObj.label,
-							sourceObj.nodeDomain,
-							d.sourceNodeId,
-							d.source.isUri,
-							d.targetNodeId,
-							targetObj.nodeType,
-							targetObj.label,
-							targetObj.nodeDomain,
-							d.targetNodeId,
-							d.target.isUri,
-							event);
-				}
-				PropertySuggestDropdown.getInstance().show(
+				PropertyDialog.getInstance().show(
 						worksheetId,
 						alignmentId,
 						d.id,
 						d.linkUri,
+						d.label,
+						d.linkStatus,
 						d.sourceNodeId,
 						sourceObj.nodeType,
 						sourceObj.label,

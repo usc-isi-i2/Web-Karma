@@ -72,46 +72,50 @@ var ClassFunctions = (function() {
 				hideFunction();
 		}
 
-		function manageLinks() {
+		function manageLinks(e) {
 			hide();
 			console.log("showIncomingOutgoingLinks");
 			ManageIncomingOutgoingLinksDialog.getInstance().show(worksheetId,
 				columnId, alignmentId,
 				columnLabel, columnUri, columnDomain, nodeType, isUri);
+			e.preventDefault();
 		}
 
-		function addIncomingLink() {
+		function addIncomingLink(e) {
 			hide();
 			console.log("addIncomingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
 				columnLabel, columnUri, columnDomain, nodeType, isUri,
 				"incoming");
-			
+			e.preventDefault();
 		};
 
-		function searchData() {
+		function searchData(e) {
 			hide();
 			AugmentDataDialog.getInstance(worksheetId,
 				columnDomain, columnUri, alignmentId).show();
+			e.preventDefault();
 		}
 
-		function addOutgoingLink() {
+		function addOutgoingLink(e) {
 			hide();
 			console.log("addOutgoingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
 				columnLabel, columnUri, columnDomain, nodeType, isUri,
 				"outgoing");
+			e.preventDefault();
 		}
 
-		function addOutgoingLiteral() {
+		function addOutgoingLiteral(e) {
 			hide();
 			console.log("addOutgoingLiteral");
 			AddLiteralNodeDialog.getInstance().showWithProperty(worksheetId, columnId, columnDomain);
+			e.preventDefault();
 		}
 		
-		function deleteNode() {
+		function deleteNode(e) {
 			console.log("Delete Node");
 			var info = generateInfoObject(worksheetId, "", "DeleteNodeCommand");
 			var newInfo = info['newInfo'];
@@ -122,20 +126,23 @@ var ClassFunctions = (function() {
 			showLoading(worksheetId);
 			sendRequest(info, worksheetId);
 			hide();
+			e.preventDefault();
 		}
 
-		function editNode() {
+		function editNode(e) {
 			console.log("Edit Node");
 			hide();
 			AddLiteralNodeDialog.getInstance().showEdit(worksheetId, columnId);
+			e.preventDefault();
 		}
 		
-		function exportCSV() {
+		function exportCSV(e) {
 			hide();
 			ExportCSVModelDialog.getInstance().show(worksheetId, alignmentId, columnId, "exportCSV");
+			e.preventDefault();
 		};
 
-		function exportJSON() {
+		function exportJSON(e) {
 			hide();
 			console.log("exportJSON");
 			// var info = generateInfoObject(worksheetId, "", "ExportJSONCommand");
@@ -146,9 +153,10 @@ var ClassFunctions = (function() {
 			// showLoading(worksheetId);
 			// var returned = sendRequest(info, worksheetId);
 			ExportJSONDialog.getInstance().show(worksheetId, columnId);
+			e.preventDefault();
 		}
 
-		function exportAvro() {
+		function exportAvro(e) {
 			hide();
 			console.log("exportAvro");
 			var info = generateInfoObject(worksheetId, "", "ExportAvroCommand");
@@ -157,14 +165,16 @@ var ClassFunctions = (function() {
 			info["newInfo"] = JSON.stringify(newInfo);
 			showLoading(worksheetId);
 			var returned = sendRequest(info, worksheetId);
+			e.preventDefault();
 		}
 
-		function invokeMLService() {
+		function invokeMLService(e) {
 			hide();
 			ExportCSVModelDialog.getInstance().show(worksheetId, alignmentId, columnId, "invokeMLService");
+			e.preventDefault();
 		}
 
-		function duplicateNode() {
+		function duplicateNode(e) {
 			var info = generateInfoObject(worksheetId, "", "AddNodeCommand");
 			var newInfo = info['newInfo'];
 			newInfo.push(getParamObject("label", "", "other"));
@@ -175,40 +185,57 @@ var ClassFunctions = (function() {
 
 			var returned = sendRequest(info, worksheetId);
 			hide();
+			e.preventDefault();
 		}
 
 		function generateJS() {
-			var ul = $("<ul>").addClass("list-group");
+			var btnList = $("<div>").addClass("btn-group-vertical").css("display", "block");
 			for (var i = 0; i < options.length; i++) {
 				var option = options[i];
-				var li = $("<li>").addClass("list-group-item");
-				if(i % 2 == 0)
-					li.addClass("list-even");
-				else
-					li.addClass("list-odd");
-				if (option.name == "divider") {
-					continue;
-					li.addClass("divider");
-				} else {
-					var a = $("<a>")
-						.attr("href", "#")
-						.attr("tabindex", "-1")
+
+				var btn = $("<button>").addClass("btn").addClass("btn-default")
 						.text(option.name)
-						.click(option.func);
-					li.append(a);
-					li.data("category", option.category);
-					li.data("nodeType", option.nodeType);
-				}
-				ul.append(li);
+						.click(option.func)
+						.data("category", option.category)
+						.data("nodeType", option.nodeType);
+
+				btnList.append(btn);
+
+				if(i % 2 == 0)
+					btn.addClass("list-even");
+				else
+					btn.addClass("list-odd");
+				
 			}
 
 			var div = $("<div>")
 				.attr("id", menuId)
-				.append(ul);
+				.append(btnList);
 
-			var container = $("#classDialogFunctions");
+			var container = $("#" + parentId + "Functions");
 			container.append(div);
 		}
+
+		function enableAllItems() {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				btn.removeClass("disabled");
+				btn.prop("disabled", false);
+			}
+		}
+		
+		// function disableItem(value) {
+		// 	var btns = $("button", "#" + menuId);
+		// 	for(var i=0; i<btns.length; i++) {
+		// 		var btn = $(btns[i]);
+		// 		if(btn.text() == value) {
+		// 			btn.addClass("disabled");
+		// 			btn.prop("disabled", true);
+		// 			break;
+		// 		}
+		// 	}
+		// }
 
 		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, 
 				p_alignmentId, p_nodeType, p_isUri, hideFunc,
@@ -224,8 +251,10 @@ var ClassFunctions = (function() {
 			isUri = p_isUri;
 			hideFunction = hideFunc;
 
+			enableAllItems();
+
 			//if(columnCategory.length > 0) {
-			$("li", $("#" + menuId)).each(function(index) {
+			$("button", $("#" + menuId)).each(function(index) {
 				var show = true;
 				
 				var category = $(this).data("category");
@@ -262,10 +291,11 @@ var ClassFunctions = (function() {
 					}
 				}
 				
-				if (show)
-					$(this).show();
-				else
-					$(this).hide();
+				if(!show) {
+					btn = $(this);
+					btn.addClass("disabled");
+					btn.prop("disabled", true);
+				}
 			});
 		};
 
