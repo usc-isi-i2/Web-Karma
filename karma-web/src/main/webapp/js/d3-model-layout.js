@@ -153,6 +153,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var force = d3.layout.force()
 		.gravity(0)
 		.linkStrength(function(d){
+			if(d.source.isTemporary)
+				return 0.1;
+
 			if (d.type == "edgeLink"){
 				if (d.target.outside.isOutside){
 					return 1;
@@ -170,10 +173,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			return 0;
 		})
 		.friction(0.8)
-		.charge(-100)
+		.charge(function(d) {
+			// console.log(JSON.stringify(d));
+			if(d.isTemporary)
+				return -5000;
+			return -100;
+		})
 		.linkDistance(function(d){
 			if (d.target.noLayer){
 				return outsideUnitLinkLength * 4;
+			}
+			if(d.source.isTemporary) {
+				return outsideUnitLinkLength * 6;
 			}
 			return outsideUnitLinkLength;
 		})
@@ -185,10 +196,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		.gravity(0)
 		.friction(0.8)
 		.charge(function(d){
+
+			if(d.node.isTemporary)
+				return -500;
 			return 0;
 		})
 		.linkDistance(0)
-		.linkStrength(0.8);
+		.linkStrength(function(d) {
+			if(d.source.isTemporary)
+				return 0.1;
+
+			return 0.8
+		});
 		//node can be dragged to the position you want
 
 	var drag = force.drag()
