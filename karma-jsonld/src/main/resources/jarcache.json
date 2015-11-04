@@ -1,0 +1,7 @@
+[
+  {
+    "Content-Location": "https://raw.githubusercontent.com/usc-isi-i2/dig-alignment/development/versions/2.0/karma/context.json",
+    "X-Classpath": "contexts/development-context-v2.json",
+    "Content-Type": "application/ld+json"
+  }
+]

@@ -20,6 +20,7 @@
 		<module>karma-storm</module>
 		<module>karma-web-services</module>
 		<module>karma-typer</module>
+		<module>karma-jsonld</module>
 	</modules>
 
 

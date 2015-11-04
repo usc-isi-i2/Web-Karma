@@ -80,9 +80,19 @@
 			<classifier>hadoop2</classifier> 
 		</dependency>
 		<dependency>
-		    <groupId>com.github.jsonld-java</groupId>
-		    <artifactId>jsonld-java</artifactId>
-		    <version>0.5.1</version>
+		    <groupId>edu.isi</groupId>
+		    <artifactId>karma-jsonld</artifactId>
+		    <version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>org.apache.spark</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-cli</artifactId>
+					<groupId>commons-cli</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		
