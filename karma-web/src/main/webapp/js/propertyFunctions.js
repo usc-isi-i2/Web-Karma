@@ -1,25 +1,27 @@
-var PropertyDropdownMenu = (function() {
+var PropertyFunctions = (function() {
 
 	var instance = null;
 
 
 	function PrivateConstructor() {
-		var menuId = "propertyDropdownMenu";
+		var menuId = "propertyFunctions";
+		var parentId = "propertyDialog";
+
 		var worksheetId;
 		var alignmentId;
 		var propertyId;
 		var propertyUri;
 		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
 		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
+		var hideFunction;
 
 		var options = [
 			//Title, function to call, needs file upload     
 			// ,
 			["Delete", deleteLink],
-			["divider", null],
+			// ["divider", null],
 			["Change From", changeFrom],
-			["Change To", changeTo],
-			["Change Link", changeLink]
+			["Change To", changeTo]
 		];
 
 		function init() {
@@ -27,30 +29,15 @@ var PropertyDropdownMenu = (function() {
 		}
 
 		function hide() {
-			$("#" + menuId).hide();
-			$(document).off('click', hide);
+			if(hideFunction)
+				hideFunction();
 		}
 
-		function changeLink() {
-			console.log("changeLink");
-			if(targetNodeType == "ColumnNode") {
-    			SetSemanticTypeDialog.getInstance().show(worksheetId, targetId, targetLabel);
-    		} else {
-				var dialog = IncomingOutgoingLinksDialog.getInstance();
-				dialog.setSelectedFromClass(sourceId);
-				dialog.setSelectedToClass(targetId);
-				dialog.setSelectedProperty(propertyUri);
-				dialog.show(worksheetId,
-					targetNodeId, alignmentId,
-					targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
-					"changeLink", sourceNodeId, targetNodeId, propertyUri);
-    		}
-		};
-
-		function deleteLink() {
+		function deleteLink(e) {
 			console.log("deleteLink");
 			if (confirm("Are you sure you wish to delete the link?")) {
 				var info;
+				hide();
 				if(targetNodeType == "ColumnNode") {
 					info = generateInfoObject(worksheetId, targetNodeId, "UnassignSemanticTypeCommand");
 					info["newInfo"] = JSON.stringify(info['newInfo']);
@@ -78,10 +65,12 @@ var PropertyDropdownMenu = (function() {
 				showLoading(worksheetId);
 				var returned = sendRequest(info, worksheetId);
 			}
+			e.preventDefault();
 		}
 
-		function changeFrom() {
+		function changeFrom(e) {
 			console.log("Change From");
+			hide();
 			if(targetNodeType == "ColumnNode") {
     			SetSemanticTypeDialog.getInstance().show(worksheetId, targetId, targetLabel);
     		} else {
@@ -93,14 +82,15 @@ var PropertyDropdownMenu = (function() {
 					targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
 					"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
 			}
-
+			e.preventDefault();
 		}
 
-		function changeTo() {
+		function changeTo(e) {
 			console.log("Change To");
 			if(targetNodeType == "ColumnNode") {
 				alert("Cannot change the link. You could delete it from the Delete menu option");
 			} else {
+				hide();
 				var dialog = IncomingOutgoingLinksDialog.getInstance();
 				dialog.setSelectedToClass(targetId);
 				dialog.setSelectedProperty(propertyUri);
@@ -109,53 +99,61 @@ var PropertyDropdownMenu = (function() {
 					sourceLabel, sourceId, sourceDomain, sourceNodeType, sourceIsUri,
 					"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
 			}
+			e.preventDefault();
 		}
 
 		function generateJS() {
-			var ul = $("<ul>");
-			ul.attr("role", "menu")
-				.addClass("dropdown-menu")
-				.css("display", "block")
-				.css("position", "static")
-				.css("margin-bottom", "5px");
+			var btnList = $("<div>").addClass("btn-group-vertical").css("display", "block");
 			for (var i = 0; i < options.length; i++) {
 				var option = options[i];
-				var li = $("<li>");
-				if (option[0] == "divider") {
-					li.addClass("divider");
-				} else {
-					var a = $("<a>")
-						.attr("href", "#")
-						.attr("tabindex", "-1")
+
+				var btn = $("<button>").addClass("btn").addClass("btn-default")
 						.text(option[0])
 						.click(option[1]);
-					li.append(a);
-				}
-				ul.append(li);
+
+				btnList.append(btn);
+
+				if(i % 2 == 0)
+					btn.addClass("list-even");
+				else
+					btn.addClass("list-odd");
+				
 			}
 
 			var div = $("<div>")
 				.attr("id", menuId)
-				.addClass("dropdown")
-				.addClass("clearfix")
-				.addClass("contextMenu")
-				.append(ul);
+				.append(btnList);
 
-			var container = $("body div.container");
+			var container = $("#" + parentId + "Functions");
 			container.append(div);
 		}
 
-		function disableItem(itemIdx) {
-			var div = $("#" + menuId);
-			var li = $("li:eq(" + itemIdx + ")", div);
-			li.addClass("disabled");
+		function enableAllItems() {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				btn.removeClass("disabled");
+				btn.prop("disabled", false);
+			}
+		}
+		
+		function disableItem(value) {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				if(btn.text() == value) {
+					btn.addClass("disabled");
+					btn.prop("disabled", true);
+					break;
+				}
+			}
 		}
 
 
 		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri,
 			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
 			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
-			event) {
+			hideFunc, event) {
 			worksheetId = p_worksheetId;
 			alignmentId = p_alignmentId;
 			propertyId = p_propertyId;
@@ -173,38 +171,16 @@ var PropertyDropdownMenu = (function() {
 			
 			sourceNodeType = p_sourceNodeType;
 			targetNodeType = p_targetNodeType;
+			hideFunction = hideFunc;
 
+			enableAllItems();
 			if (p_sourceNodeType == "ColumnNode" || p_sourceNodeType == "LiteralNode") {
-				for (var i = 0; i < options.length; i++) {
-					if (options[i][0] == "Change From") {
-						disableItem(i);
-						break;
-					}
-				}
+				disableItem ("Change From");
 			}
 
 			if (p_targetNodeType == "ColumnNode" || p_targetNodeType == "LiteralNode") {
-				for (var i = 0; i < options.length; i++) {
-					if (options[i][0] == "Change To") {
-						disableItem(i);
-						break;
-					}
-				}
+				disableItem("Change To");
 			}
-			
-			
-			//console.log("Click for opening Menu");
-			$("#" + menuId).css({
-				display: "block",
-				position: "absolute",
-				left: event.pageX,
-				top: event.pageY
-			});
-
-			window.setTimeout(function() {
-				$(document).on('click', hide);
-
-			}, 10);
 		};
 
 

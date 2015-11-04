@@ -71,6 +71,39 @@ public class SemanticTypeColumnModel implements Jsonizable {
 		writer.endObject();
 	}
 
+	public JSONObject getAsJSONObject(String classUri, OntologyManager ontMgr, int maxLabels) throws JSONException {
+		JSONArray arr = new JSONArray();
+		
+		// Need to sort
+		HashMap<String, Double> sortedMap = Util.sortHashMap(scoreMap);
+		for (String label : sortedMap.keySet()) {
+			double probability = scoreMap.get(label);
+			// Check if the type contains domain
+			if(label.contains("|")){
+				String domainURIStr = label.split("\\|")[0];
+				String typeURIStr = label.split("\\|")[1];
+				
+				Label domainURI = ontMgr.getUriLabel(domainURIStr);
+				Label typeURI = ontMgr.getUriLabel(typeURIStr);
+				if(domainURI == null || typeURI == null)
+					continue;
+				
+				if(domainURIStr.equals(classUri)) {
+					String clazzLocalNameWithPrefix = domainURI.getDisplayName();
+					if(domainURI.getPrefix() == null) 
+						clazzLocalNameWithPrefix = domainURI.getUri() + "/" + domainURI.getLocalName();
+					insertSemanticTypeSuggestion(arr, clazzLocalNameWithPrefix, domainURIStr, domainURIStr, 
+							typeURI.getDisplayName(), typeURIStr, probability);
+					if(arr.length() == maxLabels)
+						break;
+				}
+			}
+		}
+		JSONObject obj = new JSONObject();
+		obj.put("Labels", arr);
+		return obj;
+	}
+	
 	public JSONObject getAsJSONObject(OntologyManager ontMgr, Alignment alignment) throws JSONException {
 		JSONObject obj = new JSONObject();
 		JSONArray arr = new JSONArray();

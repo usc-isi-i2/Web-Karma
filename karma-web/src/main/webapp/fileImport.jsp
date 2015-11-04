@@ -37,6 +37,12 @@
 					</div>
 					<div class="radio">
 					  <label>
+					    <input type="radio" name="FileFormatSelection" id="JSONLinesFileFormat" value="JSONLinesFile" checked>
+					    JSON Lines
+					  </label>
+					</div>
+					<div class="radio">
+					  <label>
 					    <input type="radio" name="FileFormatSelection" id="XMLFileFormat" value="XMLFile">
 					    XML
 					  </label>

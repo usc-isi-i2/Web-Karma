@@ -49,6 +49,10 @@ text.FakeRootLink {
 }
 */
 
+.link.TemporaryLink {
+	stroke: rgb(133, 188, 216);
+}
+
 g.ColumnNode rect{
 	fill:black;
 }

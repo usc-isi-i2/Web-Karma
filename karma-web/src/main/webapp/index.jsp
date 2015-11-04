@@ -363,8 +363,11 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/semanticTypes.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/classUI.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertyUI.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/classDropdown.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/propertyDropdown.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/classDialog.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/classFunctions.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/anchorDropdown.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/propertyDialog.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/propertyFunctions.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/UnconnectedNodesLayout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>

@@ -27,11 +27,14 @@ import edu.isi.karma.view.VWorkspace;
 
 public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
+	private final String classUri;
 	private static Logger logger = LoggerFactory.getLogger(GetSemanticSuggestionsCommand.class.getSimpleName());
 	
-	protected GetSemanticSuggestionsCommand(String id, String model, String worksheetId, String hNodeId, String selectionId) {
+	protected GetSemanticSuggestionsCommand(String id, String model, String worksheetId, 
+			String hNodeId, String classUri, String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
+		this.classUri = classUri;
 	}
 	
 	@Override
@@ -87,15 +90,19 @@ public class GetSemanticSuggestionsCommand extends WorksheetSelectionCommand {
 						logger.info("no semantic type learned for the column " + hNodeId);
 					}
 				}
+				JSONObject result;
 				if(model != null) {
-					JSONObject json = model.getAsJSONObject(ontMgr, alignment);
-					pw.print(json.toString());
+					if(classUri == null)
+						result = model.getAsJSONObject(ontMgr, alignment);
+					else {
+						model = new SemanticTypeUtil().predictColumnSemanticType(workspace, worksheet, currentColumnPath, 4, selection);
+						result = model.getAsJSONObject(classUri, ontMgr, 4);
+					}
 				} else {
-					JSONObject obj = new JSONObject();
-					JSONArray arr = new JSONArray();
-					obj.put("Labels", arr);
-					pw.println(obj.toString());
+					result = new JSONObject();
+					result.put("Labels", new JSONArray());
 				}
+				pw.println(result.toString());
 				
 			}
 			

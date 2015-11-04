@@ -15,7 +15,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var linkClickListener = null;
 	var nodeClickListener = null;
 	var anchorClickListener = null;
-	
+	var anchorMouseListener = null;
+	var linkApproveClickListener = null;
+	var nodeDragDropListener = null;
+
 	var test = [];
 	//var tableData = [];                            //store table data
 	//var columnPos = [];                            //position for each column
@@ -150,6 +153,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var force = d3.layout.force()
 		.gravity(0)
 		.linkStrength(function(d){
+			if(d.source.isTemporary)
+				return 0.1;
+
 			if (d.type == "edgeLink"){
 				if (d.target.outside.isOutside){
 					return 1;
@@ -167,10 +173,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			return 0;
 		})
 		.friction(0.8)
-		.charge(-100)
+		.charge(function(d) {
+			// console.log(JSON.stringify(d));
+			if(d.isTemporary)
+				return -5000;
+			return -100;
+		})
 		.linkDistance(function(d){
 			if (d.target.noLayer){
 				return outsideUnitLinkLength * 4;
+			}
+			if(d.source.isTemporary) {
+				return outsideUnitLinkLength * 6;
 			}
 			return outsideUnitLinkLength;
 		})
@@ -182,10 +196,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		.gravity(0)
 		.friction(0.8)
 		.charge(function(d){
+
+			if(d.node.isTemporary)
+				return -500;
 			return 0;
 		})
 		.linkDistance(0)
-		.linkStrength(0.8);
+		.linkStrength(function(d) {
+			if(d.source.isTemporary)
+				return 0.1;
+
+			return 0.8
+		});
 		//node can be dragged to the position you want
 
 	var drag = force.drag()
@@ -195,6 +217,21 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			}
 	  	})
 	    .on("dragend", function(d) {
+	    	if(d.isTemporary) {
+	    		originalNode = d.original;
+	    		d3.select(event.target).call(function(d) {
+	    			if(d.length > 0) {
+	    				if(d[0].length > 0 && d[0][0].__data__) {
+	    					data = d[0][0].__data__;
+	    					if(data.node) {
+	    						if(nodeDragDropListener != null) {
+	    							nodeDragDropListener(originalNode, data.node.original, event);
+	    						}
+	    					}
+	    				} 
+	    			}
+	    		});
+	    	}
 	  		if (!d.outside.isOutside || d.noLayer){
 	  			d.position.x = d.x;
 	  			d.position.y = d.y;
@@ -262,10 +299,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("opacity", 0)
 			.remove();
 
+		
 		var test = labels.append("circle")
 			.attr("r", 0)
-			//.attr("fill", "black");
-		
+
 		labelFrame = labels
 			.append("g")
 			.attr("class", function(d){
@@ -358,6 +395,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("fill", function(d){
 				if (d.type == "nodeLabel"){
 					if (d.node.isForcedByUser) return "rgb(42,98,126)";
+					if (d.node.isTemporary) return "#888";
 					return "#555";
 				}
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
@@ -377,6 +415,38 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			});
 			
 		labelBoard.moveToBack();
+
+		labelApproveBoard = labels
+			.filter(function(d, i){
+				//console.log(JSON.stringify(d));
+				return d.type == "linkLabel" && d.node.original.linkStatus == "TemporaryLink";
+			})
+			.append("rect")
+			.attr("fill", "transparent")
+			.classed("clickBoard", true)
+			.attr("r", 5)
+			.attr("opacity", 1)
+			.attr("stroke-width", 2)
+			.attr("stroke", "red")
+			.attr("width", function(d){
+				return 8;
+			})
+			.attr("height", function(d){
+				return 8;
+			})
+			.attr("x", function(d){
+				var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
+				return -4;
+			})
+			.attr("y", function(d){
+				var h = Math.ceil(this.parentNode.childNodes[1].getBBox().height);
+				return -h+15;
+			})
+			.on("click", function(d){
+				if(linkApproveClickListener != null)
+						linkApproveClickListener(d.node.original, d3.event);
+			});
+
 		labelClickBoard = labels
 			.filter(function(d, i){
 				return (i % 2 == 1) && d.node.type != "anchor";
@@ -410,7 +480,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return -h;
 			})
 			.on("click", function(d){
-				console.log(d.node.labelWidth);
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
 					if(linkClickListener != null)
 						linkClickListener(d.node.original, d3.event);
@@ -575,6 +644,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				d.position.y = height - nodeRadius - d.layer * unitLinkLength;
 			})
 			.on("mouseover", function(d){
+				if(anchorMouseListener != null && d.original.nodeType == "ColumnNode")
+					anchorMouseListener(d.original, d3.event);
 				d3.select(this)
 					.transition()
 					.duration(500)
@@ -1093,6 +1164,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			node.showLabel = false;
 			node.original = d;
 			node.isForcedByUser = d.isForcedByUser;
+			node.isTemporary = d.isTemporary;
 			if (d.column || d.column == 0){
 				//columnPos.push(d.xPos);
 				node.nodeId = d.hNodeId;
@@ -1751,7 +1823,19 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	this.setAnchorClickListener = function(listener) {
 		anchorClickListener = listener;
 	}
+
+	this.setAnchorMouseListener = function(listener) {
+		anchorMouseListener = listener;
+	}
 	
+	this.setLinkApproveClickListener = function(listener) {
+		linkApproveClickListener = listener;
+	}
+
+	this.setNodeDragDropListener = function(listener) {
+		nodeDragDropListener = listener;
+	}
+
 	this.onscroll = function(event){
 		//console.log(window.pageXOffset);
 		if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){

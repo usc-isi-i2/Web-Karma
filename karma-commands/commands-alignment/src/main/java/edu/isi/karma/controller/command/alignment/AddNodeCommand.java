@@ -82,12 +82,18 @@ public class AddNodeCommand extends WorksheetCommand {
 				.getGraph().clone();
 
 		try {
+			if(nodeId.equals("")) {
+				nodeId = nodeUri + (alignment.getLastIndexOfNodeUri(nodeUri) + 1);
+			}
 			InternalNode node = new InternalNode(nodeId, new Label(nodeUri));
 			Node addedNode = alignment.addInternalNode(node);
 			if (addedNode != null)
 				alignment.addToForcedNodes(addedNode);
 			if(!this.isExecutedInBatch())
 				alignment.align();
+			
+			if(nodeLabel.equals("")) 
+				nodeLabel = node.getDisplayId();
 			
 		} catch (JSONException e) {
 			logger.error("Error adding Internal Node:" , e);
