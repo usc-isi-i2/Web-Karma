@@ -96,7 +96,7 @@ public class GetAlternativeLinksCommand extends Command {
 			
 		} else if (linksRange == ALTERNATIVE_LINKS_RANGE.compatibleLinks) {
 			
-			List<LabeledLink> compatibleLinks = alignment.getLinks(sourceNodeId, targetNodeId);
+			List<LabeledLink> compatibleLinks = alignment.getPossibleLinks(sourceNodeId, targetNodeId);
 			if (compatibleLinks != null) {
 				for (LabeledLink link : compatibleLinks) {
 					if (link.getLabel() != null)

@@ -103,7 +103,7 @@ public class ModelingConfiguration {
 			"# turning off the next two flags is equal to manual alignment" + newLine + 
 			"compatible.properties=true" + newLine + 
 			"ontology.alignment=false" + newLine + 
-			"knownmodels.alignment=false" + newLine + 
+			"knownmodels.alignment=true" + newLine + 
 			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
@@ -138,7 +138,7 @@ public class ModelingConfiguration {
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
 			"" + newLine + 
-			"learner.enabled=false" + newLine + 
+			"learner.enabled=true" + newLine + 
 			"" + newLine + 
 			"add.ontology.paths=false" + newLine + 
 			"" + newLine + 
@@ -212,7 +212,7 @@ public class ModelingConfiguration {
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				knownModelsAlignment = true;
 				out.println();
-				out.println("knownmodels.alignment=false");
+				out.println("knownmodels.alignment=true");
 				out.close();
 			}
 			
@@ -226,7 +226,7 @@ public class ModelingConfiguration {
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				learnerEnabled = true;
 				out.println();
-				out.println("learner.enabled=false");
+				out.println("learner.enabled=true");
 				out.close();
 			}
 

@@ -89,7 +89,7 @@ public class SortableSemanticModel extends SemanticModel
 
 	private void computeCoherence() {
 		for (LabeledLink l : this.graph.edgeSet()) {
-			linkCoherence.updateCoherence(this.getGraph(), l);
+			linkCoherence.updateCoherence(l);
 		}
 	}
 
