@@ -223,6 +223,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			}
 // 			console.log(JSON.stringify(d));
 			if(d.isTemporary && d.original.nodeDomain == "BlankNode") {
+				d3.select(this).moveToBack();
 				nodes.each(function(d){
 					d.beforeDragFixed = d.fixed;
 					d3.select(this).classed("fixed", d.fixed = true);
