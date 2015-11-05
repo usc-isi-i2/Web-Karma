@@ -14,7 +14,7 @@
 	opacity: 0;
 }
 
-.fixed{
+.node.fixed{
 	stroke : #555;
 	stroke-width : 4;
 }

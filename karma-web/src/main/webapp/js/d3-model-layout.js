@@ -149,36 +149,52 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var linkArrow = forceSVG.selectAll(".linkArrow");   //little triangle of links
 	var labelFrame = forceSVG.selectAll(".labelFrame"); //the frame of each label
 
+	var linkStrengthFunc = function(d) {
+		if(d.source.isTemporary) {
+				return 0.1;
+		}
+		if (d.type == "edgeLink"){
+			if (d.target.outside.isOutside){
+				return 1;
+			}
+			return 0;
+		}
+		if (d.source.outside.isOutside && d.target.outside.isOutside) {
+			return 1;
+		} else if (d.source.outside.isOutside || d.target.outside.isOutside) {
+			if (!d.target.outside.isOutside && d.target.type == "anchor"){
+				return 0.1;
+			}
+			return 0.8;
+		}
+		return 0;
+	}
+
+	var chargeFunc = function(d) {
+		if(d.isTemporary)
+			return -5000;
+		return -100;
+	}
+
+	var labelLinkStrengthFunc = function(d) {
+		if(d.source.isTemporary)
+			return 0.1;
+
+		return 0.8
+	}
+
+	var labelChargeFunc = function(d) {
+		if(d.node.isTemporary)
+			return -5000;
+		return -100;
+	}
+
 	//force layout for nodes
 	var force = d3.layout.force()
 		.gravity(0)
-		.linkStrength(function(d){
-			if(d.source.isTemporary)
-				return 0.1;
-
-			if (d.type == "edgeLink"){
-				if (d.target.outside.isOutside){
-					return 1;
-				}
-				return 0;
-			}
-			if (d.source.outside.isOutside && d.target.outside.isOutside){
-				return 1;
-			} else if (d.source.outside.isOutside || d.target.outside.isOutside){
-				if (!d.target.outside.isOutside && d.target.type == "anchor"){
-					return 0.1;
-				}
-				return 0.8;
-			}
-			return 0;
-		})
+		.linkStrength(linkStrengthFunc)
 		.friction(0.8)
-		.charge(function(d) {
-			// console.log(JSON.stringify(d));
-			if(d.isTemporary)
-				return -5000;
-			return -100;
-		})
+		.charge(chargeFunc)
 		.linkDistance(function(d){
 			if (d.target.noLayer){
 				return outsideUnitLinkLength * 4;
@@ -195,19 +211,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		//.size([Math.max(width, columns * barWidth), height])
 		.gravity(0)
 		.friction(0.8)
-		.charge(function(d){
-
-			if(d.node.isTemporary)
-				return -500;
-			return 0;
-		})
+		.charge(labelChargeFunc)
 		.linkDistance(0)
-		.linkStrength(function(d) {
-			if(d.source.isTemporary)
-				return 0.1;
-
-			return 0.8
-		});
+		.linkStrength(labelLinkStrengthFunc);
 		//node can be dragged to the position you want
 
 	var drag = force.drag()
@@ -215,10 +221,33 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			if (!d.outside.isOutside || d.noLayer){
 	  			d3.select(this).classed("fixed", d.fixed = true);
 			}
+// 			console.log(JSON.stringify(d));
+			if(d.isTemporary && d.original.nodeDomain == "BlankNode") {
+				nodes.each(function(d){
+					d.beforeDragFixed = d.fixed;
+					d3.select(this).classed("fixed", d.fixed = true);
+				});
+				labelFrame.each(function(d) {
+					d.beforeDragFixed = d.fixed;
+					d3.select(this).classed("fixed", d.fixed = true);
+
+				});
+				// force.charge(function(d) {
+				// 	if(d.original.nodeDomain == "BlankNode")
+				// 		return 5000;
+				// 	if(d.isTemporary)
+				// 		return -5000;
+				// 	return -100;
+				// });
+				// labelForce.charge(-1);
+				// force.start();
+				// labelForce.start();
+			}
 	  	})
 	    .on("dragend", function(d) {
 	    	if(d.isTemporary) {
-	    		originalNode = d.original;
+	    		console.log("DragEnd of TemporaryLink")
+	    		originalNode = d.original;	
 	    		d3.select(event.target).call(function(d) {
 	    			if(d.length > 0) {
 	    				if(d[0].length > 0 && d[0][0].__data__) {
@@ -231,7 +260,22 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	    				} 
 	    			}
 	    		});
+
+	    		if(d.original.nodeDomain == "BlankNode") {
+		    		nodes.each(function(d){
+						d3.select(this).classed("fixed", d.fixed = d.beforeDragFixed);
+					});
+					labelFrame.each(function(d) {
+						d3.select(this).classed("fixed", d.fixed = d.beforeDragFixed);
+					});
+				}
+	    // 			force.charge(chargeFunc).linkStrength(linkStrengthFunc);
+					// labelForce.charge(labelChargeFunc).linkStrength(labelLinkStrengthFunc);
+					// force.start();
+					// labelForce.start();
+	    // 		}
 	    	}
+
 	  		if (!d.outside.isOutside || d.noLayer){
 	  			d.position.x = d.x;
 	  			d.position.y = d.y;
@@ -1763,7 +1807,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			setLayer(tmpL, tmpEdgeLink);
 
 			
-			height = (maxLayer + 0.5) * unitLinkLength;
+			height = (maxLayer + 0.5) * unitLinkLength * 1.5;
 			if (width > window.innerWidth){
 				height += (maxLayer + 1.5) * outsideUnitLinkLength;
 			}
