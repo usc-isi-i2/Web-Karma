@@ -810,18 +810,30 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public List<LabeledLink> suggestLinks(String nodeId) {
 		
-		List<LabeledLink> alternativeLinks = new LinkedList<LabeledLink>();
+		List<LabeledLink> suggestedLinks = new LinkedList<LabeledLink>();
 		
 		if (this.steinerTree == null) {
 			logger.error("the model is null.");
-			return alternativeLinks;
+			return suggestedLinks;
 		}
 		
 		Node n = this.getNodeById(nodeId);
 		if (n == null) {
 			logger.error("could not find the node " + nodeId + " in the model.");
-			return alternativeLinks;
+			return suggestedLinks;
 		}
+		
+		
+		Set<String> currentLinkIds = new HashSet<String>();
+		Set<LabeledLink> currentIncomingLinks, currentOutgoingLinks;
+		currentIncomingLinks = this.getIncomingLinksInTree(nodeId);
+		currentOutgoingLinks = this.getOutgoingLinksInTree(nodeId);
+		if (currentIncomingLinks != null) 
+			for (LabeledLink l : currentIncomingLinks)
+				currentLinkIds.add(l.getId());
+		if (currentOutgoingLinks != null) 
+			for (LabeledLink l : currentOutgoingLinks)
+				currentLinkIds.add(l.getId());
 		
 		Set<LabeledLink> candidateLinks = new HashSet<LabeledLink>();
 		List<LabeledLink> incomingLinks, outgoingLinks;
@@ -829,12 +841,9 @@ public class Alignment implements OntologyUpdateListener {
 		outgoingLinks = this.getOutgoingLinksInGraph(nodeId);
 		if (incomingLinks != null) candidateLinks.addAll(incomingLinks);
 		if (outgoingLinks != null) candidateLinks.addAll(outgoingLinks);
-
-		//  create a class: LinkCoherence, Cost
 		
-		// create an object for the current alignment
 		if (candidateLinks.size() == 0)
-			return alternativeLinks;
+			return suggestedLinks;
 		
 		LinkCoherence modelCoherence = new LinkCoherence();
 		double modelCost = 0.0;
@@ -849,43 +858,45 @@ public class Alignment implements OntologyUpdateListener {
 		AlignmentScore currentScore = new AlignmentScore(modelCoherence, modelCost);
 		List<AlignmentScore> alignmentScores = new LinkedList<AlignmentScore>();
 		for (LabeledLink l : candidateLinks) {
+			// ignore the candidate links that are already in the model
+			if (currentLinkIds.contains(l.getId())) continue;
 			AlignmentScore a = new AlignmentScore(l, currentScore);
 			alignmentScores.add(a);
 		}
 		
 		Collections.sort(alignmentScores);
 		for (AlignmentScore a : alignmentScores) {
-			alternativeLinks.add(a.getLink());
+			suggestedLinks.add(a.getLink());
 		}
 		
-		return alternativeLinks;
+		return suggestedLinks;
 	}
 
 	public List<LabeledLink> suggestAlternativeLinks(String linkId) {
 
-		List<LabeledLink> suggestedLinks = new LinkedList<LabeledLink>();
+		List<LabeledLink> alternativeLinks = new LinkedList<LabeledLink>();
 		
 		if (this.steinerTree == null) {
 			logger.error("the model is null.");
-			return suggestedLinks;
+			return alternativeLinks;
 		}
 
 		LabeledLink link = this.getLinkById(linkId);
 		if (link == null) {
 			logger.error("could not find the link " + linkId + " in the model.");
-			return suggestedLinks;
+			return alternativeLinks;
 		}
 
 		Node source = this.getNodeById(link.getSource().getId());
 		if (source == null) {
 			logger.error("could not find the source node " + link.getSource().getId() + " in the model.");
-			return suggestedLinks;
+			return alternativeLinks;
 		}
 		
 		Node target = this.getNodeById(link.getTarget().getId());
 		if (target == null) {
 			logger.error("could not find the source node " + link.getTarget().getId() + " in the model.");
-			return suggestedLinks;
+			return alternativeLinks;
 		}
 		
 		Set<LabeledLink> candidateLinks = new HashSet<LabeledLink>();
@@ -896,7 +907,7 @@ public class Alignment implements OntologyUpdateListener {
 		if (outgoingLinks != null) candidateLinks.addAll(outgoingLinks);
 
 		if (candidateLinks.size() == 0)
-			return suggestedLinks;
+			return alternativeLinks;
 		
 		LinkCoherence modelCoherence = new LinkCoherence();
 		double modelCost = 0.0;
@@ -911,16 +922,18 @@ public class Alignment implements OntologyUpdateListener {
 		AlignmentScore currentScore = new AlignmentScore(modelCoherence, modelCost);
 		List<AlignmentScore> alignmentScores = new LinkedList<AlignmentScore>();
 		for (LabeledLink l : candidateLinks) {
+			// ignore the candidate links that are already in the model
+			if (l.getId().equalsIgnoreCase(link.getId())) continue;
 			AlignmentScore a = new AlignmentScore(l, currentScore);
 			alignmentScores.add(a);
 		}
 		
 		Collections.sort(alignmentScores);
 		for (AlignmentScore a : alignmentScores) {
-			suggestedLinks.add(a.getLink());
+			alternativeLinks.add(a.getLink());
 		}
 		
-		return suggestedLinks;		
+		return alternativeLinks;		
 	}
 
 	public void align() {
