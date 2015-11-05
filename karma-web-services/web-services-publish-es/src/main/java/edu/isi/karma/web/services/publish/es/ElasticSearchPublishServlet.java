@@ -44,6 +44,8 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.er.helper.PythonRepository;
+import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
@@ -356,15 +358,21 @@ public class ElasticSearchPublishServlet extends Application {
 	private void initialization(ServletContext context) throws KarmaException {
 		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
 		initContextParameters(context, contextParameters);
+		
+		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
+		contextParameters = contextParametersRegistry.registerByKarmaHome(null);
+		
 		UpdateContainer uc = new UpdateContainer();
 		KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
 		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
 		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
 		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
+		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
+		PythonRepositoryRegistry.getInstance().register(pythonRepository);
 
 		SemanticTypeUtil.setSemanticTypeTrainingStatus(false);
-		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextParameters.getId());
-		modelingConfiguration.setLearnerEnabled(false); // disable automatic													// learning
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
+		modelingConfiguration.setLearnerEnabled(false); // disable automatic learning												// learning
 	}
 
 }
