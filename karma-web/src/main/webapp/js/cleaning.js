@@ -103,7 +103,7 @@ var TransformColumnDialog = (function() {
 			$("tr", tab1).remove();
 			var tab2 = $("table#examples");
 			$("tr", tab2).remove();
-			$("div#coverage").text(coverage*100);
+			$("b#coverage").text(coverage*100);
 
 			populateResult(values[0]);
 		}
@@ -309,7 +309,7 @@ var TransformColumnDialog = (function() {
 				var trTag = $("tr#" + rid + "_suggestion_cl_row", cleaningTable);
 				// empty an array in JS
 				if (trTag.length == 0) {
-				trTag = $("<tr>").attr("id", rid + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[rid]["Orgdis"])).append($("<td>").addClass("noBorder"));
+					trTag = $("<tr>").attr("id", rid + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[rid]["Orgdis"])).append($("<td>").addClass("noBorder"));
 				} else {
 					trTag = trTag[0];
 				}
@@ -336,6 +336,22 @@ var TransformColumnDialog = (function() {
 				tab1.append(trTag);
 			});
 			
+			$.each(minimal, function(index, id){
+				var td = $("td#"+id+"_suggestion_transformed").addClass("minimal");	
+			});
+			lightControl(coverage);
+			
+		}
+		function lightControl(coverage){
+			if (coverage >= 100){
+				$("span#red").removeClass('active');
+				$("span#green").addClass('active');
+			}
+			else{
+				$("span#green").removeClass('active');
+				$("span#red").addClass('active');
+
+			}
 		}
 
 		function preprocessData(data, nodeIds) {

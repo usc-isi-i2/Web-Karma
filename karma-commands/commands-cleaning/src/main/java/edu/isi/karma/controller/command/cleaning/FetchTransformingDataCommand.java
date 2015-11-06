@@ -112,7 +112,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 		}
 		Msg = String.format("end, Time,%d, Worksheet,%s", System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
-		UserStudyUtil.logStart(wk.getUserMonitor(), System.currentTimeMillis());
+		//UserStudyUtil.logStart(wk.getUserMonitor(), System.currentTimeMillis());
 		return new UpdateContainer(new FetchResultUpdate(hNodeId, rows));
 	}
 

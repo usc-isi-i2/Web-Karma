@@ -70,7 +70,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
 	private int sample_cnt = 300;
 	private int sample_size = 200;
-	private int maximal_recommand_size = 100;
+	private int maximal_recommand_size = 150;
 	private Vector<TransformationExample> examples;
 	private HashSet<String> nodeIds = new HashSet<String>();
 	RamblerTransformationInputs inputs;
@@ -201,7 +201,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		boolean results = false;
 		int iterNum = 0;
 		RamblerTransformationOutput rtf = null;
-		while (iterNum < 1 && !results) // try to find an program within iterNum
+		while (iterNum < 1 && !results) // try to find a program within iterNum
 		{
 			rtf = new RamblerTransformationOutput(inputs);
 			if (rtf.getTransformations().keySet().size() > 0) {
@@ -281,15 +281,15 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			ArrayList<String> sortedIds = getRecommendedIDswithFatalError(records);
 			keys = sortedIds;
 		}
-		HashSet<String> mintest = getMinimalTestSet(dp, mg, records, rtf, tpid);
-		ArrayList<String> expIds = getExampleIDs();
-		double coverage = getTestCoverage(mintest, expIds);
+		HashSet<String> mintest = getMinimalTestSet(dp, mg, records, rtf, tpid, keys);
+		mg.addMultiInterpreationRecords(mintest);
+		double coverage = getTestCoverage(mintest, mg.allMultipleInterpretation);
 		String vars = "";
 		if (rtf.nullRule) {
 			keys.clear();
 		}
-		UserStudyUtil.logOneiteration(wk.getUserMonitor(), worksheetId, System.currentTimeMillis(), examples, keys, resdata);
-		logDiagnosticInfo(rtf, resdata, keys);
+		//UserStudyUtil.logOneiteration(wk.getUserMonitor(), worksheetId, System.currentTimeMillis(), examples, keys, resdata);
+		//logDiagnosticInfo(rtf, resdata, keys);
 		return new UpdateContainer(new CleaningResultUpdate(hNodeId, resdata, coverage, keys, Lists.newArrayList(mintest)));
 	}
 	private void addExamplesIntoRecords(ArrayList<DataRecord> records, Transformation tf){
@@ -359,22 +359,15 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		return ret;
 		
 	}
-	private double getTestCoverage(HashSet<String> toTest, ArrayList<String> exampleIds){
-		//handle redundancy
-		double total = 1;
-		double tested = 0;
-		for(String id: exampleIds){
-			if(toTest.contains(id)){
-				tested ++;
-			}
+	private double getTestCoverage(HashSet<String> toTest, HashSet<String> all){
+
+		if(all.size() == 0){
+			return 100;
 		}
-		if(toTest.size() != 0){
-			total = toTest.size();
-		}
-		return tested * 1.0 / total;
+		return (1- toTest.size() * 1.0 / all.size()) * 100;
 	}
-	private HashSet<String> getMinimalTestSet(DataPreProcessor dp, Messager mg, ArrayList<DataRecord> records, RamblerTransformationOutput rtf, String tpid){
-		HashSet<String> ret = new HashSet<String>();
+	private HashSet<String> getMinimalTestSet(DataPreProcessor dp, Messager mg, ArrayList<DataRecord> records, RamblerTransformationOutput rtf, String tpid,List<String> sortedIds){
+		HashSet<String> tmp = new HashSet<String>();
 		ArrayList<String> exampleIDs = getExampleIDs();
 		RamblerTransformation rtransformation = (RamblerTransformation) rtf.getTransformations().get(tpid);
 		InspectorFactory factory = new InspectorFactory(dp, mg, records, exampleIDs, rtransformation.prog);
@@ -383,8 +376,14 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		for (DataRecord r : records) {
 			double value = mvInspector.getActionLabel(r);
 			if(value < 0){
-				if(!ret.contains(r.id) && !existed.contains(r.origin));
-					ret.add(r.id);
+				if(!tmp.contains(r.id) && !existed.contains(r.origin));
+					tmp.add(r.id);
+			}
+		}
+		HashSet<String> ret = new HashSet<String>();
+		for(String key: sortedIds){
+			if(tmp.contains(key)){
+				ret.add(key);
 			}
 		}
 		return ret;

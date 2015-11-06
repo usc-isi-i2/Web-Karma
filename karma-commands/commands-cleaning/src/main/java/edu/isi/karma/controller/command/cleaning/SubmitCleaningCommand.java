@@ -172,7 +172,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		UpdateContainer c = new UpdateContainer();
 		HNodePath selectedPath = null;
 		Worksheet wk = workspace.getWorksheet(worksheetId);
-		UserStudyUtil.storeStudyData(wk.getUserMonitor());
+		//UserStudyUtil.storeStudyData(wk.getUserMonitor());
 
 		try {
 			// obtain transformed results
@@ -198,7 +198,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 			ValueCollection rvco = getValueCollectionFromRamblerTranformationOutput(rtf);
 			double acc = calculateAccuracy(rvco, truthTable);
-			UserStudyUtil.logAccuracy(wk.getUserMonitor(), acc, worksheetId);
+			//UserStudyUtil.logAccuracy(wk.getUserMonitor(), acc, worksheetId);
 			findNewHNodeIdAndHNodeAsDerived(workspace, selectedPath);
 			// create edit multiple cells command
 			createAndExecuteMultiCellCmd(workspace, selectedPath, rvco);

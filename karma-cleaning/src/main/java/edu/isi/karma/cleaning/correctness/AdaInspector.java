@@ -29,8 +29,8 @@ public class AdaInspector implements Inspector {
 		}
 	}
 	public void initeParameter(){
-		//String value = "{\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.0|2\":0.20450001920049324,\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.6|2\":0.024386868116059113,\"edu.isi.karma.cleaning.correctness.MembershipAmbiguityInspector|0.07\":0.0025917344906929455,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.6|2\":0.007308103433307873,\"edu.isi.karma.cleaning.correctness.MultiviewInspector\":0.21458067957712698,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|1\":0.12985188307902093,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|2\":0.20038555374000705}";		
-		String value = "{\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|0.0|3\":0.08225784904838043}";
+		String value = "{\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.0|2\":0.20450001920049324,\"edu.isi.karma.cleaning.correctness.OutlierInspector|1.6|2\":0.024386868116059113,\"edu.isi.karma.cleaning.correctness.MembershipAmbiguityInspector|0.07\":0.0025917344906929455,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.6|2\":0.007308103433307873,\"edu.isi.karma.cleaning.correctness.MultiviewInspector\":0.21458067957712698,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|1\":0.12985188307902093,\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|2.8|2\":0.20038555374000705}";		
+		//String value = "{\"edu.isi.karma.cleaning.correctness.ClasscenterInspector|0.0|3\":0.08225784904838043}";
 		JSONObject parameters = new JSONObject(value);
 		Iterator<String> keys = parameters.keys();
 		while(keys.hasNext()){
@@ -65,6 +65,15 @@ public class AdaInspector implements Inspector {
 			return -1;
 		}
 	}
+	public double tuneResult(double ret, double tuneflag){
+		double bigNegtive = -1.0 * 1e-10; 
+		if(tuneflag < 0){
+			if(ret >= 0){
+				ret = bigNegtive; 
+			}
+		}
+		return ret;
+	}
 	public double getActionScore(DataRecord record){
 		double ret = 0.0;
 		ArrayList<Double> alllabels = new ArrayList<Double>();
@@ -74,9 +83,6 @@ public class AdaInspector implements Inspector {
 		for(double d: alllabels){
 			ret += d;
 		}
-		/*if(ret < 0){
-			Prober.printRecommendation(record, alllabels);
-		}*/
 		return ret;
 	}
 	@Override

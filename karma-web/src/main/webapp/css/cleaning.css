@@ -21,7 +21,15 @@
 .hover { background-color: #106166; color: #fff; cursor:pointer; }
 .page{ margin:5px;}
 
-
+div.coverage {
+	color:blue;
+}
+b.figure{
+	color:red;
+}
+td.minimal {
+	border: 1px solid blue;
+}
 span.ins {
 	background:#F7BE81;
 }
@@ -116,3 +124,35 @@ button.editbutton{
 	max-height: 200px;
 	overflow: auto;
 }
+
+/*! Light */
+#light {
+    background-color: #000;
+    text-align: center;
+    box-shadow: 0 0 5px rgba(0,0,0, .8);
+    overflow: hidden;
+    padding: 4px 4px 4px;
+    width: 90px;
+}
+
+#light span {
+    display: inline-block;
+    border-radius: 50px;
+    /*display: block;*/
+    height: 30px;
+    margin: 4px auto 0;
+    opacity: .5;
+    width: 30px;
+}
+
+/*! Light colours */
+#red    { background-color: red; }
+#orange { background-color: orange; }
+#green  { background-color: green; }
+
+/*! Active states */
+#light span.active    { opacity: 1; }
+#light #red.active    { box-shadow: 0 0 10px red; }
+#light #orange.active { box-shadow: 0 0 10px orange; }
+#light #green.active  { box-shadow: 0 0 10px green; }
+
