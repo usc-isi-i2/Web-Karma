@@ -226,7 +226,7 @@
 		  				</table>
 			  		</div>
 					<!--<div class="coverage"><B class="figure" id="coverage"></B>% of the minimal set tested</div>	-->
-					<div id="light"> <span class="active" id="red"></span> <span id="green"></span> </div>
+					<!--<div id="light"> <span class="active" id="red"></span> <span id="green"></span> </div> -->
 			  		<B>Recommended Examples:</B>
 			  		<div class="cleaningOverflowDiv">
 		  				<table id="recmd" class="table table-striped table-condensed">

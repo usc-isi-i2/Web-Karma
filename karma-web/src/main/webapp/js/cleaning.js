@@ -339,7 +339,7 @@ var TransformColumnDialog = (function() {
 			$.each(minimal, function(index, id){
 				var td = $("td#"+id+"_suggestion_transformed").addClass("minimal");	
 			});
-			lightControl(coverage);
+			//lightControl(coverage);
 			
 		}
 		function lightControl(coverage){
