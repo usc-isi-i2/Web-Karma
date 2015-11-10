@@ -24,6 +24,8 @@ package edu.isi.karma.rep;
 
 import java.io.PrintWriter;
 
+import org.json.JSONObject;
+
 import edu.isi.karma.controller.command.selection.SelectionManager;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -48,6 +50,7 @@ public class Worksheet extends RepEntity {
     private SelectionManager selMgr;
     private Object msger = null;//used for holding session cleaning data
 	private Object dpp = null; // data preprocessing for cleaning
+	private JSONObject userMoniter = new JSONObject();// used for user study
     @Override
     public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
         pw.print(prefix);
@@ -124,7 +127,11 @@ public class Worksheet extends RepEntity {
     public void setMetadataContainer(MetadataContainer metadataContainer) {
         this.metadataContainer = metadataContainer;
     }
-
+    public void clearUserCleaningData(){
+    		this.msger = null;
+    		this.dpp = null;
+    		this.userMoniter = new JSONObject();
+    }
     /**
      * When a new HNode is added to a table or one of the nested tables, we need
      * to go through and add place holders in the data table to hold the values
@@ -214,6 +221,9 @@ public class Worksheet extends RepEntity {
     
     public SelectionManager getSelectionManager() {
     	return selMgr;
+    }
+    public JSONObject getUserMonitor(){
+    		return this.userMoniter;
     }
     public Object getMsg()
 	{

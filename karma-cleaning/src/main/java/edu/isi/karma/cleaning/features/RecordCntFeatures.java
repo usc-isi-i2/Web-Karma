@@ -24,6 +24,8 @@ package edu.isi.karma.cleaning.features;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.python.antlr.PythonParser.trailer_return;
+
 public class RecordCntFeatures implements Feature {
 	public String name = "";
 	public String value = "";
@@ -53,7 +55,8 @@ public class RecordCntFeatures implements Feature {
 	}
 
 	@Override
-	public double getScore() {
-		return this.score;
+	public double getScore(String value) {
+		this.value = value;
+		return this.computerScore();
 	}
 }

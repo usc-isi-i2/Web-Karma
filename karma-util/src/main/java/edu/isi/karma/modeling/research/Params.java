@@ -26,8 +26,8 @@ public class Params {
 	public static boolean RESEARCH_MODE = true;
 	
 //	private static String DATASET_NAME = "museum-saam-crm";
-	private static String DATASET_NAME = "museum-29-edm";
-//	private static String DATASET_NAME = "museum-29-crm";
+//	private static String DATASET_NAME = "museum-29-edm";
+	private static String DATASET_NAME = "museum-29-crm";
 //	private static String DATASET_NAME = "museum-29-crm-lod";
 //	private static String DATASET_NAME = "music";
 	

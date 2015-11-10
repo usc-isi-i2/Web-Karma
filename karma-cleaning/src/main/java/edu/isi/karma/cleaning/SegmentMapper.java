@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
+import edu.isi.karma.cleaning.grammartree.Segment;
+import edu.isi.karma.cleaning.grammartree.TNode;
 import edu.isi.karma.cleaning.internalfunlibrary.InternalTransformationLibrary;
 import edu.isi.karma.cleaning.internalfunlibrary.TransformFunction;
 import edu.isi.karma.webserver.ContextParametersRegistry;
@@ -16,10 +18,11 @@ class Dataitem {
 }
 
 public class SegmentMapper {
-	public static InternalTransformationLibrary itfl = new InternalTransformationLibrary();
+	
+	public InternalTransformationLibrary itfl = new InternalTransformationLibrary();
 
 	// only try to find one segment whose starting pos in target is pos
-	public static Vector<Segment> findMapping(Vector<TNode> org,
+	public Vector<Segment> findMapping(Vector<TNode> org,
 			Vector<TNode> tar, int pos) {
 		Vector<Segment> res = new Vector<Segment>();
 		Dataitem root = new Dataitem();
@@ -32,7 +35,7 @@ public class SegmentMapper {
 		res = convert2Segments(ret, org, tar);
 		return res;
 	}
-	public static Vector<Segment> convert2Segments(ArrayList<ArrayList<Dataitem>> repo , Vector<TNode> org, Vector<TNode> tar){
+	public Vector<Segment> convert2Segments(ArrayList<ArrayList<Dataitem>> repo , Vector<TNode> org, Vector<TNode> tar){
 		HashMap<String, ArrayList<Dataitem>> groups = new HashMap<String,ArrayList<Dataitem>>();
 		Vector<Segment> ret = new Vector<Segment>();
 		for(ArrayList<Dataitem> line: repo){
@@ -46,7 +49,7 @@ public class SegmentMapper {
 				for(int ptr = item.tarpos; ptr<= item.tarend; ptr++){
 					cont.add(tar.get(ptr));
 				}
-				Segment seg = new Segment(item.tarpos, item.tarend+1, cont, contextId);
+				Segment seg = new Segment(item.tarpos, item.tarend+1, cont);
 				ret.add(seg);
 				return ret;
 			}
@@ -78,7 +81,7 @@ public class SegmentMapper {
 		}
 		return ret;
 	}
-	public static Dataitem convert(ArrayList<Dataitem> path, Vector<TNode> org, Vector<TNode> tar) {
+	public Dataitem convert(ArrayList<Dataitem> path, Vector<TNode> org, Vector<TNode> tar) {
 		int start = 0;
 		int end = 0;
 		int[] mapping = {Integer.MAX_VALUE, Integer.MIN_VALUE, InternalTransformationLibrary.Functions.NonExist.getValue()};
@@ -108,7 +111,7 @@ public class SegmentMapper {
 		return ret;
 	}
 
-	public static void recursiveSearch(Vector<TNode> org, Vector<TNode> tar,
+	public void recursiveSearch(Vector<TNode> org, Vector<TNode> tar,
 			Dataitem root, ArrayList<Dataitem> path, ArrayList<ArrayList<Dataitem>> repo) {
 		if (root.tarpos >= tar.size()) {
 			repo.add(path);
@@ -132,7 +135,7 @@ public class SegmentMapper {
 		return;
 	}
 	//match one token in the target token seq
-	public static Vector<Dataitem> makeOneMove(Vector<TNode> org,
+	public Vector<Dataitem> makeOneMove(Vector<TNode> org,
 			Vector<TNode> tar, Dataitem root) {
 		Vector<Dataitem> ret = new Vector<Dataitem>();
 		int tpos = root.tarpos;
@@ -230,7 +233,8 @@ public class SegmentMapper {
 		for (int i = 0; i < s1.length; i++) {
 			Vector<TNode> ts1 = UtilTools.convertStringtoTNodes(s1[i]);
 			Vector<TNode> ts2 = UtilTools.convertStringtoTNodes(s2[i]);
-			Vector<Segment> ret = SegmentMapper.findMapping(ts1, ts2, 0);
+			SegmentMapper mapper = new SegmentMapper();
+			Vector<Segment> ret = mapper.findMapping(ts1, ts2, 0);
 			System.out.println("" + ret);
 		}
 	}

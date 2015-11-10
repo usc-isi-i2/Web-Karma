@@ -224,13 +224,15 @@
 			  		<div class="cleaningOverflowDiv">
 		  				<table id="examples" class="table table-striped table-condensed">
 		  				</table>
-			  		</div>	
+			  		</div>
+					<!--<div class="coverage"><B class="figure" id="coverage"></B>% of the minimal set tested</div>	-->
+					<!--<div id="light"> <span class="active" id="red"></span> <span id="green"></span> </div> -->
 			  		<B>Recommended Examples:</B>
 			  		<div class="cleaningOverflowDiv">
 		  				<table id="recmd" class="table table-striped table-condensed">
 		  				</table>
 			  		</div>	
-			  		<B>All Records:</B>
+			  		<B>Sampled Records:</B>
 			  		<div class="cleaningOverflowDivLarge">
 			  			<table id="cleaningExamplesTable" class="table table-striped table-condensed" style="max-height:100px; overflow:auto">
 		  				</table>

@@ -30,6 +30,8 @@ import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.Token;
 
+import edu.isi.karma.cleaning.grammartree.TNode;
+
 public class Ruler {
 	String Org = "";
 	String Trgt = "";

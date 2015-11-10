@@ -37,5 +37,5 @@ public interface Feature {
 	/**
 	 * @return the score of this feature on a set of strings.
 	 */
-	public double getScore();
+	public double getScore(String value);
 }

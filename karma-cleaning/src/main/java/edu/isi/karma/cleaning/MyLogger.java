@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 
 public class MyLogger {
-	public static BufferedWriter out;
+	public BufferedWriter out;
 	public static String user_id = "";
 	public static HashMap<String, Long> timespan = new HashMap<String, Long>();
 
@@ -21,8 +21,18 @@ public class MyLogger {
 			}
 		}
 	}
-
-	public static void logsth(String context) {
+	public MyLogger(String name) {
+		if (out == null) {
+			try {
+				out = new BufferedWriter(new FileWriter(new File(
+						"./log/"+name+".txt"), false));
+			} catch (Exception e) {
+				// LoggerFactory.getLogger(MyLogger.class).info(e.toString());
+				out = null;
+			}
+		}
+	}
+	public void logsth(String context) {
 		try {
 			out.write(context);
 			out.flush();

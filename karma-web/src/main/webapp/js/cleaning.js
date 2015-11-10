@@ -26,6 +26,7 @@ var TransformColumnDialog = (function() {
 		var dialog = $("#transformColumnDialog");
 		var worksheetId, columnId;
 		var cleaningExamples, results, topkeys, transformedResult, nodeIds;
+		var minimal, coverage;
 
 		function init() {
 			//Initialize what happens when we show the dialog
@@ -76,7 +77,8 @@ var TransformColumnDialog = (function() {
 			cleaningExamples = [];
 			results = [];
 			topkeys = [];
-
+			minimal = [];
+			coverage = 0.0;
 			var values = fetchCleanningRawData();
 
 			// Populate the table of cleaning preview table
@@ -84,7 +86,7 @@ var TransformColumnDialog = (function() {
 			$("tr.nonHeading", cleaningTable).remove();
 			$("tr.suggestion", cleaningTable).remove();
 
-			nodeIds = [];
+			/*nodeIds = [];
 			var data = values[0]["data"]
 			for (var nodeId in data) {
 				if (data.hasOwnProperty(nodeId)) {
@@ -95,12 +97,13 @@ var TransformColumnDialog = (function() {
 					cleaningTable.append(tr);
 					nodeIds.push(nodeId);
 				}
-			}
+			}*/
 			//cleaning
 			var tab1 = $("table#recmd");
 			$("tr", tab1).remove();
 			var tab2 = $("table#examples");
 			$("tr", tab2).remove();
+			$("b#coverage").text(coverage*100);
 
 			populateResult(values[0]);
 		}
@@ -134,13 +137,17 @@ var TransformColumnDialog = (function() {
 				transformedResult = new Object();
 
 				// Remove the old results
-				$("td.ruleResultsValue_rest", cleaningTable).remove();
-				$("tr.suggestion", cleaningTable).remove();
-				//$("td.ruleResultsValue_begin", cleaningTable).remove();
+				//$("td.ruleResultsValue_rest", cleaningTable).remove();
+				//$("tr.suggestion", cleaningTable).remove();
+				$("tr", cleaningTable).remove();
 
 				var data = rdata["data"];
 				$.each(data, function(nodeId, xval) {
-					var trTag = $("tr#" + nodeId + "_cl_row");
+					var trTag = $("<tr>").attr("id", nodeId + "_cl_row").addClass("nonHeading").append($("<td>").text(data[nodeId]["Org"]).attr('id', nodeId + "_origVal")) //add text and id to the td
+						.append($("<td>").addClass("noBorder"));
+					//add td to seperate org and result
+					trTag.data("originalVal", (data[nodeId]["Org"]));
+
 					if (trTag != null) {
 						transformedResult[nodeId] = xval;
 						if (xval == $("div#" + nodeId).text()) {
@@ -164,11 +171,9 @@ var TransformColumnDialog = (function() {
 											.attr("id", nodeId)))
 									.append($("<td>").addClass("noBorder")))));
 
-						console.log($("div#" + nodeId).text() + ":" + xval["Tardis"]);
 						$("div#" + nodeId, trTag).editable({
 							type: 'text',
 							success: function(response, value) {
-								console.log("Set new value:" + value);
 								var tmpnodeId = nodeId;
 								$("div", $(this).parent().prev()).html(xval["Tar"]);
 								if (nodeId.indexOf("suggestion") >= 0) {
@@ -190,6 +195,7 @@ var TransformColumnDialog = (function() {
 							inputclass: 'worksheetInputEdit'
 						});
 					}
+				cleaningTable.append(trTag);
 				});
 
 			} catch (err) {
@@ -201,7 +207,6 @@ var TransformColumnDialog = (function() {
 			var data = results;
 			var newdata = [];
 			var examples = cleaningExamples;
-			console.log(examples)
 			showCleanningWaitingSignOnScreen();
 			handleGenerateCleaningRulesButton();
 			/*else//use the trimmed data
@@ -215,7 +220,7 @@ var TransformColumnDialog = (function() {
 		function handleGenerateCleaningRulesButton() {
 			var info = generateInfoObject(worksheetId, columnId, "GenerateCleaningRulesCommand");
 			info["examples"] = JSON.stringify(cleaningExamples);
-			info["cellIDs"] = JSON.stringify(nodeIds);
+			//info["cellIDs"] = JSON.stringify(nodeIds);
 
 			var returned = $.ajax({
 				url: "RequestController",
@@ -253,18 +258,16 @@ var TransformColumnDialog = (function() {
 		}
 
 		function populateInfoPanel() {
-			var nodeId = topKeys[0];
+			var recommends = topKeys;
 			//tab1.append(trTag.clone(true,true));
 			var tab2 = $("table#examples");
 			$("tr", tab2).remove();
 			var examples = cleaningExamples;
 			$.each(examples, function(index, value) {
 				var nodeID = value["nodeId"];
-				var trTag1 = $("tr#" + nodeID + "_suggestion_cl_row", tab2);
-
-				if (trTag1.length == 0) {
-					trTag1 = $("<tr>").attr("id", nodeID + "_suggestion_cl_row").append($("<td>").addClass('info').text($("tr#" + nodeID + "_cl_row").data("originalVal")));
-				}
+				//var trTag1 = $("tr#" + nodeID + "_suggestion_cl_row", tab2);
+				var trTag1 = $("<tr>").attr("id", nodeID + "_example_cl_row").append($("<td>").addClass('info').text(value["before"]));
+				
 
 				var closeButton = $("<button>");
 				closeButton.attr("id", nodeID);
@@ -298,21 +301,57 @@ var TransformColumnDialog = (function() {
 				//$(">td",trTag1).addClass("info");
 				tab2.append(trTag1);
 			});
-			// recommanded examples
-			if (nodeId == undefined || nodeId == "-2") {
-				return;
-			}
-			var datadict = results[0]["data"];
 			var tab1 = $("table#recmd");
-			var trTag = $("tr#" + nodeId + "_suggestion_cl_row", tab1);
 			$("tr", tab1).remove();
-			// empty an array in JS
-			if (trTag.length == 0) {
-				trTag = $("<tr>").attr("id", nodeId + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[nodeId]["Orgdis"])).append($("<td>").addClass("noBorder"));
-			} else {
-				trTag = trTag[0];
+			var cleaningTable = $("table#cleaningExamplesTable");
+			var datadict = results[0]["data"];
+			$.each(topKeys,function(index, rid){
+				var trTag = $("tr#" + rid + "_suggestion_cl_row", cleaningTable);
+				// empty an array in JS
+				if (trTag.length == 0) {
+					trTag = $("<tr>").attr("id", rid + "_suggestion_cl_row").append($("<td>").addClass('info').html(datadict[rid]["Orgdis"])).append($("<td>").addClass("noBorder"));
+				} else {
+					trTag = trTag[0];
+				}
+				var confirmCorrectButton = $("<div>");
+				confirmCorrectButton.attr("id", rid);
+				confirmCorrectButton.addClass("ui-icon").addClass("ui-icon-check").addClass("confirmcorrect");
+				confirmCorrectButton.button({
+					icons: {
+					},
+					text: false
+				});
+				confirmCorrectButton.click(function(event) {
+					examples.push({
+						"nodeId": rid,
+						"before": $("tr#" + rid + "_cl_row").data("originalVal"),
+						"after": $("div#"+rid+"_suggestion", trTag).data("cellValue")
+						});
+					updateResult();
+
+					
+				});
+				var tdConfirmCorrectButton = $("<td>").attr("class", "infobutton").append(confirmCorrectButton);
+				$(trTag).append(tdConfirmCorrectButton);
+				tab1.append(trTag);
+			});
+			
+			$.each(minimal, function(index, id){
+				var td = $("td#"+id+"_suggestion_transformed").addClass("minimal");	
+			});
+			//lightControl(coverage);
+			
+		}
+		function lightControl(coverage){
+			if (coverage >= 100){
+				$("span#red").removeClass('active');
+				$("span#green").addClass('active');
 			}
-			tab1.append(trTag);
+			else{
+				$("span#green").removeClass('active');
+				$("span#red").addClass('active');
+
+			}
 		}
 
 		function preprocessData(data, nodeIds) {
@@ -324,15 +363,15 @@ var TransformColumnDialog = (function() {
 		}
 
 		function handleCleaningResultUpdate(cleaningResults) {
-			console.log("handleCleaningResultUpdate: " + cleaningResults);
 			var topCol = cleaningResults[0];
 			results = cleaningResults;
 			topKeys = topCol["top"];
-
+			minimal = results[0]["minimal"];
+			coverage = results[0]["coverage"];
 			//var sndCol = element["result"][1];
 			preprocessData(topCol, topCol["top"]);
-			populateInfoPanel();
 			populateResult(topCol);
+			populateInfoPanel();
 			//var pdata = getVaritions(element["result"]);
 			//populateVariations(topCol["top"], sndCol["data"]);
 		}

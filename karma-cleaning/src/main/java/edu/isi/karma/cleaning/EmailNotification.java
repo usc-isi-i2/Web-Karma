@@ -2,9 +2,6 @@ package edu.isi.karma.cleaning;
 
 import java.util.Properties;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -55,10 +52,10 @@ public class EmailNotification {
 				multipart.addBodyPart(messageBodyPart);
 				// Part two is attachment
 				messageBodyPart = new MimeBodyPart();
-				String filename = "./log/mylog.txt";
+				/*String filename = "./log/mylog.txt";
 				DataSource source = new FileDataSource(filename);
 				messageBodyPart.setDataHandler(new DataHandler(source));
-				messageBodyPart.setFileName(filename);
+				messageBodyPart.setFileName(filename);*/
 				multipart.addBodyPart(messageBodyPart);
 				message.setContent(multipart);
 				Transport.send(message);

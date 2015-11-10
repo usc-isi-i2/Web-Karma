@@ -40,11 +40,9 @@ public class RamblerTransformationOutput implements TransformationOutput {
 	private RamblerTransformationInputs input;
 	private HashMap<String, Transformation> transformations;
 	public boolean nullRule = false;
-	public String contextId;
-	public RamblerTransformationOutput(RamblerTransformationInputs input, String contextId) {
+	public RamblerTransformationOutput(RamblerTransformationInputs input) {
 		
 		this.input = input;
-		this.contextId = contextId;
 		transformations = new HashMap<String, Transformation>();
 		ExecutorService executor = Executors.newFixedThreadPool(1);
 		final Future<?> worker = executor.submit(new Runnable() {
@@ -59,6 +57,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		try {
 			worker.get(3000, TimeUnit.SECONDS);
 		} catch (Exception e) {
+			logger.error(e.toString());
 			nullRule = true;
 			transformations.clear();
 		}
@@ -74,17 +73,17 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			String[] tmp = { t.getBefore(), t.getAfter() };
 			exps.add(tmp);
 		}
-		ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
+		ProgSynthesis psProgSynthesis = new ProgSynthesis();
 		psProgSynthesis.inite(exps, input.dpp, input.msg);
 		// add time out here
 		Collection<ProgramRule> rules = null;
-		//rules = psProgSynthesis.adaptive_main();
-		rules = psProgSynthesis.run_main();
+		rules = psProgSynthesis.adaptive_main();
+		//rules = psProgSynthesis.run_main();
 		input.msg.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
 		input.msg.updateWeights(psProgSynthesis.partiCluster.weights);
 
 		if (rules == null || rules.size() == 0) {
-			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY, contextId);
+			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY);
 			r.nullRule = true;
 			this.nullRule = true;
 			rules = new Vector<ProgramRule>();
@@ -98,13 +97,9 @@ public class RamblerTransformationOutput implements TransformationOutput {
 				transformations.put(r.signature, r);
 			}
 		}
-		// RamblerTransformation r = new
-		// RamblerTransformation(psProgSynthesis.getBestRule());
-		// transformations.put("BESTRULE",r);
 	}
 
 	public HashMap<String, Transformation> getTransformations() {
-		// TODO Auto-generated method stub
 		return transformations;
 	}
 
@@ -147,7 +142,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 				val = t.transform_debug(orgval);
 				cLabel = t.getClassLabel(orgval);
 			} else {
-				val = "";
+				val = t.transform_debug(val);;
 				cLabel = t.getClassLabel(val);
 			}
 			vo.setValue(k, val);

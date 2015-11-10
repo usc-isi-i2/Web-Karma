@@ -24,7 +24,7 @@ package edu.isi.karma.cleaning.features;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.Ruler;
-import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.grammartree.TNode;
 
 //only to test whether a substring exist
 public class RecordTextFeature implements Feature {
@@ -61,9 +61,9 @@ public class RecordTextFeature implements Feature {
 	}
 
 	@Override
-	public double getScore() {
-		// TODO Auto-generated method stub
-		return this.score;
+	public double getScore(String value) {
+		this.value = value;
+		return this.computeScore();
 	}
 
 }

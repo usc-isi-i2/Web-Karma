@@ -2,7 +2,7 @@ package edu.isi.karma.cleaning.internalfunlibrary;
 
 import java.util.Vector;
 
-import edu.isi.karma.cleaning.TNode;
+import edu.isi.karma.cleaning.grammartree.TNode;
 
 public interface TransformFunction {
 	public boolean convertable(Vector<TNode> sour, Vector<TNode> dest);

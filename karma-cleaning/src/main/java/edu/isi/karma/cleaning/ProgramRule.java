@@ -2,7 +2,10 @@ package edu.isi.karma.cleaning;
 
 import java.util.HashMap;
 
+import edu.isi.karma.cleaning.grammartree.Program;
+
 public class ProgramRule {
+	public static final String defaultclasslabel = "attr_0";
 	public HashMap<String, InterpreterType> rules = new HashMap<String, InterpreterType>();
 	public HashMap<String, String> strRules = new HashMap<String, String>();
 	public PartitionClassifierType pClassifier;
@@ -10,13 +13,15 @@ public class ProgramRule {
 	public String signString = "";
 	public static final String IDENTITY = "substr(value,'START','END')";
 	public boolean nullRule = false;
-	public String contextId;
-	public ProgramRule(Program prog, String contextId) {
+	public Program program = null;
+	
+	public ProgramRule(Program prog) {
+		program = prog;
 		this.pClassifier = prog.classifier;
 		initInterpretor();
 	}
 
-	public ProgramRule(String rule, String contextId) {
+	public ProgramRule(String rule) {
 		initInterpretor();
 		InterpreterType worker = itInterpretor.create(rule);
 		rules.put("attr_0", worker);
@@ -31,7 +36,7 @@ public class ProgramRule {
 
 	public void initInterpretor() {
 		if (itInterpretor == null)
-			itInterpretor = new Interpretor(contextId);
+			itInterpretor = new Interpretor();
 	}
 
 	public InterpreterType getRuleForValue(String value) {
@@ -41,7 +46,7 @@ public class ProgramRule {
 	}
 
 	public String getClassForValue(String value) {
-		String labelString = "attr_0";
+		String labelString = defaultclasslabel;
 		if (value.length() == 0)
 			return labelString;
 		if (pClassifier != null) {

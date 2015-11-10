@@ -16,15 +16,12 @@ public class FetchTransformingDataFactory extends CommandFactory {
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
-		FetchTransformingDataCommand cmd = new FetchTransformingDataCommand(getNewId(workspace),
-				Command.NEW_MODEL, getWorksheetId(request, workspace), hNodeId, 
-				selectionName);
+		FetchTransformingDataCommand cmd = new FetchTransformingDataCommand(getNewId(workspace), Command.NEW_MODEL, getWorksheetId(request, workspace), hNodeId, selectionName);
 		return cmd;
 	}
 
 	@Override
-	public Class<? extends Command> getCorrespondingCommand()
-	{
+	public Class<? extends Command> getCorrespondingCommand() {
 		return FetchTransformingDataCommand.class;
 	}
 }

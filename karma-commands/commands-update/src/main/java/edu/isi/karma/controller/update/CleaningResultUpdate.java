@@ -1,9 +1,5 @@
 package edu.isi.karma.controller.update;
-
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import edu.isi.karma.view.VWorkspace;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,24 +7,31 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.view.VWorkspace;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class CleaningResultUpdate extends AbstractUpdate {
 
 	private HashMap<String,HashMap<String, String>> map = new HashMap<String, HashMap<String,String>>();
 	private String hNodeId = "";
-	private String varString;
-	private Set<String> topkey = new HashSet<String>();
+	private List<String> topkey = new ArrayList<String>();
+	private List<String> minimal = new ArrayList<String>();
+	private double coverage = 0.0;
 	public enum JsonKeys {
 		worksheetId, hNodeId, result
 	}
 	private static Logger logger = LoggerFactory
 			.getLogger(CleaningResultUpdate.class);
-	public CleaningResultUpdate(String hNodeId, HashMap<String,HashMap<String, String>> store,String vars,Set<String> keys) {
+	public CleaningResultUpdate(String hNodeId, HashMap<String,HashMap<String, String>> store,double coverage, List<String> keys, List<String> minimal) {
 		this.hNodeId = hNodeId;
 		topkey = keys;
-		varString = vars;
 		this.map = store;
+		this.coverage = coverage;
+		this.minimal = minimal;
 	}
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
@@ -45,25 +48,20 @@ public class CleaningResultUpdate extends AbstractUpdate {
 				JSONObject jsBest = new JSONObject(map);
 				bestpac.put("data", jsBest);
 			}
-			JSONArray jba = new JSONArray();
+			JSONArray recmd = new JSONArray();
 			for(String key:topkey)
 			{
-				jba.put(key);
+				recmd.put(key);
+			}
+			JSONArray min = new JSONArray();
+			for(String key: this.minimal){
+				min.put(key);
 			}
 			bestpac.put("tps",new JSONObject());
-			bestpac.put("top", jba);
+			bestpac.put("top", recmd);
+			bestpac.put("coverage", this.coverage);
+			bestpac.put("minimal",min );
 			jsa.put(0,bestpac);//put the best one as the first
-			if(varString.compareTo("")!=0)
-			{
-				/*JSONObject jsBest = new JSONObject(varString);
-				JSONObject varpac = new JSONObject();
-				JSONArray jba = new JSONArray();
-				varpac.put("data", jsBest);
-				varpac.put("tps",new JSONObject());
-				jsa.put(1,varpac);//put the var as the second
-				*/
-			}
-			
 			obj.put(JsonKeys.result.name(), jsa);
 			pw.print(obj.toString(4));
 		} catch (JSONException e) {

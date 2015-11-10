@@ -1,6 +1,8 @@
 package edu.isi.karma.cleaning;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ParseTreeNode {
 	nodetype type = nodetype.root;
@@ -11,12 +13,10 @@ public class ParseTreeNode {
 	}
 	ParseTreeNode parent;
 	ArrayList<ParseTreeNode> children = new ArrayList<ParseTreeNode>();
-	String contextId;
-	public ParseTreeNode(nodetype type, String value, String contextId)
+	public ParseTreeNode(nodetype type, String value)
 	{
 		this.type = type;
 		this.value = value;
-		this.contextId = contextId;
 	}
 	public void addChildren(ParseTreeNode node)
 	{
@@ -28,8 +28,7 @@ public class ParseTreeNode {
 	{
 		return this.children;
 	}
-	//convert the tree back to program, only need to be used on the root node
-	//not work if only the position expression is updated
+	//convert the tree back to program
 	public String toProgram()
 	{
 		String prog = "";
@@ -52,7 +51,15 @@ public class ParseTreeNode {
 			}
 			else
 			{
-				prog = String.format("substr(value,%s,%s)", this.children.get(0).value,this.children.get(1).value);
+				String template = "";
+				String regex = "([a-zA-Z]+)\\(.+\\)";
+				Matcher matcher = Pattern.compile(regex).matcher(prog);
+				if (matcher.find())
+					template = matcher.group(1)+"(substr(value, %s, %s))";
+				else{
+					template = "substr(value, %s, %s)";
+				}
+				prog = String.format(template, this.children.get(0).value,this.children.get(1).value);
 			}
 		}
 		return prog;
@@ -72,7 +79,7 @@ public class ParseTreeNode {
 	{
 		try
 		{
-		ProgramRule ptmp = new ProgramRule(this.value, contextId);
+		ProgramRule ptmp = new ProgramRule(this.value);
 		String res = "";
 		res = ptmp.transform(input);
 		//recursively evaluate the children nodes.

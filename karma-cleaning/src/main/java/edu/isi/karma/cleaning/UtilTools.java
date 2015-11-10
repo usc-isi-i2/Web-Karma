@@ -20,6 +20,10 @@ import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import edu.isi.karma.cleaning.features.RecordClassifier;
+import edu.isi.karma.cleaning.grammartree.GrammarTreeNode;
+import edu.isi.karma.cleaning.grammartree.Partition;
+import edu.isi.karma.cleaning.grammartree.Segment;
+import edu.isi.karma.cleaning.grammartree.TNode;
 
 public class UtilTools {
 	public static int index = 0;
@@ -31,8 +35,7 @@ public class UtilTools {
 		// sort list based on comparator
 		Collections.sort(list, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((Comparable) ((Map.Entry) (o1)).getValue())
-						.compareTo(((Map.Entry) (o2)).getValue());
+				return ((Comparable) ((Map.Entry) (o1)).getValue()).compareTo(((Map.Entry) (o2)).getValue());
 			}
 		});
 		// put sorted list into map again
@@ -90,6 +93,9 @@ public class UtilTools {
 	}
 
 	public static double distance(double[] a, double[] b, double[] w) {
+		if (w == null || w.length == 0 || w.length != a.length) {
+			return distance(a, b);
+		}
 		double res = 0.0;
 		for (int i = 0; i < a.length; i++) {
 			res += Math.pow(a[i] - b[i], 2) * w[i];
@@ -105,8 +111,7 @@ public class UtilTools {
 		return Math.sqrt(res);
 	}
 
-	public static Vector<Integer> getStringPos(int tokenpos,
-			Vector<TNode> example) {
+	public static Vector<Integer> getStringPos(int tokenpos, Vector<TNode> example) {
 
 		Vector<Integer> poss = new Vector<Integer>();
 		if (tokenpos < 0)
@@ -183,8 +188,58 @@ public class UtilTools {
 		return true;
 	}
 
-	public static void StringColorCode(String org, String res,
-			HashMap<String, String> dict) throws Exception {
+	public static HashSet<String> getPositions(String org) {
+		HashSet<String> ret = new HashSet<String>();
+		int segmentCnt = 0;
+		Vector<int[]> allUpdates = new Vector<int[]>();
+		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
+		String pat1 = "((?<=\\{_S\\})|(?=\\{_S\\}))";
+		String[] st = org.split(pat);
+		boolean inloop = false;
+		for (String token : st) {
+			if (token.compareTo("{_L}") == 0 && !inloop) {
+				inloop = true;
+				continue;
+			}
+			if (token.compareTo("{_L}") == 0 && inloop) {
+				inloop = false;
+				continue;
+			}
+			String[] st1 = token.split(pat1);
+			for (String str : st1) {
+				if (str.compareTo("{_S}") == 0 || str.compareTo("{_S}") == 0) {
+					continue;
+				}
+				if (str.indexOf("{_C}") != -1) {
+					String[] pos = str.split("\\{_C\\}");
+					int[] poses = { Integer.valueOf(pos[0]), Integer.valueOf(pos[1]), segmentCnt };
+					boolean findPos = false;
+					for (int i = 0; i < allUpdates.size(); i++) {
+						int[] cur = allUpdates.get(i);
+						if (poses[0] <= cur[0]) {
+							findPos = true;
+							allUpdates.add(i, poses);
+							break; // avoid infinite adding
+						}
+					}
+					if (!findPos) {
+						allUpdates.add(poses);
+					}
+				}
+			}
+		}
+		for (int[] update : allUpdates) {
+			if (!ret.contains(update[0] + "")) {
+				ret.add(update[0] + "");
+			}
+			if (!ret.contains(update[1] + "")) {
+				ret.add(update[1] + "");
+			}
+		}
+		return ret;
+	}
+
+	public static void StringColorCode(String org, String res, HashMap<String, String> dict) throws Exception {
 		int segmentCnt = 0;
 		Vector<int[]> allUpdates = new Vector<int[]>();
 		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
@@ -210,8 +265,7 @@ public class UtilTools {
 				}
 				if (str.indexOf("{_C}") != -1) {
 					String[] pos = str.split("\\{_C\\}");
-					int[] poses = { Integer.valueOf(pos[0]),
-							Integer.valueOf(pos[1]), segmentCnt };
+					int[] poses = { Integer.valueOf(pos[0]), Integer.valueOf(pos[1]), segmentCnt };
 					boolean findPos = false;
 					for (int i = 0; i < allUpdates.size(); i++) {
 						int[] cur = allUpdates.get(i);
@@ -224,23 +278,18 @@ public class UtilTools {
 					if (!findPos) {
 						allUpdates.add(poses);
 					}
-					String tmp = org.substring(Integer.valueOf(pos[0]),
-							Integer.valueOf(pos[1]));
+					String tmp = org.substring(Integer.valueOf(pos[0]), Integer.valueOf(pos[1]));
 					String tarseg = pos.length == 3 ? pos[2] : tmp;
 
 					if (inloop) {
 
-						tardis += String.format(
-								"<span class=\"a%d\">%s</span>", segmentCnt,
-								tarseg);
+						tardis += String.format("<span class=\"a%d\">%s</span>", segmentCnt, tarseg);
 						// orgdis +=
 						// String.format("<span class=\"a%d\">%s</span>",
 						// segmentCnt,tarseg);
 						tar += tarseg;
 					} else {
-						tardis += String.format(
-								"<span class=\"a%d\">%s</span>", segmentCnt,
-								tarseg);
+						tardis += String.format("<span class=\"a%d\">%s</span>", segmentCnt, tarseg);
 						// orgdis +=
 						// String.format("<span class=\"a%d\">%s</span>",
 						// segmentCnt,tarseg);
@@ -249,8 +298,7 @@ public class UtilTools {
 					}
 
 				} else {
-					tardis += String.format("<span class=\"ins\">%s</span>",
-							str);
+					tardis += String.format("<span class=\"ins\">%s</span>", str);
 					tar += str;
 				}
 			}
@@ -259,8 +307,7 @@ public class UtilTools {
 		for (int[] update : allUpdates) {
 			if (update[0] >= pre) {
 				orgdis += org.substring(pre, update[0]);
-				orgdis += String.format("<span class=\"a%d\">%s</span>",
-						update[2], org.substring(update[0], update[1]));
+				orgdis += String.format("<span class=\"a%d\">%s</span>", update[2], org.substring(update[0], update[1]));
 				pre = update[1];
 			}
 		}
@@ -311,9 +358,24 @@ public class UtilTools {
 		results.clear();
 		index = 0;
 	}
-
+	public static double getRemainingPercentage(int num){
+		int upper_bound = 90;
+		int lower_bound = 1;
+		double max_percentage = 0.1;
+		double min_percentage = 0.01;
+		if(num > upper_bound){
+			return max_percentage;
+		}
+		else if (num < lower_bound){
+			return min_percentage;
+		}
+		else{
+			return min_percentage + (num - lower_bound)*(max_percentage - min_percentage)/(upper_bound - lower_bound);
+		}
+	}
 	public static Vector<String> buildDict(Collection<String> data) {
 		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
+		PreprocessTokenizerWrapper r = new PreprocessTokenizerWrapper();
 		for (String pair : data) {
 			String s1 = pair;
 			if (s1.contains("<_START>")) {
@@ -322,9 +384,7 @@ public class UtilTools {
 			if (s1.contains("<_END>")) {
 				s1 = s1.replace("<_END>", "");
 			}
-			Ruler r = new Ruler();
-			r.setNewInput(s1);
-			Vector<TNode> v = r.vec;
+			ArrayList<TNode> v = r.tokenize(s1);
 			HashSet<String> curRow = new HashSet<String>();
 			for (TNode t : v) {
 				String k = t.text;
@@ -350,10 +410,9 @@ public class UtilTools {
 				}
 			}
 		}
-		// prune infrequent terms
-		int thresdhold = (int) (data.size() * 0.10);
-		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet()
-				.iterator();
+		// prune infrequent terms UtilTools.getRemainingPercentage(mapHashSet.size())
+		int thresdhold = (int) (data.size() * UtilTools.getRemainingPercentage(mapHashSet.size()));
+		Iterator<Entry<String, Integer>> iter = mapHashSet.entrySet().iterator();
 		while (iter.hasNext()) {
 			Entry<String, Integer> e = iter.next();
 			if (e.getValue() < thresdhold) {
@@ -397,21 +456,26 @@ public class UtilTools {
 		return key;
 	}
 
-	public static ArrayList<String[]> extractExamplesinPartition(
-			Collection<Partition> pars) {
+	public static ArrayList<String[]> extractExamplesinPartition(Collection<Partition> pars) {
 		ArrayList<String[]> examples = new ArrayList<String[]>();
 		for (Partition par : pars) {
 			for (int i = 0; i < par.orgNodes.size(); i++) {
-				String[] exp = { UtilTools.print(par.orgNodes.get(i)),
-						UtilTools.print(par.tarNodes.get(i)) };
+				String[] exp = { UtilTools.print(par.orgNodes.get(i)), UtilTools.print(par.tarNodes.get(i)) };
 				examples.add(exp);
 			}
 		}
 		return examples;
 	}
+	public static ArrayList<String[]> extracExamplesinTNodes(Vector<Vector<TNode>> orgs, Vector<Vector<TNode>> tars){
+		ArrayList<String[]> examples = new ArrayList<String[]>();
+		for(int i = 0; i < orgs.size(); i++){
+			String[] exp = { UtilTools.print(orgs.get(i)), UtilTools.print(tars.get(i)) };
+			examples.add(exp);
+		}
+		return examples;
+	}
 
-	public static void clusterData(
-			Collection<String[]> data, RecordClassifier rcf) {
+	public static void clusterData(Collection<String[]> data, RecordClassifier rcf) {
 		HashMap<String, ArrayList<String[]>> res = new HashMap<String, ArrayList<String[]>>();
 		for (String[] elem : data) {
 			String[] n = { elem[0], elem[1] };
@@ -441,9 +505,11 @@ public class UtilTools {
 			}
 		}
 	}
-	public static Vector<TNode> convertStringtoTNodes(String s1){
+
+	public static Vector<TNode> convertStringtoTNodes(String s1) {
 		Ruler r = new Ruler();
-		r.setNewInput(s1);;
+		r.setNewInput(s1);
+		;
 		return r.vec;
 	}
 }
