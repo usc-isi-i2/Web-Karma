@@ -56,7 +56,7 @@ public class GraphBuilder_LOD_Pattern {
 
 	public void buildGraph(OntologyManager ontologyManager, String patternsDir) {
 
-		Map<String, Pattern> patterns = PatternReader.importPatterns(patternsDir);
+		Map<String, Pattern> patterns = PatternReader.importPatterns(patternsDir, null);
 		
 		Map<String, Pattern> patternsSize2 = new HashMap<String, Pattern>(); 
 		Map<String, Pattern> patternsSize3 = new HashMap<String, Pattern>(); 
