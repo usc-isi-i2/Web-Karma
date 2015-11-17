@@ -158,15 +158,6 @@
 									</excludes>
 								</filter>
 							</filters>
-							<artifactSet>
-								<excludes>
-									<exclude>com.sun.jersey:*</exclude>
-									<exclude>com.sun.jersey.contribs:*</exclude>
-									<exclude>javax.ws.rs:*</exclude>
-									<exclude>org.glassfish.jersey.core:*</exclude>
-									<exclude>org.glassfish.hk2:*</exclude>
-								</excludes>
-							</artifactSet>
 						</configuration>
 						<executions>
 							<execution>
