@@ -34,7 +34,7 @@ public class CSVImport extends Import {
     protected final int dataStartRowIndex;
     protected final char delimiter;
     protected final char quoteCharacter;
-    protected final char escapeCharacter = '\\';
+    protected final char escapeCharacter;
     protected final InputStream is;
     protected final String encoding;
     protected final int maxNumLines;
@@ -51,7 +51,17 @@ public class CSVImport extends Import {
         this.headerRowIndex = headerRowIndex;
         this.dataStartRowIndex = dataStartRowIndex;
         this.delimiter = delimiter;
-        this.quoteCharacter = quoteCharacter;
+        // Trick:
+        // Passing quoteCharacter as $ signals that we don't want any quote character
+        // Required because CSVReader constructor doesn't take ignoreQuotation
+        if(quoteCharacter == '$') {
+            this.quoteCharacter = '\0';
+            this.escapeCharacter = '\0';
+        } else {
+            this.escapeCharacter = '\\';
+            this.quoteCharacter = quoteCharacter;
+        }
+        
         this.encoding = encoding;
         this.maxNumLines = maxNumLines;
         this.is = is;
@@ -124,6 +134,7 @@ public class CSVImport extends Import {
             String line, BufferedReader br) throws IOException {
         HTable headers = worksheet.getHeaders();
         Map<Integer, String> headersMap = new HashMap<Integer, String>();
+
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
         String[] rowValues = null;
