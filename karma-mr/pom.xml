@@ -162,7 +162,6 @@
 								<excludes>
 									<exclude>com.sun.jersey:*</exclude>
 									<exclude>com.sun.jersey.contribs:*</exclude>
-									<exclude>org.apache.hadoop:*</exclude>
 									<exclude>javax.ws.rs:*</exclude>
 									<exclude>org.glassfish.jersey.core:*</exclude>
 									<exclude>org.glassfish.hk2:*</exclude>
