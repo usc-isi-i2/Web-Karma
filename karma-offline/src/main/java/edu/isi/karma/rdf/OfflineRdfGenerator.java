@@ -320,7 +320,7 @@ public class OfflineRdfGenerator {
 				&& !inputType.equalsIgnoreCase("JL")
 				) {
 			logger.error("Invalid source type: " + inputType
-					+ ". Please choose from: DB, SQL, CSV, XML, JSON, AVRO.");
+					+ ". Please choose from: DB, SQL, CSV, XML, JSON, AVRO, JL.");
 			return false;
 		}
 		return true;
