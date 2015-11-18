@@ -54,10 +54,10 @@ public class CSVImport extends Import {
         // Trick:
         // Passing quoteCharacter as $ signals that we don't want any quote character
         // Required because CSVReader constructor doesn't take ignoreQuotation (as does CSVParser), sigb
-        this(reader,
+       /* this(reader,
 	     line,
-	     new CSVParser(separator, quotechar, escape, strictQuotes, ignoreLeadingWhiteSpace));
-    }
+	     new CSVParser(separator, quotechar, escape, strictQuotes, ignoreLeadingWhiteSpace));*/
+    
         if(quoteCharacter == '$') {
             this.quoteCharacter = '\0';
             this.escapeCharacter = '\0';
