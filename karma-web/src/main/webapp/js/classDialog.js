@@ -72,17 +72,49 @@ var ClassDialog = (function() {
 			} else {
 				uri = target.data('uri');
 				id = target.data('id');
-				console.log("Change Node:" + id + ", " + uri);
+				label = target.text();
 
-				var info = generateInfoObject(worksheetId, "", "ChangeNodeCommand");
-				var newInfo = info['newInfo'];
-				newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-				newInfo.push(getParamObject("oldNodeId", columnId, "other"));
-				newInfo.push(getParamObject("newNodeUri", uri, "other"));
-				newInfo.push(getParamObject("newNodeId", id, "other"));
-				info["newInfo"] = JSON.stringify(newInfo);
-				showLoading(worksheetId);
-				var returned = sendRequest(info, worksheetId);
+				console.log("Change Node:" + id + ", " + uri);
+				
+				var links = D3ModelManager.getInstance().getCurrentLinksToNode(worksheetId, columnId);
+				var oldEdges = []
+				var newEdges = []
+				$.each(links, function(index, link) {
+					if(link.source.id == columnId) {
+						//Change source
+						if(link.target.type == "ColumnNode") {
+							//Set Semantic Type
+							var type = {
+								"uri": link.uri,
+								"label": link.label,
+								"source": {"uri": uri, "id": id, "label": label}
+							}
+							setSemanticType(worksheetId, link.target.id, type);
+						} else {
+							//Change Links Command
+							var edge = {
+								"uri": link.uri,
+								"label": link.label,
+								"target": link.target,
+								"source": {"uri": uri, "id": id, "label": label}
+							} 
+							newEdges.push(edge);
+							oldEdges.push(link);
+						}
+					} else {
+						//Change target
+						var edge = {
+							"uri": link.uri,
+							"label": link.label,
+							"target": {"uri": uri, "id": id, "label": label},
+							"source": link.source
+						} 
+						newEdges.push(edge);
+						oldEdges.push(link);
+					}
+				});
+				if(oldEdges.length > 0 || newEdges.length > 0)
+					changeLinks(worksheetId, alignmentId, oldEdges, newEdges);
 			}
 			hide();
 		}
