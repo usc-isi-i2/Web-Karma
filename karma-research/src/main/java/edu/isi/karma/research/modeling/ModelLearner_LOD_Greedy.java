@@ -64,7 +64,7 @@ public class ModelLearner_LOD_Greedy {
 		
 		logger.info("importing patterns ...");
 		long timeStart = System.currentTimeMillis();
-		patterns = PatternReader.importPatterns(patternDirectoryPath);
+		patterns = PatternReader.importPatterns(patternDirectoryPath, null);
 		long timeImportPatterns = System.currentTimeMillis();
 		float elapsedTimeSec = (timeImportPatterns - timeStart)/1000F;
 		logger.info("time to import the patterns: " + elapsedTimeSec + "s");

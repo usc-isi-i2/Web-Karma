@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.modeling.alignment.GraphUtil;
+import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 
@@ -19,17 +20,20 @@ public class Pattern {
 	private int frequency; // number of times this pattern appears in LOD
 	private List<String> types;
 	private DirectedWeightedMultigraph<Node, LabeledLink> graph;
+	private NodeIdFactory nodeIdFactory;
 	
 	public Pattern(String id, 
 			int size, 
 			int frequency, 
 			List<String> types,
-			DirectedWeightedMultigraph<Node, LabeledLink> graph) {
+			DirectedWeightedMultigraph<Node, LabeledLink> graph,
+			NodeIdFactory nodeIdFactory) {
 		this.id = id;
 		this.size = size;
 		this.frequency = frequency;
 		this.types = types;
 		this.graph = graph;
+		this.nodeIdFactory = nodeIdFactory;
 	}
 
 	@Override
@@ -80,7 +84,10 @@ public class Pattern {
 	public void setGraph(DirectedWeightedMultigraph<Node, LabeledLink> graph) {
 		this.graph = graph;
 	}
-	
+	public NodeIdFactory getNodeIdFactory() {
+		return nodeIdFactory;
+	}
+
 	public String getPrintStr() {
 		String s = "";
 		s += "id: " + (this.id == null? "NULL" : this.id) + "\n";

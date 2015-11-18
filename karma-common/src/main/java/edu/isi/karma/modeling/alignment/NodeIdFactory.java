@@ -76,4 +76,10 @@ public class NodeIdFactory {
 		else
 			return -1;
 	}
+	
+	public NodeIdFactory clone() {
+		NodeIdFactory clone = new NodeIdFactory();
+		clone.nodeUris.putAll(this.nodeUris);
+		return clone;
+	}
 }

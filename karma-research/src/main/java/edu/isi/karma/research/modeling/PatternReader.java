@@ -58,7 +58,7 @@ public class PatternReader {
 		return invertedIndex;
 	}
 	
-	public static Map<String, Pattern> importPatterns(String patternDirectoryPath) {
+	public static Map<String, Pattern> importPatterns(String patternDirectoryPath, Integer length) {
 		
 		Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 		
@@ -86,7 +86,12 @@ public class PatternReader {
 					for (CSVRecord record : csvParser) {
 						Pattern p = getPattern(record, headerMap, totalFrequency);
 						if (p != null) {
-							patterns.put(p.getId(), p);
+							if (length != null) {
+								if (p.getSize() - 1 == length.intValue())
+									patterns.put(p.getId(), p);
+							} else {
+								patterns.put(p.getId(), p);
+							}
 //							System.out.println(p.getPrintStr());
 						} else {
 							logger.error("Error in reading the pattern: " + record.toString());
@@ -204,7 +209,7 @@ public class PatternReader {
 			}
 		}
 
-		Pattern p = new Pattern(id, size, frequency, types, graph);
+		Pattern p = new Pattern(id, size, frequency, types, graph, nodeIdFactory);
 		
 		return p;
 	}
