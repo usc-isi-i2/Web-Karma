@@ -42,7 +42,7 @@ public class CSVImport extends Import {
         this.delimiter = delimiter;
         // Trick:
         // Passing quoteCharacter as $ signals that we don't want any quote character
-        // Required because CSVReader constructor doesn't take ignoreQuotation (as does CSVParser), sigb
+        // Required because CSVReader constructor doesn't take ignoreQuotation (as does CSVParser), sigh
         if(quoteCharacter == '$') {
             this.quoteCharacter = '\0';
             this.escapeCharacter = '\0';

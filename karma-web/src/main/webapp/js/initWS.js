@@ -26,6 +26,7 @@ window.setTimeout(function() {
 				});
 
 			parse(data);
+			PropertyDialog.getInstance();
 			$("div#WaitingDiv").hide();
 			console.log("done bootup");
 		},
