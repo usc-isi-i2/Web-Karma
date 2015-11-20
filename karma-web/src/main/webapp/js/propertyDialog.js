@@ -149,6 +149,8 @@ var PropertyDialog = (function() {
 						items.push({"label": type["DisplayLabel"], "uri": type["FullType"], "class": "propertyDropdown_suggestion"});
 					});
 				}
+			} else {
+				items = getRecommendedProperties(worksheetId, propertyId);
 			}
 
 			renderMenu($("#property_recommended", dialog), items);	
