@@ -1,32 +1,21 @@
 package edu.isi.karma.imp.csv;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
-
+import au.com.bytecode.opencsv.CSVReader;
+import edu.isi.karma.imp.Import;
+import edu.isi.karma.rep.*;
+import edu.isi.karma.rep.HNode.HNodeType;
+import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
+import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
+import edu.isi.karma.util.EncodingDetector;
+import edu.isi.karma.webserver.KarmaException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVReader;
-import edu.isi.karma.imp.Import;
-import edu.isi.karma.rep.HNode;
-import edu.isi.karma.rep.HNode.HNodeType;
-import edu.isi.karma.rep.HTable;
-import edu.isi.karma.rep.RepFactory;
-import edu.isi.karma.rep.Row;
-import edu.isi.karma.rep.Table;
-import edu.isi.karma.rep.Worksheet;
-import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
-import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
-import edu.isi.karma.util.EncodingDetector;
-import edu.isi.karma.webserver.KarmaException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CSVImport extends Import {
     private static Logger logger = LoggerFactory.getLogger(CSVImport.class);
@@ -54,10 +43,6 @@ public class CSVImport extends Import {
         // Trick:
         // Passing quoteCharacter as $ signals that we don't want any quote character
         // Required because CSVReader constructor doesn't take ignoreQuotation (as does CSVParser), sigb
-        this(reader,
-	     line,
-	     new CSVParser(separator, quotechar, escape, strictQuotes, ignoreLeadingWhiteSpace));
-    }
         if(quoteCharacter == '$') {
             this.quoteCharacter = '\0';
             this.escapeCharacter = '\0';
