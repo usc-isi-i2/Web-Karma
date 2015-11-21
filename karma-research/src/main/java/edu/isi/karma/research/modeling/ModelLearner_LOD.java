@@ -774,7 +774,7 @@ public class ModelLearner_LOD {
 //						Params.LOD_OBJECT_PROPERIES_FILE, 
 //						Params.LOD_DATA_PROPERIES_FILE);
 				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, 
-						Params.PATTERNS_DIR, maxPatternSize);
+						Params.PATTERNS_INPUT_DIR, maxPatternSize);
 				modelLearner = new ModelLearner_LOD(b.getGraphBuilder(), steinerNodes);
 			}
 

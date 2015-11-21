@@ -64,9 +64,9 @@ public class GraphBuilder_LOD_Pattern {
 
 		for (Pattern p : patterns.values()) {
 			if (p != null && p.getGraph() != null) {
-				if (p.getSize() == 2) patternsSize2.put(p.getId(), p);
-				else if (p.getSize() == 3) patternsSize3.put(p.getId(), p);
-				else if (p.getSize() == 4) patternsSize4.put(p.getId(), p);
+				if (p.getLength() == 2) patternsSize2.put(p.getId(), p);
+				else if (p.getLength() == 3) patternsSize3.put(p.getId(), p);
+				else if (p.getLength() == 4) patternsSize4.put(p.getId(), p);
 			}
 		}
 
@@ -152,7 +152,7 @@ public class GraphBuilder_LOD_Pattern {
 		
 
 //		GraphBuilder_LOD_Pattern lodPatternGraphBuilder = 
-				new GraphBuilder_LOD_Pattern(ontologyManager, Params.PATTERNS_DIR, 2);
+				new GraphBuilder_LOD_Pattern(ontologyManager, Params.PATTERNS_INPUT_DIR, 2);
 
 		
 //		HashMap<String, Integer> opFrequency = new HashMap<String, Integer>();
