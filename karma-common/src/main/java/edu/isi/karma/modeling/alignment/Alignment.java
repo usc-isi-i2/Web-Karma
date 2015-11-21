@@ -582,7 +582,7 @@ public class Alignment implements OntologyUpdateListener {
 		Node source = this.getNodeById(sourceId);
 		if (source == null) return links;
 
-		Node target = this.getNodeById(sourceId);
+		Node target = this.getNodeById(targetId);
 		if (target == null) return links;
 
 		Set<DefaultLink> allLinks = this.graphBuilder.getGraph().getAllEdges(source, target);
@@ -858,6 +858,8 @@ public class Alignment implements OntologyUpdateListener {
 		AlignmentScore currentScore = new AlignmentScore(modelCoherence, modelCost);
 		List<AlignmentScore> alignmentScores = new LinkedList<AlignmentScore>();
 		for (LabeledLink l : candidateLinks) {
+			if (l.getModelIds() == null || l.getModelIds().isEmpty()) // ignore the links that are added by the user (not present in the known models)
+				continue;
 			// ignore the candidate links that are already in the model
 			if (currentLinkIds.contains(l.getId())) continue;
 			AlignmentScore a = new AlignmentScore(l, currentScore);
@@ -922,6 +924,8 @@ public class Alignment implements OntologyUpdateListener {
 		AlignmentScore currentScore = new AlignmentScore(modelCoherence, modelCost);
 		List<AlignmentScore> alignmentScores = new LinkedList<AlignmentScore>();
 		for (LabeledLink l : candidateLinks) {
+			if (l.getModelIds() == null || l.getModelIds().isEmpty()) // ignore the links that are added by the user (not present in the known models)
+				continue;
 			// ignore the candidate links that are already in the model
 			if (l.getId().equalsIgnoreCase(link.getId())) continue;
 			AlignmentScore a = new AlignmentScore(l, currentScore);
