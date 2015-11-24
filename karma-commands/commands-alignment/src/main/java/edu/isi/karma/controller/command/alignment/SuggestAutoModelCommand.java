@@ -122,7 +122,7 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 			String columnName = hNode.getColumnName().trim().replaceAll(" ", "_");
 			ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNode.getId());
 			
-			List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinksInGraph(columnNode.getId());
+			List<LabeledLink> columnNodeIncomingLinks = alignment.getGraphBuilder().getIncomingLinks(columnNode.getId());
 			if (columnNodeIncomingLinks == null || columnNodeIncomingLinks.isEmpty()) { // SemanticType not yet assigned
 				Label propertyLabel = new Label(ns + columnName, ns, "karma");
 				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel);

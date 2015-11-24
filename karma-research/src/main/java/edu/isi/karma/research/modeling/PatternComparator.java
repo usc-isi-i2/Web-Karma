@@ -10,6 +10,9 @@ import com.google.common.collect.Multisets;
 public class PatternComparator implements Comparator<Pattern> {
 
 	private List<String> types;
+
+	public PatternComparator() {
+	}
 	
 	public PatternComparator(List<String> types) {
 		this.types = types;
@@ -18,31 +21,32 @@ public class PatternComparator implements Comparator<Pattern> {
 	@Override
 	public int compare(Pattern p1, Pattern p2) {
 		
-		Multiset<String> sourceTypes = HashMultiset.create(this.types);
-		Multiset<String> p1Types = HashMultiset.create(p1.getTypes());
-		Multiset<String> p2Types = HashMultiset.create(p2.getTypes());
-		
-		int a = Multisets.intersection(sourceTypes, p1Types).size();
-		int b = Multisets.intersection(sourceTypes, p2Types).size();
+		if (types != null) {
+			Multiset<String> sourceTypes = HashMultiset.create(this.types);
+			Multiset<String> p1Types = HashMultiset.create(p1.getTypes());
+			Multiset<String> p2Types = HashMultiset.create(p2.getTypes());
+			
+			int a = Multisets.intersection(sourceTypes, p1Types).size();
+			int b = Multisets.intersection(sourceTypes, p2Types).size();
 
-		// pattern with more common type has higher priority
-		if (a > b) 
-			return -1; 
-		else if (a < b) 
-			return 1; 
-		else { 
-			if (p1.getSize() < p2.getSize()) // prefer more concise models 
+			// pattern with more common type has higher priority
+			if (a > b) 
+				return -1; 
+			else if (a < b) 
+				return 1; 
+		}
+
+		if (p1.getLength() < p2.getLength()) // prefer more concise models 
+			return -1;
+		else if (p1.getLength() > p2.getLength()) 
+			return 1;
+		else {
+			if (p1.getFrequency() > p2.getFrequency())  // prefer more frequent patterns
 				return -1;
-			else if (p1.getSize() > p2.getSize()) 
+			else if (p1.getFrequency() < p2.getFrequency()) 
 				return 1;
-			else {
-				if (p1.getFrequency() > p2.getFrequency())  // prefer more frequent patterns
-					return -1;
-				else if (p1.getFrequency() < p2.getFrequency()) 
-					return 1;
-				else 
-					return 0;
-			}
+			else 
+				return 0;
 		}
 	}
 

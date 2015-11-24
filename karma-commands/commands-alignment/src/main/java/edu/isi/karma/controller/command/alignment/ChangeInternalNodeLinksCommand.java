@@ -270,7 +270,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 				delDescStr.append(sep + delLink.getLabel().getDisplayName());
 				sep = ", ";
 				
-				// alignment.changeLinkStatus(linkId, LinkStatus.Normal);
+//				alignment.changeLinkStatus(linkId, LinkStatus.Normal);
 				alignment.removeLink(linkId);
 				
 				Node node = alignment.getNodeById(targetId);

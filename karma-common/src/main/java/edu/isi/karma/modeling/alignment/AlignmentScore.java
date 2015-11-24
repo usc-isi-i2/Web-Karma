@@ -11,7 +11,7 @@ public class AlignmentScore implements Comparable<AlignmentScore>{
 	
 	public AlignmentScore(LinkCoherence linkCoherence, double cost) {
 		this.linkCoherence = new LinkCoherence(linkCoherence);
-		this.cost = cost + link.getWeight();
+		this.cost = cost;
 	}
 	
 	public AlignmentScore(LabeledLink link, AlignmentScore a) {

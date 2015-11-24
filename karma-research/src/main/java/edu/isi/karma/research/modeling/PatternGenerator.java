@@ -1,5 +1,7 @@
 package edu.isi.karma.research.modeling;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -7,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 
-import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
 import edu.isi.karma.modeling.research.Params;
@@ -26,6 +30,8 @@ public class PatternGenerator {
 	List<Pattern> basicPatterns;
 	
 	private HashMap<String,List<Connection>> possibleConnections;
+	
+	private String outputDir;
 
 	enum Direction {IN , OUT, BOTH}
 
@@ -40,11 +46,12 @@ public class PatternGenerator {
 		}
 	}
 	
-	public PatternGenerator(String patternDirectoryPath) {
+	public PatternGenerator(String inputDir, String outputDir) {
 		this.basicPatterns = new LinkedList<Pattern>();
 		this.possibleConnections = new HashMap<String,List<Connection>>();
+		this.outputDir = outputDir;
 		
-		Map<String,Pattern> patternsLengthOne = PatternReader.importPatterns(patternDirectoryPath, 1);
+		Map<String,Pattern> patternsLengthOne = PatternReader.importPatterns(inputDir, 1);
 		if (patternsLengthOne != null) {
 			this.basicPatterns.addAll(patternsLengthOne.values());
 		}
@@ -110,17 +117,106 @@ public class PatternGenerator {
 				nodes.add(n);
 		return nodes;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public List<Pattern> getPatterns(int length, 
+			int instanceLimit, 
+			boolean includeShorterPatterns, 
+			List<Pattern> seeds,
+			int seedLength) {
+
+		List<Pattern> results = new LinkedList<Pattern>();
+		if (length <= 0 || length < seedLength) {
+			return results;
+		} else if (length == seedLength) {
+			return seeds;
+		} else {
+			List<Pattern> shorterPatterns = getPatterns(length-1, instanceLimit, includeShorterPatterns, seeds, seedLength);
+			if (includeShorterPatterns && 
+					(length-1) > seedLength && 
+					shorterPatterns != null)
+				results.addAll(shorterPatterns);
+			for (Pattern p : shorterPatterns) {
+				
+				// try to connect patterns of length one to nodes of a pattern (join)
+				DirectedWeightedMultigraph<Node, LabeledLink> g = p.getGraph();
+				if (g == null)
+					continue;
+				
+				Node source, target;
+				for (Node n : g.vertexSet()) {
+					
+					List<Connection> connections = this.possibleConnections.get(n.getUri());
+					if (connections == null || connections.size() == 0)
+						continue;
+					
+					for (Connection c : connections) {
+
+						NodeIdFactory nodeIdFactory = p.getNodeIdFactory().clone();
+						if (nodeIdFactory.lastIndexOf(c.nodeUri) == instanceLimit)
+							continue;
+						
+						String newNodeId = nodeIdFactory.getNodeId(c.nodeUri);
+						Node newNode = new InternalNode(newNodeId, new Label(c.nodeUri));
+						DirectedWeightedMultigraph<Node, LabeledLink> newG = 
+								(DirectedWeightedMultigraph<Node, LabeledLink>)g.clone();
+						newG.addVertex(newNode);
+						
+						if (c.direction == Direction.OUT) {
+							source = n;
+							target = newNode;
+						} else {
+							source = newNode;
+							target = n;
+						}
+						String newLinkId = LinkIdFactory.getLinkId(c.linkUri, source.getId(), target.getId());
+						LabeledLink newLink = new ObjectPropertyLink(newLinkId, new Label(c.linkUri), ObjectPropertyType.None);
+						newG.addEdge(source, target, newLink);
+						Pattern newP = new Pattern(new RandomGUID().toString(), length, 0, newG, nodeIdFactory);
+						results.add(newP);
+
+						// add links to existing nodes in the pattern
+						Set<Node> nodesInPatternWithSameURI = this.getNodesWithUri(c.nodeUri, g);
+						for (Node existingNode : nodesInPatternWithSameURI) {
+
+							if (c.direction == Direction.OUT) {
+								source = n;
+								target = existingNode;
+							} else {
+								source = existingNode;
+								target = n;
+							}
+
+							newLinkId = LinkIdFactory.getLinkId(c.linkUri, source.getId(), target.getId());
+							newLink = new ObjectPropertyLink(newLinkId, new Label(c.linkUri), ObjectPropertyType.None);
+							if (g.containsEdge(newLink))
+								continue;
+							
+							newG = (DirectedWeightedMultigraph<Node, LabeledLink>)g.clone();
+							newG.addEdge(source, target, newLink);
+							newP = new Pattern(new RandomGUID().toString(), length, 0, newG, p.getNodeIdFactory().clone());
+							results.add(newP);
+						}
+					}
+				}
+			}
+			System.out.println("***** " + "patterns with length " + length + " *****");
+			results = getValidPatterns(results);
+			printPatterns(length, results);
+			return results;
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<Pattern> getPatterns(int length, int instanceLimit, boolean includeShorterPatterns) {
 		
-		System.out.println("length: " + length);
-		if (length <= 0)
-			return new LinkedList<Pattern>();
-		else if (length == 1)
-			return this.basicPatterns;
-		else {
-			List<Pattern> results = new LinkedList<Pattern>();
+		List<Pattern> results = new LinkedList<Pattern>();
+
+		if (length <= 0) {
+			return results;
+		} else if (length == 1) {
+			results = this.basicPatterns;
+		} else {
 			List<Pattern> shorterPatterns = getPatterns(length-1, instanceLimit, includeShorterPatterns);
 			if (includeShorterPatterns && shorterPatterns != null)
 				results.addAll(shorterPatterns);
@@ -160,7 +256,7 @@ public class PatternGenerator {
 						String newLinkId = LinkIdFactory.getLinkId(c.linkUri, source.getId(), target.getId());
 						LabeledLink newLink = new ObjectPropertyLink(newLinkId, new Label(c.linkUri), ObjectPropertyType.None);
 						newG.addEdge(source, target, newLink);
-						Pattern newP = new Pattern(new RandomGUID().toString(), length, 0, null, newG, nodeIdFactory);
+						Pattern newP = new Pattern(new RandomGUID().toString(), length, 0, newG, nodeIdFactory);
 						results.add(newP);
 
 						// add links to existing nodes in the pattern
@@ -182,41 +278,167 @@ public class PatternGenerator {
 							
 							newG = (DirectedWeightedMultigraph<Node, LabeledLink>)g.clone();
 							newG.addEdge(source, target, newLink);
-							newP = new Pattern(new RandomGUID().toString(), length, 0, null, newG, p.getNodeIdFactory().clone());
+							newP = new Pattern(new RandomGUID().toString(), length, 0, newG, p.getNodeIdFactory().clone());
 							results.add(newP);
 						}
 					}
 				}
 			}
-			return results;
+		}
+		System.out.println("***** " + "patterns with length " + length + " *****");
+		results = getValidPatterns(results);
+		printPatterns(length, results);
+		return results;
+	}
+	
+	private void printPatterns(int length, List<Pattern> patterns) {
+		File outRootDir = new File(outputDir);
+		if (outRootDir.exists() && outRootDir.isDirectory()) {
+			String outPath = outRootDir.getAbsolutePath() + "/" + length;
+			File outDir = new File(outPath);
+			if (outDir.exists()) {
+				try {
+					FileUtils.deleteDirectory(outDir);
+				} catch (IOException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+			if (!outDir.mkdir()) {
+				System.out.println("could not create the diretcory: " + outPath);
+				return;
+			} 
+			String filename;
+			for (Pattern p : patterns) {
+				filename = outPath + "/" + p.getId() + ".json";
+				try {
+					p.writeJson(filename);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	
-	public static void main(String[] args) {
-		int length = 4;
+	private List<Pattern> getValidPatterns(List<Pattern> patterns) {
+		List<Pattern> distinctPatterns, validPatterns;
+		System.out.println("number of patterns before removing duplicates: " + patterns.size());
+		distinctPatterns = removeDuplicates(patterns);
+		System.out.println("number of patterns after removing duplicates: " + distinctPatterns.size());
+		validPatterns = getPatternCount(distinctPatterns);
+		System.out.println("number of existing patterns in the data: " + validPatterns.size());
+		return validPatterns;
+	}
+
+	private List<Pattern> removeDuplicates(List<Pattern> patterns) {
+		List<Pattern> results = new LinkedList<Pattern>();
+		if (patterns == null || patterns.isEmpty())
+			return results;
+		
+		HashSet<Integer> hashTable = new HashSet<Integer>();
+		int hash;
+		for (Pattern p :patterns) {
+			hash = p.getLabel().hashCode();
+			if (hashTable.contains(hash)) continue;
+			hashTable.add(hash);
+			results.add(p);
+		}
+//		Collections.sort(patterns, new PatternLabelComparator());
+//		for (int i = 0; i < patterns.size(); i++) {
+//			if (i > 0 && patterns.get(i).getLabel().equalsIgnoreCase(patterns.get(i-1).getLabel()))
+//				continue;
+//			results.add(patterns.get(i));
+//		}
+		return results;
+	}
+
+	private List<Pattern> getPatternCount(List<Pattern> patterns) {
+		List<Pattern> results = new LinkedList<Pattern>();
+		if (patterns == null || patterns.isEmpty())
+			return results;
+		
+		String host = "fusionRepository.isi.edu";
+		int port = 1200;  
+		String username = "dba";
+		String password = "dba";
+		VirtuosoManager vm = new VirtuosoManager(host, port, username, password);
+		
+		RepositoryConnection con;
+		try {
+			con = vm.getConnection();
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			return results;
+		}
+		
+		int count;
+		int patternNumber = 1;
+		for (Pattern p : patterns) {
+			count = vm.getPatternCount(con, p.toSparql());
+			if (count != 0) {
+				p.setFrequency(count);
+				results.add(p);
+			}
+			System.out.println("pattern " + patternNumber++ + "/" + patterns.size() + 
+					", length: " + p.getLength() + 
+					", count: " + count);
+			if (patternNumber % 5000 == 0) {
+				System.out.println("getting new connection ...");
+				try {
+					vm.closeConnection(con);
+				} catch (RepositoryException e) {
+					e.printStackTrace();
+				}
+				try {
+					con = vm.getConnection();
+				} catch (RepositoryException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		try {
+			vm.closeConnection(con);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			return results;
+		}
+		
+		return results;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		int length = 5;
+		int seedLength = 4;
 		int instanceLimit = 2;
 		boolean includeShorterPatterns = false;
-		PatternGenerator pg = new PatternGenerator(Params.PATTERNS_DIR);
-		List<Pattern> patterns = pg.getPatterns(length, instanceLimit, includeShorterPatterns);
-		System.out.println("number of patterns: " + patterns.size());
-		for (Pattern p : patterns) {
-			if (p.getGraph() != null)
-				if (!includeShorterPatterns && p.getGraph().edgeSet().size() != length) {
-					System.out.println("************ There is a bug in the code!!! ************");
-				}
-				Node n1 = new InternalNode("http://erlangen-crm.org/current/E21_Person1", null);
-				Node n2 = new InternalNode("http://erlangen-crm.org/current/E67_Birth1", null);
-				Node n3 = new InternalNode("http://erlangen-crm.org/current/E69_Death1", null);
-				Node n4 = new InternalNode("http://erlangen-crm.org/current/E52_Time-Span1", null);
-				Node n5 = new InternalNode("http://erlangen-crm.org/current/E52_Time-Span2", null);
-				
-				if (p.getGraph().containsVertex(n1) &&
-						p.getGraph().containsVertex(n2) &&
-						p.getGraph().containsVertex(n3) &&
-						p.getGraph().containsVertex(n4) &&
-						p.getGraph().containsVertex(n5))
-					System.out.println(GraphUtil.labeledGraphToString(p.getGraph()));
+		PatternGenerator pg = new PatternGenerator(Params.PATTERNS_INPUT_DIR, Params.PATTERNS_OUTPUT_DIR);
+
+		System.out.println("reading patterns with length " + seedLength);
+		List<Pattern> seeds = new LinkedList<Pattern>();
+		File f = new File(Params.PATTERNS_OUTPUT_DIR);
+		for (int i = 0; i < length; i++) {
+			File f1 = new File(f.getAbsoluteFile() + "/" + seedLength);
+			File[] files = f1.listFiles();
+			if (files != null)
+			for (File f2 : files) {
+				Pattern p = Pattern.readJson(f2.getAbsolutePath());
+				seeds.add(p);
+			}
 		}
-		System.out.println("number of patterns: " + patterns.size());
+		System.out.println("finished reading patterns.");
+		
+		long start = System.currentTimeMillis();
+//		List<Pattern> patterns = pg.getPatterns(length, instanceLimit, includeShorterPatterns);
+		List<Pattern> patterns = pg.getPatterns(length, instanceLimit, includeShorterPatterns, seeds, seedLength);
+		long patternGeneraionTime = System.currentTimeMillis();
+		System.out.println("================================================================================");
+		System.out.println("time to generate patterns: " + (patternGeneraionTime - start)/1000F);
+		System.out.println("number of possible patterns: " + patterns.size());
+		System.out.println("================================================================================");
+		
+
+		
+		System.out.println("done.");
 	}
 }

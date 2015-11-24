@@ -58,7 +58,7 @@ public class PatternReader {
 		return invertedIndex;
 	}
 	
-	public static Map<String, Pattern> importPatterns(String patternDirectoryPath, Integer length) {
+	public static Map<String, Pattern> importPatterns(String inputDir, Integer length) {
 		
 		Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 		
@@ -71,7 +71,7 @@ public class PatternReader {
 		CSVParser csvParserTotalFrequency;
 		CSVParser csvParser;
 		
-		File patternDir = new File(patternDirectoryPath);
+		File patternDir = new File(inputDir);
 		if (patternDir.exists()) {
 			File[] patternFiles = patternDir.listFiles();
 			for (File file : patternFiles) {
@@ -87,7 +87,7 @@ public class PatternReader {
 						Pattern p = getPattern(record, headerMap, totalFrequency);
 						if (p != null) {
 							if (length != null) {
-								if (p.getSize() - 1 == length.intValue())
+								if (p.getLength() == length.intValue())
 									patterns.put(p.getId(), p);
 							} else {
 								patterns.put(p.getId(), p);
@@ -136,8 +136,8 @@ public class PatternReader {
 			return null;
 		}
 		
-		int size = numOfObjectProperties + numOfDataProperties + 1;
-		String id = "p" + size + "-" + new RandomGUID().toString();
+		int length = numOfObjectProperties + numOfDataProperties;
+		String id = "p" + length + "-" + new RandomGUID().toString();
 
 		Integer countIndex = headerMap.get(COUNT_COLUMN);
 		if (countIndex == null) {
@@ -191,7 +191,7 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s), ObjectPropertyType.None);
 				graph.addEdge(source, target, link);
-				w = getWeight(size, frequency, totalFrequency);
+				w = getWeight(length, frequency, totalFrequency);
 				graph.setEdgeWeight(link, w);
 //				if (size == 3 && (target.getId().contains("E21_") || target.getId().contains("E39_")) && source.getId().contains("E12_"))
 //					System.out.println("pattern size: " + size + " , link: " + link.getId() + ", count: " + frequency + ", w:" + w);
@@ -204,23 +204,24 @@ public class PatternReader {
 						LinkIdFactory.getLinkId(s, source.getId(), target.getId()), 
 						new Label(s));
 				graph.addEdge(source, target, link);
-				w = getWeight(size, frequency, totalFrequency);
+				w = getWeight(length, frequency, totalFrequency);
 				graph.setEdgeWeight(link, w);
 			}
 		}
 
-		Pattern p = new Pattern(id, size, frequency, types, graph, nodeIdFactory);
+//		Pattern p = new Pattern(id, length, frequency, types, graph, nodeIdFactory);
+		Pattern p = new Pattern(id, length, frequency, graph, nodeIdFactory);
 		
 		return p;
 	}
 	
-	private static double getWeight(int patternSize, int frequency, int totalFrequency) {
+	private static double getWeight(int patternLength, int frequency, int totalFrequency) {
 		double w = 0.0;
 		double initialWeight;
 		double subtract = 0.0;
 		
-		initialWeight = (ModelingParams.PATTERN_LINK_WEIGHT / (patternSize - 1));
-		initialWeight = initialWeight - ((double)patternSize - 2.0) / 10.0;
+		initialWeight = (ModelingParams.PATTERN_LINK_WEIGHT / (patternLength));
+		initialWeight = initialWeight - ((double)patternLength - 1.0) / 10.0;
 		if (totalFrequency > 0) {
 			subtract = (double)frequency / (double)totalFrequency;
 			if (subtract > initialWeight) subtract = 0.0000001; //initialWeight - Double.MIN_VALUE;

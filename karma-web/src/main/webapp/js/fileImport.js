@@ -357,6 +357,10 @@ var FileOptionsDialog = (function() {
 								var lastWorksheetId = lastWorksheetLoaded.attr("id");
 								ShowExistingModelDialog.getInstance().showIfNeeded(lastWorksheetId);
 							}
+						} else {
+							//format is ontology, reload caches
+							PropertyDialog.getInstance().reloadCache();
+							ClassDialog.getInstance().reloadCache();
 						}
 						dialog.modal('hide');
 					}

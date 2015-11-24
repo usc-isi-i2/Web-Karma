@@ -40,7 +40,7 @@ public class GetPropertiesCommand extends WorksheetCommand {
 	public enum INTERNAL_PROP_RANGE {
 		allDataProperties, allObjectProperties, allDataAndObjectProperties, 
 		existingProperties, dataPropertiesForClass, propertiesWithDomainRange,
-		recommenedProperties
+		recommendedProperties
 	}
 	
 	private enum JsonKeys {
@@ -52,13 +52,13 @@ public class GetPropertiesCommand extends WorksheetCommand {
 	private static Logger logger = LoggerFactory.getLogger(GetPropertiesCommand.class.getSimpleName());
 	
 	protected GetPropertiesCommand(String id, String model, String worksheetId, INTERNAL_PROP_RANGE propertiesRange, 
-									String classURI, String domainURI, String rangeURI) {
+									String classURI, String domainURI, String rangeURI, String linkId) {
 		super(id, model, worksheetId);
 		this.propertiesRange = propertiesRange;
 		this.classURI = classURI;
 		this.domainURI = domainURI;
 		this.rangeURI = rangeURI;
-		this.linkId = "";
+		this.linkId = linkId;
 	}
 	
 	@Override
@@ -142,7 +142,7 @@ public class GetPropertiesCommand extends WorksheetCommand {
 				// Store the data property links for specialized edge link options
 				properties.addAll(specializedLinks);
 			}
-		} else if(propertiesRange ==  INTERNAL_PROP_RANGE.recommenedProperties) {
+		} else if(propertiesRange ==  INTERNAL_PROP_RANGE.recommendedProperties) {
 			Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 			properties.addAll(alignment.suggestAlternativeLinks(linkId));
 		}

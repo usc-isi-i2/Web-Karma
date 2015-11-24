@@ -236,7 +236,7 @@
 			  			<div class="row">
 			  				<div class="col-sm-2" id="classDialogFunctions"></div>
 			  				<div class="col-sm-10" id="classDialogSuggestions">
-			  				<ul class="nav nav-tabs" role="tablist">
+			  				<ul class="nav nav-tabs" role="tablist" id="class_tabs">
 							    <li role="presentation" class="active"><a href="#class_recommended" aria-controls="class_recommended" role="tab" data-toggle="tab">Recommended</a></li>
 							    <li role="presentation"><a href="#class_compatible" aria-controls="class_compatible" role="tab" data-toggle="tab">Compatible</a></li>
 							    <li role="presentation"><a href="#class_all" aria-controls="class_all" role="tab" data-toggle="tab">All</a></li>
@@ -282,7 +282,7 @@
 			  			<div class="row">
 			  				<div class="col-sm-2" id="propertyDialogFunctions"></div>
 			  				<div class="col-sm-10" id="propertyDialogSuggestions">
-			  				<ul class="nav nav-tabs" role="tablist">
+			  				<ul class="nav nav-tabs" role="tablist" id="property_tabs">
 							    <li role="presentation" class="active"><a href="#property_recommended" aria-controls="property_recommended" role="tab" data-toggle="tab">Recommended</a></li>
 							    <li role="presentation"><a href="#property_compatible" aria-controls="property_compatible" role="tab" data-toggle="tab">Compatible</a></li>
 							    <li role="presentation"><a href="#property_all" aria-controls="property_all" role="tab" data-toggle="tab">All</a></li>

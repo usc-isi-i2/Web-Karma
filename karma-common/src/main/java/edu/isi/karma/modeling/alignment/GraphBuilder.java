@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -1339,6 +1340,66 @@ public class GraphBuilder {
 		Collections.sort(sortedLinks, new LinkPriorityComparator());
 		
 		return sortedLinks;
+	}
+	
+	public List<LabeledLink> getLinks(String sourceId, String targetId) {
+		
+		List<LabeledLink> links  = new LinkedList<LabeledLink>();
+
+		Node source = this.getIdToNodeMap().get(sourceId);
+		if (source == null) return links;
+
+		Node target = this.getIdToNodeMap().get(targetId);
+		if (target == null) return links;
+
+		Set<DefaultLink> allLinks = this.getGraph().getAllEdges(source, target);
+		if (allLinks != null) {
+			for (DefaultLink l : allLinks) {
+				if (l instanceof LabeledLink) {
+					links.add((LabeledLink)l);
+				}
+			}
+		}
+		
+		return links;
+	}
+
+	public List<LabeledLink> getIncomingLinks(String nodeId) {
+		
+		List<LabeledLink> incomingLinks  = new LinkedList<LabeledLink>();
+
+		Node node = this.getIdToNodeMap().get(nodeId);
+		if (node == null) return incomingLinks;
+		
+		Set<DefaultLink> allIncomingLinks = this.getGraph().incomingEdgesOf(node);
+		if (allIncomingLinks != null) {
+			for (DefaultLink l : allIncomingLinks) {
+				if (l instanceof LabeledLink) {
+					incomingLinks.add((LabeledLink)l);
+				}
+			}
+		}
+		
+		return incomingLinks;
+	}
+	
+	public List<LabeledLink> getOutgoingLinks(String nodeId) {
+		
+		List<LabeledLink> outgoingLinks  = new LinkedList<LabeledLink>();
+
+		Node node = this.getIdToNodeMap().get(nodeId);
+		if (node == null) return outgoingLinks;
+		
+		Set<DefaultLink> allOutgoingLinks = this.getGraph().outgoingEdgesOf(node);
+		if (allOutgoingLinks != null) {
+			for (DefaultLink l : allOutgoingLinks) {
+				if (l instanceof LabeledLink) {
+					outgoingLinks.add((LabeledLink)l);
+				}
+			}
+		}
+		
+		return outgoingLinks;
 	}
 	
 	public static void main(String[] args) throws Exception {

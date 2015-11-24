@@ -54,9 +54,7 @@ var AnchorDropdownMenu = (function() {
 							if(nodeLabel.endsWith("(add)")) {
 								nodeLabel = nodeLabel.substring(0, nodeLabel.length-6);
 							}
-							idx = nodeLabel.indexOf(":");
-							if(idx != -1)
-								nodeLabel = nodeLabel.substring(idx+1);
+							nodeLabel = getLabelWithoutPrefix(nodeLabel);
 							nodes.push({"id":type["DomainId"], "uri":type["DomainUri"], "label":nodeLabel});
 							seenNodes.push(type["DomainId"]);
 						
@@ -74,11 +72,16 @@ var AnchorDropdownMenu = (function() {
 			}
 
 			//Add the blank node and link
-			nodes.push({"id":"BlankNode1", "uri":"BlankNode", "label":" "});
-				var linkId = "BlankNode1--rdfs:label--" + columnId;
-				links.push({"id":linkId, "source":"BlankNode1", "target":columnId, 
-									"uri":"http://www.w3.org/2000/01/rdf-schema#label", 
-									"label":"label", "type":"DataPropertyLink"});
+			var blankNode = {"id":"BlankNode1", "uri":"BlankNode", "label":" "};
+			nodes.push(blankNode);
+			var defaultProperty = PropertyDialog.getInstance().getDefaultProperty();
+			var linkId = blankNode.id + "--" + defaultProperty.label + "--" + columnId;
+			links.push({"id": linkId, 
+						"source": blankNode.id, 
+						"target": columnId, 
+						"uri": defaultProperty.uri, 
+						"label": getLabelWithoutPrefix(defaultProperty.label), 
+						"type": "DataPropertyLink"});
 
 			//Register the link approve listener	
 			D3ModelManager.getInstance().setLinkApproveListener(worksheetId, function(link, event) {

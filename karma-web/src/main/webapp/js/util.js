@@ -534,6 +534,33 @@ function getAllPropertiesForDomainRange(worksheetId, domainUri, rangeUri) {
 	return result;
 }
 
+function getRecommendedProperties(worksheetId, linkId) {
+	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
+	info["propertiesRange"] = "recommendedProperties";
+	info["linkId"] = linkId;
+
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data: info,
+		dataType: "json",
+		async: false,
+		complete: function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			var data = json.elements[0].properties;
+			$.each(data, function(index, prop) {
+				parsePropertyJSON(prop, result);
+			});
+		},
+		error: function(xhr, textStatus) {
+			alert("Error occured while fetching properties: " + textStatus);
+		}
+	});
+	//sortClassPropertyNodes(result);
+	return result;
+}
+
 function parsePropertyJSON(prop, result) {
 	var node = {
 		"label": prop.label,
@@ -714,6 +741,13 @@ function refreshWorksheet(worksheetId, updates) {
 	info["updates"] = JSON.stringify(updates);
 	showLoading(info["worksheetId"]);
 	sendRequest(info, worksheetId);
+}
+
+function getLabelWithoutPrefix(label) {
+	idx = label.indexOf(":");
+	if(idx != -1)
+		return label.substring(idx+1);
+	return label;
 }
 
 function isValidUrl(url) {

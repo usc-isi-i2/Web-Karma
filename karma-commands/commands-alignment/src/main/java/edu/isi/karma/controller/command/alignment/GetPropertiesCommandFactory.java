@@ -10,7 +10,7 @@ import edu.isi.karma.rep.Workspace;
 public class GetPropertiesCommandFactory extends CommandFactory {
 
 	public enum Arguments {
-		worksheetId, propertiesRange, classURI, domainURI, rangeURI
+		worksheetId, propertiesRange, classURI, domainURI, rangeURI, linkId
 	}
 	
 	@Override
@@ -19,13 +19,13 @@ public class GetPropertiesCommandFactory extends CommandFactory {
 		String domainURI = request.getParameter(Arguments.domainURI.name());
 		String rangeURI = request.getParameter(Arguments.rangeURI.name());
 		String classURI = request.getParameter(Arguments.classURI.name());
-		
+		String linkId = request.getParameter(Arguments.linkId.name());
 		String worksheetId =request.getParameter(Arguments.worksheetId.name());
 		INTERNAL_PROP_RANGE range = INTERNAL_PROP_RANGE.valueOf(
 				request.getParameter(Arguments.propertiesRange.name()));
 		
 		return new GetPropertiesCommand(getNewId(workspace), 
-				Command.NEW_MODEL, worksheetId, range, classURI, domainURI, rangeURI);
+				Command.NEW_MODEL, worksheetId, range, classURI, domainURI, rangeURI, linkId);
 	}
 
 	@Override
