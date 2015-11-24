@@ -12,11 +12,23 @@ var ClassDialog = (function() {
 		var allClassCache;
 
 		function init() {
+			reloadCache();
+			$('input', dialog).on('keyup', filterDropdown);
+
+			$('#class_tabs a[href="#class_all"]').on('shown.bs.tab', function(e) {
+				window.setTimeout(function() {
+					$('input', dialog).select();
+				}, 10);
+				
+				console.log("All clicked");
+			});
+		}
+
+		function reloadCache() {
 			allClassCache = null;
 			window.setTimeout(function() {
 				allClassCache = getAllClasses(worksheetId);
 			}, 10);
-			$('input', dialog).on('keyup', filterDropdown);
 		}
 
 		function hide() {
@@ -132,6 +144,7 @@ var ClassDialog = (function() {
 			});
 
 			renderMenu($("#class_all", dialog), allTypes);
+			return allTypes.length;
 		}
 
 		function populateRecommended() {
@@ -143,17 +156,19 @@ var ClassDialog = (function() {
 				});	
 			}
 			renderMenu($("#class_recommended", dialog), items);
+			return inTypes.length;
 		}
 
 		function populateCompatible() {
-			var inTypes = getClassesInModel(worksheetId);
+			//var inTypes = getClassesInModel(worksheetId);
 			var items = [];
-			if(inTypes != null) {
-				$.each(inTypes, function(index, type) {
-					items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
-				});	
-			}
+			// if(inTypes != null) {
+			// 	$.each(inTypes, function(index, type) {
+			// 		items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
+			// 	});	
+			// }
 			renderMenu($("#class_compatible", dialog), items);
+			return items.length;
 		}
 
 		function filterDropdown(e) {
@@ -185,9 +200,17 @@ var ClassDialog = (function() {
 		}
 
 		function populateMenu() {
-			populateRecommended();
-			populateCompatible();
+			var numRecom = populateRecommended();
+			var numCompatible = populateCompatible();
 			populateAll();
+
+			if(numRecom != 0) {
+				$('#class_tabs a[href="#class_recommended"]').tab('show');
+			} else if(numCompatible  != 0) {
+				$('#class_tabs a[href="#class_compatible"]').tab('show');
+			} else {
+				$('#class_tabs a[href="#class_all"]').tab('show');
+			}
 		}
 
 		function renderMenu(div, menuItems) {
@@ -260,7 +283,8 @@ var ClassDialog = (function() {
 
 		return { //Return back the public methods
 			show: show,
-			init: init
+			init: init,
+			reloadCache: reloadCache
 		};
 	};
 

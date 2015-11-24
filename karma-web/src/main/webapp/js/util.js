@@ -743,6 +743,13 @@ function refreshWorksheet(worksheetId, updates) {
 	sendRequest(info, worksheetId);
 }
 
+function getLabelWithoutPrefix(label) {
+	idx = label.indexOf(":");
+	if(idx != -1)
+		return label.substring(idx+1);
+	return label;
+}
+
 function isValidUrl(url) {
 	var re = /^(ht|f)tps?:\/\/(([a-z0-9-\.]+\.[a-z]{2,4})|(localhost))\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/;
     return re.test(url);

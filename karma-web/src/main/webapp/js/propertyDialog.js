@@ -13,13 +13,46 @@ var PropertyDialog = (function() {
 		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
 		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
 		var allPropertiesCache;
+		var defaultProperty;
 
 		function init() {
+			reloadCache();
+			$('input', dialog).on('keyup', filterDropdown);
+
+			$('#property_tabs a[href="#property_all"]').on('shown.bs.tab', function(e) {
+				window.setTimeout(function() {
+					$('input', dialog).select();
+				}, 10);
+				
+				console.log("All clicked");
+			});
+		}
+
+		function reloadCache() {
 			allPropertiesCache = null;
+			defaultProperty = null;
 			window.setTimeout(function() {
 				allPropertiesCache = getAllDataAndObjectProperties(worksheetId);
+				for(var i=0; i<allPropertiesCache.length; i++) {
+					type = allPropertiesCache[i];
+					if(type.uri == DEFAULT_PROPERTY_URI) {
+						defaultProperty  = type;
+						break;
+					}
+				}
+				if(defaultProperty == null) {
+					defaultProperty = {
+						"uri":"http://www.w3.org/2000/01/rdf-schema#label", 
+						"label":"rdfs:label",
+						"id": "http://www.w3.org/2000/01/rdf-schema#label", 
+						"type": "dataProperty"						
+					}
+				}
 			}, 10);
-			$('input', dialog).on('keyup', filterDropdown);
+		}
+
+		function getDefaultProperty() {
+			return defaultProperty;
 		}
 
 		function hide() {
@@ -117,6 +150,7 @@ var PropertyDialog = (function() {
 			});
 
 			renderMenu($("#property_all", dialog), allTypes);
+			return allTypes.length;
 		}
 
 		function populateCompatibleProperties() {
@@ -127,6 +161,7 @@ var PropertyDialog = (function() {
 				compatibleTypes = getAllPropertiesForDomainRange(worksheetId, sourceDomain, targetDomain);
 			}
 			renderMenu($("#property_compatible", dialog), compatibleTypes);	
+			return compatibleTypes.length;
 		}
 
 		function populateSuggestedProperties() {
@@ -154,6 +189,7 @@ var PropertyDialog = (function() {
 			}
 
 			renderMenu($("#property_recommended", dialog), items);	
+			return items.length;
 		}
 
 		function filterDropdown(e) {
@@ -184,9 +220,17 @@ var PropertyDialog = (function() {
 		}
 
 		function populateMenu() {
-			window.setTimeout(populateSuggestedProperties, 10);
-			window.setTimeout(populateCompatibleProperties, 11);
+			numRecom = populateSuggestedProperties();
+			numCompatible = populateCompatibleProperties();
 			populateAllProperties();
+
+			if(numRecom != 0) {
+				$('#property_tabs a[href="#property_recommended"]').tab('show');
+			} else if(numCompatible  != 0) {
+				$('#property_tabs a[href="#property_compatible"]').tab('show');
+			} else {
+				$('#property_tabs a[href="#property_all"]').tab('show');
+			}
 		}
 
 		function renderMenu(div, menuItems) {
@@ -277,7 +321,9 @@ var PropertyDialog = (function() {
 
 		return { //Return back the public methods
 			show: show,
-			init: init
+			init: init,
+			getDefaultProperty: getDefaultProperty,
+			reloadCache: reloadCache
 		};
 	};
 
@@ -295,3 +341,6 @@ var PropertyDialog = (function() {
 
 
 })();
+
+
+
