@@ -39,6 +39,7 @@ public class ConvertJSONLD {
         String outputPath = cl.getOptionValue("outputpath");
         String tmpNumpartition = cl.getOptionValue("numpartition");
         final String dateFilter = cl.getOptionValue("datefilter", "");
+        System.out.println("dateFilter: " + dateFilter);
         String tmpOutputPartition = cl.getOptionValue("outputpartition");
         if (filePath == null || outputPath == null) {
             logger.error("No file path provided!");
@@ -73,6 +74,9 @@ public class ConvertJSONLD {
                     if (date.contains(dateFilter)) {
                         return true;
                     }
+                }
+                if (results.size() == 0 && dateFilter.isEmpty()) {
+                    return true;
                 }
                 return false;
             }
