@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
@@ -92,7 +93,9 @@ public class Alignment implements OntologyUpdateListener {
 		this.ontologyManager = ontologyManager;
 		this.ontologyManager.subscribeListener(this);
 		this.sourceColumnNodes = new HashSet<ColumnNode>(); 
-		if (ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getKnownModelsAlignment()) {
+		ModelingConfiguration conf = ModelingConfigurationRegistry.getInstance().
+				getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome());
+		if (conf.getKnownModelsAlignment()) {
 			this.graphBuilder = 
 					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilderClone();
 		} else {
@@ -575,67 +578,6 @@ public class Alignment implements OntologyUpdateListener {
 		return results;
 	}
 	
-	public List<LabeledLink> getLinksInGraph(String sourceId, String targetId) {
-		
-		List<LabeledLink> links  = new LinkedList<LabeledLink>();
-
-		Node source = this.getNodeById(sourceId);
-		if (source == null) return links;
-
-		Node target = this.getNodeById(targetId);
-		if (target == null) return links;
-
-		Set<DefaultLink> allLinks = this.graphBuilder.getGraph().getAllEdges(source, target);
-		if (allLinks != null) {
-			for (DefaultLink l : allLinks) {
-				if (l instanceof LabeledLink) {
-					links.add((LabeledLink)l);
-				}
-			}
-		}
-		
-		return links;
-	}
-	
-	public List<LabeledLink> getIncomingLinksInGraph(String nodeId) {
-		
-		List<LabeledLink> incomingLinks  = new LinkedList<LabeledLink>();
-
-		Node node = this.getNodeById(nodeId);
-		if (node == null) return incomingLinks;
-		
-		Set<DefaultLink> allIncomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
-		if (allIncomingLinks != null) {
-			for (DefaultLink l : allIncomingLinks) {
-				if (l instanceof LabeledLink) {
-					incomingLinks.add((LabeledLink)l);
-				}
-			}
-		}
-		
-		return incomingLinks;
-	}
-	
-
-	public List<LabeledLink> getOutgoingLinksInGraph(String nodeId) {
-		
-		List<LabeledLink> outgoingLinks  = new LinkedList<LabeledLink>();
-
-		Node node = this.getNodeById(nodeId);
-		if (node == null) return outgoingLinks;
-		
-		Set<DefaultLink> allOutgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
-		if (allOutgoingLinks != null) {
-			for (DefaultLink l : allOutgoingLinks) {
-				if (l instanceof LabeledLink) {
-					outgoingLinks.add((LabeledLink)l);
-				}
-			}
-		}
-		
-		return outgoingLinks;
-	}
-	
 //	public List<LabeledLink> getIncomingLinksInGraph(String nodeId) {
 //		
 //		List<LabeledLink> possibleLinks  = new ArrayList<LabeledLink>();
@@ -837,8 +779,10 @@ public class Alignment implements OntologyUpdateListener {
 		
 		Set<LabeledLink> candidateLinks = new HashSet<LabeledLink>();
 		List<LabeledLink> incomingLinks, outgoingLinks;
-		incomingLinks = this.getIncomingLinksInGraph(nodeId);
-		outgoingLinks = this.getOutgoingLinksInGraph(nodeId);
+		incomingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
+				getGraphBuilder().getIncomingLinks(nodeId);
+		outgoingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
+				getGraphBuilder().getOutgoingLinks(nodeId);
 		if (incomingLinks != null) candidateLinks.addAll(incomingLinks);
 		if (outgoingLinks != null) candidateLinks.addAll(outgoingLinks);
 		
@@ -903,8 +847,10 @@ public class Alignment implements OntologyUpdateListener {
 		
 		Set<LabeledLink> candidateLinks = new HashSet<LabeledLink>();
 		List<LabeledLink> incomingLinks, outgoingLinks;
-		incomingLinks = this.getLinksInGraph(target.getId(), source.getId());
-		outgoingLinks = this.getLinksInGraph(source.getId(), target.getId());
+		incomingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
+				getGraphBuilder().getLinks(target.getId(), source.getId());
+		outgoingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
+				getGraphBuilder().getLinks(source.getId(), target.getId());
 		if (incomingLinks != null) candidateLinks.addAll(incomingLinks);
 		if (outgoingLinks != null) candidateLinks.addAll(outgoingLinks);
 
