@@ -170,6 +170,9 @@ var PropertyDialog = (function() {
 			if(targetNodeType == "ColumnNode") {
 				var semSuggestions = getSuggestedSemanticTypes(worksheetId, targetId, sourceDomain);
 				var uriFound = false;
+				uriLabel = "uri";
+				if(sourceLabel != " ")
+					uriLabel += " of " + sourceLabel;
 				if(semSuggestions != null && semSuggestions["Labels"]) {
 					$.each(semSuggestions["Labels"], function(index, type) {
 						if(type["DisplayLabel"] == "km-dev:columnSubClassOfLink" ||
