@@ -244,15 +244,8 @@ var D3ModelManager = (function() {
 			if(linkApproveListeners[worksheetId]) {
 				layout.setLinkApproveClickListener(function(d, event) {
 					worksheetNodes = modelNodesMap[worksheetId];
-					var sourceNodeOrg = worksheetNodes[d.sourceNodeId];
-					var targetNodeOrg = worksheetNodes[d.targetNodeId]
 					var func = linkApproveListeners[worksheetId];
-					var link = {"uri": d.linkUri,
-								"label":d.label,
-								"source": getNodeRep(sourceNodeOrg),
-								"target": getNodeRep(targetNodeOrg)
-							}
-					func(link, event);
+					func(getLinkRep(d), event);
 				});
 					
 			}
@@ -260,9 +253,15 @@ var D3ModelManager = (function() {
 			if(nodeDragDropListeners[worksheetId]) {
 				layout.setNodeDragDropListener(function(source, target, event) {
 					var sourceNodeOrg = worksheetNodes[source.nodeId];
-					var targetNodeOrg = worksheetNodes[target.nodeId];
 					var func = nodeDragDropListeners[worksheetId];
-					func(getNodeRep(sourceNodeOrg), getNodeRep(targetNodeOrg), event);
+					if(target.nodeId) {
+						var targetNodeOrg = worksheetNodes[target.nodeId];
+						var targetRep = getNodeRep(targetNodeOrg);
+					} else {
+						var linkOrg = worksheetLinks[target.id];
+						var targetRep = getLinkRep(linkOrg);
+					}
+					func(getNodeRep(sourceNodeOrg), targetRep, event);
 				});
 			}
 		};
@@ -316,32 +315,26 @@ var D3ModelManager = (function() {
 
 			var result = [];
 			$.each(worksheetJson.links, function(index, link) {
-				var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
-				var targetNodeOrg = worksheetNodes[link.targetNodeId]
-				result.push({
-					"id": link.id,
-					"uri": link.linkUri,
-					"label":link.label,
-					"type":link.linkType,
-					"source": getNodeRep(sourceNodeOrg),
-					"target": getNodeRep(targetNodeOrg)
-				});
+				result.push(getLinkRep(link));
 			});
 			$.each(worksheetJson.edgeLinks, function(index, link) {
-				var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
-				var targetNodeOrg = worksheetNodes[link.targetNodeId]
-				result.push({
-					"id": link.id,
-					"uri": link.linkUri,
-					"label":link.label,
-					"type":link.linkType,
-					"source": getNodeRep(sourceNodeOrg),
-					"target": getNodeRep(targetNodeOrg)
-				});
+				result.push(getLinkRep(link));
 			});
 			return result;
 		}
 
+		function getLinkRep(link) {
+			var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
+			var targetNodeOrg = worksheetNodes[link.targetNodeId]
+			return {
+				"id": link.id,
+				"uri": link.linkUri,
+				"label":link.label,
+				"type":link.linkType,
+				"source": getNodeRep(sourceNodeOrg),
+				"target": getNodeRep(targetNodeOrg)
+			};
+		}
 
 		function getCurrentLinksToNode(worksheetId, nodeId) {
 			
@@ -351,30 +344,12 @@ var D3ModelManager = (function() {
 			var result = [];
 			$.each(worksheetJson.links, function(index, link) {
 				if(link.sourceNodeId == nodeId || link.targetNodeId == nodeId) {
-					var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
-					var targetNodeOrg = worksheetNodes[link.targetNodeId]
-					result.push({
-						"id": link.id,
-						"uri": link.linkUri,
-						"label":link.label,
-						"type":link.linkType,
-						"source": getNodeRep(sourceNodeOrg),
-						"target": getNodeRep(targetNodeOrg)
-					});
+					result.push(getLinkRep(link));
 				}
 			});
 			$.each(worksheetJson.edgeLinks, function(index, link) {
 				if(link.sourceNodeId == nodeId || link.targetNodeId == nodeId) {
-					var sourceNodeOrg = worksheetNodes[link.sourceNodeId];
-					var targetNodeOrg = worksheetNodes[link.targetNodeId]
-					result.push({
-						"id": link.id,
-						"uri": link.linkUri,
-						"label":link.label,
-						"type":link.linkType,
-						"source": getNodeRep(sourceNodeOrg),
-						"target": getNodeRep(targetNodeOrg)
-					});
+					result.push(getLinkRep(link));
 				}
 			});
 			return result;

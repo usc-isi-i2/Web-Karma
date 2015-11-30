@@ -116,14 +116,22 @@ var AnchorDropdownMenu = (function() {
 			D3ModelManager.getInstance().setNodeDragDropListener(worksheetId, function(source, target, event) {
 				if(source.uri == "BlankNode") {
 					if(columnType == "ColumnNode") {
-						//Set the semantic type
-						var type = {
-							"uri": "http://www.w3.org/2000/01/rdf-schema#label",
-							"label": "label",
-							"source": target
+						if(target.source) {
+							//Target is a link
+							setSpecializedEdgeSemanticType(worksheetId, columnId, target);
+						} else {
+							//Set the semantic type
+							var type = {
+								"uri": "http://www.w3.org/2000/01/rdf-schema#label",
+								"label": "label",
+								"source": target
+							}
+							setSemanticType(worksheetId, columnId, type);
 						}
-						setSemanticType(worksheetId, columnId, type);
 					} else {
+						if(target.source) //Ignore if target is an link in other cases
+							return;
+
 						var newEdges = [];
 						var edge = {
 							"uri": "http://www.w3.org/2000/01/rdf-schema#label",

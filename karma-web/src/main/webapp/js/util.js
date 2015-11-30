@@ -675,6 +675,29 @@ function changeLinks(worksheetId, alignmentId, oldEdges, newEdges) {
 	return sendRequest(info, worksheetId);
 }
 
+function setSpecializedEdgeSemanticType(worksheetId, columnId, edge) {
+	var info = generateInfoObject(worksheetId, columnId, "");
+	info["command"] = "SetMetaPropertyCommand";
+
+	var newInfo = info['newInfo'];
+
+	info["metaPropertyName"] = "isSpecializationForEdge";
+	info["metaPropertyUri"] = edge.uri;
+	info["metaPropertyId"] = edge.id;
+	newInfo.push(getParamObject("metaPropertyName", info["metaPropertyName"], "other"));
+	newInfo.push(getParamObject("metaPropertyUri", info["metaPropertyUri"], "other"));
+	newInfo.push(getParamObject("metaPropertyId", info["metaPropertyId"], "linkWithHNodeId"));
+
+	info["trainAndShowUpdates"] = true
+	info["rdfLiteralType"] = ''
+	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
+	newInfo.push(getParamObject("rdfLiteralType", '', "other"));
+
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var returned = sendRequest(info, worksheetId);
+}
+
 function setSemanticType(worksheetId, columnId, type) {
 	var info = generateInfoObject(worksheetId, columnId, "");
 	var newInfo = info['newInfo']; 
