@@ -214,6 +214,9 @@ var D3ModelManager = (function() {
 					sourceObj = d.source;
 					targetObj = d.target;
 				}
+				if(sourceObj == null) {
+					sourceObj = {"nodeType": "Link", "label":d.source, "nodeDomain":d.source};
+				}
 				PropertyDialog.getInstance().show(
 						worksheetId,
 						alignmentId,

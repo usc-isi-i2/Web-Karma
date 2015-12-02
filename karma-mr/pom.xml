@@ -135,7 +135,7 @@
 					<!-- Configuration for generating a self contained jar for MR -->
 					<!--
 						to generate the jar, run:
-						mvn package -P shaded
+						mvn package -Pshaded,cloudera
 					-->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

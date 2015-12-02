@@ -1059,7 +1059,12 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 						layerLabel[layer].push(d);
 					}
 				} else if (d.type == "edgeLinkLabel"){
-
+					if(d.show) {
+						if (!layerLabel[0]){
+							layerLabel[0] = [];
+						}
+						layerLabel[0].push(d);
+					}
 				} else if (d.type == "linkLabel"){
 					//if (!nodesData[d.node.src].outside.isOutside && !nodesData[d.node.tgt].outside.isOutside){
 					if (d.show){
@@ -1524,12 +1529,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			textData.push({
 				node : node,
 				type : "edgeLinkLabel",
-				content : d.label
+				content : d.label,
+				nodeId : d.id
 			});
 
 			textLinksData.push({
 				source : textData.length - 2,
-				target : textData.length - 1
+				target : textData.length - 1,
+				edgeId : d.id
 			});
 		});
 	}

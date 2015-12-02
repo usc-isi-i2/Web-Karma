@@ -181,6 +181,11 @@ var PropertyFunctions = (function() {
 			if (p_targetNodeType == "ColumnNode" || p_targetNodeType == "LiteralNode") {
 				disableItem("Change To");
 			}
+
+			if(p_sourceNodeType == "Link") {
+				disableItem("Change From");
+				disableItem("Change To");
+			}
 		};
 
 

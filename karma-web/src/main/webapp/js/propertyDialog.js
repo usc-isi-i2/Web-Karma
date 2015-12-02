@@ -299,19 +299,29 @@ var PropertyDialog = (function() {
 			targetNodeType = p_targetNodeType;
 
 			$("input", dialog).val('');
-			populateMenu();
 
 			$("#propertyDialog_title", dialog).html("Change Property: " + p_propertyLabel);
-			if(linkStatus != "TemporaryLink") {
+			if(sourceNodeType == "Link") {
+				$("#propertyDialogSuggestions").hide();
 				$("#propertyDialogFunctions", dialog).show();
-				PropertyFunctions.getInstance().show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, 
-													p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
-													p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
-													hide, event);
-				$("#propertyDialogSuggestions").removeClass("col-sm-12").addClass("col-sm-10");
+					PropertyFunctions.getInstance().show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, 
+														p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
+														p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
+														hide, event);
 			} else {
-				$("#propertyDialogFunctions", dialog).hide();
-				$("#propertyDialogSuggestions").removeClass("col-sm-10").addClass("col-sm-12");
+				$("#propertyDialogSuggestions").show();
+				populateMenu();
+				if(linkStatus != "TemporaryLink") {
+					$("#propertyDialogFunctions", dialog).show();
+					PropertyFunctions.getInstance().show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, 
+														p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
+														p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
+														hide, event);
+					$("#propertyDialogSuggestions").removeClass("col-sm-12").addClass("col-sm-10");
+				} else {
+					$("#propertyDialogFunctions", dialog).hide();
+					$("#propertyDialogSuggestions").removeClass("col-sm-10").addClass("col-sm-12");
+				}
 			}
 
 			dialog.modal({
