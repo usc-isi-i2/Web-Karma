@@ -1737,7 +1737,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 						// 	d.show = true;
 						// 	return 1;
 						// }
-						if ((d.node.src < nodesData.length && nodesData[d.node.src].outside.isOutside) || (d.node.tgt < nodesData.length && nodesData[d.node.tgt].outside.isOutside)){
+						if ((d.node.src < nodesData.length && nodesData[d.node.src].noLayer == undefined && nodesData[d.node.src].outside.isOutside) 
+							|| (d.node.tgt < nodesData.length && nodesData[d.node.tgt].noLayer == undefined && nodesData[d.node.tgt].outside.isOutside)){
 							d.show = false;
 							return 0;
 						}
@@ -1748,7 +1749,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			d3.select(htmlElement).selectAll(".edgeLinkLabel")
 				.attr("opacity", function(d){
 					//console.log(d.index);
-					if (!d.node.src.show || nodesData[d.node.tgt].outside.isOutside){
+					if (!d.node.src.show || 
+						(nodesData[d.node.tgt].noLayer == undefined && nodesData[d.node.tgt].outside.isOutside)) {
 						d.show = false;
 						return 0;
 					}
