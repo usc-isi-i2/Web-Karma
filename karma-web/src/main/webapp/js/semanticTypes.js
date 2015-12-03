@@ -2550,7 +2550,7 @@ var AddLiteralNodeDialog = (function() {
 								getAllProperties();
 								propertyUI.generateJS(propDiv, true);
 								
-								$("#isUriRow", dialog).hide();
+								$("#isUriRow", dialog).show();
 							} else {
 								$(".modal-title", dialog).html("Edit Literal Node");
 								$("#btnSave", dialog).text("Save");
@@ -2614,7 +2614,7 @@ var AddLiteralNodeDialog = (function() {
 				 
 				 if(dialogMode == "edit")
 					 newInfo.push(getParamObject("nodeId", nodeId, "other"));
-				 else if(dialogMode == "addWithProperty") {
+				 else if(dialogMode == "addWithProperty" && isUri == false) {
 					 var property = propertyUI.getSelectedProperty();
 					 var type = property.other;
 					 if(type == "objectProperty")
