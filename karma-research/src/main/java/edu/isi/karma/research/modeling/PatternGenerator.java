@@ -23,7 +23,6 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.ObjectPropertyLink;
 import edu.isi.karma.rep.alignment.ObjectPropertyType;
-import edu.isi.karma.util.RandomGUID;
 
 public class PatternGenerator {
 
@@ -172,7 +171,7 @@ public class PatternGenerator {
 						String newLinkId = LinkIdFactory.getLinkId(c.linkUri, source.getId(), target.getId());
 						LabeledLink newLink = new ObjectPropertyLink(newLinkId, new Label(c.linkUri), ObjectPropertyType.None);
 						newG.addEdge(source, target, newLink);
-						Pattern newP = new Pattern(new RandomGUID().toString(), length, 0, newG, nodeIdFactory);
+						Pattern newP = new Pattern(length, 0, newG, nodeIdFactory);
 						results.add(newP);
 
 						// add links to existing nodes in the pattern
@@ -194,7 +193,7 @@ public class PatternGenerator {
 							
 							newG = (DirectedWeightedMultigraph<Node, LabeledLink>)g.clone();
 							newG.addEdge(source, target, newLink);
-							newP = new Pattern(new RandomGUID().toString(), length, 0, newG, p.getNodeIdFactory().clone());
+							newP = new Pattern(length, 0, newG, p.getNodeIdFactory().clone());
 							results.add(newP);
 						}
 					}
@@ -256,7 +255,7 @@ public class PatternGenerator {
 						String newLinkId = LinkIdFactory.getLinkId(c.linkUri, source.getId(), target.getId());
 						LabeledLink newLink = new ObjectPropertyLink(newLinkId, new Label(c.linkUri), ObjectPropertyType.None);
 						newG.addEdge(source, target, newLink);
-						Pattern newP = new Pattern(new RandomGUID().toString(), length, 0, newG, nodeIdFactory);
+						Pattern newP = new Pattern(length, 0, newG, nodeIdFactory);
 						results.add(newP);
 
 						// add links to existing nodes in the pattern
@@ -278,7 +277,7 @@ public class PatternGenerator {
 							
 							newG = (DirectedWeightedMultigraph<Node, LabeledLink>)g.clone();
 							newG.addEdge(source, target, newLink);
-							newP = new Pattern(new RandomGUID().toString(), length, 0, newG, p.getNodeIdFactory().clone());
+							newP = new Pattern(length, 0, newG, p.getNodeIdFactory().clone());
 							results.add(newP);
 						}
 					}

@@ -47,7 +47,6 @@ import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -55,6 +54,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
+import edu.isi.karma.modeling.alignment.learner.PatternWeightSystem;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -272,7 +272,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 		if (modelingConfiguration.isLearnerEnabled())
 			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Compact).
-			addModelAndUpdateAndExport(semanticModel, false);
+			addModelAndUpdateAndExport(semanticModel, PatternWeightSystem.JWSPaperFormula);
 
 		// *****************************************************************************************
 		// *****************************************************************************************

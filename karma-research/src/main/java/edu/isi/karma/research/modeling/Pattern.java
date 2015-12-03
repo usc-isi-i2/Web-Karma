@@ -27,10 +27,12 @@ import com.google.gson.stream.JsonWriter;
 import edu.isi.karma.modeling.alignment.GraphUtil;
 import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.modeling.alignment.NodeIdFactory;
+import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.util.RandomGUID;
 
 public class Pattern {
 	
@@ -43,7 +45,7 @@ public class Pattern {
 	private DirectedWeightedMultigraph<Node, LabeledLink> graph;
 	private NodeIdFactory nodeIdFactory;
 	
-	public Pattern(String id, 
+	private Pattern(String id, 
 			int length, 
 			int frequency, 
 //			List<String> types,
@@ -57,6 +59,19 @@ public class Pattern {
 		this.nodeIdFactory = nodeIdFactory;
 	}
 
+	public Pattern(int length, 
+			int frequency, 
+//			List<String> types,
+			DirectedWeightedMultigraph<Node, LabeledLink> graph,
+			NodeIdFactory nodeIdFactory) {
+		this.id = "p" + length + new RandomGUID().toString();
+		this.length = length;
+		this.frequency = frequency;
+//		this.types = types;
+		this.graph = graph;
+		this.nodeIdFactory = nodeIdFactory;
+	}
+	
 	@Override
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -298,5 +313,21 @@ public class Pattern {
 		if (this.graph != null)
 			s += GraphUtil.labeledGraphToString(graph);
 		return s;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		int length = 1;
+		System.out.println("patterns with length " + length);
+		File f = new File(Params.PATTERNS_OUTPUT_DIR);
+		File f1 = new File(f.getAbsoluteFile() + "/" + length);
+		File[] files = f1.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				Pattern p = Pattern.readJson(file.getAbsolutePath());
+				p.setId("p" + length + "-" + p.getId());
+				p.writeJson(file.getAbsolutePath());
+			}
+		}
+		System.out.println("done.");
 	}
 }

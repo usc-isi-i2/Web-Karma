@@ -63,6 +63,7 @@ import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphCompact;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.alignment.learner.ModelReader;
+import edu.isi.karma.modeling.alignment.learner.PatternWeightSystem;
 import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
 import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel;
 import edu.isi.karma.modeling.alignment.learner.SteinerNodes;
@@ -964,7 +965,7 @@ public class ModelLearner_KnownModels {
 					logger.info("building the graph ...");
 					for (SemanticModel sm : trainingData)
 //						modelLearningGraph.addModel(sm);
-						modelLearningGraph.addModelAndUpdate(sm, false);
+						modelLearningGraph.addModelAndUpdate(sm, PatternWeightSystem.JWSPaperFormula);
 					modelLearner = new ModelLearner_KnownModels(modelLearningGraph.getGraphBuilder(), steinerNodes);
 //					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
 //					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();

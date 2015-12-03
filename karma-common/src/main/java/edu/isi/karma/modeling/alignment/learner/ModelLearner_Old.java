@@ -783,7 +783,7 @@ public class ModelLearner_Old {
 				{
 					logger.info("building the graph ...");
 					for (SemanticModel sm : trainingData)
-						modelLearningGraph.addModel(sm, false);
+						modelLearningGraph.addModel(sm, PatternWeightSystem.JWSPaperFormula);
 					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file

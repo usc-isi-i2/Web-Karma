@@ -137,7 +137,6 @@ public class PatternReader {
 		}
 		
 		int length = numOfObjectProperties + numOfDataProperties;
-		String id = "p" + length + "-" + new RandomGUID().toString();
 
 		Integer countIndex = headerMap.get(COUNT_COLUMN);
 		if (countIndex == null) {
@@ -210,7 +209,7 @@ public class PatternReader {
 		}
 
 //		Pattern p = new Pattern(id, length, frequency, types, graph, nodeIdFactory);
-		Pattern p = new Pattern(id, length, frequency, graph, nodeIdFactory);
+		Pattern p = new Pattern(length, frequency, graph, nodeIdFactory);
 		
 		return p;
 	}

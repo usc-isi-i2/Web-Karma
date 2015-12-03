@@ -58,6 +58,7 @@ import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphCompact;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.alignment.learner.ModelReader;
+import edu.isi.karma.modeling.alignment.learner.PatternWeightSystem;
 import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
@@ -468,7 +469,7 @@ public class ModelLearner_KnownModels2 {
 					logger.info("building the graph ...");
 					for (SemanticModel sm : trainingData)
 //						modelLearningGraph.addModel(sm);
-						modelLearningGraph.addModelAndUpdate(sm, false);
+						modelLearningGraph.addModelAndUpdate(sm, PatternWeightSystem.JWSPaperFormula);
 					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
 					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
 					// save graph to file

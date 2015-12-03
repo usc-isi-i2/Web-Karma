@@ -31,7 +31,7 @@ public class Params {
 	public static String DATASET_NAME = "museum-29-crm-lod";
 //	public static String DATASET_NAME = "music";
 	
-	private static String ROOT_DIR = "/Users/mohsen/Dropbox/__Mohsen__/ISI/Source Modeling/datasets/" + DATASET_NAME + "/";
+	public static String ROOT_DIR = "/Users/mohsen/Dropbox/__Mohsen__/ISI/Source Modeling/datasets/" + DATASET_NAME + "/";
 	
 	public static String ONTOLOGY_DIR = ROOT_DIR + "preloaded-ontologies/";
 	

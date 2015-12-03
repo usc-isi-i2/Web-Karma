@@ -675,7 +675,8 @@ public class ModelLearner_LOD {
 	
 	public static void main(String[] args) throws Exception {
 
-		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome("/Users/mohsen/karma/");
+		contextParameters.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, "/Users/mohsen/karma/");
 		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
 
 		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
@@ -704,17 +705,19 @@ public class ModelLearner_LOD {
 		
 		FileUtils.cleanDirectory(new File(graphPath));
 
+//		String modelDir = Params.ROOT_DIR + "models-json-modified/";
+		String modelDir = Params.MODEL_DIR;
 		List<SemanticModel> semanticModels = 
-				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
+				ModelReader.importSemanticModelsFromJsonFiles(modelDir, Params.MODEL_MAIN_FILE_EXT);
 
 		ModelLearner_LOD modelLearner = null;
 
 		boolean onlyGenerateSemanticTypeStatistics = false;
 		boolean onlyUseOntology = false;
-		boolean useCorrectType = false;
-		int numberOfCandidates = 4;
-		boolean onlyEvaluateInternalLinks = false; 
-		int maxPatternSize = 3;
+		boolean useCorrectType = true;
+		int numberOfCandidates = 1;
+		boolean onlyEvaluateInternalLinks = true; 
+		int maxPatternSize = 1;
 
 		if (onlyGenerateSemanticTypeStatistics) {
 			getStatistics(semanticModels);
@@ -774,7 +777,7 @@ public class ModelLearner_LOD {
 //						Params.LOD_OBJECT_PROPERIES_FILE, 
 //						Params.LOD_DATA_PROPERIES_FILE);
 				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, 
-						Params.PATTERNS_INPUT_DIR, maxPatternSize);
+						Params.PATTERNS_OUTPUT_DIR, maxPatternSize);
 				modelLearner = new ModelLearner_LOD(b.getGraphBuilder(), steinerNodes);
 			}
 

@@ -184,7 +184,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 	private void addLinks(SemanticModel model, 
 			HashMap<Node, Node> internalNodeMapping, 
 			HashMap<Node, Node> columnNodeMapping,
-			boolean useOriginalWeights) {
+			PatternWeightSystem weightSystem) {
 		
 		if (model == null) 
 			return;
@@ -219,19 +219,25 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
 			if (l != null) {
 				int numOfPatterns = l.getModelIds().size();
-//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
-//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
-				if (useOriginalWeights) {
+				if (weightSystem == PatternWeightSystem.OriginalWeights) {
 					double currentW = l.getWeight();
 					double newW = model.getGraph().getEdgeWeight(e);
 					if (newW < currentW)
 						this.graphBuilder.changeLinkWeight(l, newW);
-				} else {
-					if (n2 instanceof InternalNode)
-//						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
-						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
-					else
+				} else if (weightSystem == PatternWeightSystem.JWSPaperFormula) {
+					if (n2 instanceof InternalNode) {
+						// wl - x/(n+1)
+						// wl = 1
+						// x = (numOfPatterns + 1)
+						// n = totalNumberOfPatterns
+						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - 
+								((double) (numOfPatterns + 1) / (double) (this.totalNumberOfKnownModels + 1) ));
+//						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
+					} else {
 						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+					}
+				} else {
+					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 				}
 				l.getModelIds().add(modelId);
 				n1.getModelIds().add(modelId);
@@ -251,7 +257,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 					link.getModelIds().clear();
 				link.getModelIds().add(modelId);
 
-				if (useOriginalWeights) {
+				if (weightSystem == PatternWeightSystem.OriginalWeights) {
 					if (!this.graphBuilder.addLink(n1, n2, link, model.getGraph().getEdgeWeight(e))) continue;
 				} else {
 					if (!this.graphBuilder.addLink(n1, n2, link, ModelingParams.PATTERN_LINK_WEIGHT)) continue;
@@ -265,7 +271,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 	}
 	
 	@Override
-	public Set<InternalNode> addModel(SemanticModel model, boolean useOriginalWeights) {
+	public Set<InternalNode> addModel(SemanticModel model, PatternWeightSystem weightSystem) {
 				
 		// adding the patterns to the graph
 		
@@ -281,7 +287,9 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //			initializeFromJsonRepository();
 //			return null;
 //		}
-		
+
+		this.totalNumberOfKnownModels ++;
+
 		// add the model  nodes that are not in the graph
 		Set<InternalNode> addedInternalNodes = new HashSet<InternalNode>();
 		this.addInternalNodes(model, addedInternalNodes);
@@ -289,7 +297,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 		HashMap<Node, Node> columnNodeMapping = this.getColumnNodeMapping(model, internalNodeMapping);
 		
-		this.addLinks(model, internalNodeMapping, columnNodeMapping, useOriginalWeights);
+		this.addLinks(model, internalNodeMapping, columnNodeMapping, weightSystem);
 
 		this.lastUpdateTime = System.currentTimeMillis();
 		return addedInternalNodes;
@@ -322,7 +330,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			i++;
 			if (i == 4) continue;
 			System.out.println(sm.getId());
-			temp = ml.addModel(sm, false);
+			temp = ml.addModel(sm, PatternWeightSystem.JWSPaperFormula);
 			if (temp != null) addedNodes.addAll(temp);
 		}
 		
