@@ -47,6 +47,16 @@ public class TestIdentityN3ToJSONReducer extends TestRDFMapReduce{
 
 	}
 
+	@Test
+	public void testReduceEmptyObject() throws IOException
+	{
+		List<Pair<Text,List<Text>>> inputs = getReducerPairsFromFile("output/people.output.emptyobject.ttl");
+
+
+		reduceDriver.withAll(inputs);
+		reduceDriver.addAllOutput(this.getPairsFromFile("output/people.output.emptyobject.n3toflatjson.json"));
+		reduceDriver.runTest();	
+	}
 	
 	
 }

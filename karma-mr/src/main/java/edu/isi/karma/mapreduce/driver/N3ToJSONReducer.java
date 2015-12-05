@@ -57,14 +57,27 @@ public class N3ToJSONReducer extends Reducer<Text,Text,Text,Text>{
 			{
 				object = object.substring(1, object.length()-1);
 			}
-			int typeIndex = object.indexOf("^^");
-			if(typeIndex > 0)
-			{
-				object = object.substring(0, typeIndex);
+			else {
+				
+				int lastQuoteIndex = object.lastIndexOf("\"");
+			
+				if(lastQuoteIndex != object.length()-1)
+				{
+					int typeIndex = object.indexOf("^^", lastQuoteIndex);
+					if(typeIndex != -1)
+					{
+						object = object.substring(0, typeIndex);
+					}
+				}
 			}
 			if(object.startsWith("\"") && object.endsWith("\""))
 			{
-				object = object.substring(1, object.length()-1);
+				if(object.length() > 1)
+					object = object.substring(1, object.length()-1);
+				else
+				{
+					object = "";
+				}
 			}
 			if(!output.has(predicate))
 			{
