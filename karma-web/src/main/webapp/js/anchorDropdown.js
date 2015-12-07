@@ -122,8 +122,8 @@ var AnchorDropdownMenu = (function() {
 						} else {
 							//Set the semantic type
 							var type = {
-								"uri": "http://www.w3.org/2000/01/rdf-schema#label",
-								"label": "label",
+								"uri": defaultProperty.uri,
+								"label": defaultProperty.label,
 								"source": target
 							}
 							setSemanticType(worksheetId, columnId, type);
@@ -134,8 +134,8 @@ var AnchorDropdownMenu = (function() {
 
 						var newEdges = [];
 						var edge = {
-							"uri": "http://www.w3.org/2000/01/rdf-schema#label",
-							"label": "label",
+							"uri": defaultProperty.uri,
+							"label": defaultProperty.label,
 							"source": target,
 							"target": {"id":columnId, "uri":columnUri, "label":columnLabel, "type":columnType}
 						}

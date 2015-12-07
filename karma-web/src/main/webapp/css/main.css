@@ -116,3 +116,7 @@ body {
 .editButton, .hideButton, .deleteButton {
 	padding: 0px 12px;
 }
+
+#propertyDialogRight {
+	height: 500px;
+}

@@ -5,57 +5,44 @@ var PropertyDialog = (function() {
 
 	function PrivateConstructor() {
 		var dialog = $("#propertyDialog");
+		var menuId = "propertyFunctions";
+		var rightDiv;
 
 		var worksheetId;
 		var alignmentId;
-		var propertyId;
-		var propertyUri;
+		var propertyId, propertyUri, propertyLabel;
 		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
 		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
-		var allPropertiesCache;
-		var defaultProperty;
+		var propertyTabs;
+
+		var options = [
+			//Title, function to call, needs file upload     
+			// ,
+			["Change Link", changeLinkUI],
+			["Advance Options", advanceOptionsUI],
+			["Delete", deleteLink],
+			// ["divider", null],
+			["Change From", changeFromUI],
+			["Change To", changeToUI]
+		];
 
 		function init() {
+			propertyTabs = PropertyTabs.getInstance();
 			reloadCache();
-			$('input', dialog).on('keyup', filterDropdown);
-
-			$('#property_tabs a[href="#property_all"]').on('shown.bs.tab', function(e) {
-				window.setTimeout(function() {
-					$('input', dialog).select();
-				}, 10);
-				
-				console.log("All clicked");
-			});
+			generateJS();
+			rightDiv = $("#propertyDialogRight");
 		}
 
 		function reloadCache() {
-			allPropertiesCache = null;
-			defaultProperty = null;
-			window.setTimeout(function() {
-				allPropertiesCache = getAllDataAndObjectProperties(worksheetId);
-				for(var i=0; i<allPropertiesCache.length; i++) {
-					type = allPropertiesCache[i];
-					if(type.uri == DEFAULT_PROPERTY_URI) {
-						defaultProperty  = type;
-						break;
-					}
-				}
-				if(defaultProperty == null) {
-					defaultProperty = {
-						"uri":"http://www.w3.org/2000/01/rdf-schema#label", 
-						"label":"rdfs:label",
-						"id": "http://www.w3.org/2000/01/rdf-schema#label", 
-						"type": "dataProperty"						
-					}
-				}
-			}, 10);
+			propertyTabs.reloadCache();
 		}
 
 		function getDefaultProperty() {
-			return defaultProperty;
+			return propertyTabs.getDefaultProperty();
 		}
 
 		function hide() {
+			propertyTabs.hide();
 			dialog.modal('hide');
 		}
 
@@ -68,6 +55,135 @@ var PropertyDialog = (function() {
 				$("div.error", dialog).text(err);
 			}
 			$("div.error", dialog).show();
+		}
+
+		function changeLinkUI() {
+			initRightDiv("Change Link");
+			propertyTabs.show(worksheetId, alignmentId, propertyId, propertyUri, 
+													sourceNodeId, sourceNodeType, sourceLabel, sourceDomain, sourceId, sourceIsUri,
+													targetNodeId, targetNodeType, targetLabel, targetDomain, targetId, targetIsUri,
+													rightDiv, selectPropertyFromMenu,
+													event);
+		}
+
+		function initRightDiv(mode) {
+			showFunctionsMenu();
+			disableItem(mode);
+			setTitle(mode);
+			var firstChild = rightDiv.children();
+			firstChild.hide();
+			$("body").append(firstChild);
+			rightDiv.empty();
+		}
+
+		function deleteLink(e) {
+			console.log("deleteLink");
+			if (confirm("Are you sure you wish to delete the link?")) {
+				var info;
+				hide();
+				if(targetNodeType == "ColumnNode") {
+					info = generateInfoObject(worksheetId, targetNodeId, "UnassignSemanticTypeCommand");
+					info["newInfo"] = JSON.stringify(info['newInfo']);
+				} else {
+					info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
+	
+					// Prepare the input for command
+					var newInfo = info['newInfo'];
+	
+					// Put the old edge information
+					var initialEdges = [];
+					var oldEdgeObj = {};
+					oldEdgeObj["edgeSourceId"] = sourceNodeId;
+					oldEdgeObj["edgeTargetId"] = targetNodeId;
+					oldEdgeObj["edgeId"] = propertyUri;
+					initialEdges.push(oldEdgeObj);
+					newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+					newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+					var newEdges = [];
+					newInfo.push(getParamObject("newEdges", newEdges, "other"));
+					info["newInfo"] = JSON.stringify(newInfo);
+					info["newEdges"] = newEdges;
+				}
+
+				showLoading(worksheetId);
+				var returned = sendRequest(info, worksheetId);
+			}
+			e.preventDefault();
+		}
+
+		function advanceOptionsUI(e) {
+			initRightDiv("Advance Options");
+			var tdTag = $("td#" + targetNodeId);
+			var typeJsonObject = $(tdTag).data("typesJsonObject");
+			if (typeJsonObject) {
+				existingTypes = typeJsonObject["SemanticTypesArray"];
+			} else {
+				existingTypes = [];
+			}
+			var isSubClass = false;
+			var rdfLiteralType = "";
+			$.each(existingTypes, function(index, type) {
+				if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
+					isSubClass = true;
+					rdfLiteralType = type["rdfLiteralType"];
+				} else if(type["rdfLiteralType"]){
+					rdfLiteralType = type["rdfLiteralType"];
+				}
+			});
+
+			PropertyAdvanceOptionsDialog.getInstance().show(rdfLiteralType, isSubClass, rightDiv, saveAdvanceOptions);
+		}
+
+		function saveAdvanceOptions(literalType, isSubclassOfClass) {
+			if(isSubclassOfClass) {
+				setSubClassSemanticType(worksheetId, targetId, {"uri": sourceDomain, "id": sourceId, "label":sourceLabel}, literalType);
+			} else {
+				var type = {};
+				type.label = propertyLabel;
+				type.uri = propertyUri;
+				type.source = {"uri": sourceDomain, "label": sourceLabel, "id": sourceId};
+				type.target = {"uri": targetDomain, "label": targetLabel, "id": targetId};
+				setSemanticType(worksheetId, targetId, type, literalType);
+			}
+			hide();
+		}
+
+		function changeFromUI(e) {
+			initRightDiv("Change From");
+
+			console.log("Change From");
+			hide();
+			if(targetNodeType == "ColumnNode") {
+    			SetSemanticTypeDialog.getInstance().show(worksheetId, targetId, targetLabel);
+    		} else {
+				var dialog = IncomingOutgoingLinksDialog.getInstance();
+				dialog.setSelectedFromClass(sourceId);
+				dialog.setSelectedProperty(propertyUri);
+				dialog.show(worksheetId,
+					targetNodeId, alignmentId,
+					targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
+					"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
+			}
+			e.preventDefault();
+		}
+
+		function changeToUI(e) {
+			initRightDiv("Change To");
+
+			console.log("Change To");
+			if(targetNodeType == "ColumnNode") {
+				alert("Cannot change the link. You could delete it from the Delete menu option");
+			} else {
+				hide();
+				var dialog = IncomingOutgoingLinksDialog.getInstance();
+				dialog.setSelectedToClass(targetId);
+				dialog.setSelectedProperty(propertyUri);
+				dialog.show(worksheetId,
+					sourceNodeId, alignmentId,
+					sourceLabel, sourceId, sourceDomain, sourceNodeType, sourceIsUri,
+					"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
+			}
+			e.preventDefault();
 		}
 
 		function changeLink(label, uri) {
@@ -100,8 +216,7 @@ var PropertyDialog = (function() {
 			hide();
 		}
 
-		function selectPropertyFromMenu(e) {
-			target = $(e.target);
+		function selectPropertyFromMenu(label, uri) {
 			label = target.text();
 			
 
@@ -111,11 +226,9 @@ var PropertyDialog = (function() {
 				e.stopPropagation();
 				return;
 			} else if(sourceDomain == "BlankNode") {
-				uri = target.data('uri');
 				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, uri, label);
 				e.stopPropagation();
 			} else {
-				uri = target.data('uri');
 				if(targetNodeType == "ColumnNode") {
 					changeSemanticType(label, uri);
 				} else {
@@ -125,155 +238,105 @@ var PropertyDialog = (function() {
 			hide();
 		}
 
-		function populateAllProperties() {
-			if(allPropertiesCache == null) {
-				window.setTimeout(populateAllProperties, 10);
-				return;
-			}
 
-			var allTypes = [];
-			var uriFound = false;
-			
-			if(allTypes.length > 0) 
-				allTypes.push({"label": "divider", "uri": "divider"});
-
-			if(targetNodeType == "ColumnNode" && uriFound == false) {
-				uriLabel = "uri";
-				if(sourceLabel != " ")
-					uriLabel += " of " + sourceLabel;
-				allTypes.push({"label": uriLabel, "uri": "http://isi.edu/integration/karma/dev#classLink"});
-				// allTypes.push({"label": "divider", "uri": "divider"});
-			}
-
-			$.each(allPropertiesCache, function(index, type) {
-				allTypes.push({"label": type["label"], "uri": type["uri"]});
-			});
-
-			renderMenu($("#property_all", dialog), allTypes);
-			return allTypes.length;
+		function setTitle(title) {
+			$("#propertyDialog_title", dialog).html(title + ": " + propertyLabel);
 		}
 
-		function populateCompatibleProperties() {
-			var compatibleTypes;
-			if(targetNodeType == "ColumnNode") {
-				compatibleTypes = getAllPropertiesForClass(worksheetId, sourceDomain);
-			} else {
-				compatibleTypes = getAllPropertiesForDomainRange(worksheetId, sourceDomain, targetDomain);
+
+		function generateJS() {
+			var btnList = $("<div>").addClass("btn-group-vertical").css("display", "block");
+			for (var i = 0; i < options.length; i++) {
+				var option = options[i];
+
+				var btn = $("<button>").addClass("btn").addClass("btn-default")
+						.text(option[0])
+						.click(option[1]);
+
+				btnList.append(btn);
+
+				if(i % 2 == 0)
+					btn.addClass("list-even");
+				else
+					btn.addClass("list-odd");
+				
 			}
-			renderMenu($("#property_compatible", dialog), compatibleTypes);	
-			return compatibleTypes.length;
+
+			var div = $("<div>")
+				.attr("id", menuId)
+				.append(btnList);
+
+			var container = $("#propertyDialogFunctions");
+			container.append(div);
 		}
 
-		function populateSuggestedProperties() {
-			var items = [];
+		function enableAllItems() {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				btn.removeClass("disabled");
+				btn.prop("disabled", false);
+			}
+		}
 
-			if(targetNodeType == "ColumnNode") {
-				var semSuggestions = getSuggestedSemanticTypes(worksheetId, targetId, sourceDomain);
-				var uriFound = false;
-				uriLabel = "uri";
-				if(sourceLabel != " ")
-					uriLabel += " of " + sourceLabel;
-				if(semSuggestions != null && semSuggestions["Labels"]) {
-					$.each(semSuggestions["Labels"], function(index, type) {
-						if(type["DisplayLabel"] == "km-dev:columnSubClassOfLink" ||
-								type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
-								type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
-							return;
-						}
-						if(type["DisplayLabel"] == "uri" || type["DisplayLabel"] == "km-dev:classLink") {
-							uriFound = true;
-							type["DisplayLabel"] = uriLabel;
-						}
-						items.push({"label": type["DisplayLabel"], "uri": type["FullType"], "class": "propertyDropdown_suggestion"});
-					});
+		function disableAllItems() {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				btn.addClass("disabled");
+				btn.prop("disabled", true);
+			}
+		}
+		
+		function disableItem(value) {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				if(btn.text() == value) {
+					btn.addClass("disabled");
+					btn.prop("disabled", true);
+					break;
 				}
-			} else {
-				items = getRecommendedProperties(worksheetId, propertyId);
-			}
-
-			renderMenu($("#property_recommended", dialog), items);	
-			return items.length;
-		}
-
-		function filterDropdown(e) {
-			query = $("input", dialog).val();
-			switch(e.keyCode) {
-		        case 40: // down arrow
-		        case 38: // up arrow
-		        case 16: // shift
-		        case 17: // ctrl
-		        case 18: // alt
-		          break;
-
-		        case 9: // tab
-		        case 13: // enter
-		          if (!this.shown) return;
-		          break;
-
-		        case 27: // escape
-		          hide();
-		          break;
-		        default:
-		          	items = allPropertiesCache;
-		          	items = $.grep(items, function (item) {
-			        	return (item["label"].toLowerCase().indexOf(query.toLowerCase()) != -1);
-			      	});
-			      	renderMenu($("#property_all", dialog), items);
-		      }
-		}
-
-		function populateMenu() {
-			numRecom = populateSuggestedProperties();
-			numCompatible = populateCompatibleProperties();
-			populateAllProperties();
-
-			if(numRecom != 0) {
-				$('#property_tabs a[href="#property_recommended"]').tab('show');
-			} else if(numCompatible  != 0) {
-				$('#property_tabs a[href="#property_compatible"]').tab('show');
-			} else {
-				$('#property_tabs a[href="#property_all"]').tab('show');
 			}
 		}
 
-		function renderMenu(div, menuItems) {
-			var ul = $("ul", div);
-			ul.empty();
-			ul.scrollTop(1);
-
-			$.each(menuItems, function(index, item) {
-				var label = item["label"];
-				var uri = item["uri"];
-
-				var li = $("<li>").addClass("col-xs-4");
-				if(label == "divider") {
-					li.addClass("divider");
-					
-				} else {
-					if (label == "km-dev:classLink") {
-						var a = $("<a>")
-							.attr("href", "#")
-							.attr("tabindex", "-1")
-							.text("uri")
-							.click(selectPropertyFromMenu);
-						li.append(a);
-					} else {
-						var a = $("<a>")
-							.attr("href", "#")
-							.attr("tabindex", "-1")
-							.text(label)
-							.data('uri', uri)
-							.click(selectPropertyFromMenu);
-						li.append(a);
-					}
+		function enableItem(value) {
+			var btns = $("button", "#" + menuId);
+			for(var i=0; i<btns.length; i++) {
+				var btn = $(btns[i]);
+				if(btn.text() == value) {
+					btn.removeClass("disabled");
+					btn.prop("disabled", false);
+					break;
 				}
-				if(item["class"])
-					li.addClass(item["class"]);
-				ul.append(li);
-			});
-
+			}
 		}
 
+		function showFunctionsMenu() {
+			$("#propertyDialogFunctions", dialog).show();
+			if(sourceNodeType == "Link") {
+				disableAllItems();
+				enableItem("Delete");
+			} else {
+				enableAllItems();
+				if (sourceNodeType == "ColumnNode" || sourceNodeType == "LiteralNode") {
+					disableItem ("Change From");
+				}
+
+				if (targetNodeType == "ColumnNode" || targetNodeType == "LiteralNode") {
+					disableItem("Change To");
+				}
+
+				if(targetNodeType  != "ColumnNode")
+					disableItem("Advance Options");
+			}
+			rightDiv.removeClass("col-sm-12").addClass("col-sm-10");
+		}
+
+		function hideFunctionsMenu() {
+			$("#propertyDialogFunctions", dialog).hide();
+			rightDiv.removeClass("col-sm-10").addClass("col-sm-12");
+		}
 
 		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, p_propertyLabel, p_propertyStatus,
 			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
@@ -284,6 +347,8 @@ var PropertyDialog = (function() {
 			propertyId = p_propertyId;
 			linkStatus = p_propertyStatus;
 			propertyUri = p_propertyUri;
+			propertyLabel = p_propertyLabel;
+
 			sourceNodeId = p_sourceNodeId;
 			sourceLabel = p_sourceLabel;
 			sourceDomain = p_sourceDomain;
@@ -300,27 +365,15 @@ var PropertyDialog = (function() {
 
 			$("input", dialog).val('');
 
-			$("#propertyDialog_title", dialog).html("Change Property: " + p_propertyLabel);
+			$("#propertyDialog_title", dialog).html("Link: " + propertyLabel);
 			if(sourceNodeType == "Link") {
-				$("#propertyDialogSuggestions").hide();
-				$("#propertyDialogFunctions", dialog).show();
-					PropertyFunctions.getInstance().show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, 
-														p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
-														p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
-														hide, event);
+				showFunctionsMenu();
+				rightDiv.hide();
 			} else {
-				$("#propertyDialogSuggestions").show();
-				populateMenu();
-				if(linkStatus != "TemporaryLink") {
-					$("#propertyDialogFunctions", dialog).show();
-					PropertyFunctions.getInstance().show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, 
-														p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
-														p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
-														hide, event);
-					$("#propertyDialogSuggestions").removeClass("col-sm-12").addClass("col-sm-10");
-				} else {
-					$("#propertyDialogFunctions", dialog).hide();
-					$("#propertyDialogSuggestions").removeClass("col-sm-10").addClass("col-sm-12");
+				rightDiv.show();
+				changeLinkUI();
+				if(linkStatus == "TemporaryLink") {
+					hideFunctionsMenu();
 				}
 			}
 
@@ -335,6 +388,7 @@ var PropertyDialog = (function() {
 		return { //Return back the public methods
 			show: show,
 			init: init,
+			setTitle: setTitle,
 			getDefaultProperty: getDefaultProperty,
 			reloadCache: reloadCache
 		};
@@ -356,4 +410,57 @@ var PropertyDialog = (function() {
 })();
 
 
+var PropertyAdvanceOptionsDialog = (function() {
+
+	var instance = null;
+
+	function PrivateConstructor() {
+		var callback;
+		var dialog = $("#propertyAdvanceOptions");
+
+		function init() {
+			$("#btnSaveAdvanceOptions").on("click", function(e) {
+				var literalType = $("#propertyLiteralType", dialog).val();
+				var isSubclassOfClass = $("#propertyIsSubclass", dialog).is(':checked');
+				callback(literalType, isSubclassOfClass);	
+			});	
+			$("#propertyLiteralType").typeahead( 
+				{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
+		}
+
+		function show(rdfLiteralType, isSubClass, div, p_callback) {
+			callback = p_callback;
+
+			$("#propertyLiteralType", dialog).val(rdfLiteralType);
+			$("div#propertyAdvanceOptions input:checkbox").prop('checked', isSubClass);
+			
+			div.append(dialog);
+			dialog.show();
+		}
+
+		function hide() {
+			dialog.hide();
+		}
+
+		return { //Return back the public methods
+			show: show,
+			init: init,
+			hide: hide
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
+
+
+})();
 

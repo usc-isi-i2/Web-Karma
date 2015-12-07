@@ -675,7 +675,7 @@ function changeLinks(worksheetId, alignmentId, oldEdges, newEdges) {
 	return sendRequest(info, worksheetId);
 }
 
-function setSpecializedEdgeSemanticType(worksheetId, columnId, edge) {
+function setSpecializedEdgeSemanticType(worksheetId, columnId, edge, rdfLiteralType) {
 	var info = generateInfoObject(worksheetId, columnId, "");
 	info["command"] = "SetMetaPropertyCommand";
 
@@ -691,14 +691,42 @@ function setSpecializedEdgeSemanticType(worksheetId, columnId, edge) {
 	info["trainAndShowUpdates"] = true
 	info["rdfLiteralType"] = ''
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
-	newInfo.push(getParamObject("rdfLiteralType", '', "other"));
+	if(rdfLiteralType)
+		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	else
+		newInfo.push(getParamObject("rdfLiteralType", '', "other"));
 
 	info["newInfo"] = JSON.stringify(newInfo);
 	showLoading(info["worksheetId"]);
 	var returned = sendRequest(info, worksheetId);
 }
 
-function setSemanticType(worksheetId, columnId, type) {
+function setSubClassSemanticType(worksheetId, columnId, clazz, rdfLiteralType) {
+	var info = generateInfoObject(worksheetId, columnId, "");
+	info["command"] = "SetMetaPropertyCommand";
+
+	var newInfo = info['newInfo'];
+
+	info["metaPropertyName"] = "isSubclassOfClass";
+	info["metaPropertyUri"] = clazz.uri;
+	info["metaPropertyId"] = clazz.id;
+	newInfo.push(getParamObject("metaPropertyName", info["metaPropertyName"], "other"));
+	newInfo.push(getParamObject("metaPropertyUri", info["metaPropertyUri"], "other"));
+	newInfo.push(getParamObject("metaPropertyId", info["metaPropertyId"], "linkWithHNodeId"));
+
+	info["trainAndShowUpdates"] = true
+	info["rdfLiteralType"] = ''
+	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
+	if(rdfLiteralType)
+		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	else
+		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var returned = sendRequest(info, worksheetId);
+}
+
+function setSemanticType(worksheetId, columnId, type, rdfLiteralType) {
 	var info = generateInfoObject(worksheetId, columnId, "");
 	var newInfo = info['newInfo']; 
 	if(type.label == "uri") {
@@ -722,7 +750,10 @@ function setSemanticType(worksheetId, columnId, type) {
 		newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
 	}
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
-	newInfo.push(getParamObject("rdfLiteralType", '', "other"));
+	if(rdfLiteralType)
+		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	else
+		newInfo.push(getParamObject("rdfLiteralType", '', "other"));
 
 	info["newInfo"] = JSON.stringify(newInfo);
 	showLoading(info["worksheetId"]);

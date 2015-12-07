@@ -281,31 +281,7 @@
 			  		<div class="main">
 			  			<div class="row">
 			  				<div class="col-sm-2" id="propertyDialogFunctions"></div>
-			  				<div class="col-sm-10" id="propertyDialogSuggestions">
-			  				<ul class="nav nav-tabs" role="tablist" id="property_tabs">
-							    <li role="presentation" class="active"><a href="#property_recommended" aria-controls="property_recommended" role="tab" data-toggle="tab">Recommended</a></li>
-							    <li role="presentation"><a href="#property_compatible" aria-controls="property_compatible" role="tab" data-toggle="tab">Compatible</a></li>
-							    <li role="presentation"><a href="#property_all" aria-controls="property_all" role="tab" data-toggle="tab">All</a></li>
-							  </ul>
-
-							  <!-- Tab panes -->
-							  <div class="tab-content">
-							    <div role="tabpanel" class="tab-pane active" id="property_recommended">
-							    	<ul class="list-unstyled row"></ul>
-							    </div>
-							    <div role="tabpanel" class="tab-pane" id="property_compatible">
-							    	<ul class="list-unstyled row"></ul>
-							    </div>
-							    <div role="tabpanel" class="tab-pane" id="property_all">
-							    	<ul class="list-unstyled row"></ul>
-							    	<div class="input-group col-sm-offset-6">
-									  	<input type="text" class="form-control" aria-describedby="basic-input_propertyDialog-addOn" id="input_propertyDialog">
-  										<span class="input-group-addon glyphicon glyphicon-search" id="basic-input_propertyDialog-addOn" style="top:0px"></span>
-									</div>
-
-							    </div>
-							  </div>
-			  				</div>
+			  				<div class="col-sm-10" id="propertyDialogRight"></div>
 			  			</div>
 			  		</div>
 					<div class="error" style="display: none"></div>
@@ -314,6 +290,58 @@
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+
+	<div id="propertyTabs" style="display:none">
+		<ul class="nav nav-tabs" role="tablist" id="property_tabs">
+    		<li role="presentation" class="active"><a href="#property_recommended" aria-controls="property_recommended" role="tab" data-toggle="tab">Recommended</a></li>
+    		<li role="presentation"><a href="#property_compatible" aria-controls="property_compatible" role="tab" data-toggle="tab">Compatible</a></li>
+    		<li role="presentation"><a href="#property_all" aria-controls="property_all" role="tab" data-toggle="tab">All</a></li>
+  		</ul>
+
+	  	<!-- Tab panes -->
+	  	<div class="tab-content">
+    		<div role="tabpanel" class="tab-pane active" id="property_recommended">
+    			<ul class="list-unstyled row"></ul>
+    		</div>
+	    	<div role="tabpanel" class="tab-pane" id="property_compatible">
+	    		<ul class="list-unstyled row"></ul>
+	    	</div>
+	    	<div role="tabpanel" class="tab-pane" id="property_all">
+	    		<ul class="list-unstyled row"></ul>
+	    		<div class="input-group col-sm-offset-6">
+			  		<input type="text" class="form-control" aria-describedby="basic-input_propertyDialog-addOn" id="input_propertyDialog">
+					<span class="input-group-addon glyphicon glyphicon-search" id="basic-input_propertyDialog-addOn" style="top:0px"></span>
+				</div>
+
+	    	</div>
+  		</div>
+	</div>
+
+	<div id="propertyAdvanceOptions" style="display:none">
+		<div class="row">
+			<div class="form-group">
+				<label>
+					Literal Type:
+					<input type="text" class="form-control" id="propertyLiteralType" autocomplete="off">
+				</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group">
+				<div class="checkbox">
+				  	<label>
+					    <input type="checkbox" id="propertyIsSubclass">
+					    specifies class for node
+				  	</label>
+				</div>
+			</div>
+		</div>			  	
+			
+		<div class="row">
+			<button type="submit" class="btn btn-primary" id="btnSaveAdvanceOptions">Save</button>
+		</div>
+	</div>			
 
 <div class="modal fade" id="addNodeDialog" tabindex="-1">
   <div class="modal-dialog">
