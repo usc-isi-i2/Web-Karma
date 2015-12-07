@@ -14,6 +14,7 @@ var PropertyDialog = (function() {
 		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
 		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
 		var propertyTabs;
+		var propertyLiteralType, propertyIsSubClass;
 
 		var options = [
 			//Title, function to call, needs file upload     
@@ -66,10 +67,13 @@ var PropertyDialog = (function() {
 													event);
 		}
 
-		function initRightDiv(mode) {
+		function initRightDiv(mode, title) {
 			showFunctionsMenu();
 			disableItem(mode);
-			setTitle(mode);
+			if(title)
+				setTitle(title)
+			else
+				setTitle(mode);
 			var firstChild = rightDiv.children();
 			firstChild.hide();
 			$("body").append(firstChild);
@@ -113,25 +117,7 @@ var PropertyDialog = (function() {
 
 		function advanceOptionsUI(e) {
 			initRightDiv("Advance Options");
-			var tdTag = $("td#" + targetNodeId);
-			var typeJsonObject = $(tdTag).data("typesJsonObject");
-			if (typeJsonObject) {
-				existingTypes = typeJsonObject["SemanticTypesArray"];
-			} else {
-				existingTypes = [];
-			}
-			var isSubClass = false;
-			var rdfLiteralType = "";
-			$.each(existingTypes, function(index, type) {
-				if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
-					isSubClass = true;
-					rdfLiteralType = type["rdfLiteralType"];
-				} else if(type["rdfLiteralType"]){
-					rdfLiteralType = type["rdfLiteralType"];
-				}
-			});
-
-			PropertyAdvanceOptionsDialog.getInstance().show(rdfLiteralType, isSubClass, rightDiv, saveAdvanceOptions);
+			PropertyAdvanceOptionsDialog.getInstance().show(propertyLiteralType, propertyIsSubClass, rightDiv, saveAdvanceOptions);
 		}
 
 		function saveAdvanceOptions(literalType, isSubclassOfClass) {
@@ -149,90 +135,99 @@ var PropertyDialog = (function() {
 		}
 
 		function changeFromUI(e) {
-			initRightDiv("Change From");
+			initRightDiv("Change From", "Change From Class for Link");
 
-			console.log("Change From");
-			hide();
-			if(targetNodeType == "ColumnNode") {
-    			SetSemanticTypeDialog.getInstance().show(worksheetId, targetId, targetLabel);
-    		} else {
-				var dialog = IncomingOutgoingLinksDialog.getInstance();
-				dialog.setSelectedFromClass(sourceId);
-				dialog.setSelectedProperty(propertyUri);
-				dialog.show(worksheetId,
-					targetNodeId, alignmentId,
-					targetLabel, targetId, targetDomain, targetNodeType, targetIsUri,
-					"changeIncoming", sourceNodeId, targetNodeId, propertyUri);
-			}
-			e.preventDefault();
+			ClassTabs.getInstance().show(worksheetId, sourceNodeId, sourceLabel, sourceDomain, 
+				alignmentId, sourceNodeType, rightDiv, function(clazz) {
+					if(targetNodeType == "ColumnNode") {
+						var type = {};
+						type.label = propertyLabel;
+						type.uri = propertyUri;
+						type.source = clazz;
+						type.target = {"uri": targetDomain, "label": targetLabel, "id": targetId};
+						setSemanticType(worksheetId, targetId, type, propertyLiteralType);
+					} else {
+						//Change Links command
+						oldEdges = [];
+						var oldEdgeObj = {};
+						oldEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
+						oldEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
+						oldEdgeObj["uri"] = propertyUri;
+						oldEdges.push(oldEdgeObj);
+
+						// Put the new edge information
+						var newEdges = [];
+						var newEdgeObj = {};
+						newEdgeObj["source"] = clazz;
+						newEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
+						newEdgeObj["uri"] = propertyUri;
+						newEdges.push(newEdgeObj);
+
+						changeLinks(worksheetId, alignmentId, oldEdges, newEdges);
+					}
+					hide();
+				},
+				event);
+
 		}
 
 		function changeToUI(e) {
-			initRightDiv("Change To");
+			initRightDiv("Change To", "Change To Class for Link");
 
-			console.log("Change To");
-			if(targetNodeType == "ColumnNode") {
-				alert("Cannot change the link. You could delete it from the Delete menu option");
-			} else {
-				hide();
-				var dialog = IncomingOutgoingLinksDialog.getInstance();
-				dialog.setSelectedToClass(targetId);
-				dialog.setSelectedProperty(propertyUri);
-				dialog.show(worksheetId,
-					sourceNodeId, alignmentId,
-					sourceLabel, sourceId, sourceDomain, sourceNodeType, sourceIsUri,
-					"changeOutgoing", sourceNodeId, targetNodeId, propertyUri);
-			}
-			e.preventDefault();
+			ClassTabs.getInstance().show(worksheetId, targetNodeId, targetLabel, targetDomain, 
+				alignmentId, targetNodeType, rightDiv, function(clazz) {
+					//Change Links command
+					oldEdges = [];
+					var oldEdgeObj = {};
+					oldEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
+					oldEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
+					oldEdgeObj["uri"] = propertyUri;
+					oldEdges.push(oldEdgeObj);
+
+					// Put the new edge information
+					var newEdges = [];
+					var newEdgeObj = {};
+					newEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
+					newEdgeObj["target"] = clazz;
+					newEdgeObj["uri"] = propertyUri;
+					newEdges.push(newEdgeObj);
+
+					changeLinks(worksheetId, alignmentId, oldEdges, newEdges);
+					hide();
+				},
+				event);
 		}
 
-		function changeLink(label, uri) {
-			oldEdges = [];
-			var oldEdgeObj = {};
-			oldEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
-			oldEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
-			oldEdgeObj["uri"] = propertyUri;
-			oldEdges.push(oldEdgeObj);
-
-			// Put the new edge information
-			var newEdges = [];
-			var newEdgeObj = {};
-			newEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
-			newEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
-			newEdgeObj["uri"] = uri
-			newEdges.push(newEdgeObj);
-
-			changeLinks(worksheetId, alignmentId, oldEdges, newEdges);
-			hide();
-		}
-
-		function changeSemanticType(label, uri) {
-			var type = {
-				"label": label,
-				"uri": uri,
-				"source": {"id": sourceId, "uri":sourceDomain, "label": sourceLabel}
-			}
-			setSemanticType(worksheetId, targetId, type);
-			hide();
-		}
-
-		function selectPropertyFromMenu(label, uri) {
-			label = target.text();
-			
-
+		function selectPropertyFromMenu(property) {
 			console.log("Selected property:" + label);
-			if(label == 'More...') {
-				populateAllProperties();
-				e.stopPropagation();
-				return;
-			} else if(sourceDomain == "BlankNode") {
-				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, uri, label);
+			if(sourceDomain == "BlankNode") {
+				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, property.uri, property.label);
 				e.stopPropagation();
 			} else {
 				if(targetNodeType == "ColumnNode") {
-					changeSemanticType(label, uri);
+					var type = {
+						"label": property.label,
+						"uri": property.uri,
+						"source": {"id": sourceId, "uri":sourceDomain, "label": sourceLabel}
+					}
+					setSemanticType(worksheetId, targetId, type, propertyLiteralType);
 				} else {
-					changeLink(label, uri);	
+					oldEdges = [];
+					var oldEdgeObj = {};
+					oldEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
+					oldEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
+					oldEdgeObj["uri"] = propertyUri;
+					oldEdges.push(oldEdgeObj);
+
+					// Put the new edge information
+					var newEdges = [];
+					var newEdgeObj = {};
+					newEdgeObj["source"] = {"id": sourceId, "uri":sourceDomain, "label": sourceLabel};
+					newEdgeObj["target"] = {"id": targetId, "uri":targetDomain, "label": targetLabel};
+					newEdgeObj["uri"] = property.uri
+					newEdges.push(newEdgeObj);
+
+					changeLinks(worksheetId, alignmentId, oldEdges, newEdges);
 				}
 			}
 			hide();
@@ -364,6 +359,27 @@ var PropertyDialog = (function() {
 			targetNodeType = p_targetNodeType;
 
 			$("input", dialog).val('');
+
+			propertyIsSubClass = false;
+			propertyLiteralType = "";
+
+			if(p_targetNodeType == "ColumnNode") {
+				var tdTag = $("td#" + targetNodeId);
+				var typeJsonObject = $(tdTag).data("typesJsonObject");
+				if (typeJsonObject) {
+					existingTypes = typeJsonObject["SemanticTypesArray"];
+				} else {
+					existingTypes = [];
+				}
+				$.each(existingTypes, function(index, type) {
+					if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
+						propertyIsSubClass = true;
+						propertyLiteralType = type["rdfLiteralType"];
+					} else if(type["rdfLiteralType"]){
+						propertyLiteralType = type["rdfLiteralType"];
+					}
+				});
+			}
 
 			$("#propertyDialog_title", dialog).html("Link: " + propertyLabel);
 			if(sourceNodeType == "Link") {
