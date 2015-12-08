@@ -1,37 +1,5 @@
 package edu.isi.karma.rdf;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.tika.detect.DefaultDetector;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MediaType;
-import org.apache.tika.mime.MediaTypeRegistry;
-import org.apache.tika.mime.MimeTypes;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.sax.BodyContentHandler;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.XML;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 import edu.isi.karma.imp.Import;
@@ -58,6 +26,32 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
+import org.apache.commons.io.IOUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.mime.MediaType;
+import org.apache.tika.mime.MediaTypeRegistry;
+import org.apache.tika.mime.MimeTypes;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.XML;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GenericRDFGenerator extends RdfGenerator {
 
@@ -352,7 +346,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		if (contextCache.containsKey(id.getName())) {
 			return contextCache.get(id.getName());
 		}
-		JSONTokener token = new JSONTokener(id.getLocation().openStream());
+		JSONTokener token = new JSONTokener(new InputStreamReader(id.getLocation().openStream()));
 		JSONObject obj = new JSONObject(token);
 		this.contextCache.put(id.getName(), obj);
 		return obj;

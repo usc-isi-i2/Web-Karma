@@ -1,39 +1,24 @@
 package edu.isi.karma.mapreduce.driver;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Iterator;
-
+import edu.isi.karma.rdf.JSONImpl;
 import org.apache.hadoop.io.Text;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.isi.karma.kr2rml.ContextIdentifier;
-import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
-import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+import java.io.IOException;
 
 public class JSONMapper extends BaseRDFMapper {
 	private Text reusableOutputValue = new Text("");
 	private Text reusableOutputKey = new Text("");
-	private String atId = "@id";
+	private JSONImpl json = new JSONImpl();
 	
 	private static Logger LOG = LoggerFactory.getLogger(JSONMapper.class);
-	
 	@Override
-	protected KR2RMLRDFWriter configureRDFWriter(StringWriter sw) {
-		PrintWriter pw = new PrintWriter(sw);
-		KR2RMLRDFWriter outWriter = new JSONKR2RMLRDFWriter(pw, karma.getBaseURI());
-		ContextIdentifier contextId = karma.getContextId();
-		try {
-			atId = getAtId(karma.getGenerator().loadContext(contextId).getJSONObject(("@context")));
-		} catch(Exception e)
-		{}
-		return outWriter;
+	public void setup(Context context) throws IOException {
+		this.process = json;
+		super.setup(context);
 	}
-
 	@Override
 	protected void writeRDFToContext(Context context, String results)
 			throws IOException, InterruptedException {
@@ -42,8 +27,8 @@ public class JSONMapper extends BaseRDFMapper {
 			for(int i = 0; i < generatedObjects.length(); i++)
 			{
 				try{
-					if (generatedObjects.getJSONObject(i).has(atId)) {
-						reusableOutputKey.set(generatedObjects.getJSONObject(i).getString(atId));
+					if (generatedObjects.getJSONObject(i).has(json.getAtId())) {
+						reusableOutputKey.set(generatedObjects.getJSONObject(i).getString(json.getAtId()));
 					}
 					else {
 						reusableOutputKey.set(generatedObjects.getJSONObject(i).toString());
@@ -56,24 +41,6 @@ public class JSONMapper extends BaseRDFMapper {
 					//throw new ArrayIndexOutOfBoundsException("************ARRAYEXCEPTION*********:" + ae.getMessage() + "SOURCE: " + generatedObjects.getJSONObject(i).toString());
 				}
 			}
-		
-	}
 
-	private String getAtId(JSONObject c) {
-		@SuppressWarnings("rawtypes")
-		Iterator itr = c.keys();
-		while (itr.hasNext()) {
-			String key = itr.next().toString();
-			try {
-				if (c.get(key).toString().equals("@id")) {
-					return key;
-				}
-			}
-			catch(Exception e) 
-			{
-
-			}
-		}
-		return atId;
 	}
 }
