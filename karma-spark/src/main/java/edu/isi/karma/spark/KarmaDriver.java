@@ -31,6 +31,7 @@ public class KarmaDriver {
     private static final String propertyPath = "job.properties";
     private static final JSONImpl mapper = new JSONImpl(propertyPath);
     private static final int defaultPartitions = 100;
+    private static final int batchSize = 200;
     public static void main(String[] args) throws ParseException, IOException, ClassNotFoundException {
         Options options = createCommandLineOptions();
         CommandLineParser parser = new BasicParser();
@@ -53,14 +54,14 @@ public class KarmaDriver {
         } catch (Exception e) {
 
         }
-        SparkConf conf = new SparkConf().setAppName("Karma");
+        final SparkConf conf = new SparkConf().setAppName("Karma");
         conf.set("spark.executor.userClassPathFirst", "true");
         conf.set("spark.driver.userClassPathFirst", "true");
         conf.set("spark.files.userClassPathFirst", "true");
         conf.set("spark.io.compression.codec", "lz4");
         conf.set("spark.yarn.dist.archives", "karma.zip");
         conf.set("spark.yarn.dist.files", "job.properties,extractionfiles-webpage.json");
-        JavaSparkContext sc = new JavaSparkContext(conf);
+        final JavaSparkContext sc = new JavaSparkContext(conf);
         JavaPairRDD<String, String> pairs;
         if (inputFormat.equals("text")) {
             JavaRDD<String> input = sc.textFile(filePath, partitions);
@@ -81,7 +82,39 @@ public class KarmaDriver {
                 }
             });
         }
-        pairs.flatMapToPair(new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
+        pairs.groupByKey().flatMapToPair(new PairFlatMapFunction<Tuple2<String,Iterable<String>>, String, String>() {
+            @Override
+            public Iterable<Tuple2<String, String>> call(Tuple2<String, Iterable<String>> stringIterableTuple2) throws Exception {
+                List<Tuple2<String, String>> results = new LinkedList<>();
+                String key = stringIterableTuple2._1;
+                Iterable<String> values = stringIterableTuple2._2;
+                int count = 0;
+                StringBuilder builder = new StringBuilder();
+                builder.append("[");
+                boolean isFirst = true;
+                for (String value : values) {
+                    if (isFirst) {
+                        builder.append(value);
+                        isFirst = false;
+                    }
+                    else {
+                        builder.append(",").append(value);
+                    }
+                    count++;
+                    if (count == batchSize) {
+                        builder.append("]");
+                        results.add(new Tuple2<>(key, builder.toString()));
+                        builder = new StringBuilder();
+                        builder.append("[");
+                        isFirst = true;
+                        count = 0;
+                    }
+                }
+                String last = builder.append("]").toString();
+                results.add(new Tuple2<>(key, last));
+                return results;
+            }
+        }).flatMapToPair(new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
             @Override
             public Iterable<Tuple2<String, String>> call(Tuple2<String, String> writableIterableTuple2) throws Exception {
                 List<Tuple2<String, String>> results = new LinkedList<>();
