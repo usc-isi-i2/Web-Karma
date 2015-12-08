@@ -21,6 +21,7 @@
 		<module>karma-web-services</module>
 		<module>karma-typer</module>
 		<module>karma-jsonld</module>
+		<module>karma-spark</module>
 	</modules>
 
 
@@ -233,8 +234,6 @@
     	<groupId>org.json</groupId>
     	<artifactId>json</artifactId>
     	<version>20131018</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
     </dependency>
     <dependency>
     	<groupId>commons-fileupload</groupId>
