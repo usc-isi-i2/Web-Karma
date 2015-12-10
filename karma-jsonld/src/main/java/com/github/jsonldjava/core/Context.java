@@ -638,6 +638,10 @@ public class Context extends LinkedHashMap<String, Object> {
                         typeLanguage = "@type";
                         typeLanguageValue = (String) ((Map<String, Object>) value).get("@type");
                     }
+                    else {
+                        typeLanguage = "@type";
+                        typeLanguageValue = "@id";
+                    }
                 }
                 // 2.7.2)
                 else {
