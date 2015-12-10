@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -21,12 +23,14 @@ public class JSONCompactMapper extends Mapper<Writable, Text, Text, Text> {
 	private static Logger LOG = LoggerFactory.getLogger(JSONCompactMapper.class);
 	protected Object jsonLdContext;
 	protected Text outputText = new Text();
-
+	protected String jsonLdContextFile;
+	protected String jsonLdContextURL;
+	
 	@Override
 	public void setup(Context context) throws IOException
 	{
-		String jsonLdContextFile = context.getConfiguration().get("jsonld.context.file");
-		String jsonLdContextURL = context.getConfiguration().get("jsonld.context.url");
+		jsonLdContextFile = context.getConfiguration().get("jsonld.context.file");
+		jsonLdContextURL = context.getConfiguration().get("jsonld.context.url");
 		if(jsonLdContextFile != null)
 		{
 			InputStream in = new FileInputStream(new File(jsonLdContextFile));
@@ -52,8 +56,12 @@ public class JSONCompactMapper extends Mapper<Writable, Text, Text, Text> {
 			String valueString = value.toString();
 			JSONObject obj = new JSONObject(valueString);
 			Object outobj = JsonLdProcessor.compact(JsonUtils.fromString(valueString), jsonLdContext, new JsonLdOptions(""));
+			if(outobj instanceof Map && jsonLdContextURL != null)
+			{
+				Map outjsonobj = (Map) outobj;
+				outjsonobj.put("@context", jsonLdContextURL);
+			}
 			outputText.set(JsonUtils.toString(outobj));
-			System.out.println(outputText.toString());
 			if (obj.has("uri")) {
 				context.write(new Text(obj.getString("uri")), outputText);
 			}
