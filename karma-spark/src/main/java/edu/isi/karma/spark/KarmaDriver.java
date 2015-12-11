@@ -2,6 +2,7 @@ package edu.isi.karma.spark;
 
 import edu.isi.karma.rdf.JSONImpl;
 import edu.isi.karma.util.JSONLDUtil;
+
 import org.apache.commons.cli.*;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -17,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import scala.Tuple2;
 
 import java.io.IOException;
@@ -28,12 +30,13 @@ import java.util.List;
  */
 public class KarmaDriver {
     private static Logger logger = LoggerFactory.getLogger(KarmaDriver.class);
-    private static final String propertyPath = "job.properties";
-    private static final JSONImpl mapper = new JSONImpl(propertyPath);
-    private static final int defaultPartitions = 100;
-    private static final int batchSize = 200;
+    static JSONImpl mapper = new JSONImpl("job.properties");
+  
     public static void main(String[] args) throws ParseException, IOException, ClassNotFoundException {
-        Options options = createCommandLineOptions();
+    	int defaultPartitions = 100;
+    	final int batchSize = 200;
+    	
+    	Options options = createCommandLineOptions();
         CommandLineParser parser = new BasicParser();
         CommandLine cl = null;
         cl = parser.parse(options, args);
@@ -54,6 +57,7 @@ public class KarmaDriver {
         } catch (Exception e) {
 
         }
+        
         final SparkConf conf = new SparkConf().setAppName("Karma");
         conf.set("spark.executor.userClassPathFirst", "true");
         conf.set("spark.driver.userClassPathFirst", "true");
@@ -61,12 +65,15 @@ public class KarmaDriver {
         conf.set("spark.io.compression.codec", "lz4");
         conf.set("spark.yarn.dist.archives", "karma.zip");
         conf.set("spark.yarn.dist.files", "job.properties,extractionfiles-webpage.json");
+        
         final JavaSparkContext sc = new JavaSparkContext(conf);
         JavaPairRDD<String, String> pairs;
         if (inputFormat.equals("text")) {
             JavaRDD<String> input = sc.textFile(filePath, partitions);
             pairs = input.mapToPair(new PairFunction<String, String, String>() {
-                @Override
+                private static final long serialVersionUID = 4170227232300260255L;
+
+				@Override
                 public Tuple2<String, String> call(String s) throws Exception {
                     int tabIndex = s.indexOf("\t");
                     return new Tuple2<>(s.substring(0, tabIndex), s.substring(tabIndex + 1));
@@ -76,46 +83,61 @@ public class KarmaDriver {
         else {
             JavaPairRDD<Writable, Text> input = sc.sequenceFile(filePath, Writable.class, Text.class, partitions);
             pairs = input.mapToPair(new PairFunction<Tuple2<Writable, Text>, String, String>() {
-                @Override
+                private static final long serialVersionUID = -9042224661662821670L;
+
+				@Override
                 public Tuple2<String, String> call(Tuple2<Writable, Text> textTextTuple2) throws Exception {
                     return new Tuple2<>(textTextTuple2._1.toString(), textTextTuple2._2.toString());
                 }
             });
         }
-        pairs.groupByKey().flatMapToPair(new PairFlatMapFunction<Tuple2<String,Iterable<String>>, String, String>() {
-            @Override
-            public Iterable<Tuple2<String, String>> call(Tuple2<String, Iterable<String>> stringIterableTuple2) throws Exception {
-                List<Tuple2<String, String>> results = new LinkedList<>();
-                String key = stringIterableTuple2._1;
-                Iterable<String> values = stringIterableTuple2._2;
-                int count = 0;
-                StringBuilder builder = new StringBuilder();
-                builder.append("[");
-                boolean isFirst = true;
-                for (String value : values) {
-                    if (isFirst) {
-                        builder.append(value);
-                        isFirst = false;
-                    }
-                    else {
-                        builder.append(",").append(value);
-                    }
-                    count++;
-                    if (count == batchSize) {
-                        builder.append("]");
-                        results.add(new Tuple2<>(key, builder.toString()));
-                        builder = new StringBuilder();
-                        builder.append("[");
-                        isFirst = true;
-                        count = 0;
-                    }
-                }
-                String last = builder.append("]").toString();
-                results.add(new Tuple2<>(key, last));
-                return results;
-            }
+        
+        applyModel(sc, pairs, batchSize)
+        		.saveAsNewAPIHadoopFile(outputPath, Text.class, Text.class, SequenceFileOutputFormat.class);
+    }
+    
+    public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext sc, 
+    			JavaPairRDD<String, String> input, 
+        		final int batchSize) {
+    	JavaPairRDD<Text, Text> pairs = input.groupByKey().flatMapToPair(
+    			new PairFlatMapFunction<Tuple2<String,Iterable<String>>, String, String>() {
+    				private static final long serialVersionUID = 6507159579657773801L;
+
+					@Override
+		            public Iterable<Tuple2<String, String>> call(Tuple2<String, Iterable<String>> stringIterableTuple2) throws Exception {
+		                List<Tuple2<String, String>> results = new LinkedList<>();
+		                String key = stringIterableTuple2._1;
+		                Iterable<String> values = stringIterableTuple2._2;
+		                int count = 0;
+		                StringBuilder builder = new StringBuilder();
+		                builder.append("[");
+		                boolean isFirst = true;
+		                for (String value : values) {
+		                    if (isFirst) {
+		                        builder.append(value);
+		                        isFirst = false;
+		                    }
+		                    else {
+		                        builder.append(",").append(value);
+		                    }
+		                    count++;
+		                    if (count == batchSize) {
+		                        builder.append("]");
+		                        results.add(new Tuple2<>(key, builder.toString()));
+		                        builder = new StringBuilder();
+		                        builder.append("[");
+		                        isFirst = true;
+		                        count = 0;
+		                    }
+		                }
+		                String last = builder.append("]").toString();
+		                results.add(new Tuple2<>(key, last));
+		                return results;
+		            }
         }).flatMapToPair(new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
-            @Override
+        	private static final long serialVersionUID = -3533063264900721773L;
+           
+			@Override
             public Iterable<Tuple2<String, String>> call(Tuple2<String, String> writableIterableTuple2) throws Exception {
                 List<Tuple2<String, String>> results = new LinkedList<>();
                 String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
@@ -138,21 +160,38 @@ public class KarmaDriver {
                 return results;
             }
         }).reduceByKey(new Function2<String, String, String>() {
-            @Override
+            private static final long serialVersionUID = -3238789305990222436L;
+
+			@Override
             public String call(String text, String text2) throws Exception {
                 JSONObject left = new JSONObject(text);
                 JSONObject right = new JSONObject(text2);
                 return JSONLDUtil.mergeJSONObjects(left, right).toString();
             }
         }).mapToPair(new PairFunction<Tuple2<String,String>, Text, Text>() {
-            @Override
+            private static final long serialVersionUID = 2787821808872176951L;
+
+			@Override
             public Tuple2<Text, Text> call(Tuple2<String, String> stringStringTuple2) throws Exception {
                 return new Tuple2<>(new Text(stringStringTuple2._1), new Text(stringStringTuple2._2));
             }
-        }).saveAsNewAPIHadoopFile(outputPath, Text.class, Text.class, SequenceFileOutputFormat.class);
-
+        });
+        return pairs;
     }
+    
+    public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext jsc, JavaRDD<String> input, 
+    		final int batchSize) {
+    	JavaPairRDD<String, String> pairRDD = input.mapToPair(new PairFunction<String, String, String>() {
+            private static final long serialVersionUID = -4153068088292891034L;
 
+			public Tuple2<String, String> call(String s) throws Exception {
+                int tabIndex = s.indexOf("\t");
+                return new Tuple2<>(s.substring(0, tabIndex), s.substring(tabIndex + 1));
+            }
+        });
+    	return applyModel(jsc, pairRDD, batchSize);
+    }
+    
     private static Options createCommandLineOptions() {
         Options options = new Options();
         options.addOption(new Option("filepath", "filepath", true, "Path to coordinate sequence file"));
