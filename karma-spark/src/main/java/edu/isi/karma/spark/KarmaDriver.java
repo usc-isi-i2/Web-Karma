@@ -21,17 +21,18 @@ import org.slf4j.LoggerFactory;
 
 import scala.Tuple2;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by chengyey on 12/6/15.
  */
 public class KarmaDriver {
     private static Logger logger = LoggerFactory.getLogger(KarmaDriver.class);
-    static JSONImpl mapper = new JSONImpl("job.properties");
-  
+    
     public static void main(String[] args) throws ParseException, IOException, ClassNotFoundException {
     	int defaultPartitions = 100;
     	final int batchSize = 200;
@@ -92,12 +93,15 @@ public class KarmaDriver {
             });
         }
         
-        applyModel(sc, pairs, batchSize)
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("job.properties"));
+        applyModel(sc, pairs, properties, batchSize)
         		.saveAsNewAPIHadoopFile(outputPath, Text.class, Text.class, SequenceFileOutputFormat.class);
     }
     
     public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext sc, 
     			JavaPairRDD<String, String> input, 
+    			final Properties karmaSettings,
         		final int batchSize) {
     	JavaPairRDD<Text, Text> pairs = input.groupByKey().flatMapToPair(
     			new PairFlatMapFunction<Tuple2<String,Iterable<String>>, String, String>() {
@@ -136,10 +140,12 @@ public class KarmaDriver {
 		            }
         }).flatMapToPair(new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
         	private static final long serialVersionUID = -3533063264900721773L;
-           
+        	
 			@Override
             public Iterable<Tuple2<String, String>> call(Tuple2<String, String> writableIterableTuple2) throws Exception {
                 List<Tuple2<String, String>> results = new LinkedList<>();
+                JSONImpl mapper = new JSONImpl(karmaSettings);
+            	
                 String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
                 JSONArray generatedObjects = new JSONArray(result);
                 for (int i = 0; i < generatedObjects.length(); i++) {
@@ -179,7 +185,24 @@ public class KarmaDriver {
         return pairs;
     }
     
-    public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext jsc, JavaRDD<String> input, 
+    public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext jsc, 
+    		JavaRDD<String> input, 
+    		String propertiesStr,
+    		final int batchSize) {
+    	JSONObject properties = new JSONObject(propertiesStr);
+	    Properties prop = new Properties();
+		for(Object objPropertyName : properties.keySet()) {
+			String propertyName = objPropertyName.toString();
+			String value = properties.getString(propertyName);
+			logger.info("Set " + propertyName + "=" + value);
+			prop.setProperty(propertyName, value);
+		}
+		return applyModel(jsc, input, prop, batchSize);
+    }
+	
+    public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext jsc, 
+    		JavaRDD<String> input, 
+    		Properties properties,
     		final int batchSize) {
     	JavaPairRDD<String, String> pairRDD = input.mapToPair(new PairFunction<String, String, String>() {
             private static final long serialVersionUID = -4153068088292891034L;
@@ -189,7 +212,7 @@ public class KarmaDriver {
                 return new Tuple2<>(s.substring(0, tabIndex), s.substring(tabIndex + 1));
             }
         });
-    	return applyModel(jsc, pairRDD, batchSize);
+    	return applyModel(jsc, pairRDD, properties, batchSize);
     }
     
     private static Options createCommandLineOptions() {

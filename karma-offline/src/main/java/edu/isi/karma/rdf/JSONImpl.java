@@ -3,22 +3,29 @@ package edu.isi.karma.rdf;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.writer.JSONKR2RMLRDFWriter;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
+
 import org.json.JSONObject;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
+import java.util.Properties;
 
 /**
  * Created by chengyey on 12/6/15.
  */
 public class JSONImpl extends BaseRDFImpl {
-    protected String atId = "@id";
+    private static final long serialVersionUID = -1590543154341174334L;
+	protected String atId = "@id";
 
     public JSONImpl(String propertyPath) {
         super(propertyPath);
     }
 
+    public JSONImpl(Properties properties) {
+    	super(properties);
+    }
+    
     public JSONImpl() {
         super();
     }

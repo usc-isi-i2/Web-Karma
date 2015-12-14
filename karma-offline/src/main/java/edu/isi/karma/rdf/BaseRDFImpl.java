@@ -5,6 +5,7 @@ import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,9 @@ import java.util.regex.Pattern;
  * Created by chengyey on 12/6/15.
  */
 public abstract class BaseRDFImpl implements Serializable {
-    private static Logger LOG = LoggerFactory.getLogger(BaseRDFImpl.class);
+   private static final long serialVersionUID = 6611527418523710154L;
+
+	private static Logger LOG = LoggerFactory.getLogger(BaseRDFImpl.class);
 
     protected BaseKarma karma;
     protected String header = null;
@@ -39,11 +42,19 @@ public abstract class BaseRDFImpl implements Serializable {
         }
     }
 
+    public BaseRDFImpl(Properties properties) {
+    	try {
+			setup(properties);
+		} catch (IOException e) {
+			 LOG.error("Can't setup", e);
+		}
+    }
+    
     public BaseRDFImpl() {
 
     }
 
-    public void setup(Properties configuration) throws IOException {
+	public void setup(Properties configuration) throws IOException {
         urlPatterns = new HashMap<>();
         karma = new BaseKarma();
         String inputTypeString = (String) configuration.get(
