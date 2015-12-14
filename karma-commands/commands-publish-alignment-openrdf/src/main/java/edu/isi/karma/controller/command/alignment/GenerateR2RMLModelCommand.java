@@ -39,6 +39,7 @@ import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.CommandHistory;
@@ -240,7 +241,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 				workspace.getCommandHistory().doCommand(changeInternalNodeLinksCommand, workspace);
 				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
 				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
-				uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+				uc.append(((WorksheetCommand)changeInternalNodeLinksCommand).computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			}catch(Exception e)
 			{
 				e.printStackTrace();
