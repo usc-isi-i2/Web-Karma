@@ -39,6 +39,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
@@ -182,36 +183,39 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 				continue;
 			}
 			
+			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
+			
+			String sourceUri = newEdge.has(JsonKeys.edgeSourceUri.name()) ? newEdge.getString(JsonKeys.edgeSourceUri.name()) : null;
 			String sourceId = newEdge.has(JsonKeys.edgeSourceId.name()) ? newEdge.getString(JsonKeys.edgeSourceId.name()) : null;
 			Node sourceNode = null;
 			if(sourceId != null) {
 				if(sourceId.endsWith(" (add)"))
 					sourceId = sourceId.substring(0, sourceId.length()-5).trim();
 				sourceNode = alignment.getNodeById(sourceId);
-			} 
+				
+				if(sourceNode == null) {
+					sourceNode = alignment.addInternalNode(new InternalNode(sourceId, new Label(sourceUri)));
+				}
+			} else if(sourceUri != null){
+				sourceNode = alignment.addInternalNode(new Label(sourceUri));
+				sourceId = sourceNode.getId();
+			}
 			
+			String targetUri = newEdge.has(JsonKeys.edgeTargetUri.name()) ? newEdge.getString(JsonKeys.edgeTargetUri.name()) : null;
 			String targetId = newEdge.has(JsonKeys.edgeTargetId.name()) ? newEdge.getString(JsonKeys.edgeTargetId.name()) : null;
 			Node targetNode = null;
 			if(targetId != null) {
 				if(targetId.endsWith(" (add)"))
 					targetId = targetId.substring(0, targetId.length()-5).trim();
-				targetNode = alignment.getNodeById(targetId);;
-			}
-			
-			String edgeUri = newEdge.getString(JsonKeys.edgeId.name());
-			String sourceUri = newEdge.has(JsonKeys.edgeSourceUri.name()) ? newEdge.getString(JsonKeys.edgeSourceUri.name()) : null;
-			String targetUri = newEdge.has(JsonKeys.edgeTargetUri.name()) ? newEdge.getString(JsonKeys.edgeTargetUri.name()) : null;
-			
-			if (sourceNode == null && sourceUri != null) {
-				sourceNode = alignment.addInternalNode(new Label(sourceUri));
-				sourceId = sourceNode.getId();
-			} 
-			
-			if (targetNode == null && targetUri != null) {
+				targetNode = alignment.getNodeById(targetId);
+				
+				if(targetNode == null) {
+					targetNode = alignment.addInternalNode(new InternalNode(targetId, new Label(targetUri)));
+				}
+			} else if(targetUri != null) {
 				targetNode = alignment.addInternalNode(new Label(targetUri));
 				targetId = targetNode.getId();
-			} 
-
+			}
 			
 			String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
 			LabeledLink newLink = alignment.getLinkById(linkId);
