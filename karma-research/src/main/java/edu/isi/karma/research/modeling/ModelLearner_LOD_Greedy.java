@@ -451,7 +451,7 @@ public class ModelLearner_LOD_Greedy {
 			float elapsedTimeSec = elapsedTimeMillis/1000F;
 
 			List<SortableSemanticModel> topHypotheses = new LinkedList<SortableSemanticModel>();
-			if (sm != null) topHypotheses.add(new SortableSemanticModel(sm));
+			if (sm != null) topHypotheses.add(new SortableSemanticModel(sm, false));
 
 			Map<String, SemanticModel> models = 
 					new TreeMap<String, SemanticModel>();

@@ -167,7 +167,7 @@ public class ModelLearner_KnownModels {
 				tree.addVertex(n);
 			
 			SemanticModel sm = new SemanticModel(new RandomGUID().toString(), tree);
-			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null);
+			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null, false);
 			sortableSemanticModels.add(sortableSemanticModel);
 			return sortableSemanticModels;
 		}
@@ -230,7 +230,7 @@ public class ModelLearner_KnownModels {
 							sn.getMappingToSourceColumns()
 							);
 					SortableSemanticModel sortableSemanticModel = 
-							new SortableSemanticModel(sm, sn);
+							new SortableSemanticModel(sm, sn, false);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
 //					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));

@@ -124,7 +124,14 @@ public class Pattern {
 		return nodeIdFactory;
 	}
 
-	public String toSparql() {
+	public String toSparql(String graphIRI) {
+		if (this.length == 1)
+			return this.toCountSparql(graphIRI);
+		else
+			return this.toExistsSparql(graphIRI);
+	}
+	
+	public String toCountSparql(String graphIRI) {
 
 		String sparql = "";
 		
@@ -137,7 +144,11 @@ public class Pattern {
 		int variableIndex = 1;
 		String sourceVarName,targetVarName;
 		
-		sparql += "SELECT (COUNT(*) as ?count) WHERE { \n";
+		sparql += "SELECT (COUNT(*) as ?count) \n";  
+		if (graphIRI != null && !graphIRI.isEmpty()) {
+			sparql += "FROM <" + graphIRI + "> \n";
+		}
+		sparql += "WHERE { \n";
 		
 		for (LabeledLink l : this.graph.edgeSet()) {
 			source = l.getSource();
@@ -183,6 +194,78 @@ public class Pattern {
 			}
 		}
 
+		sparql += "}";
+		
+		return sparql;
+	}
+	
+	public String toExistsSparql(String graphIRI) {
+
+		String sparql = "";
+		
+		if (this.graph == null || this.graph.edgeSet().size() == 0)
+			return sparql;
+		
+		HashMap<Node,String> nodeVariables = new HashMap<Node,String>();
+		Node source, target;
+		String variablePrefix = "?var";
+		int variableIndex = 1;
+		String sourceVarName,targetVarName;
+		
+		sparql += "SELECT (COUNT(*) as ?count) \n";
+		sparql += "{ \n";
+		sparql += "SELECT ?var1 \n";  
+		if (graphIRI != null && !graphIRI.isEmpty()) {
+			sparql += "FROM <" + graphIRI + "> \n";
+		}
+		sparql += "WHERE { \n";
+		
+		for (LabeledLink l : this.graph.edgeSet()) {
+			source = l.getSource();
+			target = l.getTarget();
+			if (!(source instanceof InternalNode) || 
+					!(target instanceof InternalNode))
+				continue;
+			sourceVarName = nodeVariables.get(source);
+			if (sourceVarName == null) {
+				sourceVarName = variablePrefix + (variableIndex++);
+				sparql += sourceVarName + " rdf:type " + "<" + source.getUri() + ">. \n";
+				nodeVariables.put(source, sourceVarName);
+			}
+			targetVarName = nodeVariables.get(target);
+			if (targetVarName == null) {
+				targetVarName = variablePrefix + (variableIndex++);
+				sparql += targetVarName + " rdf:type " + "<" + target.getUri() + ">. \n";
+				nodeVariables.put(target, targetVarName);
+			}
+			sparql += sourceVarName + " <" + l.getUri() + "> " + targetVarName + ". \n";
+		}
+		
+		// to assert the not equal condition between instances of the classes with same uris but different ids
+		Function<Node, String> sameUriNodes = new Function<Node, String>() {
+			  @Override public String apply(final Node n) {
+				  if (n == null || n.getLabel() == null)
+					  return null;
+				  return n.getLabel().getUri();
+			  }
+			};
+
+		Multimap<String, Node> index = Multimaps.index(graph.vertexSet(), sameUriNodes);
+		for (String s : index.keySet()) {
+			Collection<Node> nodeGroup = index.get(s);
+			if (nodeGroup != null && !nodeGroup.isEmpty()) {
+				List<Node> nodeList = new LinkedList<Node>(nodeGroup);
+				for (int i = 0; i < nodeList.size() - 1; i++) {
+					for (int j = i + 1; j < nodeList.size(); j++) {
+						sparql += "FILTER (" + nodeVariables.get(nodeList.get(i)) + " != " +
+								nodeVariables.get(nodeList.get(j)) + "). \n";
+					}
+				}
+			}
+		}
+
+		sparql += "} \n";
+		sparql += "LIMIT 1 \n";
 		sparql += "}";
 		
 		return sparql;

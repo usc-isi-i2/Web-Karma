@@ -31,7 +31,7 @@ public class Params {
 	public static String DATASET_NAME = "museum-29-crm-lod";
 //	public static String DATASET_NAME = "music";
 	
-	public static String ROOT_DIR = "/Users/mohsen/Dropbox/__Mohsen__/ISI/Source Modeling/datasets/" + DATASET_NAME + "/";
+	public static String ROOT_DIR = "/Users/mohsen/Dropbox/__Mohsen__/ISI/source-modeling/datasets/" + DATASET_NAME + "/";
 	
 	public static String ONTOLOGY_DIR = ROOT_DIR + "preloaded-ontologies/";
 	
@@ -53,9 +53,9 @@ public class Params {
 	public static String GRAPHVIS_OUT_DETAILS_FILE_EXT = ".out.details.dot";
 
 	public static String LOD_DIR = ROOT_DIR + "lod/";
-	public static String PATTERNS_INPUT_DIR = LOD_DIR + "patterns/input/";
-	public static String PATTERNS_OUTPUT_DIR = LOD_DIR + "patterns/output/";
-	public static String LOD_OBJECT_PROPERIES_FILE = LOD_DIR + "objectproperties.csv";
-	public static String LOD_DATA_PROPERIES_FILE = LOD_DIR + "dataproperties.csv";
+	public static String PATTERNS_INPUT_DIR = "patterns/input/";
+	public static String PATTERNS_OUTPUT_DIR = "patterns/output/";
+	public static String LOD_OBJECT_PROPERIES_FILE = "object-properties.csv";
+	public static String LOD_DATA_PROPERIES_FILE = "data-properties.csv";
 	
 }

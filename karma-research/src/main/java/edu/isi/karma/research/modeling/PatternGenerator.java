@@ -32,6 +32,8 @@ public class PatternGenerator {
 	
 	private String outputDir;
 
+	private VirtuosoConnector virtuosoConnector;
+	
 	enum Direction {IN , OUT, BOTH}
 
 	private class Connection {
@@ -45,10 +47,11 @@ public class PatternGenerator {
 		}
 	}
 	
-	public PatternGenerator(String inputDir, String outputDir) {
+	public PatternGenerator(String inputDir, String outputDir, VirtuosoConnector vc) {
 		this.basicPatterns = new LinkedList<Pattern>();
 		this.possibleConnections = new HashMap<String,List<Connection>>();
 		this.outputDir = outputDir;
+		this.virtuosoConnector = vc;
 		
 		Map<String,Pattern> patternsLengthOne = PatternReader.importPatterns(inputDir, 1);
 		if (patternsLengthOne != null) {
@@ -356,11 +359,10 @@ public class PatternGenerator {
 		if (patterns == null || patterns.isEmpty())
 			return results;
 		
-		String host = "fusionRepository.isi.edu";
-		int port = 1200;  
-		String username = "dba";
-		String password = "dba";
-		VirtuosoManager vm = new VirtuosoManager(host, port, username, password);
+		if (this.virtuosoConnector == null)
+			return results;
+		
+		VirtuosoManager vm = new VirtuosoManager(this.virtuosoConnector);
 		
 		RepositoryConnection con;
 		try {
@@ -373,7 +375,8 @@ public class PatternGenerator {
 		int count;
 		int patternNumber = 1;
 		for (Pattern p : patterns) {
-			count = vm.getPatternCount(con, p.toSparql());
+//			System.out.println(p.toSparql(this.virtuosoConnector.getGraphIRI()));
+			count = vm.getPatternCount(con, p.toSparql(this.virtuosoConnector.getGraphIRI()));
 			if (count != 0) {
 				p.setFrequency(count);
 				results.add(p);
@@ -406,12 +409,23 @@ public class PatternGenerator {
 		return results;
 	}
 	
-	public static void main(String[] args) throws IOException {
+	private static void generatePatternsFromSeeds() throws IOException {
+
 		int length = 5;
 		int seedLength = 4;
 		int instanceLimit = 2;
 		boolean includeShorterPatterns = false;
-		PatternGenerator pg = new PatternGenerator(Params.PATTERNS_INPUT_DIR, Params.PATTERNS_OUTPUT_DIR);
+
+		String instance = "fusionRepository.isi.edu";
+		int port = 1300;  
+		String username = "dba";
+		String password = "dba";
+		int queryTimeout = 1;
+
+		VirtuosoConnector vc = new VirtuosoConnector(instance, port, username, password);
+		vc.setQueryTimeout(queryTimeout);
+
+		PatternGenerator pg = new PatternGenerator(Params.PATTERNS_INPUT_DIR, Params.PATTERNS_OUTPUT_DIR, vc);
 
 		System.out.println("reading patterns with length " + seedLength);
 		List<Pattern> seeds = new LinkedList<Pattern>();
@@ -426,9 +440,7 @@ public class PatternGenerator {
 			}
 		}
 		System.out.println("finished reading patterns.");
-		
 		long start = System.currentTimeMillis();
-//		List<Pattern> patterns = pg.getPatterns(length, instanceLimit, includeShorterPatterns);
 		List<Pattern> patterns = pg.getPatterns(length, instanceLimit, includeShorterPatterns, seeds, seedLength);
 		long patternGeneraionTime = System.currentTimeMillis();
 		System.out.println("================================================================================");
@@ -436,7 +448,66 @@ public class PatternGenerator {
 		System.out.println("number of possible patterns: " + patterns.size());
 		System.out.println("================================================================================");
 		
+	}
+	
+	private static void generatePatterns() {
 
+		int length = 4;
+		int instanceLimit = 2;
+		boolean includeShorterPatterns = false;
+		
+		String instance = "fusionRepository.isi.edu";
+		int port = 1300;  
+		String username = "dba";
+		String password = "dba";
+		String baseGraph = "http://museum-crm-lod/";
+		int queryTimeout = 1;
+		String graphIRI;
+		
+		File f = new File(Params.SOURCE_DIR);
+		File[] files = f.listFiles();
+		String sourcename, filename;
+		String patternInputDirStr, patternOutputDirStr;
+//		int i = 4; {
+		for (int i = 4; i < files.length; i++) {
+			File file = files[i];
+			filename = file.getName();
+			System.out.println("processing " + filename + " ...");
+			sourcename = filename.substring(0, filename.lastIndexOf("."));
+			patternInputDirStr = Params.LOD_DIR + sourcename + "/" + Params.PATTERNS_INPUT_DIR;
+			patternOutputDirStr = Params.LOD_DIR + sourcename + "/" + Params.PATTERNS_OUTPUT_DIR;
+			File patternOutputDir = new File(patternOutputDirStr);
+			if (!patternOutputDir.exists()) {
+				patternOutputDir.mkdir();
+			}
+			
+			graphIRI = baseGraph + sourcename;
+			VirtuosoConnector vc = new VirtuosoConnector(instance, port, username, password, graphIRI);
+			vc.setQueryTimeout(queryTimeout);
+			PatternGenerator pg = new PatternGenerator(patternInputDirStr, patternOutputDirStr, vc);
+
+			long start = System.currentTimeMillis();
+			List<Pattern> patterns = pg.getPatterns(length, instanceLimit, includeShorterPatterns);
+			long patternGeneraionTime = System.currentTimeMillis();
+			System.out.println("================================================================================");
+			System.out.println("time to generate patterns: " + (patternGeneraionTime - start)/1000F);
+			System.out.println("number of possible patterns: " + patterns.size());
+			System.out.println("================================================================================");
+
+			System.out.println("done with " + filename + ".");
+
+		}
+		
+
+		
+	}
+	
+	public static void main(String[] args) throws IOException {
+
+//		boolean generatePatternsFromSeeds = false;
+//		
+//		if (generatePatternsFromSeeds) generatePatternsFromSeeds();
+//		else generatePatterns();
 		
 		System.out.println("done.");
 	}

@@ -67,8 +67,9 @@ import org.slf4j.LoggerFactory;
 import virtuoso.jdbc4.VirtuosoExtendedString;
 import virtuoso.jdbc4.VirtuosoRdfBox;
 import virtuoso.sesame2.driver.VirtuosoRepository;
+import edu.isi.karma.research.modeling.VirtuosoConnector;
 
-public class VirtuosoConnector {
+public class VirtuosoSample {
 
 	private static Logger logger = LoggerFactory.getLogger(VirtuosoConnector.class);
 

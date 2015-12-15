@@ -198,7 +198,7 @@ public class ModelLearner_LOD {
 				tree.addVertex(n);
 			
 			SemanticModel sm = new SemanticModel(new RandomGUID().toString(), tree);
-			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null);
+			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null, false);
 			sortableSemanticModels.add(sortableSemanticModel);
 			return sortableSemanticModels;
 		}
@@ -252,7 +252,7 @@ public class ModelLearner_LOD {
 							sn.getMappingToSourceColumns()
 							);
 					SortableSemanticModel sortableSemanticModel = 
-							new SortableSemanticModel(sm, sn);
+							new SortableSemanticModel(sm, sn, false);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
 //					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
@@ -703,7 +703,7 @@ public class ModelLearner_LOD {
 		String outputPath = Params.OUTPUT_DIR;
 		String graphPath = Params.GRAPHS_DIR;
 		
-		FileUtils.cleanDirectory(new File(graphPath));
+//		FileUtils.cleanDirectory(new File(graphPath));
 
 //		String modelDir = Params.ROOT_DIR + "models-json-modified/";
 		String modelDir = Params.MODEL_DIR;
@@ -717,7 +717,7 @@ public class ModelLearner_LOD {
 		boolean useCorrectType = true;
 		int numberOfCandidates = 1;
 		boolean onlyEvaluateInternalLinks = true; 
-		int maxPatternSize = 1;
+		int maxPatternSize = 5;
 
 		if (onlyGenerateSemanticTypeStatistics) {
 			getStatistics(semanticModels);
@@ -777,7 +777,7 @@ public class ModelLearner_LOD {
 //						Params.LOD_OBJECT_PROPERIES_FILE, 
 //						Params.LOD_DATA_PROPERIES_FILE);
 				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, 
-						Params.PATTERNS_OUTPUT_DIR, maxPatternSize);
+						Params.LOD_DIR + "saam/" + Params.PATTERNS_OUTPUT_DIR, maxPatternSize);
 				modelLearner = new ModelLearner_LOD(b.getGraphBuilder(), steinerNodes);
 			}
 

@@ -34,12 +34,12 @@ public class SortableSemanticModel extends SemanticModel
 	private SteinerNodes steinerNodes;
 	private LinkCoherence linkCoherence;
 	
-	public SortableSemanticModel(SemanticModel semanticModel, SteinerNodes steinerNodes) {
+	public SortableSemanticModel(SemanticModel semanticModel, SteinerNodes steinerNodes, boolean interactiveMode) {
 		
 		super(semanticModel);
 		
 		this.steinerNodes = steinerNodes;
-		this.linkCoherence = new LinkCoherence();
+		this.linkCoherence = new LinkCoherence(interactiveMode);
 		
 		if (this.graph != null && this.graph.edgeSet().size() > 0) {
 			this.cost = this.computeCost();
@@ -47,11 +47,11 @@ public class SortableSemanticModel extends SemanticModel
 		}
 	}
 	
-	public SortableSemanticModel(SemanticModel semanticModel) {
+	public SortableSemanticModel(SemanticModel semanticModel, boolean interactiveMode) {
 		
 		super(semanticModel);
-		this.linkCoherence = new LinkCoherence();
-		
+		this.linkCoherence = new LinkCoherence(interactiveMode);
+
 		if (this.graph != null && this.graph.edgeSet().size() > 0) {
 			this.cost = this.computeCost();
 			this.computeCoherence();

@@ -183,7 +183,7 @@ public class ModelLearner_KnownModels2 {
 						mappingToSourceColumns
 						);
 				SortableSemanticModel sortableSemanticModel = 
-						new SortableSemanticModel(sm);
+						new SortableSemanticModel(sm, false);
 				sortableSemanticModels.add(sortableSemanticModel);
 				
 //					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
