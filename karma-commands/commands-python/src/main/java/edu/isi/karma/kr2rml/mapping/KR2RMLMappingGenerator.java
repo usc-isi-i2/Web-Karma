@@ -592,7 +592,8 @@ public class KR2RMLMappingGenerator {
 					{
 						alreadyExists = true;
 					}
-					else if(!pom.getObject().hasRefObjectMap() && pom.getObject().getTemplate().toString().compareTo(poMap.getObject().getTemplate().toString())== 0)
+					else if(!pom.getObject().hasRefObjectMap() && !poMap.getObject().hasRefObjectMap() &&
+							pom.getObject().getTemplate().toString().compareTo(poMap.getObject().getTemplate().toString())== 0)
 					{
 						alreadyExists = true;
 					}
