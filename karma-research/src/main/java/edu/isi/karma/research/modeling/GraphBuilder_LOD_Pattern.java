@@ -77,80 +77,80 @@ public class GraphBuilder_LOD_Pattern {
 			temp = modelLearningGraph.addModel(sm, PatternWeightSystem.Default);
 			if (temp != null) addedNodes.addAll(temp);
 		}
-		System.out.println("total patterns with length " + length + ": " + patterns.size());
-		System.out.println("duplicate patterns with length " + length + ": " + count);
+//		System.out.println("total patterns with length " + length + ": " + patterns.size());
+//		System.out.println("duplicate patterns with length " + length + ": " + count);
 		return addedNodes;
 	}
 	
-	public void buildGraph_Old(OntologyManager ontologyManager, String patternsDir) {
-
-		Map<String, Pattern> patterns = PatternReader.importPatterns(patternsDir, null);
-		
-		Map<String, Pattern> patternsSize2 = new HashMap<String, Pattern>(); 
-		Map<String, Pattern> patternsSize3 = new HashMap<String, Pattern>(); 
-		Map<String, Pattern> patternsSize4 = new HashMap<String, Pattern>(); 
-
-		for (Pattern p : patterns.values()) {
-			if (p != null && p.getGraph() != null) {
-				if (p.getLength() == 2) patternsSize2.put(p.getId(), p);
-				else if (p.getLength() == 3) patternsSize3.put(p.getId(), p);
-				else if (p.getLength() == 4) patternsSize4.put(p.getId(), p);
-			}
-		}
-
-		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
-		Set<InternalNode> temp;
-		
-		if (this.maxPatternLength >= 4) {
-			logger.info("adding patterns of size 4 ...");
-			temp = this.addPatterns(patternsSize4);
-			if (temp != null) addedNodes.addAll(temp);
-		}
-
-		if (this.maxPatternLength >= 3) {
-			logger.info("adding patterns of size 3 ...");
-			temp = this.addPatterns(patternsSize3);
-			if (temp != null) addedNodes.addAll(temp);
-		}
-		
-		if (this.maxPatternLength >= 2) {
-			logger.info("adding patterns of size 2 ...");
-			temp = this.addPatterns(patternsSize2);
-			if (temp != null) addedNodes.addAll(temp);
-		}
-
-		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
-					"LOD Graph", 
-					false, 
-					GraphVizLabelType.LocalId,
-					GraphVizLabelType.LocalUri,
-					true, 
-					true, 
-					Params.GRAPHS_DIR + 
-					"lod.graph.small.dot");
-		} catch (Exception e) {
-			logger.error("error in exporting the alignment graph to graphviz!");
-		}
-
-		this.modelLearningGraph.updateGraphUsingOntology(addedNodes);
-
-		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
-					"LOD Graph", 
-					false, 
-					GraphVizLabelType.LocalId,
-					GraphVizLabelType.LocalUri,
-					true, 
-					true, 
-					Params.GRAPHS_DIR + "lod.graph.dot");
-			GraphUtil.exportJson(this.getGraphBuilder().getGraph(), 
-					Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT, true, true);
-		} catch (Exception e) {
-			logger.error("error in exporting the alignment graph to graphviz!");
-		}
-		
-	}
+//	public void buildGraph_Old(OntologyManager ontologyManager, String patternsDir) {
+//
+//		Map<String, Pattern> patterns = PatternReader.importPatterns(patternsDir, null);
+//		
+//		Map<String, Pattern> patternsSize2 = new HashMap<String, Pattern>(); 
+//		Map<String, Pattern> patternsSize3 = new HashMap<String, Pattern>(); 
+//		Map<String, Pattern> patternsSize4 = new HashMap<String, Pattern>(); 
+//
+//		for (Pattern p : patterns.values()) {
+//			if (p != null && p.getGraph() != null) {
+//				if (p.getLength() == 2) patternsSize2.put(p.getId(), p);
+//				else if (p.getLength() == 3) patternsSize3.put(p.getId(), p);
+//				else if (p.getLength() == 4) patternsSize4.put(p.getId(), p);
+//			}
+//		}
+//
+//		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+//		Set<InternalNode> temp;
+//		
+//		if (this.maxPatternLength >= 4) {
+//			logger.info("adding patterns of size 4 ...");
+//			temp = this.addPatterns(patternsSize4);
+//			if (temp != null) addedNodes.addAll(temp);
+//		}
+//
+//		if (this.maxPatternLength >= 3) {
+//			logger.info("adding patterns of size 3 ...");
+//			temp = this.addPatterns(patternsSize3);
+//			if (temp != null) addedNodes.addAll(temp);
+//		}
+//		
+//		if (this.maxPatternLength >= 2) {
+//			logger.info("adding patterns of size 2 ...");
+//			temp = this.addPatterns(patternsSize2);
+//			if (temp != null) addedNodes.addAll(temp);
+//		}
+//
+//		try {
+//			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
+//					"LOD Graph", 
+//					false, 
+//					GraphVizLabelType.LocalId,
+//					GraphVizLabelType.LocalUri,
+//					true, 
+//					true, 
+//					Params.GRAPHS_DIR + 
+//					"lod.graph.small.dot");
+//		} catch (Exception e) {
+//			logger.error("error in exporting the alignment graph to graphviz!");
+//		}
+//
+//		this.modelLearningGraph.updateGraphUsingOntology(addedNodes);
+//
+//		try {
+//			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
+//					"LOD Graph", 
+//					false, 
+//					GraphVizLabelType.LocalId,
+//					GraphVizLabelType.LocalUri,
+//					true, 
+//					true, 
+//					Params.GRAPHS_DIR + "lod.graph.dot");
+//			GraphUtil.exportJson(this.getGraphBuilder().getGraph(), 
+//					Params.GRAPHS_DIR + "lod" + Params.GRAPH_JSON_FILE_EXT, true, true);
+//		} catch (Exception e) {
+//			logger.error("error in exporting the alignment graph to graphviz!");
+//		}
+//		
+//	}
 
 	public void buildGraph(OntologyManager ontologyManager, String patternsDir) {
 
@@ -216,23 +216,27 @@ public class GraphBuilder_LOD_Pattern {
 				}
 			}
 		}
-
-		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
-					"LOD Graph", 
-					false, 
-					GraphVizLabelType.LocalId,
-					GraphVizLabelType.LocalUri,
-					true, 
-					true, 
-					Params.GRAPHS_DIR + 
-					"lod.graph.small.dot");
-		} catch (Exception e) {
-			logger.error("error in exporting the alignment graph to graphviz!");
-		}
-
+		
+//		try {
+//			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
+//					"LOD Graph", 
+//					false, 
+//					GraphVizLabelType.LocalId,
+//					GraphVizLabelType.LocalUri,
+//					true, 
+//					true, 
+//					Params.GRAPHS_DIR + 
+//					"lod.graph.small.dot");
+//		} catch (Exception e) {
+//			logger.error("error in exporting the alignment graph to graphviz!");
+//		}
+		
 		this.modelLearningGraph.updateGraphUsingOntology(addedNodes);
 
+	}
+	
+	public void serialize(String graphPath) {
+
 		try {
 			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
 					"LOD Graph", 
@@ -241,11 +245,13 @@ public class GraphBuilder_LOD_Pattern {
 					GraphVizLabelType.LocalUri,
 					true, 
 					true, 
-					Params.GRAPHS_DIR + "lod.graph.dot");
+					graphPath + Params.GRAPH_GRAPHVIZ_FILE_EXT);
+			
 			GraphUtil.exportJson(this.getGraphBuilder().getGraph(), 
-					Params.GRAPHS_DIR + "lod" + Params.GRAPH_FILE_EXT, true, true);
+					graphPath, true, true);
+			
 		} catch (Exception e) {
-			logger.error("error in exporting the alignment graph to graphviz!");
+			logger.error("error in serializing the alignment graph to " + graphPath);
 		}
 		
 	}
@@ -279,9 +285,10 @@ public class GraphBuilder_LOD_Pattern {
 		ontologyManager.updateCache(); 
 		
 
-//		GraphBuilder_LOD_Pattern lodPatternGraphBuilder = 
-				new GraphBuilder_LOD_Pattern(ontologyManager, Params.PATTERNS_OUTPUT_DIR, 3);
-
+		String patternPath = Params.LOD_DIR + "s09-s-18-artists" + "/" + Params.PATTERNS_OUTPUT_DIR;
+		GraphBuilder_LOD_Pattern lodPatternGraphBuilder = 
+				new GraphBuilder_LOD_Pattern(ontologyManager, patternPath, 3);
+		lodPatternGraphBuilder.serialize("test");
 		
 //		HashMap<String, Integer> opFrequency = new HashMap<String, Integer>();
 //		HashMap<String, Integer> dpFrequency = new HashMap<String, Integer>();

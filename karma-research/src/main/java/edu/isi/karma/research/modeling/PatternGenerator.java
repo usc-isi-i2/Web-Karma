@@ -409,6 +409,77 @@ public class PatternGenerator {
 		return results;
 	}
 	
+	private static void prunePatterns() throws IOException {
+		
+		int length = 5;
+		int matches = 0;
+		Node domain, source, target;
+		boolean saam = false;
+		
+		File f = new File(Params.SOURCE_DIR);
+		File[] files = f.listFiles();
+		String sourcename, filename;
+		
+		for (int i = 0; i < files.length; i++) 
+		{
+
+			if (saam) {
+				System.out.println("processing saam ...");
+				sourcename = "saam";
+				i = files.length;
+			} else {
+				File file = files[i];
+				filename = file.getName();
+				System.out.println("processing " + filename + " ...");
+				sourcename = filename.substring(0, filename.lastIndexOf("."));
+			}
+			
+			matches = 0;
+			
+			for (int j = 2; j <= length; j++) {
+				System.out.println("reading patterns with length " + j);
+				File f1 = new File(Params.LOD_DIR + sourcename + "/" + Params.PATTERNS_OUTPUT_DIR + "/" + j);
+				File[] patternFiles = f1.listFiles();
+				if (files != null)
+				for (File f2 : patternFiles) {
+					Pattern p = Pattern.readJson(f2.getAbsolutePath());
+					
+					for (Node n : p.getGraph().vertexSet()) {
+						if (p.getGraph().outDegreeOf(n) > 1) {
+							matches++;
+//							System.out.println(p.getPrintStr());
+							if (!f2.delete())
+								System.out.println("error in deleting the file " + f2.getAbsolutePath());
+							break;
+						}
+					}
+//					domain = null;
+//					for (LabeledLink l : p.getGraph().edgeSet()) {
+//						
+//						source = l.getSource();
+//						target = l.getTarget();
+//
+//						if (target.getUri().equalsIgnoreCase("http://erlangen-crm.org/current/E52_Time-Span")) {
+//							if (domain == null) {
+//								domain = source;
+//							} else if (source.equals(domain)) {
+//								matches ++;
+////								System.out.println(p.getPrintStr());
+//
+//								if (!f2.delete())
+//									System.out.println("error in deleting the file " + f2.getAbsolutePath());
+//							}
+//						}
+//
+//					}
+//
+				}
+			}
+			System.out.println(matches);
+		}
+	}
+	
+	
 	private static void generatePatternsFromSeeds() throws IOException {
 
 		int length = 5;
@@ -508,6 +579,13 @@ public class PatternGenerator {
 //		
 //		if (generatePatternsFromSeeds) generatePatternsFromSeeds();
 //		else generatePatterns();
+
+		// two production URIs that have two time span
+		//uri1: nodeID://b4981707
+		//uri2: nodeID://b4988056
+		
+		prunePatterns();
+		
 		
 		System.out.println("done.");
 	}

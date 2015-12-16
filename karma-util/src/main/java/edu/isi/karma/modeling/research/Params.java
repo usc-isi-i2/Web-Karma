@@ -44,7 +44,8 @@ public class Params {
 	public static String R2RML_DIR = ROOT_DIR + "models-r2rml/";
 	public static String RESULTS_DIR = ROOT_DIR + "results/";
 	
-	public static String GRAPH_FILE_EXT = ".graph.json";
+	public static String GRAPH_JSON_FILE_EXT = ".graph.json";
+	public static String GRAPH_GRAPHVIZ_FILE_EXT = ".dot";
 	
 	public static String MODEL_MAIN_FILE_EXT = ".model.json";
 
@@ -52,7 +53,7 @@ public class Params {
 	public static String GRAPHVIS_OUT_FILE_EXT = ".out.dot";
 	public static String GRAPHVIS_OUT_DETAILS_FILE_EXT = ".out.details.dot";
 
-	public static String LOD_DIR = ROOT_DIR + "lod/";
+	public static String LOD_DIR = ROOT_DIR + "lod-prunned/";
 	public static String PATTERNS_INPUT_DIR = "patterns/input/";
 	public static String PATTERNS_OUTPUT_DIR = "patterns/output/";
 	public static String LOD_OBJECT_PROPERIES_FILE = "object-properties.csv";

@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.io.FileUtils;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
@@ -700,24 +699,26 @@ public class ModelLearner_LOD {
 		ontologyManager.updateCache(); 
 
 
-		String outputPath = Params.OUTPUT_DIR;
-		String graphPath = Params.GRAPHS_DIR;
-		
 //		FileUtils.cleanDirectory(new File(graphPath));
 
-//		String modelDir = Params.ROOT_DIR + "models-json-modified/";
-		String modelDir = Params.MODEL_DIR;
+		boolean useModifiedDS = false;
+		String modelDir;
+		if (useModifiedDS) modelDir = Params.ROOT_DIR + "models-json-modified/";
+		else modelDir = Params.MODEL_DIR;
+		
 		List<SemanticModel> semanticModels = 
 				ModelReader.importSemanticModelsFromJsonFiles(modelDir, Params.MODEL_MAIN_FILE_EXT);
 
 		ModelLearner_LOD modelLearner = null;
 
-		boolean onlyGenerateSemanticTypeStatistics = false;
+		boolean onlyGenerateSemanticTypeStatistics = true;
 		boolean onlyUseOntology = false;
 		boolean useCorrectType = true;
 		int numberOfCandidates = 1;
 		boolean onlyEvaluateInternalLinks = true; 
-		int maxPatternSize = 5;
+		int maxPatternSize = 1;
+		boolean useSaamLod = true;
+		boolean recreateGraphs = false;
 
 		if (onlyGenerateSemanticTypeStatistics) {
 			getStatistics(semanticModels);
@@ -727,15 +728,20 @@ public class ModelLearner_LOD {
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = "";
 
-		filename += "lod-results";
-		filename += useCorrectType ? "-correct":"-k=" + numberOfCandidates;
-		filename += onlyUseOntology ? "-ontology" : "-p" + maxPatternSize;
-		filename += onlyEvaluateInternalLinks ? "-internal":"-all";
+		filename += "results";
+		if (useModifiedDS) filename += ".modified";
+		if (useSaamLod) filename += ".saam";
+		filename += useCorrectType ? ".correct":".k=" + numberOfCandidates;
+		filename += onlyUseOntology ? ".ontology" : ".p" + maxPatternSize;
+		filename += onlyEvaluateInternalLinks ? ".internal":".all";
 		filename += ".csv"; 
 
+		
 		PrintWriter resultFile = new PrintWriter(new File(filePath + filename));
 
 		resultFile.println("source \t p \t r \t t \n");
+
+		String sourceName;
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
@@ -743,6 +749,20 @@ public class ModelLearner_LOD {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
+		
+			sourceName = newSource.getId().substring(0, newSource.getId().lastIndexOf("."));
+			
+			String outputDir = Params.OUTPUT_DIR + sourceName + "/";
+			File f = new File(outputDir);
+			if (!f.exists()) {
+				f.mkdir();
+			}
+
+			String graphDir = Params.GRAPHS_DIR + sourceName + "/";
+			f = new File(graphDir);
+			if (!f.exists()) {
+				f.mkdir();
+			}
 
 			logger.info("======================================================");
 			logger.info(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
@@ -754,15 +774,19 @@ public class ModelLearner_LOD {
 
 			List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
 
-			String graphName = graphPath + "lod" + Params.GRAPH_FILE_EXT; 
+			String graphName, graphPath;
+			if (useSaamLod) graphName = "saam.p" + maxPatternSize; 
+			else graphName = sourceName + ".p" + maxPatternSize;
+			
+			graphPath = graphDir + graphName + Params.GRAPH_JSON_FILE_EXT;
 
 			if (onlyUseOntology) {
 				modelLearner = new ModelLearner_LOD(new GraphBuilder(ontologyManager, false), steinerNodes);
-			} else if (new File(graphName).exists()) {
+			} else if (!recreateGraphs && new File(graphPath).exists()) {
 				// read graph from file
 				try {
 					logger.info("loading the graph ...");
-					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
+					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphPath);
 					modelLearner = new ModelLearner_LOD(new GraphBuilderTopK(ontologyManager, graph), steinerNodes);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -776,8 +800,12 @@ public class ModelLearner_LOD {
 //				GraphBuilder_Popularity b = new GraphBuilder_Popularity(ontologyManager, 
 //						Params.LOD_OBJECT_PROPERIES_FILE, 
 //						Params.LOD_DATA_PROPERIES_FILE);
-				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, 
-						Params.LOD_DIR + "saam/" + Params.PATTERNS_OUTPUT_DIR, maxPatternSize);
+				String patternPath;
+				if (useSaamLod) patternPath = Params.LOD_DIR + "saam/" + Params.PATTERNS_OUTPUT_DIR;
+				else patternPath = Params.LOD_DIR + sourceName + "/" + Params.PATTERNS_OUTPUT_DIR;
+					
+				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, patternPath, maxPatternSize);
+				b.serialize(graphPath);
 				modelLearner = new ModelLearner_LOD(b.getGraphBuilder(), steinerNodes);
 			}
 
@@ -839,13 +867,18 @@ public class ModelLearner_LOD {
 
 					}
 				}
-
-			String outName = outputPath + newSource.getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT;
+						
+			String outputPath, outputName;
+			outputName = newSource.getName();
+			if (useModifiedDS) outputName += ".modified";
+			if (useSaamLod) outputName += ".saam";
+			outputName += ".p" + maxPatternSize + Params.GRAPHVIS_OUT_FILE_EXT;
+			outputPath = outputDir + outputName;
 
 			GraphVizUtil.exportSemanticModelsToGraphviz(
 					models, 
 					newSource.getName(),
-					outName,
+					outputPath,
 					GraphVizLabelType.LocalId,
 					GraphVizLabelType.LocalUri,
 					true,

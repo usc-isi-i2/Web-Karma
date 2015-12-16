@@ -948,8 +948,8 @@ public class ModelLearner_KnownModels {
 				long start = System.currentTimeMillis();
 
 				String graphName = !iterativeEvaluation?
-						graphPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPH_FILE_EXT : 
-							graphPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPH_FILE_EXT;
+						graphPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPH_JSON_FILE_EXT : 
+							graphPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPH_JSON_FILE_EXT;
 
 				if (new File(graphName).exists()) {
 					// read graph from file
