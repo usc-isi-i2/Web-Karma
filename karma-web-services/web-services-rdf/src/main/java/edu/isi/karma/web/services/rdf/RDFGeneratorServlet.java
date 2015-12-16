@@ -86,13 +86,14 @@ public class RDFGeneratorServlet implements ServletContextListener{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/rdf")
-	public String RDF(MultivaluedMap<String, String> formParams) {
+	public Response RDF(MultivaluedMap<String, String> formParams) {
 		try {
 			logger.info("Path - r2rml/rdf . Generate and return RDF as String");
-			return getRDF(formParams);
+			String result =  getRDF(formParams);
+			return Response.status(200).entity(result).build();
 		} catch (Exception e) {
 			logger.error("Error generating RDF", e);
-			return "Exception: " + e.getMessage();
+			return Response.serverError().build();
 		}
 
 	}
@@ -100,13 +101,14 @@ public class RDFGeneratorServlet implements ServletContextListener{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/json")
-	public String JSON(MultivaluedMap<String, String> formParams) {
+	public Response JSON(MultivaluedMap<String, String> formParams) {
 		try {
 			logger.info("Path - r2rml/json . Generate and return JSON ld as String");
-			return getJSON(formParams);
+			String result =  getJSON(formParams);
+			return Response.status(200).entity(result).build();
 		} catch (Exception e) {
 			logger.error("Error generating JSON", e);
-			return "Exception: " + e.getMessage();
+			return Response.serverError().build();
 		}
 
 	}
