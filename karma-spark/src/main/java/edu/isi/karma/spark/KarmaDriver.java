@@ -11,6 +11,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
@@ -185,7 +186,7 @@ public class KarmaDriver {
         return pairs;
     }
     
-    public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext jsc, 
+    public static JavaRDD<String> applyModel(JavaSparkContext jsc, 
     		JavaRDD<String> input, 
     		String propertiesStr,
     		final int batchSize) {
@@ -197,7 +198,16 @@ public class KarmaDriver {
 			logger.info("Set " + propertyName + "=" + value);
 			prop.setProperty(propertyName, value);
 		}
-		return applyModel(jsc, input, prop, batchSize);
+		JavaPairRDD<Text, Text> pairs = applyModel(jsc, input, prop, batchSize);
+		return pairs.map(new Function<Tuple2<Text,Text>, String>() {
+
+			private static final long serialVersionUID = 5833358013516510838L;
+
+			@Override
+			public String call(Tuple2<Text, Text> arg0) throws Exception {
+				return (arg0._1() + "\t" + arg0._2());
+			}
+		});
     }
 	
     public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext jsc, 

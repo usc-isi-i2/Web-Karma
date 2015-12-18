@@ -24,8 +24,8 @@ public class PythonRepository {
 	private List<String> localKeys = Arrays.asList("workspaceid", "selectionName", "command", "worksheetId", "selection", "nodeid");
 	private boolean libraryHasBeenLoaded = false;
 	private boolean reloadLibrary = true;
-	private PyStringMap initialLocals = new PyStringMap();
-	private PythonInterpreter interpreter = PythonInterpreter.threadLocalStateInterpreter(initialLocals);
+	private PyStringMap initialLocals;
+	private PythonInterpreter interpreter;
 	private String repositoryPath;
 	
 	public PythonRepository(boolean reloadLibrary, String repositoryPath)
@@ -39,7 +39,8 @@ public class PythonRepository {
 	private void initialize()
 	{
 		scripts = new ConcurrentHashMap<String, PyCode>();
-
+		initialLocals = new PyStringMap();
+		interpreter = PythonInterpreter.threadLocalStateInterpreter(initialLocals);
 		
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getImportStatements());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getRowIndexDefStatement());
