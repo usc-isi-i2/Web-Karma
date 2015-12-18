@@ -689,7 +689,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				d.position.y = height - nodeRadius - d.layer * unitLinkLength;
 			})
 			.on("mouseover", function(d){
-				if(anchorMouseListener != null && d.original.nodeType == "ColumnNode" && !d.outside.isOutside)
+				if(anchorMouseListener != null && !d.isTemporary && !d.outside.isOutside)
 					anchorMouseListener(d.original, d3.event);
 				d3.select(this)
 					.transition()

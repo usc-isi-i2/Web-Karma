@@ -2,7 +2,6 @@ package edu.isi.karma.controller.command.alignment;
 
 import java.io.PrintWriter;
 import java.util.List;
-import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,19 +11,13 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
-import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
-import edu.isi.karma.modeling.ontology.OntologyManager;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeColumnModel;
-import edu.isi.karma.modeling.semantictypes.SemanticTypeUtil;
-import edu.isi.karma.rep.HNodePath;
-import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.view.VWorkspace;
 
 public class GetLinkSuggestionsCommand extends WorksheetSelectionCommand {
@@ -75,8 +68,13 @@ public class GetLinkSuggestionsCommand extends WorksheetSelectionCommand {
 					VWorkspace vWorkspace) {
 				JSONObject result = new JSONObject();
 				JSONArray links = new JSONArray();
+				
 				for(LabeledLink property : finalProperties) {
+					if(property.getTarget().getType() == NodeType.ColumnNode)
+						continue;
+					
 					JSONObject link = new JSONObject();
+					
 					link.put(Arguments.uri.name(), property.getUri());
 					link.put(Arguments.label.name(), property.getLabel().getDisplayName());
 					
@@ -92,6 +90,8 @@ public class GetLinkSuggestionsCommand extends WorksheetSelectionCommand {
 					
 					link.put(Arguments.source.name(), sourceObject);
 					link.put(Arguments.target.name(), targetObject);
+					links.put(link);
+					logger.info("Suggestion:" + link.toString());
 				}
 				result.put(Arguments.links.name(), links);
 				

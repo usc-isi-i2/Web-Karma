@@ -20,7 +20,7 @@ var PropertyDialog = (function() {
 			//Title, function to call, needs file upload     
 			// ,
 			["Change Link", changeLinkUI],
-			["Advance Options", advanceOptionsUI],
+			["Advanced Options", advanceOptionsUI],
 			["Delete", deleteLink],
 			// ["divider", null],
 			["Change From", changeFromUI],
@@ -116,7 +116,7 @@ var PropertyDialog = (function() {
 		}
 
 		function advanceOptionsUI(e) {
-			initRightDiv("Advance Options");
+			initRightDiv("Advanced Options");
 			PropertyAdvanceOptionsDialog.getInstance().show(propertyLiteralType, propertyIsSubClass, rightDiv, saveAdvanceOptions);
 		}
 
@@ -323,7 +323,7 @@ var PropertyDialog = (function() {
 				}
 
 				if(targetNodeType  != "ColumnNode")
-					disableItem("Advance Options");
+					disableItem("Advanced Options");
 			}
 			rightDiv.removeClass("col-sm-12").addClass("col-sm-10");
 		}

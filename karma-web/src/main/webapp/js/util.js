@@ -372,6 +372,32 @@ function getSuggestedSemanticTypes(worksheetId, columnId, classUri) {
 	return result;
 }
 
+function getSuggestedLinks(worksheetId, columnId) {
+	var info = generateInfoObject(worksheetId, columnId, "GetLinkSuggestionsCommand");
+	var newInfo = info['newInfo']; // Used for commands that take JSONArray as input and are saved in the history
+	
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var result;
+	var returned = $.ajax({
+		url: "RequestController",
+		type: "POST",
+		data: info,
+		dataType: "json",
+		async: false,
+		complete: function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			hideLoading(info["worksheetId"]);
+			result = json.elements[0];
+		},
+		error: function(xhr, textStatus) {
+			alert("Error occured with fetching new rows! " + textStatus);
+			hideLoading(info["worksheetId"]);
+		}
+	});
+	return result;
+}
+
 function getAllDataAndObjectProperties(worksheetId) {
 	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "allDataAndObjectProperties";

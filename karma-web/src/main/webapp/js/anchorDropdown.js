@@ -8,7 +8,7 @@ var AnchorDropdownMenu = (function() {
 		var worksheetId, columnId;
 		var columnUri, columnLabel, columnDomain, columnCategory, columnType, alignmentId;
 		var options = [
-			["Suggest", suggestSemanticTypes]
+			["Suggest", suggest]
 		];
 
 		function init() {
@@ -20,8 +20,38 @@ var AnchorDropdownMenu = (function() {
 			$(document).off('click', hide);
 		}
 
+		function suggest() {
+			if(columnType == "ColumnNode")
+				suggestSemanticTypes();
+			else
+				suggestLinks();
+		}
+
 		function suggestSemanticTypes() {
 			var semSuggestions = getSuggestedSemanticTypes(worksheetId, columnId);
+			var links = [];
+
+			if(semSuggestions != null && semSuggestions["Labels"]) {
+				
+				$.each(semSuggestions["Labels"], function(index, type) {
+					if(type["DisplayLabel"] == "km-dev:columnSubClassOfLink" ||
+							type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
+							type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
+						return;
+					}
+
+					links.push(
+						{"uri": type["FullType"], "label": type["DisplayLabel"], 
+						"source": {"uri": type["DomainUri"], "id": type["DomainId"], "label":type["DisplayDomainLabel"]},
+						"target": {"uri": columnDomain, "id": columnId, "label": columnLabel}
+						});
+				});
+			}
+
+			addSuggestionedLinks(links);
+		}
+
+		function addSuggestionedLinks(suggestedLinks) {
 			var items = [];
 			var uriFound = false;
 			var nodes = [];
@@ -29,44 +59,60 @@ var AnchorDropdownMenu = (function() {
 			var seenNodes = [];
 			var seenLinks = [];
 
-			if(semSuggestions != null && semSuggestions["Labels"]) {
+			if(suggestedLinks.length > 0) {
 				var wsNodes = D3ModelManager.getInstance().getNodes(worksheetId);
 				$.each(wsNodes, function(index, node) {
 					seenNodes.push(node.id);
 				});
 				var wsLinks = D3ModelManager.getInstance().getLinks(worksheetId);
 				$.each(wsLinks, function(index, link) {
-					var linkTypeId = link.source.uri;
+					var linkTypeId;
+					if(columnType == "ColumnNode") {
+					 	linkTypeId = link.source.uri + "--" + link.target.id;
+					 } else {
+					 	linkTypeId = link.source.id + "--" + link.target.id;
+					 }
 					seenLinks.push(linkTypeId);
 				});
 
-				$.each(semSuggestions["Labels"], function(index, type) {
-					if(type["DisplayLabel"] == "km-dev:columnSubClassOfLink" ||
-							type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
-							type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
-						return;
-					}
-					console.log("Show type: " + JSON.stringify(type));
-					if($.inArray(type["DomainId"], seenNodes) == -1) {
-						var linkTypeId = type["DomainUri"];
-						if($.inArray(linkTypeId, seenLinks) == -1) {
-							nodeLabel = type["DisplayDomainLabel"];
-							if(nodeLabel.endsWith("(add)")) {
-								nodeLabel = nodeLabel.substring(0, nodeLabel.length-6);
-							}
-							nodeLabel = getLabelWithoutPrefix(nodeLabel);
-							nodes.push({"id":type["DomainId"], "uri":type["DomainUri"], "label":nodeLabel});
-							seenNodes.push(type["DomainId"]);
-						
-							var linkId = type["DomainId"] + "--" + type["FullType"] + "--" + columnId;
-							var linkLabel = type["DisplayLabel"];
-							idx = linkLabel.indexOf(":");
-							if(idx != -1)
-								linkLabel = linkLabel.substring(idx+1);
-							links.push({"id":linkId, "source":type["DomainId"], "target":columnId, 
-									"uri":type["FullType"], "label":linkLabel, "type":"DataPropertyLink"});
-							seenLinks.push(linkTypeId);
+				$.each(suggestedLinks, function(index, link) {
+					console.log("Show type: " + JSON.stringify(link));
+					var linkTypeId;
+					if(columnType == "ColumnNode") {
+					 	linkTypeId = link.source.uri + "--" + link.target.id;
+					 } else {
+					 	linkTypeId = link.source.id + "--" + link.target.id;
+					 }
+
+					if($.inArray(linkTypeId, seenLinks) == -1) {
+						//Handle the source
+						if(link.source.label.endsWith("(add)")) {
+							link.source.label = link.source.label.substring(0, link.source.label.length-6);
 						}
+						link.source.label = getLabelWithoutPrefix(link.source.label);
+						if($.inArray(link.source.id, seenNodes) == -1) {
+							nodes.push({"id":link.source.id, "uri":link.source.uri, "label":link.source.label});
+							seenNodes.push(link.source.id);
+						}
+
+						//Hanlde the target
+						if(link.target.label.endsWith("(add)")) {
+							link.target.label = link.target.label.substring(0, link.target.label.length-6);
+						}
+						link.target.label = getLabelWithoutPrefix(link.target.label);
+						if($.inArray(link.target.id, seenNodes) == -1) {
+							nodes.push({"id":link.target.id, "uri":link.target.uri, "label":link.target.label});
+							seenNodes.push(link.target.id);
+						}
+
+						var linkId = link.source.id + "--" + link.uri + "--" + link.target.id;
+						var linkLabel = link.label;
+						idx = linkLabel.indexOf(":");
+						if(idx != -1)
+							linkLabel = linkLabel.substring(idx+1);
+						links.push({"id":linkId, "source":link.source.id, "target":link.target.id, 
+								"uri":link.uri, "label":linkLabel, "type":"DataPropertyLink"});
+						seenLinks.push(linkTypeId);
 					}
 				});
 			}
@@ -82,6 +128,19 @@ var AnchorDropdownMenu = (function() {
 						"uri": defaultProperty.uri, 
 						"label": getLabelWithoutPrefix(defaultProperty.label), 
 						"type": "DataPropertyLink"});
+
+			if(columnType != "ColumnNode") {
+				var blankNode2 = {"id":"BlankNode2", "uri":"BlankNode", "label":" "};
+				nodes.push(blankNode2);
+				var defaultProperty = PropertyDialog.getInstance().getDefaultProperty();
+				var linkId = columnId + "--" +  defaultProperty.label + "--" + blankNode2.id;
+				links.push({"id": linkId, 
+							"source": columnId, 
+							"target": blankNode2.id, 
+							"uri": defaultProperty.uri, 
+							"label": getLabelWithoutPrefix(defaultProperty.label), 
+							"type": "ObjectPropertyLink"});
+			}
 
 			//Register the link approve listener	
 			D3ModelManager.getInstance().setLinkApproveListener(worksheetId, function(link, event) {
@@ -158,6 +217,11 @@ var AnchorDropdownMenu = (function() {
 				    }
 				});
 			}, 10)
+		}
+
+		function suggestLinks() {
+			var suggestions = getSuggestedLinks(worksheetId, columnId);
+			addSuggestionedLinks(suggestions.links);
 		}
 
 		function restoreD3Model(event) {
