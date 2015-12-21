@@ -98,6 +98,7 @@ public class GraphBuilder {
 	private HashMap<String, Set<LabeledLink>> nodeIncomingLinks;
 	private HashMap<String, Set<LabeledLink>> nodeOutgoingLinks;
 	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
+	private HashMap<String, List<LabeledLink>> patternLinks;
 	private int numberOfModelLinks = 0;
 
 	// Constructor
@@ -125,7 +126,8 @@ public class GraphBuilder {
 		this.linkCountMap = new HashMap<String, Integer>();
 		this.nodeDataPropertyCount = new HashMap<String, Integer>();
 		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
-		
+		this.patternLinks = new HashMap<String, List<LabeledLink>>();
+
 		this.nodeDataProperties= new HashMap<String,Set<Node>>(); 
 		
 		this.nodeIncomingLinks = new HashMap<String, Set<LabeledLink>>();
@@ -246,6 +248,10 @@ public class GraphBuilder {
 		return nodeOutgoingLinks;
 	}
 	
+	public HashMap<String, List<LabeledLink>> getPatternLinks() {
+		return patternLinks;
+	}
+
 	public void resetOntologyMaps() {
 		String[] currentUris = this.uriClosure.keySet().toArray(new String[0]);
 		this.uriClosure.clear();
@@ -596,6 +602,16 @@ public class GraphBuilder {
 		
 		logger.debug("exit>");		
 		return true;
+	}
+	
+	public void savePatternLink(LabeledLink l) {
+		String key = l.getSource().getUri() + l.getUri() + l.getTarget().getUri();
+		List<LabeledLink> links = this.patternLinks.get(key);
+		if (links == null) {
+			links = new LinkedList<LabeledLink>();
+			this.patternLinks.put(key, links);
+		}
+		links.add(l);
 	}
 	
 	private double computeWeight(DefaultLink link) {

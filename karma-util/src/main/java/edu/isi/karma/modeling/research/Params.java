@@ -53,7 +53,7 @@ public class Params {
 	public static String GRAPHVIS_OUT_FILE_EXT = ".out.dot";
 	public static String GRAPHVIS_OUT_DETAILS_FILE_EXT = ".out.details.dot";
 
-	public static String LOD_DIR = ROOT_DIR + "lod-prunned/";
+	public static String LOD_DIR = ROOT_DIR + "lod/";
 	public static String PATTERNS_INPUT_DIR = "patterns/input/";
 	public static String PATTERNS_OUTPUT_DIR = "patterns/output/";
 	public static String LOD_OBJECT_PROPERIES_FILE = "object-properties.csv";

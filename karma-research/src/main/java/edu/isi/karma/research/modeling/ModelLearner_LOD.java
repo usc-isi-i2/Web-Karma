@@ -223,10 +223,13 @@ public class ModelLearner_LOD {
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
+//			int permutation = 3;
+//			if (sn.getNodesCount() > 18)
+//				permutation = 2;
 			if (this.graphBuilder instanceof GraphBuilderTopK) // which is not in ModelLearner_LOD
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
 						modelingConfiguration.getTopKSteinerTree(), 
-						5, 3, true);
+						5, 2, true);
 			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -698,32 +701,32 @@ public class ModelLearner_LOD {
 		}
 		ontologyManager.updateCache(); 
 
-
-//		FileUtils.cleanDirectory(new File(graphPath));
-
-		boolean useModifiedDS = false;
-		String modelDir;
-		if (useModifiedDS) modelDir = Params.ROOT_DIR + "models-json-modified/";
-		else modelDir = Params.MODEL_DIR;
-		
-		List<SemanticModel> semanticModels = 
-				ModelReader.importSemanticModelsFromJsonFiles(modelDir, Params.MODEL_MAIN_FILE_EXT);
-
-		ModelLearner_LOD modelLearner = null;
-
-		boolean onlyGenerateSemanticTypeStatistics = true;
+		boolean onlyGenerateSemanticTypeStatistics = false;
 		boolean onlyUseOntology = false;
 		boolean useCorrectType = true;
 		int numberOfCandidates = 1;
 		boolean onlyEvaluateInternalLinks = true; 
-		int maxPatternSize = 1;
+		int maxPatternSize = 5;
+		boolean recreateGraphs = true;
 		boolean useSaamLod = true;
-		boolean recreateGraphs = false;
+		boolean useModifiedDS = true;
+
+		String modelDir;
+		if (useModifiedDS) modelDir = Params.ROOT_DIR + "models-json-modified/";
+		else modelDir = Params.MODEL_DIR;
+		
+//		FileUtils.cleanDirectory(new File(graphPath));
+		
+		List<SemanticModel> semanticModels = 
+				ModelReader.importSemanticModelsFromJsonFiles(modelDir, Params.MODEL_MAIN_FILE_EXT);
 
 		if (onlyGenerateSemanticTypeStatistics) {
 			getStatistics(semanticModels);
 			return;
 		}
+
+		ModelLearner_LOD modelLearner = null;
+
 
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = "";
@@ -732,7 +735,7 @@ public class ModelLearner_LOD {
 		if (useModifiedDS) filename += ".modified";
 		if (useSaamLod) filename += ".saam";
 		filename += useCorrectType ? ".correct":".k=" + numberOfCandidates;
-		filename += onlyUseOntology ? ".ontology" : ".p" + maxPatternSize;
+		filename += onlyUseOntology ? ".p0" : ".p" + maxPatternSize;
 		filename += onlyEvaluateInternalLinks ? ".internal":".all";
 		filename += ".csv"; 
 
@@ -745,7 +748,7 @@ public class ModelLearner_LOD {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 1; {
+//		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -872,7 +875,8 @@ public class ModelLearner_LOD {
 			outputName = newSource.getName();
 			if (useModifiedDS) outputName += ".modified";
 			if (useSaamLod) outputName += ".saam";
-			outputName += ".p" + maxPatternSize + Params.GRAPHVIS_OUT_FILE_EXT;
+			outputName += onlyUseOntology ? ".p0" : ".p" + maxPatternSize;
+			outputName += Params.GRAPHVIS_OUT_FILE_EXT;
 			outputPath = outputDir + outputName;
 
 			GraphVizUtil.exportSemanticModelsToGraphviz(

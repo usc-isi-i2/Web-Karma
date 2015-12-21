@@ -411,10 +411,15 @@ public class PatternGenerator {
 	
 	private static void prunePatterns() throws IOException {
 		
-		int length = 5;
+		int length = 4;
 		int matches = 0;
 		Node domain, source, target;
 		boolean saam = false;
+		if (saam) length = 5;
+		
+		boolean chain = false;
+		boolean timespan = false;
+		boolean duplicate = true;
 		
 		File f = new File(Params.SOURCE_DIR);
 		File[] files = f.listFiles();
@@ -444,35 +449,53 @@ public class PatternGenerator {
 				for (File f2 : patternFiles) {
 					Pattern p = Pattern.readJson(f2.getAbsolutePath());
 					
-					for (Node n : p.getGraph().vertexSet()) {
-						if (p.getGraph().outDegreeOf(n) > 1) {
-							matches++;
-//							System.out.println(p.getPrintStr());
-							if (!f2.delete())
-								System.out.println("error in deleting the file " + f2.getAbsolutePath());
-							break;
-						}
-					}
-//					domain = null;
-//					for (LabeledLink l : p.getGraph().edgeSet()) {
-//						
-//						source = l.getSource();
-//						target = l.getTarget();
-//
-//						if (target.getUri().equalsIgnoreCase("http://erlangen-crm.org/current/E52_Time-Span")) {
-//							if (domain == null) {
-//								domain = source;
-//							} else if (source.equals(domain)) {
-//								matches ++;
-////								System.out.println(p.getPrintStr());
-//
+					if (chain) {
+						for (Node n : p.getGraph().vertexSet()) {
+							if (p.getGraph().outDegreeOf(n) > 1) {
+								matches++;
+//								System.out.println(p.getPrintStr());
 //								if (!f2.delete())
 //									System.out.println("error in deleting the file " + f2.getAbsolutePath());
-//							}
-//						}
-//
-//					}
-//
+								break;
+							}
+						}
+					} 
+					if (timespan) {
+						domain = null;
+						for (LabeledLink l : p.getGraph().edgeSet()) {
+							
+							source = l.getSource();
+							target = l.getTarget();
+	
+							if (target.getUri().equalsIgnoreCase("http://erlangen-crm.org/current/E52_Time-Span")) {
+								if (domain == null) {
+									domain = source;
+								} else if (source.equals(domain)) {
+									matches ++;
+//									System.out.println(p.getPrintStr());
+	
+//									if (!f2.delete())
+//										System.out.println("error in deleting the file " + f2.getAbsolutePath());
+								}
+							}
+	
+						}
+					}
+					
+					boolean visited = false;
+					if (duplicate) {
+						for (Node n : p.getGraph().vertexSet()) {
+							if (!visited && n.getUri().equals("http://erlangen-crm.org/current/E12_Production")) {
+								visited = true;
+							} else if (n.getUri().equals("http://erlangen-crm.org/current/E12_Production")) {
+								matches++;
+//								System.out.println(p.getPrintStr());
+//								if (!f2.delete())
+//									System.out.println("error in deleting the file " + f2.getAbsolutePath());
+								break;
+							}
+						}
+					}
 				}
 			}
 			System.out.println(matches);
