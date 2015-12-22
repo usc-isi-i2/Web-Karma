@@ -31,7 +31,7 @@ public abstract class BaseRDFImpl implements Serializable {
     boolean readKarmaConfig = false;
     protected JSONArray jKarmaConfig = null;
     protected HashMap<String, Pattern> urlPatterns=null;
-
+    protected boolean disableNesting = false;
     public BaseRDFImpl(String propertyPath) {
         try {
             final Properties properties = new Properties();
@@ -67,6 +67,7 @@ public abstract class BaseRDFImpl implements Serializable {
         String rdfSelection = (String)configuration.get("rdf.generation.selection");
         delimiter = (String)configuration.get("karma.input.delimiter");
         hasHeader = Boolean.parseBoolean((String)configuration.get("karma.input.header"));
+        disableNesting = Boolean.parseBoolean((String)configuration.getProperty("rdf.generation.disable.nesting", "false"));
         karma.setup("./karma.zip/karma", inputTypeString, modelUri, modelFile,
                 baseURI, contextURI, rdfGenerationRoot, rdfSelection);
 

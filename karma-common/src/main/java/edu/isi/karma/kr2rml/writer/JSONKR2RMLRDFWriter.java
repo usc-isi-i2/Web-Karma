@@ -50,6 +50,10 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 	public JSONKR2RMLRDFWriter (PrintWriter outWriter, String baseURI) {
 		super(outWriter, baseURI);
 	}
+	
+	public JSONKR2RMLRDFWriter (PrintWriter outWriter, String baseURI, boolean disableNesting) {
+		super(outWriter, baseURI, disableNesting);
+	}
 
 	public void setGlobalContext(JSONObject context, ContextIdentifier contextId) {
 		if (context.has("@context")) {
@@ -97,6 +101,10 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			if (object instanceof String) {
 				object = normalizeURI((String)object);
 			}
+			else if(object instanceof JSONObject && disableNesting)
+			{
+				object = normalizeURI(((JSONObject)object).get(atId).toString());
+			}
 			subject.put(shortHandPredicateURI, object);
 		}
 	}
@@ -130,6 +138,10 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		if (object instanceof String) {	
 			object = normalizeURI((String)object);
 		}
+		else if(object instanceof JSONObject && disableNesting)
+		{
+			object = normalizeURI(((JSONObject)object).get(atId).toString());
+		}			
 		array.put(object);
 		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type")) {
 			int size = array.length();

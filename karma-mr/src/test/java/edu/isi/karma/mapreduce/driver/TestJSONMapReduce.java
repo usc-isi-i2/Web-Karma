@@ -47,9 +47,22 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 
 		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
 		List<Pair<Text,Text>> results = mapDriver.run();
+		System.out.println(results);
 		assertTrue(results.size() > 1);
 	}
+	
+	@Test
+	public void testMapDisableNesting() throws IOException {
 
+		mapDriver.addInput(new Text("people.json"), new Text(IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream("data/json/people.json"))));
+		org.apache.hadoop.conf.Configuration conf = mapDriver.getConfiguration();
+		conf.set("rdf.generation.disable.nesting", "true");
+		List<Pair<Text,Text>> results = mapDriver.run();
+		System.out.println(results);
+		assertTrue(results.size() == 27);
+		conf.set("rdf.generation.disable.nesting", "false");
+	}
+	
 	@Test
 	public void testReduce() throws IOException 
 	{

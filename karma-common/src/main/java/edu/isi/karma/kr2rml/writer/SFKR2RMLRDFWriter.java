@@ -14,6 +14,7 @@ import edu.isi.karma.kr2rml.Prefix;
 import edu.isi.karma.kr2rml.ShortHandURIGenerator;
 
 public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
+	protected boolean disableNesting = false;
 	protected boolean firstObject = true;
 	protected ConcurrentHashMap<String, ConcurrentHashMap<String, E>> generatedObjectsByTriplesMapId;
 	protected ConcurrentHashMap<String, E> generatedObjectsWithoutTriplesMap;
@@ -57,6 +58,11 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 			this.baseURI = baseURI;
 	}
 	
+	public SFKR2RMLRDFWriter (PrintWriter outWriter, String baseURI, boolean disableNesting) {
+		this(outWriter, baseURI);
+		this.disableNesting = disableNesting;
+	}
+	
 	protected abstract void initializeOutput();
 
 	@Override
@@ -65,7 +71,10 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 		E subject = checkAndAddsubjUri(null, generatedObjectsWithoutTriplesMap, subjUri);
 		E object = getGeneratedObject(generatedObjectsWithoutTriplesMap, objectUri);
 		addValue(null, subject, predicateUri, object !=null? object : objectUri);
-		rootObjectsByTriplesMapId.get("").remove(objectUri);
+		if(!disableNesting)
+		{
+			rootObjectsByTriplesMapId.get("").remove(objectUri);
+		}
 	}
 
 	@Override
@@ -100,6 +109,10 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 			if(triplesMapId == null || rootTriplesMapIds.isEmpty() || rootTriplesMapIds.contains(triplesMapId))
 			{
 				rootObjectsByTriplesMapId.get(triplesMapId).put(subjUri, object);
+			}
+			else if (disableNesting)
+			{
+				rootObjectsByTriplesMapId.get("").put(subjUri, object);
 			}
 			return object;
 		}

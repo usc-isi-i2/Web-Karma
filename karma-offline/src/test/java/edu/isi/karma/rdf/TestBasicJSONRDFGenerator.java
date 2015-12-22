@@ -125,6 +125,34 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 	}
 	
 	@Test
+	public void testGenerateJSON3() {
+		try {
+			String filename = "employees.json";
+			logger.info("Loading json file: " + filename);
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			JSONKR2RMLRDFWriter writer = new JSONKR2RMLRDFWriter(pw,"http://lod.isi.edu/cs548/",true);
+			RDFGeneratorRequest request = new RDFGeneratorRequest("employees-model", filename);
+			request.setInputFile(new File(getTestResource(filename).toURI()));
+			request.setDataType(InputType.JSON);
+			request.setStrategy(new UserSpecifiedRootStrategy("http://isi.edu/integration/karma/dev#TriplesMap_6c6ae57b-f0ac-4443-9a49-4ae5d2e20630"));
+			request.addWriter(writer);
+			request.setContextParameters(ContextParametersRegistry.getInstance().getDefault());
+			rdfGen.generateRDF(request);
+			
+			String rdf = sw.toString();
+			System.out.println(rdf);
+			assertNotEquals(rdf.length(), 0);
+			String[] lines = rdf.split("(\r\n|\n)");
+			int count = lines.length;
+			
+			assertEquals(235, count);
+		} catch (Exception e) {
+			logger.error("testGenerateRDF1 failed:", e);
+			fail("Execption: " + e.getMessage());
+		}
+	}	
+	@Test
 	public void testGenerateRDF2() {
 		try {
 			executeBasicJSONTest("cs548-events.json", "cs548-events-model", true, 238);
