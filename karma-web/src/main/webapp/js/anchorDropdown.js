@@ -277,8 +277,8 @@ var AnchorDropdownMenu = (function() {
 			$("#" + menuId).css({
 				display: "block",
 				position: "absolute",
-				left: event.pageX - 30,
-				top: event.pageY
+				left: event.pageX - 40,
+				top: event.pageY + 7
 			});
 
 			window.setTimeout(function() {
