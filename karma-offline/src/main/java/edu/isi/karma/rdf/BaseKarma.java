@@ -84,8 +84,7 @@ public class BaseKarma {
 		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
 		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
 		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
-		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
-		PythonRepositoryRegistry.getInstance().register(pythonRepository);
+		PythonRepositoryRegistry.getInstance().registerSafe(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 	}
 
 	private void addModel() throws MalformedURLException {
