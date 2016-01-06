@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -206,8 +207,7 @@ public class JsonImportValues {
 
 	@SuppressWarnings("unchecked")
 	public Iterator<String> getSortedKeysIterator(JSONObject object) {
-		List<String> keys = new LinkedList<String>();
-		keys.addAll(object.keySet());
+		List<String> keys = IteratorUtils.toList(object.keys());
 		Collections.sort(keys);
 		Iterator<String> it = keys.iterator();
 		return it;

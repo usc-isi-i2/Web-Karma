@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -145,9 +146,9 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		array.put(object);
 		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type")) {
 			int size = array.length();
+			JSONArray newTypeArray = new JSONArray();
 			for (int i = 0; i < size; i++) {
-				String t = generateShortHandURIFromContext(array.remove(0).toString());
-				array.put(t);
+				newTypeArray.put(generateShortHandURIFromContext(array.get(i).toString()));
 			}
 			subject.put(atType, array);
 		}
@@ -206,17 +207,17 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		outWriter.close();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void collapseSameType(JSONObject obj) {
-		for (Object key : new HashSet(obj.keySet())) {
+		for (Object key : IteratorUtils.toList(obj.keys())) {
 			Object value = obj.get((String)key);
 			if (value instanceof JSONArray) {
 				JSONArray array = (JSONArray)value;
+				JSONArray newArray = new JSONArray();
 				Map<String, Object> types = new HashMap<String, Object>();
 				int length = array.length();
 				for (int i = 0; i < length; i++) {
-					Object o = array.remove(0);
+					Object o = array.get(i);
 					if (o instanceof JSONObject) {
 						JSONObject jsonObjectValue = (JSONObject)o;
 						if (jsonObjectValue.has(atId)) {
@@ -250,12 +251,17 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				}
 				if (types.size() > 1 || Objects.equals(contextInverseAtContainerMapping.get(key), true)) {
 					for (Entry<String, Object> type : types.entrySet()) {
-						array.put(type.getValue());
+						newArray.put(type.getValue());
 					}
+					obj.put((String)key, newArray);
 				}
 				else if (types.values().iterator().hasNext()){
 					Object o = types.values().iterator().next();
 					obj.put((String)key, o);
+				}
+				else
+				{
+					obj.put((String)key, newArray);
 				}
 			}
 			if (value instanceof JSONObject)

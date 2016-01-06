@@ -24,6 +24,7 @@ import scala.Tuple2;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -104,49 +105,15 @@ public class KarmaDriver {
     			JavaPairRDD<String, String> input, 
     			final Properties karmaSettings,
         		final int batchSize) {
-    	JavaPairRDD<Text, Text> pairs = input.groupByKey().flatMapToPair(
-    			new PairFlatMapFunction<Tuple2<String,Iterable<String>>, String, String>() {
-    				private static final long serialVersionUID = 6507159579657773801L;
-
-					@Override
-		            public Iterable<Tuple2<String, String>> call(Tuple2<String, Iterable<String>> stringIterableTuple2) throws Exception {
-		                List<Tuple2<String, String>> results = new LinkedList<>();
-		                String key = stringIterableTuple2._1;
-		                Iterable<String> values = stringIterableTuple2._2;
-		                int count = 0;
-		                StringBuilder builder = new StringBuilder();
-		                builder.append("[");
-		                boolean isFirst = true;
-		                for (String value : values) {
-		                    if (isFirst) {
-		                        builder.append(value);
-		                        isFirst = false;
-		                    }
-		                    else {
-		                        builder.append(",").append(value);
-		                    }
-		                    count++;
-		                    if (count == batchSize) {
-		                        builder.append("]");
-		                        results.add(new Tuple2<>(key, builder.toString()));
-		                        builder = new StringBuilder();
-		                        builder.append("[");
-		                        isFirst = true;
-		                        count = 0;
-		                    }
-		                }
-		                String last = builder.append("]").toString();
-		                results.add(new Tuple2<>(key, last));
-		                return results;
-		            }
-        }).flatMapToPair(new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
+    	
+    	JavaPairRDD<Text, Text> pairs = input.flatMapToPair(new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
         	private static final long serialVersionUID = -3533063264900721773L;
         	
 			@Override
             public Iterable<Tuple2<String, String>> call(Tuple2<String, String> writableIterableTuple2) throws Exception {
                 List<Tuple2<String, String>> results = new LinkedList<>();
-                JSONImpl mapper = new JSONImpl(karmaSettings);
-            	
+                
+                final JSONImpl mapper = new JSONImpl(karmaSettings);
                 String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
                 JSONArray generatedObjects = new JSONArray(result);
                 for (int i = 0; i < generatedObjects.length(); i++) {
@@ -192,7 +159,8 @@ public class KarmaDriver {
     		final int batchSize) {
     	JSONObject properties = new JSONObject(propertiesStr);
 	    Properties prop = new Properties();
-		for(Object objPropertyName : properties.keySet()) {
+		for (Iterator<String> keysIterator = properties.keys(); keysIterator.hasNext(); ) {
+			String objPropertyName = keysIterator.next();
 			String propertyName = objPropertyName.toString();
 			String value = properties.getString(propertyName);
 			logger.info("Set " + propertyName + "=" + value);
