@@ -1,20 +1,26 @@
 package edu.isi.karma.rdf;
 
-import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
-import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.isi.karma.kr2rml.planning.UserSpecifiedRootStrategy;
+import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 
 /**
  * Created by chengyey on 12/6/15.
@@ -90,7 +96,7 @@ public abstract class BaseRDFImpl implements Serializable {
                     sbConfig.append(line.trim());
                 }
 
-                jKarmaConfig = (JSONArray) JSONSerializer.toJSON(sbConfig.toString());
+                jKarmaConfig = new JSONArray(sbConfig.toString());
 
                 br.close();
             }
@@ -122,11 +128,11 @@ public abstract class BaseRDFImpl implements Serializable {
 
                 String modelName = addModelToKarmaSetup(jMatchedKarmaConfig);
                 if(modelName != null){
-                    if(jMatchedKarmaConfig.containsKey("roots")){
+                    if(jMatchedKarmaConfig.has("roots")){
                         JSONArray jArrayRoots = jMatchedKarmaConfig.getJSONArray("roots");
-                        for (int i=0;i<jArrayRoots.size();i++){
+                        for (int i=0;i<jArrayRoots.length();i++){
                             JSONObject jObjRoots = jArrayRoots.getJSONObject(i);
-                            if(jObjRoots.containsKey("root")){
+                            if(jObjRoots.has("root")){
                                 karma.setRdfGenerationRoot(jObjRoots.getString("root"),modelName);
                                 results = checkResultsAndWriteToContext(key,value,modelName);
                             }
@@ -153,13 +159,13 @@ public abstract class BaseRDFImpl implements Serializable {
     protected String addModelToKarmaSetup(JSONObject jMatchedKarmaConfig) throws MalformedURLException {
 
         String modelName=null;
-        if (jMatchedKarmaConfig.containsKey("model-uri")){
+        if (jMatchedKarmaConfig.has("model-uri")){
 
             //add the new model and cache it
             String modelURL = jMatchedKarmaConfig.getString("model-uri");
             modelName=extractModelName(modelURL);
             karma.addModel(modelName,null, jMatchedKarmaConfig.getString("model-uri"));
-        }else if(jMatchedKarmaConfig.containsKey("model-file")){
+        }else if(jMatchedKarmaConfig.has("model-file")){
 
             String modelFile = jMatchedKarmaConfig.getString("model-file");
             modelName=extractModelName(modelFile);
@@ -201,8 +207,8 @@ public abstract class BaseRDFImpl implements Serializable {
         JSONObject jMatchedKarmaConfig = null;
         Pattern p = null;
         if(jKarmaConfig != null){
-            for(int i=0;i<jKarmaConfig.size();i++){
-                if(jKarmaConfig.getJSONObject(i).containsKey("urls")){
+            for(int i=0;i<jKarmaConfig.length();i++){
+                if(jKarmaConfig.getJSONObject(i).has("urls")){
                     p = getMatchedURLPattern(jKarmaConfig.getJSONObject(i).getString("urls").trim());
                     Matcher m = p.matcher(key.trim());
                     if(m.find()){
