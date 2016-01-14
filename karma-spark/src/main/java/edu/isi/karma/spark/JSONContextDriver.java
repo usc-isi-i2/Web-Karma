@@ -91,17 +91,19 @@ private static Logger logger = LoggerFactory.getLogger(JSONContextDriver.class);
                 }
             });
         }
-        
-      applyContext(sc, pairs, contextUrl)
+      
+        InputStream in = new URL(contextUrl).openStream();
+        final Object context = JsonUtils.fromInputStream(in);
+        in.close();
+		
+      	applyContext(sc, pairs, context, contextUrl)
         		.saveAsNewAPIHadoopFile(outputPath, Text.class, Text.class, SequenceFileOutputFormat.class);
     }
     
     public static JavaPairRDD<String, String> applyContext(JavaSparkContext jsc, 
     		JavaPairRDD<String, String> input,
-    		final String contextUrl) throws IOException {
-    	InputStream in = new URL(contextUrl).openStream();
-		final Object context = JsonUtils.fromInputStream(in);
-		in.close();
+    		final Object context, final String contextUrl) throws IOException {
+    	
 		
 		return input.mapToPair(new PairFunction<Tuple2<String,String>, String, String>() {
 			private static final long serialVersionUID = 2878941073410454935L;
@@ -139,7 +141,7 @@ private static Logger logger = LoggerFactory.getLogger(JSONContextDriver.class);
     }
     
     public static JavaRDD<String> applyContext(JavaSparkContext jsc, 
-    		JavaRDD<String> input, String contextUrl) throws IOException {
+    		JavaRDD<String> input, String context, String contextUrl) throws IOException {
     	JavaPairRDD<String, String> inputPair = input.mapToPair(new PairFunction<String, String, String>() {
             private static final long serialVersionUID = -4153068088292891034L;
 
@@ -148,7 +150,10 @@ private static Logger logger = LoggerFactory.getLogger(JSONContextDriver.class);
                 return new Tuple2<>(s.substring(0, tabIndex), s.substring(tabIndex + 1));
             }
         });
-		JavaPairRDD<String, String> pairs = applyContext(jsc, inputPair, contextUrl);
+    	
+    	final Object contextObject = JsonUtils.fromString(context);
+		
+		JavaPairRDD<String, String> pairs = applyContext(jsc, inputPair, contextObject, contextUrl);
 		return pairs.map(new Function<Tuple2<String, String>, String>() {
 
 			private static final long serialVersionUID = 5833358013516510838L;
