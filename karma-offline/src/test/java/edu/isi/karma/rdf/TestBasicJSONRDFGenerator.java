@@ -119,7 +119,7 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 			
 			assertEquals(358, count);
 		} catch (Exception e) {
-			logger.error("testGenerateRDF1 failed:", e);
+			logger.error("testGenerateJSON2 failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}
@@ -141,13 +141,14 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 			rdfGen.generateRDF(request);
 			
 			String rdf = sw.toString();
+			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("(\r\n|\n)");
 			int count = lines.length;
 			
-			assertEquals(235, count);
+			assertEquals(236, count);
 		} catch (Exception e) {
-			logger.error("testGenerateRDF1 failed:", e);
+			logger.error("testGenerateJSON3 failed:", e);
 			fail("Execption: " + e.getMessage());
 		}
 	}	

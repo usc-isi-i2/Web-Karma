@@ -166,8 +166,17 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 				if (value.has(atId)) {
 					String Id = value.get(atId).toString();
 					if (!isValidURI(Id)) {
-						value.remove(atId);
+						if(!disableNesting)
+						{
+							value.remove(atId);
+						}
+						else if(!isValidBlankNode(Id))
+						{
+							value.remove(atId);
+						}
 					}
+					
+					
 				}
 				collapseSameType(value);
 				if (!firstObject) {
@@ -192,6 +201,11 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			entry.getValue().clear();
 		}
 		this.generatedObjectsWithoutTriplesMap.clear();
+	}
+
+	private boolean isValidBlankNode(String id) {
+		
+		return id.startsWith("_:");
 	}
 
 	@Override
