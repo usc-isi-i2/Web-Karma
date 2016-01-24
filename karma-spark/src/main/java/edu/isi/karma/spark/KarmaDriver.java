@@ -67,12 +67,13 @@ public class KarmaDriver {
         }
         
         final SparkConf conf = new SparkConf().setAppName("Karma");
+        conf.set("spark.master", "local[*]");
         conf.set("spark.executor.userClassPathFirst", "true");
         conf.set("spark.driver.userClassPathFirst", "true");
         conf.set("spark.files.userClassPathFirst", "true");
         conf.set("spark.io.compression.codec", "lz4");
         conf.set("spark.yarn.dist.archives", "karma.zip");
-        conf.set("spark.yarn.dist.files", "job.properties,extractionfiles-webpage.json");
+        conf.set("spark.yarn.dist.files", "job.properties");
         
         final JavaSparkContext sc = new JavaSparkContext(conf);
         JavaPairRDD<String, String> pairs;

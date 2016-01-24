@@ -74,10 +74,8 @@ public class BaseKarma {
 			}	
 		}
 		
-		ServletContextParameterMap contextParameters = new ServletContextParameterMap(null);
 		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
-		contextParametersRegistry.register(contextParameters);
-		
+		ServletContextParameterMap contextParameters = contextParametersRegistry.registerByKarmaHome(null);
 		KarmaMetadataManager userMetadataManager;
 		userMetadataManager = new KarmaMetadataManager(contextParameters);
 		UpdateContainer uc = new UpdateContainer();
