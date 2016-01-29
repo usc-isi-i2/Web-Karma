@@ -161,7 +161,6 @@ public class KarmaDriver {
                 List<Tuple2<String, String>> results = new LinkedList<>();
                 final JSONImpl mapper = new JSONImpl(karmaSettings);
             	String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
-            	System.out.println("GOT RESULT:" + result);
                 JSONArray generatedObjects = new JSONArray(result);
                 for (int i = 0; i < generatedObjects.length(); i++) {
                     try {
