@@ -20,17 +20,19 @@ public class SavedModelURLs {
 		File file = getModelsFile(contextId);
 		JSONObject json = new JSONObject(FileUtil.readFileContentsToString(file, "UTF-8"));
 		JSONArray models = ((JSONArray)json.get("models"));
+		JSONArray newModels = new JSONArray();
 		
 		int modelIndex = modelExists(models, url);
-		if(modelIndex != -1) {	//Remove previous same model url
-			models.remove(modelIndex);
-		}
-		models.put(url);
 		
-		
-		while(models.length() > maxNumUrls) {
-			models.remove(0);	//remove the first if more than max
+		for(int i = Math.max(0,  models.length() - maxNumUrls); i < models.length(); i ++)
+		{
+			if(modelIndex != i)
+			{
+				newModels.put(models.get(i));
+			}
 		}
+		newModels.put(url);
+		json.put("models", newModels);
 		FileUtil.writePrettyPrintedJSONObjectToFile(json, file);
 	}
 	

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Iterator;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -71,6 +72,7 @@ public class UpdateIdAndType {
 		pw.close();		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static void processJSONObject(JSONObject obj) {
 		if (obj.has("@id")) {
 			obj.put("uri", obj.getString("@id"));
@@ -80,7 +82,8 @@ public class UpdateIdAndType {
 			obj.put("a", obj.get("@type"));
 			obj.remove("@type");
 		}
-		for (Object key : obj.keySet()) {
+		for (Iterator<String> keysIterator = obj.keys(); keysIterator.hasNext(); ) {
+			String key = keysIterator.next();
 			Object o = obj.get((String) key);
 			if (o instanceof JSONObject) {
 				processJSONObject((JSONObject) o);

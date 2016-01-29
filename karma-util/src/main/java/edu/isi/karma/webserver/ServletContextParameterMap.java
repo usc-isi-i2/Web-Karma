@@ -106,7 +106,6 @@ public class ServletContextParameterMap {
 	public String getParameterValue(ContextParameter param) {
 		if (valuesMap.containsKey(param))
 			return valuesMap.get(param);
-//		logger.error("Parameter value does not exist! " + param);
 
 		return "";
 	}
@@ -120,4 +119,9 @@ public class ServletContextParameterMap {
 		return id;
 	}
 
+	@Override
+	public String toString(){
+		
+		return id + ": " + valuesMap.toString();
+	}
 }

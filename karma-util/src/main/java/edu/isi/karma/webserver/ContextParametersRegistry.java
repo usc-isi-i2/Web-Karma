@@ -14,7 +14,7 @@ public class ContextParametersRegistry {
 
 	private String defaultKarmaId = null;
 	
-	public ServletContextParameterMap registerByKarmaHome(String karmaHome)
+	public synchronized ServletContextParameterMap registerByKarmaHome(String karmaHome)
 	{
 		if(karmaHome == null || !karmaHomeToContextParameters.containsKey(karmaHome))
 		{
@@ -23,9 +23,6 @@ public class ContextParametersRegistry {
 			karmaHome = contextParameters.getKarmaHome();
 		}
 		return karmaHomeToContextParameters.get(karmaHome);
-	}
-	public void register(ServletContextParameterMap contextParameters) {
-		karmaHomeToContextParameters.put(contextParameters.getKarmaHome(), contextParameters);
 	}
 
 	public ServletContextParameterMap getContextParameters(String karmaHome) {
@@ -40,7 +37,7 @@ public class ContextParametersRegistry {
 		return contextMap;
 	}
 	
-	public void deregister(String contextId) {
+	public synchronized void deregister(String contextId) {
 		karmaHomeToContextParameters.remove(contextId);
 	}
 }

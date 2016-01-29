@@ -3,8 +3,8 @@ package edu.isi.karma.controller.command.worksheet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -247,7 +247,6 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 		return flag;
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean addJSONObjectValues(JSONObject obj, Worksheet worksheet, HTable htable, RepFactory factory, Row row, String newHNodeId) {
 		HNode ndid = htable.getHNode(newHNodeId);
 		HTable nestedHTable = ndid.getNestedTable();
@@ -257,7 +256,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 		Table nestedTable = row.getNode(newHNodeId).getNestedTable();
 		Row r = nestedTable.addRow(factory);
 		boolean flag = false;
-		for (Object key : new TreeSet<Object>(obj.keySet())) {
+		for (Object key : IteratorUtils.toList(obj.keys())) {
 			Object value = obj.get(key.toString());
 			HNode h = nestedHTable.getHNodeFromColumnName(key.toString());
 			if ( h == null) {		

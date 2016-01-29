@@ -74,18 +74,15 @@ public class BaseKarma {
 			}	
 		}
 		
-		ServletContextParameterMap contextParameters = new ServletContextParameterMap(null);
 		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
-		contextParametersRegistry.register(contextParameters);
-		
+		ServletContextParameterMap contextParameters = contextParametersRegistry.registerByKarmaHome(null);
 		KarmaMetadataManager userMetadataManager;
 		userMetadataManager = new KarmaMetadataManager(contextParameters);
 		UpdateContainer uc = new UpdateContainer();
 		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
 		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
 		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
-		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
-		PythonRepositoryRegistry.getInstance().register(pythonRepository);
+		PythonRepositoryRegistry.getInstance().registerSafe(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 	}
 
 	private void addModel() throws MalformedURLException {

@@ -42,9 +42,8 @@ public abstract class TestRdfGenerator {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 
-		contextParameters = new ServletContextParameterMap(null);
 		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
-		contextParametersRegistry.register(contextParameters);
+		contextParameters = contextParametersRegistry.registerByKarmaHome(null);
 		
         KarmaMetadataManager userMetadataManager = new KarmaMetadataManager(contextParameters);
         UpdateContainer uc = new UpdateContainer();
