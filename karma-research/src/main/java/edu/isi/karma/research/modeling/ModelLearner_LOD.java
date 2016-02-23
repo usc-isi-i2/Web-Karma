@@ -702,15 +702,17 @@ public class ModelLearner_LOD {
 		ontologyManager.updateCache(); 
 
 		boolean onlyGenerateSemanticTypeStatistics = false;
-		boolean onlyUseOntology = false;
+		boolean onlyUseOntology = true;
 		boolean useCorrectType = true;
 		int numberOfCandidates = 1;
 		boolean onlyEvaluateInternalLinks = true; 
-		int maxPatternSize = 5;
+		int maxPatternSize = 1;
 		boolean recreateGraphs = true;
-		boolean useSaamLod = true;
-		boolean useModifiedDS = true;
-
+		boolean useModifiedDS = false;
+		String lodDSName = "ds29";
+//		String lodDSName = "saam";
+//		String lodDSName = "musicbrainz";
+		
 		String modelDir;
 		if (useModifiedDS) modelDir = Params.ROOT_DIR + "models-json-modified/";
 		else modelDir = Params.MODEL_DIR;
@@ -733,7 +735,7 @@ public class ModelLearner_LOD {
 
 		filename += "results";
 		if (useModifiedDS) filename += ".modified";
-		if (useSaamLod) filename += ".saam";
+		filename += "." + lodDSName;
 		filename += useCorrectType ? ".correct":".k=" + numberOfCandidates;
 		filename += onlyUseOntology ? ".p0" : ".p" + maxPatternSize;
 		filename += onlyEvaluateInternalLinks ? ".internal":".all";
@@ -778,8 +780,7 @@ public class ModelLearner_LOD {
 			List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
 
 			String graphName, graphPath;
-			if (useSaamLod) graphName = "saam.p" + maxPatternSize; 
-			else graphName = sourceName + ".p" + maxPatternSize;
+			graphName = lodDSName + ".p" + maxPatternSize; 
 			
 			graphPath = graphDir + graphName + Params.GRAPH_JSON_FILE_EXT;
 
@@ -804,8 +805,10 @@ public class ModelLearner_LOD {
 //						Params.LOD_OBJECT_PROPERIES_FILE, 
 //						Params.LOD_DATA_PROPERIES_FILE);
 				String patternPath;
-				if (useSaamLod) patternPath = Params.LOD_DIR + "saam/" + Params.PATTERNS_OUTPUT_DIR;
-				else patternPath = Params.LOD_DIR + sourceName + "/" + Params.PATTERNS_OUTPUT_DIR;
+				if (lodDSName.equalsIgnoreCase("ds29")) 
+					patternPath = Params.LOD_DIR + sourceName + "/" + Params.PATTERNS_OUTPUT_DIR;
+				else
+					patternPath = Params.LOD_DIR + lodDSName + "/" + Params.PATTERNS_OUTPUT_DIR;
 					
 				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, patternPath, maxPatternSize);
 				b.serialize(graphPath);
@@ -874,7 +877,7 @@ public class ModelLearner_LOD {
 			String outputPath, outputName;
 			outputName = newSource.getName();
 			if (useModifiedDS) outputName += ".modified";
-			if (useSaamLod) outputName += ".saam";
+			outputName += "." + lodDSName;
 			outputName += onlyUseOntology ? ".p0" : ".p" + maxPatternSize;
 			outputName += Params.GRAPHVIS_OUT_FILE_EXT;
 			outputPath = outputDir + outputName;

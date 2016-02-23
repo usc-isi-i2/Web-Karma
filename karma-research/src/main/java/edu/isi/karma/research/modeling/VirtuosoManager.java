@@ -147,12 +147,12 @@ public class VirtuosoManager {
 								"?y rdf:type ?c2. \n" +
 								"?x ?op12 ?y. \n" +
 								"FILTER (?x != ?y). \n " +
-								//"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
-								//"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
-								//"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
-								//"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
-								//"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) \n" +
-								//"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c1), \"http://www.w3.org/2002/07/owl#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c2), \"http://www.w3.org/2002/07/owl#\")) \n" +
 								"} \n" +
 								"GROUP BY ?c1 ?op12 ?c2 \n" + 
 								"ORDER BY DESC(?count)";
@@ -236,9 +236,9 @@ public class VirtuosoManager {
 								"WHERE { ?x rdf:type ?c1. \n" +
 								"?x ?dp1a ?y. \n" +
 								"FILTER isLiteral(?y). \n" +
-								//"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
-								//"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
-								//"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2002/07/owl#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2000/01/rdf-schema#\")) \n" +
+//								"FILTER(!STRSTARTS(STR(?c), \"http://www.w3.org/2002/07/owl#\")) \n" +
 								"} " +
 								"GROUP BY ?c1 ?dp1a \n" + 
 								"ORDER BY DESC(?count)";
@@ -298,7 +298,9 @@ public class VirtuosoManager {
 	public static void main(String[] args) {
 
 		String instance = "fusionRepository.isi.edu";
-		int port = 1300;  
+//		int port = 1140;//music;  
+//		int port = 1300;  
+		int port = 1400;  
 		String username = "dba";
 		String password = "dba";
 		
@@ -306,7 +308,7 @@ public class VirtuosoManager {
 		VirtuosoManager vm = new VirtuosoManager(vc);
 
 		
-		String baseGraph = "http://museum-crm-lod/";
+		String baseGraph = "http://museum-edm-lod/";
 		String filename, graphNameSuffix, graphName;
 		String patternInputDirStr;
 		List<String> graphIRIs = new ArrayList<String>();
@@ -332,20 +334,18 @@ public class VirtuosoManager {
 		}
 		
 		
-		//		extractObjectProperties(repository, "http://europeana.eu", Params.LOD_OBJECT_PROPERIES_FILE);
-		//		extractDataProperties(repository, "http://europeana.eu", Params.LOD_DATA_PROPERIES_FILE);
-
-		//		extractObjectProperties(repository, "http://amsterdammuseum.nl", Params.LOD_OBJECT_PROPERIES_FILE);
-		//		extractDataProperties(repository, "http://amsterdammuseum.nl", Params.LOD_DATA_PROPERIES_FILE);
-
 //		List<String> graphIRIs = new ArrayList<String>();
 //		graphIRIs.add("http://musicbrainz.org");
 //		graphIRIs.add("http://dbtune.org/jamendo");
 //		graphIRIs.add("http://dbtune.org/magnatune");
 //		graphIRIs.add("http://dbtune.org/bbc/peel");
 //		graphIRIs.add("http://dbtune.org/bbc/playcount");
-//		vm.extractDataProperties(graphIRIs, Params.LOD_DATA_PROPERIES_FILE);
-//		vm.extractObjectProperties(graphIRIs, Params.LOD_OBJECT_PROPERIES_FILE);
+////		vm.extractDataProperties(graphIRIs, Params.LOD_DATA_PROPERIES_FILE);
+//		File patternDir = new File(Params.LOD_DIR + "musicbrainz/" + Params.PATTERNS_INPUT_DIR);
+//		if (!patternDir.exists()) {
+//			patternDir.mkdirs();
+//		}
+//		vm.extractObjectProperties(graphIRIs, patternDir.getAbsolutePath() + "/" + Params.LOD_OBJECT_PROPERIES_FILE);
 
 	}
 

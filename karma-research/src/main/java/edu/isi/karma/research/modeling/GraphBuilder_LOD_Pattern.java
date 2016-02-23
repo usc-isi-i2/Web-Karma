@@ -136,19 +136,19 @@ public class GraphBuilder_LOD_Pattern {
 			}
 		}
 		
-		try {
-			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
-					"LOD Graph", 
-					false, 
-					GraphVizLabelType.LocalId,
-					GraphVizLabelType.LocalUri,
-					true, 
-					true, 
-					Params.GRAPHS_DIR + 
-					"lod.graph.small.dot");
-		} catch (Exception e) {
-			logger.error("error in exporting the alignment graph to graphviz!");
-		}
+//		try {
+//			GraphVizUtil.exportJGraphToGraphviz(this.getGraphBuilder().getGraph(), 
+//					"LOD Graph", 
+//					false, 
+//					GraphVizLabelType.LocalId,
+//					GraphVizLabelType.LocalUri,
+//					true, 
+//					true, 
+//					Params.GRAPHS_DIR + 
+//					"lod.graph.small.dot");
+//		} catch (Exception e) {
+//			logger.error("error in exporting the alignment graph to graphviz!");
+//		}
 		
 		this.modelLearningGraph.updateGraphUsingOntology(addedNodes);
 

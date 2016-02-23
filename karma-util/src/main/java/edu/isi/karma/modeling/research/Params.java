@@ -28,7 +28,8 @@ public class Params {
 //	public static String DATASET_NAME = "museum-saam-crm";
 //	public static String DATASET_NAME = "museum-29-edm";
 //	public static String DATASET_NAME = "museum-29-crm";
-	public static String DATASET_NAME = "museum-29-crm-lod";
+//	public static String DATASET_NAME = "museum-29-crm-lod";
+	public static String DATASET_NAME = "museum-29-edm-lod";
 //	public static String DATASET_NAME = "music";
 	
 	public static String ROOT_DIR = "/Users/mohsen/Dropbox/__Mohsen__/ISI/source-modeling/datasets/" + DATASET_NAME + "/";

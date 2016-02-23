@@ -411,37 +411,44 @@ public class PatternGenerator {
 	
 	private static void prunePatterns() throws IOException {
 		
-		int length = 4;
+		int length = 5;
 		int matches = 0;
 		Node domain, source, target;
-		boolean saam = false;
-		if (saam) length = 5;
+		String lodDSName = "ds29";
+//		String lodDSName = "saam";
+//		String lodDSName = "musicbrainz";
 		
 		boolean chain = false;
 		boolean timespan = false;
-		boolean duplicate = true;
+		boolean duplicate = false;
+		boolean removeUris = false;
+		boolean twoAggregatedCHOs = true;
 		
 		File f = new File(Params.SOURCE_DIR);
 		File[] files = f.listFiles();
 		String sourcename, filename;
 		
+		List<String> removeUriList = new LinkedList<String>();
+		removeUriList.add("http://purl.org/ontology/mo/Playlist");
+		removeUriList.add("http://www.w3.org/TR/owl-time/Interval");
+		
 		for (int i = 0; i < files.length; i++) 
 		{
 
-			if (saam) {
-				System.out.println("processing saam ...");
-				sourcename = "saam";
-				i = files.length;
-			} else {
+			if (lodDSName.equals("ds29")) {
 				File file = files[i];
 				filename = file.getName();
 				System.out.println("processing " + filename + " ...");
 				sourcename = filename.substring(0, filename.lastIndexOf("."));
+			} else {
+				System.out.println("processing " + lodDSName + " ...");
+				sourcename = lodDSName;
+				i = files.length;
 			}
 			
 			matches = 0;
 			
-			for (int j = 2; j <= length; j++) {
+			for (int j = 1; j <= length; j++) {
 				System.out.println("reading patterns with length " + j);
 				File f1 = new File(Params.LOD_DIR + sourcename + "/" + Params.PATTERNS_OUTPUT_DIR + "/" + j);
 				File[] patternFiles = f1.listFiles();
@@ -459,7 +466,30 @@ public class PatternGenerator {
 								break;
 							}
 						}
-					} 
+					}
+					
+					if (twoAggregatedCHOs) {
+						boolean existAggregatedCHO = false;
+						for (LabeledLink l : p.getGraph().edgeSet()) {
+							
+							source = l.getSource();
+							target = l.getTarget();
+	
+							if (!existAggregatedCHO && target.getUri().equalsIgnoreCase("http://www.americanartcollaborative.org/ontology/CulturalHeritageObject")
+									&& l.getUri().equalsIgnoreCase("http://www.europeana.eu/schemas/edm/aggregatedCHO")) {
+								existAggregatedCHO = true;
+							} else if (target.getUri().equalsIgnoreCase("http://www.americanartcollaborative.org/ontology/CulturalHeritageObject")
+									&& l.getUri().equalsIgnoreCase("http://www.europeana.eu/schemas/edm/aggregatedCHO")) {
+									matches ++;
+//									System.out.println(p.getPrintStr());
+	
+									if (!f2.delete())
+										System.out.println("error in deleting the file " + f2.getAbsolutePath());
+							}
+	
+						}
+					}
+					
 					if (timespan) {
 						domain = null;
 						for (LabeledLink l : p.getGraph().edgeSet()) {
@@ -479,6 +509,21 @@ public class PatternGenerator {
 								}
 							}
 	
+						}
+					}
+					
+					if (removeUris) {
+						for (Node n : p.getGraph().vertexSet()) {
+							for (String uri : removeUriList) {
+								if (n.getUri().equalsIgnoreCase(uri)) {
+									matches++;
+//									System.out.println(p.getPrintStr());
+									if (!f2.delete())
+										System.out.println("error in deleting the file " + f2.getAbsolutePath());
+									break;
+									
+								}
+							}
 						}
 					}
 					
@@ -511,19 +556,24 @@ public class PatternGenerator {
 		boolean includeShorterPatterns = false;
 
 		String instance = "fusionRepository.isi.edu";
-		int port = 1300;  
+		int port = 1140;  
+//		int port = 1300;  
 		String username = "dba";
 		String password = "dba";
 		int queryTimeout = 1;
+		String sourcename = "musicbrainz";
+
+		String patternInputDirStr = Params.LOD_DIR + sourcename + "/" + Params.PATTERNS_INPUT_DIR;
+		String patternOutputDirStr = Params.LOD_DIR + sourcename + "/" + Params.PATTERNS_OUTPUT_DIR;
 
 		VirtuosoConnector vc = new VirtuosoConnector(instance, port, username, password);
 		vc.setQueryTimeout(queryTimeout);
 
-		PatternGenerator pg = new PatternGenerator(Params.PATTERNS_INPUT_DIR, Params.PATTERNS_OUTPUT_DIR, vc);
+		PatternGenerator pg = new PatternGenerator(patternInputDirStr, patternOutputDirStr, vc);
 
 		System.out.println("reading patterns with length " + seedLength);
 		List<Pattern> seeds = new LinkedList<Pattern>();
-		File f = new File(Params.PATTERNS_OUTPUT_DIR);
+		File f = new File(patternOutputDirStr);
 		for (int i = 0; i < length; i++) {
 			File f1 = new File(f.getAbsoluteFile() + "/" + seedLength);
 			File[] files = f1.listFiles();
@@ -546,15 +596,17 @@ public class PatternGenerator {
 	
 	private static void generatePatterns() {
 
-		int length = 4;
+		int length = 5;
 		int instanceLimit = 2;
 		boolean includeShorterPatterns = false;
 		
 		String instance = "fusionRepository.isi.edu";
-		int port = 1300;  
+//		int port = 1140;  
+//		int port = 1300;  
+		int port = 1400;  
 		String username = "dba";
 		String password = "dba";
-		String baseGraph = "http://museum-crm-lod/";
+		String baseGraph = "http://museum-edm-lod/";
 		int queryTimeout = 1;
 		String graphIRI;
 		
@@ -563,7 +615,7 @@ public class PatternGenerator {
 		String sourcename, filename;
 		String patternInputDirStr, patternOutputDirStr;
 //		int i = 4; {
-		for (int i = 4; i < files.length; i++) {
+		for (int i = 0; i < files.length; i++) {
 			File file = files[i];
 			filename = file.getName();
 			System.out.println("processing " + filename + " ...");
@@ -592,14 +644,51 @@ public class PatternGenerator {
 
 		}
 		
+	}
+	
+	private static void generatePatterns2() {
 
+		int length = 4;
+		int instanceLimit = 2;
+		boolean includeShorterPatterns = false;
 		
+		String instance = "fusionRepository.isi.edu";
+		int port = 1140;  
+//		int port = 1300;  
+		String username = "dba";
+		String password = "dba";
+		int queryTimeout = 1;
+		
+		String sourcename = "musicbrainz";
+		String patternInputDirStr, patternOutputDirStr;
+
+		patternInputDirStr = Params.LOD_DIR + sourcename + "/" + Params.PATTERNS_INPUT_DIR;
+		patternOutputDirStr = Params.LOD_DIR + sourcename + "/" + Params.PATTERNS_OUTPUT_DIR;
+		File patternOutputDir = new File(patternOutputDirStr);
+		if (!patternOutputDir.exists()) {
+			patternOutputDir.mkdir();
+		}
+			
+		VirtuosoConnector vc = new VirtuosoConnector(instance, port, username, password, null);
+		vc.setQueryTimeout(queryTimeout);
+		PatternGenerator pg = new PatternGenerator(patternInputDirStr, patternOutputDirStr, vc);
+
+		long start = System.currentTimeMillis();
+		List<Pattern> patterns = pg.getPatterns(length, instanceLimit, includeShorterPatterns);
+		long patternGeneraionTime = System.currentTimeMillis();
+		System.out.println("================================================================================");
+		System.out.println("time to generate patterns: " + (patternGeneraionTime - start)/1000F);
+		System.out.println("number of possible patterns: " + patterns.size());
+		System.out.println("================================================================================");
+
+		System.out.println("done.");
+
 	}
 	
 	public static void main(String[] args) throws IOException {
 
-//		boolean generatePatternsFromSeeds = false;
-//		
+		boolean generatePatternsFromSeeds = false;
+		
 //		if (generatePatternsFromSeeds) generatePatternsFromSeeds();
 //		else generatePatterns();
 
