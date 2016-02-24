@@ -15,7 +15,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var linkClickListener = null;
 	var nodeClickListener = null;
 	var anchorClickListener = null;
-	
+	var anchorMouseListener = null;
+	var linkApproveClickListener = null;
+	var nodeDragDropListener = null;
+
 	var test = [];
 	//var tableData = [];                            //store table data
 	//var columnPos = [];                            //position for each column
@@ -146,31 +149,58 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var linkArrow = forceSVG.selectAll(".linkArrow");   //little triangle of links
 	var labelFrame = forceSVG.selectAll(".labelFrame"); //the frame of each label
 
+	var linkStrengthFunc = function(d) {
+		if(d.source.isTemporary) {
+				return 0.1;
+		}
+		if (d.type == "edgeLink"){
+			if (d.target.outside.isOutside){
+				return 1;
+			}
+			return 0;
+		}
+		if (d.source.outside.isOutside && d.target.outside.isOutside) {
+			return 1;
+		} else if (d.source.outside.isOutside || d.target.outside.isOutside) {
+			if (!d.target.outside.isOutside && d.target.type == "anchor"){
+				return 0.1;
+			}
+			return 0.8;
+		}
+		return 0;
+	}
+
+	var chargeFunc = function(d) {
+		if(d.isTemporary)
+			return -5000;
+		return -100;
+	}
+
+	var labelLinkStrengthFunc = function(d) {
+		if(d.source.isTemporary)
+			return 0.1;
+
+		return 0.8
+	}
+
+	var labelChargeFunc = function(d) {
+		if(d.node.isTemporary)
+			return -5000;
+		return -100;
+	}
+
 	//force layout for nodes
 	var force = d3.layout.force()
 		.gravity(0)
-		.linkStrength(function(d){
-			if (d.type == "edgeLink"){
-				if (d.target.outside.isOutside){
-					return 1;
-				}
-				return 0;
-			}
-			if (d.source.outside.isOutside && d.target.outside.isOutside){
-				return 1;
-			} else if (d.source.outside.isOutside || d.target.outside.isOutside){
-				if (!d.target.outside.isOutside && d.target.type == "anchor"){
-					return 0.1;
-				}
-				return 0.8;
-			}
-			return 0;
-		})
+		.linkStrength(linkStrengthFunc)
 		.friction(0.8)
-		.charge(-100)
+		.charge(chargeFunc)
 		.linkDistance(function(d){
 			if (d.target.noLayer){
 				return outsideUnitLinkLength * 4;
+			}
+			if(d.source.isTemporary) {
+				return outsideUnitLinkLength * 6;
 			}
 			return outsideUnitLinkLength;
 		})
@@ -181,11 +211,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		//.size([Math.max(width, columns * barWidth), height])
 		.gravity(0)
 		.friction(0.8)
-		.charge(function(d){
-			return 0;
-		})
+		.charge(labelChargeFunc)
 		.linkDistance(0)
-		.linkStrength(0.8);
+		.linkStrength(labelLinkStrengthFunc);
 		//node can be dragged to the position you want
 
 	var drag = force.drag()
@@ -193,8 +221,62 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			if (!d.outside.isOutside || d.noLayer){
 	  			d3.select(this).classed("fixed", d.fixed = true);
 			}
+// 			console.log(JSON.stringify(d));
+			if(d.isTemporary && d.original.nodeDomain == "BlankNode") {
+				d3.select(this).moveToBack();
+				nodes.each(function(d){
+					d.beforeDragFixed = d.fixed;
+					d3.select(this).classed("fixed", d.fixed = true);
+				});
+				labelFrame.each(function(d) {
+					d.beforeDragFixed = d.fixed;
+					d3.select(this).classed("fixed", d.fixed = true);
+
+				});
+				// force.charge(function(d) {
+				// 	if(d.original.nodeDomain == "BlankNode")
+				// 		return 5000;
+				// 	if(d.isTemporary)
+				// 		return -5000;
+				// 	return -100;
+				// });
+				// labelForce.charge(-1);
+				// force.start();
+				// labelForce.start();
+			}
 	  	})
 	    .on("dragend", function(d) {
+	    	if(d.isTemporary) {
+	    		console.log("DragEnd of TemporaryLink")
+	    		originalNode = d.original;	
+	    		d3.select(event.target).call(function(d) {
+	    			if(d.length > 0) {
+	    				if(d[0].length > 0 && d[0][0].__data__) {
+	    					data = d[0][0].__data__;
+	    					if(data.node) {
+	    						if(nodeDragDropListener != null) {
+	    							nodeDragDropListener(originalNode, data.node.original, event);
+	    						}
+	    					}
+	    				} 
+	    			}
+	    		});
+
+	    		if(d.original.nodeDomain == "BlankNode") {
+		    		nodes.each(function(d){
+						d3.select(this).classed("fixed", d.fixed = d.beforeDragFixed);
+					});
+					labelFrame.each(function(d) {
+						d3.select(this).classed("fixed", d.fixed = d.beforeDragFixed);
+					});
+				}
+	    // 			force.charge(chargeFunc).linkStrength(linkStrengthFunc);
+					// labelForce.charge(labelChargeFunc).linkStrength(labelLinkStrengthFunc);
+					// force.start();
+					// labelForce.start();
+	    // 		}
+	    	}
+
 	  		if (!d.outside.isOutside || d.noLayer){
 	  			d.position.x = d.x;
 	  			d.position.y = d.y;
@@ -262,10 +344,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("opacity", 0)
 			.remove();
 
+		
 		var test = labels.append("circle")
 			.attr("r", 0)
-			//.attr("fill", "black");
-		
+
 		labelFrame = labels
 			.append("g")
 			.attr("class", function(d){
@@ -358,6 +440,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.attr("fill", function(d){
 				if (d.type == "nodeLabel"){
 					if (d.node.isForcedByUser) return "rgb(42,98,126)";
+					if (d.node.isTemporary) return "#888";
 					return "#555";
 				}
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
@@ -377,6 +460,38 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			});
 			
 		labelBoard.moveToBack();
+
+		labelApproveBoard = labels
+			.filter(function(d, i){
+				//console.log(JSON.stringify(d));
+				return d.type == "linkLabel" && d.node.original.linkStatus == "TemporaryLink";
+			})
+			.append("rect")
+			.attr("fill", "transparent")
+			.classed("clickBoard", true)
+			.attr("r", 5)
+			.attr("opacity", 1)
+			.attr("stroke-width", 2)
+			.attr("stroke", "red")
+			.attr("width", function(d){
+				return 8;
+			})
+			.attr("height", function(d){
+				return 8;
+			})
+			.attr("x", function(d){
+				var w = Math.ceil(this.parentNode.childNodes[1].getBBox().width);
+				return -4;
+			})
+			.attr("y", function(d){
+				var h = Math.ceil(this.parentNode.childNodes[1].getBBox().height);
+				return -h+15;
+			})
+			.on("click", function(d){
+				if(linkApproveClickListener != null)
+						linkApproveClickListener(d.node.original, d3.event);
+			});
+
 		labelClickBoard = labels
 			.filter(function(d, i){
 				return (i % 2 == 1) && d.node.type != "anchor";
@@ -410,7 +525,6 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				return -h;
 			})
 			.on("click", function(d){
-				console.log(d.node.labelWidth);
 				if (d.type == "linkLabel" || d.type == "edgeLinkLabel"){
 					if(linkClickListener != null)
 						linkClickListener(d.node.original, d3.event);
@@ -575,6 +689,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				d.position.y = height - nodeRadius - d.layer * unitLinkLength;
 			})
 			.on("mouseover", function(d){
+				if(anchorMouseListener != null && !d.isTemporary && !d.outside.isOutside)
+					anchorMouseListener(d.original, d3.event);
 				d3.select(this)
 					.transition()
 					.duration(500)
@@ -943,7 +1059,12 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 						layerLabel[layer].push(d);
 					}
 				} else if (d.type == "edgeLinkLabel"){
-
+					if(d.show) {
+						if (!layerLabel[0]){
+							layerLabel[0] = [];
+						}
+						layerLabel[0].push(d);
+					}
 				} else if (d.type == "linkLabel"){
 					//if (!nodesData[d.node.src].outside.isOutside && !nodesData[d.node.tgt].outside.isOutside){
 					if (d.show){
@@ -1093,6 +1214,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			node.showLabel = false;
 			node.original = d;
 			node.isForcedByUser = d.isForcedByUser;
+			node.isTemporary = d.isTemporary;
 			if (d.column || d.column == 0){
 				//columnPos.push(d.xPos);
 				node.nodeId = d.hNodeId;
@@ -1407,12 +1529,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			textData.push({
 				node : node,
 				type : "edgeLinkLabel",
-				content : d.label
+				content : d.label,
+				nodeId : d.id
 			});
 
 			textLinksData.push({
 				source : textData.length - 2,
-				target : textData.length - 1
+				target : textData.length - 1,
+				edgeId : d.id
 			});
 		});
 	}
@@ -1613,7 +1737,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 						// 	d.show = true;
 						// 	return 1;
 						// }
-						if ((d.node.src < nodesData.length && nodesData[d.node.src].outside.isOutside) || (d.node.tgt < nodesData.length && nodesData[d.node.tgt].outside.isOutside)){
+						if ((d.node.src < nodesData.length && nodesData[d.node.src].noLayer == undefined && nodesData[d.node.src].outside.isOutside) 
+							|| (d.node.tgt < nodesData.length && nodesData[d.node.tgt].noLayer == undefined && nodesData[d.node.tgt].outside.isOutside)){
 							d.show = false;
 							return 0;
 						}
@@ -1624,7 +1749,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			d3.select(htmlElement).selectAll(".edgeLinkLabel")
 				.attr("opacity", function(d){
 					//console.log(d.index);
-					if (!d.node.src.show || nodesData[d.node.tgt].outside.isOutside){
+					if (!d.node.src.show || 
+						(nodesData[d.node.tgt].noLayer == undefined && nodesData[d.node.tgt].outside.isOutside)) {
 						d.show = false;
 						return 0;
 					}
@@ -1691,7 +1817,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			setLayer(tmpL, tmpEdgeLink);
 
 			
-			height = (maxLayer + 0.5) * unitLinkLength;
+			height = (maxLayer + 0.5) * unitLinkLength * 1.5;
 			if (width > window.innerWidth){
 				height += (maxLayer + 1.5) * outsideUnitLinkLength;
 			}
@@ -1751,7 +1877,19 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	this.setAnchorClickListener = function(listener) {
 		anchorClickListener = listener;
 	}
+
+	this.setAnchorMouseListener = function(listener) {
+		anchorMouseListener = listener;
+	}
 	
+	this.setLinkApproveClickListener = function(listener) {
+		linkApproveClickListener = listener;
+	}
+
+	this.setNodeDragDropListener = function(listener) {
+		nodeDragDropListener = listener;
+	}
+
 	this.onscroll = function(event){
 		//console.log(window.pageXOffset);
 		if (Math.abs(window.pageXOffset - xOffset) > reshuffleFrequency){

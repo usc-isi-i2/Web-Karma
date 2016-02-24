@@ -63,6 +63,7 @@ import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphCompact;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
 import edu.isi.karma.modeling.alignment.learner.ModelReader;
+import edu.isi.karma.modeling.alignment.learner.PatternWeightSystem;
 import edu.isi.karma.modeling.alignment.learner.SemanticTypeMapping;
 import edu.isi.karma.modeling.alignment.learner.SortableSemanticModel;
 import edu.isi.karma.modeling.alignment.learner.SteinerNodes;
@@ -166,7 +167,7 @@ public class ModelLearner_KnownModels {
 				tree.addVertex(n);
 			
 			SemanticModel sm = new SemanticModel(new RandomGUID().toString(), tree);
-			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null);
+			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null, false);
 			sortableSemanticModels.add(sortableSemanticModel);
 			return sortableSemanticModels;
 		}
@@ -229,7 +230,7 @@ public class ModelLearner_KnownModels {
 							sn.getMappingToSourceColumns()
 							);
 					SortableSemanticModel sortableSemanticModel = 
-							new SortableSemanticModel(sm, sn);
+							new SortableSemanticModel(sm, sn, false);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
 //					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
@@ -947,8 +948,8 @@ public class ModelLearner_KnownModels {
 				long start = System.currentTimeMillis();
 
 				String graphName = !iterativeEvaluation?
-						graphPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPH_FILE_EXT : 
-							graphPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPH_FILE_EXT;
+						graphPath + semanticModels.get(newSourceIndex).getName() + Params.GRAPH_JSON_FILE_EXT : 
+							graphPath + semanticModels.get(newSourceIndex).getName() + ".knownModels=" + numberOfKnownModels + Params.GRAPH_JSON_FILE_EXT;
 
 				if (new File(graphName).exists()) {
 					// read graph from file
@@ -964,7 +965,7 @@ public class ModelLearner_KnownModels {
 					logger.info("building the graph ...");
 					for (SemanticModel sm : trainingData)
 //						modelLearningGraph.addModel(sm);
-						modelLearningGraph.addModelAndUpdate(sm, false);
+						modelLearningGraph.addModelAndUpdate(sm, PatternWeightSystem.JWSPaperFormula);
 					modelLearner = new ModelLearner_KnownModels(modelLearningGraph.getGraphBuilder(), steinerNodes);
 //					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
 //					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();

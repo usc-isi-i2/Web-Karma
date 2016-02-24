@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.io.FileUtils;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.jgrapht.graph.WeightedMultigraph;
@@ -198,7 +197,7 @@ public class ModelLearner_LOD {
 				tree.addVertex(n);
 			
 			SemanticModel sm = new SemanticModel(new RandomGUID().toString(), tree);
-			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null);
+			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null, false);
 			sortableSemanticModels.add(sortableSemanticModel);
 			return sortableSemanticModels;
 		}
@@ -224,10 +223,13 @@ public class ModelLearner_LOD {
 //			logger.info("START ...");
 			
 			List<DirectedWeightedMultigraph<Node, LabeledLink>> topKSteinerTrees;
+//			int permutation = 3;
+//			if (sn.getNodesCount() > 18)
+//				permutation = 2;
 			if (this.graphBuilder instanceof GraphBuilderTopK) // which is not in ModelLearner_LOD
 				topKSteinerTrees =  ((GraphBuilderTopK)this.graphBuilder).getTopKSteinerTrees(sn, 
 						modelingConfiguration.getTopKSteinerTree(), 
-						5, 3, true);
+						5, 2, true);
 			else 
 			{
 				topKSteinerTrees = new LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
@@ -252,7 +254,7 @@ public class ModelLearner_LOD {
 							sn.getMappingToSourceColumns()
 							);
 					SortableSemanticModel sortableSemanticModel = 
-							new SortableSemanticModel(sm, sn);
+							new SortableSemanticModel(sm, sn, false);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
 //					System.out.println(GraphUtil.labeledGraphToString(sm.getGraph()));
@@ -675,7 +677,8 @@ public class ModelLearner_LOD {
 	
 	public static void main(String[] args) throws Exception {
 
-		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome("/Users/mohsen/karma/");
+		contextParameters.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, "/Users/mohsen/karma/");
 		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, "/Users/mohsen/karma/config");
 
 		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
@@ -698,48 +701,73 @@ public class ModelLearner_LOD {
 		}
 		ontologyManager.updateCache(); 
 
-
-		String outputPath = Params.OUTPUT_DIR;
-		String graphPath = Params.GRAPHS_DIR;
-		
-		FileUtils.cleanDirectory(new File(graphPath));
-
-		List<SemanticModel> semanticModels = 
-				ModelReader.importSemanticModelsFromJsonFiles(Params.MODEL_DIR, Params.MODEL_MAIN_FILE_EXT);
-
-		ModelLearner_LOD modelLearner = null;
-
 		boolean onlyGenerateSemanticTypeStatistics = false;
-		boolean onlyUseOntology = false;
-		boolean useCorrectType = false;
-		int numberOfCandidates = 4;
-		boolean onlyEvaluateInternalLinks = false; 
-		int maxPatternSize = 3;
+		boolean onlyUseOntology = true;
+		boolean useCorrectType = true;
+		int numberOfCandidates = 1;
+		boolean onlyEvaluateInternalLinks = true; 
+		int maxPatternSize = 1;
+		boolean recreateGraphs = true;
+		boolean useModifiedDS = false;
+		String lodDSName = "ds29";
+//		String lodDSName = "saam";
+//		String lodDSName = "musicbrainz";
+		
+		String modelDir;
+		if (useModifiedDS) modelDir = Params.ROOT_DIR + "models-json-modified/";
+		else modelDir = Params.MODEL_DIR;
+		
+//		FileUtils.cleanDirectory(new File(graphPath));
+		
+		List<SemanticModel> semanticModels = 
+				ModelReader.importSemanticModelsFromJsonFiles(modelDir, Params.MODEL_MAIN_FILE_EXT);
 
 		if (onlyGenerateSemanticTypeStatistics) {
 			getStatistics(semanticModels);
 			return;
 		}
 
+		ModelLearner_LOD modelLearner = null;
+
+
 		String filePath = Params.RESULTS_DIR + "temp/";
 		String filename = "";
 
-		filename += "lod-results";
-		filename += useCorrectType ? "-correct":"-k=" + numberOfCandidates;
-		filename += onlyUseOntology ? "-ontology" : "-p" + maxPatternSize;
-		filename += onlyEvaluateInternalLinks ? "-internal":"-all";
+		filename += "results";
+		if (useModifiedDS) filename += ".modified";
+		filename += "." + lodDSName;
+		filename += useCorrectType ? ".correct":".k=" + numberOfCandidates;
+		filename += onlyUseOntology ? ".p0" : ".p" + maxPatternSize;
+		filename += onlyEvaluateInternalLinks ? ".internal":".all";
 		filename += ".csv"; 
 
+		
 		PrintWriter resultFile = new PrintWriter(new File(filePath + filename));
 
 		resultFile.println("source \t p \t r \t t \n");
 
+		String sourceName;
+
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 1; {
+//		int i = 0; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
+		
+			sourceName = newSource.getId().substring(0, newSource.getId().lastIndexOf("."));
+			
+			String outputDir = Params.OUTPUT_DIR + sourceName + "/";
+			File f = new File(outputDir);
+			if (!f.exists()) {
+				f.mkdir();
+			}
+
+			String graphDir = Params.GRAPHS_DIR + sourceName + "/";
+			f = new File(graphDir);
+			if (!f.exists()) {
+				f.mkdir();
+			}
 
 			logger.info("======================================================");
 			logger.info(newSource.getName() + "(#attributes:" + newSource.getColumnNodes().size() + ")");
@@ -751,15 +779,18 @@ public class ModelLearner_LOD {
 
 			List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
 
-			String graphName = graphPath + "lod" + Params.GRAPH_FILE_EXT; 
+			String graphName, graphPath;
+			graphName = lodDSName + ".p" + maxPatternSize; 
+			
+			graphPath = graphDir + graphName + Params.GRAPH_JSON_FILE_EXT;
 
 			if (onlyUseOntology) {
 				modelLearner = new ModelLearner_LOD(new GraphBuilder(ontologyManager, false), steinerNodes);
-			} else if (new File(graphName).exists()) {
+			} else if (!recreateGraphs && new File(graphPath).exists()) {
 				// read graph from file
 				try {
 					logger.info("loading the graph ...");
-					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
+					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphPath);
 					modelLearner = new ModelLearner_LOD(new GraphBuilderTopK(ontologyManager, graph), steinerNodes);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -773,8 +804,14 @@ public class ModelLearner_LOD {
 //				GraphBuilder_Popularity b = new GraphBuilder_Popularity(ontologyManager, 
 //						Params.LOD_OBJECT_PROPERIES_FILE, 
 //						Params.LOD_DATA_PROPERIES_FILE);
-				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, 
-						Params.PATTERNS_DIR, maxPatternSize);
+				String patternPath;
+				if (lodDSName.equalsIgnoreCase("ds29")) 
+					patternPath = Params.LOD_DIR + sourceName + "/" + Params.PATTERNS_OUTPUT_DIR;
+				else
+					patternPath = Params.LOD_DIR + lodDSName + "/" + Params.PATTERNS_OUTPUT_DIR;
+					
+				GraphBuilder_LOD_Pattern b = new GraphBuilder_LOD_Pattern(ontologyManager, patternPath, maxPatternSize);
+				b.serialize(graphPath);
 				modelLearner = new ModelLearner_LOD(b.getGraphBuilder(), steinerNodes);
 			}
 
@@ -836,13 +873,19 @@ public class ModelLearner_LOD {
 
 					}
 				}
-
-			String outName = outputPath + newSource.getName() + Params.GRAPHVIS_OUT_DETAILS_FILE_EXT;
+						
+			String outputPath, outputName;
+			outputName = newSource.getName();
+			if (useModifiedDS) outputName += ".modified";
+			outputName += "." + lodDSName;
+			outputName += onlyUseOntology ? ".p0" : ".p" + maxPatternSize;
+			outputName += Params.GRAPHVIS_OUT_FILE_EXT;
+			outputPath = outputDir + outputName;
 
 			GraphVizUtil.exportSemanticModelsToGraphviz(
 					models, 
 					newSource.getName(),
-					outName,
+					outputPath,
 					GraphVizLabelType.LocalId,
 					GraphVizLabelType.LocalUri,
 					true,

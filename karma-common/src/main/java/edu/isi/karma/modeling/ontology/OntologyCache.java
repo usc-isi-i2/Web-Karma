@@ -28,6 +28,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.HashMultimap;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.ontology.OntResource;
@@ -592,9 +593,10 @@ public class OntologyCache {
 	private void processSchemaOrgOntology() {
 		
 		StmtIterator itr = ontHandler.getOntModel().listStatements();
-		HashMap<OntProperty, Resource> domains = new HashMap<OntProperty, Resource>();
-		HashMap<OntProperty, Resource> ranges = new HashMap<OntProperty, Resource>();
 		
+		HashMultimap<OntProperty, Resource> domains = HashMultimap.create(); 
+		HashMultimap<OntProperty, Resource> ranges = HashMultimap.create(); 
+
 		while (itr.hasNext()) {
 			Statement stmt = itr.next();
 
@@ -622,11 +624,11 @@ public class OntologyCache {
 			}
 		}
 		
-		for (Entry<OntProperty,Resource> entry : domains.entrySet()) {
+		for (Entry<OntProperty,Resource> entry : domains.entries()) {
 			entry.getKey().addDomain(entry.getValue());
 		}
 
-		for (Entry<OntProperty,Resource> entry : ranges.entrySet()) {
+		for (Entry<OntProperty,Resource> entry : ranges.entries()) {
 			entry.getKey().addRange(entry.getValue());
 		}
 		

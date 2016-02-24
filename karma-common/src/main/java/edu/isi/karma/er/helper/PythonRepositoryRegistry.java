@@ -13,6 +13,13 @@ public class PythonRepositoryRegistry {
 		return singleton;
 	}
 
+	public synchronized void registerSafe(String repositoryPath) {
+		if(!karmaHomeToPythonRepository.containsKey(repositoryPath))
+		{
+			PythonRepository pythonRepository = new PythonRepository(false, repositoryPath);
+			karmaHomeToPythonRepository.put(pythonRepository.getRepositoryPath(), pythonRepository);
+		}
+	}
 	public void register(PythonRepository pythonRepository) {
 		karmaHomeToPythonRepository.put(pythonRepository.getRepositoryPath(), pythonRepository);
 	}

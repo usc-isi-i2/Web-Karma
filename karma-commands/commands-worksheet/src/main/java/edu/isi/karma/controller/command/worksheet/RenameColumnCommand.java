@@ -23,6 +23,7 @@ package edu.isi.karma.controller.command.worksheet;
 
 import java.util.List;
 
+import org.apache.commons.collections.IteratorUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -108,7 +109,7 @@ public class RenameColumnCommand extends WorksheetCommand {
 
 	private void replaceColumnName(JSONObject object) {
 		
-		for(Object key : object.keySet()) {
+		for(Object key : IteratorUtils.toList(object.keys())) {
 			String strKey = (String)key;
 			
 			Object value = object.get(strKey);

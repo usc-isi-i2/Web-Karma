@@ -51,8 +51,9 @@ public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 	protected final GenericRDFGenerator rdfGen = new GenericRDFGenerator(SuperSelectionManager.DEFAULT_SELECTION_TEST_NAME);
 	private static Logger logger = LoggerFactory.getLogger(TestJSONRDFGenerator.class);
 	
-	protected void executeBasicJSONTest(String filename, String modelName, boolean generateProvenance, int expectedNumberOfLines) throws IOException, URISyntaxException,
-			KarmaException {
+	
+	protected void executeBasicJSONTest(String filename, String modelName, boolean generateProvenance, int expectedNumberOfLines, boolean disableNesting) throws IOException, URISyntaxException,
+	KarmaException {
 		logger.debug("Loading json file: " + filename);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
@@ -63,11 +64,17 @@ public abstract class TestJSONRDFGenerator extends TestRdfGenerator{
 		request.setDataType(InputType.JSON);
 		request.addWriters(writers);
 		request.setContextParameters(ContextParametersRegistry.getInstance().getDefault());
+		
 		rdfGen.generateRDF(request);
 		String rdf = sw.toString();
 		assertNotEquals(rdf.length(), 0);
 		String[] lines = rdf.split("(\r\n|\n)");
 		assertEquals(expectedNumberOfLines, lines.length);
+	}
+	
+	protected void executeBasicJSONTest(String filename, String modelName, boolean generateProvenance, int expectedNumberOfLines) throws IOException, URISyntaxException,
+			KarmaException {
+		
 	}
 
 	protected URL getTestResource(String name)

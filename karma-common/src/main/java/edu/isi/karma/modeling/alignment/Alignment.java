@@ -21,7 +21,6 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,10 +37,12 @@ import org.slf4j.LoggerFactory;
 
 import com.rits.cloning.Cloner;
 
+import edu.isi.karma.config.ModelingConfiguration;
 import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.modeling.Namespaces;
 import edu.isi.karma.modeling.Prefixes;
 import edu.isi.karma.modeling.Uris;
+import edu.isi.karma.modeling.alignment.learner.LinkCoherence;
 import edu.isi.karma.modeling.alignment.learner.ModelLearner;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
@@ -61,7 +62,6 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
-import edu.isi.karma.rep.alignment.LinkPriorityComparator;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
 import edu.isi.karma.rep.alignment.LiteralNode;
@@ -93,7 +93,9 @@ public class Alignment implements OntologyUpdateListener {
 		this.ontologyManager = ontologyManager;
 		this.ontologyManager.subscribeListener(this);
 		this.sourceColumnNodes = new HashSet<ColumnNode>(); 
-		if (ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome()).getKnownModelsAlignment()) {
+		ModelingConfiguration conf = ModelingConfigurationRegistry.getInstance().
+				getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome());
+		if (conf.getKnownModelsAlignment()) {
 			this.graphBuilder = 
 					ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).getGraphBuilderClone();
 		} else {
@@ -524,7 +526,7 @@ public class Alignment implements OntologyUpdateListener {
 		return this.graphBuilder.getOutgoingLinksMap().get(nodeId);
 	}
 
-	public List<LabeledLink> getLinks(String sourceId, String targetId) {
+	public List<LabeledLink> getPossibleLinks(String sourceId, String targetId) {
 		return this.graphBuilder.getPossibleLinks(sourceId, targetId);
 	}
 
@@ -552,59 +554,6 @@ public class Alignment implements OntologyUpdateListener {
 		return results;
 	}
 	
-	public List<LabeledLink> getIncomingLinksInGraph(String nodeId) {
-		
-		List<LabeledLink> possibleLinks  = new ArrayList<LabeledLink>();
-		List<DefaultLink> tempDefault = null;
-		List<LabeledLink> tempLabeled = null;
-		HashSet<DefaultLink> allLinks = new HashSet<DefaultLink>();
-
-		Node node = this.getNodeById(nodeId);
-		if (node == null) return possibleLinks;
-		
-		Set<DefaultLink> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
-		if (incomingLinks != null) {
-			tempDefault = Arrays.asList(incomingLinks.toArray(new DefaultLink[0]));
-			allLinks.addAll(tempDefault);
-		}
-		
-		if (node instanceof ColumnNode) {
-			if (tempDefault != null) {
-				for (DefaultLink l : tempDefault)
-					if (l instanceof LabeledLink)
-						possibleLinks.add((LabeledLink)l);
-			}
-		} else {
-			Set<DefaultLink> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
-			if (outgoingLinks != null) {
-				tempDefault = Arrays.asList(outgoingLinks.toArray(new DefaultLink[0]));
-				allLinks.addAll(outgoingLinks);
-			}
-			
-			if (allLinks.size() == 0)
-				return possibleLinks;
-			
-			String sourceId, targetId;
-			for (DefaultLink e : allLinks) {
-				if (e.getSource().getId().equals(nodeId)) { // outgoing link
-					sourceId = e.getTarget().getId();
-					targetId = nodeId;
-				} else { // incoming link
-					sourceId = e.getSource().getId();
-					targetId = nodeId;
-				}
-				tempLabeled = getLinks(sourceId, targetId);
-				if (tempLabeled != null)
-					possibleLinks.addAll(tempLabeled);
-			}
-		}
-		
-		Collections.sort(possibleLinks, new LinkPriorityComparator());
-
-		logger.debug("Finished obtaining the incoming links.");
-		return possibleLinks;
-	}
-	
 	public Set<LabeledLink> getOutgoingLinksInTree(String nodeId) {
 		Set<LabeledLink> results = new HashSet<LabeledLink>();
 		
@@ -629,49 +578,103 @@ public class Alignment implements OntologyUpdateListener {
 		return results;
 	}
 	
-	public List<LabeledLink> getOutgoingLinksInGraph(String nodeId) {
-		
-		List<LabeledLink> possibleLinks  = new ArrayList<LabeledLink>();
-		List<DefaultLink> tempDefault = null;
-		List<LabeledLink> tempLabeled = null;
-		HashSet<DefaultLink> allLinks = new HashSet<DefaultLink>();
-
-		Node node = this.getNodeById(nodeId);
-		if (node == null || node instanceof ColumnNode) return possibleLinks;
-		
-		Set<DefaultLink> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
-		if (incomingLinks != null) {
-			tempDefault = Arrays.asList(incomingLinks.toArray(new DefaultLink[0]));
-			allLinks.addAll(tempDefault);
-		}
-		Set<DefaultLink> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
-		if (outgoingLinks != null) {
-			tempDefault = Arrays.asList(outgoingLinks.toArray(new DefaultLink[0]));
-			allLinks.addAll(outgoingLinks);
-		}
-		
-		if (allLinks.size() == 0)
-			return possibleLinks;
-		
-		String sourceId, targetId;
-		for (DefaultLink e : allLinks) {
-			if (e.getSource().getId().equals(nodeId)) { // outgoing link
-				sourceId = nodeId;
-				targetId = e.getTarget().getId();
-			} else { // incoming link
-				sourceId = nodeId;
-				targetId = e.getSource().getId();
-			}
-			tempLabeled = getLinks(sourceId, targetId);
-			if (tempLabeled != null)
-				possibleLinks.addAll(tempLabeled);
-		}
-		
-		Collections.sort(possibleLinks, new LinkPriorityComparator());
-
-		logger.debug("Finished obtaining the outgoing links.");
-		return possibleLinks;
-	}
+//	public List<LabeledLink> getIncomingLinksInGraph(String nodeId) {
+//		
+//		List<LabeledLink> possibleLinks  = new ArrayList<LabeledLink>();
+//		List<DefaultLink> tempDefault = null;
+//		List<LabeledLink> tempLabeled = null;
+//		HashSet<DefaultLink> allLinks = new HashSet<DefaultLink>();
+//
+//		Node node = this.getNodeById(nodeId);
+//		if (node == null) return possibleLinks;
+//		
+//		Set<DefaultLink> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
+//		if (incomingLinks != null) {
+//			tempDefault = Arrays.asList(incomingLinks.toArray(new DefaultLink[0]));
+//			allLinks.addAll(tempDefault);
+//		}
+//		
+//		if (node instanceof ColumnNode) {
+//			if (tempDefault != null) {
+//				for (DefaultLink l : tempDefault)
+//					if (l instanceof LabeledLink)
+//						possibleLinks.add((LabeledLink)l);
+//			}
+//		} else {
+//			Set<DefaultLink> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
+//			if (outgoingLinks != null) {
+//				tempDefault = Arrays.asList(outgoingLinks.toArray(new DefaultLink[0]));
+//				allLinks.addAll(outgoingLinks);
+//			}
+//			
+//			if (allLinks.size() == 0)
+//				return possibleLinks;
+//			
+//			String sourceId, targetId;
+//			for (DefaultLink e : allLinks) {
+//				if (e.getSource().getId().equals(nodeId)) { // outgoing link
+//					sourceId = e.getTarget().getId();
+//					targetId = nodeId;
+//				} else { // incoming link
+//					sourceId = e.getSource().getId();
+//					targetId = nodeId;
+//				}
+//				tempLabeled = getLinks(sourceId, targetId);
+//				if (tempLabeled != null)
+//					possibleLinks.addAll(tempLabeled);
+//			}
+//		}
+//		
+//		Collections.sort(possibleLinks, new LinkPriorityComparator());
+//
+//		logger.debug("Finished obtaining the incoming links.");
+//		return possibleLinks;
+//	}
+	
+	
+//	public List<LabeledLink> getOutgoingLinksInGraph(String nodeId) {
+//		
+//		List<LabeledLink> possibleLinks  = new ArrayList<LabeledLink>();
+//		List<DefaultLink> tempDefault = null;
+//		List<LabeledLink> tempLabeled = null;
+//		HashSet<DefaultLink> allLinks = new HashSet<DefaultLink>();
+//
+//		Node node = this.getNodeById(nodeId);
+//		if (node == null || node instanceof ColumnNode) return possibleLinks;
+//		
+//		Set<DefaultLink> incomingLinks = this.graphBuilder.getGraph().incomingEdgesOf(node);
+//		if (incomingLinks != null) {
+//			tempDefault = Arrays.asList(incomingLinks.toArray(new DefaultLink[0]));
+//			allLinks.addAll(tempDefault);
+//		}
+//		Set<DefaultLink> outgoingLinks = this.graphBuilder.getGraph().outgoingEdgesOf(node);
+//		if (outgoingLinks != null) {
+//			tempDefault = Arrays.asList(outgoingLinks.toArray(new DefaultLink[0]));
+//			allLinks.addAll(outgoingLinks);
+//		}
+//		
+//		if (allLinks.size() == 0)
+//			return possibleLinks;
+//		
+//		String sourceId, targetId;
+//		for (DefaultLink e : allLinks) {
+//			if (e.getSource().getId().equals(nodeId)) { // outgoing link
+//				sourceId = nodeId;
+//				targetId = e.getTarget().getId();
+//			} else { // incoming link
+//				sourceId = nodeId;
+//				targetId = e.getSource().getId();
+//			}
+//			tempLabeled = getLinks(sourceId, targetId);
+//			if (tempLabeled != null)
+//				possibleLinks.addAll(tempLabeled);
+//		}
+//		
+//		Collections.sort(possibleLinks, new LinkPriorityComparator());
+//
+//		logger.debug("Finished obtaining the outgoing links.");
+//		return possibleLinks;
+//	}
 	
 	private void updateLinksPreferredByUI() {
 		
@@ -747,6 +750,142 @@ public class Alignment implements OntologyUpdateListener {
 		return result;
 	}
 	
+	public List<LabeledLink> suggestLinks(String nodeId) {
+		
+		List<LabeledLink> suggestedLinks = new LinkedList<LabeledLink>();
+		
+		if (this.steinerTree == null) {
+			logger.error("the model is null.");
+			return suggestedLinks;
+		}
+		
+		Node n = this.getNodeById(nodeId);
+		if (n == null) {
+			logger.error("could not find the node " + nodeId + " in the model.");
+			return suggestedLinks;
+		}
+		
+		
+		Set<String> currentLinkIds = new HashSet<String>();
+		Set<LabeledLink> currentIncomingLinks, currentOutgoingLinks;
+		currentIncomingLinks = this.getIncomingLinksInTree(nodeId);
+		currentOutgoingLinks = this.getOutgoingLinksInTree(nodeId);
+		if (currentIncomingLinks != null) 
+			for (LabeledLink l : currentIncomingLinks)
+				currentLinkIds.add(l.getId());
+		if (currentOutgoingLinks != null) 
+			for (LabeledLink l : currentOutgoingLinks)
+				currentLinkIds.add(l.getId());
+		
+		Set<LabeledLink> candidateLinks = new HashSet<LabeledLink>();
+		List<LabeledLink> incomingLinks, outgoingLinks;
+		incomingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
+				getGraphBuilder().getIncomingLinks(nodeId);
+		outgoingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
+				getGraphBuilder().getOutgoingLinks(nodeId);
+		if (incomingLinks != null) candidateLinks.addAll(incomingLinks);
+		if (outgoingLinks != null) candidateLinks.addAll(outgoingLinks);
+		
+		if (candidateLinks.size() == 0)
+			return suggestedLinks;
+		
+		LinkCoherence modelCoherence = new LinkCoherence();
+		double modelCost = 0.0;
+		for (LabeledLink e : this.steinerTree.edgeSet()) {
+			// get the link from the graph
+			LabeledLink l = this.getLinkById(e.getId());
+//			modelCoherence.updateCoherence(this.steinerTree, l);
+			modelCoherence.updateCoherence(l);
+			modelCost += l.getWeight();
+		}
+		
+		AlignmentScore currentScore = new AlignmentScore(modelCoherence, modelCost);
+		List<AlignmentScore> alignmentScores = new LinkedList<AlignmentScore>();
+		for (LabeledLink l : candidateLinks) {
+			if (l.getModelIds() == null || l.getModelIds().isEmpty()) // ignore the links that are added by the user (not present in the known models)
+				continue;
+			// ignore the candidate links that are already in the model
+			if (currentLinkIds.contains(l.getId())) continue;
+			AlignmentScore a = new AlignmentScore(l, currentScore);
+			alignmentScores.add(a);
+		}
+		
+		Collections.sort(alignmentScores);
+		for (AlignmentScore a : alignmentScores) {
+			suggestedLinks.add(a.getLink());
+		}
+		
+		return suggestedLinks;
+	}
+
+	public List<LabeledLink> suggestAlternativeLinks(String linkId) {
+
+		List<LabeledLink> alternativeLinks = new LinkedList<LabeledLink>();
+		
+		if (this.steinerTree == null) {
+			logger.error("the model is null.");
+			return alternativeLinks;
+		}
+
+		LabeledLink link = this.getLinkById(linkId);
+		if (link == null) {
+			logger.error("could not find the link " + linkId + " in the model.");
+			return alternativeLinks;
+		}
+
+		Node source = this.getNodeById(link.getSource().getId());
+		if (source == null) {
+			logger.error("could not find the source node " + link.getSource().getId() + " in the model.");
+			return alternativeLinks;
+		}
+		
+		Node target = this.getNodeById(link.getTarget().getId());
+		if (target == null) {
+			logger.error("could not find the source node " + link.getTarget().getId() + " in the model.");
+			return alternativeLinks;
+		}
+		
+		Set<LabeledLink> candidateLinks = new HashSet<LabeledLink>();
+		List<LabeledLink> incomingLinks, outgoingLinks;
+		incomingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
+				getGraphBuilder().getLinks(target.getId(), source.getId());
+		outgoingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
+				getGraphBuilder().getLinks(source.getId(), target.getId());
+		if (incomingLinks != null) candidateLinks.addAll(incomingLinks);
+		if (outgoingLinks != null) candidateLinks.addAll(outgoingLinks);
+
+		if (candidateLinks.size() == 0)
+			return alternativeLinks;
+		
+		LinkCoherence modelCoherence = new LinkCoherence();
+		double modelCost = 0.0;
+		for (LabeledLink e : this.steinerTree.edgeSet()) {
+			// get the link from the graph
+			LabeledLink l = this.getLinkById(e.getId());
+//			modelCoherence.updateCoherence(this.steinerTree, l);
+			modelCoherence.updateCoherence(l);
+			modelCost += l.getWeight();
+		}
+		
+		AlignmentScore currentScore = new AlignmentScore(modelCoherence, modelCost);
+		List<AlignmentScore> alignmentScores = new LinkedList<AlignmentScore>();
+		for (LabeledLink l : candidateLinks) {
+			if (l.getModelIds() == null || l.getModelIds().isEmpty()) // ignore the links that are added by the user (not present in the known models)
+				continue;
+			// ignore the candidate links that are already in the model
+			if (l.getId().equalsIgnoreCase(link.getId())) continue;
+			AlignmentScore a = new AlignmentScore(l, currentScore);
+			alignmentScores.add(a);
+		}
+		
+		Collections.sort(alignmentScores);
+		for (AlignmentScore a : alignmentScores) {
+			alternativeLinks.add(a.getLink());
+		}
+		
+		return alternativeLinks;		
+	}
+
 	public void align() {
 		
 //    	logger.debug("*** Graph ***");

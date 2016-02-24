@@ -7,13 +7,22 @@ import java.util.Set;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.jsonldjava.core.JsonLdError;
+import com.github.jsonldjava.core.JsonLdOptions;
+import com.github.jsonldjava.core.JsonLdProcessor;
+import com.github.jsonldjava.utils.JsonUtils;
 
 public class N3ToJSONReducer extends Reducer<Text,Text,Text,Text>{
+	
+	private static Logger LOG = LoggerFactory.getLogger(JSONCompactMapper.class);
+	private Text reusableOutputKey = new Text("");
 	private Text reusableOutputValue = new Text("");
+	
 	protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
-	{
+	{	
 		Iterator<Text> iterator = values.iterator();
 		Set<String> allTriples = new HashSet<String>();
 		while(iterator.hasNext())
@@ -26,87 +35,29 @@ public class N3ToJSONReducer extends Reducer<Text,Text,Text,Text>{
 			}
 			
 		}
-		JSONObject output = new JSONObject();
-		String id = key.toString().trim();
-		if(id.startsWith("<") && id.endsWith(">"))
-		{
-			id = id.substring(1, id.length()-1);
-		}
-		output.accumulate("@id", id);
-		
+		StringBuilder triplesDocument = new StringBuilder();
 		for(String triple : allTriples)
 		{
-			int firstSpaceIndex = triple.indexOf(' ');
-			int secondSpaceIndex = triple.indexOf(' ', firstSpaceIndex+1);
-			String predicate = triple.substring(firstSpaceIndex, secondSpaceIndex).trim();
-			if(predicate.equals("<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"))
-			{
-				predicate = "@type";
-			}
-			else if(predicate.startsWith("<") && predicate.endsWith(">"))
-			{
-				predicate = predicate.substring(1, predicate.length()-1);
-			}
-			int periodIndex = triple.lastIndexOf(".");
-			if(periodIndex < 0)
-			{
-				periodIndex = triple.length();
-			}
-			String object = triple.substring(secondSpaceIndex, periodIndex).trim();
-			if((object.startsWith("<") && object.endsWith(">")))
-			{
-				object = object.substring(1, object.length()-1);
-			}
-			int typeIndex = object.indexOf("^^");
-			if(typeIndex > 0)
-			{
-				object = object.substring(0, typeIndex);
-			}
-			if(object.startsWith("\"") && object.endsWith("\""))
-			{
-				object = object.substring(1, object.length()-1);
-			}
-			if(!output.has(predicate))
-			{
-				output.put(predicate, object);
-			}
-			else 
-			{	
-				Object value = output.get(predicate);
-				if(value instanceof String)
-				{
-					JSONArray newArray = new JSONArray();
-					if(((String) value).compareTo(object) <= 0)
-					{
-						newArray.put(value);
-						newArray.put(object);
-					}
-					else
-					{
-						newArray.put(object);
-						newArray.put(value);
-					}
-					output.put(predicate, newArray);
-				}
-				else if(value instanceof JSONArray)
-				{
-					JSONArray array = (JSONArray)value;
-					String swapValue = object;
-					for(int i = 0; i < array.length(); i++)
-					{
-						if(object.compareTo(array.getString(i)) <= 0)
-						{
-							swapValue = array.getString(i);
-							array.put(i, object);
-							break;
-						}
-					}
-					array.put(swapValue);
-				}
-			}
+			triplesDocument.append(triple);
+			triplesDocument.append("\n");
 		}
-		reusableOutputValue.set(output.toString());
-		context.write(new Text(id), reusableOutputValue);
+		
+		try {
+			Object output = JsonLdProcessor.fromRDF(triplesDocument.toString());
+			JsonLdOptions jlo = new JsonLdOptions();
+			String result = JsonUtils.toString(JsonLdProcessor.compact(output, null, jlo));
+			reusableOutputValue.set(result);
+			String id = key.toString().trim();
+			if(id.startsWith("<") && id.endsWith(">"))
+			{
+				id = id.substring(1, id.length()-1);
+			}
+			reusableOutputKey.set(id);
+			context.write(reusableOutputKey, reusableOutputValue);
+		} catch (JsonLdError e) {
+			LOG.error("Unable to convert " + key.toString() + " to JSON-LD", e);
+		}
+		
 	}
 
 }

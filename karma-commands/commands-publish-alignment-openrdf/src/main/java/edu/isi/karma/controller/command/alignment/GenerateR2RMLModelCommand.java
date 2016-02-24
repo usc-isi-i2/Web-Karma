@@ -39,6 +39,7 @@ import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
+import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.CommandHistory;
@@ -47,7 +48,6 @@ import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
-import edu.isi.karma.controller.update.InfoUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -55,6 +55,7 @@ import edu.isi.karma.modeling.alignment.AlignmentManager;
 import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraph;
 import edu.isi.karma.modeling.alignment.learner.ModelLearningGraphType;
+import edu.isi.karma.modeling.alignment.learner.PatternWeightSystem;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -240,7 +241,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 				workspace.getCommandHistory().doCommand(changeInternalNodeLinksCommand, workspace);
 				uc.add(new HistoryUpdate(workspace.getCommandHistory()));
 				uc.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
-				uc.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+				uc.append(((WorksheetCommand)changeInternalNodeLinksCommand).computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 			}catch(Exception e)
 			{
 				e.printStackTrace();
@@ -272,7 +273,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 		if (modelingConfiguration.isLearnerEnabled())
 			ModelLearningGraph.getInstance(workspace.getOntologyManager(), ModelLearningGraphType.Compact).
-			addModelAndUpdateAndExport(semanticModel, false);
+			addModelAndUpdateAndExport(semanticModel, PatternWeightSystem.JWSPaperFormula);
 
 		// *****************************************************************************************
 		// *****************************************************************************************

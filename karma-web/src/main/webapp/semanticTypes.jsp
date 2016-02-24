@@ -223,6 +223,127 @@
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
        
+<div class="modal fade" id="classDialog" tabindex="-1">
+  <div class="modal-dialog modal-wide">
+		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title"><span id="classDialog_title"></span></h4>
+			  </div>
+			  <div class="modal-body">
+			  		<div class="main">
+			  			<div class="row">
+			  				<div class="col-sm-2" id="classDialogFunctions"></div>
+			  				<div class="col-sm-10" id="classDialogRight"></div>			  				
+			  			</div>
+						<div class="error" style="display: none"></div>
+					</div>
+			  </div>
+			 </form>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="classTabs" style="display:none">
+	<ul class="nav nav-tabs" role="tablist" id="class_tabs">
+	    <li role="presentation" class="active"><a href="#class_recommended" aria-controls="class_recommended" role="tab" data-toggle="tab">Recommended</a></li>
+	    <li role="presentation"><a href="#class_compatible" aria-controls="class_compatible" role="tab" data-toggle="tab">Compatible</a></li>
+	    <li role="presentation"><a href="#class_all" aria-controls="class_all" role="tab" data-toggle="tab">All</a></li>
+  	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+    	<div role="tabpanel" class="tab-pane active" id="class_recommended">
+    		<ul class="list-unstyled row"></ul>
+    	</div>
+    	<div role="tabpanel" class="tab-pane" id="class_compatible">
+    		<ul class="list-unstyled row"></ul>
+    	</div>
+    	<div role="tabpanel" class="tab-pane" id="class_all">
+    		<ul class="list-unstyled row"></ul>
+    		<div class="input-group col-sm-offset-6">
+		  		<input type="text" class="form-control" aria-describedby="basic-input_classDialog-addOn" id="input_classDialog">
+				<span class="input-group-addon glyphicon glyphicon-search" id="basic-input_classDialog-addOn" style="top:0px"></span>
+			</div>
+		</div>
+  	</div>
+</div>
+
+<div class="modal fade" id="propertyDialog" tabindex="-1">
+  <div class="modal-dialog modal-wide">
+		<div class="modal-content">
+			<form class="bs-example bs-example-form" role="form">
+		     <div class="modal-header">
+			      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			       <h4 class="modal-title"><span id="propertyDialog_title"></span></h4>
+			  </div>
+			  <div class="modal-body">
+			  		<div class="main">
+			  			<div class="row">
+			  				<div class="col-sm-2" id="propertyDialogFunctions"></div>
+			  				<div class="col-sm-10" id="propertyDialogRight"></div>
+			  			</div>
+			  		</div>
+					<div class="error" style="display: none"></div>
+			  </div>
+			 </form>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+	<div id="propertyTabs" style="display:none">
+		<ul class="nav nav-tabs" role="tablist" id="property_tabs">
+    		<li role="presentation" class="active"><a href="#property_recommended" aria-controls="property_recommended" role="tab" data-toggle="tab">Recommended</a></li>
+    		<li role="presentation"><a href="#property_compatible" aria-controls="property_compatible" role="tab" data-toggle="tab">Compatible</a></li>
+    		<li role="presentation"><a href="#property_all" aria-controls="property_all" role="tab" data-toggle="tab">All</a></li>
+  		</ul>
+
+	  	<!-- Tab panes -->
+	  	<div class="tab-content">
+    		<div role="tabpanel" class="tab-pane active" id="property_recommended">
+    			<ul class="list-unstyled row"></ul>
+    		</div>
+	    	<div role="tabpanel" class="tab-pane" id="property_compatible">
+	    		<ul class="list-unstyled row"></ul>
+	    	</div>
+	    	<div role="tabpanel" class="tab-pane" id="property_all">
+	    		<ul class="list-unstyled row"></ul>
+	    		<div class="input-group col-sm-offset-6">
+			  		<input type="text" class="form-control" aria-describedby="basic-input_propertyDialog-addOn" id="input_propertyDialog">
+					<span class="input-group-addon glyphicon glyphicon-search" id="basic-input_propertyDialog-addOn" style="top:0px"></span>
+				</div>
+
+	    	</div>
+  		</div>
+	</div>
+
+	<div id="propertyAdvanceOptions" style="display:none">
+		<div class="row">
+			<div class="form-group">
+				<label>
+					Literal Type:
+					<input type="text" class="form-control" id="propertyLiteralType" autocomplete="off">
+				</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="form-group">
+				<div class="checkbox">
+				  	<label>
+					    <input type="checkbox" id="propertyIsSubclass">
+					    specifies class for node
+				  	</label>
+				</div>
+			</div>
+		</div>			  	
+			
+		<div class="row">
+			<button type="submit" class="btn btn-primary" id="btnSaveAdvanceOptions">Save</button>
+		</div>
+	</div>			
+
 <div class="modal fade" id="addNodeDialog" tabindex="-1">
   <div class="modal-dialog">
 		<div class="modal-content">

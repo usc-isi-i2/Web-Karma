@@ -343,6 +343,61 @@ function parseClassJSON(clazz, result, allLabels) {
 	//	}
 }
 
+function getSuggestedSemanticTypes(worksheetId, columnId, classUri) {
+	var info = generateInfoObject(worksheetId, columnId, "GetSemanticSuggestionsCommand");
+	var newInfo = info['newInfo']; // Used for commands that take JSONArray as input and are saved in the history
+	if(classUri) {
+		info["classUri"] = classUri;
+		newInfo.push(getParamObject("classUri", info["classUri"], "other"));
+	}
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var result;
+	var returned = $.ajax({
+		url: "RequestController",
+		type: "POST",
+		data: info,
+		dataType: "json",
+		async: false,
+		complete: function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			hideLoading(info["worksheetId"]);
+			result = json.elements[0];
+		},
+		error: function(xhr, textStatus) {
+			alert("Error occured with fetching new rows! " + textStatus);
+			hideLoading(info["worksheetId"]);
+		}
+	});
+	return result;
+}
+
+function getSuggestedLinks(worksheetId, columnId) {
+	var info = generateInfoObject(worksheetId, columnId, "GetLinkSuggestionsCommand");
+	var newInfo = info['newInfo']; // Used for commands that take JSONArray as input and are saved in the history
+	
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var result;
+	var returned = $.ajax({
+		url: "RequestController",
+		type: "POST",
+		data: info,
+		dataType: "json",
+		async: false,
+		complete: function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			hideLoading(info["worksheetId"]);
+			result = json.elements[0];
+		},
+		error: function(xhr, textStatus) {
+			alert("Error occured with fetching new rows! " + textStatus);
+			hideLoading(info["worksheetId"]);
+		}
+	});
+	return result;
+}
+
 function getAllDataAndObjectProperties(worksheetId) {
 	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
 	info["propertiesRange"] = "allDataAndObjectProperties";
@@ -505,6 +560,33 @@ function getAllPropertiesForDomainRange(worksheetId, domainUri, rangeUri) {
 	return result;
 }
 
+function getRecommendedProperties(worksheetId, linkId) {
+	var info = generateInfoObject(worksheetId, "", "GetPropertiesCommand");
+	info["propertiesRange"] = "recommendedProperties";
+	info["linkId"] = linkId;
+
+	var result = [];
+	$.ajax({
+		url: "RequestController",
+		type: "POST",
+		data: info,
+		dataType: "json",
+		async: false,
+		complete: function(xhr, textStatus) {
+			var json = $.parseJSON(xhr.responseText);
+			var data = json.elements[0].properties;
+			$.each(data, function(index, prop) {
+				parsePropertyJSON(prop, result);
+			});
+		},
+		error: function(xhr, textStatus) {
+			alert("Error occured while fetching properties: " + textStatus);
+		}
+	});
+	//sortClassPropertyNodes(result);
+	return result;
+}
+
 function parsePropertyJSON(prop, result) {
 	var node = {
 		"label": prop.label,
@@ -582,6 +664,128 @@ function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
 	return result;
 }
 
+function changeLinks(worksheetId, alignmentId, oldEdges, newEdges) {
+	var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
+	// Prepare the input for command
+	var newInfo = info['newInfo'];
+	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+
+	// Put the old edge information
+	var initialEdges = [];
+	$.each(oldEdges, function(index, edge) {
+		var oldEdgeObj = {};
+		oldEdgeObj["edgeSourceId"] = edge.source.id;
+		oldEdgeObj["edgeTargetId"] = edge.target.id;
+		oldEdgeObj["edgeId"] = edge.uri;
+		initialEdges.push(oldEdgeObj);
+	});
+	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+	info["initialEdges"] = initialEdges;
+
+	// Put the new edge information
+	var newEdgesArr = [];
+	$.each(newEdges, function(index, edge) {
+		var newEdgeObj = {};
+		newEdgeObj["edgeSourceId"] = edge.source.id;
+		newEdgeObj["edgeSourceUri"] = edge.source.uri;
+		newEdgeObj["edgeTargetId"] = edge.target.id;
+		newEdgeObj["edgeTargetUri"] = edge.target.uri;
+		newEdgeObj["edgeId"] = edge.uri;
+		newEdgesArr.push(newEdgeObj);
+	});
+	newInfo.push(getParamObject("newEdges", newEdgesArr, "other"));
+	info["newEdges"] = newEdgesArr;
+
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(worksheetId);
+	return sendRequest(info, worksheetId);
+}
+
+function setSpecializedEdgeSemanticType(worksheetId, columnId, edge, rdfLiteralType) {
+	var info = generateInfoObject(worksheetId, columnId, "");
+	info["command"] = "SetMetaPropertyCommand";
+
+	var newInfo = info['newInfo'];
+
+	info["metaPropertyName"] = "isSpecializationForEdge";
+	info["metaPropertyUri"] = edge.uri;
+	info["metaPropertyId"] = edge.id;
+	newInfo.push(getParamObject("metaPropertyName", info["metaPropertyName"], "other"));
+	newInfo.push(getParamObject("metaPropertyUri", info["metaPropertyUri"], "other"));
+	newInfo.push(getParamObject("metaPropertyId", info["metaPropertyId"], "linkWithHNodeId"));
+
+	info["trainAndShowUpdates"] = true
+	info["rdfLiteralType"] = ''
+	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
+	if(rdfLiteralType)
+		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	else
+		newInfo.push(getParamObject("rdfLiteralType", '', "other"));
+
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var returned = sendRequest(info, worksheetId);
+}
+
+function setSubClassSemanticType(worksheetId, columnId, clazz, rdfLiteralType) {
+	var info = generateInfoObject(worksheetId, columnId, "");
+	info["command"] = "SetMetaPropertyCommand";
+
+	var newInfo = info['newInfo'];
+
+	info["metaPropertyName"] = "isSubclassOfClass";
+	info["metaPropertyUri"] = clazz.uri;
+	info["metaPropertyId"] = clazz.id;
+	newInfo.push(getParamObject("metaPropertyName", info["metaPropertyName"], "other"));
+	newInfo.push(getParamObject("metaPropertyUri", info["metaPropertyUri"], "other"));
+	newInfo.push(getParamObject("metaPropertyId", info["metaPropertyId"], "linkWithHNodeId"));
+
+	info["trainAndShowUpdates"] = true
+	info["rdfLiteralType"] = ''
+	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
+	if(rdfLiteralType)
+		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	else
+		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var returned = sendRequest(info, worksheetId);
+}
+
+function setSemanticType(worksheetId, columnId, type, rdfLiteralType) {
+	var info = generateInfoObject(worksheetId, columnId, "");
+	var newInfo = info['newInfo']; 
+	if(type.label == "uri") {
+		info["command"] = "SetMetaPropertyCommand";
+		info["metaPropertyName"] = "isUriOfClass";
+		info["metaPropertyUri"] = type.source.uri
+		info["metaPropertyId"] = type.source.id;
+		newInfo.push(getParamObject("metaPropertyName", info["metaPropertyName"], "other"));
+		newInfo.push(getParamObject("metaPropertyUri", info["metaPropertyUri"], "other"));
+		newInfo.push(getParamObject("metaPropertyId", info["metaPropertyId"], "other"));
+	} else {
+		info["command"] = "SetSemanticTypeCommand";
+		var semTypesArray = new Array();
+		var newType = new Object();
+		newType["FullType"] = type.uri;
+		newType["DomainUri"] = type.source.uri;
+		newType["DomainId"] = type.source.id;
+		newType["DomainLabel"] = type.source.label;
+		semTypesArray.push(newType);
+		info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
+		newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
+	}
+	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
+	if(rdfLiteralType)
+		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	else
+		newInfo.push(getParamObject("rdfLiteralType", '', "other"));
+
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(info["worksheetId"]);
+	var returned = sendRequest(info, worksheetId);
+}
+
 function changeKarmaHome(homeDir) {
 	var info = generateInfoObject("", "", "SetKarmaHomeCommand");
 	info["directory"] = homeDir;
@@ -617,6 +821,13 @@ function refreshWorksheet(worksheetId, updates) {
 	info["updates"] = JSON.stringify(updates);
 	showLoading(info["worksheetId"]);
 	sendRequest(info, worksheetId);
+}
+
+function getLabelWithoutPrefix(label) {
+	idx = label.indexOf(":");
+	if(idx != -1)
+		return label.substring(idx+1);
+	return label;
 }
 
 function isValidUrl(url) {

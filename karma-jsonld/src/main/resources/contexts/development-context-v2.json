@@ -1,0 +1,1105 @@
+{
+  "@context": {
+    "Thing": {
+      "@type": "@id",
+      "@id": "http://schema.org/Thing"
+    },
+    "Text": {
+      "@type": "@id",
+      "@id": "http://schema.org/Text"
+    },
+    "State": {
+      "@type": "@id",
+      "@id": "http://schema.org/State"
+    },
+    "LegalAction": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/LegalAction"
+    },
+    "City": {
+      "@type": "@id",
+      "@id": "http://schema.org/City"
+    },
+    "GovernmentPermit": {
+      "@type": "@id",
+      "@id": "http://schema.org/GovernmentPermit"
+    },
+    "Patent": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/Patent"
+    },
+    "Topic": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/Topic"
+    },
+    "DistinctivePhrases": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/DistinctivePhrases"
+    },
+    "Feature": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/Feature"
+    },
+    "FeatureCollection": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/FeatureCollection"
+    },
+    "WebPage": {
+      "@type": "@id",
+      "@id": "http://schema.org/WebPage"
+    },
+    "ScholarlyArticle": {
+      "@type": "@id",
+      "@id": "http://schema.org/ScholarlyArticle"
+    },
+    "WebPageElement": {
+      "@type": "@id",
+      "@id": "http://schema.org/WebPageElement"
+    },
+    "PhoneNumber": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/PhoneNumber"
+    },
+    "EmailAddress": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/EmailAddress"
+    },
+    "Place": {
+      "@type": "@id",
+      "@id": "http://schema.org/Place"
+    },
+    "GeoCoordinates": {
+      "@type": "@id",
+      "@id": "http://schema.org/GeoCoordinates"
+    },
+    "Country": {
+      "@type": "@id",
+      "@id": "http://schema.org/Country"
+    },
+    "PostalAddress": {
+      "@type": "@id",
+      "@id": "http://schema.org/PostalAddress"
+    },
+    "Activity": {
+      "@type": "@id",
+      "@id": "http://www.w3.org/ns/prov#Activity"
+    },
+    "ImageObject": {
+      "@type": "@id",
+      "@id": "http://schema.org/ImageObject"
+    },
+    "ServiceRate": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/ServiceRate"
+    },
+    "Organization": {
+      "@type": "@id",
+      "@id": "http://schema.org/Organization"
+    },
+    "PersonName": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/PersonName"
+    },
+    "SimilarObject": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/SimilarObject"
+    },
+    "Name": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/Name"
+    },
+    "Identifier": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/Identifier"
+    },
+    "Article": {
+      "@id": "http://schema.org/Article"
+    },
+    "Cluster": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/Cluster"
+    },
+    "Thread": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/Thread"
+    },
+    "Post": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/Post"
+    },
+    "Offer": {
+      "@type": "@id",
+      "@id": "http://schema.org/Offer"
+    },
+    "PriceSpecification": {
+      "@type": "@id",
+      "@id": "http://schema.org/PriceSpecification"
+    },
+    "Demand": {
+      "@type": "@id",
+      "@id": "http://schema.org/Demand"
+    },
+    "Product": {
+      "@type": "@id",
+      "@id": "http://schema.org/Product"
+    },
+    "OrganizationRole": {
+      "@type": "@id",
+      "@id": "http://schema.org/OrganizationRole"
+    },
+    "Role": {
+      "@type": "@id",
+      "@id": "http://schema.org/Role"
+    },
+    "PersonOrOrganization": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/PersonOrOrganization"
+    },
+    "LegalActionCause": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/LegalActionCause"
+    },
+    "AdultService": {
+      "@type": "@id",
+      "@id": "http://memexproxy.com/ontology/AdultService"
+    },
+    "a": "@type",
+    "hairColor": {
+      "@id": "http://memexproxy.com/ontology/hairColor",
+      "@container":"@set"
+    },
+    "eyeColor": {
+      "@id": "http://memexproxy.com/ontology/eyeColor",
+      "@container":"@set"
+    },
+    "personAge": {
+      "@id": "http://memexproxy.com/ontology/personAge",
+      "@container":"@set"
+    },
+    "mainEntityOfPage": {
+      "@id": "http://schema.org/mainEntityOfPage",
+      "@type": "@id"
+    },
+    "mainEntity": {
+      "@id": "http://schema.org/mainEntity",
+      "@type": "@id"
+    },
+    "makesOffer": {
+      "@id": "http://schema.org/makesOffer",
+      "@container":"@set",
+      "@type": "@id"
+    },
+    "owner": {
+      "@id": "http://memexproxy.com/ontology/owner",
+      "@container":"@set",
+      "@type": "@id"
+    },
+    "legalName": {
+      "@id": "http://schema.org/legalName"
+    },
+    "provider": {
+      "@id": "http://schema.org/provider"
+    },
+    "category": {
+      "@id": "http://schema.org/category"
+    },
+    "cause": {
+      "@id": "http://schema.org/cause"
+    },
+    "cacheUrl": {
+      "@id": "http://memexproxy.com/ontology/cacheUrl"
+    },
+    "plaintiff": {
+      "@id": "http://memexproxy.com/ontology/plaintiff"
+    },
+    "defendant": {
+      "@id": "http://memexproxy.com/ontology/defendant"
+    },
+    "numberOfItems": {
+      "@id": "http://memexproxy.com/ontology/numberOfItems"
+    },
+    "assignee": {
+      "@id": "http://memexproxy.com/ontology/assignee",
+      "@type": "@id"
+    },
+    "isSimilarTo": {
+      "@id": "http://schema.org/isSimilarTo",
+      "@container":"@set"
+    },
+    "targetUrl": {
+      "@id": "http://schema.org/targetUrl"
+    },
+    "about": {
+      "@id": "http://schema.org/about"
+    },
+    "audience": {
+      "@id": "http://schema.org/audience"
+    },
+    "issuedBy": {
+      "@id": "http://schema.org/issuedBy"
+    },
+    "valueName": {
+      "@id": "http://schema.org/valueName"
+    },
+    "status": {
+      "@id": "http://schema.org/status"
+    },
+    "validFrom": {
+      "@id": "http://schema.org/validFrom"
+    },
+    "validIn": {
+      "@id": "http://schema.org/validIn"
+    },
+    "postalCode": {
+      "@id": "http://schema.org/postalCode"
+    },
+    "streetAddress": {
+      "@id": "http://schema.org/streetAddress"
+    },
+    "providesService": {
+      "@id": "http://schema.org/providesService",
+      "@type": "@id"
+    },
+    "serviceType": {
+      "@id": "http://schema.org/serviceType"
+    },
+    "subtype": {
+      "@id": "http://schema.org/subtype"
+    },
+    "dateCreated": {
+      "@id": "http://schema.org/dateCreated"
+    },
+    "worksFor": {
+      "@id": "http://schema.org/worksFor",
+      "@type": "@id"
+    },
+    "employee": {
+      "@id": "http://schema.org/employee",
+      "@type": "@id"
+    },
+    "subOrganization": {
+      "@id": "http://schema.org/subOrganization"
+    },
+    "databaseId": {
+      "@id": "http://memexproxy.com/ontology/databaseId"
+    },
+    "digitalObjectIdentifier": {
+      "@id": "http://memexproxy.com/ontology/digitalObjectIdentifier"
+    },
+    "agent": {
+      "@id": "http://schema.org/agent"
+    },
+    "textChecksum": {
+      "@id": "http://memexproxy.com/ontology/textChecksum"
+    },
+    "hasBodyPart": {
+      "@id": "http://memexproxy.com/ontology/hasBodyPart",
+      "@type": "@id"
+    },
+    "hasImagePart": {
+      "@id": "http://memexproxy.com/ontology/hasImagePart",
+      "@type": "@id"
+    },
+    "hasTitlePart": {
+      "@id": "http://memexproxy.com/ontology/hasTitlePart",
+      "@type": "@id"
+    },
+    "hasAbstractPart": {
+      "@id": "http://memexproxy.com/ontology/hasAbstractPart",
+      "@type": "@id"
+    },
+    "hasSignaturePart": {
+      "@id": "http://memexproxy.com/ontology/hasSignaturePart",
+      "@type": "@id"
+    },
+    "hasClaimPart": {
+      "@id": "http://memexproxy.com/ontology/hasClaimPart",
+      "@type": "@id"
+    },
+    "hasPhrase": {
+      "@id": "http://memexproxy.com/ontology/hasPhrase"
+    },
+    "hasPost": {
+      "@id": "http://memexproxy.com/ontology/hasPost",
+      "@type": "@id"
+    },
+    "hasFeatureCollection": {
+      "@id": "http://memexproxy.com/ontology/hasFeatureCollection"
+    },
+    "hasFeatures": {
+      "@id": "http://memexproxy.com/ontology/hasFeatures"
+    },
+    "distinctivePhrases": {
+      "@id": "http://memexproxy.com/ontology/distinctivePhrases"
+    },
+    "featureName": {
+      "@id": "http://memexproxy.com/ontology/featureName"
+    },
+    "isAuthorOf": {
+      "@id": "http://memexproxy.com/ontology/isAuthorOf",
+      "@type": "@id"
+    },
+    "isPostOf": {
+      "@id": "http://memexproxy.com/ontology/isPostOf",
+      "@type": "@id"
+    },
+    "activityCount": {
+      "@id": "http://memexproxy.com/ontology/activityCount"
+    },
+    "featureValue": {
+      "@id": "http://memexproxy.com/ontology/featureValue"
+    },
+    "featureObject": {
+      "@id": "http://memexproxy.com/ontology/featureObject"
+    },
+    "generatedAtTime": {
+      "@type": "xsd:date",
+      "@id": "http://www.w3.org/ns/prov#generatedAtTime"
+    },
+    "snapshotUri": {
+      "@id": "http://memexproxy.com/ontology/snapshotUri",
+      "@type": "@id"
+    },
+    "text": {
+      "@id": "http://schema.org/text"
+    },
+    "uri": "@id",
+    "url": {
+      "@id": "http://schema.org/url"
+    },
+    "isoCode": {
+      "@id": "http://memexproxy.com/ontology/isoCode"
+    },
+    "applicant": {
+      "@id": "http://memexproxy.com/ontology/applicant",
+      "@type": "@id"
+    },
+    "price": {
+      "@id": "http://schema.org/price"
+    },
+    "priceCurrency": {
+      "@id": "http://schema.org/priceCurrency"
+    },
+    "billingIncrement": {
+      "@id": "http://schema.org/billingIncrement"
+    },
+    "unitCode": {
+      "@id": "http://schema.org/unitCode"
+    },
+    "wasGeneratedBy": {
+      "@id": "http://www.w3.org/ns/prov#wasGeneratedBy",
+      "@type": "@id"
+    },
+    "wasDerivedFrom": {
+      "@id": "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "@type": "@id"
+    },
+    "endedAtTime": {
+      "@id": "http://www.w3.org/ns/prov#endedAtTime"
+    },
+    "wasAttributedTo": {
+      "@id": "http://www.w3.org/ns/prov#wasAttributedTo",
+      "@type": "@id"
+    },
+    "wasAssociatedWith": {
+      "@id": "http://www.w3.org/ns/prov#wasAssociatedWith"
+    },
+    "Person": {
+      "@id": "http://schema.org/Person"
+    },
+    "screenshot": {
+      "@id": "http://schema.org/screenshot"
+    },
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "label": {
+      "@id": "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "similarity_score": {
+      "@id": "http://memexproxy.com/ontology/similarity_score"
+    },
+    "similar_url": {
+      "@id": "http://memexproxy.com/ontology/similar_url"
+    },
+    "address": {
+      "@id": "http://schema.org/address",
+      "@container":"@set",
+      "@type": "@id"
+    },
+    "addressCountry": {
+      "@id": "http://schema.org/addressCountry"
+    },
+    "addressLocality": {
+      "@id": "http://schema.org/addressLocality"
+    },
+    "addressRegion": {
+      "@id": "http://schema.org/addressRegion"
+    },
+    "location": {
+      "@id": "http://schema.org/location"
+    },
+    "geo": {
+      "@id": "http://schema.org/geo"
+    },
+    "lat": {
+      "@id": "http://schema.org/latitude"
+    },
+    "lon": {
+      "@id": "http://schema.org/longitude"
+    },
+    "inLanguage": {
+      "@id": "http://schema.org/inLanguage"
+    },
+    "dateModified": {
+      "@id": "http://schema.org/dateModified"
+    },
+    "dateCrawled": {
+      "@id": "http://memexproxy.com/ontology/dateCrawled"
+    },
+    "dateMostLikelyCreated": {
+      "@id": "http://memexproxy.com/ontology/dateMostLikelyCreated"
+    },
+    "phonenumber": {
+      "@id": "http://memexproxy.com/ontology/phonenumber"
+    },
+    "countryDialingCode": {
+      "@id": "http://memexproxy.com/ontology/countryDialingCode"
+    },
+    "localPhoneNumber": {
+      "@id": "http://memexproxy.com/ontology/localPhoneNumber"
+    },
+    "emailaddress": {
+      "@id": "http://memexproxy.com/ontology/emailaddress"
+    },
+    "website": {
+      "@id": "http://memexproxy.com/ontology/website"
+    },
+    "person_age": {
+      "@id": "http://memexproxy.com/ontology/person_age"
+    },
+    "person_gender": {
+      "@id": "http://memexproxy.com/ontology/person_gender"
+    },
+    "person_ethnicity": {
+      "@id": "http://memexproxy.com/ontology/person_ethnicity"
+    },
+    "person_height": {
+      "@id": "http://memexproxy.com/ontology/person_height"
+    },
+    "person_haircolor": {
+      "@id": "http://memexproxy.com/ontology/person_haircolor"
+    },
+    "person_build": {
+      "@id": "http://memexproxy.com/ontology/person_build"
+    },
+    "person_cupsizeus": {
+      "@id": "http://memexproxy.com/ontology/person_cupsizeus"
+    },
+    "person_bustbandsize": {
+      "@id": "http://memexproxy.com/ontology/person_bustbandsize"
+    },
+    "person_piercings": {
+      "@id": "http://memexproxy.com/ontology/person_piercings"
+    },
+    "person_hairlength": {
+      "@id": "http://memexproxy.com/ontology/person_hairlength"
+    },
+    "person_hairtype": {
+      "@id": "http://memexproxy.com/ontology/person_hairtype"
+    },
+    "person_eyecolor": {
+      "@id": "http://memexproxy.com/ontology/person_eyecolor"
+    },
+    "person_weight": {
+      "@id": "http://memexproxy.com/ontology/person_weight"
+    },
+    "person_name": {
+      "@id": "http://memexproxy.com/ontology/person_name"
+    },
+    "person_tattoocount": {
+      "@id": "http://memexproxy.com/ontology/person_tattoocount"
+    },
+    "person_grooming": {
+      "@id": "http://memexproxy.com/ontology/person_grooming"
+    },
+    "person_implantspresent": {
+      "@id": "http://memexproxy.com/ontology/person_implantspresent"
+    },
+    "person_username": {
+      "@id": "http://memexproxy.com/ontology/person_username"
+    },
+    "person_userid": {
+      "@id": "http://memexproxy.com/ontology/person_userid"
+    },
+    "person_blackhat_username": {
+      "@id": "http://memexproxy.com/ontology/person_blackhat_username"
+    },
+    "person_travel": {
+      "@id": "http://memexproxy.com/ontology/person_travel"
+    },
+    "person_waistsize": {
+      "@id": "http://memexproxy.com/ontology/person_waistsize"
+    },
+    "person_hipstype": {
+      "@id": "http://memexproxy.com/ontology/person_hipstype"
+    },
+    "person_alias": {
+      "@id": "http://memexproxy.com/ontology/person_alias"
+    },
+    "person_incalloutcall": {
+      "@id": "http://memexproxy.com/ontology/person_incalloutcall"
+    },
+    "person_location": {
+      "@id": "http://memexproxy.com/ontology/person_location"
+    },
+    "datePublished": {
+      "@id": "http://schema.org/datePublished"
+    },
+    "isCitationOf": {
+      "@id": "http://memexproxy.com/ontology/isCitationOf"
+    },
+    "citation": {
+      "@id": "http://schema.org/citation"
+    },
+    "publicationUri": {
+      "@id": "http://memexproxy.com/ontology/publicationUri",
+      "@type": "@id"
+    },
+    "hasName": {
+      "@id": "http://memexproxy.com/ontology/hasName"
+    },
+    "hasIdentifier": {
+      "@id": "http://memexproxy.com/ontology/hasIdentifier"
+    },
+    "hasType": {
+      "@id": "http://memexproxy.com/ontology/hasType"
+    },
+    "buyer": {
+      "@id": "http://schema.org/buyer",
+      "@type": "@id"
+    },
+    "seller": {
+      "@id": "http://schema.org/seller",
+      "@type": "@id"
+    },
+    "description": {
+      "@id": "http://schema.org/description",
+      "@container":"@set"
+    },
+    "title": {
+      "@id": "http://schema.org/title"
+    },
+    "name": {
+      "@id": "http://schema.org/name",
+      "@container":"@set"
+    },
+    "alternateName": {
+      "@id": "http://schema.org/alternateName"
+    },
+    "aggregateRating": {
+      "@id": "http://schema.org/aggregateRating"
+    },
+    "ratingValue": {
+      "@id": "http://schema.org/ratingValue"
+    },
+    "AggregateRating": {
+      "@id": "http://schema.org/AggregateRating"
+    },
+    "image": {
+      "@id": "http://schema.org/image"
+    },
+    "publisher": {
+      "@id": "http://schema.org/publisher"
+    },
+    "manufacturer": {
+      "@id": "http://schema.org/manufacturer"
+    },
+    "memberOf": {
+      "@id": "http://schema.org/memberOf"
+    },
+    "availableAtOrFrom": {
+      "@id": "http://schema.org/availableAtOrFrom",
+      "@type": "@id"
+    },
+    "availabilityStarts": {
+      "@id": "http://schema.org/availabilityStarts"
+    },
+    "startDate": {
+      "@id": "http://schema.org/startDate"
+    },
+    "identifier": {
+      "@id": "http://memexproxy.com/ontology/identifier",
+      "@container":"@set"
+    },
+    "itemOffered": {
+      "@id": "http://schema.org/itemOffered",
+      "@type": "@id"
+    },
+    "offers": {
+      "@id": "http://schema.org/offers",
+      "@container":"@set",
+      "@type": "@id"
+    },
+    "startTime": {
+      "@id": "http://schema.org/startTime"
+    },
+    "itemCondition": {
+      "@id": "http://schema.org/itemCondition"
+    },
+    "model": {
+      "@id": "http://schema.org/model"
+    },
+    "serialNumber": {
+      "@id": "http://schema.org/serialNumber"
+    },
+    "priceSpecification": {
+      "@id": "http://schema.org/priceSpecification",
+      "@container":"@set"
+    },
+    "inventoryLevel": {
+      "@id": "http://schema.org/inventoryLevel"
+    },
+    "sku": {
+      "@id": "http://schema.org/sku"
+    },
+    "mpn": {
+      "@id": "http://schema.org/mpn"
+    },
+    "contactPoint": {
+      "@id": "http://schema.org/contactPoint",
+      "@type": "@id"
+    },
+    "telephone": {
+      "@id": "http://schema.org/telephone",
+      "@container":"@set",
+      "@type": "@id"
+    },
+    "creditcardaccepted": {
+      "@id": "http://memexproxy.com/ontology/creditcardaccepted"
+    },
+    "rate": {
+      "@id": "http://memexproxy.com/ontology/rate"
+    },
+    "place_name": {
+      "@id": "http://memexproxy.com/ontology/place_name"
+    },
+    "place_zipcode": {
+      "@id": "http://memexproxy.com/ontology/place_zipcode"
+    },
+    "place_city": {
+      "@id": "http://memexproxy.com/ontology/place_city"
+    },
+    "place_state": {
+      "@id": "http://memexproxy.com/ontology/place_state"
+    },
+    "place_country": {
+      "@id": "http://memexproxy.com/ontology/place_country"
+    },
+    "place_postalAddress": {
+      "@id": "http://memexproxy.com/ontology/place_postalAddress"
+    },
+    "text_body_clean": {
+      "@id": "http://memexproxy.com/ontology/text_body_clean"
+    },
+    "text_title_clean": {
+      "@id": "http://memexproxy.com/ontology/text_title_clean"
+    },
+    "text_body_unicode_block_catalog": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_block_catalog"
+    },
+    "text_body_unicode_block_histogram": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_block_histogram"
+    },
+    "text_body_unicode_block_signature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_block_signature"
+    },
+    "text_body_unicode_catalog": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_catalog"
+    },
+    "text_body_unicode_category_catalog": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_category_catalog"
+    },
+    "text_body_unicode_category_histogram": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_category_histogram"
+    },
+    "text_body_unicode_category_signature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_category_signature"
+    },
+    "text_body_unicode_histogram": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_histogram"
+    },
+    "text_body_unicode_signature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_signature"
+    },
+    "text_title_unicode_block_catalog": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_block_catalog"
+    },
+    "text_title_unicode_block_histogram": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_block_histogram"
+    },
+    "text_title_unicode_block_signature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_block_signature"
+    },
+    "text_title_unicode_catalog": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_catalog"
+    },
+    "text_title_unicode_category_catalog": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_category_catalog"
+    },
+    "text_title_unicode_category_histogram": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_category_histogram"
+    },
+    "text_title_unicode_category_signature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_category_signature"
+    },
+    "text_title_unicode_histogram": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_histogram"
+    },
+    "text_title_unicode_signature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_signature"
+    },
+    "author": {
+      "@id": "http://schema.org/author",
+      "@type": "@id"
+    },
+    "sourceOrganization": {
+      "@id": "http://schema.org/sourceOrganization"
+    },
+    "email": {
+      "@id": "http://schema.org/email",
+      "@container":"@set"
+    },
+    "content_type": {
+      "@id": "http://memexproxy.com/ontology/content_type"
+    },
+    "content_length": {
+      "@id": "http://memexproxy.com/ontology/content_length"
+    },
+    "publication_year": {
+      "@id": "http://memexproxy.com/ontology/publication_year"
+    },
+    "affiliation_country": {
+      "@id": "http://memexproxy.com/ontology/affiliation_country"
+    },
+    "compound": {
+      "@id": "http://memexproxy.com/ontology/compound"
+    },
+    "organization": {
+      "@id": "http://memexproxy.com/ontology/organization",
+      "@type": "@id"
+    },
+    "misc": {
+      "@id": "http://memexproxy.com/ontology/misc"
+    },
+    "operatingPermit": {
+      "@id": "http://memexproxy.com/ontology/operatingPermit"
+    },
+    "legalAction": {
+      "@id": "http://memexproxy.com/ontology/legalAction",
+      "@type": "@id"
+    },
+    "place_location": {
+      "@id": "http://memexproxy.com/ontology/place_location"
+    },
+    "provider_name": {
+      "@id": "http://memexproxy.com/ontology/provider_name"
+    },
+    "claims": {
+      "@id": "http://memexproxy.com/ontology/claims"
+    },
+    "keywords": {
+      "@id": "http://schema.org/keywords"
+    },
+    "wipo_country_code": {
+      "@id": "http://memexproxy.com/ontology/wipo_country_code"
+    },
+    "similar_bodyPart": {
+      "@id": "http://memexproxy.com/ontology/similar_bodyPart"
+    },
+    "enrollment_date": {
+      "@id": "http://memexproxy.com/ontology/enrollment_date"
+    },
+    "weaponsMentioned": {
+      "@id": "http://memexproxy.com/ontology/weaponsMentioned"
+    },
+    "person_postCount": {
+      "@id": "http://memexproxy.com/ontology/person_postCount"
+    },
+    "isPartOf": {
+      "@id": "http://schema.org/isPartOf",
+      "@type": "@id"
+    },
+    "pricesMentioned": {
+      "@id": "http://memexproxy.com/ontology/pricesMentioned"
+    },
+    "bitcoinPricesMentioned": {
+      "@id": "http://memexproxy.com/ontology/bitcoinPricesMentioned"
+    },
+    "similar_bodyPart_cluster": {
+      "@id": "http://memexproxy.com/ontology/similar_bodyPart_cluster"
+    },
+    "emailDomainsMentioned": {
+      "@id": "http://memexproxy.com/ontology/emailDomainsMentioned"
+    },
+    "fromUser": {
+      "@id": "http://memexproxy.com/ontology/fromUser"
+    },
+    "toUsers": {
+      "@id": "http://memexproxy.com/ontology/toUsers"
+    },
+    "transactionTypesMentioned": {
+      "@id": "http://memexproxy.com/ontology/transactionTypesMentioned"
+    },
+    "phonenumber_feature": {
+      "@id": "http://memexproxy.com/ontology/phonenumber_feature"
+    },
+    "emailaddress_feature": {
+      "@id": "http://memexproxy.com/ontology/emailaddress_feature"
+    },
+    "website_feature": {
+      "@id": "http://memexproxy.com/ontology/website_feature"
+    },
+    "person_age_feature": {
+      "@id": "http://memexproxy.com/ontology/person_age_feature"
+    },
+    "person_gender_feature": {
+      "@id": "http://memexproxy.com/ontology/person_gender_feature"
+    },
+    "person_ethnicity_feature": {
+      "@id": "http://memexproxy.com/ontology/person_ethnicity_feature"
+    },
+    "person_height_feature": {
+      "@id": "http://memexproxy.com/ontology/person_height_feature"
+    },
+    "person_haircolor_feature": {
+      "@id": "http://memexproxy.com/ontology/person_haircolor_feature"
+    },
+    "person_build_feature": {
+      "@id": "http://memexproxy.com/ontology/person_build_feature"
+    },
+    "person_cupsizeus_feature": {
+      "@id": "http://memexproxy.com/ontology/person_cupsizeus_feature"
+    },
+    "person_bustbandsize_feature": {
+      "@id": "http://memexproxy.com/ontology/person_bustbandsize_feature"
+    },
+    "person_piercings_feature": {
+      "@id": "http://memexproxy.com/ontology/person_piercings_feature"
+    },
+    "person_hairlength_feature": {
+      "@id": "http://memexproxy.com/ontology/person_hairlength_feature"
+    },
+    "person_hairtype_feature": {
+      "@id": "http://memexproxy.com/ontology/person_hairtype_feature"
+    },
+    "person_eyecolor_feature": {
+      "@id": "http://memexproxy.com/ontology/person_eyecolor_feature"
+    },
+    "person_weight_feature ": {
+      "@id": "http://memexproxy.com/ontology/person_weight_feature"
+    },
+    "person_name_feature": {
+      "@id": "http://memexproxy.com/ontology/person_name_feature"
+    },
+    "person_tattoocount_feature": {
+      "@id": "http://memexproxy.com/ontology/person_tattoocount_feature"
+    },
+    "person_grooming_feature": {
+      "@id": "http://memexproxy.com/ontology/person_grooming_feature"
+    },
+    "person_implantspresent_feature ": {
+      "@id": "http://memexproxy.com/ontology/person_implantspresent_feature"
+    },
+    "person_username_feature": {
+      "@id": "http://memexproxy.com/ontology/person_username_feature"
+    },
+    "person_userid_feature": {
+      "@id": "http://memexproxy.com/ontology/person_userid_feature"
+    },
+    "person_blackhat_username_feature": {
+      "@id": "http://memexproxy.com/ontology/person_blackhat_username_feature"
+    },
+    "person_travel_feature ": {
+      "@id": "http://memexproxy.com/ontology/person_travel_feature"
+    },
+    "person_waistsize_feature ": {
+      "@id": "http://memexproxy.com/ontology/person_waistsize_feature"
+    },
+    "person_hipstype_feature": {
+      "@id": "http://memexproxy.com/ontology/person_hipstype_feature"
+    },
+    "person_alias_feature ": {
+      "@id": "http://memexproxy.com/ontology/person_alias_feature"
+    },
+    "person_incalloutcall_feature": {
+      "@id": "http://memexproxy.com/ontology/person_incalloutcall_feature"
+    },
+    "person_location_feature": {
+      "@id": "http://memexproxy.com/ontology/person_location_feature"
+    },
+    "place_zipcode_feature": {
+      "@id": "http://memexproxy.com/ontology/place_zipcode_feature"
+    },
+    "creditcardaccepted_feature": {
+      "@id": "http://memexproxy.com/ontology/creditcardaccepted_feature"
+    },
+    "rate_feature": {
+      "@id": "http://memexproxy.com/ontology/rate_feature"
+    },
+    "place_postalAddress_feature": {
+      "@id": "http://memexproxy.com/ontology/place_postalAddress_feature"
+    },
+    "text_body_clean_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_clean_feature"
+    },
+    "text_title_clean_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_clean_feature"
+    },
+    "text_body_unicode_block_catalog_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_block_catalog_feature"
+    },
+    "text_body_unicode_block_histogram_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_block_histogram_feature"
+    },
+    "text_body_unicode_block_signature_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_block_signature_feature"
+    },
+    "text_body_unicode_catalog_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_catalog_feature"
+    },
+    "text_body_unicode_category_catalog_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_category_catalog_feature"
+    },
+    "text_body_unicode_category_histogram_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_category_histogram_feature"
+    },
+    "text_body_unicode_category_signature_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_category_signature_feature"
+    },
+    "text_body_unicode_histogram_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_histogram_feature"
+    },
+    "text_body_unicode_signature_feature": {
+      "@id": "http://memexproxy.com/ontology/text_body_unicode_signature_feature"
+    },
+    "text_title_unicode_block_catalog_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_block_catalog_feature"
+    },
+    "text_title_unicode_block_histogram_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_block_histogram_feature"
+    },
+    "text_title_unicode_block_signature_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_block_signature_feature"
+    },
+    "text_title_unicode_catalog_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_catalog_feature"
+    },
+    "text_title_unicode_category_catalog_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_category_catalog_feature"
+    },
+    "text_title_unicode_category_histogram_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_category_histogram_feature"
+    },
+    "text_title_unicode_category_signature_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_category_signature_feature"
+    },
+    "text_title_unicode_histogram_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_histogram_feature"
+    },
+    "text_title_unicode_signature_feature": {
+      "@id": "http://memexproxy.com/ontology/text_title_unicode_signature_feature"
+    },
+    "author_feature": {
+      "@id": "http://memexproxy.com/ontology/author_feature"
+    },
+    "content_type_feature": {
+      "@id": "http://memexproxy.com/ontology/content_type_feature"
+    },
+    "content_length_feature": {
+      "@id": "http://memexproxy.com/ontology/content_length_feature"
+    },
+    "publication_year_feature": {
+      "@id": "http://memexproxy.com/ontology/publication_year_feature"
+    },
+    "affiliation_country_feature": {
+      "@id": "http://memexproxy.com/ontology/affiliation_country_feature"
+    },
+    "compound_feature": {
+      "@id": "http://memexproxy.com/ontology/compound_feature"
+    },
+    "organization_feature": {
+      "@id": "http://memexproxy.com/ontology/organization_feature"
+    },
+    "misc_feature": {
+      "@id": "http://memexproxy.com/ontology/misc_feature"
+    },
+    "place_location_feature": {
+      "@id": "http://memexproxy.com/ontology/place_location_feature"
+    },
+    "provider_name_feature": {
+      "@id": "http://memexproxy.com/ontology/provider_name_feature"
+    },
+    "claims_feature": {
+      "@id": "http://memexproxy.com/ontology/claims_feature"
+    },
+    "wipo_country_feature": {
+      "@id": "http://memexproxy.com/ontology/wipo_country_feature"
+    },
+    "keywords_feature": {
+      "@id": "http://memexproxy.com/ontology/keywords_feature"
+    },
+    "similar_bodyPart_feature": {
+      "@id": "http://memexproxy.com/ontology/similar_bodyPart_feature"
+    },
+    "enrollment_date_feature": {
+      "@id": "http://memexproxy.com/ontology/enrollment_date_feature"
+    },
+    "weaponsMentioned_feature": {
+      "@id": "http://memexproxy.com/ontology/weaponsMentioned_feature"
+    },
+    "person_postCount_feature": {
+      "@id": "http://memexproxy.com/ontology/person_postCount_feature"
+    },
+    "pricesMentioned_feature": {
+      "@id": "http://memexproxy.com/ontology/pricesMentioned_feature"
+    },
+    "bitcoinPricesMentioned_feature": {
+      "@id": "http://memexproxy.com/ontology/bitcoinPricesMentioned_feature"
+    },
+    "similar_bodyPart_cluster_feature": {
+      "@id": "http://memexproxy.com/ontology/similar_bodyPart_cluster_feature"
+    },
+    "emailDomainsMentioned_feature": {
+      "@id": "http://memexproxy.com/ontology/emailDomainsMentioned_feature"
+    },
+    "fromUser_feature": {
+      "@id": "http://memexproxy.com/ontology/fromUser_feature"
+    },
+    "toUsers_feature": {
+      "@id": "http://memexproxy.com/ontology/toUsers_feature"
+    },
+    "transactionTypesMentioned_feature": {
+      "@id": "http://memexproxy.com/ontology/transactionTypesMentioned_feature"
+    },
+    "hasNonEnglishPhrase": {
+      "@id": "http://memexproxy.com/ontology/hasNonEnglishPhrase"
+    },
+    "hasTechnologyPhrase": {
+      "@id": "http://memexproxy.com/ontology/hasTechnologyPhrase"
+    },
+    "hasNFAPhrase": {
+      "@id": "http://memexproxy.com/ontology/hasNFAPhrase"
+    },
+    "hasFirearmsPhrase": {
+      "@id": "http://memexproxy.com/ontology/hasFirearmsPhrase"
+    },
+    "hasGangPhrase": {
+      "@id": "http://memexproxy.com/ontology/hasGangPhrase"
+    },
+    "hasFirearmsRedFlagPhrase": {
+      "@id": "http://memexproxy.com/ontology/hasFirearmsRedFlagPhrase"
+    },
+    "similarityScore": {
+      "@id": "http://memexproxy.com/ontology/similarityScore"
+    }
+  }
+}

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -97,6 +98,7 @@ public class GraphBuilder {
 	private HashMap<String, Set<LabeledLink>> nodeIncomingLinks;
 	private HashMap<String, Set<LabeledLink>> nodeOutgoingLinks;
 	private HashMap<String, Set<SemanticTypeMapping>> semanticTypeMatches; // nodeUri + dataPropertyUri --> SemanticType Mapping
+	private HashMap<String, List<LabeledLink>> patternLinks;
 	private int numberOfModelLinks = 0;
 
 	// Constructor
@@ -124,7 +126,8 @@ public class GraphBuilder {
 		this.linkCountMap = new HashMap<String, Integer>();
 		this.nodeDataPropertyCount = new HashMap<String, Integer>();
 		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
-		
+		this.patternLinks = new HashMap<String, List<LabeledLink>>();
+
 		this.nodeDataProperties= new HashMap<String,Set<Node>>(); 
 		
 		this.nodeIncomingLinks = new HashMap<String, Set<LabeledLink>>();
@@ -245,6 +248,10 @@ public class GraphBuilder {
 		return nodeOutgoingLinks;
 	}
 	
+	public HashMap<String, List<LabeledLink>> getPatternLinks() {
+		return patternLinks;
+	}
+
 	public void resetOntologyMaps() {
 		String[] currentUris = this.uriClosure.keySet().toArray(new String[0]);
 		this.uriClosure.clear();
@@ -595,6 +602,16 @@ public class GraphBuilder {
 		
 		logger.debug("exit>");		
 		return true;
+	}
+	
+	public void savePatternLink(LabeledLink l) {
+		String key = l.getSource().getUri() + l.getUri() + l.getTarget().getUri();
+		List<LabeledLink> links = this.patternLinks.get(key);
+		if (links == null) {
+			links = new LinkedList<LabeledLink>();
+			this.patternLinks.put(key, links);
+		}
+		links.add(l);
 	}
 	
 	private double computeWeight(DefaultLink link) {
@@ -1339,6 +1356,66 @@ public class GraphBuilder {
 		Collections.sort(sortedLinks, new LinkPriorityComparator());
 		
 		return sortedLinks;
+	}
+	
+	public List<LabeledLink> getLinks(String sourceId, String targetId) {
+		
+		List<LabeledLink> links  = new LinkedList<LabeledLink>();
+
+		Node source = this.getIdToNodeMap().get(sourceId);
+		if (source == null) return links;
+
+		Node target = this.getIdToNodeMap().get(targetId);
+		if (target == null) return links;
+
+		Set<DefaultLink> allLinks = this.getGraph().getAllEdges(source, target);
+		if (allLinks != null) {
+			for (DefaultLink l : allLinks) {
+				if (l instanceof LabeledLink) {
+					links.add((LabeledLink)l);
+				}
+			}
+		}
+		
+		return links;
+	}
+
+	public List<LabeledLink> getIncomingLinks(String nodeId) {
+		
+		List<LabeledLink> incomingLinks  = new LinkedList<LabeledLink>();
+
+		Node node = this.getIdToNodeMap().get(nodeId);
+		if (node == null) return incomingLinks;
+		
+		Set<DefaultLink> allIncomingLinks = this.getGraph().incomingEdgesOf(node);
+		if (allIncomingLinks != null) {
+			for (DefaultLink l : allIncomingLinks) {
+				if (l instanceof LabeledLink) {
+					incomingLinks.add((LabeledLink)l);
+				}
+			}
+		}
+		
+		return incomingLinks;
+	}
+	
+	public List<LabeledLink> getOutgoingLinks(String nodeId) {
+		
+		List<LabeledLink> outgoingLinks  = new LinkedList<LabeledLink>();
+
+		Node node = this.getIdToNodeMap().get(nodeId);
+		if (node == null) return outgoingLinks;
+		
+		Set<DefaultLink> allOutgoingLinks = this.getGraph().outgoingEdgesOf(node);
+		if (allOutgoingLinks != null) {
+			for (DefaultLink l : allOutgoingLinks) {
+				if (l instanceof LabeledLink) {
+					outgoingLinks.add((LabeledLink)l);
+				}
+			}
+		}
+		
+		return outgoingLinks;
 	}
 	
 	public static void main(String[] args) throws Exception {

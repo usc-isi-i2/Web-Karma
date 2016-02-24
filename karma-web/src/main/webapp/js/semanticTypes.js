@@ -176,28 +176,7 @@ var SetSemanticTypeDialog = (function() {
 		}
 
 		function getSuggestedTypes() {
-			var info = generateInfoObject(worksheetId, columnId, "GetSemanticSuggestionsCommand");
-			var newInfo = info['newInfo']; // Used for commands that take JSONArray as input and are saved in the history
-			info["newInfo"] = JSON.stringify(newInfo);
-			showLoading(info["worksheetId"]);
-			var result;
-			var returned = $.ajax({
-				url: "RequestController",
-				type: "POST",
-				data: info,
-				dataType: "json",
-				async: false,
-				complete: function(xhr, textStatus) {
-					var json = $.parseJSON(xhr.responseText);
-					hideLoading(info["worksheetId"]);
-					result = json.elements[0];
-				},
-				error: function(xhr, textStatus) {
-					alert("Error occured with fetching new rows! " + textStatus);
-					hideLoading(info["worksheetId"]);
-				}
-			});
-			return result;
+			return getSuggestedSemanticTypes(worksheetId, columnId);
 		}
 
 		function validate() {
@@ -2571,7 +2550,7 @@ var AddLiteralNodeDialog = (function() {
 								getAllProperties();
 								propertyUI.generateJS(propDiv, true);
 								
-								$("#isUriRow", dialog).hide();
+								$("#isUriRow", dialog).show();
 							} else {
 								$(".modal-title", dialog).html("Edit Literal Node");
 								$("#btnSave", dialog).text("Save");
@@ -2635,7 +2614,7 @@ var AddLiteralNodeDialog = (function() {
 				 
 				 if(dialogMode == "edit")
 					 newInfo.push(getParamObject("nodeId", nodeId, "other"));
-				 else if(dialogMode == "addWithProperty") {
+				 else if(dialogMode == "addWithProperty" && isUri == false) {
 					 var property = propertyUI.getSelectedProperty();
 					 var type = property.other;
 					 if(type == "objectProperty")

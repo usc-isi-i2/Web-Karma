@@ -1,0 +1,213 @@
+var ClassTabs = (function() {
+
+	var instance = null;
+
+
+	function PrivateConstructor() {
+		var dialog = $("#classTabs");
+
+		var worksheetId, columnId;
+		var columnUri, columnLabel, alignmentId;
+		var nodeType; //LiteralNode or InternalNode
+		var allClassCache;
+		var onSelectCallback;
+
+		function init() {
+			reloadCache();
+			$('input', dialog).on('keyup', filterDropdown);
+
+			$('#class_tabs a[href="#class_all"]').on('shown.bs.tab', function(e) {
+				window.setTimeout(function() {
+					$('input', dialog).select();
+				}, 10);
+				
+				console.log("All clicked");
+			});
+		}
+
+		function reloadCache() {
+			allClassCache = null;
+			window.setTimeout(function() {
+				allClassCache = getAllClasses(worksheetId);
+			}, 10);
+		}
+
+		function hide() {
+			dialog.hide();
+		}
+
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+
+		function showError(err) {
+			if (err) {
+				$("div.error", dialog).text(err);
+			}
+			$("div.error", dialog).show();
+		}
+
+		function selectFromMenu(e) {
+			target = $(e.target);
+			label = target.text();
+			uri = target.data('uri');
+			id = target.data('id');
+
+			console.log("Selected property:" + label);
+			onSelectCallback({"label":label, "uri":uri, "id": id});
+		}
+
+		function populateAll() {
+			if(allClassCache == null) {
+				window.setTimeout(populateAll, 10);
+				return;
+			}
+
+			var allTypes = [];
+			
+			$.each(allClassCache, function(index, type) {
+				allTypes.push({"label": type["label"], "uri": type["uri"], "id": type["id"]});
+			});
+
+			renderMenu($("#class_all", dialog), allTypes);
+			return allTypes.length;
+		}
+
+		function populateRecommended() {
+			var inTypes = getClassesInModel(worksheetId);
+			var items = [];
+			if(inTypes != null) {
+				$.each(inTypes, function(index, type) {
+					items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
+				});	
+			}
+			renderMenu($("#class_recommended", dialog), items);
+			return inTypes.length;
+		}
+
+		function populateCompatible() {
+			//var inTypes = getClassesInModel(worksheetId);
+			var items = [];
+			// if(inTypes != null) {
+			// 	$.each(inTypes, function(index, type) {
+			// 		items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
+			// 	});	
+			// }
+			renderMenu($("#class_compatible", dialog), items);
+			return items.length;
+		}
+
+		function filterDropdown(e) {
+			query = $("input", dialog).val();
+			switch(e.keyCode) {
+		        case 40: // down arrow
+		        case 38: // up arrow
+		        case 16: // shift
+		        case 17: // ctrl
+		        case 18: // alt
+		          break;
+
+		        case 9: // tab
+		        case 13: // enter
+		          if (!this.shown) return;
+		          // this.select();
+		          break;
+
+		        case 27: // escape
+		          hide();
+		          break;
+		        default:
+		          	items = allClassCache;
+		          	items = $.grep(items, function (item) {
+			        	return (item["label"].toLowerCase().indexOf(query.toLowerCase()) != -1);
+			      	});
+			      	renderMenu($("#class_all", dialog), items);
+		      }
+		}
+
+		function populateMenu() {
+			var numRecom = populateRecommended();
+			var numCompatible = populateCompatible();
+			populateAll();
+
+			if(numRecom != 0) {
+				$('#class_tabs a[href="#class_recommended"]').tab('show');
+			} else if(numCompatible  != 0) {
+				$('#class_tabs a[href="#class_compatible"]').tab('show');
+			} else {
+				$('#class_tabs a[href="#class_all"]').tab('show');
+			}
+		}
+
+		function renderMenu(div, menuItems) {
+			var ul = $("ul", div);
+			ul.empty();
+			ul.scrollTop(1);
+
+			$.each(menuItems, function(index, item) {
+				var label = item["label"];
+				var uri = item["uri"];
+
+				var li = $("<li>").addClass("col-xs-4")
+				if(label == "divider") {
+					li.addClass("divider");
+					
+				} else {
+					
+					var a = $("<a>")
+						.attr("href", "#")
+						.attr("tabindex", "-1")
+						.text(label)
+						.data('uri', uri)
+						.data("id", item["id"])
+						.click(selectFromMenu);
+					li.append(a);
+				}
+				if(item["class"])
+					li.addClass(item["class"]);
+				ul.append(li);
+			});
+
+		}
+
+
+		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, 
+				p_alignmentId, p_nodeType, div, callback,
+				event) {
+			worksheetId = p_worksheetId;
+			columnLabel = p_columnLabel;
+			columnId = p_columnId;
+			columnUri = p_columnUri;
+			alignmentId = p_alignmentId;
+			nodeType = p_nodeType;
+			onSelectCallback = callback;
+
+			$("input", dialog).val('');
+			populateMenu();
+
+			div.append(dialog)
+			dialog.show();
+		};
+
+
+		return { //Return back the public methods
+			show: show,
+			init: init,
+			reloadCache: reloadCache
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
+
+
+})();

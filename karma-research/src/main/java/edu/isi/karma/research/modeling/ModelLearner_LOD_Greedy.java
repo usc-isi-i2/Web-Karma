@@ -64,7 +64,7 @@ public class ModelLearner_LOD_Greedy {
 		
 		logger.info("importing patterns ...");
 		long timeStart = System.currentTimeMillis();
-		patterns = PatternReader.importPatterns(patternDirectoryPath);
+		patterns = PatternReader.importPatterns(patternDirectoryPath, null);
 		long timeImportPatterns = System.currentTimeMillis();
 		float elapsedTimeSec = (timeImportPatterns - timeStart)/1000F;
 		logger.info("time to import the patterns: " + elapsedTimeSec + "s");
@@ -361,7 +361,7 @@ public class ModelLearner_LOD_Greedy {
 			columnNodes.add(cn);
 		}
 		
-		ModelLearner_LOD_Greedy ml = new ModelLearner_LOD_Greedy(Params.PATTERNS_DIR, null);
+		ModelLearner_LOD_Greedy ml = new ModelLearner_LOD_Greedy(Params.PATTERNS_INPUT_DIR, null);
 		SemanticModel sm = ml.hypothesize(columnNodes);
 		String output = Params.RESULTS_DIR + "out.dot";
 
@@ -407,7 +407,7 @@ public class ModelLearner_LOD_Greedy {
 		ontologyManager.updateCache(); 
 		
 //		LODGreedyModelLearner modelLearner = new LODGreedyModelLearner(Params.PATTERNS_DIR, ontologyManager);
-		ModelLearner_LOD_Greedy modelLearner = new ModelLearner_LOD_Greedy(Params.PATTERNS_DIR, null);
+		ModelLearner_LOD_Greedy modelLearner = new ModelLearner_LOD_Greedy(Params.PATTERNS_INPUT_DIR, null);
 
 		String outputPath = Params.OUTPUT_DIR;
 
@@ -451,7 +451,7 @@ public class ModelLearner_LOD_Greedy {
 			float elapsedTimeSec = elapsedTimeMillis/1000F;
 
 			List<SortableSemanticModel> topHypotheses = new LinkedList<SortableSemanticModel>();
-			if (sm != null) topHypotheses.add(new SortableSemanticModel(sm));
+			if (sm != null) topHypotheses.add(new SortableSemanticModel(sm, false));
 
 			Map<String, SemanticModel> models = 
 					new TreeMap<String, SemanticModel>();

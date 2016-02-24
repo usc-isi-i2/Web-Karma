@@ -1,14 +1,5 @@
 package edu.isi.karma.rdf;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.er.helper.PythonRepositoryRegistry;
@@ -24,6 +15,14 @@ import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class BaseKarma {
 	private static Logger LOG = LoggerFactory.getLogger(BaseKarma.class);
@@ -75,18 +74,15 @@ public class BaseKarma {
 			}	
 		}
 		
-		ServletContextParameterMap contextParameters = new ServletContextParameterMap(null);
 		ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
-		contextParametersRegistry.register(contextParameters);
-		
+		ServletContextParameterMap contextParameters = contextParametersRegistry.registerByKarmaHome(null);
 		KarmaMetadataManager userMetadataManager;
 		userMetadataManager = new KarmaMetadataManager(contextParameters);
 		UpdateContainer uc = new UpdateContainer();
 		userMetadataManager.register(new UserPreferencesMetadata(contextParameters), uc);
 		userMetadataManager.register(new UserConfigMetadata(contextParameters), uc);
 		userMetadataManager.register(new PythonTransformationMetadata(contextParameters), uc);
-		PythonRepository pythonRepository = new PythonRepository(false, contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
-		PythonRepositoryRegistry.getInstance().register(pythonRepository);
+		PythonRepositoryRegistry.getInstance().registerSafe(contextParameters.getParameterValue(ContextParameter.USER_PYTHON_SCRIPTS_DIRECTORY));
 	}
 
 	private void addModel() throws MalformedURLException {
@@ -185,6 +181,7 @@ public class BaseKarma {
 			}
 		}
 		catch (KarmaException | JSONException | IOException e) {
+			LOG.error("Not able to set root", e);
 			throw new RuntimeException("Unable to set rdf generation root: " + e.getMessage());
 		}
 		

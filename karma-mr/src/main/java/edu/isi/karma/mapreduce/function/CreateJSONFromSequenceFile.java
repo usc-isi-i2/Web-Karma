@@ -25,6 +25,8 @@ import edu.isi.karma.rdf.CommandLineArgumentParser;
 public class CreateJSONFromSequenceFile {
 	static String filePath = null;
 	static String outputPath = null;
+	static String outputtype = "0"; //by default output json array
+	
 	public static void main(String[] args) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Options options = createCommandLineOptions();
 		CommandLine cl = CommandLineArgumentParser.parse(args, options, CreateJSONFromSequenceFile.class.getSimpleName());
@@ -36,6 +38,10 @@ public class CreateJSONFromSequenceFile {
 		outputPath = filePath;
 		if (cl.hasOption("outputpath")) {
 			outputPath = (String) cl.getOptionValue("outputpath");
+		}
+		
+		if(cl.hasOption("outputtype")){
+			outputtype = (String) cl.getOptionValue("outputtype");
 		}
 		FileSystem hdfs = FileSystem.get(new Configuration());
 		RemoteIterator<LocatedFileStatus> itr = hdfs.listFiles(new Path(filePath), true);
@@ -70,7 +76,9 @@ public class CreateJSONFromSequenceFile {
 		{
 			PrintWriter fw = new PrintWriter(stream);
 			fws.add(fw);
-			fw.write("[\n");
+			if (outputtype.equals("0")){
+				fw.write("[\n");
+			}
 		}
 		SequenceFile.Reader reader = new SequenceFile.Reader(conf, SequenceFile.Reader.file(inputPath));
 		Writable key = (Writable) Class.forName(reader.getKeyClass().getCanonicalName()).newInstance();
@@ -91,13 +99,19 @@ public class CreateJSONFromSequenceFile {
 			}
 			else
 			{
-				fw.write(",\n");
+				if (outputtype.equals("0")){
+					fw.write(",\n");
+				}
 			}
 			fw.write(val.toString());
+			fw.write("\n");
 		}
 		for(PrintWriter fw : fws)
 		{
-			fw.write("\n]\n");
+			if(outputtype.equals("0")){
+				fw.write("\n]\n");
+			}
+			
 			fw.close();
 		}
 		reader.close();
@@ -108,6 +122,7 @@ public class CreateJSONFromSequenceFile {
 				options.addOption(new Option("filepath", "filepath", true, "location of the input file directory"));
 				options.addOption(new Option("outputpath", "outputpath", true, "location of output file directory"));
 				options.addOption(new Option("splits", "splits", true, "number of splits per file"));
+				options.addOption(new Option("outputtype", "outputtype", true, "0 for JSON Array or 1 for json lines"));
 				options.addOption(new Option("help", "help", false, "print this message"));
 
 		return options;

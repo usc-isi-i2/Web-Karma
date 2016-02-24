@@ -17,7 +17,7 @@ public class GetSemanticSuggestionsCommandFactory
 			JSONInputCommandFactory {
 
 	private enum Arguments {
-		worksheetId, hNodeId, selectionName
+		worksheetId, hNodeId, selectionName, classUri
 	}
 	
 	@Override
@@ -27,8 +27,12 @@ public class GetSemanticSuggestionsCommandFactory
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
-		return new GetSemanticSuggestionsCommand(getNewId(workspace), model, worksheetId, hNodeId, 
-				selectionName);
+		String classUri = null;
+		if(HistoryJsonUtil.valueExits(Arguments.classUri.name(), inputJson))
+			classUri = HistoryJsonUtil.getStringValue(Arguments.classUri.name(), inputJson);
+		
+		return new GetSemanticSuggestionsCommand(getNewId(workspace), model, 
+				worksheetId, hNodeId, classUri, selectionName);
 	}
 
 	@Override
@@ -36,8 +40,10 @@ public class GetSemanticSuggestionsCommandFactory
 		String hNodeId = request.getParameter(Arguments.hNodeId.name());
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String selectionName = request.getParameter(Arguments.selectionName.name());
+		String classUri = request.getParameter(Arguments.classUri.name());
+		
 		return new GetSemanticSuggestionsCommand(getNewId(workspace), 
-				Command.NEW_MODEL, worksheetId, hNodeId, selectionName);
+				Command.NEW_MODEL, worksheetId, hNodeId, classUri, selectionName);
 	}
 
 	@Override

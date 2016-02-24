@@ -109,10 +109,14 @@ body {
 	cursor: pointer;
 }
 
-#manualModeHeader a {
+#modeHeader a {
 	color: rgb(255, 255, 150);
 }
 
 .editButton, .hideButton, .deleteButton {
 	padding: 0px 12px;
+}
+
+#propertyDialogRight {
+	height: 500px;
 }

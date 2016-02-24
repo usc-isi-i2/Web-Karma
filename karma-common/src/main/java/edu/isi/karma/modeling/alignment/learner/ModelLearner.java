@@ -211,7 +211,7 @@ public class ModelLearner {
 				tree.addVertex(n);
 			
 			SemanticModel sm = new SemanticModel(new RandomGUID().toString(), tree);
-			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null);
+			SortableSemanticModel sortableSemanticModel = new SortableSemanticModel(sm, null, true);
 			sortableSemanticModels.add(sortableSemanticModel);
 			return sortableSemanticModels;
 		}
@@ -255,7 +255,7 @@ public class ModelLearner {
 							sn.getMappingToSourceColumns()
 							);
 					SortableSemanticModel sortableSemanticModel = 
-							new SortableSemanticModel(sm, sn);
+							new SortableSemanticModel(sm, sn, true);
 					sortableSemanticModels.add(sortableSemanticModel);
 					
 //					sortableSemanticModel.print();

@@ -1,0 +1,6 @@
+(<mailto:slepicka@isi.edu>, <mailto:slepicka@isi.edu> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Thing> .
+<mailto:slepicka@isi.edu> <http://www.w3.org/2000/01/rdf-schema#comment> "" .
+<mailto:slepicka@isi.edu> <http://www.w3.org/2000/01/rdf-schema#label> "" .
+<mailto:slepicka@isi.edu> <http://xmlns.com/foaf/spec/#nick> "^^^^^^^^^ some text ^^^^^ more text ^&*^& other text ^^^^^^^^^ - yet more text" .
+<mailto:slepicka@isi.edu> <http://xmlns.com/foaf/spec/#status> "75^^^^" .
+)

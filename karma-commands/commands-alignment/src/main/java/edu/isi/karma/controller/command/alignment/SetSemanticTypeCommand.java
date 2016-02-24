@@ -196,7 +196,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				// Check if a semantic type already exists for the column
 				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 				columnNode.setRdfLiteralType(rdfLiteralType);
-				List<LabeledLink> columnNodeIncomingLinks = alignment.getIncomingLinksInGraph(columnNode.getId());
+				List<LabeledLink> columnNodeIncomingLinks = alignment.getGraphBuilder().getIncomingLinks(columnNode.getId());
 				LabeledLink oldIncomingLinkToColumnNode = null;
 				Node oldDomainNode = null;
 				if (columnNodeIncomingLinks != null && !columnNodeIncomingLinks.isEmpty()) { // SemanticType already assigned

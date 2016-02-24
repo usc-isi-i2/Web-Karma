@@ -161,8 +161,8 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		boolean semanticTypeAlreadyExists = false;
 		LabeledLink oldIncomingLinkToColumnNode = null;
 		Node oldDomainNode = null;
-		List<LabeledLink> columnNodeIncomingLinks = alignment
-				.getIncomingLinksInGraph(columnNode.getId());
+		List<LabeledLink> columnNodeIncomingLinks = alignment.getGraphBuilder()
+				.getIncomingLinks(columnNode.getId());
 		if (columnNodeIncomingLinks != null
 				&& !columnNodeIncomingLinks.isEmpty()) { // SemanticType already
 			// assigned

@@ -199,7 +199,7 @@ and related projects, please see: http://www.isi.edu/integration
 		            </li>
 		          </ul>
 		          <ul class="nav navbar-nav navbar-middle col-sm-2">
-		            <li id="manualModeHeader" style="display:none;"><a href="#" style="cursor: none">Manual Mode</a></li>
+		            <li id="modeHeader" style="display:none;"><a href="#" style="cursor: none"></a></li>
 		          </ul>
 		          
 		          <ul class="nav navbar-nav navbar-right">
@@ -363,8 +363,12 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/semanticTypes.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/classUI.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/propertyUI.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/classDropdown.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/propertyDropdown.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/classDialog.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/classTabs.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/classFunctions.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/anchorDropdown.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/propertyDialog.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/propertyTabs.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model-layout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/UnconnectedNodesLayout.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
@@ -387,6 +391,8 @@ and related projects, please see: http://www.isi.edu/integration
         	var ontologyAligment = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getOntologyAlignment()%>;
         	var knownModelsAlignment = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getKnownModelsAlignment()%>;
         	var forceLayoutEnabled = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()%>;
+        	var DEFAULT_PROPERTY_URI = "<%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getDefaultProperty()%>";
+
             $(function() {
                 // Clear the workspace when closing the window
                 $(window).bind("beforeunload", function() {
@@ -478,8 +484,10 @@ and related projects, please see: http://www.isi.edu/integration
                     .scroll(startPositionFooter)
                     .resize(startPositionFooter);
             	
-            	if(!ontologyAligment && !knownModelsAlignment)
-            		manualAlignHeader();
+            	if(ontologyAligment || knownModelsAlignment)
+            		showModeHeader("Automatic Mode");
+
+            	loadPropertiesForCache();
 			});
             
             var footerPositionTimer = null;
@@ -521,8 +529,18 @@ and related projects, please see: http://www.isi.edu/integration
                
        		}
             
-            function manualAlignHeader() {
-            	$("#manualModeHeader").show();
+            function showModeHeader(headerTxt) {
+            	$("#modeHeader a").html(headerTxt);
+            	$("#modeHeader").show();
+            }
+
+            function loadPropertiesForCache() {
+            	$("div#WaitingDiv").show();
+				window.setTimeout(function() {
+					PropertyDialog.getInstance();
+					ClassDialog.getInstance();
+					$("div#WaitingDiv").hide();
+				}, 10);
             }
 		</script>
 		<script type="text/javascript">

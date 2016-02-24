@@ -80,7 +80,8 @@ public class ModelingConfiguration {
 	private Boolean storeOldHistory;
 
 	private Boolean showModelsWithoutMatching;
-
+	private String defaultProperty = null;
+	
 	private final String newLine = System.getProperty("line.separator").toString();
 	
 	private String defaultModelingProperties = 
@@ -103,7 +104,7 @@ public class ModelingConfiguration {
 			"# turning off the next two flags is equal to manual alignment" + newLine + 
 			"compatible.properties=true" + newLine + 
 			"ontology.alignment=false" + newLine + 
-			"knownmodels.alignment=false" + newLine + 
+			"knownmodels.alignment=true" + newLine + 
 			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
@@ -131,6 +132,7 @@ public class ModelingConfiguration {
 			"" + newLine + 
 			"karma.source.prefix=http://isi.edu/integration/karma/sources/" + newLine + 
 			"karma.service.prefix=http://isi.edu/integration/karma/services/" + newLine + 
+			"default.property=http://schema.org/name" + newLine +
 			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
@@ -138,7 +140,7 @@ public class ModelingConfiguration {
 			"#" + newLine + 
 			"##########################################################################################" + newLine + 
 			"" + newLine + 
-			"learner.enabled=false" + newLine + 
+			"learner.enabled=true" + newLine + 
 			"" + newLine + 
 			"add.ontology.paths=false" + newLine + 
 			"" + newLine + 
@@ -212,7 +214,7 @@ public class ModelingConfiguration {
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				knownModelsAlignment = true;
 				out.println();
-				out.println("knownmodels.alignment=false");
+				out.println("knownmodels.alignment=true");
 				out.close();
 			}
 			
@@ -226,7 +228,7 @@ public class ModelingConfiguration {
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				learnerEnabled = true;
 				out.println();
-				out.println("learner.enabled=false");
+				out.println("learner.enabled=true");
 				out.close();
 			}
 
@@ -281,6 +283,13 @@ public class ModelingConfiguration {
 
 			showModelsWithoutMatching = Boolean.parseBoolean(modelingProperties.getProperty("models.display.nomatching", "false"));
 
+			defaultProperty = modelingProperties.getProperty("default.property");
+			if(defaultProperty == null) {
+				//need to add this property to the end
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				out.println("default.property=http://schema.org/name");
+				out.close();
+			}
 		} catch (IOException e) {
 			logger.error("Error occured while reading config file ...", e);
 			System.exit(1);
@@ -529,6 +538,12 @@ public class ModelingConfiguration {
 		return multipleSamePropertyPerNode;
 	}
 
+	public String getDefaultProperty() {
+		if(defaultProperty == null)
+			load();
+		return defaultProperty;
+	}
+	
 	public void setManualAlignment()
 	{
 		ontologyAlignment = false;

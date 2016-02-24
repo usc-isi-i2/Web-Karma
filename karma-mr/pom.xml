@@ -80,9 +80,19 @@
 			<classifier>hadoop2</classifier> 
 		</dependency>
 		<dependency>
-		    <groupId>com.github.jsonld-java</groupId>
-		    <artifactId>jsonld-java</artifactId>
-		    <version>0.5.1</version>
+		    <groupId>edu.isi</groupId>
+		    <artifactId>karma-jsonld</artifactId>
+		    <version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>org.apache.spark</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-cli</artifactId>
+					<groupId>commons-cli</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		
@@ -125,7 +135,7 @@
 					<!-- Configuration for generating a self contained jar for MR -->
 					<!--
 						to generate the jar, run:
-						mvn package -P shaded
+						mvn package -Pshaded,cloudera
 					-->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -148,16 +158,6 @@
 									</excludes>
 								</filter>
 							</filters>
-							<artifactSet>
-								<excludes>
-									<exclude>com.sun.jersey:*</exclude>
-									<exclude>com.sun.jersey.contribs:*</exclude>
-									<exclude>org.apache.hadoop:*</exclude>
-									<exclude>javax.ws.rs:*</exclude>
-									<exclude>org.glassfish.jersey.core:*</exclude>
-									<exclude>org.glassfish.hk2:*</exclude>
-								</excludes>
-							</artifactSet>
 						</configuration>
 						<executions>
 							<execution>
@@ -365,9 +365,9 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-        		<hadoop.version>2.6.0-cdh5.4.7</hadoop.version>
-        		<hive.version>1.1.0-cdh5.4.7</hive.version>
-        		<avro.version>1.7.6-cdh5.4.7</avro.version>
+        		<hadoop.version>2.6.0-cdh5.5.0</hadoop.version>
+        		<hive.version>1.1.0-cdh5.5.0</hive.version>
+        		<avro.version>1.7.6-cdh5.5.0</avro.version>
         		<es.version>1.4.4</es.version>
         		<es.hadoop.version>2.1.0.Beta2</es.hadoop.version>
     		</properties>

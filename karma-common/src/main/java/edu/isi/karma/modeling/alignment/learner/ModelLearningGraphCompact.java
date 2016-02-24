@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +44,7 @@ import edu.isi.karma.modeling.alignment.SemanticModel;
 import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.modeling.research.Params;
 import edu.isi.karma.rep.alignment.ColumnNode;
+import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
@@ -184,7 +187,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 	private void addLinks(SemanticModel model, 
 			HashMap<Node, Node> internalNodeMapping, 
 			HashMap<Node, Node> columnNodeMapping,
-			boolean useOriginalWeights) {
+			PatternWeightSystem weightSystem) {
 		
 		if (model == null) 
 			return;
@@ -219,19 +222,25 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
 			if (l != null) {
 				int numOfPatterns = l.getModelIds().size();
-//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
-//					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
-				if (useOriginalWeights) {
+				if (weightSystem == PatternWeightSystem.OriginalWeights) {
 					double currentW = l.getWeight();
 					double newW = model.getGraph().getEdgeWeight(e);
 					if (newW < currentW)
 						this.graphBuilder.changeLinkWeight(l, newW);
-				} else {
-					if (n2 instanceof InternalNode)
-//						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT / (double) (numOfPatterns + 1) );
-						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
-					else
+				} else if (weightSystem == PatternWeightSystem.JWSPaperFormula) {
+					if (n2 instanceof InternalNode) {
+						// wl - x/(n+1)
+						// wl = 1
+						// x = (numOfPatterns + 1)
+						// n = totalNumberOfPatterns
+						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - 
+								((double) (numOfPatterns + 1) / (double) (this.totalNumberOfKnownModels + 1) ));
+//						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT - (0.00001 * numOfPatterns) );
+					} else {
 						this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+					}
+				} else {
+					this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
 				}
 				l.getModelIds().add(modelId);
 				n1.getModelIds().add(modelId);
@@ -251,7 +260,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 					link.getModelIds().clear();
 				link.getModelIds().add(modelId);
 
-				if (useOriginalWeights) {
+				if (weightSystem == PatternWeightSystem.OriginalWeights) {
 					if (!this.graphBuilder.addLink(n1, n2, link, model.getGraph().getEdgeWeight(e))) continue;
 				} else {
 					if (!this.graphBuilder.addLink(n1, n2, link, ModelingParams.PATTERN_LINK_WEIGHT)) continue;
@@ -265,7 +274,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 	}
 	
 	@Override
-	public Set<InternalNode> addModel(SemanticModel model, boolean useOriginalWeights) {
+	public Set<InternalNode> addModel(SemanticModel model, PatternWeightSystem weightSystem) {
 				
 		// adding the patterns to the graph
 		
@@ -281,7 +290,9 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //			initializeFromJsonRepository();
 //			return null;
 //		}
-		
+
+		this.totalNumberOfKnownModels ++;
+
 		// add the model  nodes that are not in the graph
 		Set<InternalNode> addedInternalNodes = new HashSet<InternalNode>();
 		this.addInternalNodes(model, addedInternalNodes);
@@ -289,12 +300,277 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 		HashMap<Node, Node> columnNodeMapping = this.getColumnNodeMapping(model, internalNodeMapping);
 		
-		this.addLinks(model, internalNodeMapping, columnNodeMapping, useOriginalWeights);
+		this.addLinks(model, internalNodeMapping, columnNodeMapping, weightSystem);
 
 		this.lastUpdateTime = System.currentTimeMillis();
 		return addedInternalNodes;
 	}
 
+	public Set<InternalNode> addLodPattern(SemanticModel model) {
+		
+		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+		
+		if (model == null) 
+			return addedNodes;
+		
+		String modelId = model.getId();
+
+		Node source, target;
+		Node n1, n2;
+		
+		String sourceUri, targetUri, linkUri; 
+		String id, key;
+		
+		Set<String> mappedLinks = new HashSet<String>();
+		Set<String> mappedNodes = new HashSet<String>();
+
+		HashMap<Node,Node> mapping = new HashMap<Node,Node>();
+		
+		HashMap<String, List<Node>> uriMatchedNodes = new HashMap<String, List<Node>>();
+
+		List<LabeledLink> sortedLinks = new ArrayList<LabeledLink>();
+		List<LabeledLink> idSortedLinks = new ArrayList<LabeledLink>();
+		idSortedLinks.addAll(model.getGraph().edgeSet());
+		Collections.sort(idSortedLinks);
+		for (LabeledLink l : idSortedLinks) {
+			key = l.getSource().getUri() + l.getUri() + l.getTarget().getUri();
+			if (this.graphBuilder.getPatternLinks().get(key) != null) {
+				sortedLinks.add(l);
+			}
+		}
+		for (LabeledLink l : idSortedLinks) {
+			if (!sortedLinks.contains(l)) {
+				sortedLinks.add(l);
+			}
+		}
+		
+		sortedLinks.addAll(model.getGraph().edgeSet());
+//		System.out.println("new pattern ...");
+		for (LabeledLink e : sortedLinks) {
+			
+
+			source = e.getSource();
+			target = e.getTarget();
+			
+//			if (model.getId().equals("p4-022E14EC-57EC-9F3B-CBCD-F64FDFE95609")) {
+//				System.out.println(GraphUtil.labeledGraphToString(model.getGraph()));
+//				System.out.println(e.getId());
+//			}
+				
+//			if (source.getId().contains("E42_Identifier") &&
+//					target.getId().contains("E55_Type")) {
+//				System.out.println(GraphUtil.labeledGraphToString(model.getGraph()));
+//				System.out.println("debug");
+//			}
+			
+			sourceUri = source.getUri();
+			targetUri = target.getUri();
+			linkUri = e.getUri();
+			
+			n1 = mapping.get(source);
+			n2 = mapping.get(target);
+
+			key = sourceUri + linkUri + targetUri;
+
+//			if (target.getId().contains("E52_Time-Span2")) {
+//				System.out.println(GraphUtil.labeledGraphToString(model.getGraph()));
+//				System.out.println("debug");
+//			}
+
+			List<LabeledLink> matchedLinks = null;
+			if (n1 == null && n2 == null) {
+				matchedLinks = this.graphBuilder.getPatternLinks().get(key); 
+				if (matchedLinks != null && !matchedLinks.isEmpty()) {
+					Collections.sort(matchedLinks);
+					for (LabeledLink l : matchedLinks) {
+						if (!mappedLinks.contains(l.getId())) {
+							mappedLinks.add(l.getId());
+							n1 = l.getSource();
+							n2 = l.getTarget();
+							mapping.put(source,n1);
+							mapping.put(target, n2);
+							mappedNodes.add(n1.getId());
+							mappedNodes.add(n2.getId());
+							break;
+						}
+					}
+				}
+			} else if (n1 == null) { // target is already mapped
+				matchedLinks = this.graphBuilder.getPatternLinks().get(key); 
+				if (matchedLinks != null && !matchedLinks.isEmpty()) {
+					for (LabeledLink l : matchedLinks) {
+						if (!mappedLinks.contains(l.getId()) && 
+								!mappedNodes.contains(l.getSource().getId()) &&
+								l.getTarget().getId().equalsIgnoreCase(n2.getId())) {
+							mappedLinks.add(l.getId());
+							n1 = l.getSource();
+							mapping.put(source,n1);
+							mappedNodes.add(n1.getId());
+							break;
+						}
+					}
+				}
+			} else if (n2 == null) {
+				matchedLinks = this.graphBuilder.getPatternLinks().get(key); 
+				if (matchedLinks != null && !matchedLinks.isEmpty()) {
+					for (LabeledLink l : matchedLinks) {
+						if (!mappedLinks.contains(l.getId()) && 
+								!mappedNodes.contains(l.getTarget().getId()) &&
+								l.getSource().getId().equalsIgnoreCase(n1.getId())) {
+							mappedLinks.add(l.getId());
+							n2 = l.getTarget();
+							mapping.put(target,n2);
+							mappedNodes.add(n2.getId());
+							break;
+						}
+					}
+				}
+			}
+				
+			if (n1 == null) {
+				
+				List<Node> sortedMatchedNodes = uriMatchedNodes.get(sourceUri);
+				if (sortedMatchedNodes == null) {
+					sortedMatchedNodes = new LinkedList<Node>();
+					Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(sourceUri);
+					if (matchedNodes != null && !matchedNodes.isEmpty()) {
+						sortedMatchedNodes.addAll(matchedNodes);
+						Collections.sort(sortedMatchedNodes, new NodeSupportingModelsComparator());
+						while (!sortedMatchedNodes.isEmpty()) { 
+							if (mappedNodes.contains(sortedMatchedNodes.get(0).getId())) {
+								sortedMatchedNodes.remove(0);
+								continue;
+							}
+							Set<DefaultLink> outLinks = this.getGraphBuilder().getGraph().outgoingEdgesOf(sortedMatchedNodes.get(0));
+							boolean okLink = true;
+							if (outLinks != null) {
+								for (DefaultLink dl : outLinks) {
+									if (dl instanceof LabeledLink &&
+											dl.getUri().equalsIgnoreCase(linkUri)) {
+										sortedMatchedNodes.remove(0);
+										okLink = false;
+										break;
+									}
+								}
+								if (!okLink) continue; 
+							}
+							break;
+						}
+						if (!sortedMatchedNodes.isEmpty()) {
+							n1 = sortedMatchedNodes.get(0);
+							mappedNodes.add(n1.getId());
+							mapping.put(source, n1);
+							sortedMatchedNodes.remove(0);
+						}
+						uriMatchedNodes.put(sourceUri, sortedMatchedNodes);
+					}
+				}
+				if (n1 == null) {
+					id = this.nodeIdFactory.getNodeId(sourceUri);
+					n1 = new InternalNode(id, new Label(sourceUri));
+					if (this.graphBuilder.addNode(n1)) {
+						mapping.put(source, n1);
+						mappedNodes.add(n1.getId());
+						addedNodes.add((InternalNode)n1);
+					} else {
+						System.out.println("Error in adding the node " + id + " to the graph.");
+					}
+				} 
+			}
+
+			if (n2 == null) {
+				
+//				if(model.getId().equals("p4-06B7640A-8E23-B427-4B46-B1C9C194BDD7"))
+//				{
+//					System.out.println(GraphUtil.labeledGraphToString(model.getGraph()));	
+//				}
+				List<Node> sortedMatchedNodes = uriMatchedNodes.get(targetUri);
+				if (sortedMatchedNodes == null) {
+					sortedMatchedNodes = new LinkedList<Node>();
+					Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(targetUri);
+					if (matchedNodes != null && !matchedNodes.isEmpty()) {
+						sortedMatchedNodes.addAll(matchedNodes);
+						Collections.sort(sortedMatchedNodes, new NodeSupportingModelsComparator());
+						while (!sortedMatchedNodes.isEmpty()) { 
+							if (mappedNodes.contains(sortedMatchedNodes.get(0).getId())) {
+								sortedMatchedNodes.remove(0);
+								continue;
+							}
+							Set<DefaultLink> inLinks = this.getGraphBuilder().getGraph().incomingEdgesOf(sortedMatchedNodes.get(0));
+							boolean okLink = true;
+							if (inLinks != null) {
+								for (DefaultLink dl : inLinks) {
+									if (dl instanceof LabeledLink &&
+											dl.getUri().equalsIgnoreCase(linkUri)) {
+										sortedMatchedNodes.remove(0);
+										okLink = false;
+										break;
+									}
+								}
+								if (!okLink) continue; 
+							}
+							break;
+						}
+						if (!sortedMatchedNodes.isEmpty()) {
+							n2 = sortedMatchedNodes.get(0);
+							mappedNodes.add(n2.getId());
+							mapping.put(target, n2);
+							sortedMatchedNodes.remove(0);
+						}
+						uriMatchedNodes.put(targetUri, sortedMatchedNodes);
+					}
+				}
+				if (n2 == null) {
+					id = this.nodeIdFactory.getNodeId(targetUri);
+//					if (id.contains("E55_Type10"))
+//						System.out.println("break");
+					n2 = new InternalNode(id, new Label(targetUri));
+					if (this.graphBuilder.addNode(n2)) {
+						mapping.put(target, n2);
+						addedNodes.add((InternalNode)n2);
+						mappedNodes.add(n2.getId());
+					} else {
+						System.out.println("Error in adding the node " + id + " to the graph.");
+					}
+				} 
+			}
+			
+//			if (n1 == null || n2 == null) {
+//				System.out.println(GraphUtil.labeledGraphToString(model.getGraph()));
+//				System.out.println("debug");
+//			}
+			id = LinkIdFactory.getLinkId(e.getUri(), n1.getId(), n2.getId());
+			LabeledLink l = this.graphBuilder.getIdToLinkMap().get(id);
+			if (l != null) {
+				this.graphBuilder.changeLinkWeight(l, ModelingParams.PATTERN_LINK_WEIGHT);
+				l.getModelIds().add(modelId);
+				n1.getModelIds().add(modelId);
+				n2.getModelIds().add(modelId);
+			} else {
+
+				LabeledLink link = e.copy(id);
+				
+				if (link == null) {
+		    		logger.error("cannot instanciate a link from the type: " + e.getType().toString());
+		    		continue;
+				}
+				link.setStatus(LinkStatus.Normal); // all the links in learning graph are normal
+
+				if (link.getModelIds() != null)
+					link.getModelIds().clear();
+				link.getModelIds().add(modelId);
+
+				if (!this.graphBuilder.addLink(n1, n2, link, ModelingParams.PATTERN_LINK_WEIGHT)) continue;
+
+				this.graphBuilder.savePatternLink(link);
+				n1.getModelIds().add(modelId);
+				n2.getModelIds().add(modelId);
+			}
+		}
+		
+		return addedNodes;
+	}
+	
 	public static void main(String[] args) throws Exception {
 
 		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getDefault();
@@ -322,7 +598,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			i++;
 			if (i == 4) continue;
 			System.out.println(sm.getId());
-			temp = ml.addModel(sm, false);
+			temp = ml.addModel(sm, PatternWeightSystem.JWSPaperFormula);
 			if (temp != null) addedNodes.addAll(temp);
 		}
 		
