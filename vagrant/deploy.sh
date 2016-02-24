@@ -5,7 +5,7 @@ if [ ! -z $KARMA_UPDATE ]
 cd /home/vagrant/Web-Karma
 git reset --hard
 git pull
-mvn clean install
 fi
 
-bash -c "cd /home/vagrant/Web-Karma/karma-web; mvn jetty:run &"
+bash -c "cd /home/vagrant/Web-Karma; mvn clean install -Dmaven.test.skip=true"
+bash -c "cd /home/vagrant/Web-Karma/karma-web; nohup mvn jetty:run &"
