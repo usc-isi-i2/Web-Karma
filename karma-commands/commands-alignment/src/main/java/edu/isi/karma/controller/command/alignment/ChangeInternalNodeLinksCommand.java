@@ -271,8 +271,10 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 				// Add info to description string
 				LabeledLink delLink = alignment.getLinkById(linkId);
-				delDescStr.append(sep + delLink.getLabel().getDisplayName());
-				sep = ", ";
+				if(delLink != null) {
+					delDescStr.append(sep + delLink.getLabel().getDisplayName());
+					sep = ", ";
+				}
 				
 //				alignment.changeLinkStatus(linkId, LinkStatus.Normal);
 				alignment.removeLink(linkId);
@@ -283,12 +285,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 					worksheet.getSemanticTypes().unassignColumnSemanticType(cNode.getHNodeId());
 				}
 			}
-			
-			
-			
 		}
-		
-		
 	}
 
 	@Override
