@@ -26,7 +26,7 @@ var FileFormatSelectionDialog = (function() {
 		function init() {
 			//Initialize what happens when we show the dialog
 			dialog.on('show.bs.modal', function(e) {
-				$("span#fileFormatError").hide();
+				$("#fileFormatError").hide();
 				$("input:radio[name=FileFormatSelection]").attr("checked", false);
 				$("input:checkbox[name='FilterCheck']", dialog).attr('checked', false);
 				var fileName = $("#fileFormatSelectionDialog").data("fileName");
@@ -67,7 +67,6 @@ var FileFormatSelectionDialog = (function() {
 			$('#btnSaveFormat', dialog).on('click', function(e) {
 				e.preventDefault();
 				saveDialog(e);
-				dialog.modal('hide');
 			});
 		}
 
@@ -83,9 +82,12 @@ var FileFormatSelectionDialog = (function() {
 			var selectedFormat = $("input:radio[name='FileFormatSelection']:checked").val();
 			console.log("Selected format:" + selectedFormat);
 			if (selectedFormat == null || selectedFormat == "") {
-				$("span#fileFormatError").show();
+				$("#fileFormatError").show();
 				return false;
 			}
+			
+			dialog.modal('hide');
+			
 			var urlString = "RequestController?workspaceId=" + $.workspaceGlobalInformation.id;
 
 			//MVS: add the id of the revised worksheet in the request
