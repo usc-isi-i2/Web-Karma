@@ -97,7 +97,7 @@ public class WorksheetCommandHistoryExecutor {
 
 		JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 		String commandName = (String)commObject.get(HistoryArguments.commandName.name());
-		logger.warn("Command in history: " + commandName);
+		logger.debug("Command in history: " + commandName);
 
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
 		try {
