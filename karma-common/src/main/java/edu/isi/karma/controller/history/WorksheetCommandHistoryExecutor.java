@@ -59,7 +59,7 @@ public class WorksheetCommandHistoryExecutor {
 	private static String[] commandsIgnoreNodeBefore = { "AddColumnCommand",
 		"SubmitPythonTransformationCommand"
 	};
-
+	
 	public WorksheetCommandHistoryExecutor(String worksheetId, Workspace workspace) {
 		super();
 		this.worksheetId = worksheetId;
@@ -67,9 +67,10 @@ public class WorksheetCommandHistoryExecutor {
 	}
 
 	public UpdateContainer executeCommandsByTags(
-			List<CommandTag> tags, JSONArray historyJson) throws JSONException,
+			List<CommandTag> tagsToAdd, List<CommandTag> tagsToRemove, JSONArray historyJson) throws JSONException,
 			KarmaException, CommandException {
-		JSONArray filteredCommands = HistoryJsonUtil.filterCommandsByTag(tags, historyJson);
+		JSONArray filteredCommands = HistoryJsonUtil.filterCommandsByTag(tagsToAdd, historyJson);
+		filteredCommands = HistoryJsonUtil.removeCommandsByTag(tagsToRemove, filteredCommands);
 		return executeAllCommands(filteredCommands);
 	}
 	
@@ -96,7 +97,7 @@ public class WorksheetCommandHistoryExecutor {
 
 		JSONArray inputParamArr = (JSONArray) commObject.get(HistoryArguments.inputParameters.name());
 		String commandName = (String)commObject.get(HistoryArguments.commandName.name());
-		logger.debug("Command in history: " + commandName);
+		logger.warn("Command in history: " + commandName);
 
 		// Change the hNode ids, vworksheet id to point to the current worksheet ids
 		try {

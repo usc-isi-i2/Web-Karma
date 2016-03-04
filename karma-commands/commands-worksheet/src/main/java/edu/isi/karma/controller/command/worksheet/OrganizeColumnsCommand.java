@@ -28,6 +28,7 @@ public class OrganizeColumnsCommand extends WorksheetCommand {
 		this.orderedColumns = orderedColumns;
 
 		addTag(CommandTag.Transformation);
+		addTag(CommandTag.IgnoreInBatch);
 	}
 
 	@Override
