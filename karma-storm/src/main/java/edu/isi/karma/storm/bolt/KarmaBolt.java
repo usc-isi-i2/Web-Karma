@@ -95,8 +95,11 @@ public class KarmaBolt extends BaseRichBolt {
 			karmaHomeDirectory = karmaHomeStrategy.getKarmaHomeDirectory();	
 		}
 		karma = new BaseKarma();
-		karma.setup(karmaHomeDirectory, (String)localConfig.get("karma.input.type"), (String)localConfig.get("model.uri"), (String)localConfig.get("model.file"), 
-				(String)localConfig.get("base.uri"), (String)localConfig.get("context.uri"), 
+		karma.setup(karmaHomeDirectory, 
+				(String)localConfig.get("karma.input.type"), 
+				(String)localConfig.get("model.uri"), (String)localConfig.get("model.file"), (String)localConfig.get("model.content"),
+				(String)localConfig.get("base.uri"), 
+				(String)localConfig.get("context.uri"), (String)localConfig.get("context.content"),
 				(String)localConfig.get("rdf.generation.root"), (String)localConfig.get("rdf.generation.selection"));
 		
 	}

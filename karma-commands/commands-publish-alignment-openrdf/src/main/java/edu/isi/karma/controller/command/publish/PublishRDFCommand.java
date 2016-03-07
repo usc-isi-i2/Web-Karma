@@ -200,9 +200,10 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 				PrintWriter pw = new PrintWriter(tmp);
 				pw.println(utilObj.getMappingFromTripleStore(modelRepoUrl, modelContext, url));
 				pw.close();
-				Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(tmp.toURI().toURL());
+				R2RMLMappingIdentifier tempId = new R2RMLMappingIdentifier(tmp.toURI().toURL().toString(), tmp.toURI().toURL(), null);
+				Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(tempId);
 				tmp.delete();
-				R2RMLMappingIdentifier identifier = new R2RMLMappingIdentifier(mapping.getId().getName(), new URL(url));
+				R2RMLMappingIdentifier identifier = new R2RMLMappingIdentifier(mapping.getId().getName(), new URL(url), null);
 				WorksheetR2RMLJenaModelParser parser = new WorksheetR2RMLJenaModelParser(model, identifier);
 				mapping = parser.parse();
 			} catch (Exception e) {

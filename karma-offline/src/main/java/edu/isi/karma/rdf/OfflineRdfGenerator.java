@@ -380,7 +380,8 @@ public class OfflineRdfGenerator {
 		if (baseURI != null && !baseURI.trim().isEmpty())
 			return;
 		try {
-			Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(modelURL);
+			R2RMLMappingIdentifier modelIdentifier = new R2RMLMappingIdentifier(modelURL.toString(), modelURL, null);
+			Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(modelIdentifier);
 			Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
 			Property baseURIProp = model.getProperty(Uris.KM_HAS_BASEURI);
 			RDFNode node = model.getResource(Uris.KM_R2RML_MAPPING_URI);
@@ -410,15 +411,15 @@ public class OfflineRdfGenerator {
 		ContextIdentifier contextId = null;
 		if (contextURL != null) {
 			
-			contextId = new ContextIdentifier(contextURL.getQuery(), contextURL);
+			contextId = new ContextIdentifier(contextURL.getQuery(), contextURL, null);
 		}
 		if(inputType.equals("DB")) {
-			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL);
+			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(tablename, modelURL, null);
 			createWriters();
 			dbRdfGen.generateRDFFromTable(tablename, topkrows, writers, id, contextId, baseURI);
 		} else {
 			String query = loadQueryFromFile();
-			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL);
+			R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(modelURL.toString(), modelURL, null);
 			createWriters();
 			dbRdfGen.generateRDFFromSQL(query, writers, id, contextId, baseURI);
 		}
@@ -556,7 +557,7 @@ public class OfflineRdfGenerator {
 			logger.error("Unable to generate RDF from file because of invalid configuration");
 			return;
 		}
-		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL);
+		R2RMLMappingIdentifier id = new R2RMLMappingIdentifier(sourceName, modelURL, null);
 
 		createWriters();
 		GenericRDFGenerator rdfGenerator = new GenericRDFGenerator(selectionName);
@@ -605,7 +606,7 @@ public class OfflineRdfGenerator {
 		request.setStrategy(new UserSpecifiedRootStrategy(rootTripleMap));
 		request.setContextParameters(contextParameters);
 		if (contextURL != null) {
-			ContextIdentifier contextId = new ContextIdentifier(contextURL.getQuery(), contextURL);
+			ContextIdentifier contextId = new ContextIdentifier(contextURL.getQuery(), contextURL, null);
 			rdfGenerator.addContext(contextId);
 			request.setContextName(contextURL.getQuery());
 		}

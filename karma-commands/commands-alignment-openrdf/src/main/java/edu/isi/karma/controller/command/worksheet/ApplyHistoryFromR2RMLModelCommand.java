@@ -160,7 +160,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 				editor.deleteExistingTransformationAndModelingCommands();
 				historyJson = editor.getHistoryJSON();
 			}
-			System.out.println(editor.getHistoryJSON().toString(4));
+			logger.info(editor.getHistoryJSON().toString(4));
 			UpdateContainer hc = histExecutor.executeAllCommands(historyJson);
 			if(hc != null) {
 				hc.removeUpdateByClass(InfoUpdate.class);

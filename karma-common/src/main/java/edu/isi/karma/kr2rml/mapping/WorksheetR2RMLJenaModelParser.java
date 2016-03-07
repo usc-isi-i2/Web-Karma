@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -104,7 +105,7 @@ public class WorksheetR2RMLJenaModelParser {
 		{	
 			if(model == null)
 			{
-				this.model = loadSourceModelIntoJenaModel(id.getLocation());
+				this.model = loadSourceModelIntoJenaModel(id);
 			}
 		}
 	}
@@ -206,13 +207,22 @@ public class WorksheetR2RMLJenaModelParser {
 		
 		
 	}
-    public static Model loadSourceModelIntoJenaModel(URL modelURL) throws IOException {
+    
+	public static Model loadSourceModelIntoJenaModel(R2RMLMappingIdentifier id) throws IOException {
         // Create an empty Model
         Model model = ModelFactory.createDefaultModel();
-        InputStream s = modelURL.openStream();
+        InputStream s;
+        if(id.getContent() != null) {
+        	s = IOUtils.toInputStream(id.getContent());
+        } else {
+        	URL modelURL = id.getLocation();
+        	logger.info("Load model:" + modelURL.toString());
+        	s = modelURL.openStream();
+        }
         model.read(s, null, "TURTLE");
         return model;
     }
+   
 	private Resource getMappingResourceFromSourceName() throws KarmaException {
 		Property sourceNameProp = model.getProperty(Uris.KM_SOURCE_NAME_URI);
 		RDFNode node = model.createLiteral(id.getName());

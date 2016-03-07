@@ -1,7 +1,6 @@
 package edu.isi.karma.rdf;
 
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.er.helper.PythonRepository;
 import edu.isi.karma.er.helper.PythonRepositoryRegistry;
 import edu.isi.karma.kr2rml.ContextIdentifier;
 import edu.isi.karma.kr2rml.mapping.KR2RMLMapping;
@@ -30,13 +29,18 @@ public class BaseKarma {
 	protected GenericRDFGenerator generator;
 	protected String baseURI;
 	protected InputType inputType;
+	
 	protected String modelUri;
 	protected String modelFile;
 	protected URL modelURL;
+	protected String modelContent;
+	
 	protected ContextIdentifier contextId; 
 	protected String rdfGenerationRoot = null;
-	public void setup(String karmaHomePath, String inputTypeString, String modelUri, String modelFile, 
-			String baseURI, String contextURI, String root, String selection) {
+	public void setup(String karmaHomePath, String inputTypeString, 
+			String modelUri, String modelFile, String modelContent,
+			String baseURI, String contextURI, String contextContent,
+			String root, String selection) {
 
 		try {
 			setupKarmaHome(karmaHomePath);
@@ -44,10 +48,13 @@ public class BaseKarma {
 			generator = new GenericRDFGenerator(selection);
 			this.modelUri = modelUri;
 			this.modelFile = modelFile;
+			this.modelContent = modelContent;
+			
 			this.baseURI = baseURI;
+			
 			addModel();
 			if (contextURI != null && !contextURI.isEmpty()) {
-				addContext(contextURI);
+				addContext(contextURI, contextContent);
 			}
 			setRdfGenerationRoot(root, "model");
 		} catch (KarmaException | IOException e) {
@@ -87,18 +94,18 @@ public class BaseKarma {
 
 	private void addModel() throws MalformedURLException {
 		getModel();
-		generator.addModel(new R2RMLMappingIdentifier("model", modelURL));
+		generator.addModel(new R2RMLMappingIdentifier("model", modelURL, modelContent));
 	}
 	
-	public void addModel(String modelName,String modelFile,String modelUri) throws MalformedURLException {
-		URL modelURL = getModel(modelFile,modelUri);
-		generator.addModel(new R2RMLMappingIdentifier(modelName,modelURL));
+	public void addModel(String modelName, String modelFile, String modelUri, String modelContent) throws MalformedURLException {
+		URL modelURL = getModel(modelFile, modelUri);
+		generator.addModel(new R2RMLMappingIdentifier(modelName, modelURL, modelContent));
 		
 	}
 
-	private void addContext(String contextURI)    {
+	private void addContext(String contextURI, String contextContent)    {
 		try {
-			contextId = new ContextIdentifier("context", new URL(contextURI));
+			contextId = new ContextIdentifier("context", new URL(contextURI), contextContent);
 			generator.addContext(contextId);
 		}catch(Exception e) {
 

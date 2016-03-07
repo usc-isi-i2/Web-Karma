@@ -46,7 +46,7 @@ public class HistoryJSONEditor {
 						JSONObject obj = new JSONObject(array.get(j).toString());
 						newOutputColumns.add(obj.get("value").toString());
 					}
-					System.out.println(commandTag.toString(4));
+					logger.debug(commandTag.toString(4));
 					newOutputColumns.retainAll(outputColumns);
 					if (newOutputColumns.size() == 0)
 						newHistoryJSON.put(historyJSON.get(i));
@@ -81,7 +81,7 @@ public class HistoryJSONEditor {
 						JSONObject obj = new JSONObject(array.get(j).toString());
 						newOutputColumns.add(obj.get("value").toString());
 					}
-					System.out.println(commandTag.toString(4));
+					logger.debug(commandTag.toString(4));
 					newOutputColumns.retainAll(outputColumns);
 					if (newOutputColumns.size() == 0)
 						newHistoryJSON.put(historyJSON.get(i));
