@@ -1017,7 +1017,7 @@ public class ModelLearner_KnownModels {
 		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, karmaHomeDir + "config");
 
 		List<String> trainingSources = new ArrayList<String>();
-		trainingSources.add("gunsinternational.com");
+		trainingSources.add("www.gunsinternational.com");
 		trainingSources.add("www.alaskaslist.com");
 		trainingSources.add("www.dallasguns.com");
 		trainingSources.add("www.elpasoguntrader.com");
@@ -1105,7 +1105,7 @@ public class ModelLearner_KnownModels {
 
 		for (int i = 0; i < testModels.size(); i++) {
 //		for (int i = 0; i <= 1; i++) {
-//		int i = 4; {
+//		int i = 0; {
 
 			int targetSourceIndex = i;
 			SemanticModel targetSource = testModels.get(targetSourceIndex);
@@ -1173,7 +1173,7 @@ public class ModelLearner_KnownModels {
 			long elapsedTimeMillis = System.currentTimeMillis() - start;
 			float elapsedTimeSec = elapsedTimeMillis/1000F;
 			
-			int cutoff = 20;//ModelingConfiguration.getMaxCandidateModels();
+			int cutoff = 3;//ModelingConfiguration.getMaxCandidateModels();
 			List<SortableSemanticModel> topHypotheses = null;
 			if (hypothesisList != null) {
 				topHypotheses = hypothesisList.size() > cutoff ? 
@@ -1195,7 +1195,8 @@ public class ModelLearner_KnownModels {
 
 					String label = "candidate " + k + "\n" + 
 //								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
-							"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n";
+//							"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n";
+							"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getCoherenceString()) + "\n";
 					label += (m.getSteinerNodes() == null || m.getSteinerNodes().getCoherence() == null) ? 
 							"" : "node coherence:" + m.getSteinerNodes().getCoherence().getCoherenceValue() + "\n";
 					label += "confidence:" + m.getConfidenceScore() + "\n";

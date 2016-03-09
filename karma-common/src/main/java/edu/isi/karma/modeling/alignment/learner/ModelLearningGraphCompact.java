@@ -275,6 +275,31 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				
 			}
 		}
+		
+		DefaultLink[] graphLinks = this.graphBuilder.getGraph().edgeSet().toArray(new DefaultLink[0]); 
+		for (DefaultLink e : graphLinks) {
+			source = e.getSource();
+			target = e.getTarget();
+			if (source instanceof InternalNode && 
+					target instanceof InternalNode &&
+					e instanceof LabeledLink) {
+				LabeledLink l = (LabeledLink)e;
+				Set<Node> nodesWithSourceUri = this.graphBuilder.getUriToNodesMap().get(source.getUri());
+				Set<Node> nodesWithTargetUri = this.graphBuilder.getUriToNodesMap().get(target.getUri());
+				if (nodesWithSourceUri == null || nodesWithTargetUri == null) continue;
+				for (Node nn1 : nodesWithSourceUri) {
+					for (Node nn2 : nodesWithTargetUri) {
+						if (nn1.equals(source) && nn2.equals(target)) continue;
+						if (nn1.equals(nn2)) continue;
+						String id = LinkIdFactory.getLinkId(l.getUri(), nn1.getId(), nn2.getId());
+						LabeledLink newLink = l.copy(id);
+						newLink.setModelIds(null);
+						this.graphBuilder.addLink(nn1, nn2, newLink, ModelingParams.PATTERN_LINK_WEIGHT);
+					}
+				}
+			}
+		}
+
 	}
 	
 	@Override
