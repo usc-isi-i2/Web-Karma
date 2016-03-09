@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -106,7 +105,12 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				new HashMap<String, List<Node>>();
 		
 		String uri;
+		List<Node> sortedNodes = new ArrayList<Node>();
 		for (Node n : model.getGraph().vertexSet()) {
+			sortedNodes.add(n);
+		}
+		Collections.sort(sortedNodes);
+		for (Node n : sortedNodes) {
 			if (n instanceof InternalNode) {
 				uri = n.getUri();
 				List<Node> sortedMatchedNodes = uriMatchedNodes.get(uri);
@@ -120,7 +124,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			}
 		}
 
-		for (Node n : model.getGraph().vertexSet()) {
+		for (Node n : sortedNodes) {
 			if (n instanceof InternalNode) {
 				List<Node> sortedMatchedNodes = uriMatchedNodes.get(n.getUri());
 				internalNodeMapping.put(n, sortedMatchedNodes.get(0));

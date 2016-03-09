@@ -616,92 +616,6 @@ public class ModelLearner_KnownModels {
 		return mappingStruct;
 	}
 
-//	private void updateWeights() {
-//
-//		List<DefaultLink> oldLinks = new ArrayList<DefaultLink>();
-//
-//		List<Node> sources = new ArrayList<Node>();
-//		List<Node> targets = new ArrayList<Node>();
-//		List<LabeledLink> newLinks = new ArrayList<LabeledLink>();
-//		List<Double> weights = new ArrayList<Double>();
-//
-//		HashMap<String, LinkFrequency> sourceTargetLinkFrequency = 
-//				new HashMap<String, LinkFrequency>();
-//
-//		LinkFrequency lf1, lf2;
-//
-//		String key, key1, key2;
-//		String linkUri;
-//		for (DefaultLink link : this.graphBuilder.getGraph().edgeSet()) {
-//			linkUri = link.getUri();
-//			if (!linkUri.equalsIgnoreCase(Uris.DEFAULT_LINK_URI)) {
-//				if (link.getTarget() instanceof InternalNode && !linkUri.equalsIgnoreCase(Uris.RDFS_SUBCLASS_URI)) {
-//					key = "domain:" + link.getSource().getLabel().getUri() + ",link:" + linkUri + ",range:" + link.getTarget().getLabel().getUri();
-//					Integer count = this.graphBuilder.getLinkCountMap().get(key);
-//					if (count != null)
-//						this.graphBuilder.changeLinkWeight(link, ModelingParams.PATTERN_LINK_WEIGHT - ((double)count / (double)this.graphBuilder.getNumberOfModelLinks()) );
-//				}
-//				continue;
-//			}
-//
-//			key1 = link.getSource().getLabel().getUri() + 
-//					link.getTarget().getLabel().getUri();
-//			key2 = link.getTarget().getLabel().getUri() + 
-//					link.getSource().getLabel().getUri();
-//
-//			lf1 = sourceTargetLinkFrequency.get(key1);
-//			if (lf1 == null) {
-//				lf1 = this.graphBuilder.getMoreFrequentLinkBetweenNodes(link.getSource().getLabel().getUri(), link.getTarget().getLabel().getUri());
-//				sourceTargetLinkFrequency.put(key1, lf1);
-//			}
-//
-//			lf2 = sourceTargetLinkFrequency.get(key2);
-//			if (lf2 == null) {
-//				lf2 = this.graphBuilder.getMoreFrequentLinkBetweenNodes(link.getTarget().getLabel().getUri(), link.getSource().getLabel().getUri());
-//				sourceTargetLinkFrequency.put(key2, lf2);
-//			}
-//
-//			int c = lf1.compareTo(lf2);
-//			String id = null;
-//			if (c > 0) {
-//				sources.add(link.getSource());
-//				targets.add(link.getTarget());
-//
-//				id = LinkIdFactory.getLinkId(lf1.getLinkUri(), link.getSource().getId(), link.getTarget().getId());
-//				if (link instanceof ObjectPropertyLink)
-//					newLinks.add(new ObjectPropertyLink(id, new Label(lf1.getLinkUri()), ((ObjectPropertyLink) link).getObjectPropertyType()));
-//				else if (link instanceof SubClassLink)
-//					newLinks.add(new SubClassLink(id));
-//
-//				weights.add(lf1.getWeight());
-//			} else if (c < 0) {
-//				sources.add(link.getTarget());
-//				targets.add(link.getSource());
-//
-//				id = LinkIdFactory.getLinkId(lf2.getLinkUri(), link.getSource().getId(), link.getTarget().getId());
-//				if (link instanceof ObjectPropertyLink)
-//					newLinks.add(new ObjectPropertyLink(id, new Label(lf2.getLinkUri()), ((ObjectPropertyLink) link).getObjectPropertyType()));
-//				else if (link instanceof SubClassLink)
-//					newLinks.add(new SubClassLink(id));
-//
-//				weights.add(lf2.getWeight());
-//			} else
-//				continue;
-//
-//			oldLinks.add(link);
-//		}
-//
-//		for (DefaultLink link : oldLinks)
-//			this.graphBuilder.getGraph().removeEdge(link);
-//
-//		LabeledLink newLink;
-//		for (int i = 0; i < newLinks.size(); i++) {
-//			newLink = newLinks.get(i);
-//			this.graphBuilder.addLink(sources.get(i), targets.get(i), newLink);
-//			this.graphBuilder.changeLinkWeight(newLink, weights.get(i));
-//		}
-//	}
-
 	private static double roundDecimals(double d, int k) {
 		String format = "";
 		for (int i = 0; i < k; i++) format += "#";
@@ -766,8 +680,7 @@ public class ModelLearner_KnownModels {
 		}
 	}
 	
-	
-	public static void main(String[] args) throws Exception {
+	public static void runResearchEvaluation() throws Exception {
 
 		/***
 		 * When running with k=1, change the flag "multiple.same.property.per.node" to true so all attributes have at least one semantic types
@@ -1094,6 +1007,264 @@ public class ModelLearner_KnownModels {
 			resultFile.close();
 		}
 		
+	}
+	
+	public static void runUkHackEvaluation() throws Exception {
+
+		String karmaHomeDir = "/Users/mohsen/karma-uk-hack/";
+		ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().registerByKarmaHome(karmaHomeDir);
+		contextParameters.setParameterValue(ContextParameter.USER_DIRECTORY_PATH, karmaHomeDir);
+		contextParameters.setParameterValue(ContextParameter.USER_CONFIG_DIRECTORY, karmaHomeDir + "config");
+
+		List<String> trainingSources = new ArrayList<String>();
+		trainingSources.add("gunsinternational.com");
+		trainingSources.add("www.alaskaslist.com");
+		trainingSources.add("www.dallasguns.com");
+		trainingSources.add("www.elpasoguntrader.com");
+		trainingSources.add("www.floridagunclassifieds.com");
+		
+		List<String> testSources = new ArrayList<String>();
+		testSources.add("www.armslist.com");
+		testSources.add("www.floridaguntrader.com");
+		testSources.add("www.hawaiiguntrader.com");
+		testSources.add("www.montanagunclassifieds.com");
+		testSources.add("www.msguntrader.com");
+		testSources.add("www.tennesseegunexchange.com");
+		
+		List<SemanticModel> semanticModels = new ArrayList<SemanticModel>(); 
+		List<SemanticModel> trainingModels = new ArrayList<SemanticModel>(); 
+		List<SemanticModel> testModels = new ArrayList<SemanticModel>(); 
+		String ukHacKDirStr = karmaHomeDir + "git/data/weapons/";
+		File ukHackDir = new File(ukHacKDirStr);
+		File[] ukHackWebsites = ukHackDir.listFiles();
+		if (ukHackWebsites != null) {
+			for (File ukHackWebsite : ukHackWebsites) {
+				if (!ukHackWebsite.isDirectory())
+					continue;
+				File[] ukHackWebsiteFiles = ukHackWebsite.listFiles();
+				String sourceName = ukHackWebsite.getName();
+				if (!trainingSources.contains(sourceName) && !testSources.contains(sourceName)) 
+					continue;
+
+				if (ukHackWebsiteFiles != null) {
+					for (File ukHackWebsiteFile : ukHackWebsiteFiles) {
+						if (ukHackWebsiteFile.getName().equalsIgnoreCase("model.json")) {
+							SemanticModel sm = null;
+							try {
+								sm = SemanticModel.readJson(ukHackWebsiteFile.getAbsolutePath());
+							} catch (Exception e) {
+								System.out.println("Error in reading " + ukHackWebsiteFile.getAbsolutePath());
+								break;
+							}
+							sm.setName(sourceName);
+							if (trainingSources.contains(sourceName)) 
+								trainingModels.add(sm);
+							else if (testSources.contains(sourceName)) 
+								testModels.add(sm);
+						}
+					}
+				}
+			}
+		}
+		
+		OntologyManager ontologyManager = new OntologyManager(contextParameters.getId());
+		File ff = new File(karmaHomeDir + "preloaded-ontologies/");
+		File[] files = ff.listFiles();
+		for (File f : files) {
+			if(f.getName().startsWith(".") || f.isDirectory()) {
+				continue; //Ignore . files
+			}
+			ontologyManager.doImport(f, "UTF-8");
+		}
+		ontologyManager.updateCache();  
+
+		ModelLearningGraph modelLearningGraph = null;
+		
+		ModelLearner_KnownModels modelLearner;
+		
+		boolean onlyGenerateSemanticTypeStatistics = false;
+		boolean useCorrectType = true;
+		boolean onlyEvaluateInternalLinks = false || useCorrectType; 
+		int numberOfCandidates = 1;
+
+		if (onlyGenerateSemanticTypeStatistics) {
+			getStatistics(semanticModels);
+			return;
+		}
+		String filePath = karmaHomeDir + "result/";
+		String filename = ""; 
+		filename += "results";
+		filename += useCorrectType ? "-correct":"-k=" + numberOfCandidates;
+		filename += onlyEvaluateInternalLinks ? "-internal":"-all";
+		filename += ".csv"; 
+		
+		PrintWriter resultFile = null;
+		
+		resultFile = new PrintWriter(new File(filePath + filename));
+		resultFile.println("source \t p \t r \t t \t a \t m \n");
+
+		for (int i = 0; i < testModels.size(); i++) {
+//		for (int i = 0; i <= 1; i++) {
+//		int i = 4; {
+
+			int targetSourceIndex = i;
+			SemanticModel targetSource = testModels.get(targetSourceIndex);
+
+			logger.info("======================================================");
+			logger.info(targetSource.getName() + "(#attributes:" + targetSource.getColumnNodes().size() + ")");
+			System.out.println(targetSource.getName() + "(#attributes:" + targetSource.getColumnNodes().size() + ")");
+			logger.info("======================================================");
+			
+			modelLearningGraph = (ModelLearningGraphCompact)ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
+				
+			SemanticModel correctModel;
+			correctModel = targetSource;
+//			correctModel.setAccuracy(1.0);
+//			correctModel.setMrr(1.0);
+				
+				
+			List<ColumnNode> columnNodes = correctModel.getColumnNodes();
+			//				if (useCorrectType && numberOfCRFCandidates > 1)
+			//					updateCrfSemanticTypesForResearchEvaluation(columnNodes);
+
+			List<Node> steinerNodes = new LinkedList<Node>(columnNodes);
+			modelLearner = new ModelLearner_KnownModels(modelLearningGraph.getGraphBuilder(), steinerNodes);
+			long start = System.currentTimeMillis();
+
+			String graphName = karmaHomeDir + "alignment-graph/graph.json";
+
+//			if (new File(graphName).exists()) {
+//				// read graph from file
+//				try {
+//					logger.info("loading the graph ...");
+//					DirectedWeightedMultigraph<Node, DefaultLink> graph = GraphUtil.importJson(graphName);
+//					GraphBuilder gb = new GraphBuilderTopK(ontologyManager, graph);
+//					modelLearner = new ModelLearner_KnownModels(gb, steinerNodes);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			} else 
+			{
+				logger.info("building the graph ...");
+				for (SemanticModel sm : trainingModels)
+//						modelLearningGraph.addModel(sm);
+					modelLearningGraph.addModelAndUpdate(sm, PatternWeightSystem.JWSPaperFormula);
+				modelLearner = new ModelLearner_KnownModels(modelLearningGraph.getGraphBuilder(), steinerNodes);
+//					modelLearner.graphBuilder = modelLearningGraph.getGraphBuilder();
+//					modelLearner.nodeIdFactory = modelLearner.graphBuilder.getNodeIdFactory();
+				// save graph to file
+				try {
+						GraphUtil.exportJson(modelLearningGraph.getGraphBuilder().getGraph(), graphName, true, true);
+						GraphVizUtil.exportJGraphToGraphviz(modelLearner.graphBuilder.getGraph(), 
+								"test", 
+								true, 						
+								GraphVizLabelType.LocalId,
+								GraphVizLabelType.LocalUri,
+								false, 
+								true, 
+								graphName + ".dot");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+				
+			List<SortableSemanticModel> hypothesisList = modelLearner.hypothesize(useCorrectType, numberOfCandidates);
+			
+			long elapsedTimeMillis = System.currentTimeMillis() - start;
+			float elapsedTimeSec = elapsedTimeMillis/1000F;
+			
+			int cutoff = 20;//ModelingConfiguration.getMaxCandidateModels();
+			List<SortableSemanticModel> topHypotheses = null;
+			if (hypothesisList != null) {
+				topHypotheses = hypothesisList.size() > cutoff ? 
+						hypothesisList.subList(0, cutoff) : 
+							hypothesisList;
+			}
+
+			Map<String, SemanticModel> models = 
+					new TreeMap<String, SemanticModel>();
+
+			ModelEvaluation me;
+			models.put("1-correct model", correctModel);
+			if (topHypotheses != null) {
+				for (int k = 0; k < topHypotheses.size(); k++) {
+
+					SortableSemanticModel m = topHypotheses.get(k);
+
+					me = m.evaluate(correctModel, onlyEvaluateInternalLinks, false);
+
+					String label = "candidate " + k + "\n" + 
+//								(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
+							"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n";
+					label += (m.getSteinerNodes() == null || m.getSteinerNodes().getCoherence() == null) ? 
+							"" : "node coherence:" + m.getSteinerNodes().getCoherence().getCoherenceValue() + "\n";
+					label += "confidence:" + m.getConfidenceScore() + "\n";
+					label += m.getSteinerNodes() == null ? "" : "mapping score:" + m.getSteinerNodes().getScore() + "\n";
+					label +=
+							"cost:" + roundDecimals(m.getCost(), 6) + "\n" +
+							//								"-distance:" + me.getDistance() + 
+							"-precision:" + me.getPrecision() + 
+							"-recall:" + me.getRecall();
+
+					models.put(label, m);
+
+					if (k == 0) { // first rank model
+						System.out.println("number of known models: " + trainingModels.size() +
+								", precision: " + me.getPrecision() + 
+								", recall: " + me.getRecall() + 
+								", time: " + elapsedTimeSec + 
+								", accuracy: " + correctModel.getAccuracy() + 
+								", mrr: " + correctModel.getMrr()); 
+						logger.info("number of known models: " + trainingModels.size() +
+								", precision: " + me.getPrecision() + 
+								", recall: " + me.getRecall() + 
+								", time: " + elapsedTimeSec + 
+								", accuracy: " + correctModel.getAccuracy() + 
+								", mrr: " + correctModel.getMrr()); 
+//							resultFile.println("number of known models \t precision \t recall");
+//							resultFile.println(numberOfKnownModels + "\t" + me.getPrecision() + "\t" + me.getRecall());
+						String s = me.getPrecision() + "\t" + 
+									me.getRecall() + "\t" + 
+									elapsedTimeSec + "\t" + 
+									correctModel.getAccuracy() + "\t" + 
+									correctModel.getMrr();
+						
+//						s = newSource.getName() + "\t" + 
+//								me.getPrecision() + "\t" + 
+//								me.getRecall() + "\t" + 
+//								elapsedTimeSec + "\t" + 
+//								correctModel.getAccuracy() + "\t" + 
+//								correctModel.getMrr();
+						s = me.getPrecision() + "\t" + 
+								me.getRecall() + "\t" + 
+								elapsedTimeSec; 
+						resultFile.println(s);
+
+//						resultFile.println(me.getPrecision() + "\t" + me.getRecall() + "\t" + elapsedTimeSec);
+					}
+				}
+			}
+
+			String outName = karmaHomeDir + "output/" + targetSource.getName() + ".out.dot";
+
+			GraphVizUtil.exportSemanticModelsToGraphviz(
+					models, 
+					targetSource.getName(),
+					outName,
+					GraphVizLabelType.LocalId,
+					GraphVizLabelType.LocalUri,
+					true,
+					true);
+
+		}
+
+		resultFile.close();
+	}
+
+	public static void main(String[] args) throws Exception {
+		boolean uk_hack = true;
+		if (uk_hack) runUkHackEvaluation();
+		else runResearchEvaluation();
 	}
 
 
