@@ -68,6 +68,7 @@ public class EvaluateMRR {
 					// Reading learned Semantic labels and storing in an array list 
 					JSONArray learnedArray = (JSONArray) obj.get("learnedSemanticTypes");
 					ArrayList <String> learnedTypes= new ArrayList<String>();
+					if (learnedArray != null)
 					for(Object o2: learnedArray){
 						JSONObject learnedObj= (JSONObject) o2;
 						learnedTypes.add(learnedObj.get("domain")+""); 

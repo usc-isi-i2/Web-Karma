@@ -80,6 +80,8 @@ import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.Origin;
+import edu.isi.karma.semantictypes.evaluation.EvaluateMRR;
+import edu.isi.karma.semantictypes.evaluation.MRRItem;
 import edu.isi.karma.util.RandomGUID;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -623,7 +625,7 @@ public class ModelLearner_KnownModels {
         return Double.valueOf(DForm.format(d));
 	}
 
-	private static void getStatistics(List<SemanticModel> semanticModels) {
+	private static void getStatistics(List<SemanticModel> semanticModels, List<String> modelFiles, int numOfCandidates) {
 		for (int i = 0; i < semanticModels.size(); i++) {
 			SemanticModel source = semanticModels.get(i);
 			int attributeCount = source.getColumnNodes().size();
@@ -664,9 +666,14 @@ public class ModelLearner_KnownModels {
 				}
 
 			}
+			
+			MRRItem mrrItem = null;
+			if (modelFiles != null) {
+				mrrItem = EvaluateMRR.calculateMRRValue(modelFiles.get(i),4);
+			}
 
 //			System.out.println(numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + numberOfAttributesWhoseTypeIsFirstCRFType);
-			
+//			System.out.println(source.getName());
 			System.out.println(
 					attributeCount + "\t" + 
 					nodeCount + "\t" + 
@@ -674,8 +681,10 @@ public class ModelLearner_KnownModels {
 					(linkCount - attributeCount) + "\t" +
 					classNodeCount + "\t" + 
 					datanodeCount + "\t" + 
+					numberOfAttributesWhoseTypeIsFirstCRFType + "\t" + 
 					numberOfAttributesWhoseTypeIsInCRFTypes + "\t" + 
-					numberOfAttributesWhoseTypeIsFirstCRFType);
+					(mrrItem != null ? roundDecimals(mrrItem.getAccuracy(),2) : 0) + "\t" + 
+					(mrrItem != null ? roundDecimals(mrrItem.getMrr(),2) : 0));
 
 		}
 	}
@@ -745,7 +754,7 @@ public class ModelLearner_KnownModels {
 		int numberOfCandidates = 1;
 
 		if (onlyGenerateSemanticTypeStatistics) {
-			getStatistics(semanticModels);
+			getStatistics(semanticModels, null, 0);
 			return;
 		}
 		int numberOfKnownModels;
@@ -1030,10 +1039,18 @@ public class ModelLearner_KnownModels {
 		testSources.add("www.montanagunclassifieds.com");
 		testSources.add("www.msguntrader.com");
 		testSources.add("www.tennesseegunexchange.com");
+		testSources.add("www.kyclassifieds.com");
+		testSources.add("www.nextechclassifieds.com");
+		testSources.add("www.shooterswap.com");
+		testSources.add("www.theoutdoorstrader.com");
 		
-		List<SemanticModel> semanticModels = new ArrayList<SemanticModel>(); 
+		
 		List<SemanticModel> trainingModels = new ArrayList<SemanticModel>(); 
-		List<SemanticModel> testModels = new ArrayList<SemanticModel>(); 
+		List<SemanticModel> testModels = new ArrayList<SemanticModel>();
+		
+		List<String> trainingFiles = new LinkedList<String>();
+		List<String> testFiles = new LinkedList<String>();
+		
 		String ukHacKDirStr = karmaHomeDir + "git/data/weapons/";
 		File ukHackDir = new File(ukHacKDirStr);
 		File[] ukHackWebsites = ukHackDir.listFiles();
@@ -1057,10 +1074,13 @@ public class ModelLearner_KnownModels {
 								break;
 							}
 							sm.setName(sourceName);
-							if (trainingSources.contains(sourceName)) 
+							if (trainingSources.contains(sourceName)) {
 								trainingModels.add(sm);
-							else if (testSources.contains(sourceName)) 
+								trainingFiles.add(ukHackWebsiteFile.getAbsolutePath());
+							} else if (testSources.contains(sourceName)) {
 								testModels.add(sm);
+								testFiles.add(ukHackWebsiteFile.getAbsolutePath());
+							}
 						}
 					}
 				}
@@ -1082,13 +1102,20 @@ public class ModelLearner_KnownModels {
 		
 		ModelLearner_KnownModels modelLearner;
 		
-		boolean onlyGenerateSemanticTypeStatistics = false;
+		boolean onlyGenerateSemanticTypeStatistics = true;
 		boolean useCorrectType = true;
 		boolean onlyEvaluateInternalLinks = false || useCorrectType; 
 		int numberOfCandidates = 1;
 
 		if (onlyGenerateSemanticTypeStatistics) {
-			getStatistics(semanticModels);
+			System.out.println("==============================================");
+			System.out.println("training");
+			System.out.println("==============================================");
+			getStatistics(trainingModels, trainingFiles, 4);
+			System.out.println("==============================================");
+			System.out.println("test");
+			System.out.println("==============================================");
+			getStatistics(testModels, testFiles, 4);
 			return;
 		}
 		String filePath = karmaHomeDir + "result/";
