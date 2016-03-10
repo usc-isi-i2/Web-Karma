@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 import scala.Tuple2;
 import edu.isi.karma.rdf.JSONImpl;
+import edu.isi.karma.rdf.N3Impl;
 import edu.isi.karma.util.JSONLDUtil;
 
 /**
@@ -125,6 +126,8 @@ public class KarmaDriver {
 		String contextTxt = IOUtils.toString(new URL(contextUrl));
 		final Broadcast<String> context = sc.broadcast(contextTxt);
         
+		final String outputFormat = karmaSettings.getProperty("karma.output.format");
+		
 		logger.info("Load model:" + modelUrl);
 		logger.info("Load context:" + contextUrl);
 		
@@ -169,7 +172,7 @@ public class KarmaDriver {
 					});
 		}
 
-		JavaPairRDD<Text, Text> pairs = input.flatMapToPair(
+		JavaPairRDD<String, String> pairs = input.flatMapToPair(
 						new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
         	private static final long serialVersionUID = -3533063264900721773L;
         	
@@ -181,36 +184,60 @@ public class KarmaDriver {
                 	karmaContentSettings.put(key, karmaSettings.get(key));
                 karmaContentSettings.put("model.content", model.value());
                 karmaContentSettings.put("context.content", context.getValue());
-                final JSONImpl mapper = new JSONImpl(karmaContentSettings);
-            	String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
-                JSONArray generatedObjects = new JSONArray(result);
-                for (int i = 0; i < generatedObjects.length(); i++) {
-                    try {
-                        String key;
-                        String value;
-                        if (generatedObjects.getJSONObject(i).has(mapper.getAtId())) {
-                            key = generatedObjects.getJSONObject(i).getString(mapper.getAtId());
-                        } else {
-                            key = generatedObjects.getJSONObject(i).toString();
-                        }
-                        value = generatedObjects.getJSONObject(i).toString();
-                        results.add(new Tuple2<>(key, value));
-                    } catch (ArrayIndexOutOfBoundsException ae) {
-                        logger.error("************ARRAYEXCEPTION*********:" + ae.getMessage() + "SOURCE: " + generatedObjects.getJSONObject(i).toString());
-                    }
+                
+                if(outputFormat != null && outputFormat.equals("n3")) {
+                	final N3Impl mapper = new N3Impl(karmaContentSettings);
+                	String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
+                	String[] lines = result.split("(\r\n|\n)");
+            		for(String line : lines)
+            		{
+            			if((line = line.trim()).isEmpty())
+            			{
+            				continue;
+            			}
+            			int splitBetweenSubjectAndPredicate = line.indexOf(' ');
+            			String key = (line.substring(0, splitBetweenSubjectAndPredicate));
+            			String value = line;
+            			results.add(new Tuple2<>(key, value));
+            		}
+                } else {
+	                final JSONImpl mapper = new JSONImpl(karmaContentSettings);
+	            	String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
+	                JSONArray generatedObjects = new JSONArray(result);
+	                for (int i = 0; i < generatedObjects.length(); i++) {
+	                    try {
+	                        String key;
+	                        String value;
+	                        if (generatedObjects.getJSONObject(i).has(mapper.getAtId())) {
+	                            key = generatedObjects.getJSONObject(i).getString(mapper.getAtId());
+	                        } else {
+	                            key = generatedObjects.getJSONObject(i).toString();
+	                        }
+	                        value = generatedObjects.getJSONObject(i).toString();
+	                        results.add(new Tuple2<>(key, value));
+	                    } catch (ArrayIndexOutOfBoundsException ae) {
+	                        logger.error("************ARRAYEXCEPTION*********:" + ae.getMessage() + "SOURCE: " + generatedObjects.getJSONObject(i).toString());
+	                    }
+	                }
                 }
                 return results;
             }
-        }).reduceByKey(new Function2<String, String, String>() {
-            private static final long serialVersionUID = -3238789305990222436L;
+        });
+		
+		if(outputFormat == null || outputFormat.equals("json")) {
+			pairs = pairs.reduceByKey(new Function2<String, String, String>() {
+	            private static final long serialVersionUID = -3238789305990222436L;
 
-			@Override
-            public String call(String text, String text2) throws Exception {
-                JSONObject left = new JSONObject(text);
-                JSONObject right = new JSONObject(text2);
-                return JSONLDUtil.mergeJSONObjects(left, right).toString();
-            }
-        }).mapToPair(new PairFunction<Tuple2<String,String>, Text, Text>() {
+				@Override
+	            public String call(String text, String text2) throws Exception {
+	                JSONObject left = new JSONObject(text);
+	                JSONObject right = new JSONObject(text2);
+	                return JSONLDUtil.mergeJSONObjects(left, right).toString();
+	            }
+	        });
+		}
+		
+		return pairs.mapToPair(new PairFunction<Tuple2<String,String>, Text, Text>() {
             private static final long serialVersionUID = 2787821808872176951L;
 
 			@Override
@@ -218,7 +245,6 @@ public class KarmaDriver {
                 return new Tuple2<>(new Text(stringStringTuple2._1), new Text(stringStringTuple2._2));
             }
         });
-        return pairs;
     }
     
     public static JavaRDD<String> applyModel(JavaSparkContext jsc, 
