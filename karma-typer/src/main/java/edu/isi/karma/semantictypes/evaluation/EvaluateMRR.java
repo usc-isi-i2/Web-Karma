@@ -62,7 +62,7 @@ public class EvaluateMRR {
 					ArrayList <String> correctTypes= new ArrayList<String>();
 					for(Object o1: userArray){
 						JSONObject userObj= (JSONObject) o1;
-						correctTypes.add(userObj.get("domain")+"");
+						correctTypes.add(userObj.get("domain").toString() + userObj.get("type").toString());
 					}
 
 					// Reading learned Semantic labels and storing in an array list 
@@ -71,7 +71,7 @@ public class EvaluateMRR {
 					if (learnedArray != null)
 					for(Object o2: learnedArray){
 						JSONObject learnedObj= (JSONObject) o2;
-						learnedTypes.add(learnedObj.get("domain")+""); 
+						learnedTypes.add(learnedObj.get("domain").toString() + learnedObj.get("type").toString()); 
 					}
 
 					int rank=1; // rank of correct semantic type in the learned semantic labels ordered list
@@ -165,7 +165,7 @@ public class EvaluateMRR {
 					ArrayList <String> correctTypes= new ArrayList<String>();
 					for(Object o1: userArray){
 						JSONObject userObj= (JSONObject) o1;
-						correctTypes.add(userObj.get("domain")+"");
+						correctTypes.add(userObj.get("domain").toString() + userObj.get("type").toString());
 					}
 
 					// Reading learned Semantic labels and storing in an array list 
@@ -173,7 +173,7 @@ public class EvaluateMRR {
 					ArrayList <String> learnedTypes= new ArrayList<String>();
 					for(Object o2: learnedArray){
 						JSONObject learnedObj= (JSONObject) o2;
-						learnedTypes.add(learnedObj.get("domain")+""); 
+						learnedTypes.add(learnedObj.get("domain").toString() + learnedObj.get("type").toString()); 
 					}
 
 					int rank=1; // rank of correct semantic type in the learned semantic labels ordered list
