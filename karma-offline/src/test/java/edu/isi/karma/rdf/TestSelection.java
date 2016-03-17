@@ -14,6 +14,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.JSONException;
@@ -154,7 +155,13 @@ public class TestSelection {
 		{
 			List<CommandTag> tags = new ArrayList<CommandTag>();
 			tags.add(CommandTag.Transformation);
-			wchr.executeCommandsByTags(tags, mapping.getWorksheetHistory());
+			
+			List<CommandTag> ignoreTags = new ArrayList<CommandTag>();
+			ignoreTags.add(CommandTag.IgnoreInBatch);
+			
+			wchr.executeCommandsByTags(tags, 
+					ignoreTags,
+					mapping.getWorksheetHistory());
 		}
 		catch (CommandException | KarmaException e)
 		{

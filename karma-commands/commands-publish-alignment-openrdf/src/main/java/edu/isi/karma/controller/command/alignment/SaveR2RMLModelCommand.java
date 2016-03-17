@@ -25,6 +25,7 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.er.helper.TripleStoreUtil;
+import edu.isi.karma.kr2rml.mapping.R2RMLMappingIdentifier;
 import edu.isi.karma.kr2rml.mapping.WorksheetR2RMLJenaModelParser;
 import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.Workspace;
@@ -168,7 +169,8 @@ public class SaveR2RMLModelCommand extends Command{
 				return false;
 			URL url = new URL(modelUrl);
 			StringWriter test = new StringWriter();
-			Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(url);
+			R2RMLMappingIdentifier modelId = new R2RMLMappingIdentifier(modelUrl, url, null);
+			Model model = WorksheetR2RMLJenaModelParser.loadSourceModelIntoJenaModel(modelId);
 			Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
 
 			RDFNode node = model.getResource(Uris.KM_R2RML_MAPPING_URI);

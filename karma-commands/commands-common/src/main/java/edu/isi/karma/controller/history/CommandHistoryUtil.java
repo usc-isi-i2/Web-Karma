@@ -180,7 +180,7 @@ public class CommandHistoryUtil {
 				newOutputColumns.add(obj.get("value").toString());
 			}
 		}
-		System.out.println(inputParamArr.toString(4));
+		logger.debug(inputParamArr.toString(4));
 		CommandFactory cf = commandFactoryMap.get(historyJSON.get(HistoryArguments.commandName.name()));
 		if(cf != null) {
 			try { // This is sort of a hack the way I did this, but could not think of a better way to get rid of the dependency

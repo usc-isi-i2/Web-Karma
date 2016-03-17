@@ -67,6 +67,38 @@ public class HistoryJsonUtil {
 		return file.exists();
 	}
 	
+	public static JSONArray removeCommandsByTag(List<CommandTag> removeFilters,
+			 JSONArray historyJson)
+			throws JSONException {
+		JSONArray commandsJSON = new JSONArray();
+		
+		for (int i = 0; i< historyJson.length(); i++) {
+			JSONObject commObject = (JSONObject) historyJson.get(i);
+			JSONArray tags = commObject.getJSONArray(HistoryArguments.tags.name());
+			boolean match = false;
+			for (int j=0; j< tags.length(); j++) {
+				
+				String tag2 = tags.getString(j);
+				for(CommandTag filter : removeFilters)
+				{
+					if(tag2.equals(filter.name()))
+					{
+						match = true;
+						break;
+					}
+					
+				}
+				if(match)
+				{
+					break;
+				}
+			}
+			if(!match)
+				commandsJSON.put(commObject);
+		}
+		return commandsJSON;
+	}
+	
 	public static JSONArray filterCommandsByTag(List<CommandTag> filters,
 			 JSONArray historyJson)
 			throws JSONException {

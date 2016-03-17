@@ -59,7 +59,7 @@ public class WorksheetCommandHistoryExecutor {
 	private static String[] commandsIgnoreNodeBefore = { "AddColumnCommand",
 		"SubmitPythonTransformationCommand"
 	};
-
+	
 	public WorksheetCommandHistoryExecutor(String worksheetId, Workspace workspace) {
 		super();
 		this.worksheetId = worksheetId;
@@ -67,9 +67,10 @@ public class WorksheetCommandHistoryExecutor {
 	}
 
 	public UpdateContainer executeCommandsByTags(
-			List<CommandTag> tags, JSONArray historyJson) throws JSONException,
+			List<CommandTag> tagsToAdd, List<CommandTag> tagsToRemove, JSONArray historyJson) throws JSONException,
 			KarmaException, CommandException {
-		JSONArray filteredCommands = HistoryJsonUtil.filterCommandsByTag(tags, historyJson);
+		JSONArray filteredCommands = HistoryJsonUtil.filterCommandsByTag(tagsToAdd, historyJson);
+		filteredCommands = HistoryJsonUtil.removeCommandsByTag(tagsToRemove, filteredCommands);
 		return executeAllCommands(filteredCommands);
 	}
 	

@@ -76,6 +76,6 @@ public interface ICommand extends IEntity
 	}
 
 	enum CommandTag {
-		Modeling, Transformation, Selection, SemanticType, Import, Other
+		Modeling, Transformation, Selection, SemanticType, Import, Other, IgnoreInBatch
 	}
 }

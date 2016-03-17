@@ -21,6 +21,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.broadcast.Broadcast;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,18 +93,20 @@ private static Logger logger = LoggerFactory.getLogger(JSONContextDriver.class);
             });
         }
       
-        InputStream in = new URL(contextUrl).openStream();
-        final Object context = JsonUtils.fromInputStream(in);
-        in.close();
-		
-      	applyContext(sc, pairs, context, contextUrl)
+        
+      	applyContext(sc, pairs, contextUrl)
         		.saveAsNewAPIHadoopFile(outputPath, Text.class, Text.class, SequenceFileOutputFormat.class);
     }
     
     public static JavaPairRDD<String, String> applyContext(JavaSparkContext jsc, 
     		JavaPairRDD<String, String> input,
-    		final Object context, final String contextUrl) throws IOException {
+    		final String contextUrl) throws IOException {
     	
+    	InputStream in = new URL(contextUrl).openStream();
+        final Object contextObject = JsonUtils.fromInputStream(in);
+        in.close();
+		
+        final Broadcast<Object> context = jsc.broadcast(contextObject);
 		
 		return input.mapToPair(new PairFunction<Tuple2<String,String>, String, String>() {
 			private static final long serialVersionUID = 2878941073410454935L;
@@ -117,7 +120,7 @@ private static Logger logger = LoggerFactory.getLogger(JSONContextDriver.class);
 				
 				JSONObject obj = new JSONObject(value);
 				Object outobj = JsonLdProcessor.compact(JsonUtils.fromString(value), 
-						context, 
+						context.getValue(), 
 						new JsonLdOptions(""));
 				if(outobj instanceof Map) {
 					@SuppressWarnings("rawtypes")
@@ -141,7 +144,7 @@ private static Logger logger = LoggerFactory.getLogger(JSONContextDriver.class);
     }
     
     public static JavaRDD<String> applyContext(JavaSparkContext jsc, 
-    		JavaRDD<String> input, String context, String contextUrl) throws IOException {
+    		JavaRDD<String> input, String contextUrl) throws IOException {
     	JavaPairRDD<String, String> inputPair = input.mapToPair(new PairFunction<String, String, String>() {
             private static final long serialVersionUID = -4153068088292891034L;
 
@@ -151,9 +154,7 @@ private static Logger logger = LoggerFactory.getLogger(JSONContextDriver.class);
             }
         });
     	
-    	final Object contextObject = JsonUtils.fromString(context);
-		
-		JavaPairRDD<String, String> pairs = applyContext(jsc, inputPair, contextObject, contextUrl);
+    	JavaPairRDD<String, String> pairs = applyContext(jsc, inputPair, contextUrl);
 		return pairs.map(new Function<Tuple2<String, String>, String>() {
 
 			private static final long serialVersionUID = 5833358013516510838L;

@@ -57,7 +57,6 @@ public class JsonImport extends Import {
 	private static Logger logger = LoggerFactory.getLogger(JsonImport.class);
 	private final Object json;
 	private int maxNumLines;
-	private int numObjects;
 	private Workspace workspace;
 	private JSONArray columnsJson;
 	private class FileObject {
@@ -127,7 +126,7 @@ public class JsonImport extends Import {
 
 	@Override
 	public Worksheet generateWorksheet() throws JSONException {
-		numObjects = 0;
+		int numObjects = 0;
 		if (json instanceof JSONArray) {
 			getWorksheet().getMetadataContainer().getWorksheetProperties().setWorksheetDataStructure(DataStructure.COLLECTION);
 			JSONArray a = (JSONArray) json;
@@ -135,6 +134,7 @@ public class JsonImport extends Import {
 				JsonImportValues JsonImportValues = new JsonImportValues(maxNumLines, numObjects, getFactory(), getWorksheet(), columnsJson);
 				JsonImportValues.addListElement(a.get(i), getWorksheet().getHeaders(),
 						getWorksheet().getDataTable());
+				numObjects = JsonImportValues.getNumberOfObjectsImported();
 				if (maxNumLines > 0 && numObjects >= maxNumLines)
 					break;
 			}

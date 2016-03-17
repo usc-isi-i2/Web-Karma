@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -106,7 +105,12 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				new HashMap<String, List<Node>>();
 		
 		String uri;
+		List<Node> sortedNodes = new ArrayList<Node>();
 		for (Node n : model.getGraph().vertexSet()) {
+			sortedNodes.add(n);
+		}
+		Collections.sort(sortedNodes);
+		for (Node n : sortedNodes) {
 			if (n instanceof InternalNode) {
 				uri = n.getUri();
 				List<Node> sortedMatchedNodes = uriMatchedNodes.get(uri);
@@ -120,7 +124,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			}
 		}
 
-		for (Node n : model.getGraph().vertexSet()) {
+		for (Node n : sortedNodes) {
 			if (n instanceof InternalNode) {
 				List<Node> sortedMatchedNodes = uriMatchedNodes.get(n.getUri());
 				internalNodeMapping.put(n, sortedMatchedNodes.get(0));
@@ -271,6 +275,31 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				
 			}
 		}
+		
+		DefaultLink[] graphLinks = this.graphBuilder.getGraph().edgeSet().toArray(new DefaultLink[0]); 
+		for (DefaultLink e : graphLinks) {
+			source = e.getSource();
+			target = e.getTarget();
+			if (source instanceof InternalNode && 
+					target instanceof InternalNode &&
+					e instanceof LabeledLink) {
+				LabeledLink l = (LabeledLink)e;
+				Set<Node> nodesWithSourceUri = this.graphBuilder.getUriToNodesMap().get(source.getUri());
+				Set<Node> nodesWithTargetUri = this.graphBuilder.getUriToNodesMap().get(target.getUri());
+				if (nodesWithSourceUri == null || nodesWithTargetUri == null) continue;
+				for (Node nn1 : nodesWithSourceUri) {
+					for (Node nn2 : nodesWithTargetUri) {
+						if (nn1.equals(source) && nn2.equals(target)) continue;
+						if (nn1.equals(nn2)) continue;
+						String id = LinkIdFactory.getLinkId(l.getUri(), nn1.getId(), nn2.getId());
+						LabeledLink newLink = l.copy(id);
+						newLink.setModelIds(null);
+						this.graphBuilder.addLink(nn1, nn2, newLink, ModelingParams.PATTERN_LINK_WEIGHT);
+					}
+				}
+			}
+		}
+
 	}
 	
 	@Override

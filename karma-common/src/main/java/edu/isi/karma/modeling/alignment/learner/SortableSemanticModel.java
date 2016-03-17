@@ -86,10 +86,10 @@ public class SortableSemanticModel extends SemanticModel
 		}
 		return cost;
 	}
-
+	
 	private void computeCoherence() {
 		for (LabeledLink l : this.graph.edgeSet()) {
-			linkCoherence.updateCoherence(l);
+			linkCoherence.updateCoherence(this.getGraph(), l);
 		}
 	}
 
@@ -148,6 +148,36 @@ public class SortableSemanticModel extends SemanticModel
 //			return 0;
 //	}
 
+	private int compareCoherencePair(Integer[] c1, Integer[] c2) {
+		if (c1 == null || c2 == null)
+			return 0;
+		
+		int items1 = c1[1];
+		int items2 = c2[1];
+		
+		int nonPatternLinks1 = c1[1] - c1[0];
+		int nonPatternLinks2 = c2[1] - c2[0];
+		
+		// item count
+		if (items1 == 0 && items2 == 0)
+			return 0;
+		else if (items1 == 0)
+			return -1;
+		else if (items2 == 0)
+			return 1;
+		
+		if (nonPatternLinks1 < nonPatternLinks2)
+			return -1;
+		else if (nonPatternLinks1 > nonPatternLinks2)
+			return 1;
+		else {
+			
+			if (nonPatternLinks1 == 0 && nonPatternLinks2 == 0) 
+				return Integer.compare(items2, items1);
+			else
+				return Integer.compare(items1, items2);
+		}
+	}
 	
 	@Override
 	public int compareTo(SortableSemanticModel m) {
@@ -160,12 +190,20 @@ public class SortableSemanticModel extends SemanticModel
 //		double score1 = this.getScore();
 //		double score2 = m.getScore();
 
-		double linkCoherence1 = this.linkCoherence.getCoherenceValue();
-		double linkCoherence2 = m.linkCoherence.getCoherenceValue();
-
-		if (linkCoherence1 > linkCoherence2)
+//		double linkCoherence1 = this.linkCoherence.getCoherenceValue();
+//		double linkCoherence2 = m.linkCoherence.getCoherenceValue();
+//		
+//		if (linkCoherence1 > linkCoherence2)
+//			return greaterThan;
+//		else if (linkCoherence1 < linkCoherence2)
+//			return lessThan;
+		
+		Integer[] linkCoherencePair1 = this.linkCoherence.getCoherencePair();
+		Integer[] linkCoherencePair2 = m.linkCoherence.getCoherencePair();
+		int linkCoherence = this.compareCoherencePair(linkCoherencePair1, linkCoherencePair2);
+		if (linkCoherence < 0)
 			return greaterThan;
-		else if (linkCoherence1 < linkCoherence2)
+		else if (linkCoherence > 0)
 			return lessThan;
 
 //		if (score1 > score2)
@@ -173,17 +211,16 @@ public class SortableSemanticModel extends SemanticModel
 //		else if (score1 < score2)
 //			return lessThan;	
 
-		if (confidenceScore1 > confidenceScore2)
-			return greaterThan;
-		else if (confidenceScore1 < confidenceScore2)
-			return lessThan;
-		
 		if (this.cost < m.cost)
 			return greaterThan;
 		else if (m.cost < this.cost)
 			return lessThan;
 		
-	
+		
+		if (confidenceScore1 > confidenceScore2)
+			return greaterThan;
+		else if (confidenceScore1 < confidenceScore2)
+			return lessThan;	
 		
 		return 0;
 		
@@ -196,12 +233,23 @@ public class SortableSemanticModel extends SemanticModel
         return Double.valueOf(DForm.format(d));
 	}
 	
+	public String getCoherenceString() {
+		String c = "";
+		c += "[";
+		c += this.linkCoherence.getCoherencePair()[0];
+		c += ",";
+		c += this.linkCoherence.getCoherencePair()[1];
+		c += "]";
+		return c;
+	}
+	
 	public String getRankingDetails() {
 		
 		String label = "";
 		label +=
 //				(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
-				"link coherence:" + (this.getLinkCoherence() == null ? "" : this.getLinkCoherence().getCoherenceValue()) + "\n";
+//				"link coherence:" + (this.getLinkCoherence() == null ? "" : this.getLinkCoherence().getCoherenceValue()) + "\n";
+				"link coherence:" + (this.getLinkCoherence() == null ? "" : this.getCoherenceString()) + "\n";
 		label += (this.getSteinerNodes() == null || this.getSteinerNodes().getCoherence() == null) ? 
 				"" : "node coherence:" + this.getSteinerNodes().getCoherence().getCoherenceValue() + "\n";
 		label += "confidence:" + this.getConfidenceScore() + "\n";

@@ -30,6 +30,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.update.WorksheetListUpdate;
 import edu.isi.karma.rep.HNode;
@@ -81,6 +83,9 @@ public class VWorksheet extends ViewEntity {
 	 * see. It records how the table is scrolled.
 	 */
 	private Map<String, TablePager> tableId2TablePager = new HashMap<String, TablePager>();
+	
+	private static Logger logger = LoggerFactory
+			.getLogger(VWorksheet.class);
 	
 	VWorksheet(String id, Worksheet worksheet, List<HNodePath> columns,
 			VWorkspace vWorkspace) {
@@ -258,16 +263,21 @@ public class VWorksheet extends ViewEntity {
 		for(int i=0; i<columns.length(); i++) {
 			JSONObject column = columns.getJSONObject(i);
 			
-			VHNode vNode = new VHNode(column.getString("id"), column.getString("name"));
-			vNode.setVisible(column.getBoolean("visible"));
-			if(column.has("children")) {
-				ArrayList<VHNode> nestedNodes = generateOrganizedColumns(column.getJSONArray("children"));
-				for(VHNode nestedVNode : nestedNodes) {
-					vNode.addNestedNode(nestedVNode);
+			if(column.has("id") && column.get("id") instanceof String) {
+				try {
+					VHNode vNode = new VHNode(column.getString("id"), column.getString("name"));
+					vNode.setVisible(column.getBoolean("visible"));
+					if(column.has("children")) {
+						ArrayList<VHNode> nestedNodes = generateOrganizedColumns(column.getJSONArray("children"));
+						for(VHNode nestedVNode : nestedNodes) {
+							vNode.addNestedNode(nestedVNode);
+						}
+					}
+					vNodes.add(vNode);
+				} catch(Exception e) {
+					logger.error("Error organizing column:" + column.toString(), e);
 				}
 			}
-			vNodes.add(vNode);
-			
 		}
 		
 		return vNodes;

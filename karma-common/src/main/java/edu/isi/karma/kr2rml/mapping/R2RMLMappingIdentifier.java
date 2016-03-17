@@ -29,25 +29,42 @@ import org.json.JSONObject;
 public class R2RMLMappingIdentifier {
 
 	private String name;
+	private String content;
 	private URL location;
+	
+	public R2RMLMappingIdentifier(String name, URL location, String content)
+	{
+		this.name = name;
+		this.location = location;
+		this.content = content;
+	}
 	
 	public R2RMLMappingIdentifier(String name, URL location)
 	{
 		this.name = name;
 		this.location = location;
+		this.content = null;
 	}
 	
 	public R2RMLMappingIdentifier(JSONObject id) throws MalformedURLException, JSONException
 	{
 		this.name = id.getString("name");
 		this.location = new URL(id.getString("location"));
+		this.content = id.getString("content");
+		if(this.content.equals("null"))
+			this.content = null;
 	}
 	
 	public String getName() {
 		return name;
 	}
+	
 	public URL getLocation() {
 		return location;
+	}
+	
+	public String getContent() {
+		return content;
 	}
 	
 	public JSONObject toJSON()
@@ -55,6 +72,7 @@ public class R2RMLMappingIdentifier {
 		JSONObject id = new JSONObject();
 		id.put("name", name);
 		id.put("location", location.toString());
+		id.put("content", content);
 		return id;
 	}
 	

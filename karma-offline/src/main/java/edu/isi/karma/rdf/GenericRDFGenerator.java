@@ -26,6 +26,7 @@ import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.ServletContextParameterMap;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.tika.detect.DefaultDetector;
@@ -346,7 +347,12 @@ public class GenericRDFGenerator extends RdfGenerator {
 		if (contextCache.containsKey(id.getName())) {
 			return contextCache.get(id.getName());
 		}
-		JSONTokener token = new JSONTokener(new InputStreamReader(id.getLocation().openStream()));
+		InputStream jsonStream;
+		if(id.getContent() != null)
+			jsonStream = IOUtils.toInputStream(id.getContent(), "utf-8");
+		else
+			jsonStream = id.getLocation().openStream();
+		JSONTokener token = new JSONTokener(new InputStreamReader(jsonStream));
 		JSONObject obj = new JSONObject(token);
 		this.contextCache.put(id.getName(), obj);
 		return obj;

@@ -65,17 +65,22 @@ public abstract class BaseRDFImpl implements Serializable {
         karma = new BaseKarma();
         String inputTypeString = (String) configuration.get(
                 "karma.input.type");
+        
         String modelUri = (String) configuration.get("model.uri");
         String modelFile = (String) configuration.get("model.file");
-        String baseURI = (String) configuration.get("base.uri");
+        String model = (String) configuration.get("model.content");
+         
         String contextURI = (String) configuration.get("context.uri");
+        String context = (String) configuration.get("context.content");
+        
+        String baseURI = (String) configuration.get("base.uri"); 
         String rdfGenerationRoot = (String)configuration.get("rdf.generation.root");
         String rdfSelection = (String)configuration.get("rdf.generation.selection");
         delimiter = (String)configuration.get("karma.input.delimiter");
         hasHeader = Boolean.parseBoolean((String)configuration.get("karma.input.header"));
         disableNesting = Boolean.parseBoolean((String)configuration.getProperty("rdf.generation.disable.nesting", "false"));
-        karma.setup("./karma.zip/karma", inputTypeString, modelUri, modelFile,
-                baseURI, contextURI, rdfGenerationRoot, rdfSelection);
+        karma.setup("./karma.zip/karma", inputTypeString, modelUri, modelFile, model,
+                baseURI, contextURI, context, rdfGenerationRoot, rdfSelection);
 
 
         readKarmaConfig = Boolean.parseBoolean((String)configuration.get("read.karma.config"));
@@ -164,12 +169,12 @@ public abstract class BaseRDFImpl implements Serializable {
             //add the new model and cache it
             String modelURL = jMatchedKarmaConfig.getString("model-uri");
             modelName=extractModelName(modelURL);
-            karma.addModel(modelName,null, jMatchedKarmaConfig.getString("model-uri"));
+            karma.addModel(modelName,null, jMatchedKarmaConfig.getString("model-uri"), null);
         }else if(jMatchedKarmaConfig.has("model-file")){
 
             String modelFile = jMatchedKarmaConfig.getString("model-file");
             modelName=extractModelName(modelFile);
-            karma.addModel(modelName, modelFile, null);
+            karma.addModel(modelName, modelFile, null, null);
         }
         return modelName;
     }
