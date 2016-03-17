@@ -149,58 +149,37 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	var linkArrow = forceSVG.selectAll(".linkArrow");   //little triangle of links
 	var labelFrame = forceSVG.selectAll(".labelFrame"); //the frame of each label
 
-	var linkStrengthFunc = function(d) {
-		if(d.source.isTemporary) {
-				return 0.1;
-		}
-		if (d.type == "edgeLink"){
-			if (d.target.outside.isOutside){
-				return 1;
-			}
-			return 0;
-		}
-		if (d.source.outside.isOutside && d.target.outside.isOutside) {
-			return 1;
-		} else if (d.source.outside.isOutside || d.target.outside.isOutside) {
-			if (!d.target.outside.isOutside && d.target.type == "anchor"){
-				return 0.1;
-			}
-			return 0.8;
-		}
-		return 0;
-	}
-
-	var chargeFunc = function(d) {
-		if(d.isTemporary)
-			return -5000;
-		return -100;
-	}
-
-	var labelLinkStrengthFunc = function(d) {
-		if(d.source.isTemporary)
-			return 0.1;
-
-		return 0.8
-	}
-
-	var labelChargeFunc = function(d) {
-		if(d.node.isTemporary)
-			return -5000;
-		return -100;
-	}
-
 	//force layout for nodes
 	var force = d3.layout.force()
 		.gravity(0)
-		.linkStrength(linkStrengthFunc)
+		.linkStrength(function(d){
+			if (d.type == "edgeLink"){
+				if (d.target.outside.isOutside){
+					return 1;
+				}
+				return 0;
+			}
+			if(d.source.isTemporary || d.target.isTemporary)
+				return 1;
+			if (d.source.outside.isOutside && d.target.outside.isOutside){
+				return 1;
+			} else if (d.source.outside.isOutside || d.target.outside.isOutside){
+				if (!d.target.outside.isOutside && d.target.type == "anchor"){
+					return 0.1;
+				}
+				return 0.8;
+			}
+			return 0;
+		})
 		.friction(0.8)
-		.charge(chargeFunc)
+		.charge(function(d) {
+			if(d.isTemporary)
+				return -8000;
+			return -100;
+		})
 		.linkDistance(function(d){
 			if (d.target.noLayer){
 				return outsideUnitLinkLength * 4;
-			}
-			if(d.source.isTemporary) {
-				return outsideUnitLinkLength * 6;
 			}
 			return outsideUnitLinkLength;
 		})
@@ -211,9 +190,11 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		//.size([Math.max(width, columns * barWidth), height])
 		.gravity(0)
 		.friction(0.8)
-		.charge(labelChargeFunc)
+		.charge(function(d){
+			return 0;
+		})
 		.linkDistance(0)
-		.linkStrength(labelLinkStrengthFunc);
+		.linkStrength(0.8);
 		//node can be dragged to the position you want
 
 	var drag = force.drag()
@@ -641,6 +622,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		nodes = nodes.data(nodesData, function(d){
 			return d.nodeId;
 		});
+
 		nodes.enter()
 			.append("circle")
 			.classed("node", true)
@@ -773,6 +755,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		nodes
 			.attr("cx", function(d) {
 				if (d.outside.isOutside){		
+					var tmpXOffset = Math.max(Math.min(xOffset, maxXOfferset) - leftPanelWidth, 0);		
+					return d.x = Math.max(tmpXOffset + nodeRadius + d.labelWidth / 2, Math.min(tmpXOffset + windowWidth - nodeRadius - d.labelWidth / 2, d.x));
+				} 
+				if (d.isTemporary){		
 					var tmpXOffset = Math.max(Math.min(xOffset, maxXOfferset) - leftPanelWidth, 0);		
 					return d.x = Math.max(tmpXOffset + nodeRadius + d.labelWidth / 2, Math.min(tmpXOffset + windowWidth - nodeRadius - d.labelWidth / 2, d.x));
 				} 
