@@ -74,7 +74,7 @@ var ClassTabs = (function() {
 		}
 
 		function populateRecommended() {
-			var inTypes = getClassesInModel(worksheetId);
+			var inTypes = []; //getClassesInModel(worksheetId);
 			var items = [];
 			if(inTypes != null) {
 				$.each(inTypes, function(index, type) {
