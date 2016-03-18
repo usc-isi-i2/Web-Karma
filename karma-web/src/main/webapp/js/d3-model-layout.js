@@ -109,7 +109,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 
 	var print = false;                             //whether or not print 
-	var nodeRadius = 4;
+	var nodeRadius = 6;
 	var unitLinkLength = 70;                       //difference between layers
 	var outsideUnitLinkLength = 50;                //length for outside links
 	var maxLayer = 0;                              //max layer number, base 0
@@ -450,7 +450,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			.append("rect")
 			.attr("fill", "transparent")
 			.classed("clickBoard", true)
-			.attr("r", 5)
+			.attr("r", nodeRadius+1)
 			.attr("opacity", 1)
 			.attr("stroke-width", 2)
 			.attr("stroke", "red")
@@ -626,7 +626,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		nodes.enter()
 			.append("circle")
 			.classed("node", true)
-			.attr("r", 1)
+			.attr("r", nodeRadius)
 			.attr("opacity", 0.7)
 			.attr("fill", "red")
 			.attr("id", function(d, i){
