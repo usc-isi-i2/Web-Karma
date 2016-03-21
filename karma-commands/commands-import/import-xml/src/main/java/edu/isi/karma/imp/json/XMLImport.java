@@ -22,6 +22,7 @@ import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.FileUtil;
+import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.webserver.KarmaException;
 
 
@@ -43,13 +44,9 @@ public class XMLImport extends Import {
         try {
             String fileContents = FileUtil.readFileContentsToString(xmlFile, encoding);
 
-            // Converting the XML to JSON
-            JSONObject json = XML.toJSONObject(fileContents);
-            jsonFile = new File("tmp.json");
-            PrintWriter pw = new PrintWriter(jsonFile);
-            pw.println(json.toString(4));
-            pw.close();
-            jsonImport = new JsonImport(jsonFile, this.getFactory(), this.getWorksheet(), workspace, maxNumLines, columnsJson);
+            JSONObject jsonObj = XML.toJSONObject(fileContents);
+            Object json = JSONUtil.createJson(jsonObj.toString());
+            jsonImport = new JsonImport(json,this.getFactory(), this.getWorksheet(), workspace, maxNumLines);
         } catch (JSONException ex) {
             logger.error("Error in populating the worksheet with XML", ex);
         } catch (IOException ex) {
