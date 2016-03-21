@@ -198,11 +198,12 @@ var PropertyDialog = (function() {
 				event);
 		}
 
-		function selectPropertyFromMenu(property) {
+		function selectPropertyFromMenu(property, e) {
 			console.log("Selected property:" + label);
-			if(sourceDomain == "BlankNode") {
+			if(sourceDomain == "BlankNode" || targetDomain == "BlankNode") {
 				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, property.uri, property.label);
 				e.stopPropagation();
+				hide();
 			} else {
 				if(targetNodeType == "ColumnNode") {
 					var type = {

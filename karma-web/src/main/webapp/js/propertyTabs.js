@@ -84,7 +84,7 @@ var PropertyTabs = (function() {
 			id = target.data('id');
 
 			console.log("Selected property:" + label);
-			onSelectCallback({"label":label, "uri":uri, "id": id});
+			onSelectCallback({"label":label, "uri":uri, "id": id}, e);
 		}
 
 		function populateAllProperties() {
