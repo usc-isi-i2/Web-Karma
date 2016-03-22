@@ -265,7 +265,7 @@ public class VWorksheet extends ViewEntity {
 			
 			if(column.has("id") && column.get("id") instanceof String) {
 				try {
-					VHNode vNode = new VHNode(column.getString("id"), column.getString("name"));
+					VHNode vNode = new VHNode(column.getString("id"), column.get("name").toString());
 					vNode.setVisible(column.getBoolean("visible"));
 					if(column.has("children")) {
 						ArrayList<VHNode> nestedNodes = generateOrganizedColumns(column.getJSONArray("children"));
