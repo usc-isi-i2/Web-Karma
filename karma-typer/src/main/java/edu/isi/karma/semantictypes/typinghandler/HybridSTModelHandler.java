@@ -2,6 +2,8 @@ package edu.isi.karma.semantictypes.typinghandler;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -297,7 +299,12 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 						    List<Double> exampleList = new ArrayList<Double>(); 
 						    String content = doc.get(Indexer.CONTENT_FIELD_NAME);
 						    for (String example: content.split(" ")) {
-						    	exampleList.add(Double.parseDouble(example));
+						    	try {
+									Number exampleNum = NumberFormat.getNumberInstance(java.util.Locale.US).parse(example);
+									exampleList.add(exampleNum.doubleValue());
+								} catch (ParseException e) {
+									logger.warn("Could not add example:" + example + " for training");
+								}
 						    }
 						    trainingLabelToExamplesMap.put(label, exampleList);
 						}
@@ -312,7 +319,12 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 				List<Double> testExamples = new ArrayList<Double>();
 				for (String example: examples) {
 					if(example.matches(numericRegEx)) {
-						testExamples.add(Double.parseDouble(example));
+						try {
+							Number exampleNum = NumberFormat.getNumberInstance(java.util.Locale.US).parse(example);
+							testExamples.add(exampleNum.doubleValue());
+						} catch (ParseException e) {
+							logger.warn("Could not add example:" + example + " for training");
+						}
 					}
 				}				
 
