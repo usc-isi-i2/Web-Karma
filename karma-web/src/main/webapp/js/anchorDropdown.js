@@ -117,6 +117,7 @@ var AnchorDropdownMenu = (function() {
 				});
 			}
 
+			var blankNodeLinks = [];
 			//Add the blank node and link
 			var blankNode = {"id":"BlankNode1", "uri":"BlankNode", "label":" "};
 			nodes.push(blankNode);
@@ -174,6 +175,8 @@ var AnchorDropdownMenu = (function() {
 			//Register the blank node listener
 			D3ModelManager.getInstance().setNodeDragDropListener(worksheetId, function(source, target, event) {
 				if(source.uri == "BlankNode") {
+					var thisLink = D3ModelManager.getInstance().getCurrentLinksToNode(worksheetId, source.id)[0];
+					
 					if(columnType == "ColumnNode") {
 						if(target.source) {
 							//Target is a link
@@ -181,8 +184,8 @@ var AnchorDropdownMenu = (function() {
 						} else {
 							//Set the semantic type
 							var type = {
-								"uri": defaultProperty.uri,
-								"label": defaultProperty.label,
+								"uri": thisLink.uri,
+								"label": thisLink.label,
 								"source": target
 							}
 							setSemanticType(worksheetId, columnId, type);
@@ -191,15 +194,27 @@ var AnchorDropdownMenu = (function() {
 						if(target.source) //Ignore if target is an link in other cases
 							return;
 
-						var newEdges = [];
-						var edge = {
-							"uri": defaultProperty.uri,
-							"label": defaultProperty.label,
-							"source": target,
-							"target": {"id":columnId, "uri":columnUri, "label":columnLabel, "type":columnType}
+						if(thisLink.source.uri == "BlankNode") {
+							var newEdges = [];
+							var edge = {
+								"uri": thisLink.uri,
+								"label": thisLink.label,
+								"source": target,
+								"target": {"id":columnId, "uri":columnUri, "label":columnLabel, "type":columnType}
+							}
+							newEdges.push(edge);
+							changeLinks(worksheetId, alignmentId, [], newEdges);
+						} else {
+							var newEdges = [];
+							var edge = {
+								"uri": thisLink.uri,
+								"label": thisLink.label,
+								"source": {"id":columnId, "uri":columnUri, "label":columnLabel, "type":columnType},
+								"target": target
+							}
+							newEdges.push(edge);
+							changeLinks(worksheetId, alignmentId, [], newEdges);
 						}
-						newEdges.push(edge);
-						changeLinks(worksheetId, alignmentId, [], newEdges);
 					}
 				}
 			});

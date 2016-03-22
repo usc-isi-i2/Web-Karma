@@ -755,7 +755,7 @@ function setSubClassSemanticType(worksheetId, columnId, clazz, rdfLiteralType) {
 function setSemanticType(worksheetId, columnId, type, rdfLiteralType) {
 	var info = generateInfoObject(worksheetId, columnId, "");
 	var newInfo = info['newInfo']; 
-	if(type.label == "uri") {
+	if(type.uri == "http://isi.edu/integration/karma/dev#classLink") {
 		info["command"] = "SetMetaPropertyCommand";
 		info["metaPropertyName"] = "isUriOfClass";
 		info["metaPropertyUri"] = type.source.uri
