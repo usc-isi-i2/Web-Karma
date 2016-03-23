@@ -114,9 +114,9 @@
             <url>http://download.osgeo.org/webdav/geotools/</url>
       </repository>
       <repository>
-		    <id>colo-vm41</id>
-		    <name>colo-vm41</name>
-		    <url>http://colo-vm41.isi.edu/artifactory/libs-release-local</url>
+		    <id>KarmaRepo</id>
+		    <name>Karma Repo</name>
+		    <url>http://repo.karma.isi.edu/artifactory/libs-release-local</url>
 	  </repository>
    </repositories>
   <dependencyManagement><dependencies>
