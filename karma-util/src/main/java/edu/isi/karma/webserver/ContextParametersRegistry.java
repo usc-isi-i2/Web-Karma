@@ -1,12 +1,13 @@
 package edu.isi.karma.webserver;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 public class ContextParametersRegistry {
 	private static ContextParametersRegistry singleton = new ContextParametersRegistry();
 
-	private final ConcurrentHashMap<String, ServletContextParameterMap> karmaHomeToContextParameters = new ConcurrentHashMap<String, ServletContextParameterMap>();
+	private final Map<String, ServletContextParameterMap> karmaHomeToContextParameters = new ConcurrentHashMap<String, ServletContextParameterMap>();
 
 	public static ContextParametersRegistry getInstance() {
 		return singleton;

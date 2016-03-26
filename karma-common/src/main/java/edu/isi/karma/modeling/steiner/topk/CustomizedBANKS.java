@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 import java.util.TreeSet;
 
 import edu.isi.karma.config.ModelingConfiguration;
@@ -24,7 +25,7 @@ public class CustomizedBANKS extends TopKSteinertrees {
 	private int iteratorCounter=0;
 	private ModelCoherence modelCoherence;
 	
-	private HashMap<SteinerNode,SteinerNode> recurseNodeMap;
+	private Map<SteinerNode,SteinerNode> recurseNodeMap;
 	private List<HashMap<SteinerNode,SteinerNode>> shortestNodeIndex;
 	private List<HashMap<SteinerNode,SortedSteinerNodes>> duplicateIndex;
 	private String contextId;
@@ -37,7 +38,7 @@ public class CustomizedBANKS extends TopKSteinertrees {
 	}
 	
 	class SortedSteinerNodes{
-		TreeSet<SteinerNode> set;
+		Set<SteinerNode> set;
 		SortedSteinerNodes(){
 			set= new TreeSet<SteinerNode>(new Comparator<SteinerNode>(){
 				public int compare(SteinerNode n1, SteinerNode n2){
@@ -199,7 +200,7 @@ public class CustomizedBANKS extends TopKSteinertrees {
 	 */
 	private void getApprTree(
 			SteinerNode ancestor, 
-			HashMap<Integer, SteinerNode> searchNodeInQueues, 
+			Map<Integer, SteinerNode> searchNodeInQueues, 
 			List<Map<String, SteinerNode>> processedNodes, 
 			int queueId) throws Exception{
 		TreeSet<SteinerNode> steinerNodes = new TreeSet<SteinerNode>();

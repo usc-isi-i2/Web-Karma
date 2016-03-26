@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.slf4j.Logger;
@@ -59,11 +61,11 @@ public class Data2Features {
 
 	// class: records convert them into csv file
 	public static void Traindata2CSV(
-			HashMap<String, Vector<String>> class2Records, String fpath,
+			Map<String, Vector<String>> class2Records, String fpath,
 			RecordFeatureSet rf) {
 		try {
 			CSVWriter writer = new CSVWriter(new FileWriter(new File(fpath)));
-			Vector<String> vsStrings = new Vector<String>();
+			List<String> vsStrings = new Vector<String>();
 			for (Vector<String> vecs : class2Records.values()) {
 				vsStrings.addAll(vecs);
 			}

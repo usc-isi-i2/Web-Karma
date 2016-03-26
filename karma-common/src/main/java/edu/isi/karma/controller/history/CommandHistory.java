@@ -71,7 +71,7 @@ public class CommandHistory {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	private static HashMap<String, IHistorySaver> historySavers = new HashMap<>();
+	private static Map<String, IHistorySaver> historySavers = new HashMap<>();
 
 	private final static Set<CommandConsolidator> consolidators = new HashSet<>();
 
@@ -198,7 +198,7 @@ public class CommandHistory {
 
 	private void writeHistoryPerWorksheet(Workspace workspace, IHistorySaver historySaver) throws Exception {
 		String workspaceId = workspace.getId();
-		HashMap<String, JSONArray> comMap = new HashMap<String, JSONArray>();
+		Map<String, JSONArray> comMap = new HashMap<String, JSONArray>();
 		for(ICommand command : _getHistory()) {
 			if(command.isSavedInHistory() &&
 					(command.hasTag(CommandTag.Modeling)

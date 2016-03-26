@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.UndirectedGraph;
@@ -713,7 +714,7 @@ public class Alignment implements OntologyUpdateListener {
 					steinerNodes.add(n);
 				
 				if (n.getSemanticTypeStatus() == ColumnSemanticTypeStatus.UserAssigned) {
-					HashMap<SemanticType, LabeledLink> domainLinks = 
+					Map<SemanticType, LabeledLink> domainLinks = 
 							GraphUtil.getDomainLinks(this.graphBuilder.getGraph(), n, n.getUserSemanticTypes());
 					if (domainLinks != null) {
 						for (LabeledLink l : domainLinks.values()) {
@@ -745,7 +746,7 @@ public class Alignment implements OntologyUpdateListener {
 			}
 		}
 		
-		ArrayList<Node> result = new ArrayList<>();
+		List<Node> result = new ArrayList<>();
 		result.addAll(steinerNodes);
 		return result;
 	}
@@ -1042,7 +1043,7 @@ public class Alignment implements OntologyUpdateListener {
 		DirectedWeightedMultigraph<Node, LabeledLink> tree = 
 				new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
 
-		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
+		Map<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
 		for (Node n : model.getGraph().vertexSet()) {
 			if (n instanceof InternalNode) {
 

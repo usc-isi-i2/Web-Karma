@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
@@ -106,7 +107,7 @@ public class DisplayModel {
 		
 		//Remove missing Levels
 		int newMaxLevel = getMaxLevel(false);
-		HashMap<Integer, Set<Node>> nodesAtLevel = getLevelToNodes(null, false);
+		Map<Integer, Set<Node>> nodesAtLevel = getLevelToNodes(null, false);
 		for(int i=maxLevel; i<newMaxLevel; i++) {
 			Set<Node> nodes = nodesAtLevel.get(i);
 			if(nodes == null || nodes.size() == 0) {
@@ -285,7 +286,7 @@ public class DisplayModel {
 			}
 		}
 		
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(model, false);
+		Map<Integer, Set<Node>> levelToNodes = getLevelToNodes(model, false);
 		
 		// find in/out degree in each level
 		int k = 0;
@@ -418,7 +419,7 @@ public class DisplayModel {
 			nodesSpan.put(n, columnNodes);
 		}
 		
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(model, true);
+		Map<Integer, Set<Node>> levelToNodes = getLevelToNodes(model, true);
 		Set<ColumnNode> allColumnNodes = new HashSet<ColumnNode>();
 		
 		int i = getMaxLevel(true);
@@ -496,7 +497,7 @@ public class DisplayModel {
 		List<Integer> n1SpanPositions = new ArrayList<Integer>();
 		List<Integer> n2SpanPositions = new ArrayList<Integer>();
 		
-		ArrayList<HNode> orderedNodeIds = new ArrayList<HNode>();
+		List<HNode> orderedNodeIds = new ArrayList<HNode>();
 		this.hTable.getSortedLeafHNodes(orderedNodeIds);
 		if (orderedNodeIds != null)
 		for (int i = 0; i < orderedNodeIds.size(); i++) {
@@ -548,7 +549,7 @@ public class DisplayModel {
 		
 		int maxLevel = model.vertexSet().size();
 
-		HashMap<Integer, Set<Node>> levelToNodes = getLevelToNodes(model, false);
+		Map<Integer, Set<Node>> levelToNodes = getLevelToNodes(model, false);
 
 		// find in/out degree in each level
 		int k = 0;

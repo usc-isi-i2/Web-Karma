@@ -21,6 +21,8 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -28,7 +30,7 @@ import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.WorkspaceManager;
 
 public class AlignmentManager {
-	private static ConcurrentHashMap<String, Alignment> alignmentMap = null;
+	private static Map<String, Alignment> alignmentMap = null;
 	private static AlignmentManager _InternalInstance = null;
 	public static AlignmentManager Instance()
 	{
@@ -79,7 +81,7 @@ public class AlignmentManager {
 	}
 
 	public void removeWorkspaceAlignments(String workspaceId) {
-		ArrayList<String> keysToBeRemoved = new ArrayList<String>();
+		List<String> keysToBeRemoved = new ArrayList<String>();
 		for(String key:alignmentMap.keySet()) {
 			if(key.startsWith(workspaceId+":")) {
 				keysToBeRemoved.add(key);
