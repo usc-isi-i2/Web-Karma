@@ -48,7 +48,7 @@ public class RecordDistiller {
 			if (curIndices.containsKey(type)) {
 				int cnt = curIndices.get(type);
 				curIndices.put(type, cnt + 1);
-				anchor += cnt;
+				anchor += String.valueOf(cnt);
 			} else {
 				curIndices.put(type, 0);
 				anchor += "0";
@@ -189,8 +189,8 @@ public class RecordDistiller {
 							break;
 						Ruler ruler = new Ruler();
 						ruler.setNewInput(pair[0]);
-						distiller.readRecord("" + id, ruler.vec);
-						id2String.put("" + id, pair[0]);
+						distiller.readRecord(String.valueOf(id), ruler.vec);
+						id2String.put(String.valueOf(id), pair[0]);
 						id++;
 					}
 					distiller.idenAnchor(id2String.keySet().size());
@@ -207,7 +207,7 @@ public class RecordDistiller {
 						}
 						System.out.println("\n");
 					}
-					System.out.println("" + compressRate);
+					System.out.println(String.valueOf(compressRate));
 				}
 			} catch (Exception e) {
 				System.out.println("" + e.toString());

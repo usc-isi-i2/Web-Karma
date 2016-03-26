@@ -52,7 +52,7 @@ public class TimerRunner implements Runnable {
 																			// tar,
 																			// tarcode,
 																			// label
-					xHashMap.put(index + "", line);
+					xHashMap.put(String.valueOf(index), line);
 					index++;
 				}
 				DataPreProcessor dpp = new DataPreProcessor(vtmp);
@@ -85,7 +85,7 @@ public class TimerRunner implements Runnable {
 					ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 					HashMap<String, String> unlabeledData = new HashMap<>();
 					for (int i = 0; i < vtmp.size(); i++) {
-						unlabeledData.put("" + i, vtmp.get(i));
+						unlabeledData.put(String.valueOf(i), vtmp.get(i));
 					}
 					psProgSynthesis.inite(examples, dpp, msger);
 					Vector<ProgramRule> pls = new Vector<>();
@@ -129,8 +129,8 @@ public class TimerRunner implements Runnable {
 								String indicator = "wrong";
 								if (s.compareTo(entries.get(j)[1]) == 0)
 									indicator = "correct";
-								if (!uData.containsKey(j + ""))
-									uData.put(j + "", dict);
+								if (!uData.containsKey(String.valueOf(j)))
+									uData.put(String.valueOf(j), dict);
 							}
 							// classifier accuracy
 
@@ -157,7 +157,7 @@ public class TimerRunner implements Runnable {
 										"<_START>" + entries.get(j)[0]
 												+ "<_END>", "", tmps,
 										classlabel, "wrong" };
-								xHashMap.put(j + "", ts);
+								xHashMap.put(String.valueOf(j), ts);
 								wexam = ts;
 								checknumber++;
 							}
@@ -202,7 +202,7 @@ public class TimerRunner implements Runnable {
 									wexam = ts;
 									ts[4] = "wrong";
 								}
-								xHashMap.put(j + "", ts);
+								xHashMap.put(String.valueOf(j), ts);
 							}
 						}
 
@@ -234,9 +234,9 @@ public class TimerRunner implements Runnable {
 							int e = Integer.parseInt(expsel.Choose());
 							// /
 							System.out.println("Recommand Example: "
-									+ Arrays.toString(xHashMap.get("" + e)));
+									+ Arrays.toString(xHashMap.get(String.valueOf(e))));
 							// /
-							if (xHashMap.get("" + e)[4].compareTo("right") != 0) {
+							if (xHashMap.get(String.valueOf(e))[4].compareTo("right") != 0) {
 								wexp[0] = "<_START>" + entries.get(e)[0]
 										+ "<_END>";
 								wexp[1] = entries.get(e)[1];
@@ -245,7 +245,7 @@ public class TimerRunner implements Runnable {
 								// update positive training data
 								addExamples.add(entries.get(e));
 								// update the rest dataset
-								xHashMap.remove("" + e);
+								xHashMap.remove(String.valueOf(e));
 							}
 							checknumber++;
 						}

@@ -39,7 +39,7 @@ public class Feature2 implements RecFeature {
 	}
 
 	public String getName() {
-		return type + "";
+		return String.valueOf(type);
 	}
 
 	public double computerScore() {

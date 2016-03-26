@@ -103,18 +103,18 @@ public class MultipleStringAlign {
 		if (pos >= tar.length())
 			return segs;
 		String tmp = "";
-		tmp += tar.charAt(pos);
+		tmp += String.valueOf(tar.charAt(pos));
 		int q = org.indexOf(tmp);
 		if (q == -1) {
 			int cnt = pos;
 			String tvec = "";
 			while (q == -1) {
-				tvec += tar.charAt(cnt);
+				tvec += String.valueOf(tar.charAt(cnt));
 				cnt++;
 				tmp = "";
 				if (cnt >= tar.length())
 					break;
-				tmp += tar.charAt(cnt);
+				tmp += String.valueOf(tar.charAt(cnt));
 				q = org.indexOf(tmp);
 			}
 			int[] elem = { -1, cnt - pos };
@@ -124,7 +124,7 @@ public class MultipleStringAlign {
 		for (int i = pos; i < tar.length(); i++) {
 			String tvec = "";
 			for (int j = pos; j <= i; j++) {
-				tvec += tar.charAt(j);
+				tvec += String.valueOf(tar.charAt(j));
 			}
 			Vector<Integer> mappings = new Vector<>();
 			int r = org.indexOf(tvec);
@@ -151,10 +151,10 @@ public class MultipleStringAlign {
 					corrm.add(m);
 					segs.addAll(corrm);
 				} else {
-					tvec += tar.charAt(i + 1);
+					tvec += String.valueOf(tar.charAt(i + 1));
 					int p = org.indexOf(tvec, 0);
 					String repToken = "";
-					repToken += tar.charAt(i + 1);
+					repToken += String.valueOf(tar.charAt(i + 1));
 					int rind = 0;
 					int tokenCnt = 0;
 					while ((rind = org.indexOf(repToken, rind)) != -1) {
