@@ -17,7 +17,7 @@ public class InternalTransformationLibrary {
 		}
 	}
 
-	public HashMap<Integer, TransformFunction> funcs = new HashMap<Integer, TransformFunction>();
+	public HashMap<Integer, TransformFunction> funcs = new HashMap<>();
 	public InternalTransformationLibrary() {
 		// add all the functions
 		ExactEqual equal = new ExactEqual();

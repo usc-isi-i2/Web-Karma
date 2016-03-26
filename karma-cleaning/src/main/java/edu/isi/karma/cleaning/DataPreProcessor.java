@@ -17,7 +17,7 @@ import edu.isi.karma.cleaning.features.RecordFeatureSet;
 
 public class DataPreProcessor {
 	public Collection<String> data;
-	HashMap<String, double[]> data2Vector = new HashMap<String, double[]>();
+	HashMap<String, double[]> data2Vector = new HashMap<>();
 	RecordFeatureSet rfs = new RecordFeatureSet();
 
 	public DataPreProcessor(Collection<String> data) {
@@ -75,7 +75,7 @@ public class DataPreProcessor {
 		}
 	}
 	public HashMap<String, double[]> vectorize(Collection<String> data) {
-		HashMap<String, double[]> res = new HashMap<String, double[]>();
+		HashMap<String, double[]> res = new HashMap<>();
 		for (String line : data) {
 			if (!res.containsKey(line)) {
 				double[] row = getFeatureArray(line);
@@ -86,8 +86,8 @@ public class DataPreProcessor {
 	}
 
 	public ArrayList<Integer> deCorrelate(HashMap<String, double[]> data) {
-		ArrayList<Integer> toRemove = new ArrayList<Integer>();
-		HashSet<String> signs = new HashSet<String>();
+		ArrayList<Integer> toRemove = new ArrayList<>();
+		HashSet<String> signs = new HashSet<>();
 		// build singature for each feature
 		for (int i = 0; i < rfs.getFeatureNames().size(); i++) {
 			String sg = "";
@@ -115,7 +115,7 @@ public class DataPreProcessor {
 	}
 
 	public static Vector<String> buildDict(Collection<String> data) {
-		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
+		HashMap<String, Integer> mapHashSet = new HashMap<>();
 		for (String pair : data) {
 			String s1 = pair;
 			if (s1.contains("<_START>")) {
@@ -127,7 +127,7 @@ public class DataPreProcessor {
 			Ruler r = new Ruler();
 			r.setNewInput(s1);
 			Vector<TNode> v = r.vec;
-			HashSet<String> curRow = new HashSet<String>();
+			HashSet<String> curRow = new HashSet<>();
 			for (TNode t : v) {
 				String k = t.text;
 				k = k.replaceAll("[0-9]+", "DIGITs");
@@ -162,7 +162,7 @@ public class DataPreProcessor {
 				iter.remove();
 			}
 		}
-		Vector<String> res = new Vector<String>();
+		Vector<String> res = new Vector<>();
 		res.addAll(mapHashSet.keySet());
 		return res;
 	}

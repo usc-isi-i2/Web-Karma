@@ -10,12 +10,12 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 public class Position implements GrammarTreeNode {
-	public Vector<TNode> leftContextNodes = new Vector<TNode>();
-	public Vector<TNode> rightContextNodes = new Vector<TNode>();
-	public Vector<Integer> absPosition = new Vector<Integer>();
-	public Vector<Integer> counters = new Vector<Integer>();
-	public Vector<String> orgStrings = new Vector<String>();
-	public Vector<String> tarStrings = new Vector<String>();
+	public Vector<TNode> leftContextNodes = new Vector<>();
+	public Vector<TNode> rightContextNodes = new Vector<>();
+	public Vector<Integer> absPosition = new Vector<>();
+	public Vector<Integer> counters = new Vector<>();
+	public Vector<String> orgStrings = new Vector<>();
+	public Vector<String> tarStrings = new Vector<>();
 	public boolean isinloop = false;
 	public int curState = 0;
 	public static Interpretor itInterpretor = null;
@@ -113,7 +113,7 @@ public class Position implements GrammarTreeNode {
 	// option: left or right context
 	public Vector<TNode> mergeCNXT(Vector<TNode> a, Vector<TNode> b,
 			String option) {
-		Vector<TNode> xNodes = new Vector<TNode>();
+		Vector<TNode> xNodes = new Vector<>();
 		if (a == null || b == null)
 			return null;
 		else {
@@ -170,10 +170,10 @@ public class Position implements GrammarTreeNode {
 	public Position mergewith(Position b) {
 		if (this == null || b == null)
 			return null;
-		Vector<Integer> tmpIntegers = new Vector<Integer>();
+		Vector<Integer> tmpIntegers = new Vector<>();
 		tmpIntegers.addAll(this.absPosition);
 		tmpIntegers.retainAll(b.absPosition);
-		Vector<Integer> tmpIntegers2 = new Vector<Integer>();
+		Vector<Integer> tmpIntegers2 = new Vector<>();
 		tmpIntegers2.addAll(this.counters);
 		tmpIntegers2.retainAll(b.counters);
 		Vector<TNode> tl = b.leftContextNodes;
@@ -189,8 +189,8 @@ public class Position implements GrammarTreeNode {
 			return null;
 		boolean loop = this.isinloop || b.isinloop;
 
-		Vector<String> aStrings = new Vector<String>();
-		Vector<String> bStrings = new Vector<String>();
+		Vector<String> aStrings = new Vector<>();
+		Vector<String> bStrings = new Vector<>();
 
 		if (this.orgStrings.size() == 1
 				&& this.orgStrings.size() == b.tarStrings.size()
@@ -198,7 +198,7 @@ public class Position implements GrammarTreeNode {
 			aStrings.addAll(this.orgStrings);
 			String[] s1 = this.tarStrings.get(0).split(",");
 			String[] s2 = b.tarStrings.get(0).split(",");
-			HashSet<Integer> hset = new HashSet<Integer>();
+			HashSet<Integer> hset = new HashSet<>();
 			for (int x = 0; x < s1.length; x++) {
 				int v = Integer.valueOf(s1[x]);
 				if (!hset.contains(v)) {
@@ -211,7 +211,7 @@ public class Position implements GrammarTreeNode {
 					hset.add(v);
 				}
 			}
-			SortedSet<Integer> poses = new TreeSet<Integer>(hset);
+			SortedSet<Integer> poses = new TreeSet<>(hset);
 			Iterator<Integer> iter = poses.iterator();
 			String rep = "";
 			while (iter.hasNext()) {
@@ -267,7 +267,7 @@ public class Position implements GrammarTreeNode {
 		this.curState = 0;
 	}
 
-	public Vector<String> rules = new Vector<String>();
+	public Vector<String> rules = new Vector<>();
 
 	public String toProgram() {
 /*		if (curState >= rules.size())
@@ -370,8 +370,8 @@ public class Position implements GrammarTreeNode {
 	}
 
 	public void createTotalOrderVector() {
-		HashMap<String, Double> lMap = new HashMap<String, Double>();
-		HashMap<String, Double> rMap = new HashMap<String, Double>();
+		HashMap<String, Double> lMap = new HashMap<>();
+		HashMap<String, Double> rMap = new HashMap<>();
 		if (this.leftContextNodes != null) {
 			String path = "";
 			getString(this.leftContextNodes, this.leftContextNodes.size() - 1,
@@ -389,7 +389,7 @@ public class Position implements GrammarTreeNode {
 		String reString = "";
 		String reString2 = "";
 		String reString3 = "";
-		SortedMap<Double, Vector<String>> sortedMap = new TreeMap<Double, Vector<String>>();
+		SortedMap<Double, Vector<String>> sortedMap = new TreeMap<>();
 		String negString = "";
 		for (String a : lMap.keySet()) {
 			for (String b : rMap.keySet()) {
@@ -410,7 +410,7 @@ public class Position implements GrammarTreeNode {
 					sortedMap.get(key).add(reString3);
 					sortedMap.get(key).add(negString);
 				} else {
-					Vector<String> svec = new Vector<String>();
+					Vector<String> svec = new Vector<>();
 					svec.add(reString);
 					svec.add(reString2);
 					svec.add(reString3);

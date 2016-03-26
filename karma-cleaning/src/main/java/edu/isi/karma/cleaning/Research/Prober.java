@@ -13,7 +13,7 @@ import edu.isi.karma.cleaning.TNode;
 import edu.isi.karma.cleaning.UtilTools;
 
 public class Prober {
-	public static ArrayList<String> track1 = new ArrayList<String>();
+	public static ArrayList<String> track1 = new ArrayList<>();
 	public static String target;
 	public static long adaptedProg = 0;
 	public static MultiIndex records = new MultiIndex();

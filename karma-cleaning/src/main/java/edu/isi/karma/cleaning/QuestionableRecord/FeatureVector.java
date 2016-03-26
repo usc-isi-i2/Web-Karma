@@ -34,8 +34,8 @@ public class FeatureVector {
 			"(", ")", "_", "-", "{", "}", "[", "]", "\"", "'", ":", "?", "<",
 			">", "." };
 	int[] types = { TNode.NUMTYP, TNode.SYBSTYP, TNode.LWRDTYP, TNode.UWRDTYP };
-	Vector<RecFeature> x = new Vector<RecFeature>();
-	HashSet<String> dictionary = new HashSet<String>();
+	Vector<RecFeature> x = new Vector<>();
+	HashSet<String> dictionary = new HashSet<>();
 	public int size;
 
 	public FeatureVector(HashSet<String> dic) {
@@ -48,7 +48,7 @@ public class FeatureVector {
 	}
 
 	public Vector<String> getNames() {
-		Vector<String> names = new Vector<String>();
+		Vector<String> names = new Vector<>();
 		for (RecFeature f : this.x) {
 			String name = f.getName();
 			if (name.compareTo(",") == 0) {
@@ -66,12 +66,12 @@ public class FeatureVector {
 		if (raw.contains("<_END>")) {
 			raw = raw.replace("<_END>", "");
 		}
-		Vector<RecFeature> v = new Vector<RecFeature>();
+		Vector<RecFeature> v = new Vector<>();
 		Ruler r = new Ruler();
 		r.setNewInput(raw);
-		Vector<TNode> vt = new Vector<TNode>();
+		Vector<TNode> vt = new Vector<>();
 		vt = r.vec;
-		HashMap<String, String> tmp = new HashMap<String, String>();
+		HashMap<String, String> tmp = new HashMap<>();
 		try {
 			UtilTools.StringColorCode(raw, color, tmp);
 		} catch (Exception e) {

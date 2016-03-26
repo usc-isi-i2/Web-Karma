@@ -11,7 +11,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 
 public class HashValueManager {
-	private static Map<String, Map<String, String>> hashTable = new ConcurrentHashMap<String, Map<String, String>>();
+	private static Map<String, Map<String, String>> hashTable = new ConcurrentHashMap<>();
 	
 	private static void computeHashValue(Row row, List<String> HNodeIds) {
 		for (String HNodeid : HNodeIds) {
@@ -19,7 +19,7 @@ public class HashValueManager {
 			if (n.hasNestedTable()) {
 				Table nestedTable = n.getNestedTable();
 				for (Row nestedRow : nestedTable.getRows(0, nestedTable.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
-					List<String> ids = new ArrayList<String>();
+					List<String> ids = new ArrayList<>();
 					for (Node node : nestedRow.getNodes()) {
 						ids.add(node.getHNodeId());
 					}
@@ -29,7 +29,7 @@ public class HashValueManager {
 			else {
 				Map<String, String> tmp = hashTable.get(row.getId());
 				if (tmp == null) 
-					tmp = new ConcurrentHashMap<String, String>();
+					tmp = new ConcurrentHashMap<>();
 				String value = n.getValue().asString();
 				value = DigestUtils.shaHex(value);
 				tmp.put(n.getId(), value);
@@ -45,13 +45,13 @@ public class HashValueManager {
 	}
 	
 	private static String getHashValueRecurse(Row row, List<String> HNodeIds) {
-		List<String> hashString = new ArrayList<String>();
+		List<String> hashString = new ArrayList<>();
 		for (String HNodeid : HNodeIds) {
 			Node n = row.getNode(HNodeid);
 			if (n.hasNestedTable()) {
 				Table nestedTable = n.getNestedTable();
 				for (Row nestedRow : nestedTable.getRows(0, nestedTable.getNumRows(), SuperSelectionManager.DEFAULT_SELECTION)) {
-					List<String> ids = new ArrayList<String>();
+					List<String> ids = new ArrayList<>();
 					for (Node node : nestedRow.getNodes()) {
 						ids.add(node.getHNodeId());
 					}

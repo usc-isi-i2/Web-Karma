@@ -62,7 +62,7 @@ public class MDBFileExport {
 		logger.info("MDB file exported. Location:"
 				+ outputFile);
 
-		HashMap<String, String> modeledColumnTable = new HashMap<String, String>();
+		HashMap<String, String> modeledColumnTable = new HashMap<>();
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			modeledColumnTable.put(type.getHNodeId(),"");
 		}
@@ -76,8 +76,8 @@ public class MDBFileExport {
 			
 			TableBuilder tb = new TableBuilder(worksheet.getTitle().replaceAll("\\.", "_"));
 			
-			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
-			List<String> hNodeIdList = new ArrayList<String>();
+			List<HNode> sortedLeafHNodes = new ArrayList<>();
+			List<String> hNodeIdList = new ArrayList<>();
 			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 			for (HNode hNode : sortedLeafHNodes) {
 				if (modeledColumnTable.containsKey(hNode.getId())) {

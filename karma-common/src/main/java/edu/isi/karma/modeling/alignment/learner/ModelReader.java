@@ -54,7 +54,7 @@ public class ModelReader {
 		File ff = new File(path);
 		File[] files = ff.listFiles();
 		
-		List<SemanticModel> semanticModels = new ArrayList<SemanticModel>();
+		List<SemanticModel> semanticModels = new ArrayList<>();
 		
 		for (File f : files) {
 			if (f.getName().endsWith(fileExtension)) {

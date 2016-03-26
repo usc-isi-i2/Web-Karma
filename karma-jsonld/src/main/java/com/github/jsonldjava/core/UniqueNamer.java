@@ -18,7 +18,7 @@ public class UniqueNamer {
     public UniqueNamer(String prefix) {
         this.prefix = prefix;
         this.counter = 0;
-        this.existing = new LinkedHashMap<String, String>();
+        this.existing = new LinkedHashMap<>();
     }
 
     /**

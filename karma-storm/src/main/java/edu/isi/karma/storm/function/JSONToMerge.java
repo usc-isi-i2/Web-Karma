@@ -16,9 +16,9 @@ public class JSONToMerge {
 	protected List<Tuple> tuplesToAck;
 	public JSONToMerge(int expectedSourcesToMerge)
 	{
-		this.tuplesToAck = new LinkedList<Tuple>();
+		this.tuplesToAck = new LinkedList<>();
 		this.expectedSourcesToMerge = expectedSourcesToMerge;
-		this.jsonBySource = new HashMap<String, String>(expectedSourcesToMerge);
+		this.jsonBySource = new HashMap<>(expectedSourcesToMerge);
 		this.lastUpdateTimestamp = System.currentTimeMillis();
 	}
 

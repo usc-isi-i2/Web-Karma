@@ -126,7 +126,7 @@ public class KR2RMLMappingWriter {
 	
 	protected void initializeURIs()
 	{
-		repoURIs = new HashMap<String, URI>();
+		repoURIs = new HashMap<>();
 		for (String uri : Uris.Uris) {
 			repoURIs.put(uri, f.createURI(uri));
 		}				

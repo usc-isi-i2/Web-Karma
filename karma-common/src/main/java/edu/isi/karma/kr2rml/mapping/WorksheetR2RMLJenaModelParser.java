@@ -289,7 +289,7 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 
 	private List<Resource> createSubjectMaps(Resource mappingResource, KR2RMLMapping kr2rmlMapping) throws JSONException {
-		List<Resource> subjectMapResources = new ArrayList<Resource>();
+		List<Resource> subjectMapResources = new ArrayList<>();
 		Property hasTrMapUri = model.getProperty(Uris.KM_HAS_TRIPLES_MAP_URI);
 		
 		// Get all the triple maps
@@ -476,7 +476,7 @@ public class WorksheetR2RMLJenaModelParser {
 				List<PredicateObjectMap> existingPomList = kr2rmlMapping.getAuxInfo().
 						getColumnNameToPredObjLinks().get(columnNameWithoutFormatting);  
 				if (existingPomList == null) {
-					existingPomList = new ArrayList<PredicateObjectMap>();
+					existingPomList = new ArrayList<>();
 				}
 				existingPomList.add(pom);
 				kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().put(columnNameWithoutFormatting, existingPomList);
@@ -514,7 +514,7 @@ public class WorksheetR2RMLJenaModelParser {
 				String template = templNode.toString();
 				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 						template, kr2rmlMapping.getColumnNameFormatter());
-				List<String> columnsCovered = new LinkedList<String>();
+				List<String> columnsCovered = new LinkedList<>();
 				for(TemplateTerm term : subjTemplTermSet.getAllColumnNameTermElements())
 				{
 					columnsCovered.add(term.getTemplateTermValue());
@@ -579,7 +579,7 @@ public class WorksheetR2RMLJenaModelParser {
 		for (Resource subjMapRes:subjectMapResources) {
 			
 			if (model.contains(subjMapRes, termTypeProp, blankNodeRes)) {
-				List<String> columnsCovered = new ArrayList<String>();
+				List<String> columnsCovered = new ArrayList<>();
 				Resource blankNodeSubjRes = blankNodeSubjMapItr.next();
 				
 				SubjectMap subjMap = kr2rmlMapping.getSubjectMapIndex().get(blankNodeSubjRes.getId().getLabelString());

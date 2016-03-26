@@ -68,7 +68,7 @@ public class ExportCSVUtil {
 	public static HashMap<String, String> generateCSVQuery(Workspace workspace, final String worksheetId, final String rootNodeId,
 			final ArrayList<HashMap<String, String>> columnList, final String graphUrl) {
 	
-		HashMap<String, String> retVal = new HashMap<String, String>();
+		HashMap<String, String> retVal = new HashMap<>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		// Get the alignment for this Worksheet
 		Alignment alignment = AlignmentManager.Instance().getAlignment(AlignmentManager.
@@ -148,7 +148,7 @@ public class ExportCSVUtil {
 	
 	public static HashMap<String, String> generateCSVFile(Workspace workspace, final String worksheetId, final String rootNodeId,
 			final ArrayList<HashMap<String, String>> columnList, final String graphUrl, final String tripleStoreUrl, final String csvFilePath) {
-		HashMap<String, String> retVal = new HashMap<String, String>();
+		HashMap<String, String> retVal = new HashMap<>();
 		HashMap<String, String> query = generateCSVQuery(workspace, worksheetId, rootNodeId, columnList, graphUrl);
 		try {
 			if(query.containsKey("Error")) {

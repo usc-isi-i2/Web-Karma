@@ -21,7 +21,7 @@ public class MovFeature implements Feature {
 	// x is the old y is the new example
 	public double calFeatures(ArrayList<Vector<TNode>> x,
 			ArrayList<Vector<TNode>> y) {
-		HashMap<Integer, Integer> tmp = new HashMap<Integer, Integer>();
+		HashMap<Integer, Integer> tmp = new HashMap<>();
 		for (int i = 0; i < x.size(); i++) {
 			int cnt = 0;
 			Vector<TNode> z = x.get(i);

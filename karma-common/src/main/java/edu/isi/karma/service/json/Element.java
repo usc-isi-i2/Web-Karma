@@ -140,13 +140,13 @@ public class Element {
     	
     	if (root.valueType == ValueType.SINGLE) { 
     		innerT.getHeaders().add(new Attribute(root.getKey(), root.getKey()));
-    		List<String> v = new ArrayList<String>();
+    		List<String> v = new ArrayList<>();
     		v.add(((SingleValue)root.getValue()).getValueString());
     		innerT.getValues().add(v);
     		t.cartesianProductOrUnionIfSameHeaders(innerT);
     		return;
     	} else {
-    		List<String> v = new ArrayList<String>();
+    		List<String> v = new ArrayList<>();
 			for (Element child : ((ArrayValue)root.getValue()).getElements()) 
 			{
 				if (child.valueType == ValueType.SINGLE) {

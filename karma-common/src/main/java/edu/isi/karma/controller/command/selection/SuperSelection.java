@@ -12,7 +12,7 @@ public class SuperSelection {
 	private String name;
 	
 	public SuperSelection(String name) {
-		selections = new HashSet<Selection>();
+		selections = new HashSet<>();
 		this.name = name;
 	}
 
@@ -73,6 +73,6 @@ public class SuperSelection {
 	}
 	
 	public Set<Selection> getAllSelection() {
-		return new HashSet<Selection>(selections);
+		return new HashSet<>(selections);
 	}
 }

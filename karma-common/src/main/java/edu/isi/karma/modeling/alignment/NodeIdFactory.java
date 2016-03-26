@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 public class NodeIdFactory {
 
-	private HashMap<String, Integer> nodeUris = new HashMap<String, Integer>();
+	private HashMap<String, Integer> nodeUris = new HashMap<>();
 	
 
 	public String getNodeId(String uri) {

@@ -39,15 +39,15 @@ public class ColumnMetadata {
 	private Map<String, Boolean>	    columnOnError;
 	public ColumnMetadata() {
 		super();
-		this.columnPreferredLengths = new HashMap<String, Integer>();
+		this.columnPreferredLengths = new HashMap<>();
 //		this.columnTypes 			= new HashMap<String, ColumnMetadata.COLUMN_TYPE>();
 //		this.invalidNodeIds 		= new HashMap<String, List<String>>();
-		this.columnHistogramData	= new HashMap<String, JSONObject>();
-		this.columnPythonTransform  = new HashMap<String, String>();
-		this.columnPreviousCommandId = new HashMap<String, String>();
-		this.columnDerivedFrom = new HashMap<String, String>();
-		this.columnDataStructure = new HashMap<String, DataStructure>();
-		this.columnOnError = new HashMap<String, Boolean>();
+		this.columnHistogramData	= new HashMap<>();
+		this.columnPythonTransform  = new HashMap<>();
+		this.columnPreviousCommandId = new HashMap<>();
+		this.columnDerivedFrom = new HashMap<>();
+		this.columnDataStructure = new HashMap<>();
+		this.columnOnError = new HashMap<>();
 	}
 	
 	public enum DataStructure {

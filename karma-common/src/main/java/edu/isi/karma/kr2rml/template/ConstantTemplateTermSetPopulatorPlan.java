@@ -17,11 +17,11 @@ TemplateTermSetPopulatorPlan {
 
 	public Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> execute(Row topRow, List<PopulatedTemplateTermSet> anchors)
 	{
-		Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> results = new HashMap<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>>();
+		Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> results = new HashMap<>();
 		
 			for(PopulatedTemplateTermSet anchor: anchors)
 			{
-				List<PartiallyPopulatedTermSet> references = new LinkedList<PartiallyPopulatedTermSet>();
+				List<PartiallyPopulatedTermSet> references = new LinkedList<>();
 				references.add(new PartiallyPopulatedTermSet());
 				results.put(anchor, references);
 			}

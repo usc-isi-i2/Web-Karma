@@ -31,11 +31,11 @@ public class PartiallyPopulatedTermSet {
 	
 	PartiallyPopulatedTermSet()
 	{
-		termsToNode = new HashMap<ColumnTemplateTerm, Node>();
+		termsToNode = new HashMap<>();
 	}
 	PartiallyPopulatedTermSet(ColumnTemplateTerm term, Node node)
 	{
-		termsToNode = new HashMap<ColumnTemplateTerm, Node>();
+		termsToNode = new HashMap<>();
 		termsToNode.put(term, node);
 	}
 	

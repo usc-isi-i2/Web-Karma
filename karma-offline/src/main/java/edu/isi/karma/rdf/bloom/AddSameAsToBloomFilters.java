@@ -45,9 +45,9 @@ public class AddSameAsToBloomFilters {
         triplestoreURL = (String) cl.getOptionValue("triplestoreurl");
         predicate = (String) cl.getOptionValue("predicate");
         BloomFilterTripleStoreUtil utilObj = new BloomFilterTripleStoreUtil();
-        Set<String> predicates = new HashSet<String>();
+        Set<String> predicates = new HashSet<>();
         predicates.add(predicate);
-        List<String> predicateObjectMaps = new ArrayList<String>();
+        List<String> predicateObjectMaps = new ArrayList<>();
         for (String t : utilObj.getPredicatesForParentTriplesMapsWithSameClass(triplestoreURL, null, predicates).get("refObjectMaps")) {
         	predicateObjectMaps.addAll(Arrays.asList(t.split(",")));
         }
@@ -55,7 +55,7 @@ public class AddSameAsToBloomFilters {
         	predicateObjectMaps.addAll(Arrays.asList(t.split(",")));
         }
         Map<String, String> serializedmapping = utilObj.getBloomFiltersForMaps(triplestoreURL, null, predicateObjectMaps);
-        Map<String, KR2RMLBloomFilter> mapping = new HashMap<String, KR2RMLBloomFilter>();
+        Map<String, KR2RMLBloomFilter> mapping = new HashMap<>();
         
         for (Entry<String, String> entry : serializedmapping.entrySet()) {
         	String key = entry.getKey();

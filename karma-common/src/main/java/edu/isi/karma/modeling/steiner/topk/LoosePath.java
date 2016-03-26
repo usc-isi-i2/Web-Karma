@@ -26,14 +26,14 @@ public class LoosePath extends SteinerSubTree {
 	
 	
 	public Set<SteinerNode> getNodes(){
-		Set<SteinerNode> nodeSet= new TreeSet<SteinerNode>();
+		Set<SteinerNode> nodeSet= new TreeSet<>();
 		nodeSet.addAll(pathNodes);
 		return nodeSet;
 	}
 	
 	// copying this loose path
 	public SteinerSubTree clone(){
-		LinkedList<SteinerNode> l= new LinkedList<SteinerNode>();
+		LinkedList<SteinerNode> l= new LinkedList<>();
 		for(SteinerNode n: pathNodes){
 			l.add(n.copy());
 		}

@@ -47,8 +47,8 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 	private HNode hNode;
 	private String splitValueHNodeId;
 
-	private HashMap<Node, CellValue> oldNodeValueMap = new HashMap<Node, CellValue>();
-	private HashMap<Node, NodeStatus> oldNodeStatusMap = new HashMap<Node, NodeStatus>();
+	private HashMap<Node, CellValue> oldNodeValueMap = new HashMap<>();
+	private HashMap<Node, NodeStatus> oldNodeStatusMap = new HashMap<>();
 
 //	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -136,7 +136,7 @@ public class SplitByCommaCommand extends WorksheetSelectionCommand {
 		columnPaths.set(oldPathIndex, selectedPath);
 
 		// Populate the column with old values
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<>();
 		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 
 		for (Node node : nodes) {

@@ -23,13 +23,13 @@ public class Graph<V, E extends Edge<V>> {
 	public int INF = Integer.MAX_VALUE;
 	
 	public Graph () {
-		nodes = new HashMap<String, V> ();
-		edges = new HashSet<E> ();
+		nodes = new HashMap<>();
+		edges = new HashSet<>();
 	}
 	
 	public HashSet<E> edges () { return edges; }
 
-	public HashSet<V> nodes () { return (new HashSet<V> (nodes.values())); }
+	public HashSet<V> nodes () { return (new HashSet<>(nodes.values())); }
 	
 	public void addNode (V v) {
 		nodes.put(v.toString(), v);
@@ -69,8 +69,8 @@ public class Graph<V, E extends Edge<V>> {
 	public String toString () {
     if(edges.size()==0) return("<Empty graph>");
     StringBuilder b=new StringBuilder();
-    Set<Edge> goodEdges = new TreeSet<Edge>();
-    Set<Edge> badEdges = new TreeSet<Edge>();
+    Set<Edge> goodEdges = new TreeSet<>();
+    Set<Edge> badEdges = new TreeSet<>();
     for(Edge e : edges) {
     	if(goodEdges.contains(e)){badEdges.add(e); continue;}
     	goodEdges.add(e);

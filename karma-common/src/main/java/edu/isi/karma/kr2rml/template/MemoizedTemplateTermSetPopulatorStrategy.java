@@ -47,7 +47,7 @@ public class MemoizedTemplateTermSetPopulatorStrategy implements
 			{
 				if(nodes == null || topRow != this.topRow)
 				{
-					nodes = new LinkedList<Node>();
+					nodes = new LinkedList<>();
 					topRow.collectNodes(path, nodes, sel);
 					this.topRow = topRow;
 				}

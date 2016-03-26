@@ -98,7 +98,7 @@ public class TurtleRDFParser implements RDFParser {
 
     private class State {
         String baseIri = "";
-        Map<String, String> namespaces = new LinkedHashMap<String, String>();
+        Map<String, String> namespaces = new LinkedHashMap<>();
         String curSubject = null;
         String curPredicate = null;
 
@@ -113,7 +113,7 @@ public class TurtleRDFParser implements RDFParser {
         // construction to make
         // first active bnode _:b1
 
-        private final Stack<Map<String, String>> stack = new Stack<Map<String, String>>();
+        private final Stack<Map<String, String>> stack = new Stack<>();
         public boolean expectingBnodeClose = false;
 
         public State(String input) throws JsonLdError {

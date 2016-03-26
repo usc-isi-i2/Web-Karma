@@ -75,7 +75,7 @@ public class GenerateClusterValuesCommand extends WorksheetSelectionCommand {
 				selectedPath = path;
 			}
 		}
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<>();
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
 				.collectNodes(selectedPath, nodes, selection);
 

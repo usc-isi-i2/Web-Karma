@@ -18,8 +18,8 @@ public class PythonTransformationAsURITokenizer {
 	private static List<String> acceptedTokens;
 	private static final Map<String, Pattern> patterns;
 	static {
-		patterns = new HashMap<String, Pattern>();
-		acceptedTokens = new LinkedList<String>();
+		patterns = new HashMap<>();
+		acceptedTokens = new LinkedList<>();
 		acceptedTokens.add(getValue);
 		acceptedTokens.add(literal);;
 		for(String acceptedToken : acceptedTokens)
@@ -36,7 +36,7 @@ public class PythonTransformationAsURITokenizer {
 	}
 	public static List<PythonTransformationToken> tokenize(String transformationCode)
 	{	
-		 List<PythonTransformationToken> tokens = new  LinkedList<PythonTransformationToken>();
+		 List<PythonTransformationToken> tokens = new LinkedList<>();
 		if(transformationCode == null || transformationCode.isEmpty())
 		{	
 			return tokens;

@@ -64,7 +64,7 @@ public class CSVFileExport {
 				filename;
 		logger.info("CSV file exported. Location:"
 				+ outputFile);
-		HashMap<String, String> modeledColumnTable = new HashMap<String, String>();
+		HashMap<String, String> modeledColumnTable = new HashMap<>();
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			modeledColumnTable.put(type.getHNodeId(),"");
 		}
@@ -74,8 +74,8 @@ public class CSVFileExport {
 			return "";
 		StringBuilder sb = new StringBuilder();
 		ArrayList<Row> rows =  worksheet.getDataTable().getRows(0, numRows, SuperSelectionManager.DEFAULT_SELECTION);
-		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
-		List<String> hNodeIdList = new ArrayList<String>();
+		List<HNode> sortedLeafHNodes = new ArrayList<>();
+		List<String> hNodeIdList = new ArrayList<>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 		for (HNode hNode : sortedLeafHNodes) {
 			if(modeledColumnTable.containsKey(hNode.getId())) {

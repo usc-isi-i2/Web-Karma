@@ -11,7 +11,7 @@ import edu.isi.karma.cleaning.Program;
 public class ClassifierRefiner {
 	Program prog;
 	HashMap<String, HashMap<String,String>> uData;
-	HashMap<String, ArrayList<String>> clusters = new HashMap<String, ArrayList<String>>();
+	HashMap<String, ArrayList<String>> clusters = new HashMap<>();
 	public ClassifierRefiner(Program prog, HashMap<String, HashMap<String,String>> uData)
 	{
 		this.prog = prog;
@@ -19,7 +19,7 @@ public class ClassifierRefiner {
 	}
 	public HashSet<String> selectUdata()
 	{
-		HashSet<String> idSet = new HashSet<String>();
+		HashSet<String> idSet = new HashSet<>();
 		
 		return idSet;
 	}
@@ -37,7 +37,7 @@ public class ClassifierRefiner {
 			}
 			else
 			{
-				ArrayList<String> xArrayList = new ArrayList<String>();
+				ArrayList<String> xArrayList = new ArrayList<>();
 				xArrayList.add(org);
 				clusters.put(ckey, xArrayList);
 			}

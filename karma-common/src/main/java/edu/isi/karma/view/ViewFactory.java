@@ -50,7 +50,7 @@ public class ViewFactory {
 
 	private int nextId = 1;
 
-	private Map<String, VWorksheet> vWorksheets = new HashMap<String, VWorksheet>();
+	private Map<String, VWorksheet> vWorksheets = new HashMap<>();
 
 	private String getId(String prefix) {
 		return prefix + (nextId++);
@@ -122,7 +122,7 @@ public class ViewFactory {
 	}
 	
 	public void addWorksheets(Collection<Worksheet> worksheets, VWorkspace vWorkspace) {
-		List<VWorksheet> newWorksheets = new LinkedList<VWorksheet>();
+		List<VWorksheet> newWorksheets = new LinkedList<>();
 		for (Worksheet w : worksheets) {
 			if (null == getVWorksheetByWorksheetId(w.getId())) {
 				newWorksheets

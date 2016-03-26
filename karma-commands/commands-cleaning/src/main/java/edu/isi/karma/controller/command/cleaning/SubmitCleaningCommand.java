@@ -72,7 +72,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(SubmitCleaningCommand.class);
-	private Vector<TransformationExample> examples = new Vector<TransformationExample>();
+	private Vector<TransformationExample> examples = new Vector<>();
 
 	public SubmitCleaningCommand(String id, String model, String hNodeId, String worksheetId,
 			String Examples, String selectionId) {
@@ -165,7 +165,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		HNodePath selectedPath = null;
 		try {
 			// obtain transformed results
-			HashMap<String, String> rows = new HashMap<String, String>();
+			HashMap<String, String> rows = new HashMap<>();
 			colnameString = obtainTransformedResultsAndFindNewColumnName(
 					workspace, rows);
 			createAndExecuteNewAddColumnCommand(workspace, colnameString);
@@ -242,7 +242,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 	private ValueCollection getValueCollectionFromRamblerTranformationOutput(
 			RamblerTransformationOutput rtf) {
 		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
-		Vector<ValueCollection> vvc = new Vector<ValueCollection>();
+		Vector<ValueCollection> vvc = new Vector<>();
 		String tpid = iter.next();
 		ValueCollection rvco = rtf.getTransformedValues(tpid);
 		vvc.add(rvco);
@@ -289,7 +289,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 
 			}
 		}
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<>();
 		SuperSelection selection = getSuperSelection(workspace);
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
 				.collectNodes(selectedPath, nodes, selection);

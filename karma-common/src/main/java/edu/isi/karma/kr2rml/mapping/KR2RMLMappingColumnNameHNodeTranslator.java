@@ -41,8 +41,8 @@ public class KR2RMLMappingColumnNameHNodeTranslator {
 	
 	private RepFactory factory;
 	private Worksheet worksheet;
-	private Map<String, String> hNodeIdToColumnName = new HashMap<String, String>();
-	private Map<String, String> columnNameToHNodeId  = new HashMap<String, String>();
+	private Map<String, String> hNodeIdToColumnName = new HashMap<>();
+	private Map<String, String> columnNameToHNodeId  = new HashMap<>();
 	
 	public KR2RMLMappingColumnNameHNodeTranslator(RepFactory factory, Worksheet worksheet)
 	{

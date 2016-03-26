@@ -8,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ShortHandURIGenerator {
 
-	private Set<Prefix> prefixes = new HashSet<Prefix>();
-	private Map<String, Prefix> prefixMapping = new ConcurrentHashMap<String, Prefix>();
+	private Set<Prefix> prefixes = new HashSet<>();
+	private Map<String, Prefix> prefixMapping = new ConcurrentHashMap<>();
 
 	public ShortHandURI getShortHand(String URI) {
 		Prefix p = prefixMapping.get(URI);

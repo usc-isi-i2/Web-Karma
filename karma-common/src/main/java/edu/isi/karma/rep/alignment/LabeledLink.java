@@ -69,7 +69,7 @@ public abstract class LabeledLink extends DefaultLink {
 		this.label = new Label(l);
 		this.status = LinkStatus.Normal;
 		this.keyInfo = LinkKeyInfo.None;
-		this.modelIds = new HashSet<String>();
+		this.modelIds = new HashSet<>();
 	}
 	
 	public Label getLabel() {
@@ -118,7 +118,7 @@ public abstract class LabeledLink extends DefaultLink {
 	
 	public Set<String> getModelIds() {
 		if (this.modelIds == null)
-			return new HashSet<String>();
+			return new HashSet<>();
 		return modelIds;
 	}
 
@@ -157,7 +157,7 @@ public abstract class LabeledLink extends DefaultLink {
 			logger.error("cannot instanciate a link from the type: " + this.getType().toString());
 		
 		newLink.setStatus(this.getStatus());
-		newLink.setModelIds(new HashSet<String>(this.getModelIds()));
+		newLink.setModelIds(new HashSet<>(this.getModelIds()));
 		newLink.setKeyType(this.getKeyType());
 		
 		return newLink;

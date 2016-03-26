@@ -31,8 +31,8 @@ import edu.isi.karma.util.Jsonizable;
 
 public class SemanticTypes implements Jsonizable {
 	// Map from the HNodeIds (for each column) to the semantic type
-	private Map<String, SemanticType> types = new HashMap<String, SemanticType>();
-	private Map<String, SynonymSemanticTypes> synonymTypes = new HashMap<String, SynonymSemanticTypes>();
+	private Map<String, SemanticType> types = new HashMap<>();
+	private Map<String, SynonymSemanticTypes> synonymTypes = new HashMap<>();
 
 	public Map<String, SemanticType> getTypes() {
 		return types;

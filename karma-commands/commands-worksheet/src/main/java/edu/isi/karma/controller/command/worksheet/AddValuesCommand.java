@@ -213,7 +213,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 					selectedPath = path;
 			}
 		}
-		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
+		Collection<Node> nodes = new ArrayList<>(Math.max(1000, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);	
 		for (Node node : nodes) {
 			for (int i = 0; i < array.length(); i++) {

@@ -54,32 +54,32 @@ public class DataSource extends Source {
 
 	public DataSource(String id) {
 		super(id);
-		variables = new ArrayList<String>();
-		attributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		variables = new ArrayList<>();
+		attributes = new ArrayList<>();
+		attIdToAttMap = new HashMap<>();
 	}
 	
 	public DataSource(String id, String name) {
 		super(id, name);
-		variables = new ArrayList<String>();
-		attributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		variables = new ArrayList<>();
+		attributes = new ArrayList<>();
+		attIdToAttMap = new HashMap<>();
 	}
 	
 	public DataSource(String name, DirectedWeightedMultigraph<Node, LabeledLink> treeModel) {
 		super(new RandomGUID().toString());
 		this.setName(name);
-		variables = new ArrayList<String>();
-		attributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		variables = new ArrayList<>();
+		attributes = new ArrayList<>();
+		attIdToAttMap = new HashMap<>();
 		this.updateModel(treeModel);
 	}
 	
 	public DataSource(DirectedWeightedMultigraph<Node, LabeledLink> treeModel) {
 		super(new RandomGUID().toString());
-		variables = new ArrayList<String>();
-		attributes = new ArrayList<Attribute>();
-		attIdToAttMap = new HashMap<String, Attribute>();
+		variables = new ArrayList<>();
+		attributes = new ArrayList<>();
+		attIdToAttMap = new HashMap<>();
 		this.updateModel(treeModel);
 	}
 
@@ -129,8 +129,8 @@ public class DataSource extends Source {
 		
 		Model m = new Model("model");
 		
-		HashMap<String, Argument> vertexIdToArgument = new HashMap<String, Argument>();
-		List<Attribute> attributeList = new ArrayList<Attribute>();
+		HashMap<String, Argument> vertexIdToArgument = new HashMap<>();
+		List<Attribute> attributeList = new ArrayList<>();
 		
 		// get the column name associated to the hNodeIds to assign to attribute names 
 		// set the rdf ids of all the vertices.

@@ -44,12 +44,12 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
         for (final Entry<String, String> e : dataset.getNamespaces().entrySet()) {
             availableNamespaces.put(e.getValue(), e.getKey());
         }
-        usedNamespaces = new LinkedHashSet<String>();
+        usedNamespaces = new LinkedHashSet<>();
 
         final int tabs = 0;
 
-        final Map<String, List<Object>> refs = new LinkedHashMap<String, List<Object>>();
-        final Map<String, Map<String, List<Object>>> ttl = new LinkedHashMap<String, Map<String, List<Object>>>();
+        final Map<String, List<Object>> refs = new LinkedHashMap<>();
+        final Map<String, Map<String, List<Object>>> ttl = new LinkedHashMap<>();
 
         for (String graphName : dataset.keySet()) {
             final List<RDFDataset.Quad> triples = dataset.getQuads(graphName);
@@ -86,7 +86,7 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
                         if (thisSubject.containsKey(predicate)) {
                             thisPredicate = thisSubject.get(predicate);
                         } else {
-                            thisPredicate = new ArrayList<Object>();
+                            thisPredicate = new ArrayList<>();
                             thisSubject.put(predicate, thisPredicate);
                         }
                         prevPredicate = predicate;
@@ -96,13 +96,13 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
                     if (ttl.containsKey(subject)) {
                         thisSubject = ttl.get(subject);
                     } else {
-                        thisSubject = new LinkedHashMap<String, List<Object>>();
+                        thisSubject = new LinkedHashMap<>();
                         ttl.put(subject, thisSubject);
                     }
                     if (thisSubject.containsKey(predicate)) {
                         thisPredicate = thisSubject.get(predicate);
                     } else {
-                        thisPredicate = new ArrayList<Object>();
+                        thisPredicate = new ArrayList<>();
                         thisSubject.put(predicate, thisPredicate);
                     }
 
@@ -117,7 +117,7 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
                     if (o.startsWith("_:")) {
                         // add ref to o
                         if (!refs.containsKey(o)) {
-                            refs.put(o, new ArrayList<Object>());
+                            refs.put(o, new ArrayList<>());
                         }
                         refs.get(o).add(thisPredicate);
                     }
@@ -126,14 +126,14 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
             }
         }
 
-        final Map<String, List<Object>> collections = new LinkedHashMap<String, List<Object>>();
+        final Map<String, List<Object>> collections = new LinkedHashMap<>();
 
-        final List<String> subjects = new ArrayList<String>(ttl.keySet());
+        final List<String> subjects = new ArrayList<>(ttl.keySet());
         // find collections
         for (final String subj : subjects) {
             Map<String, List<Object>> preds = ttl.get(subj);
             if (preds != null && preds.containsKey(RDF_FIRST)) {
-                final List<Object> col = new ArrayList<Object>();
+                final List<Object> col = new ArrayList<>();
                 collections.put(subj, col);
                 while (true) {
                     final List<Object> first = preds.remove(RDF_FIRST);
@@ -174,7 +174,7 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
             Object object = ttl.remove(id);
             if (collections.containsKey(id)) {
                 object = new LinkedHashMap<String, List<Object>>();
-                final List<Object> tmp = new ArrayList<Object>();
+                final List<Object> tmp = new ArrayList<>();
                 tmp.add(collections.remove(id));
                 ((HashMap<String, Object>) object).put(COLS_KEY, tmp);
             }
@@ -187,7 +187,7 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
         for (final String id : collections.keySet()) {
             final Map<String, List<Object>> subj = ttl.get(id);
             if (!subj.containsKey(COLS_KEY)) {
-                subj.put(COLS_KEY, new ArrayList<Object>());
+                subj.put(COLS_KEY, new ArrayList<>());
             }
             subj.get(COLS_KEY).add(collections.get(id));
         }
@@ -232,7 +232,7 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
             }
         } else {
             // must be an object
-            final Map<String, Map<String, List<Object>>> tmp = new LinkedHashMap<String, Map<String, List<Object>>>();
+            final Map<String, Map<String, List<Object>>> tmp = new LinkedHashMap<>();
             tmp.put("_:x", (Map<String, List<Object>>) object);
             obj = generateTurtle(tmp, indentation + 1, lineLength, true);
         }

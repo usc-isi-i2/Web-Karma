@@ -66,7 +66,7 @@ public class HTTPUtil {
 					throws ClientProtocolException, IOException {
 		
 		// Prepare the message body parameters
-		List<NameValuePair> formParams = new ArrayList<NameValuePair>();
+		List<NameValuePair> formParams = new ArrayList<>();
 		for (String param:formParameters.keySet()) {
 			formParams.add(new BasicNameValuePair(param, formParameters.get(param)));
 		}

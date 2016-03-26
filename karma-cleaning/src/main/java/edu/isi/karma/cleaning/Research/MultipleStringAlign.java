@@ -30,14 +30,14 @@ public class MultipleStringAlign {
 
 	// generate all the possible next state in DFA
 	public void generateChildren(ANode a) {
-		Vector<Vector<int[]>> multiSeqMapping = new Vector<Vector<int[]>>();
-		Vector<Long> indexes = new Vector<Long>();
+		Vector<Vector<int[]>> multiSeqMapping = new Vector<>();
+		Vector<Long> indexes = new Vector<>();
 		for (int i = 0; i < a.exps.size(); i++) {
 			String[] example = a.exps.get(i);
 			int pos = a.orgPos.get(i);
 			Vector<int[]> mappings = findNext(example[0], example[1], pos);
 			// tarpos, orgstartpos, orgendpos
-			Vector<int[]> nmapping = new Vector<int[]>();
+			Vector<int[]> nmapping = new Vector<>();
 			for (int[] elem : mappings) {
 				int[] el = { pos, elem[0], elem[1] };
 				nmapping.add(el);
@@ -46,14 +46,14 @@ public class MultipleStringAlign {
 			multiSeqMapping.add(nmapping);
 		}
 		// generate combinations
-		Vector<Vector<Integer>> configs = new Vector<Vector<Integer>>();
+		Vector<Vector<Integer>> configs = new Vector<>();
 		getCrossIndex(indexes, configs);
 		// using a combination to generate the ANode
 		for (int i = 0; i < configs.size(); i++) {
 			Vector<Integer> poses = configs.get(i);
-			Vector<Integer> orgPos = new Vector<Integer>();
-			Vector<Integer> tarPos = new Vector<Integer>();
-			Vector<Integer> length = new Vector<Integer>();
+			Vector<Integer> orgPos = new Vector<>();
+			Vector<Integer> tarPos = new Vector<>();
+			Vector<Integer> length = new Vector<>();
 			for (int j = 0; j < poses.size(); j++) {
 				int[] e = multiSeqMapping.get(j).get(poses.get(j));
 				orgPos.add(e[1]);
@@ -74,7 +74,7 @@ public class MultipleStringAlign {
 		for (int i = 0; i < k; i++)
 			com[i] = 0;
 		while (com[k - 1] < indexs.get(k - 1)) {
-			Vector<Integer> res = new Vector<Integer>();
+			Vector<Integer> res = new Vector<>();
 			for (int i = 0; i < k; i++) {
 				res.add(com[i]);
 			}
@@ -94,7 +94,7 @@ public class MultipleStringAlign {
 	// {[orgstartPos, orgendPos ], ...}
 	@SuppressWarnings("unused")
 	public Vector<int[]> findNext(String org, String tar, int pos) {
-		Vector<int[]> segs = new Vector<int[]>();
+		Vector<int[]> segs = new Vector<>();
 		if (tar.length() == 0) {
 			int[] elem = { -1, 0 };
 			segs.add(elem);
@@ -126,14 +126,14 @@ public class MultipleStringAlign {
 			for (int j = pos; j <= i; j++) {
 				tvec += tar.charAt(j);
 			}
-			Vector<Integer> mappings = new Vector<Integer>();
+			Vector<Integer> mappings = new Vector<>();
 			int r = org.indexOf(tvec);
 			while (r != -1) {
 				mappings.add(r);
 				r = org.indexOf(tvec, r + 1);
 			}
 			if (mappings.size() > 1) {
-				Vector<int[]> corrm = new Vector<int[]>();
+				Vector<int[]> corrm = new Vector<>();
 				for (int t : mappings) {
 					int[] m = { t, t + tvec.length() };
 					corrm.add(m);
@@ -142,7 +142,7 @@ public class MultipleStringAlign {
 				segs.addAll(corrm);
 				continue;
 			} else if (mappings.size() == 1) {
-				Vector<int[]> corrm = new Vector<int[]>();
+				Vector<int[]> corrm = new Vector<>();
 				// creating based on whether can find segment with one more
 				// token
 				if (i >= (tar.length() - 1)) {

@@ -59,7 +59,7 @@ public class EvaluateMRR {
 
 					// Reading correct Semantic labels and storing in an array list 
 					JSONArray userArray = (JSONArray) obj.get("userSemanticTypes");
-					ArrayList <String> correctTypes= new ArrayList<String>();
+					ArrayList <String> correctTypes= new ArrayList<>();
 					for(Object o1: userArray){
 						JSONObject userObj= (JSONObject) o1;
 						correctTypes.add(userObj.get("domain").toString() + userObj.get("type").toString());
@@ -67,7 +67,7 @@ public class EvaluateMRR {
 
 					// Reading learned Semantic labels and storing in an array list 
 					JSONArray learnedArray = (JSONArray) obj.get("learnedSemanticTypes");
-					ArrayList <String> learnedTypes= new ArrayList<String>();
+					ArrayList <String> learnedTypes= new ArrayList<>();
 					if (learnedArray != null)
 					for(Object o2: learnedArray){
 						JSONObject learnedObj= (JSONObject) o2;
@@ -162,7 +162,7 @@ public class EvaluateMRR {
 
 					// Reading correct Semantic labels and storing in an array list 
 					JSONArray userArray = (JSONArray) obj.get("userSemanticTypes");
-					ArrayList <String> correctTypes= new ArrayList<String>();
+					ArrayList <String> correctTypes= new ArrayList<>();
 					for(Object o1: userArray){
 						JSONObject userObj= (JSONObject) o1;
 						correctTypes.add(userObj.get("domain").toString() + userObj.get("type").toString());
@@ -170,7 +170,7 @@ public class EvaluateMRR {
 
 					// Reading learned Semantic labels and storing in an array list 
 					JSONArray learnedArray = (JSONArray) obj.get("learnedSemanticTypes");
-					ArrayList <String> learnedTypes= new ArrayList<String>();
+					ArrayList <String> learnedTypes= new ArrayList<>();
 					for(Object o2: learnedArray){
 						JSONObject learnedObj= (JSONObject) o2;
 						learnedTypes.add(learnedObj.get("domain").toString() + learnedObj.get("type").toString()); 

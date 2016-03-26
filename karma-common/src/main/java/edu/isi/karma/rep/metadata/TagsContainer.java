@@ -32,7 +32,7 @@ public class TagsContainer {
 		Blue, Red, Green
 	}
 
-	private Set<Tag> tags = new HashSet<Tag>();
+	private Set<Tag> tags = new HashSet<>();
 
 	public Set<Tag> getTags() {
 		return tags;

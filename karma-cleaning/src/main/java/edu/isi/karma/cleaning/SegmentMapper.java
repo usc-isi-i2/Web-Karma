@@ -21,11 +21,11 @@ public class SegmentMapper {
 	// only try to find one segment whose starting pos in target is pos
 	public static Vector<Segment> findMapping(Vector<TNode> org,
 			Vector<TNode> tar, int pos) {
-		Vector<Segment> res = new Vector<Segment>();
+		Vector<Segment> res = new Vector<>();
 		Dataitem root = new Dataitem();
 		root.tarpos = pos;
-		ArrayList<Dataitem> path = new ArrayList<Dataitem>();
-		ArrayList<ArrayList<Dataitem>> ret = new ArrayList<ArrayList<Dataitem>>();
+		ArrayList<Dataitem> path = new ArrayList<>();
+		ArrayList<ArrayList<Dataitem>> ret = new ArrayList<>();
 		
 		recursiveSearch(org, tar, root, path,ret);
 		
@@ -33,8 +33,8 @@ public class SegmentMapper {
 		return res;
 	}
 	public static Vector<Segment> convert2Segments(ArrayList<ArrayList<Dataitem>> repo , Vector<TNode> org, Vector<TNode> tar){
-		HashMap<String, ArrayList<Dataitem>> groups = new HashMap<String,ArrayList<Dataitem>>();
-		Vector<Segment> ret = new Vector<Segment>();
+		HashMap<String, ArrayList<Dataitem>> groups = new HashMap<>();
+		Vector<Segment> ret = new Vector<>();
 		for(ArrayList<Dataitem> line: repo){
 			if(line.size() == 0){
 				continue;
@@ -42,7 +42,7 @@ public class SegmentMapper {
 			Dataitem item =convert(line, org, tar);
 			if(item.range[0] < 0){
 				//create constant segment and return
-				Vector<TNode> cont = new Vector<TNode>();
+				Vector<TNode> cont = new Vector<>();
 				for(int ptr = item.tarpos; ptr<= item.tarend; ptr++){
 					cont.add(tar.get(ptr));
 				}
@@ -56,7 +56,7 @@ public class SegmentMapper {
 				groups.get(key).add(item);
 			}
 			else{
-				ArrayList<Dataitem> tmp = new ArrayList<Dataitem>();
+				ArrayList<Dataitem> tmp = new ArrayList<>();
 				tmp.add(item);
 				groups.put(key, tmp);
 			}			
@@ -66,7 +66,7 @@ public class SegmentMapper {
 			{
 				continue;
 			}
-			Vector<int[]> kmappings = new Vector<int[]>();
+			Vector<int[]> kmappings = new Vector<>();
 			for(Dataitem elem: groups.get(key)){
 				int[] xtmp = {elem.range[0], elem.range[1], elem.funcid};
 				kmappings.add(xtmp);
@@ -119,7 +119,7 @@ public class SegmentMapper {
 		}
 		
 		for (Dataitem elem : updated) {
-			ArrayList<Dataitem> newlist = new ArrayList<Dataitem>();
+			ArrayList<Dataitem> newlist = new ArrayList<>();
 			newlist.addAll(path);
 			newlist.add(elem);
 			Dataitem child = new Dataitem();
@@ -134,7 +134,7 @@ public class SegmentMapper {
 	//match one token in the target token seq
 	public static Vector<Dataitem> makeOneMove(Vector<TNode> org,
 			Vector<TNode> tar, Dataitem root) {
-		Vector<Dataitem> ret = new Vector<Dataitem>();
+		Vector<Dataitem> ret = new Vector<>();
 		int tpos = root.tarpos;
 		if(tpos >= tar.size())
 		{
@@ -208,7 +208,7 @@ public class SegmentMapper {
 		}
 		if (prefix.compareTo(tar) == 0)
 			return i;
-		Vector<TNode> tNodes = new Vector<TNode>();
+		Vector<TNode> tNodes = new Vector<>();
 		tNodes.add(org.get(i));
 		String con = tf.convert(tNodes);
 		if(con == null || con.isEmpty())

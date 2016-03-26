@@ -54,7 +54,7 @@ public class AutoOntology {
 	}
 	public void Build(String path) throws IOException {
 		
-		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+		List<HNode> sortedLeafHNodes = new ArrayList<>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 		OntModel autoOntology = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
 		String ns = Namespaces.KARMA;

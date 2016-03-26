@@ -29,20 +29,20 @@ public class TimerRunner implements Runnable {
 
 	public void run() {
 		try {
-			HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
-			Vector<String[]> examples = new Vector<String[]>();
-			Vector<String[]> addExamples = new Vector<String[]>();
-			Vector<String[]> entries = new Vector<String[]>();
+			HashMap<String, Vector<String>> records = new HashMap<>();
+			Vector<String[]> examples = new Vector<>();
+			Vector<String[]> addExamples = new Vector<>();
+			Vector<String[]> entries = new Vector<>();
 			// TODO Auto-generated method stub
 			if (f.getName().indexOf(".csv") != -1
 					&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
 				// MyLogger.logsth("========"+f.getName()+"============\n");
-				HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+				HashMap<String, String[]> xHashMap = new HashMap<>();
 				@SuppressWarnings("resource")
 				CSVReader cr = new CSVReader(new FileReader(f), ',', '"', '\0');
 				String[] pair;
 				int index = 0;
-				Vector<String> vtmp = new Vector<String>();
+				Vector<String> vtmp = new Vector<>();
 				while ((pair = cr.readNext()) != null) {
 					if (pair == null || pair.length <= 1)
 						break;
@@ -58,7 +58,7 @@ public class TimerRunner implements Runnable {
 				DataPreProcessor dpp = new DataPreProcessor(vtmp);
 				dpp.run();
 				Messager msger = new Messager();
-				Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+				Vector<Vector<String[]>> constraints = new Vector<>();
 				if (entries.size() <= 1)
 					return;
 				ExampleSelection expsel = new ExampleSelection();
@@ -70,7 +70,7 @@ public class TimerRunner implements Runnable {
 				examples.add(mt);
 				ExampleSelection.firsttime = false;
 				// accuracy record code
-				ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+				ArrayList<double[]> accArrayList = new ArrayList<>();
 				while (true) // repeat as no incorrect answer appears.
 				{
 					if (examples.size() == 8) {
@@ -79,16 +79,16 @@ public class TimerRunner implements Runnable {
 					long checknumber = 1;
 					long iterAfterNoFatalError = 0;
 					long isvisible = 0;
-					HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
-					Vector<String> resultString = new Vector<String>();
-					xHashMap = new HashMap<String, String[]>();
+					HashMap<String, Vector<String[]>> expFeData = new HashMap<>();
+					Vector<String> resultString = new Vector<>();
+					xHashMap = new HashMap<>();
 					ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
-					HashMap<String, String> unlabeledData = new HashMap<String, String>();
+					HashMap<String, String> unlabeledData = new HashMap<>();
 					for (int i = 0; i < vtmp.size(); i++) {
 						unlabeledData.put("" + i, vtmp.get(i));
 					}
 					psProgSynthesis.inite(examples, dpp, msger);
-					Vector<ProgramRule> pls = new Vector<ProgramRule>();
+					Vector<ProgramRule> pls = new Vector<>();
 					Collection<ProgramRule> ps = psProgSynthesis.run_main();
 					// collect history contraints
 					msger.updateCM_Constr(psProgSynthesis.partiCluster
@@ -107,7 +107,7 @@ public class TimerRunner implements Runnable {
 					int ErrorCnt = 0;
 					int clf_acc_error_cnt = 0;
 					int clf_acc_total_cnt = 0;
-					HashMap<String, HashMap<String, String>> uData = new HashMap<String, HashMap<String, String>>();
+					HashMap<String, HashMap<String, String>> uData = new HashMap<>();
 					for (int i = 0; i < pls.size(); i++) {
 						ProgramRule script = pls.get(i);
 						// System.out.println(script);
@@ -119,7 +119,7 @@ public class TimerRunner implements Runnable {
 									.get(j)[0]);
 							String tmps = worker
 									.execute_debug(entries.get(j)[0]);
-							HashMap<String, String> dict = new HashMap<String, String>();
+							HashMap<String, String> dict = new HashMap<>();
 							dict.put("class", classlabel);
 							UtilTools.StringColorCode(entries.get(j)[0], tmps,
 									dict);
@@ -167,7 +167,7 @@ public class TimerRunner implements Runnable {
 										+ dict.get("Org") + "<_END>") == 0) {
 									String[] exp = { dict.get("Org"), tmps };
 									if (!expFeData.containsKey(classlabel)) {
-										Vector<String[]> vstr = new Vector<String[]>();
+										Vector<String[]> vstr = new Vector<>();
 										vstr.add(exp);
 										expFeData.put(classlabel, vstr);
 									} else {
@@ -183,7 +183,7 @@ public class TimerRunner implements Runnable {
 										&& tmpx[1].compareTo(dict.get("Tar")) == 0) {
 									String[] exp = { dict.get("Org"), tmps };
 									if (!expFeData.containsKey(classlabel)) {
-										Vector<String[]> vstr = new Vector<String[]>();
+										Vector<String[]> vstr = new Vector<>();
 										vstr.add(exp);
 										expFeData.put(classlabel, vstr);
 									} else {

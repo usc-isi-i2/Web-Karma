@@ -45,7 +45,7 @@ public class VHNode {
 	}
 
 	public ArrayList<String> getAllPaths() {
-		ArrayList<String> paths = new ArrayList<String>();
+		ArrayList<String> paths = new ArrayList<>();
 		paths.add(getNodePathSignature());
 		
 		

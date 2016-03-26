@@ -13,7 +13,7 @@ public class ProgramParser {
 
 	// parse the sub program with a sequence of segment
 	public ArrayList<ParseTreeNode> parseNodeSeq(String nodeseq) {
-		ArrayList<ParseTreeNode> res = new ArrayList<ParseTreeNode>();
+		ArrayList<ParseTreeNode> res = new ArrayList<>();
 		// find segments
 		String[] tokens = nodeseq.split("\\+(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
 		for (String tok : tokens) {

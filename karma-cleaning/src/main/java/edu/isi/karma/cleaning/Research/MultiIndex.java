@@ -7,7 +7,7 @@ import java.util.List;
 
 public class MultiIndex {
 	public String value = "";
-	public ArrayList<MultiIndex> children = new ArrayList<MultiIndex>();
+	public ArrayList<MultiIndex> children = new ArrayList<>();
 	public MultiIndex()
 	{
 		
@@ -70,7 +70,7 @@ public class MultiIndex {
 				rootNode = tmpNode;
 			}
 		}
-		ArrayList<String> res = new ArrayList<String>();
+		ArrayList<String> res = new ArrayList<>();
 		if(rootNode == null)
 			return res;
 		//retrive all the leaf ndoe of the root node
@@ -106,7 +106,7 @@ public class MultiIndex {
 	public List<String> getPathes()
 	{
 		String s = "";
-		ArrayList<String> ps = new ArrayList<String>();
+		ArrayList<String> ps = new ArrayList<>();
 		this.travers(s, this, ps);
 		return ps;
 	}

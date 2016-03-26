@@ -41,10 +41,10 @@ public class ApprSteinerTree extends SteinerSubTree{
 	 * @return copy of this ApprSteinerTree
 	 */
 	public ApprSteinerTree clone(){
-		Set<SteinerNode> newTerminals= new TreeSet<SteinerNode>();
+		Set<SteinerNode> newTerminals= new TreeSet<>();
 		
-		Set<SteinerNode> newTreeNodes= new TreeSet<SteinerNode>();
-		Map<String,SteinerNode> hms=new HashMap<String,SteinerNode>();
+		Set<SteinerNode> newTreeNodes= new TreeSet<>();
+		Map<String,SteinerNode> hms= new HashMap<>();
 		
 		// copy nodes (only nodeIds: SteinerNode.copy())
 		for(SteinerNode n: treeNodes){
@@ -80,7 +80,7 @@ public class ApprSteinerTree extends SteinerSubTree{
 	 * @return TreeSet<SteinerNode> of all nodes that have degree >= 3 and the terminals
 	 */
 	public Set<SteinerNode> getFixedNodes(){
-		Set<SteinerNode> fixedNodes= new TreeSet<SteinerNode>();
+		Set<SteinerNode> fixedNodes= new TreeSet<>();
 		// first add all terminals
 		fixedNodes.addAll(terminalNodes);
 		
@@ -99,7 +99,7 @@ public class ApprSteinerTree extends SteinerSubTree{
 	 * @return the subtrees resulting from the removal of p
 	 */
 	public List<Set<SteinerNode>> getNodeSetPartitioning(LoosePath p){
-		List<Set<SteinerNode>> listOfPartitions = new ArrayList<Set<SteinerNode>>();
+		List<Set<SteinerNode>> listOfPartitions = new ArrayList<>();
 		SteinerNode n1 = p.getFirstNode();
 		SteinerNode n2 = p.getLastNode();
 		for(SteinerNode node:treeNodes){
@@ -120,8 +120,8 @@ public class ApprSteinerTree extends SteinerSubTree{
 	 * @return the nodes reached by the BFS
 	 */
 	public Set<SteinerNode> getNodesInBreadthFirstFrom(SteinerNode node, SteinerEdge exceptForEdge){
-		Set<SteinerNode> ts = new TreeSet<SteinerNode>();
-		Queue<SteinerNode> queue=new LinkedList<SteinerNode>();
+		Set<SteinerNode> ts = new TreeSet<>();
+		Queue<SteinerNode> queue= new LinkedList<>();
 		queue.offer(node);
 		while(!queue.isEmpty()){
 			SteinerNode n=queue.poll();
@@ -148,7 +148,7 @@ public class ApprSteinerTree extends SteinerSubTree{
 	 * @return PriorityQueue of all loose paths connected to fixedNode
 	 */
 	public PriorityQueue<LoosePath> getLoosePaths(SteinerNode fixedNode){
-		PriorityQueue<LoosePath> loosePaths=new PriorityQueue<LoosePath>();
+		PriorityQueue<LoosePath> loosePaths= new PriorityQueue<>();
 		
 		for(SteinerEdge edge: fixedNode.edges){
 			SteinerEdge e2=edge;
@@ -161,7 +161,7 @@ public class ApprSteinerTree extends SteinerSubTree{
 			else{
 				n1.addEdge(n2, false, edge.getEdgeLabel(), edge.weight());
 			}
-			LinkedList<SteinerNode> pathNodes = new LinkedList<SteinerNode>();
+			LinkedList<SteinerNode> pathNodes = new LinkedList<>();
 			pathNodes.add(n1);pathNodes.add(n2);
 			// following a loose path
 			while(!n.isFixedNode()&&!terminalNodes.contains(n)){
@@ -192,7 +192,7 @@ public class ApprSteinerTree extends SteinerSubTree{
 	 * @return priority queue of all loose paths in a tree (ranked by their scores) 
 	 */
 	public Set<LoosePath> getLoosePaths(){
-		Set<LoosePath> loosePaths= new TreeSet<LoosePath>();
+		Set<LoosePath> loosePaths= new TreeSet<>();
 		for(SteinerNode node: treeNodes){
 			if(node.isFixedNode()||terminalNodes.contains(node)){
 				loosePaths.addAll(getLoosePaths(node));

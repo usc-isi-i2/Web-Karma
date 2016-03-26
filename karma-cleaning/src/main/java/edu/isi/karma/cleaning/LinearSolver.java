@@ -16,7 +16,7 @@ public class LinearSolver {
 		//add residue to objective function
 		LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {-3,-3,4,0,0,0
 				}, 0);
-		Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+		Collection<LinearConstraint> constraints = new ArrayList<>();
 		//data contraint
 		constraints.add(new LinearConstraint(new double[] { 1, 1,-1,0,0,0},
 				Relationship.LEQ, 0));

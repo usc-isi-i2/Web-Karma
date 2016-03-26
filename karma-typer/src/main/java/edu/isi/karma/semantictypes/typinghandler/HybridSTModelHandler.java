@@ -90,7 +90,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 		}
 		
 		label = label.trim();
-		ArrayList<String> cleanedExamples = new ArrayList<String>();
+		ArrayList<String> cleanedExamples = new ArrayList<>();
 		countNumeric = cleanedExamplesList(examples, cleanedExamples);
 		
 		// making sure that the condition where the examples list is not empty
@@ -288,7 +288,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 				logger.warn("KS test called");
 				
 				// extract distributions for each trained semantic label
-				Map<String, List<Double>> trainingLabelToExamplesMap = new HashMap<String, List<Double>>();
+				Map<String, List<Double>> trainingLabelToExamplesMap = new HashMap<>();
 				try {
 					IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(
 							getIndexDirectory(isNumeric))));
@@ -296,7 +296,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 						for (int i=0; i<reader.maxDoc(); i++) {
 						    Document doc = reader.document(i);
 						    String label = doc.get(Indexer.LABEL_FIELD_NAME);
-						    List<Double> exampleList = new ArrayList<Double>(); 
+						    List<Double> exampleList = new ArrayList<>(); 
 						    String content = doc.get(Indexer.CONTENT_FIELD_NAME);
 						    for (String example: content.split(" ")) {
 						    	try {
@@ -316,7 +316,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 				}				
 
 				// extract test column distribution
-				List<Double> testExamples = new ArrayList<Double>();
+				List<Double> testExamples = new ArrayList<>();
 				for (String example: examples) {
 					if(example.matches(numericRegEx)) {
 						try {
@@ -467,7 +467,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 	 * @return Returns list of allowed Characters
 	 */
 	private ArrayList<String> allowedCharacters() {
-		ArrayList<String> allowed = new ArrayList<String>();
+		ArrayList<String> allowed = new ArrayList<>();
 		// Adding A-Z
 		for (int c = 65; c <= 90; c++) {
 			allowed.add(new Character((char) c).toString());
@@ -503,7 +503,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 
 	public List<String> cleanExamplesNumeric(List<String> exampleList)
 	{
-		List<String> cleanedExamples = new ArrayList<String>();
+		List<String> cleanedExamples = new ArrayList<>();
 		Iterator<String> itr = exampleList.iterator();
 		while(itr.hasNext()) {
 			String ex = itr.next();

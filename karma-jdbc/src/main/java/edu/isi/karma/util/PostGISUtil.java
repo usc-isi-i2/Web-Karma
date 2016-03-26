@@ -46,7 +46,7 @@ public class PostGISUtil extends AbstractJDBCUtil {
 	public ArrayList<String> getListOfTables(Connection conn) 
 			throws SQLException, ClassNotFoundException {
 		
-		ArrayList<String> tableNames = new ArrayList<String>();
+		ArrayList<String> tableNames = new ArrayList<>();
 		DatabaseMetaData dmd = conn.getMetaData();
 		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE"});
 		String schemaName, tableName;

@@ -10,7 +10,7 @@ import java.util.Vector;
  *store the traces for all the examples
  * */
 public class ExampleTraces {
-	public HashMap<String, Traces> expTraces = new HashMap<String, Traces>();
+	public HashMap<String, Traces> expTraces = new HashMap<>();
 	String contextId;
 	public ExampleTraces(String contextId)
 	{
@@ -18,8 +18,8 @@ public class ExampleTraces {
 	}
 	public Traces createTrace(String[] example)
 	{
-		Vector<TNode> orgNodes = new Vector<TNode>();
-		Vector<TNode> tarNodes = new Vector<TNode>();
+		Vector<TNode> orgNodes = new Vector<>();
+		Vector<TNode> tarNodes = new Vector<>();
 		Ruler ruler = new Ruler();
 		ruler.setNewInput("<_START>"+example[0]+"<_END>");
 		orgNodes = ruler.vec;
@@ -41,12 +41,12 @@ public class ExampleTraces {
 	}
 	public Vector<Vector<Segment>> getCurrentSegments(String[] example)
 	{
-		Vector<Vector<Segment>> res = new Vector<Vector<Segment>>();
+		Vector<Vector<Segment>> res = new Vector<>();
 		Traces t = this.getTrace(example);
 		Collection<Template> x = t.traceline.values();
 		for(Template tmp:x)
 		{
-			Vector<Segment> line = new Vector<Segment>();
+			Vector<Segment> line = new Vector<>();
 			for(GrammarTreeNode node:tmp.body)
 			{
 				line.add((Segment)node);
@@ -74,7 +74,7 @@ public class ExampleTraces {
 		}
 		else
 		{
-			Vector<int[]> poses = new Vector<int[]>();
+			Vector<int[]> poses = new Vector<>();
 			for(Section sec:s.section)
 			{
 				int[] x = {sec.pair[0].absPosition.get(0),sec.pair[1].absPosition.get(0)};

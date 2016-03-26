@@ -66,8 +66,8 @@ public class SteinerTree {
 		
 		logger.debug("<enter");
 
-		Pseudograph<Node, DefaultLink> g = 
-			new Pseudograph<Node, DefaultLink>(DefaultLink.class);
+		Pseudograph<Node, DefaultLink> g =
+				new Pseudograph<>(DefaultLink.class);
 		
 		for (Node n : this.steinerNodes) {
 			g.addVertex(n);
@@ -76,7 +76,7 @@ public class SteinerTree {
 		BellmanFordShortestPath<Node, DefaultLink> path;
 		
 		for (Node n1 : this.steinerNodes) {
-			path = new BellmanFordShortestPath<Node, DefaultLink>(this.graph, n1);
+			path = new BellmanFordShortestPath<>(this.graph, n1);
 			
 			for (Node n2 : this.steinerNodes) {
 				
@@ -110,16 +110,16 @@ public class SteinerTree {
 		logger.debug("<enter");
 
 		KruskalMinimumSpanningTree<Node, DefaultLink> mst =
-            new KruskalMinimumSpanningTree<Node, DefaultLink>(g1);
+				new KruskalMinimumSpanningTree<>(g1);
 
 //    	logger.debug("Total MST Cost: " + mst.getSpanningTreeCost());
 
         Set<DefaultLink> edges = mst.getEdgeSet();
 
-		WeightedMultigraph<Node, DefaultLink> g2 = 
-			new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		WeightedMultigraph<Node, DefaultLink> g2 =
+				new WeightedMultigraph<>(DefaultLink.class);
 		
-		List<DefaultLink> edgesSortedById = new ArrayList<DefaultLink>();
+		List<DefaultLink> edgesSortedById = new ArrayList<>();
 		
 		for (DefaultLink e : edges) 
 			edgesSortedById.add(e);
@@ -147,8 +147,8 @@ public class SteinerTree {
 		
 		logger.debug("<enter");
 
-		WeightedMultigraph<Node, DefaultLink> g3 = 
-			new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		WeightedMultigraph<Node, DefaultLink> g3 =
+				new WeightedMultigraph<>(DefaultLink.class);
 		
 		Set<DefaultLink> edges = g2.edgeSet();
 		DijkstraShortestPath<Node, DefaultLink> path;
@@ -159,7 +159,7 @@ public class SteinerTree {
 			source = edge.getSource();
 			target = edge.getTarget();
 			
-			path = new DijkstraShortestPath<Node, DefaultLink>(this.graph, source, target);
+			path = new DijkstraShortestPath<>(this.graph, source, target);
 			List<DefaultLink> pathEdges = path.getPathEdgeList();
 			
 			if (pathEdges == null)
@@ -198,16 +198,16 @@ public class SteinerTree {
 		logger.debug("<enter");
 
 		KruskalMinimumSpanningTree<Node, DefaultLink> mst =
-            new KruskalMinimumSpanningTree<Node, DefaultLink>(g3);
+				new KruskalMinimumSpanningTree<>(g3);
 
 //    	logger.debug("Total MST Cost: " + mst.getSpanningTreeCost());
 
         Set<DefaultLink> edges = mst.getEdgeSet();
 
-		WeightedMultigraph<Node, DefaultLink> g4 = 
-			new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		WeightedMultigraph<Node, DefaultLink> g4 =
+				new WeightedMultigraph<>(DefaultLink.class);
 		
-		List<DefaultLink> edgesSortedById = new ArrayList<DefaultLink>();
+		List<DefaultLink> edgesSortedById = new ArrayList<>();
 		
 		for (DefaultLink e : edges) 
 			edgesSortedById.add(e);
@@ -237,7 +237,7 @@ public class SteinerTree {
 
 		WeightedMultigraph<Node, DefaultLink> g5 = g4; 
 
-		List<Node> nonSteinerLeaves = new ArrayList<Node>();
+		List<Node> nonSteinerLeaves = new ArrayList<>();
 		
 		Set<Node> vertexSet = g4.vertexSet();
 		for (Node vertex : vertexSet) {
@@ -279,7 +279,7 @@ public class SteinerTree {
 //		GraphUtil.printGraph(g1);
 		
 		if (g1.vertexSet().size() < 2) {
-			this.tree = new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+			this.tree = new WeightedMultigraph<>(DefaultLink.class);
 			for (Node n : g1.vertexSet()) this.tree.addVertex(n);
 			return;
 		}

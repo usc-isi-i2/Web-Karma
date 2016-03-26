@@ -133,7 +133,7 @@ public class GraphVizUtil {
 		//edgeStyle.attr("fontsize", "10");
 		edgeStyle.attr("fontcolor", "black");
 		
-		HashMap<Node, org.kohsuke.graphviz.Node> nodeIndex = new HashMap<Node, org.kohsuke.graphviz.Node>();
+		HashMap<Node, org.kohsuke.graphviz.Node> nodeIndex = new HashMap<>();
 		
 		for (DefaultLink e : graph.edgeSet()) {
 			

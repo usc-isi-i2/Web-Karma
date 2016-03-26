@@ -48,9 +48,9 @@ public class HTable extends RepEntity {
 	private String tableName;
 
 	// My columns: map of HNodeId to HNode
-	private final Map<String, HNode> nodes = new HashMap<String, HNode>();
+	private final Map<String, HNode> nodes = new HashMap<>();
 
-	private ArrayList<String> orderedNodeIds = new ArrayList<String>();
+	private ArrayList<String> orderedNodeIds = new ArrayList<>();
 
 	
 	// mariam
@@ -184,7 +184,7 @@ public class HTable extends RepEntity {
 	}
 
 	public List<HNode> getSortedHNodes() {
-		List<HNode> allHNodes = new LinkedList<HNode>();
+		List<HNode> allHNodes = new LinkedList<>();
 		for (String hNodeId : orderedNodeIds) {
 			allHNodes.add(nodes.get(hNodeId));
 		}
@@ -289,7 +289,7 @@ public class HTable extends RepEntity {
 	}
 
 	public List<HNodePath> getAllPaths() {
-		List<HNodePath> x = new LinkedList<HNodePath>();
+		List<HNodePath> x = new LinkedList<>();
 		for (HNode hn : getSortedHNodes()) {
 			x.add(new HNodePath(hn));
 		}
@@ -297,7 +297,7 @@ public class HTable extends RepEntity {
 	}
 
 	private List<HNodePath> expandPaths(List<HNodePath> paths) {
-		List<HNodePath> x = new LinkedList<HNodePath>();
+		List<HNodePath> x = new LinkedList<>();
 		for (HNodePath p : paths) {
 			if (p.getLeaf().getNestedTable() != null) {
 				HTable nestedHTable = p.getLeaf().getNestedTable();

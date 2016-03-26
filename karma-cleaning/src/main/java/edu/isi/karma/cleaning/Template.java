@@ -5,15 +5,15 @@ import java.util.Vector;
 public class Template implements GrammarTreeNode {
 	public static final int temp_limit = 2048;
 	public int supermode = 1;
-	public Vector<GrammarTreeNode> body = new Vector<GrammarTreeNode>();
-	public Vector<Vector<Integer>> indexes = new Vector<Vector<Integer>>();
+	public Vector<GrammarTreeNode> body = new Vector<>();
+	public Vector<Vector<Integer>> indexes = new Vector<>();
 	public int curState = 0;
 	public long size = 1;
 	public String program = "null";
 
 	public Template(Vector<GrammarTreeNode> body) {
 		this.body = body;
-		Vector<Long> x = new Vector<Long>();
+		Vector<Long> x = new Vector<>();
 		for (GrammarTreeNode g : body) {
 			x.add(g.size());
 		}
@@ -50,7 +50,7 @@ public class Template implements GrammarTreeNode {
 		for (int i = 0; i < k; i++)
 			com[i] = 0;
 		while (com[k - 1] < indexs.get(k - 1)) {
-			Vector<Integer> res = new Vector<Integer>();
+			Vector<Integer> res = new Vector<>();
 			for (int i = 0; i < k; i++) {
 				// System.out.print(""+com[i]);
 				res.add(com[i]);
@@ -163,7 +163,7 @@ public class Template implements GrammarTreeNode {
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		Vector<GrammarTreeNode> line2 = ((Template) a).body;
 		Vector<GrammarTreeNode> line1 = this.body;
-		Vector<GrammarTreeNode> nLine = new Vector<GrammarTreeNode>();
+		Vector<GrammarTreeNode> nLine = new Vector<>();
 		if (line1.size() != line2.size()) {
 			return null;
 		}

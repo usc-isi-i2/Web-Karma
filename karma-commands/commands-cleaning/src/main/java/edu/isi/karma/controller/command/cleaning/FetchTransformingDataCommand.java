@@ -55,7 +55,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 	}
 
 	public HashSet<Integer> obtainIndexs(int size) {
-		HashSet<Integer> inds = new HashSet<Integer>();
+		HashSet<Integer> inds = new HashSet<>();
 		// select 30% or 50
 		int sample_size = size;
 		if (sample_size >= 500) {
@@ -84,7 +84,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 				System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
 		// Get the HNode
-		HashMap<String, HashMap<String, String>> rows = new HashMap<String, HashMap<String, String>>();
+		HashMap<String, HashMap<String, String>> rows = new HashMap<>();
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -93,7 +93,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 			}
 		}
 		// random nodes
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<>();
 		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 		HashSet<Integer> indSet = this.obtainIndexs(nodes.size());
 		int index = 0;
@@ -102,7 +102,7 @@ public class FetchTransformingDataCommand extends WorksheetSelectionCommand {
 			if (indSet.contains(index)) {
 				String id = node.getId();
 				String originalVal = node.getValue().asString();
-				HashMap<String, String> x = new HashMap<String, String>();
+				HashMap<String, String> x = new HashMap<>();
 				x.put("Org", originalVal);
 				x.put("Tar", originalVal);
 				x.put("Orgdis", originalVal);

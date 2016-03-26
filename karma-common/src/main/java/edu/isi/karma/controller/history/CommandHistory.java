@@ -198,7 +198,7 @@ public class CommandHistory {
 
 	private void writeHistoryPerWorksheet(Workspace workspace, IHistorySaver historySaver) throws Exception {
 		String workspaceId = workspace.getId();
-		HashMap<String, JSONArray> comMap = new HashMap<String, JSONArray>();
+		HashMap<String, JSONArray> comMap = new HashMap<>();
 		for(ICommand command : _getHistory()) {
 			if(command.isSavedInHistory() &&
 					(command.hasTag(CommandTag.Modeling)

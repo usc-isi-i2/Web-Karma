@@ -27,7 +27,7 @@ public class Point {
 	private final double latitude;
 	private final double longitude;
 
-	private Map<String, String> popupData = new HashMap<String, String>();
+	private Map<String, String> popupData = new HashMap<>();
 
 	public Point(double longitude, double latitude) {
 		this.longitude = longitude;

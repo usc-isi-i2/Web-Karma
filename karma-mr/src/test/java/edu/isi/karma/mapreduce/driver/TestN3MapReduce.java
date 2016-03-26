@@ -71,11 +71,11 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 	@Test
 	public void testReduce() throws IOException 
 	{
-		List<Pair<Text,List<Text>>> inputs = new LinkedList<Pair<Text,List<Text>>>();
-		List<Pair<Text,Text>> outputs = new LinkedList<Pair<Text,Text>>();
+		List<Pair<Text,List<Text>>> inputs = new LinkedList<>();
+		List<Pair<Text,Text>> outputs = new LinkedList<>();
 
-		List<Text> jasonTriples = new LinkedList<Text>();
-		List<Text> sufjanTriples = new LinkedList<Text>();
+		List<Text> jasonTriples = new LinkedList<>();
+		List<Text> sufjanTriples = new LinkedList<>();
 		jasonTriples.add(new Text("<http://ex.com/jason> foaf:firstName \"Jason\" ."));
 		jasonTriples.add(new Text("<http://ex.com/jason> foaf:lastName \"Slepicka\" ."));
 		jasonTriples.add(new Text("<http://ex.com/jason> foaf:lastName \"Slepicka\" ."));
@@ -85,11 +85,11 @@ public class TestN3MapReduce extends TestRDFMapReduce {
 		sufjanTriples.add(new Text("<http://ex.com/sufjan> foaf:lastName \"Slepicka\" ."));
 
 
-		inputs.add(new Pair<Text, List<Text>>(new Text("<http://ex.com/jason>"), jasonTriples));
-		inputs.add(new Pair<Text, List<Text>>(new Text("<http://ex.com/sufjan>"), sufjanTriples));
+		inputs.add(new Pair<>(new Text("<http://ex.com/jason>"), jasonTriples));
+		inputs.add(new Pair<>(new Text("<http://ex.com/sufjan>"), sufjanTriples));
 		reduceDriver.withAll(inputs);
-		outputs.add(new Pair<Text, Text>(new Text("<http://ex.com/jason>"), new Text("<http://ex.com/jason> foaf:lastName \"Slepicka\" .\n<http://ex.com/jason> foaf:firstName \"Jason\" .\n")));
-		outputs.add(new Pair<Text, Text>(new Text("<http://ex.com/sufjan>"), new Text("<http://ex.com/sufjan> foaf:lastName \"Slepicka\" .\n<http://ex.com/sufjan> foaf:firstName \"Sufjan\" .\n")));
+		outputs.add(new Pair<>(new Text("<http://ex.com/jason>"), new Text("<http://ex.com/jason> foaf:lastName \"Slepicka\" .\n<http://ex.com/jason> foaf:firstName \"Jason\" .\n")));
+		outputs.add(new Pair<>(new Text("<http://ex.com/sufjan>"), new Text("<http://ex.com/sufjan> foaf:lastName \"Slepicka\" .\n<http://ex.com/sufjan> foaf:firstName \"Sufjan\" .\n")));
 		reduceDriver.addAllOutput(outputs);
 		reduceDriver.runTest();
 

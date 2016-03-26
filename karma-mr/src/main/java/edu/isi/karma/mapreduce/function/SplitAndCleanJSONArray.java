@@ -25,7 +25,7 @@ public class SplitAndCleanJSONArray extends GenericUDF {
 	{
 		assert(arguments.length == 1);
 		Text arrayToCleanText = (Text)converters[0].convert(arguments[0].get());
-		List<Text> cleanedValues = new LinkedList<Text>();
+		List<Text> cleanedValues = new LinkedList<>();
 		if(arrayToCleanText == null)
 		{
 			return cleanedValues;
@@ -37,7 +37,7 @@ public class SplitAndCleanJSONArray extends GenericUDF {
 				arrayToClean = arrayToClean.substring(1,arrayToClean.length()-1);
 			}
 			
-			Set<Text> cleanedValuesSet = new HashSet<Text>();
+			Set<Text> cleanedValuesSet = new HashSet<>();
 			
 			String[] values = arrayToClean.split(",");
 			for(String value : values)

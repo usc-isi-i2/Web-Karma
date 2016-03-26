@@ -39,7 +39,7 @@ public class WorkspaceManager {
 	
 	private AtomicInteger nextId = new AtomicInteger(1);
 	
-	private final Map<String, Workspace> workspaces = new ConcurrentHashMap<String, Workspace>();
+	private final Map<String, Workspace> workspaces = new ConcurrentHashMap<>();
 	
 	private static WorkspaceManager singleton = new WorkspaceManager();
 	

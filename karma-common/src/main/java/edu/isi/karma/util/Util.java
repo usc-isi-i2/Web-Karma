@@ -40,15 +40,15 @@ public class Util {
 	 */
 	public static HashMap<String, Double> sortHashMap(
 			HashMap<String, Double> input) {
-		Map<String, Double> tempMap = new HashMap<String, Double>();
+		Map<String, Double> tempMap = new HashMap<>();
 		for (String wsState : input.keySet()) {
 			tempMap.put(wsState, input.get(wsState));
 		}
 
-		List<String> mapKeys = new ArrayList<String>(tempMap.keySet());
-		List<Double> mapValues = new ArrayList<Double>(tempMap.values());
-		HashMap<String, Double> sortedMap = new LinkedHashMap<String, Double>();
-		TreeSet<Double> sortedSet = new TreeSet<Double>(mapValues);
+		List<String> mapKeys = new ArrayList<>(tempMap.keySet());
+		List<Double> mapValues = new ArrayList<>(tempMap.values());
+		HashMap<String, Double> sortedMap = new LinkedHashMap<>();
+		TreeSet<Double> sortedSet = new TreeSet<>(mapValues);
 		Object[] sortedArray = sortedSet.toArray();
 
 		int size = sortedArray.length;

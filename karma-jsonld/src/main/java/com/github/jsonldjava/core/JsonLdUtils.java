@@ -108,7 +108,7 @@ public class JsonLdUtils {
         }
         List<Object> values = (List<Object>) obj.get(key);
         if (values == null) {
-            values = new ArrayList<Object>();
+            values = new ArrayList<>();
             obj.put(key, values);
         }
         if ("@list".equals(key)
@@ -128,7 +128,7 @@ public class JsonLdUtils {
             return;
         }
         if (!(prop instanceof List)) {
-            final List<Object> tmp = new ArrayList<Object>();
+            final List<Object> tmp = new ArrayList<>();
             tmp.add(prop);
         }
         if (value instanceof List) {
@@ -214,7 +214,7 @@ public class JsonLdUtils {
 
         if (isArray(value)) {
             if (((List) value).size() == 0 && propertyIsArray && !subject.containsKey(property)) {
-                subject.put(property, new ArrayList<Object>());
+                subject.put(property, new ArrayList<>());
             }
             for (final Object val : (List) value) {
                 addValue(subject, property, val, propertyIsArray, allowDuplicate);
@@ -225,7 +225,7 @@ public class JsonLdUtils {
 
             // make property an array if value not present or always an array
             if (!isArray(subject.get(property)) && (!hasValue || propertyIsArray)) {
-                final List<Object> tmp = new ArrayList<Object>();
+                final List<Object> tmp = new ArrayList<>();
                 tmp.add(subject.get(property));
                 subject.put(property, tmp);
             }
@@ -238,7 +238,7 @@ public class JsonLdUtils {
             // add new value as a set or single value
             Object tmp;
             if (propertyIsArray) {
-                tmp = new ArrayList<Object>();
+                tmp = new ArrayList<>();
                 ((List<Object>) tmp).add(value);
             } else {
                 tmp = value;
@@ -344,13 +344,13 @@ public class JsonLdUtils {
      * @throws JsonLdError
      */
     static List<Object> expandLanguageMap(Map<String, Object> languageMap) throws JsonLdError {
-        final List<Object> rval = new ArrayList<Object>();
-        final List<String> keys = new ArrayList<String>(languageMap.keySet());
+        final List<Object> rval = new ArrayList<>();
+        final List<String> keys = new ArrayList<>(languageMap.keySet());
         Collections.sort(keys); // lexicographically sort languages
         for (final String key : keys) {
             List<Object> val;
             if (!isArray(languageMap.get(key))) {
-                val = new ArrayList<Object>();
+                val = new ArrayList<>();
                 val.add(languageMap.get(key));
             } else {
                 val = (List<Object>) languageMap.get(key);
@@ -507,7 +507,7 @@ public class JsonLdUtils {
     static Object removePreserve(Context ctx, Object input, JsonLdOptions opts) throws JsonLdError {
         // recurse through arrays
         if (isArray(input)) {
-            final List<Object> output = new ArrayList<Object>();
+            final List<Object> output = new ArrayList<>();
             for (final Object i : (List<Object>) input) {
                 final Object result = removePreserve(ctx, i, opts);
                 // drop nulls from arrays
@@ -578,7 +578,7 @@ public class JsonLdUtils {
      * @return
      */
     private static List<String> _split(String string, String delim) {
-        final List<String> rval = new ArrayList<String>(Arrays.asList(string.split(delim)));
+        final List<String> rval = new ArrayList<>(Arrays.asList(string.split(delim)));
         if (string.endsWith("/")) {
             // javascript .split includes a blank entry if the string ends with
             // the delimiter, java .split does not so we need to add it manually
@@ -711,7 +711,7 @@ public class JsonLdUtils {
     static void removeValue(Map<String, Object> subject, String property,
             Map<String, Object> value, boolean propertyIsArray) {
         // filter out value
-        final List<Object> values = new ArrayList<Object>();
+        final List<Object> values = new ArrayList<>();
         if (subject.get(property) instanceof List) {
             for (final Object e : ((List) subject.get(property))) {
                 if (!(value.equals(e))) {

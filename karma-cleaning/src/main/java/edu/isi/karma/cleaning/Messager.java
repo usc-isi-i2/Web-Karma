@@ -6,9 +6,9 @@ import java.util.Vector;
 
 public class Messager {
 	double[] weights = null;
-	Vector<Vector<String[]>> cm_constr = new Vector<Vector<String[]>>();
-	HashMap<String, Traces> exp2Space = new HashMap<String, Traces>();
-	HashMap<String, String> exp2program = new HashMap<String,String>();
+	Vector<Vector<String[]>> cm_constr = new Vector<>();
+	HashMap<String, Traces> exp2Space = new HashMap<>();
+	HashMap<String, String> exp2program = new HashMap<>();
 	//ExampleTraces expTraces = new ExampleTraces();
 	public Messager()
 	{

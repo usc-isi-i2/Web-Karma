@@ -148,7 +148,7 @@ public class JsonLdApi {
         // 2)
         if (element instanceof List) {
             // 2.1)
-            final List<Object> result = new ArrayList<Object>();
+            final List<Object> result = new ArrayList<>();
             // 2.2)
             for (final Object item : (List<Object>) element) {
                 // 2.2.1)
@@ -185,7 +185,7 @@ public class JsonLdApi {
             // 6)
             final Map<String, Object> result = newMap();
             // 7)
-            final List<String> keys = new ArrayList<String>(elem.keySet());
+            final List<String> keys = new ArrayList<>(elem.keySet());
             Collections.sort(keys);
             for (final String expandedProperty : keys) {
                 final Object expandedValue = elem.get(expandedProperty);
@@ -201,7 +201,7 @@ public class JsonLdApi {
                     }
                     // 7.1.2)
                     else {
-                        final List<String> types = new ArrayList<String>();
+                        final List<String> types = new ArrayList<>();
                         // 7.1.2.2)
                         for (final String expandedType : (List<String>) expandedValue) {
                             types.add(activeCtx.compactIri(expandedType, true));
@@ -234,14 +234,14 @@ public class JsonLdApi {
                     // 7.2.2)
                     // Note: Must create a new set to avoid modifying the set we
                     // are iterating over
-                    for (final String property : new HashSet<String>(compactedValue.keySet())) {
+                    for (final String property : new HashSet<>(compactedValue.keySet())) {
                         final Object value = compactedValue.get(property);
                         // 7.2.2.1)
                         if (activeCtx.isReverseProperty(property)) {
                             // 7.2.2.1.1)
                             if (("@set".equals(activeCtx.getContainer(property)) || !compactArrays)
                                     && !(value instanceof List)) {
-                                final List<Object> tmp = new ArrayList<Object>();
+                                final List<Object> tmp = new ArrayList<>();
                                 tmp.add(value);
                                 result.put(property, tmp);
                             }
@@ -252,7 +252,7 @@ public class JsonLdApi {
                             // 7.2.2.1.3)
                             else {
                                 if (!(result.get(property) instanceof List)) {
-                                    final List<Object> tmp = new ArrayList<Object>();
+                                    final List<Object> tmp = new ArrayList<>();
                                     tmp.add(result.put(property, tmp));
                                 }
                                 if (value instanceof List) {
@@ -302,11 +302,11 @@ public class JsonLdApi {
                             expandedValue, true, insideReverse);
                     // 7.5.2)
                     if (!result.containsKey(itemActiveProperty)) {
-                        result.put(itemActiveProperty, new ArrayList<Object>());
+                        result.put(itemActiveProperty, new ArrayList<>());
                     } else {
                         final Object value = result.get(itemActiveProperty);
                         if (!(value instanceof List)) {
-                            final List<Object> tmp = new ArrayList<Object>();
+                            final List<Object> tmp = new ArrayList<>();
                             tmp.add(value);
                             result.put(itemActiveProperty, tmp);
                         }
@@ -337,7 +337,7 @@ public class JsonLdApi {
                     if (isList) {
                         // 7.6.4.1)
                         if (!(compactedItem instanceof List)) {
-                            final List<Object> tmp = new ArrayList<Object>();
+                            final List<Object> tmp = new ArrayList<>();
                             tmp.add(compactedItem);
                             compactedItem = tmp;
                         }
@@ -392,7 +392,7 @@ public class JsonLdApi {
                         } else {
                             List<Object> tmp;
                             if (!(mapObject.get(mapKey) instanceof List)) {
-                                tmp = new ArrayList<Object>();
+                                tmp = new ArrayList<>();
                                 tmp.add(mapObject.put(mapKey, tmp));
                             } else {
                                 tmp = (List<Object>) mapObject.get(mapKey);
@@ -408,7 +408,7 @@ public class JsonLdApi {
                                 .equals(expandedProperty))
                                 && (!(compactedItem instanceof List));
                         if (check) {
-                            final List<Object> tmp = new ArrayList<Object>();
+                            final List<Object> tmp = new ArrayList<>();
                             tmp.add(compactedItem);
                             compactedItem = tmp;
                         }
@@ -417,7 +417,7 @@ public class JsonLdApi {
                             result.put(itemActiveProperty, compactedItem);
                         } else {
                             if (!(result.get(itemActiveProperty) instanceof List)) {
-                                final List<Object> tmp = new ArrayList<Object>();
+                                final List<Object> tmp = new ArrayList<>();
                                 tmp.add(result.put(itemActiveProperty, tmp));
                             }
                             if (compactedItem instanceof List) {
@@ -492,7 +492,7 @@ public class JsonLdApi {
         // 3)
         if (element instanceof List) {
             // 3.1)
-            final List<Object> result = new ArrayList<Object>();
+            final List<Object> result = new ArrayList<>();
             // 3.2)
             for (final Object item : (List<Object>) element) {
                 // 3.2.1)
@@ -527,7 +527,7 @@ public class JsonLdApi {
             // 6)
             Map<String, Object> result = newMap();
             // 7)
-            final List<String> keys = new ArrayList<String>(elem.keySet());
+            final List<String> keys = new ArrayList<>(elem.keySet());
             Collections.sort(keys);
             for (final String key : keys) {
                 final Object value = elem.get(key);
@@ -635,7 +635,7 @@ public class JsonLdApi {
 
                         // NOTE: step not in the spec yet
                         if (!(expandedValue instanceof List)) {
-                            final List<Object> tmp = new ArrayList<Object>();
+                            final List<Object> tmp = new ArrayList<>();
                             tmp.add(expandedValue);
                             expandedValue = tmp;
                         }
@@ -669,7 +669,7 @@ public class JsonLdApi {
                                 final Object item = reverse.get(property);
                                 // 7.4.11.2.1)
                                 if (!result.containsKey(property)) {
-                                    result.put(property, new ArrayList<Object>());
+                                    result.put(property, new ArrayList<>());
                                 }
                                 // 7.4.11.2.2)
                                 if (item instanceof List) {
@@ -708,7 +708,7 @@ public class JsonLdApi {
                                     }
                                     // 7.4.11.3.3.1.2)
                                     if (!reverseMap.containsKey(property)) {
-                                        reverseMap.put(property, new ArrayList<Object>());
+                                        reverseMap.put(property, new ArrayList<>());
                                     }
                                     // 7.4.11.3.3.1.3)
                                     ((List<Object>) reverseMap.get(property)).add(item);
@@ -736,14 +736,14 @@ public class JsonLdApi {
                 // 7.5
                 else if ("@language".equals(activeCtx.getContainer(key)) && value instanceof Map) {
                     // 7.5.1)
-                    expandedValue = new ArrayList<Object>();
+                    expandedValue = new ArrayList<>();
                     // 7.5.2)
                     for (final String language : ((Map<String, Object>) value).keySet()) {
                         Object languageValue = ((Map<String, Object>) value).get(language);
                         // 7.5.2.1)
                         if (!(languageValue instanceof List)) {
                             final Object tmp = languageValue;
-                            languageValue = new ArrayList<Object>();
+                            languageValue = new ArrayList<>();
                             ((List<Object>) languageValue).add(tmp);
                         }
                         // 7.5.2.2)
@@ -764,9 +764,9 @@ public class JsonLdApi {
                 // 7.6)
                 else if ("@index".equals(activeCtx.getContainer(key)) && value instanceof Map) {
                     // 7.6.1)
-                    expandedValue = new ArrayList<Object>();
+                    expandedValue = new ArrayList<>();
                     // 7.6.2)
-                    final List<String> indexKeys = new ArrayList<String>(
+                    final List<String> indexKeys = new ArrayList<>(
                             ((Map<String, Object>) value).keySet());
                     Collections.sort(indexKeys);
                     for (final String index : indexKeys) {
@@ -774,7 +774,7 @@ public class JsonLdApi {
                         // 7.6.2.1)
                         if (!(indexValue instanceof List)) {
                             final Object tmp = indexValue;
-                            indexValue = new ArrayList<Object>();
+                            indexValue = new ArrayList<>();
                             ((List<Object>) indexValue).add(tmp);
                         }
                         // 7.6.2.2)
@@ -804,7 +804,7 @@ public class JsonLdApi {
                             || !((Map<String, Object>) expandedValue).containsKey("@list")) {
                         Object tmp = expandedValue;
                         if (!(tmp instanceof List)) {
-                            tmp = new ArrayList<Object>();
+                            tmp = new ArrayList<>();
                             ((List<Object>) tmp).add(expandedValue);
                         }
                         expandedValue = newMap();
@@ -823,7 +823,7 @@ public class JsonLdApi {
                     // 7.10.3)
                     if (!(expandedValue instanceof List)) {
                         final Object tmp = expandedValue;
-                        expandedValue = new ArrayList<Object>();
+                        expandedValue = new ArrayList<>();
                         ((List<Object>) expandedValue).add(tmp);
                     }
                     // 7.10.4)
@@ -836,7 +836,7 @@ public class JsonLdApi {
                         }
                         // 7.10.4.2)
                         if (!reverseMap.containsKey(expandedProperty)) {
-                            reverseMap.put(expandedProperty, new ArrayList<Object>());
+                            reverseMap.put(expandedProperty, new ArrayList<>());
                         }
                         // 7.10.4.3)
                         if (item instanceof List) {
@@ -851,7 +851,7 @@ public class JsonLdApi {
                 else {
                     // 7.11.1)
                     if (!result.containsKey(expandedProperty)) {
-                        result.put(expandedProperty, new ArrayList<Object>());
+                        result.put(expandedProperty, new ArrayList<>());
                     }
                     // 7.11.2)
                     if (expandedValue instanceof List) {
@@ -903,7 +903,7 @@ public class JsonLdApi {
             else if (result.containsKey("@type")) {
                 final Object rtype = result.get("@type");
                 if (!(rtype instanceof List)) {
-                    final List<Object> tmp = new ArrayList<Object>();
+                    final List<Object> tmp = new ArrayList<>();
                     tmp.add(rtype);
                     result.put("@type", tmp);
                 }
@@ -1019,11 +1019,11 @@ public class JsonLdApi {
         if (elem.containsKey("@type")) {
             // 3.1)
             List<String> oldTypes;
-            final List<String> newTypes = new ArrayList<String>();
+            final List<String> newTypes = new ArrayList<>();
             if (elem.get("@type") instanceof List) {
                 oldTypes = (List<String>) elem.get("@type");
             } else {
-                oldTypes = new ArrayList<String>();
+                oldTypes = new ArrayList<>();
                 oldTypes.add((String) elem.get("@type"));
             }
             for (final String item : oldTypes) {
@@ -1055,7 +1055,7 @@ public class JsonLdApi {
         // 5)
         else if (elem.containsKey("@list")) {
             // 5.1)
-            final Map<String, Object> result = newMap("@list", new ArrayList<Object>());
+            final Map<String, Object> result = newMap("@list", new ArrayList<>());
             // 5.2)
             // for (final Object item : (List<Object>) elem.get("@list")) {
             // generateNodeMap(item, nodeMap, activeGraph, activeSubject,
@@ -1153,7 +1153,7 @@ public class JsonLdApi {
                 generateNodeMap(elem.remove("@graph"), nodeMap, id, null, null, null);
             }
             // 6.11)
-            final List<String> keys = new ArrayList<String>(elem.keySet());
+            final List<String> keys = new ArrayList<>(elem.keySet());
             Collections.sort(keys);
             for (String property : keys) {
                 final Object value = elem.get(property);
@@ -1163,7 +1163,7 @@ public class JsonLdApi {
                 }
                 // 6.11.2)
                 if (!node.containsKey(property)) {
-                    node.put(property, new ArrayList<Object>());
+                    node.put(property, new ArrayList<>());
                 }
                 // 6.11.3)
                 generateNodeMap(value, nodeMap, activeGraph, id, property, null);
@@ -1189,7 +1189,7 @@ public class JsonLdApi {
      *
      * http://www.w3.org/TR/json-ld-api/#generate-blank-node-identifier
      */
-    private final Map<String, String> blankNodeIdentifierMap = new LinkedHashMap<String, String>();
+    private final Map<String, String> blankNodeIdentifierMap = new LinkedHashMap<>();
 
     /**
      * Generates a blank node identifier for the given key using the algorithm
@@ -1287,11 +1287,11 @@ public class JsonLdApi {
         final FramingContext state = new FramingContext(this.opts);
 
         // use tree map so keys are sotred by default
-        final Map<String, Object> nodes = new TreeMap<String, Object>();
+        final Map<String, Object> nodes = new TreeMap<>();
         generateNodeMap(input, nodes);
         this.nodeMap = (Map<String, Object>) nodes.get("@default");
 
-        final List<Object> framed = new ArrayList<Object>();
+        final List<Object> framed = new ArrayList<>();
         // NOTE: frame validation is done by the function not allowing anything
         // other than list to me passed
         frame(state,
@@ -1329,11 +1329,11 @@ public class JsonLdApi {
         final Boolean explicicOn = getFrameFlag(frame, "@explicit", state.explicit);
 
         // add matches to output
-        final List<String> ids = new ArrayList<String>(matches.keySet());
+        final List<String> ids = new ArrayList<>(matches.keySet());
         Collections.sort(ids);
         for (final String id : ids) {
             if (property == null) {
-                state.embeds = new LinkedHashMap<String, EmbedNode>();
+                state.embeds = new LinkedHashMap<>();
             }
 
             // start output
@@ -1387,7 +1387,7 @@ public class JsonLdApi {
 
                 // iterate over subject properties
                 final Map<String, Object> element = (Map<String, Object>) matches.get(id);
-                List<String> props = new ArrayList<String>(element.keySet());
+                List<String> props = new ArrayList<>(element.keySet());
                 Collections.sort(props);
                 for (final String prop : props) {
 
@@ -1416,7 +1416,7 @@ public class JsonLdApi {
                                 && ((Map<String, Object>) item).containsKey("@list")) {
                             // add empty list
                             final Map<String, Object> list = newMap();
-                            list.put("@list", new ArrayList<Object>());
+                            list.put("@list", new ArrayList<>());
                             addFrameOutput(state, output, prop, list);
 
                             // add list objects
@@ -1460,7 +1460,7 @@ public class JsonLdApi {
                 }
 
                 // handle defaults
-                props = new ArrayList<String>(frame.keySet());
+                props = new ArrayList<>(frame.keySet());
                 Collections.sort(props);
                 for (final String prop : props) {
                     // skip keywords
@@ -1482,12 +1482,12 @@ public class JsonLdApi {
                                     def = JsonLdUtils.clone(propertyFrame.get("@default"));
                                 }
                                 if (!(def instanceof List)) {
-                                    final List<Object> tmp = new ArrayList<Object>();
+                                    final List<Object> tmp = new ArrayList<>();
                                     tmp.add(def);
                                     def = tmp;
                                 }
                                 final Map<String, Object> tmp1 = newMap("@preserve", def);
-                                final List<Object> tmp2 = new ArrayList<Object>();
+                                final List<Object> tmp2 = new ArrayList<>();
                                 tmp2.add(tmp1);
                                 output.put(prop, tmp2);
                             }
@@ -1536,7 +1536,7 @@ public class JsonLdApi {
         // remove existing embed
         if (JsonLdUtils.isNode(parent)) {
             // replace subject with reference
-            final List<Object> newvals = new ArrayList<Object>();
+            final List<Object> newvals = new ArrayList<>();
             final List<Object> oldvals = (List<Object>) ((Map<String, Object>) parent)
                     .get(property);
             for (final Object v : oldvals) {
@@ -1589,7 +1589,7 @@ public class JsonLdApi {
             }
             Object nodeTypes = node.get("@type");
             if (nodeTypes == null) {
-                nodeTypes = new ArrayList<Object>();
+                nodeTypes = new ArrayList<>();
             } else if (!(nodeTypes instanceof List)) {
                 throw new JsonLdError(Error.SYNTAX_ERROR, "node @type must be an array");
             }
@@ -1633,7 +1633,7 @@ public class JsonLdApi {
         if (parent instanceof Map) {
             List<Object> prop = (List<Object>) ((Map<String, Object>) parent).get(property);
             if (prop == null) {
-                prop = new ArrayList<Object>();
+                prop = new ArrayList<>();
                 ((Map<String, Object>) parent).put(property, prop);
             }
             prop.add(output);
@@ -1769,7 +1769,7 @@ public class JsonLdApi {
 
         // return this node without the usages variable
         public Map<String, Object> serialize() {
-            return new LinkedHashMap<String, Object>(this);
+            return new LinkedHashMap<>(this);
         }
     }
 
@@ -1784,9 +1784,9 @@ public class JsonLdApi {
      */
     public List<Object> fromRDF(final RDFDataset dataset) throws JsonLdError {
         // 1)
-        final Map<String, NodeMapNode> defaultGraph = new LinkedHashMap<String, NodeMapNode>();
+        final Map<String, NodeMapNode> defaultGraph = new LinkedHashMap<>();
         // 2)
-        final Map<String, Map<String, NodeMapNode>> graphMap = new LinkedHashMap<String, Map<String, NodeMapNode>>();
+        final Map<String, Map<String, NodeMapNode>> graphMap = new LinkedHashMap<>();
         graphMap.put("@default", defaultGraph);
 
         // 3/3.1)
@@ -1797,7 +1797,7 @@ public class JsonLdApi {
             // 3.2+3.4)
             Map<String, NodeMapNode> nodeMap;
             if (!graphMap.containsKey(name)) {
-                nodeMap = new LinkedHashMap<String, NodeMapNode>();
+                nodeMap = new LinkedHashMap<>();
                 graphMap.put(name, nodeMap);
             } else {
                 nodeMap = graphMap.get(name);
@@ -1869,8 +1869,8 @@ public class JsonLdApi {
                 String property = usage.property;
                 Map<String, Object> head = usage.value;
                 // 4.3.2)
-                final List<Object> list = new ArrayList<Object>();
-                final List<String> listNodes = new ArrayList<String>();
+                final List<Object> list = new ArrayList<>();
+                final List<String> listNodes = new ArrayList<>();
                 // 4.3.3)
                 while (RDF_REST.equals(property) && node.isWellFormedListNode()) {
                     // 4.3.3.1)
@@ -1917,18 +1917,18 @@ public class JsonLdApi {
         }
 
         // 5)
-        final List<Object> result = new ArrayList<Object>();
+        final List<Object> result = new ArrayList<>();
         // 6)
-        final List<String> ids = new ArrayList<String>(defaultGraph.keySet());
+        final List<String> ids = new ArrayList<>(defaultGraph.keySet());
         Collections.sort(ids);
         for (final String subject : ids) {
             final NodeMapNode node = defaultGraph.get(subject);
             // 6.1)
             if (graphMap.containsKey(subject)) {
                 // 6.1.1)
-                node.put("@graph", new ArrayList<Object>());
+                node.put("@graph", new ArrayList<>());
                 // 6.1.2)
-                final List<String> keys = new ArrayList<String>(graphMap.get(subject).keySet());
+                final List<String> keys = new ArrayList<>(graphMap.get(subject).keySet());
                 Collections.sort(keys);
                 for (final String s : keys) {
                     final NodeMapNode n = graphMap.get(subject).get(s);
@@ -2039,7 +2039,7 @@ public class JsonLdApi {
      */
     public Object normalize(Map<String, Object> dataset) throws JsonLdError {
         // create quads and map bnodes to their associated quads
-        final List<Object> quads = new ArrayList<Object>();
+        final List<Object> quads = new ArrayList<>();
         final Map<String, Object> bnodes = newMap();
         for (String graphName : dataset.keySet()) {
             final List<Map<String, Object>> triples = (List<Map<String, Object>>) dataset
@@ -2073,7 +2073,7 @@ public class JsonLdApi {
                         if (!bnodes.containsKey(id)) {
                             bnodes.put(id, new LinkedHashMap<String, List<Object>>() {
                                 {
-                                    put("quads", new ArrayList<Object>());
+                                    put("quads", new ArrayList<>());
                                 }
                             });
                         }

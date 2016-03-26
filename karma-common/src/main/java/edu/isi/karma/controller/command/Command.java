@@ -62,12 +62,12 @@ public abstract class Command extends Entity implements ICommand
 	 * Flag to tell if the command history should be written after this command
 	 * has been executed
 	 */
-	protected Set<String> inputColumns = new HashSet<String>();
-	protected Set<String> outputColumns = new HashSet<String>();
+	protected Set<String> inputColumns = new HashSet<>();
+	protected Set<String> outputColumns = new HashSet<>();
 	/**
 	 * List of tags for the command
 	 */
-	private List<CommandTag> tags = new ArrayList<CommandTag>();
+	private List<CommandTag> tags = new ArrayList<>();
 
 	private static final List<CommandTag> commandTagPriority = new ArrayList<>();
 

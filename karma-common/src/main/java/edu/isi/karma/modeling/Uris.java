@@ -116,7 +116,7 @@ public abstract class Uris {
 	// Linking related URIs
 	public static final String KM_LINKING_MATCHES_URI = Namespaces.KARMA_DEV + "possibleLinkingMatches";
 	
-	public static final List<String> Uris = new ArrayList<String>();
+	public static final List<String> Uris = new ArrayList<>();
 	static {
 		List<Field> staticFields = new ArrayList<>();
 	    Field[] allFields = Uris.class.getDeclaredFields();

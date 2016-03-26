@@ -36,7 +36,7 @@ public class Tag {
 		super();
 		this.label = label;
 		this.color = color;
-		nodeIdList = new HashSet<String>();
+		nodeIdList = new HashSet<>();
 	}
 	
 	public Color getColor() {

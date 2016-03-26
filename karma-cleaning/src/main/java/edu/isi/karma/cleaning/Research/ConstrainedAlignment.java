@@ -23,7 +23,7 @@ public class ConstrainedAlignment {
 	// inserted same token
 	public void traverse() {
 		// inite
-		Vector<Integer> spos = new Vector<Integer>();
+		Vector<Integer> spos = new Vector<>();
 		for (int i = 0; i < expnum; i++) {
 			spos.add(0);
 		}
@@ -50,7 +50,7 @@ class LatentState {
 
 	public LatentState(Vector<Integer> spos) {
 		this.StateType = LatentState.UND;
-		segments = new Vector<int[]>();
+		segments = new Vector<>();
 		if (segments.size() != spos.size()) {
 			logger.error("Length different");
 			return;

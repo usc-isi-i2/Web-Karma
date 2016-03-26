@@ -54,7 +54,7 @@ public class TriplesMapWorker implements Callable<Boolean> {
 		this.latch = new CountDownLatch(workersDependentOn.size());
 		this.triplesMap = triplesMap;
 		this.plan = plan;
-		this.dependentTriplesMapWorkers = new LinkedList<TriplesMapWorker>();
+		this.dependentTriplesMapWorkers = new LinkedList<>();
 		this.r = r;
 		this.outWriters = outWriters;
 	}
