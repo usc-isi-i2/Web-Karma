@@ -89,7 +89,7 @@ public class Ruler {
 	// in current data,search the position of the tvec
 	public static int Search(Vector<TNode> xvec, Vector<TNode> tvec, int bpos) {
 		boolean isFind = false;
-		int p1 = -1;
+		int p1;
 		for (int t = bpos; t < xvec.size() - tvec.size() + 1; t++) {
 			p1 = t;
 			for (int x = 0; x < tvec.size(); x++) {
@@ -111,7 +111,7 @@ public class Ruler {
 
 	// evalPos()
 	public int evalPos(String input, Vector<TNode> t, String option) {
-		boolean incld = false;
+		boolean incld;
 		if (input.contains("first")) {
 			if (!input.contains("incld")) {
 				incld = false;
@@ -266,7 +266,7 @@ public class Ruler {
 
 	public void doOperation(String oper, String num, Vector<TNode> x, int spos,
 			int epos) {
-		int quan = 0;
+		int quan;
 		if (num == null || num.compareTo("anynumber") == 0) {
 			quan = Integer.MAX_VALUE;
 		} else {
@@ -319,8 +319,8 @@ public class Ruler {
 	// spos is the start position of the segment
 	// epos is the end position of the segment
 	public void mov(Vector<TNode> toks, int dpos, int spos, int epos) {
-		int pos = 0;
-		int size = 0;
+		int pos;
+		int size;
 		if (toks != null) {
 			pos = Ruler.Search(this.vec, toks, spos);
 			if (pos + toks.size() > epos + 1 || pos == -1) {
@@ -338,7 +338,7 @@ public class Ruler {
 		// update the end position and do the del
 		ListIterator<TNode> l = this.vec.listIterator(pos);
 		// ListIterator<TNode> dl = this.vec.listIterator(dpos);
-		int c = 0;
+		int c;
 		Vector<TNode> x = new Vector<TNode>();
 		for (c = 0; c < size; c++) {
 			// this.collectPoss(pos);
@@ -368,8 +368,8 @@ public class Ruler {
 
 	public void det(int n, Vector<TNode> toks, int start, int end) {
 		int cnt = 0;
-		int pos = 0;
-		int deleng = 0;
+		int pos;
+		int deleng;
 		while (cnt < n) {
 			if (toks == null) // don't specify all particular token sequence
 			{
@@ -385,7 +385,7 @@ public class Ruler {
 			}
 			// update the end position and do the del
 			ListIterator<TNode> l = this.vec.listIterator(pos);
-			int c = 0;
+			int c;
 			for (c = 0; c < deleng; c++) {
 				// this.collectPoss(pos);
 				TNode tn = l.next();

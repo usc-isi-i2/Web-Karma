@@ -90,7 +90,7 @@ public class SQLImport extends Import {
 	    List<String> headersList = new ArrayList<String>();
 	    for (int i = 0; i < data.get(0).size(); i++)
 	    {
-		    HNode hNode = null;
+		    HNode hNode;
 		    hNode = headers.addHNode(data.get(0).get(i), HNodeType.Regular, getWorksheet(), getFactory());
 		    headersList.add(hNode.getId());
 	    }

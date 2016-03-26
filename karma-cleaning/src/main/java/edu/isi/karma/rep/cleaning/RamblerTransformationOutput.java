@@ -77,7 +77,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 		psProgSynthesis.inite(exps, input.dpp, input.msg);
 		// add time out here
-		Collection<ProgramRule> rules = null;
+		Collection<ProgramRule> rules;
 		//rules = psProgSynthesis.adaptive_main();
 		rules = psProgSynthesis.run_main();
 		input.msg.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
@@ -141,8 +141,8 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		while (iter.hasNext()) {
 			String k = iter.next();
 			String orgval = v.getValue(k);
-			String cLabel = "";
-			String val = "";
+			String cLabel;
+			String val;
 			if (orgval.length() > 0) {
 				val = t.transform_debug(orgval);
 				cLabel = t.getClassLabel(orgval);

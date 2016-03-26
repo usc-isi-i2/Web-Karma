@@ -348,7 +348,7 @@ public class WebService extends Source {
 		buildHNodeId2AttributeMapping();
 		
 		// set the rdf ids of all the vertices. The rdf id of leaf vertices are the attribute ids. 
-		String hNodeId = "";
+		String hNodeId;
 		for (Node n : treeModel.vertexSet()) {
 			if (n instanceof ColumnNode) {
 				logger.debug("Node " + n.getLocalId() + " is a column node.");
@@ -438,7 +438,7 @@ public class WebService extends Source {
 				continue;
 			
 			Label propertyPredicate = new Label(e.getLabel().getUri(), e.getLabel().getNs(), e.getLabel().getPrefix());
-			IndividualPropertyAtom propertyAtom = null;
+			IndividualPropertyAtom propertyAtom;
 			
 //			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
 //			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
@@ -494,7 +494,7 @@ public class WebService extends Source {
 				continue;
 			
 			Label propertyPredicate = new Label(e.getLabel().getUri(), e.getLabel().getNs(), e.getLabel().getPrefix());
-			IndividualPropertyAtom propertyAtom = null;
+			IndividualPropertyAtom propertyAtom;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
 //			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){

@@ -186,9 +186,9 @@ public class URLManager {
 	        
 	        List<Attribute> attributeList = new ArrayList<Attribute>();
 	        HashMap<String, Integer> attributeNameCounter = new HashMap<String, Integer>();
-	        String attributeName = "";
-	        String attributeId = "";
-	        String attributeValue = "";
+	        String attributeName;
+	        String attributeId;
+	        String attributeValue;
 	        
 	        String[] urlParts = urlString.split("\\?");
 	        if (urlParts.length > 1) {
@@ -269,8 +269,8 @@ public class URLManager {
 	public static List<String>  extractAttributeNames(List<String> urlList) throws MalformedURLException {
 		List<String> attributesNameList = new ArrayList<String>();
 
-		Attribute p = null;
-		String key = null;
+		Attribute p;
+		String key;
 		for (int i = 0; i < urlList.size(); i++) {
 			//System.out.println(urlList.get(i));
 			List<Attribute> attributeList = getQueryAttributes(urlList.get(i));
@@ -290,9 +290,9 @@ public class URLManager {
 	public static List<List<String>>  attributeValuesInTable(List<String> urlList, List<String> attributeNames) throws MalformedURLException {
 		List<List<String>> allAttributes = new ArrayList<List<String>>();
 
-		Attribute p = null;
-		String key = null;
-		int index = -1;
+		Attribute p;
+		String key;
+		int index;
 		
 		for (int i = 0; i < urlList.size(); i++) {
 			//System.out.println(urlList.get(i));
@@ -318,9 +318,9 @@ public class URLManager {
 	public static List<List<String>>  attributeValuesInSets(List<String> urlList, List<String> attributeNames) throws MalformedURLException {
 		List<List<String>> allAttributes = new ArrayList<List<String>>();
 
-		Attribute p = null;
-		String key = null;
-		int index = -1;
+		Attribute p;
+		String key;
+		int index;
 		
 		for (int j = 0; j < attributeNames.size(); j++) {
 			allAttributes.add(new ArrayList<String>());
@@ -418,7 +418,7 @@ public class URLManager {
 		if (!invocationURL.endsWith("?"))
 			invocationURL += "?";
 
-		String value = "";
+		String value;
 		for (int i = 0; i < attributeNames.size(); i++) {
 			value = attributeValues.get(i).trim();
 			

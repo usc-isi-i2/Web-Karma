@@ -48,7 +48,7 @@ public class ServiceTableUtil {
 
 		logger.info("Populating an empty worksheet with the service data ...");
 
-		List<String> hNodeIdList = new ArrayList<String>();
+		List<String> hNodeIdList;
 		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
 
 		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
@@ -62,7 +62,7 @@ public class ServiceTableUtil {
 		
 		List<String> oldHNodeIdList = new ArrayList<String>(worksheet.getHeaders().getHNodeIds());
 
-		List<String> hNodeIdList = new ArrayList<String>();
+		List<String> hNodeIdList;
 		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
 
 		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
@@ -118,8 +118,8 @@ public class ServiceTableUtil {
 			oldRowIds.add(r.getId());
 		}
 		
-		HashMap<String, String> currentRow = null;
-		String currentRowId = "";
+		HashMap<String, String> currentRow;
+		String currentRowId;
 		
 		int addedRowsCount = 0; 
 		for (int i = 0; i < oldRowValues.size(); i++) {
@@ -138,7 +138,7 @@ public class ServiceTableUtil {
 				
 				addedRowsCount ++;
 				
-				Row row = null;
+				Row row;
 				if (addedRowsCount <= rowsCount)
 					row = dataTable.getRows(addedRowsCount - 1, 1, sel).get(0);
 				else 

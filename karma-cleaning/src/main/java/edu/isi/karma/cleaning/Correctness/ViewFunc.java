@@ -87,7 +87,7 @@ public class ViewFunc implements VerificationFunc {
 			Vector<GrammarTreeNode> bd = t.body;
 			ArrayList<ArrayList<String>> equviViews = new ArrayList<ArrayList<String>>();
 			for (GrammarTreeNode gt : bd) {
-				String rule = "";
+				String rule;
 				HashSet<String> vs = new HashSet<String>();
 				ArrayList<String> lviews = new ArrayList<String>();
 				do {

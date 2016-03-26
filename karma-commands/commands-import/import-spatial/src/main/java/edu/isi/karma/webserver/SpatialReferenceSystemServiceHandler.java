@@ -30,7 +30,7 @@ public class SpatialReferenceSystemServiceHandler extends HttpServlet {
 		logger.debug("Request Path Info: " + request.getPathInfo());
 		logger.debug("Request Param: " + request.getQueryString());
 		
-		String jsonOutput=null;
+		String jsonOutput;
 
 		String inGeomWKT = request.getParameter("geometry");
 		String fromSRID = request.getParameter("srid");

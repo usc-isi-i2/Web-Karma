@@ -233,7 +233,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
 					String hNodeId = ((ColumnNode)cNode).getHNodeId();
 					if(incomingLink instanceof DataPropertyOfColumnLink || incomingLink instanceof ObjectPropertySpecializationLink) {
-						String id = null;
+						String id;
 						if(incomingLink instanceof DataPropertyOfColumnLink)
 							id = ((DataPropertyOfColumnLink)incomingLink).getSpecializedLinkId();
 						else 

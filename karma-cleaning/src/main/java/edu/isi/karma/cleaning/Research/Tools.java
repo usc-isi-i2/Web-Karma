@@ -45,7 +45,7 @@ public class Tools {
 			// read and write the data
 			File nf = new File(fpath);
 			BufferedReader cr = new BufferedReader(new FileReader(fpath));
-			String pair = "";
+			String pair;
 			Vector<String> vtmp = new Vector<String>();
 			while ((pair = cr.readLine()) != null) {
 				pair = pair.trim();
@@ -69,14 +69,14 @@ public class Tools {
 				// open up standard input
 				BufferedReader br = new BufferedReader(new InputStreamReader(
 						System.in));
-				String raw = null;
+				String raw;
 				raw = br.readLine();
 				if (raw.compareTo("end") == 0) {
 					break;
 				}
 				System.out.print("Enter tar value\n");
 				// open up standard input
-				String tar = null;
+				String tar;
 				tar = br.readLine();
 
 				// learn the program

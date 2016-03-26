@@ -135,7 +135,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		List<SemanticType> typesList = new ArrayList<SemanticType>();
 		for (int i = 0; i < typesArr.length(); i++) {
 			try {
-				LabeledLink newLink = null;
+				LabeledLink newLink;
 				JSONObject type = typesArr.getJSONObject(i);
 				
 				String sourceId = "";

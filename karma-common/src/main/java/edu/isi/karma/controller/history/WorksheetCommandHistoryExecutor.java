@@ -220,7 +220,7 @@ public class WorksheetCommandHistoryExecutor {
 				String predicate = link.getString("predicate");
 				Object object = link.get("object");
 				
-				String objectHNodeId = null, subjectHNodeId = null;
+				String objectHNodeId, subjectHNodeId;
 				if(subject instanceof JSONArray) {
 					subjectHNodeId = generateHNodeId((JSONArray)subject, hTable, addIfNonExist, uc);
 				} else {

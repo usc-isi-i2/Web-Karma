@@ -499,7 +499,7 @@ public class RecordClassifier implements PartitionClassifierType {
 		try {
 			BufferedReader br1 = new BufferedReader(new FileReader(fpath1));
 			BufferedReader br2 = new BufferedReader(new FileReader(fpath2));
-			String line = "";
+			String line;
 			ArrayList<String> data = new ArrayList<String>();
 			ArrayList<String> labels = new ArrayList<String>();
 			while ((line = br1.readLine()) != null) {

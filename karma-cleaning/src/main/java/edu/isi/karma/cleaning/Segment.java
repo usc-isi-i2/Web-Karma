@@ -148,7 +148,7 @@ public class Segment implements GrammarTreeNode {
 			orgStrings.add(org);
 			tarStrings.add(tarString);
 			// create the startPosition
-			Vector<Integer> sset = new Vector<Integer>();
+			Vector<Integer> sset;
 			sset = UtilTools.getStringPos(s, orgNodes);
 			Vector<String> tars = new Vector<String>();
 			tars.add(sset.get(0).toString());
@@ -156,7 +156,7 @@ public class Segment implements GrammarTreeNode {
 					getRightCxt(s, orgNodes), orgStrings, tars, this.isinloop, contextId);
 			sPosition.isinloop = this.isinloop;
 			// create the endPosition
-			Vector<Integer> eset = new Vector<Integer>();
+			Vector<Integer> eset;
 			eset = UtilTools.getStringPos(e, orgNodes);
 			Vector<String> tars1 = new Vector<String>();
 			tars1.add(eset.get(0).toString());

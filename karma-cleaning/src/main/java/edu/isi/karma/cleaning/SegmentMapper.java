@@ -21,7 +21,7 @@ public class SegmentMapper {
 	// only try to find one segment whose starting pos in target is pos
 	public static Vector<Segment> findMapping(Vector<TNode> org,
 			Vector<TNode> tar, int pos) {
-		Vector<Segment> res = new Vector<Segment>();
+		Vector<Segment> res;
 		Dataitem root = new Dataitem();
 		root.tarpos = pos;
 		ArrayList<Dataitem> path = new ArrayList<Dataitem>();

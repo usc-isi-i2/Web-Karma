@@ -134,7 +134,7 @@ public abstract class TopKSteinertrees {
 				nodes.put(arr[3], new SteinerNode(arr[3]));
 				graph.put(nodes.get(arr[3]), new TreeSet<SteinerEdge>());
 			}
-			SteinerEdge e=null;
+			SteinerEdge e;
 			if(!uniformWeights){
 				Random r= new Random();
 				arr[1]=String.valueOf(r.nextFloat());
@@ -179,7 +179,7 @@ public abstract class TopKSteinertrees {
 				nodes.put(arr[3], new SteinerNode(arr[3]));
 				graph.put(nodes.get(arr[3]), new TreeSet<SteinerEdge>());
 			}
-			SteinerEdge e=null;
+			SteinerEdge e;
 			if(isArg1) e= new SteinerEdge(nodes.get(arr[3]), arr[0].intern(), nodes.get(arr[2]) ,Float.valueOf(arr[1])); 
 			else e= new SteinerEdge(nodes.get(arr[2]), arr[0].intern(), nodes.get(arr[3]),Float.valueOf(arr[1]));
 				
