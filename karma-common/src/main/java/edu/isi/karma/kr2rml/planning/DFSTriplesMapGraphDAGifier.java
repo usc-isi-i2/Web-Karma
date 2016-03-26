@@ -39,7 +39,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 	
 		HashSet<String> triplesMapsIds = new HashSet<String>();
 
-		if(graph.getTriplesMapIds().size() == 0)
+		if(graph.getTriplesMapIds().isEmpty())
 		{
 			return new LinkedList<String>();
 		}
@@ -74,7 +74,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 		boolean modifications = true;
 		List<String> spilledTriplesMaps = new LinkedList<String>();
 		
-		while(triplesMapsIds.size() > 0 && modifications)
+		while(!triplesMapsIds.isEmpty() && modifications)
 		{
 			logger.trace("starting a cleaning cycle");
 			modifications = false;

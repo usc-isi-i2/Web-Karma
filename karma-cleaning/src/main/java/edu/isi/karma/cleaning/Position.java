@@ -60,7 +60,7 @@ public class Position implements GrammarTreeNode {
 					smap.put(res, value); // store the string of all sizes
 			}
 		}
-		if (x == null || x.size() == 0) {
+		if (x == null || x.isEmpty()) {
 			return;
 		}
 		if (cur >= x.size() || cur < 0) {
@@ -162,7 +162,7 @@ public class Position implements GrammarTreeNode {
 				}
 			}
 		}
-		if (xNodes.size() == 0)
+		if (xNodes.isEmpty())
 			return null;
 		return xNodes;
 	}
@@ -184,7 +184,7 @@ public class Position implements GrammarTreeNode {
 				Segment.RIGHTPOS);
 		// this.leftContextNodes = g_lcxtNodes;
 		// this.rightContextNodes = g_rcxtNodes;
-		if (tmpIntegers.size() == 0 && g_lcxtNodes == null
+		if (tmpIntegers.isEmpty() && g_lcxtNodes == null
 				&& g_rcxtNodes == null)
 			return null;
 		boolean loop = this.isinloop || b.isinloop;

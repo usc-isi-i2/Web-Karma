@@ -94,7 +94,7 @@ public class Program implements GrammarTreeNode {
 		if (this.partitions.size() > 1) {
 			//StopWatch spw1 = new Log4JStopWatch("Codeblock-genprogram");
 			for (Partition p : this.partitions) {
-				if (p.tarNodes.get(0).size() == 0) {
+				if (p.tarNodes.get(0).isEmpty()) {
 					pr.addRule(p.label, "substr(value,0,0)");
 					continue;
 				}
@@ -125,7 +125,7 @@ public class Program implements GrammarTreeNode {
 			if (partitions.size() <= 0) {
 				return null;
 			}
-			if (partitions.get(0).tarNodes.get(0).size() == 0) {
+			if (partitions.get(0).tarNodes.get(0).isEmpty()) {
 				pr.addRule(partitions.get(0).label, "substr(value,0,0)");
 				return pr;
 			}
@@ -153,7 +153,7 @@ public class Program implements GrammarTreeNode {
 		ProgramRule pr = new ProgramRule(this, contextId);
 		if (this.partitions.size() > 1) {
 			for (Partition p : this.partitions) {
-				if (p.tarNodes.get(0).size() == 0) {
+				if (p.tarNodes.get(0).isEmpty()) {
 					pr.addRule(p.label, "substr(value,0,0)");
 					continue;
 				}
@@ -174,7 +174,7 @@ public class Program implements GrammarTreeNode {
 			if (partitions.size() <= 0) {
 				return null;
 			}
-			if (partitions.get(0).tarNodes.get(0).size() == 0) {
+			if (partitions.get(0).tarNodes.get(0).isEmpty()) {
 				pr.addRule(partitions.get(0).label, "substr(value,0,0)");
 				return pr;
 			}

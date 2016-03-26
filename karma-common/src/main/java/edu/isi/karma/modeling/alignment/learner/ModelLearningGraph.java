@@ -286,7 +286,7 @@ public abstract class ModelLearningGraph {
 				if (commonModelIds == null || matchedLink.getModelIds() == null)
 					return false;
 				commonModelIds = Sets.intersection(matchedLink.getModelIds(), commonModelIds);
-				if (commonModelIds.size() == 0) // no intersection
+				if (commonModelIds.isEmpty()) // no intersection
 					return false;
 			}
 		}

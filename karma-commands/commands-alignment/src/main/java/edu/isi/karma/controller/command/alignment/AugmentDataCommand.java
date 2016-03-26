@@ -175,10 +175,10 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 			otherClasses.add(otherClassarray.getJSONObject(i).getString("otherClass"));
 		}
 
-		while (subjects.size() > 0) {
+		while (!subjects.isEmpty()) {
 			ListIterator<String> subjectsIterator = subjects.listIterator();
 			LinkedList<String> tempSubjects = new LinkedList<String>();
-			while(tempSubjects.size() < limit && subjects.size() > 0)
+			while(tempSubjects.size() < limit && !subjects.isEmpty())
 			{
 				tempSubjects.add(subjectsIterator.next());
 				subjectsIterator.remove();

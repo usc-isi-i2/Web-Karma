@@ -54,7 +54,7 @@ public class AvroBatchRecordReader<T> extends AvroRecordReaderBase<Text, Text, T
 				break;
 			}
 		}
-		return (data.size() != 0);
+		return (!data.isEmpty());
 	}
 
 }

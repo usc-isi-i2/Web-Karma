@@ -73,7 +73,7 @@ public class CSVImport extends Import {
         // If no row is present for the column headers
         if (headerRowIndex == 0) {
             hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory(), br);
-            if (hNodeIdList == null || hNodeIdList.size() == 0) {
+            if (hNodeIdList == null || hNodeIdList.isEmpty()) {
                 br.close();
                 throw new KarmaException("Error occured while counting header "
                         + "nodes for the worksheet!");

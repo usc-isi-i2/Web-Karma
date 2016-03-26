@@ -40,7 +40,7 @@ public class CleaningResultUpdate extends AbstractUpdate {
 
 			JSONArray jsa = new JSONArray();
 			JSONObject bestpac = new JSONObject();
-			if(map.keySet().size()>0)
+			if(!map.keySet().isEmpty())
 			{
 				JSONObject jsBest = new JSONObject(map);
 				bestpac.put("data", jsBest);

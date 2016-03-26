@@ -140,7 +140,7 @@ public class RecordDistiller {
 		// generate candiate set
 		HashSet<String> result = new HashSet<String>();
 		for (String cxt : lcxt2ids.keySet()) {
-			if (lcxt2ids.get(cxt).size() != 0) {
+			if (!lcxt2ids.get(cxt).isEmpty()) {
 				String idString = lcxt2ids.get(cxt).get(0);
 				if (!result.contains(idString)) {
 					result.add(idString);
@@ -148,7 +148,7 @@ public class RecordDistiller {
 			}
 		}
 		for (String cxt : rcxt2ids.keySet()) {
-			if (rcxt2ids.get(cxt).size() != 0) {
+			if (!rcxt2ids.get(cxt).isEmpty()) {
 				String idString = rcxt2ids.get(cxt).get(0);
 				if (!result.contains(idString)) {
 					result.add(idString);

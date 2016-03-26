@@ -67,7 +67,7 @@ public class Graph<V, E extends Edge<V>> {
 	}*/
 	
 	public String toString () {
-    if(edges.size()==0) return("<Empty graph>");
+    if(edges.isEmpty()) return("<Empty graph>");
     StringBuilder b=new StringBuilder();
     Set<Edge> goodEdges = new TreeSet<Edge>();
     Set<Edge> badEdges = new TreeSet<Edge>();

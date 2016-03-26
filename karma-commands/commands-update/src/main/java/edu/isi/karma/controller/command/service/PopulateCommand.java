@@ -163,7 +163,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		List<String> requestIds = new ArrayList<String>();
 		Map<String, String> serviceToSourceAttMapping =  servicesAndMappings.get(service);
 		List<String> requestURLStrings = getUrlStrings(service, source, wk, serviceToSourceAttMapping, requestIds);
-		if (requestURLStrings == null || requestURLStrings.size() == 0) {
+		if (requestURLStrings == null || requestURLStrings.isEmpty()) {
 			logger.error("Data table does not have any row.");
 			return new UpdateContainer(new ErrorUpdate("Data table does not have any row."));	
 		}
@@ -212,7 +212,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		SuperSelection selection = getSuperSelection(wk);
 		List<String> requestURLStrings = new ArrayList<String>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
-		if (rows == null || rows.size() == 0) {
+		if (rows == null || rows.isEmpty()) {
 			logger.error("Data table does not have any row.");
 			return null;	
 		}

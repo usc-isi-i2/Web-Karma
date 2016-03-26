@@ -218,7 +218,7 @@ public class OptimizePartition {
 		Vector<Partition> xPar = new Vector<Partition>();
 		xPar.add(p);
 		Collection<ProgramRule> cpr = pSynthesis.producePrograms(xPar);
-		if (cpr == null || cpr.size() == 0) {
+		if (cpr == null || cpr.isEmpty()) {
 			legalParitions.put(key, false);
 			return false;
 		} else {

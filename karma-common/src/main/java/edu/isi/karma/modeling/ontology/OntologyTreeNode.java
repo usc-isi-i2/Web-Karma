@@ -57,7 +57,7 @@ public class OntologyTreeNode {
 	}
 
 	public boolean hasChildren() {
-		return (children != null && children.size() != 0);
+		return (children != null && !children.isEmpty());
 	}
 	
 	public void print() {
@@ -71,7 +71,7 @@ public class OntologyTreeNode {
 		System.out.println("Label: " + node.getLabel().getRdfsLabel());
 		for (int i = 0; i < level; i++) System.out.print("   "); System.out.print(" ");
 		System.out.println("Comment: " + node.getLabel().getRdfsComment());
-		if (node.children == null || node.children.size() == 0)
+		if (node.children == null || node.children.isEmpty())
 			return;
 		for (OntologyTreeNode child : node.getChildren()) {
 			printRecursively(child, level + 1);

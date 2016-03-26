@@ -49,7 +49,7 @@ public class FormatFunc implements VerificationFunc {
 		for(String key: tmp.keySet())
 		{
 			ArrayList<TransRecord> tdata = tmp.get(key);
-			if(tdata.size() > 0 || tdata.get(0).features.length > 0)
+			if(!tdata.isEmpty() || tdata.get(0).features.length > 0)
 			{
 				ArrayList<double[]> tcl = new ArrayList<double[]>();
 				for(int i =0; i< tdata.size(); i++)

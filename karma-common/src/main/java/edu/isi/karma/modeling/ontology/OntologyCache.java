@@ -1336,7 +1336,7 @@ public class OntologyCache {
 			if (directSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(directSuperPropertiesLocal);
 			if (indirectSuperPropertiesLocal != null) allSuperPropertiesLocal.addAll(indirectSuperPropertiesLocal);
 			
-			if (allSuperPropertiesLocal.size() == 0) continue;
+			if (allSuperPropertiesLocal.isEmpty()) continue;
 			
 			HashSet<String> temp = null;
 			
@@ -1527,8 +1527,8 @@ public class OntologyCache {
 
 			haveDomain = true;
 			
-			if ((directDomains == null || directDomains.size() == 0) &&
-					(indirectDomains == null || indirectDomains.size() == 0))
+			if ((directDomains == null || directDomains.isEmpty()) &&
+					(indirectDomains == null || indirectDomains.isEmpty()))
 				haveDomain = false;
 			
 			if (directDomains != null && directDomains.size() == 1 &&
@@ -1552,12 +1552,12 @@ public class OntologyCache {
 			haveDomain = true;
 			haveRange = true;
 			
-			if ((directDomains == null || directDomains.size() == 0) &&
-					(indirectDomains == null || indirectDomains.size() == 0))
+			if ((directDomains == null || directDomains.isEmpty()) &&
+					(indirectDomains == null || indirectDomains.isEmpty()))
 				haveDomain = false;
 			
-			if ((directRanges == null || directRanges.size() == 0) &&
-					(indirectRanges == null || indirectRanges.size() == 0))
+			if ((directRanges == null || directRanges.isEmpty()) &&
+					(indirectRanges == null || indirectRanges.isEmpty()))
 				haveRange = false;
 			
 			if (haveDomain && !haveRange) 

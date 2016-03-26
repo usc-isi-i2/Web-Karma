@@ -81,7 +81,7 @@ public class ErrorReport {
 	}
 	
 	public boolean hasReports() {
-		return reports.size() != 0;
+		return !reports.isEmpty();
 	}
 }
 

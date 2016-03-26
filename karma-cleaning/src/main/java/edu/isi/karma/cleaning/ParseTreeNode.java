@@ -46,7 +46,7 @@ public class ParseTreeNode {
 		}
 		else if(this.type == nodetype.segment)
 		{
-			if(this.children.size()==0)
+			if(this.children.isEmpty())
 			{
 				prog = this.value;
 			}

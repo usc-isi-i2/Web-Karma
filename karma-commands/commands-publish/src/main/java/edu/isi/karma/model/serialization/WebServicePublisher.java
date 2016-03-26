@@ -218,7 +218,7 @@ public class WebServicePublisher extends SourcePublisher {
 		if (service.getInputAttributes() != null) {
 			
 			my_input = model.createResource(baseNS + "input");  
-			if (service.getInputAttributes().size() > 0) {
+			if (!service.getInputAttributes().isEmpty()) {
 				my_input.addProperty(rdf_type, input_resource);
 			}
 			for (int i = 0; i < service.getInputAttributes().size(); i++) {
@@ -260,7 +260,7 @@ public class WebServicePublisher extends SourcePublisher {
 
 		if (service.getOutputAttributes() != null) {
 			my_output = model.createResource(baseNS + "output");  
-			if (service.getOutputAttributes().size() > 0) {
+			if (!service.getOutputAttributes().isEmpty()) {
 				my_output.addProperty(rdf_type, output_resource);
 			}
 			for (int i = 0; i < service.getOutputAttributes().size(); i++) {

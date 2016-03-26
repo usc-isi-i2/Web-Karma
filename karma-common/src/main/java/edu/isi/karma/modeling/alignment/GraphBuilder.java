@@ -850,7 +850,7 @@ public class GraphBuilder {
 
 		String key;
 		
-		if (possibleLinksFromSourceToTarget != null  && possibleLinksFromSourceToTarget.size() > 0) {
+		if (possibleLinksFromSourceToTarget != null  && !possibleLinksFromSourceToTarget.isEmpty()) {
 
 			for (String linkUri : possibleLinksFromSourceToTarget) {
 				key = "domain:" + sourceUri + ",link:" + linkUri + ",range:" + targetUri;
@@ -915,16 +915,16 @@ public class GraphBuilder {
 			maxCount = maxCount4;
 			type = 4; // match link label
 		} else {
-			if (objectPropertiesDirect != null && objectPropertiesDirect.size() > 0) {
+			if (objectPropertiesDirect != null && !objectPropertiesDirect.isEmpty()) {
 				selectedLinkUri = objectPropertiesDirect.iterator().next();
 				type = 5;
-			} else 	if (objectPropertiesIndirect != null && objectPropertiesIndirect.size() > 0) {
+			} else 	if (objectPropertiesIndirect != null && !objectPropertiesIndirect.isEmpty()) {
 				selectedLinkUri = objectPropertiesIndirect.iterator().next();
 				type = 6;
-			} else 	if (objectPropertiesWithOnlyDomain != null && objectPropertiesWithOnlyDomain.size() > 0) {
+			} else 	if (objectPropertiesWithOnlyDomain != null && !objectPropertiesWithOnlyDomain.isEmpty()) {
 				selectedLinkUri = objectPropertiesWithOnlyDomain.iterator().next();
 				type = 7;
-			} else 	if (objectPropertiesWithOnlyRange != null && objectPropertiesWithOnlyRange.size() > 0) {
+			} else 	if (objectPropertiesWithOnlyRange != null && !objectPropertiesWithOnlyRange.isEmpty()) {
 				selectedLinkUri = objectPropertiesWithOnlyRange.iterator().next();;
 				type = 8;
 			} else if (ontologyManager.isSubClass(sourceUri, targetUri, true)) {
@@ -1067,7 +1067,7 @@ public class GraphBuilder {
 		}
 
 		HashSet<String> uriDirectConnections = getUriDirectConnections(uri);
-		if (uriDirectConnections.size() == 0) {
+		if (uriDirectConnections.isEmpty()) {
 			this.uriClosure.put(uri, new HashSet<String>());
 		} else {
 			for (String c : uriDirectConnections) {
@@ -1131,7 +1131,7 @@ public class GraphBuilder {
 
 		for (String c : uriClosure) {
 			Set<Node> nodesOfSameUri = this.uriToNodesMap.get(c);
-			if (nodesOfSameUri == null || nodesOfSameUri.size() == 0) { // the internal node is not added to the graph before
+			if (nodesOfSameUri == null || nodesOfSameUri.isEmpty()) { // the internal node is not added to the graph before
 				Node nn = new InternalNode(nodeIdFactory.getNodeId(c), 
 						ontologyManager.getUriLabel(c));
 				if (addNode(nn)) newAddedNodes.add(nn);

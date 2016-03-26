@@ -193,7 +193,7 @@ public class TriplesMapGraph {
 		return newGraph;
 	}
 	public void killTriplesMap(List<String> tripleMapToKill, RootStrategy strategy) {
-		if (tripleMapToKill.size() == 0) {
+		if (tripleMapToKill.isEmpty()) {
 			return;
 		}
 		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();
@@ -227,7 +227,7 @@ public class TriplesMapGraph {
 	}
 	
 	public void killPredicateObjectMap(List<String> POMToKill, RootStrategy strategy) {
-		if (POMToKill.size() == 0) {
+		if (POMToKill.isEmpty()) {
 			return;
 		}
 		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();
@@ -261,7 +261,7 @@ public class TriplesMapGraph {
 	}
 	
 	public void stopTriplesMap(List<String> tripleMapToStop, RootStrategy strategy) {
-		if (tripleMapToStop.size() == 0) {
+		if (tripleMapToStop.isEmpty()) {
 			return;
 		}
 		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();

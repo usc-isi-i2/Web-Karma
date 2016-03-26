@@ -640,7 +640,7 @@ public class ExampleCluster {
 		Vector<Partition> xPar = new Vector<Partition>();
 		xPar.add(p);
 		Collection<ProgramRule> cpr = pSynthesis.producePrograms(xPar);
-		if (cpr == null || cpr.size() == 0) {
+		if (cpr == null || cpr.isEmpty()) {
 			failedCnt++;
 			legalParitions.put(key, false);
 			return false;

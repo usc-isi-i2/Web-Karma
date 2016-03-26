@@ -181,7 +181,7 @@ public class Section implements GrammarTreeNode {
 					line.add(Integer.parseInt(x));
 				}
 			}
-			if (line.size() > 0) {
+			if (!line.isEmpty()) {
 				configs.add(line);
 			}
 			return;

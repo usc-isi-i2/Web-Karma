@@ -65,7 +65,7 @@ public class Segment implements GrammarTreeNode {
 		}
 		initSections(orgNodes);
 		repString = "";
-		if (tarNodes.size() == 0) {
+		if (tarNodes.isEmpty()) {
 			repString += "EMPTY";
 		} else {
 			repString += tarNodes.get(this.start).getType();
@@ -190,7 +190,7 @@ public class Segment implements GrammarTreeNode {
 	}
 
 	public boolean isConstSegment() {
-		if (this.constNodes.size() > 0) {
+		if (!this.constNodes.isEmpty()) {
 			return true;
 		} else {
 			return false;
@@ -231,7 +231,7 @@ public class Segment implements GrammarTreeNode {
 				}
 			}
 		}
-		if (newSections.size() == 0)
+		if (newSections.isEmpty())
 			return null;
 		boolean loop = this.isinloop || s.isinloop;
 		Segment res = new Segment(newSections, loop, contextId);
@@ -239,7 +239,7 @@ public class Segment implements GrammarTreeNode {
 	}
 
 	public String getrepString() {
-		if (this.constNodes.size() > 0 && this.repString.length() == 0) {
+		if (!this.constNodes.isEmpty() && this.repString.isEmpty()) {
 			repString = UtilTools.print(this.constNodes);
 			return repString;
 

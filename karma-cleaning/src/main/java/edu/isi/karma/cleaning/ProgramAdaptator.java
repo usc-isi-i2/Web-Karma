@@ -26,7 +26,7 @@ public class ProgramAdaptator {
 		{
 			return exp2program.get(key2);
 		}
-		if(examples.size() == 1 || keys.size() == 0)
+		if(!keys.isEmpty())
 		{
 			ExampleTraces tool = new ExampleTraces(contextId);
 			Traces t1 = tool.createTrace(examples.get(0));
@@ -132,7 +132,7 @@ public class ProgramAdaptator {
 			}
 			// get the correct parts
 			boolean valid = true;
-			if(errNodes.size() == 0) // no solution exists
+			if(errNodes.isEmpty()) // no solution exists
 				valid = false;
 			for (Patcher pat : errNodes) {
 				GrammarTreeNode newSpace = updateNewSpace(pat);
@@ -179,7 +179,7 @@ public class ProgramAdaptator {
 				Patcher nPatcher = new Patcher();
 				Segment seg = ((Segment)gtruth.get(i));
 				//check if it constant segment
-				if(seg.section.size() == 0)
+				if(seg.section.isEmpty())
 				{
 					Vector<GrammarTreeNode> gs = new Vector<GrammarTreeNode>();
 					gs.add(gNodes.get(i));
@@ -261,7 +261,7 @@ public class ProgramAdaptator {
 	public ArrayList<Patcher> refinePather(Patcher pat, Vector<GrammarTreeNode> gtruth, ArrayList<Path> pathes)
 	{
 		ArrayList<Patcher> res = new ArrayList<Patcher>();
-		if(pathes.size() == 0)
+		if(pathes.isEmpty())
 		{
 			return res;
 		}
@@ -471,7 +471,7 @@ public class ProgramAdaptator {
 				}
 			}
 			ArrayList<Patcher> temPats = refinePather(pat, groundTruth, allPaths);
-			if(temPats.size() == 0)
+			if(temPats.isEmpty())
 				return null;
 			res.addAll(temPats);
 		}
@@ -493,7 +493,7 @@ public class ProgramAdaptator {
 		}
 		Traces uTraces = new Traces(contextId);
 		Vector<GrammarTreeNode> tempres = new Vector<GrammarTreeNode>(); 
-		if(res.size() > 0)
+		if(!res.isEmpty())
 		{
 			tempres = uTraces.consolidate_tool(res);
 		}
@@ -523,7 +523,7 @@ public class ProgramAdaptator {
 			}
 		}
 		// seeking a sequence of sections that can form the target strings
-		while (seeds.size() > 0) {
+		while (!seeds.isEmpty()) {
 			Path path = seeds.remove(0);
 			// check if it succeeds already
 			boolean finished = true;
@@ -624,7 +624,7 @@ public class ProgramAdaptator {
 				// one prog to multiple trace Nodes
 				multipleAlign(list, tBody, segments);
 			}
-			if (list.size() > 0) {
+			if (!list.isEmpty()) {
 				res.add(list);
 			}
 		}
@@ -662,7 +662,7 @@ public class ProgramAdaptator {
 		for (int i = progS; i <= segments.size()-1-endSpan; i++) {
 			progs.add(segments.get(i));
 		}
-		if (grt.size() > 0 && progs.size() > 0) {
+		if (!grt.isEmpty() && !progs.isEmpty()) {
 			Patcher pa = new Patcher();
 			pa.groundTruth = grt;
 			pa.programNodes = progs;

@@ -90,7 +90,7 @@ public class DisplayModel {
 		int maxLevel = getMaxLevel(true);
 		
 		for(Node n : nodesSpan.keySet()) {
-			if(nodesSpan.get(n).size() == 0) {
+			if(nodesSpan.get(n).isEmpty()) {
 				noSpanNodes.add(n);
 			} else {
 				spanNodes.add(n);
@@ -109,13 +109,13 @@ public class DisplayModel {
 		HashMap<Integer, Set<Node>> nodesAtLevel = getLevelToNodes(null, false);
 		for(int i=maxLevel; i<newMaxLevel; i++) {
 			Set<Node> nodes = nodesAtLevel.get(i);
-			if(nodes == null || nodes.size() == 0) {
+			if(nodes == null || nodes.isEmpty()) {
 				//move all at i+1 here
 				int next = i+1;
 				boolean done = false;
 				while(!done && next <= newMaxLevel) {
 					Set<Node> upper = nodesAtLevel.get(next);
-					if(upper != null && upper.size() > 0) {
+					if(upper != null && !upper.isEmpty()) {
 						done = true;
 						nodesAtLevel.put(next, null);
 						for(Node n : upper) {
@@ -159,7 +159,7 @@ public class DisplayModel {
 		if (g == null || nodes == null) return nodeToInDegree;
 		for (Node n : nodes) {
 			Set<LabeledLink> incomingLinks = g.incomingEdgesOf(n);
-			if (incomingLinks == null || incomingLinks.size() == 0) {
+			if (incomingLinks == null || incomingLinks.isEmpty()) {
 				nodeToInDegree.put(n, 0);
 			} else {
 				int count = 0;
@@ -183,7 +183,7 @@ public class DisplayModel {
 		if (g == null || nodes == null) return nodeToOutDegree;
 		for (Node n : nodes) {
 			Set<LabeledLink> outgoingLinks = g.outgoingEdgesOf(n);
-			if (outgoingLinks == null || outgoingLinks.size() == 0) {
+			if (outgoingLinks == null || outgoingLinks.isEmpty()) {
 				nodeToOutDegree.put(n, 0);
 			} else {
 				int count = 0;
@@ -201,11 +201,11 @@ public class DisplayModel {
 	}
 	
 	public boolean isModelEmpty() {
-		if(models.size() == 0)
+		if(models.isEmpty())
 			return true;
 		
 		for(DirectedWeightedMultigraph<Node, LabeledLink> model : models) {
-			if (model != null && model.vertexSet() != null && model.vertexSet().size() != 0) 
+			if (model != null && model.vertexSet() != null && !model.vertexSet().isEmpty()) 
 				return false;
 		}
 		return true;
@@ -297,7 +297,7 @@ public class DisplayModel {
 			while (true) { // until there is a direct link between two nodes in the same level
 				
 				Set<Node> nodes = levelToNodes.get(k);
-				if (nodes == null || nodes.size() == 0) break;
+				if (nodes == null || nodes.isEmpty()) break;
 				
 				HashMap<Node, Integer> nodeToInDegree = inDegreeInSet(model, nodes, false);
 				HashMap<Node, Integer> nodeToOutDegree = outDegreeInSet(model, nodes, false);
@@ -560,7 +560,7 @@ public class DisplayModel {
 			while (true) { // until there is a direct link between two nodes in the same level
 				
 				Set<Node> nodes = levelToNodes.get(k);
-				if (nodes == null || nodes.size() == 0) break;
+				if (nodes == null || nodes.isEmpty()) break;
 				
 				HashMap<Node, Integer> nodesOverlap = getNodeOverlap(nodes);
 				HashMap<Node, Integer> nodeToInDegree = inDegreeInSet(model, nodes, false);

@@ -74,7 +74,7 @@ public class SPARQLGeneratorUtil {
 		HashMap<Predicate, String> predicateList = new HashMap<Predicate, String>();
 		
 		// using a BFS approach, we traverse the tree from the root node and add triples/predicates to the queue
-		while(queue.size() > 0) {
+		while(!queue.isEmpty()) {
 			Object currentObj = queue.remove(0);
 			
 			// if this is a tripleMap, then add all its RefObjects to the queue
@@ -218,7 +218,7 @@ public class SPARQLGeneratorUtil {
 		// save the column predicate url and the column name to be dislayed
 		HashMap<Predicate, String> predicateList = new HashMap<Predicate, String>();
 		HashMap<String, String> columnList = new HashMap<String, String>();
-		if(columns != null && columns.size() > 0) {
+		if(columns != null && !columns.isEmpty()) {
 //			for (String k : columns) {
 //				int index = 0;
 //				if(k.indexOf("#") > 0) {
@@ -234,7 +234,7 @@ public class SPARQLGeneratorUtil {
 		}
 		
 		// using a BFS approach, we traverse the tree from the root node and add triples/predicates to the queue
-		while(queue.size() > 0) {
+		while(!queue.isEmpty()) {
 			Object currentObj = queue.remove(0);
 			
 			// if this is a tripleMap, then add all its RefObjects to the queue
@@ -308,7 +308,7 @@ public class SPARQLGeneratorUtil {
 				Predicate predicate = (Predicate)currentObj;
 				String k = predicate.getTemplate().toString();
 				k = k.replace('<', ' ').replace('>', ' ').trim();
-				if(columns != null && columns.size() > 0) {
+				if(columns != null && !columns.isEmpty()) {
 //					if(columnList.containsKey(k)) {
 					if(columnList.containsValue(k)) {
 						Iterator<String> itr = columnList.keySet().iterator();

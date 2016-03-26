@@ -301,8 +301,8 @@ public class Table {
 					populatedValues.add(singleValue);
 				}
 				
-				if (srcRowIds != null && srcRowIds.size() > 0 &&
-						srcRowIds.get(i) != null && srcRowIds.get(i).size() > 0 &&  
+				if (srcRowIds != null && !srcRowIds.isEmpty() &&
+						srcRowIds.get(i) != null && !srcRowIds.get(i).isEmpty() &&  
 						srcRowIds.get(i).get(j) != null)
 					resultRowIds.add(srcRowIds.get(i).get(j));
 				resultValues.add(populatedValues);
@@ -329,7 +329,7 @@ public class Table {
 		
 		try {
 			
-			if (this.headers != null && this.headers.size() > 0) {
+			if (this.headers != null && !this.headers.isEmpty()) {
 				for (int i = 0; i < this.headers.size(); i++) {
 					if (i != 0)
 						csv += separator.charValue();

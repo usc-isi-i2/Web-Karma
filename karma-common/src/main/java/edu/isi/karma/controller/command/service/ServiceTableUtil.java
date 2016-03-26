@@ -90,7 +90,7 @@ public class ServiceTableUtil {
 			List<String> hNodeIdList, edu.isi.karma.rep.Table dataTable) {
 		
 		for (List<String> rowValues : tableValues) {
-			if (rowValues == null || rowValues.size() == 0)
+			if (rowValues == null || rowValues.isEmpty())
 				continue;
 			Row row = dataTable.addRow(factory);
 			for (int i = 0; i < rowValues.size(); i++) 
@@ -128,7 +128,7 @@ public class ServiceTableUtil {
 			
 			for (int k = 0; k < tableValues.size(); k++) {
 				List<String> rowValues = tableValues.get(k);
-				if (rowValues == null || rowValues.size() == 0)
+				if (rowValues == null || rowValues.isEmpty())
 					continue;
 				
 				String tableRowId = tableRowIds.get(k);
