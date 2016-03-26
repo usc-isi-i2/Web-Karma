@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Created by Frank on 9/14/15.
  */
-public class WorksheetCommandHistory {
+public class WorksheetCommandHistory implements Cloneable {
 
     private class CommandTagListMap {
         private final Map<ICommand.CommandTag, List<ICommand> > commandTagListHashMap = new HashMap<>();

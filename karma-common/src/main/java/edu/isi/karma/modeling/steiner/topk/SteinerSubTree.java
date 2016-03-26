@@ -11,7 +11,7 @@ import java.util.TreeSet;
  * @author kasneci
  *
  */
-public abstract class SteinerSubTree implements Comparable<SteinerSubTree>{
+public abstract class SteinerSubTree implements Comparable<SteinerSubTree>, Cloneable {
 
 	protected double score;
 	private Set<SteinerNode> nodes;
