@@ -18,7 +18,7 @@ import java.util.TreeSet;
  * @author kasneci
  *
  */
-public class ApprSteinerTree extends SteinerSubTree{
+public class ApprSteinerTree extends SteinerSubTree implements Cloneable {
 	
 	// all the nodes of the result tree
 	protected Set<SteinerNode> treeNodes;

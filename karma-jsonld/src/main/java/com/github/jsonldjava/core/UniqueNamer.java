@@ -3,7 +3,7 @@ package com.github.jsonldjava.core;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class UniqueNamer {
+public class UniqueNamer implements Cloneable {
     private final String prefix;
     private int counter;
     private Map<String, String> existing;

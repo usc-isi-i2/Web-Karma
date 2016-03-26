@@ -23,7 +23,7 @@ package edu.isi.karma.modeling.alignment;
 
 import java.util.HashMap;
 
-public class NodeIdFactory {
+public class NodeIdFactory implements Cloneable {
 
 	private HashMap<String, Integer> nodeUris = new HashMap<>();
 	

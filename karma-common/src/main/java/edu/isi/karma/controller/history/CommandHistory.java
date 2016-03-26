@@ -52,7 +52,7 @@ import java.util.*;
  * @author szekely
  * 
  */
-public class CommandHistory {
+public class CommandHistory implements Cloneable{
 
 	private WorksheetCommandHistory worksheetCommandHistory = new WorksheetCommandHistory();
 	private Command previewCommand;
