@@ -1059,12 +1059,10 @@ public class Alignment implements OntologyUpdateListener {
 				tree.addVertex(iNode);
 			}
 			
-			if (n instanceof ColumnNode) {
-				if (model.getMappingToSourceColumns() != null) {
-					ColumnNode cn = model.getMappingToSourceColumns().get(n);
-					modelToAlignmentNode.put(n, cn);
-					tree.addVertex(cn);
-				}
+			if (n instanceof ColumnNode && model.getMappingToSourceColumns() != null) {
+				ColumnNode cn = model.getMappingToSourceColumns().get(n);
+				modelToAlignmentNode.put(n, cn);
+				tree.addVertex(cn);
 			}
 		}
 		

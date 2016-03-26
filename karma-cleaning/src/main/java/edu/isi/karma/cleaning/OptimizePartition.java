@@ -208,11 +208,9 @@ public class OptimizePartition {
 		}
 		// test whether its subset fails
 		for (String k : legalParitions.keySet()) {
-			if (!legalParitions.get(k)) // false
+			if (!legalParitions.get(k) && key.indexOf(k) != -1) // false
 			{
-				if (key.indexOf(k) != -1) {
-					return false;
-				}
+				return false;
 			}
 		}
 		Vector<Partition> xPar = new Vector<Partition>();
