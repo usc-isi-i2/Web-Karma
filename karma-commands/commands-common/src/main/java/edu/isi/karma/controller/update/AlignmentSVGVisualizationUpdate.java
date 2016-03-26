@@ -115,6 +115,14 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = this.worksheetId != null ? this.worksheetId.hashCode() : 0;
+		result = 31 * result + (this.alignmentGraph != null ? this.alignmentGraph.hashCode() : 0);
+		result = 31 * result + (this.alignment != null ? this.alignment.hashCode() : 0);
+		return result;
+	}
+
+	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		Workspace workspace = vWorkspace.getWorkspace();
