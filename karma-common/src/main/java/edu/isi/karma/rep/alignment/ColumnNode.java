@@ -157,7 +157,7 @@ public class ColumnNode extends Node {
 				}
 			}
 		}
-		if (tobeDeletedIndex != -1) {
+		if (tobeDeletedIndex != -1 && userSemanticTypes != null) {
 			userSemanticTypes.remove(tobeDeletedIndex);
 		}
 		if (userSemanticTypes == null || userSemanticTypes.isEmpty())
