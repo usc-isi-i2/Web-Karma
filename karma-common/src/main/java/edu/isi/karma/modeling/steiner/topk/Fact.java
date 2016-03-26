@@ -21,11 +21,11 @@ public class Fact extends WeightedLabeledEdge<Entity, Relation, Float> implement
   public int compareTo(Fact o) {
     if(n1.compareTo(o.n1)!=0) return(n1.compareTo(o.n1));
     if(n2.compareTo(o.n2)!=0) return(n2.compareTo(o.n2));    
-    return(label.compareTo(o.label));
+    return label.compareTo(o.label);
   }
   
   public boolean equals(Object obj){
-	  return(this.compareTo((Fact)obj)==0);
+	  return this.compareTo((Fact)obj)==0;
   }
 
 }

@@ -88,9 +88,9 @@ public class ExportCSVUtil {
 			if (prefObject != null) {
 				namespace = prefObject.getString(PreferencesKeys.rdfNamespace.name());
 				prefix = prefObject.getString(PreferencesKeys.rdfPrefix.name());
-				namespace = ((namespace == null) || (namespace.equals(""))) ? 
+				namespace = (namespace == null || namespace.equals("")) ? 
 						Namespaces.KARMA_DEV : namespace;
-				prefix = ((prefix == null) || (prefix.equals(""))) ? 
+				prefix = (prefix == null || prefix.equals("")) ? 
 						Prefixes.KARMA_DEV : prefix;
 			} else {
 				namespace = Namespaces.KARMA_DEV;

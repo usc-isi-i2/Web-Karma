@@ -29,7 +29,7 @@ public class Graph<V, E extends Edge<V>> {
 	
 	public HashSet<E> edges () { return edges; }
 
-	public HashSet<V> nodes () { return (new HashSet<V> (nodes.values())); }
+	public HashSet<V> nodes () { return new HashSet<V> (nodes.values()); }
 	
 	public void addNode (V v) {
 		nodes.put(v.toString(), v);
@@ -67,7 +67,7 @@ public class Graph<V, E extends Edge<V>> {
 	}*/
 	
 	public String toString () {
-    if(edges.size()==0) return("<Empty graph>");
+    if(edges.size()==0) return "<Empty graph>";
     StringBuilder b=new StringBuilder();
     Set<Edge> goodEdges = new TreeSet<Edge>();
     Set<Edge> badEdges = new TreeSet<Edge>();
@@ -80,6 +80,6 @@ public class Graph<V, E extends Edge<V>> {
       b.append(e).append('\n');
     }
     b.setLength(b.length()-1);
-		return(b.toString());
+		return b.toString();
 	}
 }

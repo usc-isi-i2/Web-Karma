@@ -103,7 +103,7 @@ public class GlueCommand extends WorksheetSelectionCommand {
 			ht = oldws.getHeaders();
 		
 		for (int i = 0; i < checked.length(); i++) {
-			JSONObject t = (checked.getJSONObject(i));
+			JSONObject t = checked.getJSONObject(i);
 			HNode hNode = ht.getHNode(t.getString("value"));
 			if(i == 0)
 				this.hNodeParentName = hNode.getParentColumnName(factory);
