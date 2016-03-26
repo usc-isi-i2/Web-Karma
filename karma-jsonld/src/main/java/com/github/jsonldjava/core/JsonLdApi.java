@@ -2090,4 +2090,32 @@ public class JsonLdApi {
         return normalizeUtils.hashBlankNodes(bnodes.keySet());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+
+        JsonLdApi jsonLdApi = (JsonLdApi) o;
+
+        if (this.opts != null ? !this.opts.equals(jsonLdApi.opts) : jsonLdApi.opts != null) return false;
+        if (this.value != null ? !this.value.equals(jsonLdApi.value) : jsonLdApi.value != null) return false;
+        if (this.context != null ? !this.context.equals(jsonLdApi.context) : jsonLdApi.context != null) return false;
+        if (this.blankNodeMapping != null ? !this.blankNodeMapping.equals(jsonLdApi.blankNodeMapping) : jsonLdApi.blankNodeMapping != null)
+            return false;
+        if (this.blankNodeIdentifierMap != null ? !this.blankNodeIdentifierMap.equals(jsonLdApi.blankNodeIdentifierMap) : jsonLdApi.blankNodeIdentifierMap != null)
+            return false;
+        return this.nodeMap != null ? this.nodeMap.equals(jsonLdApi.nodeMap) : jsonLdApi.nodeMap == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = this.opts != null ? this.opts.hashCode() : 0;
+        result = 31 * result + (this.value != null ? this.value.hashCode() : 0);
+        result = 31 * result + (this.context != null ? this.context.hashCode() : 0);
+        result = 31 * result + (this.blankNodeMapping != null ? this.blankNodeMapping.hashCode() : 0);
+        result = 31 * result + (this.blankNodeIdentifierMap != null ? this.blankNodeIdentifierMap.hashCode() : 0);
+        result = 31 * result + (this.nodeMap != null ? this.nodeMap.hashCode() : 0);
+        return result;
+    }
 }

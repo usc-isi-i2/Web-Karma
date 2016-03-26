@@ -1120,4 +1120,27 @@ public class Context extends LinkedHashMap<String, Object> {
         return rval;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Context context = (Context) o;
+
+        if (this.options != null ? !this.options.equals(context.options) : context.options != null) return false;
+        if (this.termDefinitions != null ? !this.termDefinitions.equals(context.termDefinitions) : context.termDefinitions != null)
+            return false;
+        return this.inverse != null ? this.inverse.equals(context.inverse) : context.inverse == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (this.options != null ? this.options.hashCode() : 0);
+        result = 31 * result + (this.termDefinitions != null ? this.termDefinitions.hashCode() : 0);
+        result = 31 * result + (this.inverse != null ? this.inverse.hashCode() : 0);
+        return result;
+    }
 }
