@@ -28,7 +28,7 @@ public class DataPreProcessor {
 		return data2Vector;
 	}
 	public void run() {
-		Vector<String> toks = buildDict(data);
+		ArrayList<String> toks = buildDict(data);
 		// vectorize String
 		String[] vocb = toks.toArray(new String[toks.size()]);
 		rfs.addVocabulary(vocb);
@@ -114,7 +114,7 @@ public class DataPreProcessor {
 		return res;
 	}
 
-	public static Vector<String> buildDict(Collection<String> data) {
+	public static ArrayList<String> buildDict(Collection<String> data) {
 		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
 		for (String pair : data) {
 			String s1 = pair;
@@ -162,7 +162,7 @@ public class DataPreProcessor {
 				iter.remove();
 			}
 		}
-		Vector<String> res = new Vector<String>();
+		ArrayList<String> res = new ArrayList<String>();
 		res.addAll(mapHashSet.keySet());
 		return res;
 	}
