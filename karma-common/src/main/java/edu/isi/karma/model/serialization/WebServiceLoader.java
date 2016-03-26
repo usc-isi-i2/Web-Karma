@@ -471,7 +471,8 @@ public class WebServiceLoader extends SourceLoader
 
 		// service name
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_name_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isLiteral()) {
 			service_name = node.asLiteral().getString();
 			logger.debug("service name: " + service_name);
 		} else
@@ -479,7 +480,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		// service address
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_address_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isLiteral()) {
 			service_address = node.asLiteral().getString();
 			logger.debug("service address: " + service_address);
 		} else
@@ -487,7 +489,8 @@ public class WebServiceLoader extends SourceLoader
 
 		// service method
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_method_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isLiteral()) {
 			service_method = node.asLiteral().getString();
 			logger.debug("service method: " + service_method);
 		} else
@@ -504,7 +507,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		// service input
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_input_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isResource()) {
 			inputAttributes = getAttributes(model, node.asResource(), IOType.INPUT);
 			inputModel = getSemanticModel(model, node.asResource());
 		} else
@@ -512,7 +516,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		// service output
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_output_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isResource()) {
 			outputAttributes = getAttributes(model, node.asResource(), IOType.OUTPUT );
 			outputModel = getSemanticModel(model, node.asResource());
 		} else
@@ -628,7 +633,8 @@ public class WebServiceLoader extends SourceLoader
 
 		// attribute name
 		nodeIterator = model.listObjectsOfProperty(att_resource, has_name_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isLiteral()) {
 			att_name = node.asLiteral().getString();
 			logger.debug("attribute name: " + att_name);
 		} else
@@ -636,7 +642,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		// attribute grounded In
 		nodeIterator = model.listObjectsOfProperty(att_resource, is_gounded_in_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isLiteral()) {
 			att_groundedIn = node.asLiteral().getString();
 			logger.debug("attribute grounded in: " + att_groundedIn);
 		} else
@@ -663,7 +670,8 @@ public class WebServiceLoader extends SourceLoader
 
 		// hasModel
 		nodeIterator = model.listObjectsOfProperty(io_resource, has_model_property);
-		if (!nodeIterator.hasNext() || !(modelNode = nodeIterator.next()).isResource()) {
+		modelNode = nodeIterator.next();
+		if (!nodeIterator.hasNext() || !modelNode.isResource()) {
 			logger.info("There is no model resource.");
 			return null;
 		}
@@ -703,7 +711,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		// atom type
 		nodeIterator = model.listObjectsOfProperty(atom_resource, rdf_type);
-		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (!nodeIterator.hasNext() || !node.isResource()) {
 			logger.info("The atom type is not specified.");
 			return null;
 		}
@@ -742,7 +751,8 @@ public class WebServiceLoader extends SourceLoader
 
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, class_predicate_property);
-		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (!nodeIterator.hasNext() || !node.isResource()) {
 			logger.info("The class predicate resource is not specified.");
 			return null;
 		}
@@ -754,7 +764,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		// atom argument1 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument1_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();	
+		if (nodeIterator.hasNext() && node.isResource()) {
 			argument1Id = node.asResource().getLocalName();
 			logger.debug("The atom argument1 is: " + argument1Id);
 			
@@ -801,7 +812,8 @@ public class WebServiceLoader extends SourceLoader
 
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, property_predicate_property);
-		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (!nodeIterator.hasNext() || !node.isResource()) {
 			logger.info("The property predicate resource is not specified.");
 			return null;
 		}
@@ -813,7 +825,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		// atom argument1 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument1_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isResource()) {
 			argument1Id = node.asResource().getLocalName();
 			logger.debug("The atom argument1 is: " + argument1Id);
 			
@@ -829,7 +842,8 @@ public class WebServiceLoader extends SourceLoader
 
 		// atom argument2 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument2_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isResource()) {
 			argument2Id = node.asResource().getLocalName();
 			logger.debug("The atom argument2 is: " + argument2Id);
 			
