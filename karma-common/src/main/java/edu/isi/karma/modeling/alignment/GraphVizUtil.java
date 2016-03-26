@@ -141,9 +141,8 @@ public class GraphVizUtil {
 			if (e instanceof LabeledLink) {
 				modelIds = ((LabeledLink)e).getModelIds();
 			}
-			if (onlyAddPatterns)
-				if (modelIds == null || modelIds.isEmpty())
-					continue;
+			if (onlyAddPatterns && (modelIds == null || modelIds.isEmpty()))
+				continue;
 			
 			Node source = e.getSource();
 			Node target = e.getTarget();

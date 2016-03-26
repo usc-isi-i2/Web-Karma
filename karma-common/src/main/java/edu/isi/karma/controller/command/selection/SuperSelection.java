@@ -46,9 +46,8 @@ public class SuperSelection {
 
 	public SelectionStatus refreshStatus() {
 		for (Selection sel : selections) {
-			if (sel != null)
-				if (sel.getStatus() == SelectionStatus.OUT_OF_DATE)
-					return SelectionStatus.OUT_OF_DATE;
+			if (sel != null && sel.getStatus() == SelectionStatus.OUT_OF_DATE)
+				return SelectionStatus.OUT_OF_DATE;
 		}
 		return SelectionStatus.UP_TO_DATE;
 	}

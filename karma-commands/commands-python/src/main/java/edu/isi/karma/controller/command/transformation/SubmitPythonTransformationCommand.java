@@ -279,10 +279,8 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 			ICommand command = commands.get(i);
 			if(command instanceof SubmitPythonTransformationCommand) {
 				SubmitPythonTransformationCommand pyCommand = (SubmitPythonTransformationCommand)command;
-				if(pyCommand.worksheetId.equals(this.worksheetId)) {
-					if(pyCommand.pythonNodeId.equals(this.pythonNodeId)) {
-						return command;
-					}
+				if(pyCommand.worksheetId.equals(this.worksheetId) && pyCommand.pythonNodeId.equals(this.pythonNodeId)) {
+					return command;
 				}
 			}
 		}

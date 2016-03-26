@@ -35,13 +35,10 @@ public abstract class KarmaPublishedMetadata extends KarmaMetadata {
 			logger.error("Directory provided for " + parameter + " is actually a file!");
 			throw new KarmaException("Directory provided for " + parameter + " is actually a file!");
 		}
-		if(!metadataDir.exists())
+		if(!metadataDir.exists() && !metadataDir.mkdirs())
 		{
-			if(!metadataDir.mkdirs())
-			{
-				logger.error("Unable to create directory for metadata: " + parameter);
-				throw new KarmaException("Unable to create directory for metadata! " + parameter.name());
-			}
+			logger.error("Unable to create directory for metadata: " + parameter);
+			throw new KarmaException("Unable to create directory for metadata! " + parameter.name());
 		}
 	
 	}

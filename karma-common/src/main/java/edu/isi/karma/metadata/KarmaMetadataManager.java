@@ -27,12 +27,9 @@ public class KarmaMetadataManager {
 		{
 			throw new KarmaException("Directory provided for user preferences is actually a file!");
 		}
-		if(!userDir.exists())
+		if(!userDir.exists() && !userDir.mkdirs())
 		{
-			if(!userDir.mkdirs())
-			{
-				throw new KarmaException("Unable to create directory for KARMA_WORK_HOME.  Please define the environment variable KARMA_WORK_HOME to save preferences and Karma's learning");
-			}
+			throw new KarmaException("Unable to create directory for KARMA_WORK_HOME.  Please define the environment variable KARMA_WORK_HOME to save preferences and Karma's learning");
 		}
 	}
 	public void register(KarmaMetadata metadata, UpdateContainer uc) throws KarmaException
