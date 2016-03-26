@@ -43,8 +43,11 @@ import edu.isi.karma.util.JSONLDUtil;
  */
 public class KarmaDriver {
     private static Logger logger = LoggerFactory.getLogger(KarmaDriver.class);
-    
-    public static void main(String[] args) throws ParseException, IOException, ClassNotFoundException {
+
+	private KarmaDriver() {
+	}
+
+	public static void main(String[] args) throws ParseException, IOException, ClassNotFoundException {
     	int defaultPartitions = 100;
     	final int batchSize = 200;
     	

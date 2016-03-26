@@ -40,6 +40,9 @@ public class JSONUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(JSONUtil.class);
 
+	private JSONUtil() {
+	}
+
 	public static String enclose(String x, String delimiter) {
 		return delimiter + x + delimiter;
 	}

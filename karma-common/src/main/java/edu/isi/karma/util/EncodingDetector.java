@@ -20,6 +20,9 @@ public class EncodingDetector {
 	private static Logger logger = LoggerFactory.getLogger(EncodingDetector.class);
     public final static String DEFAULT_ENCODING = StandardCharsets.UTF_8.name();
 
+    private EncodingDetector() {
+    }
+
     public static String detect(InputStream is) throws IOException {
 
         byte[] buf = new byte[4096];

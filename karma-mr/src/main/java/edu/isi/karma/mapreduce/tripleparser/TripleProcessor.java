@@ -19,6 +19,9 @@ public class TripleProcessor {
 
 	private final static Logger logger = LoggerFactory.getLogger(TripleProcessor.class);
 
+	private TripleProcessor() {
+	}
+
 	public static void parseTriples(Configuration conf, Path input, Path output) throws IOException {
 
 		FileSystem fs = FileSystem.get(conf);

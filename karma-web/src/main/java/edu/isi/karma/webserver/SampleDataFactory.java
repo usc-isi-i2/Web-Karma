@@ -50,6 +50,9 @@ public class SampleDataFactory {
 	private static Logger logger = LoggerFactory
 			.getLogger(SampleDataFactory.class);
 
+	private SampleDataFactory() {
+	}
+
 	public static Worksheet createSample1(Workspace workspace) {
 		RepFactory f = workspace.getFactory();
 

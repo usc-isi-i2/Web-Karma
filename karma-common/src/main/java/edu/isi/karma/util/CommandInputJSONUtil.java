@@ -10,7 +10,10 @@ import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
 
 
 public class CommandInputJSONUtil {
-	
+
+	private CommandInputJSONUtil() {
+	}
+
 	public enum JsonKeys {
 		name, value, type
 	}

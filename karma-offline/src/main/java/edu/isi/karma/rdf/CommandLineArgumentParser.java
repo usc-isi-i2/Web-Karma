@@ -11,7 +11,10 @@ import org.slf4j.LoggerFactory;
 public class CommandLineArgumentParser {
 
 	private static Logger logger = LoggerFactory.getLogger(CommandLineArgumentParser.class);
-	
+
+	private CommandLineArgumentParser() {
+	}
+
 	public static CommandLine parse(String args[], Options options, String commandName)
 	{
 		CommandLineParser parser = new BasicParser();

@@ -34,7 +34,10 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 public class JSONContextDriver {
 private static Logger logger = LoggerFactory.getLogger(JSONContextDriver.class);
-    
+
+    private JSONContextDriver() {
+    }
+
     public static void main(String[] args) throws ParseException, IOException, ClassNotFoundException {
     	int defaultPartitions = 100;
     	

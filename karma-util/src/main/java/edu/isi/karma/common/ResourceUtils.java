@@ -13,6 +13,9 @@ import org.apache.commons.io.IOUtils;
  */
 public class ResourceUtils {
 
+	private ResourceUtils() {
+	}
+
 	public static List<String> getListOfFiles(String classpathPath) throws IOException {
 		InputStream resourceAsStream = ResourceUtils.class.getClassLoader().getResourceAsStream("csv/");
 		return IOUtils.readLines(resourceAsStream);

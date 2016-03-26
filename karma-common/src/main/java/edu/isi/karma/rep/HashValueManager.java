@@ -12,7 +12,10 @@ import edu.isi.karma.controller.command.selection.SuperSelectionManager;
 
 public class HashValueManager {
 	private static Map<String, Map<String, String>> hashTable = new ConcurrentHashMap<String, Map<String, String>>();
-	
+
+	private HashValueManager() {
+	}
+
 	private static void computeHashValue(Row row, List<String> HNodeIds) {
 		for (String HNodeid : HNodeIds) {
 			Node n = row.getNode(HNodeid);

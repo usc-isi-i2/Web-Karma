@@ -41,7 +41,7 @@ public class SpatialReferenceSystemTransformationUtil {
 	private static final Logger logger = LoggerFactory
 			.getLogger(SpatialReferenceSystemTransformationUtil.class);
 
-	public SpatialReferenceSystemTransformationUtil() {
+	private SpatialReferenceSystemTransformationUtil() {
 
 	}
 

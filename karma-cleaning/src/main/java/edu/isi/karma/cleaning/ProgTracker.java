@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.Vector;
 
 public class ProgTracker {
+	private ProgTracker() {
+	}
+
 	public static void printPartition(Vector<Partition> pars) {
 		System.out.println("-----------");
 		System.out.println("CURRENT_PARS" + pars.toString());
