@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -86,11 +87,11 @@ public class RecordDistiller {
 	// identify the anchor tokens
 	public void idenAnchor(int total) {
 		Vector<String> dels = new Vector<String>();
-		for (String a : anchors.keySet()) {
-			int count = anchors.get(a).count;
+		for (Map.Entry<String, Anchor> stringAnchorEntry : anchors.entrySet()) {
+			int count = stringAnchorEntry.getValue().count;
 			// if an anchor appears in more 10% records, it's a valid anchor
 			if (count * 1.0 / total < 0.1) {
-				dels.add(a);
+				dels.add(stringAnchorEntry.getKey());
 			}
 		}
 		for (String s : dels) {
@@ -139,17 +140,17 @@ public class RecordDistiller {
 		}
 		// generate candiate set
 		HashSet<String> result = new HashSet<String>();
-		for (String cxt : lcxt2ids.keySet()) {
-			if (lcxt2ids.get(cxt).size() != 0) {
-				String idString = lcxt2ids.get(cxt).get(0);
+		for (Map.Entry<String, Vector<String>> stringVectorEntry : lcxt2ids.entrySet()) {
+			if (stringVectorEntry.getValue().size() != 0) {
+				String idString = stringVectorEntry.getValue().get(0);
 				if (!result.contains(idString)) {
 					result.add(idString);
 				}
 			}
 		}
-		for (String cxt : rcxt2ids.keySet()) {
-			if (rcxt2ids.get(cxt).size() != 0) {
-				String idString = rcxt2ids.get(cxt).get(0);
+		for (Map.Entry<String, Vector<String>> stringVectorEntry : rcxt2ids.entrySet()) {
+			if (stringVectorEntry.getValue().size() != 0) {
+				String idString = stringVectorEntry.getValue().get(0);
 				if (!result.contains(idString)) {
 					result.add(idString);
 				}

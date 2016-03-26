@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.json.JSONArray;
@@ -307,12 +308,12 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	public String getVarJSON(HashMap<String, HashSet<String>> values) {
 		JSONObject jsobj = new JSONObject();
 		try {
-			for (String key : values.keySet()) {
+			for (Map.Entry<String, HashSet<String>> stringHashSetEntry : values.entrySet()) {
 				JSONArray jsonArray = new JSONArray();
-				HashSet<String> vs = values.get(key);
+				HashSet<String> vs = stringHashSetEntry.getValue();
 				for (String v : vs)
 					jsonArray.put(v);
-				jsobj.put(key, jsonArray);
+				jsobj.put(stringHashSetEntry.getKey(), jsonArray);
 			}
 		} catch (Exception e) {
 			logger.error("value generation error");

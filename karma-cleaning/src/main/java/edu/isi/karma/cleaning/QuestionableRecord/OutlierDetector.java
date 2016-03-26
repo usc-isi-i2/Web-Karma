@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
@@ -137,8 +138,8 @@ public class OutlierDetector {
 		this.currentMax = -1;
 		if (data == null)
 			return;
-		for (String key : data.keySet()) {
-			Vector<String[]> vs = data.get(key);
+		for (Entry<String, Vector<String[]>> stringVectorEntry : data.entrySet()) {
+			Vector<String[]> vs = stringVectorEntry.getValue();
 			FeatureVector fVector = new FeatureVector(dict);
 			double[] dvec = new double[fVector.size()];
 			for (int i = 0; i < dvec.length; i++) {
@@ -155,7 +156,7 @@ public class OutlierDetector {
 			for (int i = 0; i < dvec.length; i++) {
 				dvec[i] = dvec[i] * 1.0 / vs.size();
 			}
-			rVectors.put(key, dvec);
+			rVectors.put(stringVectorEntry.getKey(), dvec);
 		}
 	}
 

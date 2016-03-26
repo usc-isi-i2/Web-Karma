@@ -24,6 +24,7 @@ package edu.isi.karma.cleaning;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
@@ -78,8 +79,8 @@ public class ExampleSelection {
 
 	public Vector<String[]> getOrgTarPair(HashMap<String, String[]> exps) {
 		Vector<String[]> result = new Vector<String[]>();
-		for (String key : exps.keySet()) {
-			String[] record = exps.get(key);
+		for (Map.Entry<String, String[]> stringEntry : exps.entrySet()) {
+			String[] record = stringEntry.getValue();
 			String[] tmp = { record[0], record[1] };
 			result.add(tmp);
 		}
@@ -101,23 +102,22 @@ public class ExampleSelection {
 			out.buildMeanVector(examples, dictionary);
 		}
 		Ruler ruler = new Ruler();
-		for (String keyString : exps.keySet()) {
-			String e = exps.get(keyString)[0];
+		for (Map.Entry<String, String[]> stringEntry : exps.entrySet()) {
+			String e = stringEntry.getValue()[0];
 			ruler.setNewInput(e);
-			org.put(keyString, ruler.vec);
+			org.put(stringEntry.getKey(), ruler.vec);
 			if (way >= 6) {
-				String raw = exps.get(keyString)[0];
-				String[] pair = { raw, exps.get(keyString)[2] };
-				if (testdata.containsKey(exps.get(keyString)[3])) {
-					HashMap<String, String[]> xelem = testdata.get(exps
-							.get(keyString)[3]);
-					if (!xelem.containsKey(keyString)) {
-						xelem.put(keyString, pair);
+				String raw = stringEntry.getValue()[0];
+				String[] pair = { raw, stringEntry.getValue()[2] };
+				if (testdata.containsKey(stringEntry.getValue()[3])) {
+					HashMap<String, String[]> xelem = testdata.get(stringEntry.getValue()[3]);
+					if (!xelem.containsKey(stringEntry.getKey())) {
+						xelem.put(stringEntry.getKey(), pair);
 					}
 				} else {
 					HashMap<String, String[]> vstr = new HashMap<String, String[]>();
-					vstr.put(keyString, pair);
-					testdata.put(exps.get(keyString)[3], vstr);
+					vstr.put(stringEntry.getKey(), pair);
+					testdata.put(stringEntry.getValue()[3], vstr);
 				}
 			}
 		}
@@ -194,10 +194,10 @@ public class ExampleSelection {
 			firsttime = false;
 			return raw.keySet().iterator().next();
 		}
-		for (String key : raw.keySet()) {
+		for (Map.Entry<String, String[]> stringEntry : raw.entrySet()) {
 
-			if (raw.get(key)[2].indexOf("_FATAL_ERROR_") != -1) {
-				return key;
+			if (stringEntry.getValue()[2].indexOf("_FATAL_ERROR_") != -1) {
+				return stringEntry.getKey();
 			}
 		}
 		return this.way2();
@@ -210,9 +210,9 @@ public class ExampleSelection {
 			return this.way2();
 		}
 		Vector<String> examples = new Vector<String>();
-		for (String key : raw.keySet()) {
+		for (Map.Entry<String, String[]> stringEntry : raw.entrySet()) {
 			int cnt = 0;
-			String[] tmp = raw.get(key)[2]
+			String[] tmp = stringEntry.getValue()[2]
 					.split("((?<=_\\d_FATAL_ERROR_)|(?=_\\d_FATAL_ERROR_))");
 
 			for (String tmpstring : tmp) {
@@ -226,10 +226,10 @@ public class ExampleSelection {
 			if (cnt > max) {
 				max = cnt;
 				examples.clear();
-				examples.add(key);
+				examples.add(stringEntry.getKey());
 			}
 			if (cnt == max && max > 1) {
-				examples.add(key);
+				examples.add(stringEntry.getKey());
 			}
 		}
 		// if now _FATAL_ERROR_ detected use outlier detection
@@ -260,9 +260,9 @@ public class ExampleSelection {
 			return this.way2();
 		}
 		Vector<String> examples = new Vector<String>();
-		for (String key : raw.keySet()) {
+		for (Map.Entry<String, String[]> stringEntry : raw.entrySet()) {
 			int cnt = 0;
-			String[] tmp = raw.get(key)[2]
+			String[] tmp = stringEntry.getValue()[2]
 					.split("((?<=_\\d_FATAL_ERROR_)|(?=_\\d_FATAL_ERROR_))");
 			for (String tmpstring : tmp) {
 				int errnum = 0;
@@ -275,10 +275,10 @@ public class ExampleSelection {
 			if (cnt > max) {
 				max = cnt;
 				examples.clear();
-				examples.add(key);
+				examples.add(stringEntry.getKey());
 			}
 			if (cnt == max && max > 1) {
-				examples.add(key);
+				examples.add(stringEntry.getKey());
 			}
 		}
 		// if no _FATAL_ERROR_ detected use outlier detection
@@ -286,9 +286,9 @@ public class ExampleSelection {
 			isDetectingQuestionableRecord = true;
 			String row = "";
 			double tmax = -1;
-			for (String key : this.testdata.keySet()) {
-				String trowid = out.getOutliers(testdata.get(key),
-						out.rVectors.get(key), tmax, dictionary);
+			for (Map.Entry<String, HashMap<String, String[]>> stringHashMapEntry : this.testdata.entrySet()) {
+				String trowid = out.getOutliers(stringHashMapEntry.getValue(),
+						out.rVectors.get(stringHashMapEntry.getKey()), tmax, dictionary);
 				tmax = out.currentMax;
 				if (trowid.length() > 0) {
 					row = trowid;
@@ -364,9 +364,9 @@ public class ExampleSelection {
 	public void printdata() {
 		String s1 = "";
 		String s2 = "";
-		for (String key : this.testdata.keySet()) {
-			HashMap<String, String[]> r = testdata.get(key);
-			s1 += "partition " + key + "\n";
+		for (Map.Entry<String, HashMap<String, String[]>> stringHashMapEntry : this.testdata.entrySet()) {
+			HashMap<String, String[]> r = stringHashMapEntry.getValue();
+			s1 += "partition " + stringHashMapEntry.getKey() + "\n";
 			for (String[] elem : r.values()) {
 				s1 += Arrays.toString(elem) + "\n";
 			}

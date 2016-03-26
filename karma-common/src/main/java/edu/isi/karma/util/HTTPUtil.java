@@ -67,8 +67,8 @@ public class HTTPUtil {
 		
 		// Prepare the message body parameters
 		List<NameValuePair> formParams = new ArrayList<NameValuePair>();
-		for (String param:formParameters.keySet()) {
-			formParams.add(new BasicNameValuePair(param, formParameters.get(param)));
+		for (Map.Entry<String, String> stringStringEntry : formParameters.entrySet()) {
+			formParams.add(new BasicNameValuePair(stringStringEntry.getKey(), stringStringEntry.getValue()));
 		}
 		
 		return executeHTTPPostRequest(serviceURL, contentType, acceptContentType, new UrlEncodedFormEntity(formParams, "UTF-8"));

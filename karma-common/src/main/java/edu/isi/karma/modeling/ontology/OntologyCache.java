@@ -22,6 +22,7 @@ package edu.isi.karma.modeling.ontology;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -844,14 +845,14 @@ public class OntologyCache {
 			this.indirectSuperClasses.put(c, indirectSuperClassesLocal);
 		}		
 		
-		for (String c : this.indirectSuperClasses.keySet()) {
+		for (Entry<String, HashMap<String, Label>> stringHashMapEntry : this.indirectSuperClasses.entrySet()) {
 			
-			HashMap<String, Label> superClasses = this.indirectSuperClasses.get(c);
+			HashMap<String, Label> superClasses = this.indirectSuperClasses.get(stringHashMapEntry.getKey());
 			if (superClasses == null) {
 				superClasses = new HashMap<String, Label>();
-				this.indirectSuperClasses.put(c, superClasses); 
+				this.indirectSuperClasses.put(stringHashMapEntry.getKey(), superClasses); 
 			}
-			if (!c.equalsIgnoreCase(Uris.THING_URI) && !superClasses.containsKey(Uris.THING_URI))
+			if (!stringHashMapEntry.getKey().equalsIgnoreCase(Uris.THING_URI) && !superClasses.containsKey(Uris.THING_URI))
 				superClasses.put(Uris.THING_URI, new Label(Uris.THING_URI, Namespaces.OWL, Prefixes.OWL));
 		}
 		
@@ -1518,12 +1519,12 @@ public class OntologyCache {
 		HashSet<String> directRanges;
 		HashSet<String> indirectRanges;
 		
-		for (String p : this.dataProperties.keySet()) {
+		for (Entry<String, Label> stringLabelEntry : this.dataProperties.entrySet()) {
 			
-			label = this.dataProperties.get(p);
+			label = this.dataProperties.get(stringLabelEntry.getKey());
 			
-			directDomains = propertyDirectDomains.get(p);
-			indirectDomains = propertyIndirectDomains.get(p);
+			directDomains = propertyDirectDomains.get(stringLabelEntry.getKey());
+			indirectDomains = propertyIndirectDomains.get(stringLabelEntry.getKey());
 
 			haveDomain = true;
 			
@@ -1536,18 +1537,18 @@ public class OntologyCache {
 				haveDomain = false;
 			
 			if (!haveDomain)
-				this.dataPropertiesWithoutDomain.put(p, label);
+				this.dataPropertiesWithoutDomain.put(stringLabelEntry.getKey(), label);
 		}
 		
-		for (String p : this.objectProperties.keySet()) {
+		for (Entry<String, Label> stringLabelEntry : this.objectProperties.entrySet()) {
 			
-			label = this.objectProperties.get(p);
+			label = this.objectProperties.get(stringLabelEntry.getKey());
 			
-			directDomains = propertyDirectDomains.get(p);
-			directRanges = propertyDirectRanges.get(p);
+			directDomains = propertyDirectDomains.get(stringLabelEntry.getKey());
+			directRanges = propertyDirectRanges.get(stringLabelEntry.getKey());
 
-			indirectDomains = propertyIndirectDomains.get(p);
-			indirectRanges = propertyIndirectRanges.get(p);
+			indirectDomains = propertyIndirectDomains.get(stringLabelEntry.getKey());
+			indirectRanges = propertyIndirectRanges.get(stringLabelEntry.getKey());
 
 			haveDomain = true;
 			haveRange = true;
@@ -1561,13 +1562,13 @@ public class OntologyCache {
 				haveRange = false;
 			
 			if (haveDomain && !haveRange) 
-				this.objectPropertiesWithOnlyDomain.put(p, label);
+				this.objectPropertiesWithOnlyDomain.put(stringLabelEntry.getKey(), label);
 			else if (!haveDomain && haveRange) {
-				this.objectPropertiesWithOnlyRange.put(p, label);
+				this.objectPropertiesWithOnlyRange.put(stringLabelEntry.getKey(), label);
 			}
 			else if (!haveDomain && !haveRange) {
-				if (!p.startsWith(Namespaces.RDF) && !p.startsWith(Namespaces.RDFS))
-					this.objectPropertiesWithoutDomainAndRange.put(p, label);
+				if (!stringLabelEntry.getKey().startsWith(Namespaces.RDF) && !stringLabelEntry.getKey().startsWith(Namespaces.RDFS))
+					this.objectPropertiesWithoutDomainAndRange.put(stringLabelEntry.getKey(), label);
 			}
 		}
 }

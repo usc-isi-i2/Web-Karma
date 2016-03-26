@@ -331,10 +331,10 @@ public class Model {
 	private static String getSparqlHeader(Map<String, String> nsToPrefixMapping) {
 		String prefixHeader = "";
 		
-		for (String ns : nsToPrefixMapping.keySet()) {
-			String prefix = nsToPrefixMapping.get(ns);
+		for (Map.Entry<String, String> stringStringEntry : nsToPrefixMapping.entrySet()) {
+			String prefix = stringStringEntry.getValue();
 			if (prefix != null)
-				prefixHeader += "PREFIX " + prefix + ": <" + ns + "> \n";
+				prefixHeader += "PREFIX " + prefix + ": <" + stringStringEntry.getKey() + "> \n";
 		}
 
 		return prefixHeader;

@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.semantictypes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -61,10 +62,10 @@ public class SemanticTypeColumnModel implements Jsonizable {
 	public void write(JSONWriter writer) throws JSONException {
 		writer.object();
 		writer.array();
-		for (String label : scoreMap.keySet()) {
+		for (Map.Entry<String, Double> stringDoubleEntry : scoreMap.entrySet()) {
 			writer.object();
-			writer.key(SemanticTypesUpdate.JsonKeys.FullType.name()).value(label);
-			writer.key("probability").value(scoreMap.get(label));
+			writer.key(SemanticTypesUpdate.JsonKeys.FullType.name()).value(stringDoubleEntry.getKey());
+			writer.key("probability").value(stringDoubleEntry.getValue());
 			writer.endObject();
 		}
 		writer.endArray();

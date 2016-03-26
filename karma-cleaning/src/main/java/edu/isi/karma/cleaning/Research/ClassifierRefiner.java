@@ -3,6 +3,7 @@ package edu.isi.karma.cleaning.Research;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import edu.isi.karma.cleaning.Program;
 // input: classifier, results for each record
@@ -26,9 +27,9 @@ public class ClassifierRefiner {
 	//auxiliary functions
 	public void clusterUdata()
 	{
-		for(String row:uData.keySet())
+		for(Map.Entry<String, HashMap<String, String>> stringHashMapEntry : uData.entrySet())
 		{
-			HashMap<String, String> dict = uData.get(row);
+			HashMap<String, String> dict = stringHashMapEntry.getValue();
 			String ckey = dict.get("class");
 			String org = dict.get("Org");
 			if(clusters.containsKey(ckey))
@@ -43,12 +44,12 @@ public class ClassifierRefiner {
 			}
 		}
 		//tostring
-		for(String key:clusters.keySet())
+		for(Map.Entry<String, ArrayList<String>> stringArrayListEntry : clusters.entrySet())
 		{
-			System.out.println("====="+key+"=======");
-			for(String val:clusters.get(key))
+			System.out.println("====="+ stringArrayListEntry.getKey() +"=======");
+			for(String val: stringArrayListEntry.getValue())
 			{
-				System.out.println(String.format("\"%s\", \"%s\"", val,key));
+				System.out.println(String.format("\"%s\", \"%s\"", val, stringArrayListEntry.getKey()));
 			}
 		}
 	}

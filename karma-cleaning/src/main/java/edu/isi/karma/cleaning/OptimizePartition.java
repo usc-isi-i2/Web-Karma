@@ -207,10 +207,10 @@ public class OptimizePartition {
 			return legalParitions.get(key);
 		}
 		// test whether its subset fails
-		for (String k : legalParitions.keySet()) {
-			if (!legalParitions.get(k)) // false
+		for (Entry<String, Boolean> stringBooleanEntry : legalParitions.entrySet()) {
+			if (!stringBooleanEntry.getValue()) // false
 			{
-				if (key.indexOf(k) != -1) {
+				if (key.indexOf(stringBooleanEntry.getKey()) != -1) {
 					return false;
 				}
 			}

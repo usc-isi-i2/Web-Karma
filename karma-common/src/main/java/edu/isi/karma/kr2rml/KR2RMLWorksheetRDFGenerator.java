@@ -268,12 +268,12 @@ public class KR2RMLWorksheetRDFGenerator {
 	}
 
 	private void generateColumnProvenanceInformation() {
-		for (String hNodeId:hNodeToContextUriMap.keySet()) {
-			getColumnContextTriples(hNodeId);
+		for (Entry<String, String> stringStringEntry : hNodeToContextUriMap.entrySet()) {
+			getColumnContextTriples(stringStringEntry.getKey());
 
 
 			// Generate wasDerivedFrom property if required
-			HNode hNode = factory.getHNode(hNodeId);
+			HNode hNode = factory.getHNode(stringStringEntry.getKey());
 			if (hNode.isDerivedFromAnotherColumn()) {
 				HNode originalHNode = factory.getHNode(hNode.getOriginalColumnHNodeId());
 				if (originalHNode != null) {
@@ -282,7 +282,7 @@ public class KR2RMLWorksheetRDFGenerator {
 					for(KR2RMLRDFWriter outWriter : outWriters)
 					{
 						outWriter.outputTripleWithURIObject(
-								hNodeToContextUriMap.get(hNodeId), Uris.PROV_WAS_DERIVED_FROM_URI, 
+								stringStringEntry.getValue(), Uris.PROV_WAS_DERIVED_FROM_URI, 
 								getColumnContextUri(originalHNode.getId()));
 					}
 

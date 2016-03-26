@@ -1,6 +1,7 @@
 package edu.isi.karma.cleaning;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ProgramRule {
 	public HashMap<String, InterpreterType> rules = new HashMap<String, InterpreterType>();
@@ -80,8 +81,8 @@ public class ProgramRule {
 
 	public String toString() {
 		String res = "";
-		for (String key : strRules.keySet()) {
-			res += String.format("%s:%s\n", key, strRules.get(key));
+		for (Map.Entry<String, String> stringStringEntry : strRules.entrySet()) {
+			res += String.format("%s:%s\n", stringStringEntry.getKey(), stringStringEntry.getValue());
 		}
 		return res;
 	}

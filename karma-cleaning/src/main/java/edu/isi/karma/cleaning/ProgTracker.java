@@ -29,8 +29,8 @@ public class ProgTracker {
 
 	@SuppressWarnings("rawtypes")
 	public static void printUnlabeledData(Map dicttmp) {
-		for (Object xkey : dicttmp.keySet()) {
-			System.out.println(String.format("Entry: %s,%f", xkey,dicttmp.get(xkey)));
+		for (Object o : dicttmp.entrySet()) {
+			System.out.println(String.format("Entry: %s,%f", ((Map.Entry) o).getKey(), ((Map.Entry) o).getValue()));
 		}
 	}
 }

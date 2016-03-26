@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -187,8 +188,8 @@ public class PublishReportCommand extends WorksheetCommand {
 		}
 		
 		//Now get all transforms from the map and write them to the writer
-		for(String columnName : pyTransformMap.keySet()) {
-			pw.print(pyTransformMap.get(columnName));
+		for(Map.Entry<String, String> stringStringEntry : pyTransformMap.entrySet()) {
+			pw.print(stringStringEntry.getValue());
 		}
 	}
 	

@@ -107,8 +107,8 @@ public class PostRequestManager extends LinkedApiRequestManager {
 			return false;
 		
 		for (Map<String, String> m : listOfInputAttValues)
-			for (String s : m.keySet())
-				logger.debug(s + "-->" + m.get(s));
+			for (Map.Entry<String, String> stringStringEntry : m.entrySet())
+				logger.debug(stringStringEntry.getKey() + "-->" + stringStringEntry.getValue());
 		
 		//for (String s : serviceIdsAndMappings.)
 		return true;

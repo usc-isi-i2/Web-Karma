@@ -237,10 +237,10 @@ public class DataSourceLoader extends SourceLoader {
 		if (sourceIdsAndMappings == null)
 			return null;
 		
-		for (String sourceId : sourceIdsAndMappings.keySet()) {
-			Model m = Repository.Instance().getNamedModel(sourceId);
+		for (Map.Entry<String, Map<String, String>> stringMapEntry : sourceIdsAndMappings.entrySet()) {
+			Model m = Repository.Instance().getNamedModel(stringMapEntry.getKey());
 			if (m != null)
-				sourcesAndMappings.put(importSourceFromJenaModel(m), sourceIdsAndMappings.get(sourceId));
+				sourcesAndMappings.put(importSourceFromJenaModel(m), stringMapEntry.getValue());
 		}
 		
 		return sourcesAndMappings;
@@ -680,12 +680,12 @@ public class DataSourceLoader extends SourceLoader {
 		}
 		
 		System.out.println("Mappings from matched source to model arguments:");
-		for (Source s : sourcesAndMappings.keySet()) {
-			System.out.println("Source: " + s.getId());
-			if (sourcesAndMappings.get(s) == null)
+		for (Map.Entry<DataSource, Map<String, String>> dataSourceMapEntry : sourcesAndMappings.entrySet()) {
+			System.out.println("Source: " + dataSourceMapEntry.getKey().getId());
+			if (dataSourceMapEntry.getValue() == null)
 				continue;
-			for (String str : sourcesAndMappings.get(s).keySet())
-				System.out.println(str + "-------" + sourcesAndMappings.get(s).get(str));
+			for (String str : dataSourceMapEntry.getValue().keySet())
+				System.out.println(str + "-------" + dataSourceMapEntry.getValue().get(str));
 		}
 
 	}
