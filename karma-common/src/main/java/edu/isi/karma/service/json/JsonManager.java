@@ -159,7 +159,7 @@ public class JsonManager {
 		for (int i = 0; i < srcColumns.size(); i++) {
 			for (int j = 0; j < srcColumns.get(i).size(); j++)
 			{
-				colName = srcColumns.get(i).get(j).toString();
+				colName = srcColumns.get(i).get(j);
 				if (columns.indexOf(colName) == -1)
 					columns.add(colName);
 			}
@@ -176,7 +176,7 @@ public class JsonManager {
 				rawValues = srcValues.get(i).get(j);
 				
 				for (int k = 0; k < columns.size(); k++) {
-					int index = rawNames.indexOf(columns.get(k).toString());
+					int index = rawNames.indexOf(columns.get(k));
 					if (index == -1)
 						singleValue = null;
 					else
@@ -197,7 +197,7 @@ public class JsonManager {
 		for (int i = 0; i < srcColumns.size(); i++) {
 			for (int j = 0; j < srcColumns.get(i).size(); j++)
 			{
-				colName = srcColumns.get(i).get(j).toString();
+				colName = srcColumns.get(i).get(j);
 				if (columns.indexOf(colName) == -1) {
 					columns.add(colName);
 					types.add(srcTypes.get(i).get(j));
@@ -216,7 +216,7 @@ public class JsonManager {
 				rawValues = srcValues.get(i).get(j);
 				
 				for (int k = 0; k < columns.size(); k++) {
-					int index = rawNames.indexOf(columns.get(k).toString());
+					int index = rawNames.indexOf(columns.get(k));
 					if (index == -1)
 //						singleValue = null;
 						singleValue = "";

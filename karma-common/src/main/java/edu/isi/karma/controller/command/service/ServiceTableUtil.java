@@ -154,7 +154,7 @@ public class ServiceTableUtil {
 				}
 				
 				for (String id: oldHNodeIdList) {
-					row.setValue(id, currentRow.get(id).toString(), factory);
+					row.setValue(id, currentRow.get(id), factory);
 				}
 				
 			}

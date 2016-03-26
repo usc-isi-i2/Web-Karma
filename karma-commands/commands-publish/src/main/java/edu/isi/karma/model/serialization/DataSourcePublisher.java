@@ -144,7 +144,7 @@ public class DataSourcePublisher extends SourcePublisher {
 
 		if (this.source.getVariables() != null)
 		for (int i = 0; i < this.source.getVariables().size(); i++) {
-			Resource my_variable = model.createResource(baseNS + this.source.getVariables().get(i).toString());
+			Resource my_variable = model.createResource(baseNS + this.source.getVariables().get(i));
 			my_variable.addProperty(rdf_type, variavle_resource);
 			my_source.addProperty(has_variable, my_variable);
 		}

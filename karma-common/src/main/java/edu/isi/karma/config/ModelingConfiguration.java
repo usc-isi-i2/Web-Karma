@@ -82,7 +82,7 @@ public class ModelingConfiguration {
 	private Boolean showModelsWithoutMatching;
 	private String defaultProperty = null;
 	
-	private final String newLine = System.getProperty("line.separator").toString();
+	private final String newLine = System.getProperty("line.separator");
 	
 	private String defaultModelingProperties = 
 			"##########################################################################################" + newLine + 

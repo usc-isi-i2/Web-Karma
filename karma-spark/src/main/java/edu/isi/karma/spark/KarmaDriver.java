@@ -256,7 +256,7 @@ public class KarmaDriver {
 	    for (@SuppressWarnings("unchecked")
 		Iterator<String> keysIterator = properties.keys(); keysIterator.hasNext(); ) {
 			String objPropertyName = keysIterator.next();
-			String propertyName = objPropertyName.toString();
+			String propertyName = objPropertyName;
 			String value = properties.getString(propertyName);
 			logger.info("Set " + propertyName + "=" + value);
 			prop.setProperty(propertyName, value);

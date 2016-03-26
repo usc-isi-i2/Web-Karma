@@ -19,7 +19,7 @@ public class JSONLDUtil {
 		while(iterator.hasNext())
 		{
 
-			String value = iterator.next().toString();
+			String value = iterator.next();
 			JSONObject object = new JSONObject(value);
 			accumulatorObject = mergeJSONObjects(accumulatorObject, object);
 		}
