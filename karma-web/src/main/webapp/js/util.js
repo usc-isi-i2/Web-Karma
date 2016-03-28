@@ -755,6 +755,11 @@ function setSubClassSemanticType(worksheetId, columnId, clazz, rdfLiteralType) {
 function setSemanticType(worksheetId, columnId, type, rdfLiteralType) {
 	var info = generateInfoObject(worksheetId, columnId, "");
 	var newInfo = info['newInfo']; 
+	if(rdfLiteralType) {
+	} else {
+		rdfLiteralType = ''
+	}
+	info["rdfLiteralType"] = rdfLiteralType;
 	if(type.uri == "http://isi.edu/integration/karma/dev#classLink") {
 		info["command"] = "SetMetaPropertyCommand";
 		info["metaPropertyName"] = "isUriOfClass";
@@ -771,16 +776,15 @@ function setSemanticType(worksheetId, columnId, type, rdfLiteralType) {
 		newType["DomainUri"] = type.source.uri;
 		newType["DomainId"] = type.source.id;
 		newType["DomainLabel"] = type.source.label;
+		newType["isPrimary"] = true;
+
 		semTypesArray.push(newType);
 		info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
 		newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
 	}
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
-	if(rdfLiteralType)
-		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
-	else
-		newInfo.push(getParamObject("rdfLiteralType", '', "other"));
-
+	newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	
 	info["newInfo"] = JSON.stringify(newInfo);
 	showLoading(info["worksheetId"]);
 	var returned = sendRequest(info, worksheetId);

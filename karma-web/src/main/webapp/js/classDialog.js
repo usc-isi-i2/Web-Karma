@@ -13,11 +13,11 @@ var ClassDialog = (function() {
 		var allClassCache;
 
 		function init() {
-			ClassTabs.getInstance().reloadCache();			
+			ClassTabs.getInstance().reloadAllCache();
 		}
 
 		function reloadCache() {
-			ClassTabs.getInstance().reloadCache();
+			ClassTabs.getInstance().reloadAllCache();
 		}
 
 		function hide() {

@@ -416,7 +416,7 @@ function parse(data) {
 				var tdTag = $("td#" + type["HNodeId"], wk);
 				tdTag.data("typesJsonObject", type);
 			});
-			ClassTabs.getInstance().reloadCache();
+			ClassTabs.getInstance().reloadCache(element["worksheetId"]);
 		} else if (element["updateType"] == "ImportOntologyCommand") {
 			if (!element["Import"])
 				$.sticky("Ontology import failed!");
