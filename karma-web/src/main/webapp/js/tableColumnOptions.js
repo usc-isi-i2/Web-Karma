@@ -1178,12 +1178,13 @@ var ExtractEntitiesDialog = (function() {
 
 				$.each(jsonresp, function(index, data) {
 					var row = $("<div>").addClass("checkbox");
-					var label = $("<label>").text(data.capability);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "checkbox")
 						.attr("id", "selectentities")
 						.attr("value", data.capability);
 					label.append(input);
+					label.append($("<span>").html(data.capability));
 					row.append(label);
 					dialogContent.append(row);
 				});
