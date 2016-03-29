@@ -65,7 +65,7 @@ public class InvocationManager {
 		this.idList = idList;
 		this.encoding = encoding;
 		requestURLs = URLManager.getURLsFromStrings(requestURLStrings);
-		if (requestURLs == null || requestURLs.size() == 0)
+		if (requestURLs == null || requestURLs.isEmpty())
 			throw new KarmaException("Cannot model a service without any request example.");
 		
 		this.serviceData = null;
@@ -90,7 +90,7 @@ public class InvocationManager {
 		List<String> requestURLList = new ArrayList<String>();
 		requestURLList.add(requestURLString);
 		requestURLs = URLManager.getURLsFromStrings(requestURLList);
-		if (requestURLs == null || requestURLs.size() == 0)
+		if (requestURLs == null || requestURLs.isEmpty())
 			throw new KarmaException("Cannot model a service without any request example.");
 		
 		this.serviceData = null;
@@ -215,7 +215,7 @@ public class InvocationManager {
 		List<Integer> includingColumns = new ArrayList<Integer>();
 		
 		if (headers != null) {
-			if (includeURL && headers.size() > 0)
+			if (includeURL && !headers.isEmpty())
 				includingColumns.add(0);
 			
 			for (int i = 1; i < this.serviceData.getHeaders().size(); i++) {

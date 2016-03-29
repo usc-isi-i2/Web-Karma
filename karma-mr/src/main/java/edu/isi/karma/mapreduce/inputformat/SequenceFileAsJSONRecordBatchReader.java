@@ -74,7 +74,7 @@ extends RecordReader<Text, Text> {
 				break;
 			}
 		}
-		return (data.size() != 0);
+		return (!data.isEmpty());
 	}
 
 	public float getProgress() throws IOException,  InterruptedException {

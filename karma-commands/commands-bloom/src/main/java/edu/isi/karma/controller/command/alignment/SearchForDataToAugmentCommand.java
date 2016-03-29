@@ -153,7 +153,7 @@ public class SearchForDataToAugmentCommand extends WorksheetSelectionCommand{
 					maps = new HashSet<String>();
 				}
 			}
-			if (maps.size() > 0)
+			if (!maps.isEmpty())
 				bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, null, maps));
 		} catch (KarmaException e1) {
 			e1.printStackTrace();

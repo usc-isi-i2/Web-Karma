@@ -83,7 +83,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		input.msg.updateCM_Constr(psProgSynthesis.partiCluster.getConstraints());
 		input.msg.updateWeights(psProgSynthesis.partiCluster.weights);
 
-		if (rules == null || rules.size() == 0) {
+		if (rules == null || rules.isEmpty()) {
 			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY, contextId);
 			r.nullRule = true;
 			this.nullRule = true;

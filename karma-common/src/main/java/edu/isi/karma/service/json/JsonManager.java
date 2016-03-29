@@ -315,7 +315,7 @@ public class JsonManager {
 		
 		try {
 			
-			if (columns != null && columns.size() > 0) {
+			if (columns != null && !columns.isEmpty()) {
 				for (int i = 0; i < columns.size(); i++) {
 					if (i != 0)
 						csv += separator.charValue();
@@ -326,7 +326,7 @@ public class JsonManager {
 				System.out.println("Json does not have any header.");
 
 			
-			if (values != null && values.size() > 0) {
+			if (values != null && !values.isEmpty()) {
 				for (int i = 0; i < values.size(); i++) {
 					for (int j = 0; j < values.get(i).size(); j++) {
 						if (j != 0)

@@ -10,7 +10,7 @@ public class PositionSet implements GrammarTreeNode {
 
 	public PositionSet(Collection<Position> poss) {
 		this.spaces.addAll(poss);
-		if (spaces != null && spaces.size() > 0)
+		if (spaces != null && !spaces.isEmpty())
 			for (Position p : spaces) {
 				if (p != null) {
 					size = p.rules.size();

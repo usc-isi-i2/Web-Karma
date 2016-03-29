@@ -273,7 +273,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		}
 
 		if (this.service.getInputAttributes() == null ||
-				this.service.getInputAttributes().size() == 0) {
+				this.service.getInputAttributes().isEmpty()) {
 			blankInput = true;
 		} else {
 		

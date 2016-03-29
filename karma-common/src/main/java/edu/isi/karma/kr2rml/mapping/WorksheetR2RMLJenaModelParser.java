@@ -447,7 +447,7 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 
 	private boolean isValidTemplate(List<TemplateTerm> terms) {
-		if(terms == null || terms.size() == 0)
+		if(terms == null || terms.isEmpty())
 		{
 			return false;
 		}

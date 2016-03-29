@@ -226,7 +226,7 @@ public class ModelLearningGraphCompact_Old extends ModelLearningGraph {
 			return null;
 		}
 
-		if (mappings.size() == 0) {
+		if (mappings.isEmpty()) {
 			for (Node n : matchedNodes) {
 				HashMap<Node,Node> nodeMap = new HashMap<Node,Node>();
 				nodeMap.put(node, n);

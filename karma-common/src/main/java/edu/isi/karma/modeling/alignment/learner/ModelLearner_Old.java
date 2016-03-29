@@ -215,7 +215,7 @@ public class ModelLearner_Old {
 		List<SortableSemanticModel_Old> uniqueModels = new ArrayList<SortableSemanticModel_Old>();
 		SortableSemanticModel_Old current, previous;
 		if (sortableSemanticModels != null) {
-			if (sortableSemanticModels.size() > 0)
+			if (!sortableSemanticModels.isEmpty())
 				uniqueModels.add(sortableSemanticModels.get(0));
 			for (int i = 1; i < sortableSemanticModels.size(); i++) {
 				current = sortableSemanticModels.get(i);
@@ -233,7 +233,7 @@ public class ModelLearner_Old {
 
 	private DirectedWeightedMultigraph<Node, LabeledLink> computeSteinerTree(Set<Node> steinerNodes) {
 
-		if (steinerNodes == null || steinerNodes.size() == 0) {
+		if (steinerNodes == null || steinerNodes.isEmpty()) {
 			logger.error("There is no steiner node.");
 			return null;
 		}

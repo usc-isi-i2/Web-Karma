@@ -36,7 +36,7 @@ public class SegmentMapper {
 		HashMap<String, ArrayList<Dataitem>> groups = new HashMap<String,ArrayList<Dataitem>>();
 		Vector<Segment> ret = new Vector<Segment>();
 		for(ArrayList<Dataitem> line: repo){
-			if(line.size() == 0){
+			if(line.isEmpty()){
 				continue;
 			}
 			Dataitem item =convert(line, org, tar);
@@ -114,7 +114,7 @@ public class SegmentMapper {
 			repo.add(path);
 		}
 		Vector<Dataitem> updated = makeOneMove(org, tar, root);
-		if(updated.size() == 0){
+		if(updated.isEmpty()){
 			repo.add(path);
 		}
 		

@@ -292,7 +292,7 @@ public class WebServiceLoader extends SourceLoader
 			Integer serviceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
+				|| semanticModel.getAtoms().isEmpty()) {
 			logger.info("The input model is nul or it does not have any atom");
 			return null;
 		}
@@ -326,7 +326,7 @@ public class WebServiceLoader extends SourceLoader
 			Integer serviceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
+				|| semanticModel.getAtoms().isEmpty()) {
 			logger.info("The input model is nul or it does not have any atom");
 			return null;
 		}

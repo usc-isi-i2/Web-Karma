@@ -25,7 +25,7 @@ public class VHNode {
 	}
 	
 	public boolean hasNestedTable() {
-		return this.nestedNodes.size() > 0;
+		return !this.nestedNodes.isEmpty();
 	}
 	
 	public boolean isVisible() {

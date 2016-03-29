@@ -75,7 +75,7 @@ public class ConvertJSONLD {
                         return true;
                     }
                 }
-                if (results.size() == 0 && dateFilter.isEmpty()) {
+                if (results.isEmpty() && dateFilter.isEmpty()) {
                     return true;
                 }
                 return false;

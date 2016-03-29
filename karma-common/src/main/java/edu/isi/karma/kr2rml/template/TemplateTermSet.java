@@ -79,7 +79,7 @@ public class TemplateTermSet {
 	}
 	
 	public boolean isEmpty() {
-		return termSet.size() == 0;
+		return termSet.isEmpty();
 	}
 	
 	public String getR2rmlTemplateString(RepFactory factory) {

@@ -217,7 +217,7 @@ public class SemanticTypeUtil {
 	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions, SuperSelection sel) {
 		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet,
 				path, sel);
-		if (trainingExamples.size() == 0)
+		if (trainingExamples.isEmpty())
 			return null;
 
 		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
@@ -228,7 +228,7 @@ public class SemanticTypeUtil {
 			logger.debug("Error occured while predicting semantic type.");
 			return null;
 		}
-		if (result.size() == 0) {
+		if (result.isEmpty()) {
 			return null;
 		}
 
@@ -266,7 +266,7 @@ public class SemanticTypeUtil {
 		for (SemanticTypeLabel removeLabel : removeLabels) {
 			result.remove(removeLabel);
 		}
-		if (result.size() == 0) {
+		if (result.isEmpty()) {
 			return null;
 		}
 

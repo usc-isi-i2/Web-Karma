@@ -154,7 +154,7 @@ public class Element {
 		    		v.add(((SingleValue)child.getValue()).getValueString());
 				}
 			}
-			if (v.size() > 0) {
+			if (!v.isEmpty()) {
 				innerT.getValues().add(v);
 				t.cartesianProductOrUnionIfSameHeaders(innerT);
 			}		
@@ -185,7 +185,7 @@ public class Element {
     			if (((ArrayValue)root.getValue()).getElements().size() > 1) 
 	    			break;
 	    		
-    			if (((ArrayValue)root.getValue()).getElements().size() == 0) {
+    			if (((ArrayValue) root.getValue()).getElements().isEmpty()) {
 //    				if (root.getParent() != null)
 //    					((ArrayValue)root.getParent().getValue()).getElements().remove(root);
     				return;

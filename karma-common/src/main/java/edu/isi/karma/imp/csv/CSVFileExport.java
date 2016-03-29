@@ -68,7 +68,7 @@ public class CSVFileExport {
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			modeledColumnTable.put(type.getHNodeId(),"");
 		}
-		if(modeledColumnTable.size()==0) return null;
+		if(modeledColumnTable.isEmpty()) return null;
 		int numRows = worksheet.getDataTable().getNumRows();
 		if(numRows==0) 
 			return "";

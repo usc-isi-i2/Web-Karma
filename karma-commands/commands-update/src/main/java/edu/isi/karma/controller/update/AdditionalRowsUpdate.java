@@ -70,7 +70,7 @@ public class AdditionalRowsUpdate extends AbstractUpdate {
 		
 		try {
 			JSONArray rowsJson = new JSONArray();
-			if(additionalRows.size()  > 0) {
+			if(!additionalRows.isEmpty()) {
 				Row row = additionalRows.get(0);
 				ArrayList<VHNode> nodeList = getNestedNodeList(row, vWorksheet.getHeaderViewNodes());
 				rowsJson = upd.getRowsJsonArray(additionalRows, vWorksheet, 

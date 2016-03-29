@@ -285,7 +285,7 @@ public class WorksheetToFeatureCollection {
 			modeledHNodeIds.add(0, type.getHNodeId());
 		}
 
-		if (spatialHNodeIds.size() > 0) {
+		if (!spatialHNodeIds.isEmpty()) {
 			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
 			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 			for (HNode hNode : sortedLeafHNodes) {
@@ -907,8 +907,8 @@ public class WorksheetToFeatureCollection {
 	}
 
 	public boolean hasNoGeospatialData() {
-		if (pointFeatureList.size() == 0 && lineFeatureList.size() == 0
-				&& polygonFeatureList.size() == 0)
+		if (pointFeatureList.isEmpty() && lineFeatureList.isEmpty()
+				&& polygonFeatureList.isEmpty())
 			return true;
 		return false;
 	}

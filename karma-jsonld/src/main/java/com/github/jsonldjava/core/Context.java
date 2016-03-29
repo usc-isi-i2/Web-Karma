@@ -562,7 +562,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 // 2.6.2)
                 final List<Object> list = (List<Object>) ((Map<String, Object>) value).get("@list");
                 // 2.6.3)
-                String commonLanguage = (list.size() == 0) ? defaultLanguage : null;
+                String commonLanguage = (list.isEmpty()) ? defaultLanguage : null;
                 String commonType = null;
                 // 2.6.4)
                 for (final Object item : list) {

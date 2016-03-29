@@ -364,7 +364,7 @@ public class RecordClassifier implements PartitionClassifierType {
 
 	public double getAccuracy(svm_model m, ArrayList<svm_node[]> tData,
 			ArrayList<Double> tars) {
-		if (tData.size() == 0) {
+		if (tData.isEmpty()) {
 			return 0;
 		}
 		int errorCnt = 0;

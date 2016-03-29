@@ -136,7 +136,7 @@ public class TreePostProcess {
 		
 		List<Node> possibleRoots = findPossibleRoots(tree);
 		
-		if (possibleRoots == null || possibleRoots.size() == 0)
+		if (possibleRoots == null || possibleRoots.isEmpty())
 			return null;
 		
 		Collections.sort(possibleRoots);
@@ -176,7 +176,7 @@ public class TreePostProcess {
 //				if (temp2 != null) possibleLinks.addAll(temp2);
 	
 				Collections.sort(possibleLinks, new LinkPriorityComparator());
-				if (possibleLinks.size() > 0) {
+				if (!possibleLinks.isEmpty()) {
 					
 					// pick the first one 
 					LabeledLink newLink = possibleLinks.get(0);

@@ -48,7 +48,7 @@ public class HistoryJSONEditor {
 					}
 					logger.debug(commandTag.toString(4));
 					newOutputColumns.retainAll(outputColumns);
-					if (newOutputColumns.size() == 0)
+					if (newOutputColumns.isEmpty())
 						newHistoryJSON.put(historyJSON.get(i));
 				}
 			}
@@ -83,7 +83,7 @@ public class HistoryJSONEditor {
 					}
 					logger.debug(commandTag.toString(4));
 					newOutputColumns.retainAll(outputColumns);
-					if (newOutputColumns.size() == 0)
+					if (newOutputColumns.isEmpty())
 						newHistoryJSON.put(historyJSON.get(i));
 				}
 			}

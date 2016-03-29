@@ -213,7 +213,7 @@ public class JsonLdUtils {
             boolean propertyIsArray, boolean allowDuplicate) {
 
         if (isArray(value)) {
-            if (((List) value).size() == 0 && propertyIsArray && !subject.containsKey(property)) {
+            if (((List) value).isEmpty() && propertyIsArray && !subject.containsKey(property)) {
                 subject.put(property, new ArrayList<Object>());
             }
             for (final Object val : (List) value) {
@@ -383,8 +383,7 @@ public class JsonLdUtils {
 
         // must be a string, subject reference, or empty object
         if (v instanceof String
-                || (v instanceof Map && (((Map<String, Object>) v).containsKey("@id") || ((Map<String, Object>) v)
-                        .size() == 0))) {
+                || (v instanceof Map && (((Map<String, Object>) v).containsKey("@id") || ((Map<String, Object>) v).isEmpty()))) {
             return true;
         }
 
@@ -447,21 +446,21 @@ public class JsonLdUtils {
         final List<String> baseSegments = _split(base.normalizedPath, "/");
         final List<String> iriSegments = _split(rel.normalizedPath, "/");
 
-        while (baseSegments.size() > 0 && iriSegments.size() > 0) {
+        while (!baseSegments.isEmpty() && !iriSegments.isEmpty()) {
             if (!baseSegments.get(0).equals(iriSegments.get(0))) {
                 break;
             }
-            if (baseSegments.size() > 0) {
+            if (!baseSegments.isEmpty()) {
                 baseSegments.remove(0);
             }
-            if (iriSegments.size() > 0) {
+            if (!iriSegments.isEmpty()) {
                 iriSegments.remove(0);
             }
         }
 
         // use '../' for each non-matching base segment
         String rval = "";
-        if (baseSegments.size() > 0) {
+        if (!baseSegments.isEmpty()) {
             // don't count the last segment if it isn't a path (doesn't end in
             // '/')
             // don't count empty first segment, it means base began with '/'
@@ -560,7 +559,7 @@ public class JsonLdUtils {
      */
     private static String _join(List<String> list, String joiner) {
         String rval = "";
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             rval += list.get(0);
         }
         for (int i = 1; i < list.size(); i++) {
@@ -644,7 +643,7 @@ public class JsonLdUtils {
         boolean rval = false;
         if (subject.containsKey(property)) {
             final Object value = subject.get(property);
-            rval = (!(value instanceof List) || ((List) value).size() > 0);
+            rval = (!(value instanceof List) || !((List) value).isEmpty());
         }
         return rval;
     }
@@ -724,7 +723,7 @@ public class JsonLdUtils {
             }
         }
 
-        if (values.size() == 0) {
+        if (values.isEmpty()) {
             subject.remove(property);
         } else if (values.size() == 1 && !propertyIsArray) {
             subject.put(property, values.get(0));
@@ -750,7 +749,7 @@ public class JsonLdUtils {
             if (((Map) v).containsKey("@id")) {
                 return ((String) ((Map) v).get("@id")).startsWith("_:");
             } else {
-                return ((Map) v).size() == 0
+                return ((Map) v).isEmpty()
                         || !(((Map) v).containsKey("@value") || ((Map) v).containsKey("@set") || ((Map) v)
                                 .containsKey("@list"));
             }

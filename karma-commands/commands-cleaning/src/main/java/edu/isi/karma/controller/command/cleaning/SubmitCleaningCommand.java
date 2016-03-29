@@ -263,7 +263,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 										// running
 		{
 			rtf = new RamblerTransformationOutput(inputs, workspace.getContextId());
-			if (rtf.getTransformations().keySet().size() > 0) {
+			if (!rtf.getTransformations().keySet().isEmpty()) {
 				results = true;
 			}
 			iterNum++;

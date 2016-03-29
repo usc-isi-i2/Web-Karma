@@ -181,7 +181,7 @@ public class GetClassesCommand extends WorksheetCommand {
 		final OntologyManager ontMgr = workspace.getOntologyManager();
 		final HashSet<String> domains = ontMgr.getDomainsOfProperty(
 				propertyURI, true);
-		if (domains == null || domains.size() == 0) {
+		if (domains == null || domains.isEmpty()) {
 			return null;
 		}
 
@@ -239,7 +239,7 @@ public class GetClassesCommand extends WorksheetCommand {
 			// Populate the graph nodes also
 			if (alignment != null) {
 				Set<Node> graphNodes = alignment.getNodesByUri(nodeUri);
-				if (graphNodes != null && graphNodes.size() != 0) {
+				if (graphNodes != null && !graphNodes.isEmpty()) {
 					for (Node graphNode: graphNodes) {
 						if (steinerTreeNodeIds.contains(graphNode.getId())) {
 							nodeSet.put(graphNode, true);

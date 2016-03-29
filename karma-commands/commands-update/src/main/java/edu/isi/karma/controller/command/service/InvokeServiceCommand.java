@@ -104,7 +104,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 		
 		List<String> requestURLStrings = new ArrayList<String>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
-		if (rows == null || rows.size() == 0) {
+		if (rows == null || rows.isEmpty()) {
 			logger.error("Data table does not have any row.");
 			return new UpdateContainer(new ErrorUpdate("Data table does not have any row."));	
 		}

@@ -101,7 +101,7 @@ public class TimerRunner implements Runnable {
 						System.out.println("Cannot find any rule");
 					}
 					String[] wexam = null;
-					if (pls.size() == 0)
+					if (pls.isEmpty())
 						break;
 					long t1 = System.currentTimeMillis();
 					int ErrorCnt = 0;
