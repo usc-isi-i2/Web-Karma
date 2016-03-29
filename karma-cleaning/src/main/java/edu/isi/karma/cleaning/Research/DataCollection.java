@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.MyLogger;
@@ -95,8 +96,8 @@ public class DataCollection {
 		MyLogger.logsth("============Summary Information===========\n"
 				+ this.getDate() + "\n");
 		MyLogger.logsth(DataCollection.config + "\n");
-		for (String key : stats.keySet()) {
-			Double[] value = stats.get(key);
+		for (Map.Entry<String, Double[]> stringEntry : stats.entrySet()) {
+			Double[] value = stringEntry.getValue();
 			Double cnt = value[6];
 			value[1] = value[0] * 1.0 / cnt;
 			value[3] = value[2] * 1.0 / cnt;
@@ -104,10 +105,10 @@ public class DataCollection {
 			value[10] = value[10]*1.0 / cnt;
 			// long the final stats
 			String lineString = "";
-			if(this.succeededFiles.contains(key))
-				lineString = String.format("%s,T_learn,%f,avg_learn,%f,T_gen,%f,avg_gen,%f,T_exec,%f,avg_exec,%f,exp,%f,constraint,%f,clfacc,%f, parNum, %f\n",key,value[0],value[1],value[2],value[3],value[4],value[5],value[6],value[7],value[10],value[11]);
+			if(this.succeededFiles.contains(stringEntry.getKey()))
+				lineString = String.format("%s,T_learn,%f,avg_learn,%f,T_gen,%f,avg_gen,%f,T_exec,%f,avg_exec,%f,exp,%f,constraint,%f,clfacc,%f, parNum, %f\n", stringEntry.getKey(),value[0],value[1],value[2],value[3],value[4],value[5],value[6],value[7],value[10],value[11]);
 			else {
-				lineString = String.format("%s_failed,T_learn,%f,avg_learn,%f,T_gen,%f,avg_gen,%f,T_exec,%f,avg_exec,%f,exp,%f,constraint,%f,clfacc,%f,parNum,%f\n",key,value[0],value[1],value[2],value[3],value[4],value[5],value[6],value[7],value[10],value[11]);
+				lineString = String.format("%s_failed,T_learn,%f,avg_learn,%f,T_gen,%f,avg_gen,%f,T_exec,%f,avg_exec,%f,exp,%f,constraint,%f,clfacc,%f,parNum,%f\n", stringEntry.getKey(),value[0],value[1],value[2],value[3],value[4],value[5],value[6],value[7],value[10],value[11]);
 			}
 			MyLogger.logsth(lineString);
 		}

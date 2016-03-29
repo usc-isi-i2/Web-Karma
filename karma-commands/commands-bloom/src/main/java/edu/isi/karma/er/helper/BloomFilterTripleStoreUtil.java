@@ -205,15 +205,15 @@ public class BloomFilterTripleStoreUtil extends TripleStoreUtil {
 
 	public boolean updateTripleStoreWithBloomFilters(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping, String modelurl, String context) throws KarmaException, IOException {
 		Set<String> triplemaps = bfs.keySet();
-		for (String tripleUri : triplemaps) {
-			KR2RMLBloomFilter bf = bfs.get(tripleUri);
-			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
+		for (Entry<String, KR2RMLBloomFilter> stringKR2RMLBloomFilterEntry : bfs.entrySet()) {
+			KR2RMLBloomFilter bf = stringKR2RMLBloomFilterEntry.getValue();
+			String oldserializedBloomFilter = bloomfilterMapping.get(stringKR2RMLBloomFilterEntry.getKey());
 			if (oldserializedBloomFilter != null) {
 				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
 				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
 				bf.or(bf2);
 			}
-			bfs.put(tripleUri, bf);
+			bfs.put(stringKR2RMLBloomFilterEntry.getKey(), bf);
 		}
 		deleteBloomFiltersForMaps(modelurl, null, triplemaps);
 		StringWriter sw = new StringWriter();

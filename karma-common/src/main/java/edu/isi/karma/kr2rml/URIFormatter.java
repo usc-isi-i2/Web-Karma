@@ -139,9 +139,9 @@ public class URIFormatter {
 	
 	private void populatePrefixToNamespaceMap(OntologyManager ontMgr) {
 		Map<String, String> prefixMapOntMgr = ontMgr.getPrefixMap(); 
-		for (String ns:prefixMapOntMgr.keySet()) {
-			String prefix = prefixMapOntMgr.get(ns);
-			this.prefixToNamespaceMap.put(prefix, ns);
+		for (Map.Entry<String, String> stringStringEntry : prefixMapOntMgr.entrySet()) {
+			String prefix = stringStringEntry.getValue();
+			this.prefixToNamespaceMap.put(prefix, stringStringEntry.getKey());
 		}
 	}
 	

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import libsvm.svm;
 import libsvm.svm_model;
@@ -156,8 +157,8 @@ public class RecordClassifier implements PartitionClassifierType {
 			}
 		}
 		Double maxNumber = Collections.max(class2weight.values());
-		for (Double key : class2weight.keySet()) {
-			class2weight.put(key, maxNumber / class2weight.get(key) * 1.0);
+		for (Map.Entry<Double, Double> doubleDoubleEntry : class2weight.entrySet()) {
+			class2weight.put(doubleDoubleEntry.getKey(), maxNumber / doubleDoubleEntry.getValue() * 1.0);
 		}
 		return class2weight;
 	}
@@ -332,20 +333,20 @@ public class RecordClassifier implements PartitionClassifierType {
 			ArrayList<svm_node[]> tmpTest = new ArrayList<svm_node[]>();
 			ArrayList<Double> tmpTraintar = new ArrayList<Double>();
 			ArrayList<Double> tmpTesttar = new ArrayList<Double>();
-			for (Double l : labPos.keySet()) {
-				int datasize = labPos.get(l).size();
+			for (Map.Entry<Double, ArrayList<Integer>> doubleArrayListEntry : labPos.entrySet()) {
+				int datasize = doubleArrayListEntry.getValue().size();
 				if (datasize < fold) {
 					// add its own data until reach the fold number
 					int times = fold / datasize;
 					@SuppressWarnings("unchecked")
-					ArrayList<Integer> ditems = (ArrayList<Integer>) labPos.get(l).clone();
+					ArrayList<Integer> ditems = (ArrayList<Integer>) doubleArrayListEntry.getValue().clone();
 					for (int t = 1; t < times+1; t++) {
-						labPos.get(l).addAll(ditems);
+						doubleArrayListEntry.getValue().addAll(ditems);
 					}
-					datasize = labPos.get(l).size();
+					datasize = doubleArrayListEntry.getValue().size();
 				}
 				for (int k = 0; k < datasize; k++) {
-					int itemIndex = labPos.get(l).get(k);
+					int itemIndex = doubleArrayListEntry.getValue().get(k);
 					if (k % fold == i) {
 						tmpTest.add(trainData.get(itemIndex));
 						tmpTesttar.add(targets.get(itemIndex));
@@ -408,9 +409,9 @@ public class RecordClassifier implements PartitionClassifierType {
 		int ptr = 0;
 		int[] wts_labels = new int[parameters.nr_weight];
 		double[] wts = new double[parameters.nr_weight];
-		for (Double key : wtsdict.keySet()) {
-			wts_labels[ptr] = key.intValue();
-			wts[ptr] = wtsdict.get(key);
+		for (Map.Entry<Double, Double> doubleDoubleEntry : wtsdict.entrySet()) {
+			wts_labels[ptr] = doubleDoubleEntry.getKey().intValue();
+			wts[ptr] = doubleDoubleEntry.getValue();
 			ptr++;
 		}
 		parameters.weight_label = wts_labels;

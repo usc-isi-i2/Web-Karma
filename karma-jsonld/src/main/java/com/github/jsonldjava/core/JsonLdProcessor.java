@@ -200,16 +200,16 @@ public class JsonLdProcessor {
         // 3)
         final Map<String, Object> defaultGraph = (Map<String, Object>) nodeMap.remove("@default");
         // 4)
-        for (final String graphName : nodeMap.keySet()) {
-            final Map<String, Object> graph = (Map<String, Object>) nodeMap.get(graphName);
+        for (final Map.Entry<String, Object> stringObjectEntry : nodeMap.entrySet()) {
+            final Map<String, Object> graph = (Map<String, Object>) stringObjectEntry.getValue();
             // 4.1+4.2)
             Map<String, Object> entry;
-            if (!defaultGraph.containsKey(graphName)) {
+            if (!defaultGraph.containsKey(stringObjectEntry.getKey())) {
                 entry = newMap();
-                entry.put("@id", graphName);
-                defaultGraph.put(graphName, entry);
+                entry.put("@id", stringObjectEntry.getKey());
+                defaultGraph.put(stringObjectEntry.getKey(), entry);
             } else {
-                entry = (Map<String, Object>) defaultGraph.get(graphName);
+                entry = (Map<String, Object>) defaultGraph.get(stringObjectEntry.getKey());
             }
             // 4.3)
             // TODO: SPEC doesn't specify that this should only be added if it

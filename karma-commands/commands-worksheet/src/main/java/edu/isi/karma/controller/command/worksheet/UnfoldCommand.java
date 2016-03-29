@@ -206,17 +206,17 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 				Node n = row.getNode(key.getId());
 				keyMapping.put(HashValueManager.getHashValue(oldws, n.getId(), factory), n.getValue().asString());
 			}
-			for (String mapkey : keyMapping.keySet()) {
-				HNode hn = newHT.getHNodeFromColumnName(keyMapping.get(mapkey).toLowerCase().replace('/', '_'));
+			for (Entry<String, String> stringStringEntry : keyMapping.entrySet()) {
+				HNode hn = newHT.getHNodeFromColumnName(stringStringEntry.getValue().toLowerCase().replace('/', '_'));
 				if (hn == null) {
-					HNode n = newHT.addHNode(keyMapping.get(mapkey).toLowerCase().replace('/', '_'), HNodeType.Transformation, oldws, factory);
+					HNode n = newHT.addHNode(stringStringEntry.getValue().toLowerCase().replace('/', '_'), HNodeType.Transformation, oldws, factory);
 					outputColumns.add(n.getId());
 					HTable htt = n.addNestedTable("values", oldws, factory);
 					outputColumns.add(htt.addHNode("Values", HNodeType.Transformation, oldws, factory).getId());
-					HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
+					HNodeidMapping.put(stringStringEntry.getValue(), n.getId());
 				}
 				else
-					HNodeidMapping.put(keyMapping.get(mapkey), hn.getId());
+					HNodeidMapping.put(stringStringEntry.getValue(), hn.getId());
 			}
 			Map<String, ArrayList<String>> hash = new HashMap<String, ArrayList<String>>();
 			for (Row row : rows) {
@@ -229,8 +229,8 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 				//System.out.println("Hash: " + HashValueManager.getHashValue(row, hnodeIDs));
 			}
 
-			for (String hashKey : hash.keySet()) {
-				ArrayList<String> r = hash.get(hashKey);
+			for (Entry<String, ArrayList<String>> stringArrayListEntry : hash.entrySet()) {
+				ArrayList<String> r = stringArrayListEntry.getValue();
 				Node node = parentRow.getNeighbor(newNode.getId());
 				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), 
 						newHT, hnodes, factory, selection);
@@ -283,11 +283,11 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 			Node n = row.getNode(key.getId());
 			keyMapping.put(HashValueManager.getHashValue(oldws, n.getId(), factory), n.getValue().asString());
 		}
-		for (String mapkey : keyMapping.keySet()) {
-			HNode n = newws.getHeaders().addHNode(keyMapping.get(mapkey), HNodeType.Transformation, newws, factory);
+		for (Entry<String, String> stringStringEntry : keyMapping.entrySet()) {
+			HNode n = newws.getHeaders().addHNode(stringStringEntry.getValue(), HNodeType.Transformation, newws, factory);
 			HTable ht = n.addNestedTable("values", newws, factory);
 			ht.addHNode("Values", HNodeType.Transformation, newws, factory);
-			HNodeidMapping.put(keyMapping.get(mapkey), n.getId());
+			HNodeidMapping.put(stringStringEntry.getValue(), n.getId());
 		}
 
 		Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
@@ -300,8 +300,8 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 			hash.put(hashValue, ids);
 		}
 		List<Row> resultRows = new ArrayList<Row>();
-		for (String hashKey : hash.keySet()) {
-			ArrayList<String> r = hash.get(hashKey);
+		for (Entry<String, ArrayList<String>> stringArrayListEntry : hash.entrySet()) {
+			ArrayList<String> r = stringArrayListEntry.getValue();
 			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), 
 					newws.getHeaders(), hnodes, factory, selection);
 			for (String rowid : r) {

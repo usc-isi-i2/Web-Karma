@@ -665,18 +665,18 @@ public class JsonLdApi {
                         if (((Map<String, Object>) expandedValue).containsKey("@reverse")) {
                             final Map<String, Object> reverse = (Map<String, Object>) ((Map<String, Object>) expandedValue)
                                     .get("@reverse");
-                            for (final String property : reverse.keySet()) {
-                                final Object item = reverse.get(property);
+                            for (final Map.Entry<String, Object> stringObjectEntry : reverse.entrySet()) {
+                                final Object item = stringObjectEntry.getValue();
                                 // 7.4.11.2.1)
-                                if (!result.containsKey(property)) {
-                                    result.put(property, new ArrayList<Object>());
+                                if (!result.containsKey(stringObjectEntry.getKey())) {
+                                    result.put(stringObjectEntry.getKey(), new ArrayList<Object>());
                                 }
                                 // 7.4.11.2.2)
                                 if (item instanceof List) {
-                                    ((List<Object>) result.get(property))
+                                    ((List<Object>) result.get(stringObjectEntry.getKey()))
                                     .addAll((List<Object>) item);
                                 } else {
-                                    ((List<Object>) result.get(property)).add(item);
+                                    ((List<Object>) result.get(stringObjectEntry.getKey())).add(item);
                                 }
                             }
                         }
@@ -1139,12 +1139,12 @@ public class JsonLdApi {
                 final Map<String, Object> reverseMap = (Map<String, Object>) elem
                         .remove("@reverse");
                 // 6.9.3)
-                for (final String property : reverseMap.keySet()) {
-                    final List<Object> values = (List<Object>) reverseMap.get(property);
+                for (final Map.Entry<String, Object> stringObjectEntry : reverseMap.entrySet()) {
+                    final List<Object> values = (List<Object>) stringObjectEntry.getValue();
                     // 6.9.3.1)
                     for (final Object value : values) {
                         // 6.9.3.1.1)
-                        generateNodeMap(value, nodeMap, activeGraph, referencedNode, property, null);
+                        generateNodeMap(value, nodeMap, activeGraph, referencedNode, stringObjectEntry.getKey(), null);
                     }
                 }
             }
@@ -1554,16 +1554,16 @@ public class JsonLdApi {
 
     private static void removeDependents(Map<String, EmbedNode> embeds, String id) {
         // get embed keys as a separate array to enable deleting keys in map
-        for (final String id_dep : embeds.keySet()) {
-            final EmbedNode e = embeds.get(id_dep);
+        for (final Map.Entry<String, EmbedNode> stringEmbedNodeEntry : embeds.entrySet()) {
+            final EmbedNode e = stringEmbedNodeEntry.getValue();
             final Object p = e.parent != null ? e.parent : newMap();
             if (!(p instanceof Map)) {
                 continue;
             }
             final String pid = (String) ((Map<String, Object>) p).get("@id");
             if (Obj.equals(id, pid)) {
-                embeds.remove(id_dep);
-                removeDependents(embeds, id_dep);
+                embeds.remove(stringEmbedNodeEntry.getKey());
+                removeDependents(embeds, stringEmbedNodeEntry.getKey());
             }
         }
     }
@@ -1571,10 +1571,10 @@ public class JsonLdApi {
     private Map<String, Object> filterNodes(FramingContext state, Map<String, Object> nodes,
             Map<String, Object> frame) throws JsonLdError {
         final Map<String, Object> rval = newMap();
-        for (final String id : nodes.keySet()) {
-            final Map<String, Object> element = (Map<String, Object>) nodes.get(id);
+        for (final Map.Entry<String, Object> stringObjectEntry : nodes.entrySet()) {
+            final Map<String, Object> element = (Map<String, Object>) stringObjectEntry.getValue();
             if (element != null && filterNode(state, element, frame)) {
-                rval.put(id, element);
+                rval.put(stringObjectEntry.getKey(), element);
             }
         }
         return rval;
@@ -1678,13 +1678,13 @@ public class JsonLdApi {
                     if (s == null) {
                         s = newMap("@id", sid);
                     }
-                    for (final String prop : s.keySet()) {
+                    for (final Map.Entry<String, Object> stringObjectEntry : s.entrySet()) {
                         // copy keywords
-                        if (isKeyword(prop)) {
-                            ((Map<String, Object>) o).put(prop, JsonLdUtils.clone(s.get(prop)));
+                        if (isKeyword(stringObjectEntry.getKey())) {
+                            ((Map<String, Object>) o).put(stringObjectEntry.getKey(), JsonLdUtils.clone(stringObjectEntry.getValue()));
                             continue;
                         }
-                        embedValues(state, s, prop, o);
+                        embedValues(state, s, stringObjectEntry.getKey(), o);
                     }
                 }
                 addFrameOutput(state, output, property, o);
@@ -1852,8 +1852,8 @@ public class JsonLdApi {
         }
 
         // 4)
-        for (final String name : graphMap.keySet()) {
-            final Map<String, NodeMapNode> graph = graphMap.get(name);
+        for (final Map.Entry<String, Map<String, NodeMapNode>> stringMapEntry : graphMap.entrySet()) {
+            final Map<String, NodeMapNode> graph = stringMapEntry.getValue();
 
             // 4.1)
             if (!graph.containsKey(RDF_NIL)) {
@@ -1975,14 +1975,14 @@ public class JsonLdApi {
 
         final RDFDataset dataset = new RDFDataset(this);
 
-        for (final String graphName : nodeMap.keySet()) {
+        for (final Map.Entry<String, Object> stringObjectEntry : nodeMap.entrySet()) {
             // 4.1)
-            if (JsonLdUtils.isRelativeIri(graphName)) {
+            if (JsonLdUtils.isRelativeIri(stringObjectEntry.getKey())) {
                 continue;
             }
-            final Map<String, Object> graph = (Map<String, Object>) nodeMap.get(graphName);
+            final Map<String, Object> graph = (Map<String, Object>) stringObjectEntry.getValue();
             replaceBlankNode(graph);
-            dataset.graphToRDF(graphName, graph);
+            dataset.graphToRDF(stringObjectEntry.getKey(), graph);
         }
 
         return dataset;

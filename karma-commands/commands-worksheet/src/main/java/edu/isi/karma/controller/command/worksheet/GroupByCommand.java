@@ -189,8 +189,8 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 		newht.addHNode("Values", HNodeType.Transformation, newws, factory);
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", newws, factory);
 		CloneTableUtils.cloneHTable(newValueTable, newws, factory, valuehnodes, false);
-		for (String key : hash.keySet()) {
-			ArrayList<String> r = hash.get(key);
+		for (Entry<String, ArrayList<String>> stringArrayListEntry : hash.entrySet()) {
+			ArrayList<String> r = stringArrayListEntry.getValue();
 			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), newht, keyhnodes, factory, selection);
 			for (String rowid : r) {
 				Row cur = factory.getRow(rowid);
@@ -244,8 +244,8 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 				hash.put(hashValue, ids);
 			}	
 			
-			for (String key : hash.keySet()) {
-				ArrayList<String> r = hash.get(key);
+			for (Entry<String, ArrayList<String>> stringArrayListEntry : hash.entrySet()) {
+				ArrayList<String> r = stringArrayListEntry.getValue();
 				Node node = parentRow.getNeighbor(newNode.getId());
 				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), newht, keyhnodes, factory, selection);
 				for (String rowid : r) {

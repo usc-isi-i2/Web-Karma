@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
@@ -61,8 +62,8 @@ public class DataPreProcessor {
 				}
 			}
 		}
-		for (String key : xHashMap.keySet()) {
-			double[] value = xHashMap.get(key);
+		for (Entry<String, double[]> stringEntry : xHashMap.entrySet()) {
+			double[] value = stringEntry.getValue();
 			for (int i = 0; i < value.length; i++) {
 				if (maxvals[i] > minvals[i]) {
 					double tmpval = (value[i] - minvals[i])/(maxvals[i] - minvals[i]);
@@ -71,7 +72,7 @@ public class DataPreProcessor {
 					value[i] = 0;
 				}
 			}
-			xHashMap.put(key, value);
+			xHashMap.put(stringEntry.getKey(), value);
 		}
 	}
 	public HashMap<String, double[]> vectorize(Collection<String> data) {
@@ -91,8 +92,8 @@ public class DataPreProcessor {
 		// build singature for each feature
 		for (int i = 0; i < rfs.getFeatureNames().size(); i++) {
 			String sg = "";
-			for (String key : data.keySet()) {
-				sg += data.get(key)[i]+"\n";
+			for (Entry<String, double[]> stringEntry : data.entrySet()) {
+				sg += stringEntry.getValue()[i]+"\n";
 			}
 			if (signs.contains(sg)) {
 				toRemove.add(i);

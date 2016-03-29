@@ -75,9 +75,9 @@ public class ExampleCluster {
 			for (Vector<String[]> group : constraints) {
 				xHashSet2.add(constraintKey(group));
 			}
-			for (String k : xHashMap1.keySet()) {
-				if (!xHashSet2.contains(k)) {
-					constraints.add(xHashMap1.get(k));
+			for (Map.Entry<String, Vector<String[]>> stringVectorEntry : xHashMap1.entrySet()) {
+				if (!xHashSet2.contains(stringVectorEntry.getKey())) {
+					constraints.add(stringVectorEntry.getValue());
 				}
 			}
 			// update islegal ds
@@ -145,8 +145,8 @@ public class ExampleCluster {
 				for (int j = i + 1; j < pars.size(); j++) {
 					String key = getStringKey(pars.get(i), pars.get(j));
 					boolean good = true;
-					for (String k : legalParitions.keySet()) {
-						if (!legalParitions.get(k) && key.indexOf(k) != -1) {
+					for (Map.Entry<String, Boolean> stringBooleanEntry : legalParitions.entrySet()) {
+						if (!stringBooleanEntry.getValue() && key.indexOf(stringBooleanEntry.getKey()) != -1) {
 							good = false;
 							break;
 						}
@@ -236,8 +236,8 @@ public class ExampleCluster {
 				for (int j = i + 1; j < pars.size(); j++) {
 					String key = getStringKey(pars.get(i), pars.get(j));
 					boolean good = true;
-					for (String k : legalParitions.keySet()) {
-						if (!legalParitions.get(k) && key.indexOf(k) != -1) {
+					for (Map.Entry<String, Boolean> stringBooleanEntry : legalParitions.entrySet()) {
+						if (!stringBooleanEntry.getValue() && key.indexOf(stringBooleanEntry.getKey()) != -1) {
 							good = false;
 							break;
 						}
@@ -365,21 +365,21 @@ public class ExampleCluster {
 			 * p_index.orgUnlabeledData.add(val); }
 			 */
 		}
-		for (Partition key : testResult.keySet()) {
-			Map<?, ?> dicttmp = UtilTools.sortByComparator(testResult.get(key));
+		for (Map.Entry<Partition, HashMap<String, Double>> partitionHashMapEntry : testResult.entrySet()) {
+			Map<?, ?> dicttmp = UtilTools.sortByComparator(partitionHashMapEntry.getValue());
 			/** print unlabeled data **/
 			// System.out.println("Partition: " + key.label);
 			// ProgTracker.printUnlabeledData(dicttmp);
 			/****/
 			int cnt = 0;
 			for (Object xkey : dicttmp.keySet()) {
-				if (cnt < unlabelDataAmount * key.orgNodes.size()) {
+				if (cnt < unlabelDataAmount * partitionHashMapEntry.getKey().orgNodes.size()) {
 					if (exampleInputs.contains((String) xkey))// exclude
 																// examples from
 																// unlabeled
 																// data
 						continue;
-					key.orgUnlabeledData.add((String) xkey);
+					partitionHashMapEntry.getKey().orgUnlabeledData.add((String) xkey);
 					cnt++;
 				} else {
 					break;
@@ -443,8 +443,8 @@ public class ExampleCluster {
 			}
 			// calculate instance array
 			ArrayList<double[]> instances = new ArrayList<double[]>();
-			for (String s : string2Vector.keySet()) {
-				double[] elem = string2Vector.get(s);
+			for (Map.Entry<String, double[]> stringEntry : string2Vector.entrySet()) {
+				double[] elem = stringEntry.getValue();
 				instances.add(elem);
 			}
 			// calculate constraint array
@@ -524,8 +524,8 @@ public class ExampleCluster {
 
 	public double getCompScore(Partition a, Partition b, Vector<Partition> pars) {
 		String key = getStringKey(a, b);
-		for (String ekey : legalParitions.keySet()) {
-			if (key.indexOf(ekey) != -1 && !legalParitions.get(ekey)) {
+		for (Map.Entry<String, Boolean> stringBooleanEntry : legalParitions.entrySet()) {
+			if (key.indexOf(stringBooleanEntry.getKey()) != -1 && !stringBooleanEntry.getValue()) {
 				return Double.MAX_VALUE;
 			}
 		}
@@ -596,9 +596,8 @@ public class ExampleCluster {
 			return legalParitions.get(key);
 		}
 		// test whether its subset fails
-		for (String k : legalParitions.keySet()) {
-			if (!legalParitions.get(k) && iscovered(key, k)) // false
-			{
+		for (Map.Entry<String, Boolean> stringBooleanEntry : legalParitions.entrySet()) {
+			if (!stringBooleanEntry.getValue() && iscovered(key, stringBooleanEntry.getKey())) {
 				return false;
 			}
 		}
@@ -627,9 +626,8 @@ public class ExampleCluster {
 			return legalParitions.get(key);
 		}
 		// test whether its subset fails
-		for (String k : legalParitions.keySet()) {
-			if (!legalParitions.get(k) && key.indexOf(k) != -1) // false
-			{
+		for (Map.Entry<String, Boolean> stringBooleanEntry : legalParitions.entrySet()) {
+			if (!stringBooleanEntry.getValue() && key.indexOf(stringBooleanEntry.getKey()) != -1) {
 				return false;
 			}
 		}

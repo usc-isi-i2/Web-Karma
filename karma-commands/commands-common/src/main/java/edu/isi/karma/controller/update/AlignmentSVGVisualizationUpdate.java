@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -333,9 +334,9 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			HashMap<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
 			/** Identify the max height **/
 			int maxTreeHeight = 0;
-			for (Node node : nodeHeightsMap.keySet()) {
-				if (nodeHeightsMap.get(node) >= maxTreeHeight) {
-					maxTreeHeight = nodeHeightsMap.get(node);
+			for (Map.Entry<Node, Integer> nodeIntegerEntry : nodeHeightsMap.entrySet()) {
+				if (nodeIntegerEntry.getValue() >= maxTreeHeight) {
+					maxTreeHeight = nodeIntegerEntry.getValue();
 				}
 			}
 			/*** Add the nodes and the links from the Steiner tree ***/

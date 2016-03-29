@@ -292,8 +292,8 @@ public class UtilTools {
 		dict.put("\\'", "\\\\'");
 		dict.put("\\|", "\\\\|");
 		dict.put("\\\"", "\\\\\"");
-		for (String key : dict.keySet()) {
-			s = s.replaceAll(key, dict.get(key));
+		for (Entry<String, String> stringStringEntry : dict.entrySet()) {
+			s = s.replaceAll(stringStringEntry.getKey(), stringStringEntry.getValue());
 		}
 		return s;
 	}
@@ -425,9 +425,9 @@ public class UtilTools {
 				res.put(lab, x);
 			}
 		}
-		for (String key : res.keySet()) {
-			ArrayList<String[]> cdata = res.get(key);
-			File f = new File("./log/" + key + ".csv");
+		for (Entry<String, ArrayList<String[]>> stringArrayListEntry : res.entrySet()) {
+			ArrayList<String[]> cdata = stringArrayListEntry.getValue();
+			File f = new File("./log/" + stringArrayListEntry.getKey() + ".csv");
 			CSVWriter cWriter;
 			try {
 				cWriter = new CSVWriter(new FileWriter(f));

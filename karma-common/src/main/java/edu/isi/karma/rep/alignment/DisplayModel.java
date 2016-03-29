@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
@@ -89,13 +90,13 @@ public class DisplayModel {
 		List<Node> noSpanNodes = new ArrayList<>();
 		int maxLevel = getMaxLevel(true);
 		
-		for(Node n : nodesSpan.keySet()) {
-			if(nodesSpan.get(n).size() == 0) {
-				noSpanNodes.add(n);
+		for(Entry<Node, Set<ColumnNode>> nodeSetEntry : nodesSpan.entrySet()) {
+			if(nodeSetEntry.getValue().size() == 0) {
+				noSpanNodes.add(nodeSetEntry.getKey());
 			} else {
-				spanNodes.add(n);
+				spanNodes.add(nodeSetEntry.getKey());
 			}
-			nodesLevel.put(n, maxLevel - nodesLevel.get(n));
+			nodesLevel.put(nodeSetEntry.getKey(), maxLevel - nodesLevel.get(nodeSetEntry.getKey()));
 		}
 		
 		maxLevel = getMaxLevel(spanNodes);

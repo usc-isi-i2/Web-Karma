@@ -3,6 +3,7 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -387,19 +388,19 @@ public class Position implements GrammarTreeNode {
 		String reString3 = "";
 		SortedMap<Double, Vector<String>> sortedMap = new TreeMap<Double, Vector<String>>();
 		String negString = "";
-		for (String a : lMap.keySet()) {
-			for (String b : rMap.keySet()) {
-				if (a.compareTo(b) == 0 && a.compareTo("ANY") == 0)
+		for (Map.Entry<String, Double> stringDoubleEntry : lMap.entrySet()) {
+			for (Map.Entry<String, Double> stringDoubleEntry1 : rMap.entrySet()) {
+				if (stringDoubleEntry.getKey().compareTo(stringDoubleEntry1.getKey()) == 0 && stringDoubleEntry.getKey().compareTo("ANY") == 0)
 					continue;
-				Double key = lMap.get(a) + rMap.get(b);
+				Double key = stringDoubleEntry.getValue() + stringDoubleEntry1.getValue();
 				reString = String.format(
-						"indexOf(value,\'%s\',\'%s\',1*counter)", a, b);
+						"indexOf(value,\'%s\',\'%s\',1*counter)", stringDoubleEntry.getKey(), stringDoubleEntry1.getKey());
 				reString2 = String.format(
-						"indexOf(value,\'%s\',\'%s\',2*counter)", a, b);
+						"indexOf(value,\'%s\',\'%s\',2*counter)", stringDoubleEntry.getKey(), stringDoubleEntry1.getKey());
 				reString3 = String.format(
-						"indexOf(value,\'%s\',\'%s\',3*counter)", a, b);
+						"indexOf(value,\'%s\',\'%s\',3*counter)", stringDoubleEntry.getKey(), stringDoubleEntry1.getKey());
 				negString = String.format(
-						"indexOf(value,\'%s\',\'%s\',-1*counter)", a, b);
+						"indexOf(value,\'%s\',\'%s\',-1*counter)", stringDoubleEntry.getKey(), stringDoubleEntry1.getKey());
 				if (sortedMap.containsKey(key)) {
 					sortedMap.get(key).add(reString);
 					sortedMap.get(key).add(reString2);

@@ -2,6 +2,7 @@ package edu.isi.karma.cleaning.Correctness;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.isi.karma.cleaning.UtilTools;
 
@@ -46,9 +47,9 @@ public class FormatFunc implements VerificationFunc {
 			}
 		}
 		// find the means 
-		for(String key: tmp.keySet())
+		for(Map.Entry<String, ArrayList<TransRecord>> stringArrayListEntry : tmp.entrySet())
 		{
-			ArrayList<TransRecord> tdata = tmp.get(key);
+			ArrayList<TransRecord> tdata = stringArrayListEntry.getValue();
 			if(tdata.size() > 0 || tdata.get(0).features.length > 0)
 			{
 				ArrayList<double[]> tcl = new ArrayList<double[]>();
@@ -58,7 +59,7 @@ public class FormatFunc implements VerificationFunc {
 				}
 				double[] tmean = UtilTools.sum(tcl);
 				tmean = UtilTools.produce(1.0/tdata.size(), tmean);
-				cmeans.put(key, tmean);
+				cmeans.put(stringArrayListEntry.getKey(), tmean);
 				// find the max distances
 				// strictly bigger or smaller than [mean-3*delta, mean+3*delta]
 				double d_mean = 0;
@@ -74,7 +75,7 @@ public class FormatFunc implements VerificationFunc {
 				}
 				d_mu = Math.sqrt(d_mu/tdata.size());
 				double[] x = {d_mean,d_mu};
-				mean_var.put(key, x);
+				mean_var.put(stringArrayListEntry.getKey(), x);
 			}
 		}
 		

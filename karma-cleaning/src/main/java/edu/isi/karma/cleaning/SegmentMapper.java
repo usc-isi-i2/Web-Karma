@@ -2,6 +2,7 @@ package edu.isi.karma.cleaning;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.internalfunlibrary.InternalTransformationLibrary;
@@ -64,18 +65,18 @@ public class SegmentMapper {
 				groups.put(key, tmp);
 			}			
 		}
-		for(String key: groups.keySet()){
-			if(groups.get(key).size() <= 0 )
+		for(Map.Entry<String, ArrayList<Dataitem>> stringArrayListEntry : groups.entrySet()){
+			if(stringArrayListEntry.getValue().size() <= 0 )
 			{
 				continue;
 			}
 			Vector<int[]> kmappings = new Vector<int[]>();
-			for(Dataitem elem: groups.get(key)){
+			for(Dataitem elem: stringArrayListEntry.getValue()){
 				int[] xtmp = {elem.range[0], elem.range[1], elem.funcid};
 				kmappings.add(xtmp);
 			}
-			int start = groups.get(key).get(0).tarpos;
-			int end = groups.get(key).get(0).tarend;
+			int start = stringArrayListEntry.getValue().get(0).tarpos;
+			int end = stringArrayListEntry.getValue().get(0).tarend;
 			Segment seg = new Segment(start, end+1, kmappings, org, tar);
 			ret.add(seg);			
 		}

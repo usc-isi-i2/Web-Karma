@@ -44,8 +44,8 @@ public class Util {
 	public static HashMap<String, Double> sortHashMap(
 			HashMap<String, Double> input) {
 		Map<String, Double> tempMap = new HashMap<String, Double>();
-		for (String wsState : input.keySet()) {
-			tempMap.put(wsState, input.get(wsState));
+		for (Map.Entry<String, Double> stringDoubleEntry : input.entrySet()) {
+			tempMap.put(stringDoubleEntry.getKey(), stringDoubleEntry.getValue());
 		}
 
 		List<String> mapKeys = new ArrayList<String>(tempMap.keySet());

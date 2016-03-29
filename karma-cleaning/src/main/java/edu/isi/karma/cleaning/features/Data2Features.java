@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.slf4j.Logger;
@@ -76,17 +77,17 @@ public class Data2Features {
 					.size() + 1]);
 			attr_names[attr_names.length - 1] = "label";
 			writer.writeNext(attr_names);
-			for (String label : class2Records.keySet()) {
+			for (Map.Entry<String, Vector<String>> stringVectorEntry : class2Records.entrySet()) {
 
-				for (String Record : class2Records.get(label)) {
+				for (String Record : stringVectorEntry.getValue()) {
 					Vector<String> row = new Vector<String>();
-					Collection<Feature> cf = rf.computeFeatures(Record, label);
+					Collection<Feature> cf = rf.computeFeatures(Record, stringVectorEntry.getKey());
 					Feature[] x = cf.toArray(new Feature[cf.size()]);
 					// row.add(f.getName());
 					for (int k = 0; k < cf.size(); k++) {
 						row.add(String.valueOf(x[k].getScore()));
 					}
-					row.add(label); // change this according to the dataset.
+					row.add(stringVectorEntry.getKey()); // change this according to the dataset.
 					String[] dataEntry = row.toArray(new String[row.size()]);
 					writer.writeNext(dataEntry);
 				}

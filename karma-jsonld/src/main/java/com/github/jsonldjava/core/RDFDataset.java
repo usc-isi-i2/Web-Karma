@@ -423,15 +423,15 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         // And then leak to us the potential 'prefixes'
         final Map<String, String> prefixes = context.getPrefixes(true);
 
-        for (final String key : prefixes.keySet()) {
-            final String val = prefixes.get(key);
-            if ("@vocab".equals(key)) {
+        for (final Map.Entry<String, String> stringStringEntry : prefixes.entrySet()) {
+            final String val = stringStringEntry.getValue();
+            if ("@vocab".equals(stringStringEntry.getKey())) {
                 if (val == null || isString(val)) {
                     setNamespace("", val);
                 } else {
                 }
-            } else if (!isKeyword(key)) {
-                setNamespace(key, val);
+            } else if (!isKeyword(stringStringEntry.getKey())) {
+                setNamespace(stringStringEntry.getKey(), val);
                 // TODO: should we make sure val is a valid URI prefix (i.e. it
                 // ends with /# or ?)
                 // or is it ok that full URIs for terms are used?

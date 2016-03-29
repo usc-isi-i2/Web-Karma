@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -1035,9 +1036,9 @@ public class GraphBuilder {
 		int count = 1;
 		while (count != 0) {
 			count = 0;
-			for (String s : dependentUrisMap.keySet()) {
-				Set<String> temp = this.uriClosure.get(s);
-				Set<String> dependentUris = dependentUrisMap.get(s);
+			for (Map.Entry<String, Set<String>> stringSetEntry : dependentUrisMap.entrySet()) {
+				Set<String> temp = this.uriClosure.get(stringSetEntry.getKey());
+				Set<String> dependentUris = stringSetEntry.getValue();
 				for (String ss : dependentUris) {
 					if (!temp.contains(ss)) { temp.add(ss); count++;}
 					if (this.uriClosure.get(ss) != null) {

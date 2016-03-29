@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -364,16 +365,16 @@ public class Traces implements GrammarTreeNode {
 				}
 			}
 		}
-		for (Integer key : allLoops.keySet()) {
-			for (String subkey : allLoops.get(key).keySet()) {
+		for (Map.Entry<Integer, HashMap<String, Vector<Template>>> integerHashMapEntry : allLoops.entrySet()) {
+			for (String subkey : integerHashMapEntry.getValue().keySet()) {
 				Template xline = this
-						.consolidate(allLoops.get(key).get(subkey));
-				if (lLines.containsKey(key)) {
-					lLines.get(key).put(subkey, xline);
+						.consolidate(integerHashMapEntry.getValue().get(subkey));
+				if (lLines.containsKey(integerHashMapEntry.getKey())) {
+					lLines.get(integerHashMapEntry.getKey()).put(subkey, xline);
 				} else {
 					HashMap<String, Template> xHashMap = new HashMap<String, Template>();
 					xHashMap.put(subkey, xline);
-					lLines.put(key, xHashMap);
+					lLines.put(integerHashMapEntry.getKey(), xHashMap);
 				}
 
 			}
@@ -486,15 +487,15 @@ public class Traces implements GrammarTreeNode {
 				tmpStore.put(key, xHashMap);
 			}
 		}
-		for (Integer key : tmpStore.keySet()) {
-			for (String kInteger : tmpStore.get(key).keySet()) {
-				Template x = this.consolidate(tmpStore.get(key).get(kInteger));
-				if (resHashMap.containsKey(key)) {
-					resHashMap.get(key).put(kInteger, x);
+		for (Map.Entry<Integer, HashMap<String, Vector<Template>>> integerHashMapEntry : tmpStore.entrySet()) {
+			for (String kInteger : integerHashMapEntry.getValue().keySet()) {
+				Template x = this.consolidate(integerHashMapEntry.getValue().get(kInteger));
+				if (resHashMap.containsKey(integerHashMapEntry.getKey())) {
+					resHashMap.get(integerHashMapEntry.getKey()).put(kInteger, x);
 				} else {
 					HashMap<String, Template> hashMap = new HashMap<String, Template>();
 					hashMap.put(kInteger, x);
-					resHashMap.put(key, hashMap);
+					resHashMap.put(integerHashMapEntry.getKey(), hashMap);
 				}
 			}
 		}
@@ -517,10 +518,10 @@ public class Traces implements GrammarTreeNode {
 				tmpStore.put(key, xVector);
 			}
 		}
-		for (Integer key : tmpStore.keySet()) {
+		for (Map.Entry<Integer, Vector<Template>> integerVectorEntry : tmpStore.entrySet()) {
 			// System.out.println(""+tmpStore.get(key).toString());
-			Template x = this.consolidate(tmpStore.get(key));
-			resHashMap.put(key, x);
+			Template x = this.consolidate(integerVectorEntry.getValue());
+			resHashMap.put(integerVectorEntry.getKey(), x);
 		}
 		// System.out.println("end consolidating");
 		return resHashMap;
@@ -579,8 +580,8 @@ public class Traces implements GrammarTreeNode {
 				map.put(rep, vIntegers);
 			}
 		}
-		for (String key : map.keySet()) {
-			Vector<Integer> v = map.get(key);
+		for (Map.Entry<String, Vector<Integer>> stringVectorEntry : map.entrySet()) {
+			Vector<Integer> v = stringVectorEntry.getValue();
 			if (v.size() <= 1 || !this.verfiyLoop(v, curPath))
 				continue;
 			Vector<Vector<GrammarTreeNode>> vtn = this.detectLoop(v, curPath);
@@ -880,11 +881,11 @@ public class Traces implements GrammarTreeNode {
 
 	public void tracePrint() {
 		System.out.println("===============printing trace here===============");
-		for (Integer key : this.traceline.keySet()) {
-			System.out.println("" + traceline.get(key));
+		for (Map.Entry<Integer, Template> integerTemplateEntry : this.traceline.entrySet()) {
+			System.out.println("" + integerTemplateEntry.getValue());
 		}
-		for (Integer key : this.loopline.keySet()) {
-			System.out.println("" + loopline.get(key));
+		for (Map.Entry<Integer, HashMap<String, Template>> integerHashMapEntry : this.loopline.entrySet()) {
+			System.out.println("" + integerHashMapEntry.getValue());
 		}
 	}
 	public void emptyState() {
