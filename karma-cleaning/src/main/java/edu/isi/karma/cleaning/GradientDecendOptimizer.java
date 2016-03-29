@@ -198,7 +198,7 @@ public class GradientDecendOptimizer {
 				{
 					offset += individualExps.get(x).size();
 				}
-				offset = offset/ (individualExps.size());
+				offset = offset/ individualExps.size();
 				//String sx = String.format("s: %d, t: %d,nG: %f, relative: %f, offset:%f", s.size(), t.size(),(negtiveCnt*1.0/gradient.length), this.relativeCoef,offset );
 			}
 			int wcnt = 0;
