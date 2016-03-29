@@ -47,12 +47,9 @@ public abstract class KarmaUserMetadata extends KarmaMetadata{
 		{
 			throw new KarmaException("Directory provided is actually a file!" + metadataDirPath);
 		}
-		if(!metadataDir.exists())
+		if(!metadataDir.exists() && !metadataDir.mkdirs())
 		{
-			if(!metadataDir.mkdirs())
-			{
-				throw new KarmaException("Unable to create directory for metadata! " + metadataDirPath);
-			}
+			throw new KarmaException("Unable to create directory for metadata! " + metadataDirPath);
 		}
 	}
 	protected void createFile(

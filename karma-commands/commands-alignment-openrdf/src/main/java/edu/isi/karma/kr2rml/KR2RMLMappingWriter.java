@@ -380,9 +380,8 @@ public class KR2RMLMappingWriter {
 				boolean isUri = false;
 				
 				for (TemplateTerm term:objTermSet.getAllTerms()) {
-					if (term instanceof StringTemplateTerm) {
-						if(((StringTemplateTerm)term).hasFullUri())
-							isUri = true;
+					if (term instanceof StringTemplateTerm && ((StringTemplateTerm)term).hasFullUri()) {
+						isUri = true;
 					}
 				}
 						
