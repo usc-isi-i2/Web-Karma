@@ -19,7 +19,7 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class KR2RMLConfiguration {
 	private static final Logger logger = LoggerFactory.getLogger(KR2RMLConfiguration.class);
 	private static Properties properties;
-	private static final String newLine = System.getProperty("line.separator").toString();
+	private static final String newLine = System.getProperty("line.separator");
 	private static String defaultKR2RMLProperties = "template.terms.no.minimum.for.blank.nodes=false"+ newLine;
 	
 	// WK-226 Adds the ability to generate blank nodes with out satisfying any column terms
