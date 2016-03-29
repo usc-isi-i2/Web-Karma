@@ -86,7 +86,7 @@ public class FormatFunc implements VerificationFunc {
 		//difference STRICTLY bigger than 2 standard deviations [68, 95, 99.7] rule
 		if(Math.abs(dist - mean_var.get(record.label)[0]) > 2.0*mean_var.get(record.label)[1])
 		{
-			return this.funid+"";
+			return String.valueOf(this.funid);
 		}
 		return "0";
 	}

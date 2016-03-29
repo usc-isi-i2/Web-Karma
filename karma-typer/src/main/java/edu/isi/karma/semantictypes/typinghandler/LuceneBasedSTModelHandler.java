@@ -320,15 +320,15 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		ArrayList<String> allowed = new ArrayList<String>();
 		// Adding A-Z
 		for (int c = 65; c <= 90; c++) {
-			allowed.add(new Character((char) c).toString());
+			allowed.add(String.valueOf((char) c));
 		}
 		// Adding a-z
 		for (int c = 97; c <= 122; c++) {
-			allowed.add(new Character((char) c).toString());
+			allowed.add(String.valueOf((char) c));
 		}
 		// Adding 0-9
 		for (int c = 48; c <= 57; c++) {
-			allowed.add(new Character((char) c).toString());
+			allowed.add(String.valueOf((char) c));
 		}
 		allowed.add(" "); // adding space
 		allowed.add("."); // adding dot
