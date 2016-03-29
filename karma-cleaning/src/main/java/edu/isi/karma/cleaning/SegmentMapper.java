@@ -18,6 +18,9 @@ class Dataitem {
 public class SegmentMapper {
 	public static InternalTransformationLibrary itfl = new InternalTransformationLibrary();
 
+	private SegmentMapper() {
+	}
+
 	// only try to find one segment whose starting pos in target is pos
 	public static Vector<Segment> findMapping(Vector<TNode> org,
 			Vector<TNode> tar, int pos) {

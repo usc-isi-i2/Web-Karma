@@ -47,6 +47,9 @@ public class GraphVizUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphVizUtil.class);
 
+	private GraphVizUtil() {
+	}
+
 	private static double roundDecimals(double d, int k) {
 		String format = "";
 		for (int i = 0; i < k; i++) format += "#";
@@ -141,9 +144,8 @@ public class GraphVizUtil {
 			if (e instanceof LabeledLink) {
 				modelIds = ((LabeledLink)e).getModelIds();
 			}
-			if (onlyAddPatterns)
-				if (modelIds == null || modelIds.isEmpty())
-					continue;
+			if (onlyAddPatterns && (modelIds == null || modelIds.isEmpty()))
+				continue;
 			
 			Node source = e.getSource();
 			Node target = e.getTarget();

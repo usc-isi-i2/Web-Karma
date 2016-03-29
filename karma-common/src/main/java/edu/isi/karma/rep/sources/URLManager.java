@@ -41,7 +41,7 @@ public class URLManager {
 
 	static Logger logger = LoggerFactory.getLogger(URLManager.class);
 
-	public URLManager() {
+	private URLManager() {
 		
 	}
 

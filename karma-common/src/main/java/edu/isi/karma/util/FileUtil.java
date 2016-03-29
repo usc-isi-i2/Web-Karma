@@ -53,6 +53,9 @@ public class FileUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
+    private FileUtil() {
+    }
+
     static public File downloadFileFromHTTPRequest(HttpServletRequest request, String destinationDirString) {
         // Download the file to the upload file folder
     	

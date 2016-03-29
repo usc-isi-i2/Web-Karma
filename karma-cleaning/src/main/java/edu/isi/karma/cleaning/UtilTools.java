@@ -25,6 +25,9 @@ public class UtilTools {
 	public static int index = 0;
 	public static Vector<String> results = new Vector<String>();
 
+	private UtilTools() {
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map sortByComparator(Map unsortMap) {
 		List list = new LinkedList(unsortMap.entrySet());
@@ -330,10 +333,8 @@ public class UtilTools {
 				String k = t.text;
 				k = k.replaceAll("[0-9]+", "DIGITs");
 				// filter punctuation
-				if (k.trim().length() == 1) {
-					if (!Character.isLetterOrDigit(k.charAt(0))) {
-						continue;
-					}
+				if (k.trim().length() == 1 && !Character.isLetterOrDigit(k.charAt(0))) {
+					continue;
 				}
 				if (k.trim().length() == 0)
 					continue;

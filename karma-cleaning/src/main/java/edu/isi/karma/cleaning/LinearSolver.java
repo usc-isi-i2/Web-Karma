@@ -12,6 +12,9 @@ import org.apache.commons.math.optimization.linear.Relationship;
 import org.apache.commons.math.optimization.linear.SimplexSolver;
 
 public class LinearSolver {
+	private LinearSolver() {
+	}
+
 	public static void main(String[] args) {
 		//add residue to objective function
 		LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {-3,-3,4,0,0,0

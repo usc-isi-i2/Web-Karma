@@ -24,6 +24,9 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 
 public class KR2RMLColumnNameFormatterFactory {
 
+	private KR2RMLColumnNameFormatterFactory() {
+	}
+
 	public static KR2RMLColumnNameFormatter getFormatter(SourceTypes sourceType)
 	{
 		switch(sourceType)

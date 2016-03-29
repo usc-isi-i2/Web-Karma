@@ -35,7 +35,10 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 public class TemplateTermSetBuilder {
 
 	private static Logger logger = LoggerFactory.getLogger(TemplateTermSetBuilder.class);
-	
+
+	private TemplateTermSetBuilder() {
+	}
+
 	public static TemplateTermSet constructTemplateTermSetFromR2rmlTemplateString(
 			String templStr) throws JSONException {
 		return constructTemplateTermSetFromR2rmlTemplateString(templStr, KR2RMLColumnNameFormatterFactory.getFormatter(SourceTypes.CSV));

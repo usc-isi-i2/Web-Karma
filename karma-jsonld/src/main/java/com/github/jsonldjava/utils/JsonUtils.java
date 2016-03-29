@@ -49,6 +49,9 @@ public class JsonUtils {
         JSON_FACTORY.disable(JsonFactory.Feature.CANONICALIZE_FIELD_NAMES);
     }
 
+    private JsonUtils() {
+    }
+
     /**
      * Parses a JSON-LD document from the given {@link InputStream} to an object
      * that can be used as input for the {@link JsonLdApi} and

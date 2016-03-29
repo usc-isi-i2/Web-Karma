@@ -104,7 +104,7 @@ public class ViewFunc implements VerificationFunc {
 				equviViews.add(lviews);
 			}
 			cnt++;
-			views.put(cnt+"", equviViews);
+			views.put(String.valueOf(cnt), equviViews);
 		}
 		
 		

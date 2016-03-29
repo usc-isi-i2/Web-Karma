@@ -14,7 +14,7 @@ import java.util.TreeSet;
  *
  */
 
-public class LoosePath extends SteinerSubTree {
+public class LoosePath extends SteinerSubTree implements Cloneable {
 	
 	//list of steiner nodes belonging to this loose path
 	protected LinkedList<SteinerNode> pathNodes;

@@ -11,7 +11,10 @@ import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.CommandHistory.HistoryArguments;
 
 public class HistoryJsonUtil {
-	
+
+	private HistoryJsonUtil() {
+	}
+
 	public enum ClientJsonKeys {
 		isPrimary, name, value, type, SemanticType, id, children
 	}

@@ -128,6 +128,9 @@ curl --request POST --data 'R2rmlURI=file:/Users/karma/karma-files/schedule-mode
 | R2rmlURI  | URI of the R2RML Model | Yes |
 | ContentType | Type of the data: CSV, JSON, XML or EXCEL | Yes |
 | DataURL | URL of the Data or Data Service | Yes, either RawData or DataURL need to be provided |
+| ContextURL | URL of the Context file | No, if not provided, a context will be created from the r2rml model |
+| RDFGenerationRoot | Root of the graph from where the rdf/json should be generated | No, if not provided, a root will be automatically selected. This can go wrong, if the graph has cycles |
+| RDFGenerationSelection | RDF Generation strategy | No, if not provided, a default strategy will be selected |
 | RawData | Raw CSV/JSON or XML Content | Yes, either RawData or DataURL need to be provided |
 | Encoding | Encoding of the data | No, if not provided, Karma will auto-detect the encoding |
 | MaxNumLines | Maxinum number of lines or objects to import. -1 to import all | No, defaults to -1 to import all |

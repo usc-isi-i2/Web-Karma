@@ -1,7 +1,11 @@
 Karma: A Data Integration Tool
 ================================
 
-**08 May 2014:** Check out the [step by step Karma tutorial.](https://github.com/InformationIntegrationGroup/karma-step-by-step)
+**26 April 2015:** Check out the new Karma tutorial at https://github.com/szeke/karma-tcdl-tutorial
+
+The older tutorial is at https://github.com/usc-isi-i2/karma-step-by-step
+
+Check out our [DIG web site](http://usc-isi-i2.github.io/dig/), where we use Karma extensively to process > 50M web pages.
 
 ## Quick Tidbits for Our Current Users
 - Installation script changed in April 2014: after download, run `mvn clean install` in the download folder.

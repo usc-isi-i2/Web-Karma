@@ -597,11 +597,9 @@ public class ExampleCluster {
 		}
 		// test whether its subset fails
 		for (String k : legalParitions.keySet()) {
-			if (!legalParitions.get(k)) // false
+			if (!legalParitions.get(k) && iscovered(key, k)) // false
 			{
-				if (iscovered(key, k)) {
-					return false;
-				}
+				return false;
 			}
 		}
 		ProgramAdaptator pAdapter = new ProgramAdaptator(contextId);
@@ -630,11 +628,9 @@ public class ExampleCluster {
 		}
 		// test whether its subset fails
 		for (String k : legalParitions.keySet()) {
-			if (!legalParitions.get(k)) // false
+			if (!legalParitions.get(k) && key.indexOf(k) != -1) // false
 			{
-				if (key.indexOf(k) != -1) {
-					return false;
-				}
+				return false;
 			}
 		}
 		Vector<Partition> xPar = new Vector<Partition>();
