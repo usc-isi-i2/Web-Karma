@@ -43,7 +43,10 @@ public class ServiceTableUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(ServiceTableUtil.class);
 
-	
+	private ServiceTableUtil() {
+	}
+
+
 	public static void populateEmptyWorksheet(Table table, Worksheet worksheet, RepFactory factory) {
 
 		logger.info("Populating an empty worksheet with the service data ...");

@@ -11,7 +11,10 @@ public class JSONLDUtil {
 	static {
 		comparator =  new JSONLDReducerComparator();
 	}
-	
+
+	private JSONLDUtil() {
+	}
+
 	public static JSONObject mergeJSONObjects(Iterator<String> iterator) {
 
 		JSONObject accumulatorObject = new JSONObject();

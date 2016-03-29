@@ -45,6 +45,9 @@ import org.json.XML;
 
 
 public class HTTPUtil {
+	private HTTPUtil() {
+	}
+
 	public enum HTTP_METHOD {
 		GET, POST, PUT, DELETE, HEAD
 	}

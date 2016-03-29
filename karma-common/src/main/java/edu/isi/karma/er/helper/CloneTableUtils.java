@@ -16,7 +16,10 @@ import edu.isi.karma.rep.Table;
 import edu.isi.karma.rep.Worksheet;
 
 public class CloneTableUtils {
-	
+
+	private CloneTableUtils() {
+	}
+
 	public static Map<String, String> cloneHTable(HTable newHTable, Worksheet newWorksheet, RepFactory factory, List<HNode> hNodes, boolean isFirst) {
 		Collections.sort(hNodes);
 		Map<String, String> tmp = new HashMap<>();

@@ -47,6 +47,9 @@ public class GraphVizUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphVizUtil.class);
 
+	private GraphVizUtil() {
+	}
+
 	private static double roundDecimals(double d, int k) {
 		String format = "";
 		for (int i = 0; i < k; i++) format += "#";

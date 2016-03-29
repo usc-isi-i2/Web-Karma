@@ -30,6 +30,9 @@ import edu.isi.karma.modeling.research.Params;
 
 public class ModelReader {
 
+	private ModelReader() {
+	}
+
 	public static void main(String[] args) throws Exception {
 		
 		List<SemanticModel> semanticModels = null;

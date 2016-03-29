@@ -24,6 +24,10 @@ public class KR2RMLWorksheetHistoryCompatibilityVerifier {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(KR2RMLWorksheetHistoryCompatibilityVerifier.class);
+
+	private KR2RMLWorksheetHistoryCompatibilityVerifier() {
+	}
+
 	public static boolean verify(Workspace workspace, String historyJsonStr) {
 		boolean isR2RMLCompatible = true;
 		if(null != historyJsonStr && !historyJsonStr.isEmpty())
