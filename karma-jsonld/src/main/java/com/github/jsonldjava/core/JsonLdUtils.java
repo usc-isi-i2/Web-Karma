@@ -48,9 +48,9 @@ public class JsonLdUtils {
             if (m1.size() != m2.size()) {
                 return false;
             }
-            for (final String key : m1.keySet()) {
-                if (!m2.containsKey(key)
-                        || !deepCompare(m1.get(key), m2.get(key), listOrderMatters)) {
+            for (final Map.Entry<String, Object> stringObjectEntry : m1.entrySet()) {
+                if (!m2.containsKey(stringObjectEntry.getKey())
+                        || !deepCompare(stringObjectEntry.getValue(), m2.get(stringObjectEntry.getKey()), listOrderMatters)) {
                     return false;
                 }
             }

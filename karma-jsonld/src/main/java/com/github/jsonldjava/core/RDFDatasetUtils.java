@@ -27,8 +27,8 @@ public class RDFDatasetUtils {
     @Deprecated
     static List<Object> graphToRDF(Map<String, Object> graph, UniqueNamer namer) {
         final List<Object> rval = new ArrayList<Object>();
-        for (final String id : graph.keySet()) {
-            final Map<String, Object> node = (Map<String, Object>) graph.get(id);
+        for (final Map.Entry<String, Object> stringObjectEntry : graph.entrySet()) {
+            final Map<String, Object> node = (Map<String, Object>) stringObjectEntry.getValue();
             final List<String> properties = new ArrayList<String>(node.keySet());
             Collections.sort(properties);
             for (String property : properties) {
@@ -42,12 +42,12 @@ public class RDFDatasetUtils {
                 for (final Object item : (List<Object>) items) {
                     // RDF subjects
                     final Map<String, Object> subject = newMap();
-                    if (id.indexOf("_:") == 0) {
+                    if (stringObjectEntry.getKey().indexOf("_:") == 0) {
                         subject.put("type", "blank node");
-                        subject.put("value", namer.getName(id));
+                        subject.put("value", namer.getName(stringObjectEntry.getKey()));
                     } else {
                         subject.put("type", "IRI");
-                        subject.put("value", id);
+                        subject.put("value", stringObjectEntry.getKey());
                     }
 
                     // RDF predicates

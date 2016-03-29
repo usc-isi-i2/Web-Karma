@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.perf4j.StopWatch;
@@ -459,8 +460,8 @@ public class ProgramAdaptator {
 			HashMap<Integer, Template> tmpts = wSpace.traceline;
 			Vector<GrammarTreeNode> groundTruth = pat.groundTruth;
 			ArrayList<Path> allPaths = new ArrayList<Path>();
-			for (Integer len : tmpts.keySet()) {
-				Vector<GrammarTreeNode> tBody = tmpts.get(len).body;
+			for (Map.Entry<Integer, Template> integerTemplateEntry : tmpts.entrySet()) {
+				Vector<GrammarTreeNode> tBody = integerTemplateEntry.getValue().body;
 				ArrayList<Path> paths = extractPath(tBody, tarStrings, tarSegs, evalNewExp);
 				for(Path p: paths)
 				{
@@ -698,13 +699,13 @@ public class ProgramAdaptator {
 		String prog = "";
 		//most compatible program
 		int msize = -1;
-		for(String key: exp2Prog.keySet())
+		for(Map.Entry<String, String> stringStringEntry : exp2Prog.entrySet())
 		{
-			int sz = key.split("\\*").length;
-			if(sz > msize &&UtilTools.iscovered(key, subkey))
+			int sz = stringStringEntry.getKey().split("\\*").length;
+			if(sz > msize &&UtilTools.iscovered(stringStringEntry.getKey(), subkey))
 			{
 				msize = sz;
-				prog = exp2Prog.get(key);
+				prog = stringStringEntry.getValue();
 			}
 		}
 		return prog;

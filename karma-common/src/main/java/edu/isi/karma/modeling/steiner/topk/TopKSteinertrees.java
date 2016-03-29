@@ -56,11 +56,11 @@ public abstract class TopKSteinertrees {
 		for(SteinerNode n: graph.keySet()){
 			fw.write(nodeToId.get(n.name())+" "+"0.0 "+nodeToId.get(n.name())+" \n");
 		}
-		for(SteinerNode n: graph.keySet()){
-			for(SteinerEdge e: graph.get(n)){
-				if(nodeToId.get(n.name())==null) nodeToId.put(n.name(),1);
-				fw.write(nodeToId.get(n.name())+" "
-						+nodeToId.get(n.getNeighborInEdge(e).name())+" "+e.weight()+"\n");
+		for(Map.Entry<SteinerNode, TreeSet<SteinerEdge>> steinerNodeTreeSetEntry : graph.entrySet()){
+			for(SteinerEdge e: steinerNodeTreeSetEntry.getValue()){
+				if(nodeToId.get(steinerNodeTreeSetEntry.getKey().name())==null) nodeToId.put(steinerNodeTreeSetEntry.getKey().name(),1);
+				fw.write(nodeToId.get(steinerNodeTreeSetEntry.getKey().name())+" "
+						+nodeToId.get(steinerNodeTreeSetEntry.getKey().getNeighborInEdge(e).name())+" "+e.weight()+"\n");
 			}
 		}
 		fw.close();
@@ -90,10 +90,10 @@ public abstract class TopKSteinertrees {
 		
 		FileWriter fw= new FileWriter(folder+fileName+"STAR.txt");
 		TreeSet<SteinerEdge> ts = new TreeSet<SteinerEdge>();
-		for(SteinerNode n: graph.keySet()){
-			for(SteinerEdge e: graph.get(n)){
+		for(Map.Entry<SteinerNode, TreeSet<SteinerEdge>> steinerNodeTreeSetEntry : graph.entrySet()){
+			for(SteinerEdge e: steinerNodeTreeSetEntry.getValue()){
 				if(ts.contains(e))continue;
-				fw.write(e.getEdgeLabel()+" : "+e.weight()+" : "+n.name()+" : "+n.getNeighborInEdge(e).name()+" : "+e.sourceNode.equals(n)+"\n");
+				fw.write(e.getEdgeLabel()+" : "+e.weight()+" : "+ steinerNodeTreeSetEntry.getKey().name()+" : "+ steinerNodeTreeSetEntry.getKey().getNeighborInEdge(e).name()+" : "+e.sourceNode.equals(steinerNodeTreeSetEntry.getKey())+"\n");
 				ts.add(e);
 			}
 		}

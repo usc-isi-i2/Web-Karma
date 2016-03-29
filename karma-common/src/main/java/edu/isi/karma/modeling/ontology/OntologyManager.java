@@ -556,9 +556,9 @@ public class OntologyManager  {
 		Map<String, String> nsMap = ontHandler.getOntModel().getNsPrefixMap();
 		Map<String, String> prefixMap = new HashMap<String, String>();
 		
-		for(String ns: nsMap.keySet()) {
-			if (!ns.equals("") && !prefixMap.containsKey(nsMap.get(ns)))
-				prefixMap.put(nsMap.get(ns), ns);
+		for(Map.Entry<String, String> stringStringEntry : nsMap.entrySet()) {
+			if (!stringStringEntry.getKey().equals("") && !prefixMap.containsKey(stringStringEntry.getValue()))
+				prefixMap.put(stringStringEntry.getValue(), stringStringEntry.getKey());
 		}
 		return prefixMap;
 	}

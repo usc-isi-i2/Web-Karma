@@ -163,33 +163,33 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
 
         // process refs (nesting referenced bnodes if only one reference to them
         // in the whole graph)
-        for (final String id : refs.keySet()) {
+        for (final Entry<String, List<Object>> stringListEntry : refs.entrySet()) {
             // skip items if there is more than one reference to them in the
             // graph
-            if (refs.get(id).size() > 1) {
+            if (stringListEntry.getValue().size() > 1) {
                 continue;
             }
 
             // otherwise embed them into the referenced location
-            Object object = ttl.remove(id);
-            if (collections.containsKey(id)) {
+            Object object = ttl.remove(stringListEntry.getKey());
+            if (collections.containsKey(stringListEntry.getKey())) {
                 object = new LinkedHashMap<String, List<Object>>();
                 final List<Object> tmp = new ArrayList<Object>();
-                tmp.add(collections.remove(id));
+                tmp.add(collections.remove(stringListEntry.getKey()));
                 ((HashMap<String, Object>) object).put(COLS_KEY, tmp);
             }
-            final List<Object> predicate = (List<Object>) refs.get(id).get(0);
+            final List<Object> predicate = (List<Object>) stringListEntry.getValue().get(0);
             // replace the one bnode ref with the object
-            predicate.set(predicate.lastIndexOf(id), object);
+            predicate.set(predicate.lastIndexOf(stringListEntry.getKey()), object);
         }
 
         // replace the rest of the collections
-        for (final String id : collections.keySet()) {
-            final Map<String, List<Object>> subj = ttl.get(id);
+        for (final Entry<String, List<Object>> stringListEntry : collections.entrySet()) {
+            final Map<String, List<Object>> subj = ttl.get(stringListEntry.getKey());
             if (!subj.containsKey(COLS_KEY)) {
                 subj.put(COLS_KEY, new ArrayList<Object>());
             }
-            subj.get(COLS_KEY).add(collections.get(id));
+            subj.get(COLS_KEY).add(stringListEntry.getValue());
         }
 
         // build turtle output
@@ -361,11 +361,11 @@ public class TurtleTripleCallback implements JsonLdTripleCallback {
             // return the bnode id
             return uri;
         }
-        for (final String prefix : availableNamespaces.keySet()) {
-            if (uri.startsWith(prefix)) {
-                usedNamespaces.add(prefix);
+        for (final Entry<String, String> stringStringEntry : availableNamespaces.entrySet()) {
+            if (uri.startsWith(stringStringEntry.getKey())) {
+                usedNamespaces.add(stringStringEntry.getKey());
                 // return the prefixed URI
-                return availableNamespaces.get(prefix) + ":" + uri.substring(prefix.length());
+                return stringStringEntry.getValue() + ":" + uri.substring(stringStringEntry.getKey().length());
             }
         }
         // return the full URI

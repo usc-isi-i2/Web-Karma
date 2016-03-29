@@ -217,9 +217,9 @@ public class CommandHistory {
 			}
 		}
 
-		for(String worksheetId : comMap.keySet()) {
-			JSONArray comms = comMap.get(worksheetId);
-			historySaver.saveHistory(workspaceId, worksheetId, comms);
+		for(Map.Entry<String, JSONArray> stringJSONArrayEntry : comMap.entrySet()) {
+			JSONArray comms = stringJSONArrayEntry.getValue();
+			historySaver.saveHistory(workspaceId, stringJSONArrayEntry.getKey(), comms);
 		}
 	}
 

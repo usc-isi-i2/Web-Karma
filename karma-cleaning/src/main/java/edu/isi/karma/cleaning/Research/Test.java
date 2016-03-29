@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -1023,9 +1024,9 @@ public class Test {
 
 	public static void hashResultPrint(HashMap<String, Vector<String>> res) {
 		String s = "";
-		for (String key : res.keySet()) {
-			s += "==============" + key + "=============\n";
-			for (String value : res.get(key)) {
+		for (Map.Entry<String, Vector<String>> stringVectorEntry : res.entrySet()) {
+			s += "==============" + stringVectorEntry.getKey() + "=============\n";
+			for (String value : stringVectorEntry.getValue()) {
 				s += value + "\n";
 			}
 		}

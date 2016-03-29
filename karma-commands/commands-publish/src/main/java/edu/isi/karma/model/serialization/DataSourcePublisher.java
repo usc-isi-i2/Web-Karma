@@ -166,9 +166,9 @@ public class DataSourcePublisher extends SourcePublisher {
 		// Add source information if any present
 		if(sourceInfo != null) {
 			Map<InfoAttribute, String> attributeValueMap = sourceInfo.getAttributeValueMap();
-			for (InfoAttribute attr : attributeValueMap.keySet()) {
-				Property attrProp = model.createProperty(Namespaces.KARMA, "hasSourceInfo_" + attr.name());
-				my_source.addProperty(attrProp, attributeValueMap.get(attr));
+			for (Map.Entry<InfoAttribute, String> infoAttributeStringEntry : attributeValueMap.entrySet()) {
+				Property attrProp = model.createProperty(Namespaces.KARMA, "hasSourceInfo_" + infoAttributeStringEntry.getKey().name());
+				my_source.addProperty(attrProp, infoAttributeStringEntry.getValue());
 			}
 		}
 		

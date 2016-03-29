@@ -3,6 +3,7 @@ package edu.isi.karma.cleaning;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Vector;
 
 import org.perf4j.StopWatch;
@@ -155,10 +156,10 @@ public class ProgSynthesis {
 			return legalParitions.get(key);
 		}
 		// test whether its subset fails
-		for (String k : legalParitions.keySet()) {
-			if (!legalParitions.get(k)) // false
+		for (Map.Entry<String, Boolean> stringBooleanEntry : legalParitions.entrySet()) {
+			if (!stringBooleanEntry.getValue()) // false
 			{
-				if (key.indexOf(k) != -1) {
+				if (key.indexOf(stringBooleanEntry.getKey()) != -1) {
 					return false;
 				}
 			}

@@ -21,6 +21,7 @@
 package edu.isi.karma.modeling.alignment;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.isi.karma.modeling.ontology.OntologyManager;
@@ -49,9 +50,9 @@ public class AlignmentManager {
 	}
 	
 	public String getAlignmentId(Alignment alignment) {
-		for(String id: alignmentMap.keySet()) {
-			if(alignmentMap.get(id) == alignment)
-				return id;
+		for(Map.Entry<String, Alignment> stringAlignmentEntry : alignmentMap.entrySet()) {
+			if(stringAlignmentEntry.getValue() == alignment)
+				return stringAlignmentEntry.getKey();
 		}
 		return null;
 	}

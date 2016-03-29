@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.Partition;
@@ -60,9 +61,9 @@ public class Prober {
 			res += String.format("%s   %s\n", x[0], x[1]);
 		}
 		
-		for(String k:dics.keySet())
+		for(Map.Entry<String, String> stringStringEntry : dics.entrySet())
 		{
-			System.out.println("dict: "+String.format("%s, %s", k, dics.get(k)));
+			System.out.println("dict: "+String.format("%s, %s", stringStringEntry.getKey(), stringStringEntry.getValue()));
 		}
 		for(Patcher p:errNodes)
 		{

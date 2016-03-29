@@ -22,6 +22,7 @@ package edu.isi.karma.rep.cleaning;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.JSONObject;
@@ -92,10 +93,10 @@ public class RamblerValueCollection implements ValueCollection {
 		{
 			JSONObject jb = new JSONObject();
 			Set<String> ss = data.keySet();
-			for(String key:ss)
+			for(Map.Entry<String, String> stringStringEntry : data.entrySet())
 			{
-				String val = data.get(key);
-				jb.put(key, val);
+				String val = stringStringEntry.getValue();
+				jb.put(stringStringEntry.getKey(), val);
 			}
 			return jb;
 		}
@@ -109,9 +110,9 @@ public class RamblerValueCollection implements ValueCollection {
 	{
 		String result = "";
 		Set<String> res = data.keySet();
-		for(String s:res)
+		for(Map.Entry<String, String> stringStringEntry : data.entrySet())
 		{
-			result += data.get(s);
+			result += stringStringEntry.getValue();
 			result += " ";
 		}
 		return result;

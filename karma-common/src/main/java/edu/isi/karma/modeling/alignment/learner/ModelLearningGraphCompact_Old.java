@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -89,14 +90,14 @@ public class ModelLearningGraphCompact_Old extends ModelLearningGraph {
 			}
 		}
 		
-		for (String uri : uriCount.keySet()) {
-			int modelNodeCount = uriCount.get(uri);
-			Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(uri);
+		for (Map.Entry<String, Integer> stringIntegerEntry : uriCount.entrySet()) {
+			int modelNodeCount = stringIntegerEntry.getValue();
+			Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(stringIntegerEntry.getKey());
 			int graphNodeCount = matchedNodes == null ? 0 : matchedNodes.size();
 			
 			for (int i = 0; i < modelNodeCount - graphNodeCount; i++) {
-				String id = this.nodeIdFactory.getNodeId(uri);
-				Node n = new InternalNode(id, new Label(uri));
+				String id = this.nodeIdFactory.getNodeId(stringIntegerEntry.getKey());
+				Node n = new InternalNode(id, new Label(stringIntegerEntry.getKey()));
 				if (this.graphBuilder.addNode(n))
 					addedNodes.add((InternalNode)n);
 			}

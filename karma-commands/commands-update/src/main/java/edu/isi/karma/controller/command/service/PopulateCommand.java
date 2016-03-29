@@ -220,8 +220,8 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		Map<String, String> attIdToValue = null;
 		for (int i = 0; i < rows.size(); i++) {
 			attIdToValue = new HashMap<String, String>();
-			for (String serviceAttId : serviceToSourceAttMapping.keySet()) {
-				String sourceAttId = serviceToSourceAttMapping.get(serviceAttId);
+			for (Map.Entry<String, String> stringStringEntry : serviceToSourceAttMapping.entrySet()) {
+				String sourceAttId = stringStringEntry.getValue();
 				Attribute sourceAtt = source.getAttribute(sourceAttId);
 				if (sourceAtt == null) {
 //					logger.debug("Cannot find the source attribute with the id " + sourceAttId);
@@ -235,7 +235,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 				
 				String value = rows.get(i).getNode(hNodeId).getValue().asString().trim();
 				
-				attIdToValue.put(serviceAttId, value);
+				attIdToValue.put(stringStringEntry.getKey(), value);
 				
 			}
 			String urlString = service.getPopulatedAddress(attIdToValue, null);

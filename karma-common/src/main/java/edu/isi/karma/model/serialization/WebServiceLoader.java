@@ -306,10 +306,10 @@ public class WebServiceLoader extends SourceLoader
 		if (serviceIdsAndMappings == null)
 			return null;
 		
-		for (String serviceId : serviceIdsAndMappings.keySet()) {
-			Model m = Repository.Instance().getNamedModel(serviceId);
+		for (Map.Entry<String, Map<String, String>> stringMapEntry : serviceIdsAndMappings.entrySet()) {
+			Model m = Repository.Instance().getNamedModel(stringMapEntry.getKey());
 			if (m != null)
-				servicesAndMappings.put(importSourceFromJenaModel(m), serviceIdsAndMappings.get(serviceId));
+				servicesAndMappings.put(importSourceFromJenaModel(m), stringMapEntry.getValue());
 		}
 		
 		return servicesAndMappings;
@@ -340,10 +340,10 @@ public class WebServiceLoader extends SourceLoader
 		if (serviceIdsAndMappings == null)
 			return null;
 		
-		for (String serviceId : serviceIdsAndMappings.keySet()) {
-			Model m = Repository.Instance().getNamedModel(serviceId);
+		for (Map.Entry<String, Map<String, String>> stringMapEntry : serviceIdsAndMappings.entrySet()) {
+			Model m = Repository.Instance().getNamedModel(stringMapEntry.getKey());
 			if (m != null)
-				servicesAndMappings.put(importSourceFromJenaModel(m), serviceIdsAndMappings.get(serviceId));
+				servicesAndMappings.put(importSourceFromJenaModel(m), stringMapEntry.getValue());
 		}
 		
 		return servicesAndMappings;
@@ -925,12 +925,12 @@ public class WebServiceLoader extends SourceLoader
 		}
 		
 		System.out.println("Mappings from matched source to model arguments:");
-		for (WebService s : servicesAndMappings.keySet()) {
-			System.out.println("Service: " + s.getId());
-			if (servicesAndMappings.get(s) == null)
+		for (Map.Entry<WebService, Map<String, String>> webServiceMapEntry : servicesAndMappings.entrySet()) {
+			System.out.println("Service: " + webServiceMapEntry.getKey().getId());
+			if (webServiceMapEntry.getValue() == null)
 				continue;
-			for (String str : servicesAndMappings.get(s).keySet())
-				System.out.println(str + "-------" + servicesAndMappings.get(s).get(str));
+			for (String str : webServiceMapEntry.getValue().keySet())
+				System.out.println(str + "-------" + webServiceMapEntry.getValue().get(str));
 		}
 
 	}

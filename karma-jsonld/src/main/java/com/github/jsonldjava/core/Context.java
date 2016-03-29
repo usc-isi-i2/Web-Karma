@@ -715,11 +715,10 @@ public class Context extends LinkedHashMap<String, Object> {
         // 4)
         String compactIRI = null;
         // 5)
-        for (final String term : termDefinitions.keySet()) {
-            final Map<String, Object> termDefinition = (Map<String, Object>) termDefinitions
-                    .get(term);
+        for (final Map.Entry<String, Object> stringObjectEntry : termDefinitions.entrySet()) {
+            final Map<String, Object> termDefinition = (Map<String, Object>) stringObjectEntry.getValue();
             // 5.1)
-            if (term.contains(":")) {
+            if (stringObjectEntry.getKey().contains(":")) {
                 continue;
             }
             // 5.2)
@@ -729,7 +728,7 @@ public class Context extends LinkedHashMap<String, Object> {
             }
 
             // 5.3)
-            final String candidate = term + ":"
+            final String candidate = stringObjectEntry.getKey() + ":"
                     + iri.substring(((String) termDefinition.get("@id")).length());
             // 5.4)
             if ((compactIRI == null || compareShortestLeast(candidate, compactIRI) < 0)
@@ -773,12 +772,11 @@ public class Context extends LinkedHashMap<String, Object> {
      */
     public Map<String, String> getPrefixes(boolean onlyCommonPrefixes) {
         final Map<String, String> prefixes = new LinkedHashMap<String, String>();
-        for (final String term : termDefinitions.keySet()) {
-            if (term.contains(":")) {
+        for (final Map.Entry<String, Object> stringObjectEntry : termDefinitions.entrySet()) {
+            if (stringObjectEntry.getKey().contains(":")) {
                 continue;
             }
-            final Map<String, Object> termDefinition = (Map<String, Object>) termDefinitions
-                    .get(term);
+            final Map<String, Object> termDefinition = (Map<String, Object>) stringObjectEntry.getValue();
             if (termDefinition == null) {
                 continue;
             }
@@ -786,11 +784,11 @@ public class Context extends LinkedHashMap<String, Object> {
             if (id == null) {
                 continue;
             }
-            if (term.startsWith("@") || id.startsWith("@")) {
+            if (stringObjectEntry.getKey().startsWith("@") || id.startsWith("@")) {
                 continue;
             }
             if (!onlyCommonPrefixes || id.endsWith("/") || id.endsWith("#")) {
-                prefixes.put(term, id);
+                prefixes.put(stringObjectEntry.getKey(), id);
             }
         }
         return prefixes;
@@ -1081,20 +1079,20 @@ public class Context extends LinkedHashMap<String, Object> {
         if (this.get("@vocab") != null) {
             ctx.put("@vocab", this.get("@vocab"));
         }
-        for (final String term : termDefinitions.keySet()) {
-            final Map<String, Object> definition = (Map<String, Object>) termDefinitions.get(term);
+        for (final Map.Entry<String, Object> stringObjectEntry : termDefinitions.entrySet()) {
+            final Map<String, Object> definition = (Map<String, Object>) stringObjectEntry.getValue();
             if (definition.get("@language") == null
                     && definition.get("@container") == null
                     && definition.get("@type") == null
                     && (definition.get("@reverse") == null || Boolean.FALSE.equals(definition
                             .get("@reverse")))) {
                 final String cid = this.compactIri((String) definition.get("@id"));
-                ctx.put(term, term.equals(cid) ? definition.get("@id") : cid);
+                ctx.put(stringObjectEntry.getKey(), stringObjectEntry.getKey().equals(cid) ? definition.get("@id") : cid);
             } else {
                 final Map<String, Object> defn = newMap();
                 final String cid = this.compactIri((String) definition.get("@id"));
                 final Boolean reverseProperty = Boolean.TRUE.equals(definition.get("@reverse"));
-                if (!(term.equals(cid) && !reverseProperty)) {
+                if (!(stringObjectEntry.getKey().equals(cid) && !reverseProperty)) {
                     defn.put(reverseProperty ? "@reverse" : "@id", cid);
                 }
                 final String typeMapping = (String) definition.get("@type");
@@ -1109,7 +1107,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 if (definition.get("@language") != null) {
                     defn.put("@language", Boolean.FALSE.equals(lang) ? null : lang);
                 }
-                ctx.put(term, defn);
+                ctx.put(stringObjectEntry.getKey(), defn);
             }
         }
 
