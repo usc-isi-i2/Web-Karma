@@ -138,9 +138,9 @@ public class LinkedApiServiceHandler extends HttpServlet {
 		logger.debug("Resource: " + resource);
 
 		ResourceType resourceType = ResourceType.Service;
-		if (resource != null && resource.trim().toString().equalsIgnoreCase("input"))
+		if (resource != null && resource.trim().equalsIgnoreCase("input"))
 			resourceType = ResourceType.Input;
-		if (resource != null && resource.trim().toString().equalsIgnoreCase("output"))
+		if (resource != null && resource.trim().equalsIgnoreCase("output"))
 			resourceType = ResourceType.Output;
 
 		String contextId = ContextParametersRegistry.getInstance().getDefault().getId();

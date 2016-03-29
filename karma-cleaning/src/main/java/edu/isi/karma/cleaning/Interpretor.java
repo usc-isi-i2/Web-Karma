@@ -21,7 +21,7 @@ public class Interpretor {
 									.getParameterValue(ContextParameter.PYTHON_SCRIPTS_DIRECTORY);
 		
 									;
-		if(dirpathString == null || dirpathString.toString().length() <= 1) {
+		if(dirpathString == null || dirpathString.length() <= 1) {
 			dirpathString = "../karma-web/src/main/webapp/resources/pythonCleaningscripts";
 		}
 		logger.info("Setting Python Scripts Directory for karma-cleaning: "

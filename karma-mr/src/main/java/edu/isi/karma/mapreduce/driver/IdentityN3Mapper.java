@@ -16,7 +16,7 @@ public class IdentityN3Mapper extends Mapper<Writable, Text, Text, Text> {
 	public void map(Writable key, Text value, Context context) throws IOException, InterruptedException {
 		try {
 			String valueString = value.toString();
-			String subject = valueString.toString().substring(0, valueString.indexOf(' '));
+			String subject = valueString.substring(0, valueString.indexOf(' '));
 			outputKeyText.set(subject);
 			context.write(outputKeyText, value);
 		}catch(Exception e) {

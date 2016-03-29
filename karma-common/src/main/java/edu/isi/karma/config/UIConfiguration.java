@@ -32,7 +32,7 @@ public class UIConfiguration {
 	
 	private static Logger logger = LoggerFactory.getLogger(UIConfiguration.class);
 	
-	private static final String newLine = System.getProperty("line.separator").toString();
+	private static final String newLine = System.getProperty("line.separator");
 	
 	private static String propGoogleEarthEnabled = "google.earth.enabled=true";
 	private static String propMaxLoadedClasses = "max.loaded.classes=-1";
