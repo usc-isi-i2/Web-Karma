@@ -106,7 +106,7 @@ public class Alignment implements OntologyUpdateListener {
 	}  
 
 	public boolean isEmpty() {
-		return (this.graphBuilder.getGraph().edgeSet().size() == 0 || this.steinerTree == null);
+		return (this.graphBuilder.getGraph().edgeSet().isEmpty() || this.steinerTree == null);
 	}
 	
 	public Node GetTreeRoot() {
@@ -786,7 +786,7 @@ public class Alignment implements OntologyUpdateListener {
 		if (incomingLinks != null) candidateLinks.addAll(incomingLinks);
 		if (outgoingLinks != null) candidateLinks.addAll(outgoingLinks);
 		
-		if (candidateLinks.size() == 0)
+		if (candidateLinks.isEmpty())
 			return suggestedLinks;
 		
 		LinkCoherence modelCoherence = new LinkCoherence();
@@ -854,7 +854,7 @@ public class Alignment implements OntologyUpdateListener {
 		if (incomingLinks != null) candidateLinks.addAll(incomingLinks);
 		if (outgoingLinks != null) candidateLinks.addAll(outgoingLinks);
 
-		if (candidateLinks.size() == 0)
+		if (candidateLinks.isEmpty())
 			return alternativeLinks;
 		
 		LinkCoherence modelCoherence = new LinkCoherence();

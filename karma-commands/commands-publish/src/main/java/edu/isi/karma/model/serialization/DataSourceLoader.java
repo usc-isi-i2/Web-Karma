@@ -223,7 +223,7 @@ public class DataSourceLoader extends SourceLoader {
 			Integer sourceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
+				|| semanticModel.getAtoms().isEmpty()) {
 			logger.info("The input model is nul or it does not have any atom");
 			return null;
 		}

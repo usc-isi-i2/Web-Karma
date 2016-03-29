@@ -11,7 +11,7 @@ public class Loop implements GrammarTreeNode {
 	String contextId; 
 	public Loop(Segment loopbody, int looptype, String contextId) {
 		this.contextId = contextId;
-		if (loopbody.section.size() == 0) {
+		if (loopbody.section.isEmpty()) {
 			this.loopbody = new Segment(loopbody.constNodes, contextId);
 		} else {
 			this.loopbody = new Segment(loopbody.section, true, contextId);

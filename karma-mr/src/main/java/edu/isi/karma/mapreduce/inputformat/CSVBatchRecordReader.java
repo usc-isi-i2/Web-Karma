@@ -77,7 +77,7 @@ extends RecordReader<Writable, Text> {
 			}
 			key = recordReader.getCurrentKey();
 		}
-		return (data.size() != 0);
+		return (!data.isEmpty());
 	}
 
 	public float getProgress() throws IOException,  InterruptedException {

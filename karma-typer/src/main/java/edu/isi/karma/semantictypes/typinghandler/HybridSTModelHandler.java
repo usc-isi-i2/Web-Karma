@@ -84,7 +84,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 		int countNumeric = 0;
 		
 		// running basic sanity checks in the input arguments
-		if (label == null || label.trim().length() == 0 || examples.size() == 0) {
+		if (label == null || label.trim().length() == 0 || examples.isEmpty()) {
 			logger.warn("@label argument cannot be null or an empty string and the @examples list cannot be empty.");
 			return false;
 		}
@@ -95,7 +95,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 		
 		// making sure that the condition where the examples list is not empty
 		// but contains junk only is not accepted
-		if (cleanedExamples.size() == 0) {
+		if (cleanedExamples.isEmpty()) {
 			logger.warn("@examples list contains forbidden characters only. The allowed characters are "
 					+ allowedCharacters);
 			return false;
@@ -255,7 +255,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 		}
 
 		// Sanity checks for arguments
-		if (examples == null || examples.size() == 0 || numPredictions <= 0) {
+		if (examples == null || examples.isEmpty() || numPredictions <= 0) {
 			logger.warn("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive");
 			return null;
 		}

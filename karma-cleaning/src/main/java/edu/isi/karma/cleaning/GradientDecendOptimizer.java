@@ -116,7 +116,7 @@ public class GradientDecendOptimizer {
 				ratios.add(x);
 			}
 		}
-		if (ratios.size() == 0)
+		if (ratios.isEmpty())
 			return 1;
 		Collections.sort(ratios, Collections.reverseOrder());
 		// System.out.println("ratios: "+ratios);
@@ -172,7 +172,7 @@ public class GradientDecendOptimizer {
 			// TestTools.print(t);
 			// System.out.println("s>>>");
 			// TestTools.print(s);
-			if (s.size() > 0)
+			if (!s.isEmpty())
 			{
 				this.relativeCoef = t.size()*ratio/s.size();
 				//relativeCoef = 2;
@@ -183,7 +183,7 @@ public class GradientDecendOptimizer {
 				break;
 			}
 			oldGradient = gradient;
-			if(s.size() > 0)
+			if(!s.isEmpty())
 			{
 				int negtiveCnt = 0;
 				for(int i = 0; i < gradient.length; i++)

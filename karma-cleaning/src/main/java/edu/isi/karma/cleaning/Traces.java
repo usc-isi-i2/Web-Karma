@@ -71,7 +71,7 @@ public class Traces implements GrammarTreeNode {
 			tlines.add(vs);
 		}
 		// find all possible segments starting from a position
-		while (tlines.size() > 0) {
+		while (!tlines.isEmpty()) {
 			Vector<Vector<Segment>> nlines = new Vector<Vector<Segment>>();
 			Vector<Segment> segs = tlines.remove(0);
 			int curPos = segs.get(segs.size() - 1).end;
@@ -87,7 +87,7 @@ public class Traces implements GrammarTreeNode {
 				children = findSegs(curPos);
 			}
 			//reach the end and find one trace.[is this a valid sequence?]
-			if (children == null || children.size() == 0) {
+			if (children == null || children.isEmpty()) {
 				lines.add(segs);
 			} 
 			//create a new sequence for each new children node. add them into nlines
@@ -379,7 +379,7 @@ public class Traces implements GrammarTreeNode {
 
 			}
 		}
-		if (lLines.keySet().size() == 0 && nLines.keySet().size() == 0)
+		if (lLines.keySet().isEmpty() && nLines.keySet().isEmpty())
 			return null;
 		Traces rTraces = new Traces(nLines, lLines);
 		return rTraces;
@@ -585,11 +585,11 @@ public class Traces implements GrammarTreeNode {
 			if (v.size() <= 1 || !this.verfiyLoop(v, curPath))
 				continue;
 			Vector<Vector<GrammarTreeNode>> vtn = this.detectLoop(v, curPath);
-			if (vtn != null && vtn.size() > 0) {
+			if (vtn != null && !vtn.isEmpty()) {
 				res.addAll(vtn);
 			}
 		}
-		if (res.size() == 0)
+		if (res.isEmpty())
 			return null;
 		else
 			return res;
@@ -678,7 +678,7 @@ public class Traces implements GrammarTreeNode {
 				if (isLegal) {
 					tmp_gt.add(elem);
 				}
-				if (!isLegal && tmp_gt.size() == 0) {
+				if (!isLegal && tmp_gt.isEmpty()) {
 					curStartPos += span;
 				}
 			}
@@ -828,7 +828,7 @@ public class Traces implements GrammarTreeNode {
 						nodelist1.add(curPath.get(i));
 					}
 				}
-				if (nodelist1.size() > 0) {
+				if (!nodelist1.isEmpty()) {
 					resVector.add(nodelist1);
 				}
 			} else {
@@ -869,11 +869,11 @@ public class Traces implements GrammarTreeNode {
 						nodelist1.add(curPath.get(i));
 					}
 				}
-				if (nodelist1.size() > 0)
+				if (!nodelist1.isEmpty())
 					resVector.add(nodelist1);
 			}
 		}
-		if (nodelist.size() != 0) {
+		if (!nodelist.isEmpty()) {
 			resVector.add(nodelist);
 		}
 		return resVector;

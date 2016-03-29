@@ -155,7 +155,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			HashMap<String, ColumnNode> columnNodes = new HashMap<>();
 
 			if (alignmentGraph != null
-					&& alignmentGraph.vertexSet().size() != 0) {
+					&& !alignmentGraph.vertexSet().isEmpty()) {
 				Set<Node> nodes = alignmentGraph.vertexSet();
 				for (Node node : nodes) {
 					if (node instanceof ColumnNode) {
@@ -188,7 +188,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			int nodesIndexcounter = hNodeIdList.size();
 
 			if (alignmentGraph != null
-					&& alignmentGraph.vertexSet().size() != 0) {
+					&& !alignmentGraph.vertexSet().isEmpty()) {
 				/** Add the nodes **/
 				Set<Node> nodes = alignmentGraph.vertexSet();
 				for (Node node : nodes) {
@@ -344,7 +344,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			JSONArray nodesArr = new JSONArray();
 			JSONArray linksArr = new JSONArray();
 			if (alignmentGraph != null
-					&& alignmentGraph.vertexSet().size() != 0) {
+					&& !alignmentGraph.vertexSet().isEmpty()) {
 				/** Add the nodes **/
 				Set<Node> nodes = alignmentGraph.vertexSet();
 				HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();

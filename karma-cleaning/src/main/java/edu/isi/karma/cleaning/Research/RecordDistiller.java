@@ -141,7 +141,7 @@ public class RecordDistiller {
 		// generate candiate set
 		HashSet<String> result = new HashSet<String>();
 		for (Map.Entry<String, Vector<String>> stringVectorEntry : lcxt2ids.entrySet()) {
-			if (stringVectorEntry.getValue().size() != 0) {
+			if (!stringVectorEntry.getValue().isEmpty()) {
 				String idString = stringVectorEntry.getValue().get(0);
 				if (!result.contains(idString)) {
 					result.add(idString);
@@ -149,7 +149,7 @@ public class RecordDistiller {
 			}
 		}
 		for (Map.Entry<String, Vector<String>> stringVectorEntry : rcxt2ids.entrySet()) {
-			if (stringVectorEntry.getValue().size() != 0) {
+			if (!stringVectorEntry.getValue().isEmpty()) {
 				String idString = stringVectorEntry.getValue().get(0);
 				if (!result.contains(idString)) {
 					result.add(idString);

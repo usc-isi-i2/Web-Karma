@@ -217,7 +217,7 @@ public class WorksheetGeospatialContent {
 					coordsList.add(coord);
 				}
 
-				if (coordsList.size() == 0)
+				if (coordsList.isEmpty())
 					continue;
 
 				edu.isi.karma.geospatial.LineString line = new edu.isi.karma.geospatial.LineString(coordsList);
@@ -413,7 +413,7 @@ public class WorksheetGeospatialContent {
 	}
 
 	public boolean hasNoGeospatialData() {
-		if (points.size() == 0 && lines.size() == 0 && polygons.size()==0)
+		if (points.isEmpty() && lines.isEmpty() && polygons.isEmpty())
 			return true;
 		return false;
 	}

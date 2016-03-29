@@ -147,11 +147,11 @@ public class URLManager {
 	}
 
 	private static boolean verifyAttributeExtraction(URL url, List<Attribute> attributeList) throws UnsupportedEncodingException {
-		if (url.getQuery() == null && (attributeList == null || attributeList.size() == 0))
+		if (url.getQuery() == null && (attributeList == null || attributeList.isEmpty()))
 			return true;
 		
 		if (url.getQuery() != null && url.getQuery().trim().length() == 0 && 
-				(attributeList == null || attributeList.size() == 0))
+				(attributeList == null || attributeList.isEmpty()))
 			return true;
 		
 		String originalQuery = URLDecoder.decode(url.getQuery(), "UTF-8");
@@ -216,7 +216,7 @@ public class URLManager {
 		    	    	// example: /path/to/my/resource?attribute1=value1&attribute1=value2&attribute1=value3
 		    	    	// we are currently ignoring these types of urls
 		    	    	
-		                if (values.size() > 0) {
+		                if (!values.isEmpty()) {
 			                attributeName = key;
 		                	attributeId = getId(attributeName, attributeNameCounter); 
 			                attributeValue = values.get(0);

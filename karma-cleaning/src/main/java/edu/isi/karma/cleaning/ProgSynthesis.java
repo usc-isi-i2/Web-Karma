@@ -98,7 +98,7 @@ public class ProgSynthesis {
 			return p;
 		}
 		int curleng = poss.get(index);
-		if (p.size() == 0) {
+		if (p.isEmpty()) {
 			for (int i = 0; i < curleng; i++) {
 				Vector<Integer> x = new Vector<Integer>();
 				x.add(i);
@@ -165,7 +165,7 @@ public class ProgSynthesis {
 		Vector<Partition> xPar = new Vector<Partition>();
 		xPar.add(p);
 		Collection<ProgramRule> cpr = this.producePrograms(xPar);
-		if (cpr == null || cpr.size() == 0) {
+		if (cpr == null || cpr.isEmpty()) {
 			legalParitions.put(key, false);
 			return false;
 		} else {

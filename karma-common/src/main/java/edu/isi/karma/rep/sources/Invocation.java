@@ -239,7 +239,7 @@ public class Invocation {
 		}
 		
 		// there is no output
-		if (this.response.getTable().getHeaders().size() == 0) {
+		if (this.response.getTable().getHeaders().isEmpty()) {
 			jointInputAndOutput.getValues().add(inputValues);
 		}
 

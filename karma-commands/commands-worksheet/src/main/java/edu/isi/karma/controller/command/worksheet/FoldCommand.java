@@ -129,7 +129,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		}
 		
 		this.label = "";
-		if(hnodes.size() > 0)
+		if(!hnodes.isEmpty())
 			this.label = hnodes.get(0).getParentColumnName(Repfactory);
 		String sep = " &gt; ";
 		for(HNode hnode : hnodes) {

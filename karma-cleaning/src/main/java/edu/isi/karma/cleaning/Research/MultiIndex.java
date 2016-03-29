@@ -79,7 +79,7 @@ public class MultiIndex {
 	}
 	public void getAllLeaf(MultiIndex m, ArrayList<String> res)
 	{
-		if(m.children.size() == 0)
+		if(m.children.isEmpty())
 		{
 			res.add(m.value);
 		}
@@ -112,7 +112,7 @@ public class MultiIndex {
 	}
 	public void travers(String s, MultiIndex node, ArrayList<String> paths)
 	{
-		if(node.children.size() == 0)
+		if(node.children.isEmpty())
 		{
 			String x = s+","+node.value;
 			paths.add(x);

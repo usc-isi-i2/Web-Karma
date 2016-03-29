@@ -241,7 +241,7 @@ public class Table extends RepEntity {
 
 				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
 						numRows, sel);
-				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
+				if (rowsNestedTable != null && !rowsNestedTable.isEmpty()) {
 					setCollectedNodeValues(path.getRest(), nodes,
 							rowsNestedTable, nodeIdx, factory, sel);
 					continue RowIterator;

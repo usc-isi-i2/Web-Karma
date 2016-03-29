@@ -296,7 +296,7 @@ public class JsonLdApi {
                 // algorithm.
 
                 // 7.5)
-                if (((List<Object>) expandedValue).size() == 0) {
+                if (((List<Object>) expandedValue).isEmpty()) {
                     // 7.5.1)
                     final String itemActiveProperty = activeCtx.compactIri(expandedProperty,
                             expandedValue, true, insideReverse);
@@ -582,7 +582,7 @@ public class JsonLdApi {
                         }
                         // TODO: SPEC: no mention of empty map check
                         else if (value instanceof Map) {
-                            if (((Map<String, Object>) value).size() != 0) {
+                            if (!((Map<String, Object>) value).isEmpty()) {
                                 throw new JsonLdError(Error.INVALID_TYPE_VALUE,
                                         "@type value must be a an empty object for framing");
                             }
@@ -933,7 +933,7 @@ public class JsonLdApi {
             if (activeProperty == null || "@graph".equals(activeProperty)) {
                 // 12.1)
                 if (result != null
-                        && (result.size() == 0 || result.containsKey("@value") || result
+                        && (result.isEmpty() || result.containsKey("@value") || result
                         .containsKey("@list"))) {
                     result = null;
                 }
@@ -1296,7 +1296,7 @@ public class JsonLdApi {
         // other than list to me passed
         frame(state,
                 this.nodeMap,
-                (frame != null && frame.size() > 0 ? (Map<String, Object>) frame.get(0) : newMap()),
+                (frame != null && !frame.isEmpty() ? (Map<String, Object>) frame.get(0) : newMap()),
                 framed, null);
 
         return framed;
@@ -1469,7 +1469,7 @@ public class JsonLdApi {
                     }
 
                     final List<Object> pf = (List<Object>) frame.get(prop);
-                    Map<String, Object> propertyFrame = pf.size() > 0 ? (Map<String, Object>) pf
+                    Map<String, Object> propertyFrame = !pf.isEmpty() ? (Map<String, Object>) pf
                             .get(0) : null;
                             if (propertyFrame == null) {
                                 propertyFrame = newMap();
@@ -1502,7 +1502,7 @@ public class JsonLdApi {
     private Boolean getFrameFlag(Map<String, Object> frame, String name, boolean thedefault) {
         Object value = frame.get(name);
         if (value instanceof List) {
-            if (((List<Object>) value).size() > 0) {
+            if (!((List<Object>) value).isEmpty()) {
                 value = ((List<Object>) value).get(0);
             }
         }
@@ -1594,7 +1594,7 @@ public class JsonLdApi {
                 throw new JsonLdError(Error.SYNTAX_ERROR, "node @type must be an array");
             }
             if (((List<Object>) types).size() == 1 && ((List<Object>) types).get(0) instanceof Map
-                    && ((Map<String, Object>) ((List<Object>) types).get(0)).size() == 0) {
+                    && ((Map<String, Object>) ((List<Object>) types).get(0)).isEmpty()) {
                 return !((List<Object>) nodeTypes).isEmpty();
             } else {
                 for (final Object i : (List<Object>) nodeTypes) {

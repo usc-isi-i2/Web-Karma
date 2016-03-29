@@ -69,7 +69,7 @@ public class SortableSemanticModel_Old extends SemanticModel
 		
 		this.steinerNodes = steinerNodes;
 		
-		if (this.graph != null && this.graph.edgeSet().size() > 0) {
+		if (this.graph != null && !this.graph.edgeSet().isEmpty()) {
 			this.cost = this.computeCost();
 //			this.frequency = this.computeFrequency();
 //			this.cohesion = this.computeCohesion();
@@ -81,7 +81,7 @@ public class SortableSemanticModel_Old extends SemanticModel
 		
 		super(semanticModel);
 		
-		if (this.graph != null && this.graph.edgeSet().size() > 0) {
+		if (this.graph != null && !this.graph.edgeSet().isEmpty()) {
 			this.cost = this.computeCost();
 //			this.frequency = this.computeFrequency();
 //			this.cohesion = this.computeCohesion();

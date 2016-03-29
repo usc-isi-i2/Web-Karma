@@ -63,7 +63,7 @@ public class CandidateSteinerSets {
 		Collections.sort(sortedMappings);
 
 		
-		if (this.steinerSets.size() == 0) {
+		if (this.steinerSets.isEmpty()) {
 			for (SemanticTypeMapping stm : sortedMappings) {
 				SteinerNodes sn = new SteinerNodes(contextId);
 				if (sn.addNodes(stm))
@@ -116,7 +116,7 @@ public class CandidateSteinerSets {
 		if (n == null) 
 			return;
 		
-		if (this.steinerSets.size() == 0) {
+		if (this.steinerSets.isEmpty()) {
 			SteinerNodes sn = new SteinerNodes(contextId);
 			if (sn.addNode(n))
 				this.steinerSets.add(sn);

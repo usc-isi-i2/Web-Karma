@@ -217,7 +217,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		N.getTopKTrees(k);
 		DirectedWeightedMultigraph<Node, LabeledLink> processedTree = null;
 		
-		if (terminals.size() > 0 && N.getResultQueue().isEmpty()) { 
+		if (!terminals.isEmpty() && N.getResultQueue().isEmpty()) { 
 			// No edge in the tree, we still want to return a graph with only nodes
 			// no solution found! --> return a tree with just terminal nodes
 //			ResultGraph emptyTree = new ResultGraph();

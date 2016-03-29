@@ -137,13 +137,13 @@ public class TurtleRDFParser implements RDFParser {
         }
 
         public void pop() {
-            if (stack.size() > 0) {
+            if (!stack.isEmpty()) {
                 for (final Entry<String, String> x : stack.pop().entrySet()) {
                     curSubject = x.getKey();
                     curPredicate = x.getValue();
                 }
             }
-            if (stack.size() == 0) {
+            if (stack.isEmpty()) {
                 expectingBnodeClose = false;
             }
         }
@@ -188,7 +188,7 @@ public class TurtleRDFParser implements RDFParser {
         }
 
         private boolean endIsOK() {
-            return curSubject == null && stack.size() == 0;
+            return curSubject == null && stack.isEmpty();
         }
 
         public String expandIRI(String ns, String name) throws JsonLdError {

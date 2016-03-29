@@ -739,7 +739,7 @@ public class OntologyManager  {
 		if (sourceUri == null || targetUri == null) return false;
 //		return this.ontCache.getConnectedByDirectProperties().contains(sourceUri + targetUri);
 		HashSet<String> directProperties = this.ontCache.getDomainRangeToDirectProperties().get(sourceUri+targetUri);
-		if (directProperties != null && directProperties.size() > 0) { 
+		if (directProperties != null && !directProperties.isEmpty()) { 
 			return true;
 		}
 		return false;
@@ -750,7 +750,7 @@ public class OntologyManager  {
 		if (sourceUri == null || targetUri == null) return false;
 //		return this.ontCache.getConnectedByIndirectProperties().contains(sourceUri + targetUri);
 		HashSet<String> indirectProperties = this.ontCache.getDomainRangeToIndirectProperties().get(sourceUri+targetUri);
-		if (indirectProperties != null && indirectProperties.size() > 0) { 
+		if (indirectProperties != null && !indirectProperties.isEmpty()) { 
 			return true;
 		}
 		return false;
@@ -793,7 +793,7 @@ public class OntologyManager  {
 	public boolean isConnectedByDomainlessAndRangelessProperty(String sourceUri, String targetUri) {
 		
 		if (sourceUri == null || targetUri == null) return false;
-		return (this.ontCache.getObjectPropertiesWithoutDomainAndRange().size() > 0);
+		return (!this.ontCache.getObjectPropertiesWithoutDomainAndRange().isEmpty());
 	}
 	
 //	public static void main(String[] args) throws IOException {
