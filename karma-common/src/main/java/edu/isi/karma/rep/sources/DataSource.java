@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class DataSource extends Source {
 	private Model model;
 	private List<String> variables;
 
-	HashMap<String, Attribute> attIdToAttMap;
+	Map<String, Attribute> attIdToAttMap;
 
 	public DataSource(String id) {
 		super(id);
@@ -129,7 +130,7 @@ public class DataSource extends Source {
 		
 		Model m = new Model("model");
 		
-		HashMap<String, Argument> vertexIdToArgument = new HashMap<String, Argument>();
+		Map<String, Argument> vertexIdToArgument = new HashMap<String, Argument>();
 		List<Attribute> attributeList = new ArrayList<Attribute>();
 		
 		// get the column name associated to the hNodeIds to assign to attribute names 

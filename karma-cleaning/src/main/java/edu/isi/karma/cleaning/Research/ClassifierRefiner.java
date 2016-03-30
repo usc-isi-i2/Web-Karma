@@ -11,8 +11,8 @@ import edu.isi.karma.cleaning.Program;
 
 public class ClassifierRefiner {
 	Program prog;
-	HashMap<String, HashMap<String,String>> uData;
-	HashMap<String, ArrayList<String>> clusters = new HashMap<String, ArrayList<String>>();
+	Map<String, HashMap<String,String>> uData;
+	Map<String, ArrayList<String>> clusters = new HashMap<String, ArrayList<String>>();
 	public ClassifierRefiner(Program prog, HashMap<String, HashMap<String,String>> uData)
 	{
 		this.prog = prog;
@@ -29,7 +29,7 @@ public class ClassifierRefiner {
 	{
 		for(Map.Entry<String, HashMap<String, String>> stringHashMapEntry : uData.entrySet())
 		{
-			HashMap<String, String> dict = stringHashMapEntry.getValue();
+			Map<String, String> dict = stringHashMapEntry.getValue();
 			String ckey = dict.get("class");
 			String org = dict.get("Org");
 			if(clusters.containsKey(ckey))

@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.features.Feature;
@@ -86,9 +87,9 @@ public class DataPreProcessor {
 		return res;
 	}
 
-	public ArrayList<Integer> deCorrelate(HashMap<String, double[]> data) {
+	public ArrayList<Integer> deCorrelate(Map<String, double[]> data) {
 		ArrayList<Integer> toRemove = new ArrayList<Integer>();
-		HashSet<String> signs = new HashSet<String>();
+		Set<String> signs = new HashSet<String>();
 		// build singature for each feature
 		for (int i = 0; i < rfs.getFeatureNames().size(); i++) {
 			String sg = "";
@@ -128,7 +129,7 @@ public class DataPreProcessor {
 			Ruler r = new Ruler();
 			r.setNewInput(s1);
 			Vector<TNode> v = r.vec;
-			HashSet<String> curRow = new HashSet<String>();
+			Set<String> curRow = new HashSet<String>();
 			for (TNode t : v) {
 				String k = t.text;
 				k = k.replaceAll("[0-9]+", "DIGITs");

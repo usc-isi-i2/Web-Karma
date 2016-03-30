@@ -21,6 +21,7 @@
 
 package edu.isi.karma.cleaning.Research;
 
+import java.util.List;
 import java.util.Vector;
 
 //used in alignment
@@ -29,7 +30,7 @@ public class ANode {
 	public Vector<Integer> tarPos = new Vector<Integer>();
 	public Vector<Integer> length = new Vector<Integer>();
 	public Vector<String[]> exps = new Vector<String[]>();
-	public Vector<ANode> children = new Vector<ANode>();
+	public List<ANode> children = new Vector<ANode>();
 
 	public ANode(Vector<Integer> orgPos, Vector<Integer> tarPos,
 			Vector<Integer> length, Vector<String[]> exps) {

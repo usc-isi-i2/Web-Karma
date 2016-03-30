@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -37,7 +38,7 @@ import edu.isi.karma.rdf.CommandLineArgumentParser;
 
 public class CreateSequenceFile {
 
-	ConcurrentHashMap<String, SequenceFile.Writer> writers = new ConcurrentHashMap<String, SequenceFile.Writer>();
+	Map<String, Writer> writers = new ConcurrentHashMap<String, SequenceFile.Writer>();
 	boolean useKey = true;
 	boolean outputFileName = false;
 	String filePath = null;

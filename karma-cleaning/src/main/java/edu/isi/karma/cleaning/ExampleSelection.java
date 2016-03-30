@@ -24,19 +24,24 @@ package edu.isi.karma.cleaning;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
 
 public class ExampleSelection {
-	public HashMap<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();
-	public HashMap<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
-	public HashMap<String, String[]> raw = new HashMap<String, String[]>();
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
+	public Map<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
+	public Map<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
+	public Map<String, String[]> raw = new HashMap<String, String[]>();
 	public boolean isDetectingQuestionableRecord = false;
 	public OutlierDetector out;
 	// testdata rowid:{tar, tarcolor}
-	public HashMap<String, HashMap<String, String[]>> testdata = new HashMap<String, HashMap<String, String[]>>();
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
+	public Map<String, HashMap<String, String[]>> testdata = new HashMap<String, HashMap<String, String[]>>();
 	public int way = 7;
 	public HashSet<String> dictionary = new HashSet<String>();
 
@@ -89,8 +94,9 @@ public class ExampleSelection {
 
 	// exps: rowId: {org, tar, tarcode,classlabel}
 	// example: partition id: [{raw,tarcode}]
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 	public void inite(HashMap<String, String[]> exps,
-			HashMap<String, Vector<String[]>> examples) {
+					  HashMap<String, Vector<String[]>> examples) {
 		// inite the class center vector
 
 		if (way >= 6) {
@@ -110,7 +116,7 @@ public class ExampleSelection {
 				String raw = stringEntry.getValue()[0];
 				String[] pair = { raw, stringEntry.getValue()[2] };
 				if (testdata.containsKey(stringEntry.getValue()[3])) {
-					HashMap<String, String[]> xelem = testdata.get(stringEntry.getValue()[3]);
+					Map<String, String[]> xelem = testdata.get(stringEntry.getValue()[3]);
 					if (!xelem.containsKey(stringEntry.getKey())) {
 						xelem.put(stringEntry.getKey(), pair);
 					}
@@ -167,8 +173,9 @@ public class ExampleSelection {
 		return ID;
 	}
 
-	public int ambiguityScore(Vector<TNode> vec) {
-		HashMap<String, Integer> d = new HashMap<String, Integer>();
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
+	public int ambiguityScore(List<TNode> vec) {
+		Map<String, Integer> d = new HashMap<String, Integer>();
 		int score = 0;
 		for (int i = 0; i < vec.size(); i++) {
 			if (d.containsKey(vec.get(i).text))
@@ -203,13 +210,14 @@ public class ExampleSelection {
 		return this.way2();
 	}
 
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 	public String way6() {
 		int max = 2; // only the one with _FATAL_ERROR_ inside
 		if (firsttime) {
 			firsttime = false;
 			return this.way2();
 		}
-		Vector<String> examples = new Vector<String>();
+		List<String> examples = new Vector<String>();
 		for (Map.Entry<String, String[]> stringEntry : raw.entrySet()) {
 			int cnt = 0;
 			String[] tmp = stringEntry.getValue()[2]
@@ -252,6 +260,7 @@ public class ExampleSelection {
 		}
 	}
 
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 	public String way7() {
 		// this.printdata();
 		int max = 2; // only the one with _FATAL_ERROR_ inside
@@ -259,7 +268,7 @@ public class ExampleSelection {
 			firsttime = false;
 			return this.way2();
 		}
-		Vector<String> examples = new Vector<String>();
+		List<String> examples = new Vector<String>();
 		for (Map.Entry<String, String[]> stringEntry : raw.entrySet()) {
 			int cnt = 0;
 			String[] tmp = stringEntry.getValue()[2]
@@ -361,11 +370,12 @@ public class ExampleSelection {
 		this.testdata.clear();
 	}
 
+	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 	public void printdata() {
 		String s1 = "";
 		String s2 = "";
 		for (Map.Entry<String, HashMap<String, String[]>> stringHashMapEntry : this.testdata.entrySet()) {
-			HashMap<String, String[]> r = stringHashMapEntry.getValue();
+			Map<String, String[]> r = stringHashMapEntry.getValue();
 			s1 += "partition " + stringHashMapEntry.getKey() + "\n";
 			for (String[] elem : r.values()) {
 				s1 += Arrays.toString(elem) + "\n";

@@ -1,5 +1,6 @@
 package edu.isi.karma.cleaning.Research;
 
+import java.util.List;
 import java.util.Vector;
 
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class ConstrainedAlignment {
 	// inserted same token
 	public void traverse() {
 		// inite
-		Vector<Integer> spos = new Vector<Integer>();
+		List<Integer> spos = new Vector<Integer>();
 		for (int i = 0; i < expnum; i++) {
 			spos.add(0);
 		}
@@ -46,7 +47,7 @@ class LatentState {
 	static final int ANC = 3;// a anchor state
 	public int StateType;
 	public LatentState nextState;
-	public Vector<int[]> segments;
+	public List<int[]> segments;
 
 	public LatentState(Vector<Integer> spos) {
 		this.StateType = LatentState.UND;

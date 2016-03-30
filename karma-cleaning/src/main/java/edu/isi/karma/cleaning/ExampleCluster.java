@@ -6,7 +6,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 
@@ -15,7 +17,7 @@ import edu.isi.karma.cleaning.features.Feature;
 public class ExampleCluster {
 	public HashMap<String, Boolean> legalParitions = new HashMap<String, Boolean>();
 	Vector<Partition> examples = new Vector<Partition>();
-	HashSet<String> exampleInputs = new HashSet<String>();
+	Set<String> exampleInputs = new HashSet<String>();
 	Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
 	public ProgSynthesis pSynthesis; // data
 	HashMap<String, Vector<String>> uorgclusters = new HashMap<String, Vector<String>>();
@@ -67,11 +69,11 @@ public class ExampleCluster {
 	public void updateConstraints(Vector<Vector<String[]>> cnts) {
 		if (option == method.CPIC || option == method.DPIC
 				|| option == method.SPIC) {
-			HashMap<String, Vector<String[]>> xHashMap1 = new HashMap<String, Vector<String[]>>();
+			Map<String, Vector<String[]>> xHashMap1 = new HashMap<String, Vector<String[]>>();
 			for (Vector<String[]> group : cnts) {
 				xHashMap1.put(constraintKey(group), group);
 			}
-			HashSet<String> xHashSet2 = new HashSet<String>();
+			Set<String> xHashSet2 = new HashSet<String>();
 			for (Vector<String[]> group : constraints) {
 				xHashSet2.add(constraintKey(group));
 			}
@@ -82,7 +84,7 @@ public class ExampleCluster {
 			}
 			// update islegal ds
 			for (Vector<String[]> group : constraints) {
-				ArrayList<String> g = new ArrayList<String>();
+				List<String> g = new ArrayList<String>();
 				for (String[] p : group) {
 					String line = String.format("%s, %s\n", p[0], p[1]);
 					g.add(line);
@@ -311,7 +313,7 @@ public class ExampleCluster {
 		return pars;
 	}
 
-	public void assignUnlabeledData(Vector<Partition> pars) {
+	public void assignUnlabeledData(List<Partition> pars) {
 		HashMap<String, Double> dists = new HashMap<String, Double>();
 		// find the distance between partitions
 		for (int i = 0; i < pars.size(); i++) {
@@ -322,7 +324,7 @@ public class ExampleCluster {
 				}
 			}
 		}
-		HashMap<Partition, HashMap<String, Double>> testResult = new HashMap<Partition, HashMap<String, Double>>();
+		Map<Partition, HashMap<String, Double>> testResult = new HashMap<Partition, HashMap<String, Double>>();
 
 		for (String val : string2Vector.keySet()) {
 			Partition p_index = null;
@@ -402,7 +404,7 @@ public class ExampleCluster {
 	}
 
 	public ArrayList<ArrayList<Double>> convertStringSetToContrainMatrix(
-			ArrayList<String> strings) {
+			List<String> strings) {
 		ArrayList<ArrayList<Double>> res = new ArrayList<ArrayList<Double>>();
 		for (int i = 0; i < strings.size(); i++) {
 			for (int j = i + 1; j < strings.size(); j++) {
@@ -522,7 +524,7 @@ public class ExampleCluster {
 		return mindist;
 	}
 
-	public double getCompScore(Partition a, Partition b, Vector<Partition> pars) {
+	public double getCompScore(Partition a, Partition b, List<Partition> pars) {
 		String key = getStringKey(a, b);
 		for (Map.Entry<String, Boolean> stringBooleanEntry : legalParitions.entrySet()) {
 			if (key.indexOf(stringBooleanEntry.getKey()) != -1 && !stringBooleanEntry.getValue()) {
@@ -602,7 +604,7 @@ public class ExampleCluster {
 			}
 		}
 		ProgramAdaptator pAdapter = new ProgramAdaptator(contextId);
-		ArrayList<Partition> nPs = new ArrayList<Partition>();
+		List<Partition> nPs = new ArrayList<Partition>();
 		nPs.add(p);
 		ArrayList<String[]> examps = UtilTools.extractExamplesinPartition(nPs);
 		String fprogram = pAdapter.adapt(pSynthesis.msGer.exp2Space,pSynthesis.msGer.exp2program, examps);
@@ -645,7 +647,7 @@ public class ExampleCluster {
 	}
 
 	public Vector<Partition> UpdatePartitions(int i, int j,
-			Vector<Partition> pars) {
+			List<Partition> pars) {
 		Partition p = pars.get(i).mergewith(pars.get(j));
 		Vector<Partition> res = new Vector<Partition>();
 		res.addAll(pars);
@@ -665,7 +667,7 @@ public class ExampleCluster {
 	// get a vector that can represent a partition
 	public double[] getPartitionVector(Partition p) {
 
-		ArrayList<double[]> vecs = new ArrayList<double[]>();
+		List<double[]> vecs = new ArrayList<double[]>();
 		for (Vector<TNode> orgs : p.orgNodes) {
 			vecs.add(string2Vector.get(UtilTools.print(orgs)));
 		}
