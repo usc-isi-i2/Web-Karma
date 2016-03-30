@@ -150,7 +150,7 @@ public class OfflineRdfGenerator {
 			generator.generate();
 			long end = System.currentTimeMillis();
 			
-			logger.info("Time to generate RDF:" + ((float)(end-start))/(1000*60) + " mins");
+			logger.info("Time to generate RDF:" + (float) (end-start) /(1000*60) + " mins");
 
 		} catch (Exception e) {
 			logger.error("Error occured while generating RDF!", e);
@@ -181,7 +181,7 @@ public class OfflineRdfGenerator {
 			generateRdfFromFile();
 		}
 
-		logger.info("done after {}", (System.currentTimeMillis() - l));
+		logger.info("done after {}", System.currentTimeMillis() - l);
 		if(outputFilePath != null)
 		{
 			logger.info("RDF published at: " + outputFilePath);

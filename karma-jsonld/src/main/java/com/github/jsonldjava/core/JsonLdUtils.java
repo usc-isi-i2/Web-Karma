@@ -716,8 +716,8 @@ public class JsonLdUtils {
         // filter out value
         final List<Object> values = new ArrayList<>();
         if (subject.get(property) instanceof List) {
-            for (final Object e : ((List) subject.get(property))) {
-                if (!(value.equals(e))) {
+            for (final Object e : (List) subject.get(property)) {
+                if (!value.equals(e)) {
                     values.add(value);
                 }
             }
@@ -829,7 +829,7 @@ public class JsonLdUtils {
                     }
                 }
             }
-            return (count < urls.size());
+            return count < urls.size();
         }
         return false;
     }
@@ -857,7 +857,7 @@ public class JsonLdUtils {
                 // and means that
                 // the input JSON-LD is invalid
                 throw new RuntimeException(new CloneNotSupportedException(
-                        (rval instanceof Exception ? ((Exception) rval).getMessage() : "")));
+                        rval instanceof Exception ? ((Exception) rval).getMessage() : ""));
             }
         }
         return rval;
@@ -871,7 +871,7 @@ public class JsonLdUtils {
      * @return
      */
     static Boolean isArray(Object v) {
-        return (v instanceof List);
+        return v instanceof List;
     }
 
     /**
@@ -882,7 +882,7 @@ public class JsonLdUtils {
      * @return
      */
     static Boolean isList(Object v) {
-        return (v instanceof Map && ((Map<String, Object>) v).containsKey("@list"));
+        return v instanceof Map && ((Map<String, Object>) v).containsKey("@list");
     }
 
     /**
@@ -893,7 +893,7 @@ public class JsonLdUtils {
      * @return
      */
     static Boolean isObject(Object v) {
-        return (v instanceof Map);
+        return v instanceof Map;
     }
 
     /**
@@ -904,7 +904,7 @@ public class JsonLdUtils {
      * @return
      */
     static Boolean isValue(Object v) {
-        return (v instanceof Map && ((Map<String, Object>) v).containsKey("@value"));
+        return v instanceof Map && ((Map<String, Object>) v).containsKey("@value");
     }
 
     /**
@@ -916,6 +916,6 @@ public class JsonLdUtils {
      */
     static Boolean isString(Object v) {
         // TODO: should this return true for arrays of strings as well?
-        return (v instanceof String);
+        return v instanceof String;
     }
 }

@@ -365,7 +365,7 @@ public class Model {
 			Atom atom = this.getAtoms().get(i);
 			if (atom != null) {
 				if (atom instanceof ClassAtom) {
-					ClassAtom classAtom = ((ClassAtom)atom);
+					ClassAtom classAtom = (ClassAtom)atom;
 					
 					if (classAtom.getClassPredicate().getPrefix() != null &&
 							classAtom.getClassPredicate().getNs() != null) { 
@@ -390,7 +390,7 @@ public class Model {
 						"      " + argument1Var + " rdf:type " + predicateUri + " . \n";
 				}
 				else if (atom instanceof IndividualPropertyAtom) {
-					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
+					IndividualPropertyAtom propertyAtom = (IndividualPropertyAtom)atom;
 					
 					if (propertyAtom.getPropertyPredicate().getPrefix() != null &&
 							propertyAtom.getPropertyPredicate().getNs() != null) { 
@@ -461,7 +461,7 @@ public class Model {
 			Atom atom = this.getAtoms().get(i);
 			if (atom != null) {
 				if (atom instanceof ClassAtom) {
-					ClassAtom classAtom = ((ClassAtom)atom);
+					ClassAtom classAtom = (ClassAtom)atom;
 					
 					if (classAtom.getClassPredicate().getPrefix() != null &&
 							classAtom.getClassPredicate().getNs() != null) { 
@@ -487,7 +487,7 @@ public class Model {
 						"      " + argument1Var + " rdf:type " + predicateUri + " . \n";
 				}
 				else if (atom instanceof IndividualPropertyAtom) {
-					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
+					IndividualPropertyAtom propertyAtom = (IndividualPropertyAtom)atom;
 					
 					if (propertyAtom.getPropertyPredicate().getPrefix() != null &&
 							propertyAtom.getPropertyPredicate().getNs() != null) { 
@@ -585,7 +585,7 @@ public class Model {
 			Atom atom = m.getAtoms().get(i);
 			if (atom != null) {
 				if (atom instanceof ClassAtom) {
-					ClassAtom classAtom = ((ClassAtom)atom);
+					ClassAtom classAtom = (ClassAtom)atom;
 					atomVar = "?atom" + String.valueOf(i+1);
 					predicateUri = classAtom.getClassPredicate().getUri();
 					argument1 = classAtom.getArgument1().getId();
@@ -603,7 +603,7 @@ public class Model {
 						"      " + atomVar + " " + Prefixes.SWRL + ":argument1 " + argument1Var + " . \n";
 				}
 				else if (atom instanceof IndividualPropertyAtom) {
-					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
+					IndividualPropertyAtom propertyAtom = (IndividualPropertyAtom)atom;
 					atomVar = "?atom" + String.valueOf(i+1);
 					predicateUri = propertyAtom.getPropertyPredicate().getUri();
 					argument1 = propertyAtom.getArgument1().getId();
@@ -647,7 +647,7 @@ public class Model {
 		for (Atom atom : atoms) {
 			if (atom != null) {
 				if (atom instanceof ClassAtom) {
-					ClassAtom classAtom = ((ClassAtom)atom);
+					ClassAtom classAtom = (ClassAtom)atom;
 					logicalForm += classAtom.getClassPredicate().getLocalName();
 					logicalForm += "(";
 					logicalForm += classAtom.getArgument1().getId();
@@ -655,7 +655,7 @@ public class Model {
 					logicalForm += separator;				
 				}
 				else if (atom instanceof IndividualPropertyAtom) {
-					IndividualPropertyAtom propertyAtom = ((IndividualPropertyAtom)atom);
+					IndividualPropertyAtom propertyAtom = (IndividualPropertyAtom)atom;
 					logicalForm += propertyAtom.getPropertyPredicate().getLocalName();
 					logicalForm += "(";
 					logicalForm += propertyAtom.getArgument1().getId();

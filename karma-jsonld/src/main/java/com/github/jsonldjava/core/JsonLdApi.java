@@ -180,7 +180,7 @@ public class JsonLdApi {
                 }
             }
             // 5)
-            final boolean insideReverse = ("@reverse".equals(activeProperty));
+            final boolean insideReverse = "@reverse".equals(activeProperty);
 
             // 6)
             final Map<String, Object> result = newMap();
