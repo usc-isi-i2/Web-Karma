@@ -18,12 +18,12 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 	protected boolean firstObject = true;
 	protected ConcurrentHashMap<String, ConcurrentHashMap<String, E>> generatedObjectsByTriplesMapId;
 	protected ConcurrentHashMap<String, E> generatedObjectsWithoutTriplesMap;
-	protected ConcurrentHashMap<String, ConcurrentHashMap<String, E>> rootObjectsByTriplesMapId = new ConcurrentHashMap<String, ConcurrentHashMap<String,E>>();
+	protected ConcurrentHashMap<String, ConcurrentHashMap<String, E>> rootObjectsByTriplesMapId = new ConcurrentHashMap<>();
 	protected ShortHandURIGenerator shortHandURIGenerator = new ShortHandURIGenerator();
 	protected String rootTriplesMapId; 
 	protected Set<String> rootTriplesMapIds;
 	protected String baseURI = "";
-	private static Set<String> numericLiteralTypes = new HashSet<String>();
+	private static Set<String> numericLiteralTypes = new HashSet<>();
 	static {
 		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#decimal");
 		numericLiteralTypes.add("http://www.w3.org/2001/XMLSchema#integer");
@@ -45,9 +45,9 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 	}
 	public SFKR2RMLRDFWriter (PrintWriter outWriter) {
 		this.outWriter = outWriter;
-		generatedObjectsWithoutTriplesMap = new ConcurrentHashMap<String, E>();
-		generatedObjectsByTriplesMapId = new ConcurrentHashMap<String, ConcurrentHashMap<String, E>>();
-		rootTriplesMapIds = new HashSet<String>();
+		generatedObjectsWithoutTriplesMap = new ConcurrentHashMap<>();
+		generatedObjectsByTriplesMapId = new ConcurrentHashMap<>();
+		rootTriplesMapIds = new HashSet<>();
 		this.rootObjectsByTriplesMapId.put("", new ConcurrentHashMap<String, E>());
 		initializeOutput();
 	}

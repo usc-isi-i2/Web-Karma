@@ -159,12 +159,12 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 	}
 
 	private void unfoldNestedLevel(Worksheet oldws, HTable ht, String keyHNodeid, String valueHNodeid, RepFactory factory) {
-		ArrayList<HNode> topHNodes = new ArrayList<HNode>(ht.getHNodes());
+		ArrayList<HNode> topHNodes = new ArrayList<>(ht.getHNodes());
 		SuperSelection selection = getSuperSelection(oldws);
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
-		List<Table> parentTables = new ArrayList<Table>();
+		List<Table> parentTables = new ArrayList<>();
 		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables, selection);
-		ArrayList<Row> parentRows = new ArrayList<Row>();
+		ArrayList<Row> parentRows = new ArrayList<>();
 		for (Table tmp : parentTables) {
 			for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 				parentRows.add(row);
@@ -177,8 +177,8 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 		HTable newHT = newNode.addNestedTable("Unfold: " + ht.getHNode(keyHNodeid).getColumnName(), oldws, factory);
 		HNode key = ht.getHNode(keyHNodeid);
 		HNode value = ht.getHNode(valueHNodeid);
-		List<HNode> hnodes = new ArrayList<HNode>();
-		List<String> hnodeIds = new ArrayList<String>();
+		List<HNode> hnodes = new ArrayList<>();
+		List<String> hnodeIds = new ArrayList<>();
 		if (!notOtherColumn) {
 			for (HNode h : topHNodes) {
 				if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0) {
@@ -190,7 +190,7 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 		for (Entry<String, String> entry : CloneTableUtils.cloneHTable(newHT, oldws, factory, hnodes, false).entrySet()) {
 			outputColumns.add(entry.getValue());
 		}
-		List<Row> resultRows = new ArrayList<Row>();
+		List<Row> resultRows = new ArrayList<>();
 		for (Row parentRow: parentRows) {
 			Table t = null;
 			for (Node node : parentRow.getNodes()) {
@@ -199,8 +199,8 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 					break;
 				}	
 			}
-			Map<String, String> keyMapping = new HashMap<String, String>();
-			Map<String, String> HNodeidMapping = new HashMap<String, String>();
+			Map<String, String> keyMapping = new HashMap<>();
+			Map<String, String> HNodeidMapping = new HashMap<>();
 			ArrayList<Row> rows = t.getRows(0, t.getNumRows(), selection);
 			for (Row row : rows) {
 				Node n = row.getNode(key.getId());
@@ -218,12 +218,12 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 				else
 					HNodeidMapping.put(stringStringEntry.getValue(), hn.getId());
 			}
-			Map<String, ArrayList<String>> hash = new HashMap<String, ArrayList<String>>();
+			Map<String, ArrayList<String>> hash = new HashMap<>();
 			for (Row row : rows) {
 				String hashValue = HashValueManager.getHashValue(row, hnodeIds);
 				ArrayList<String> ids = hash.get(hashValue);
 				if (ids == null)
-					ids = new ArrayList<String>();
+					ids = new ArrayList<>();
 				ids.add(row.getId());
 				hash.put(hashValue, ids);
 				//System.out.println("Hash: " + HashValueManager.getHashValue(row, hnodeIDs));
@@ -262,12 +262,12 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 		Worksheet newws = factory.createWorksheet("Unfold: " + oldws.getTitle(), workspace, oldws.getEncoding());
 		SuperSelection selection = getSuperSelection(oldws);
 		newws.getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, oldws.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.sourceType));
-		ArrayList<HNode> topHNodes = new ArrayList<HNode>(oldws.getHeaders().getHNodes());
+		ArrayList<HNode> topHNodes = new ArrayList<>(oldws.getHeaders().getHNodes());
 		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows(), selection);
 		HNode key = oldws.getHeaders().getHNode(keyHNodeid);
 		HNode value = oldws.getHeaders().getHNode(valueHNodeid);
-		List<HNode> hnodes = new ArrayList<HNode>();
-		List<String> hnodeIds = new ArrayList<String>();
+		List<HNode> hnodes = new ArrayList<>();
+		List<String> hnodeIds = new ArrayList<>();
 		if (!notOtherColumn) {
 			for (HNode h : topHNodes) {
 				if (h.getId().compareTo(value.getId()) != 0 && h.getId().compareTo(key.getId()) != 0) {
@@ -277,8 +277,8 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 			}
 		}
 		CloneTableUtils.cloneHTable(newws.getHeaders(), newws, factory, hnodes, false);
-		Map<String, String> keyMapping = new HashMap<String, String>();
-		Map<String, String> HNodeidMapping = new HashMap<String, String>();
+		Map<String, String> keyMapping = new HashMap<>();
+		Map<String, String> HNodeidMapping = new HashMap<>();
 		for (Row row : rows) {
 			Node n = row.getNode(key.getId());
 			keyMapping.put(HashValueManager.getHashValue(oldws, n.getId(), factory), n.getValue().asString());
@@ -290,16 +290,17 @@ public class UnfoldCommand extends WorksheetSelectionCommand {
 			HNodeidMapping.put(stringStringEntry.getValue(), n.getId());
 		}
 
-		Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
+		Map<String, ArrayList<String>> hash = new TreeMap<>();
 		for (Row row : rows) {
 			String hashValue = HashValueManager.getHashValue(row, hnodeIds);
 			ArrayList<String> ids = hash.get(hashValue);
 			if (ids == null)
-				ids = new ArrayList<String>();
+				ids = new ArrayList<>();
 			ids.add(row.getId());
 			hash.put(hashValue, ids);
 		}
-		List<Row> resultRows = new ArrayList<Row>();
+
+		List<Row> resultRows = new ArrayList<>();
 		for (Entry<String, ArrayList<String>> stringArrayListEntry : hash.entrySet()) {
 			ArrayList<String> r = stringArrayListEntry.getValue();
 			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), 

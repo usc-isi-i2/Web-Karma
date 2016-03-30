@@ -45,7 +45,7 @@ public class TemplateTermSetPopulatorWorker {
 		this.path = path;
 		this.strategy = strategy;
 		this.selection = sel;
-		dependentWorkers = new LinkedList<TemplateTermSetPopulatorWorker>();
+		dependentWorkers = new LinkedList<>();
 	}
 	
 	public void addDependentWorker(TemplateTermSetPopulatorWorker worker)
@@ -60,7 +60,7 @@ public class TemplateTermSetPopulatorWorker {
 	}
 	protected List<PartiallyPopulatedTermSet> work(Row topRow, Row currentRow)
 	{
-		List<PartiallyPopulatedTermSet> results = new LinkedList<PartiallyPopulatedTermSet>();
+		List<PartiallyPopulatedTermSet> results = new LinkedList<>();
 		Collection<Node> nodes = strategy.getNodes(topRow, currentRow, selection);
 		
 		for(Node n : nodes)
@@ -85,7 +85,7 @@ public class TemplateTermSetPopulatorWorker {
 	}
 
 	protected List<PartiallyPopulatedTermSet> work(Row topRow, Node n) {
-		List<List<PartiallyPopulatedTermSet>> partialResults = new LinkedList<List<PartiallyPopulatedTermSet>>();
+		List<List<PartiallyPopulatedTermSet>> partialResults = new LinkedList<>();
 		for(TemplateTermSetPopulatorWorker dependentWorker: dependentWorkers)
 		{
 			partialResults.add(dependentWorker.work(topRow, n.getBelongsToRow()));
@@ -96,7 +96,7 @@ public class TemplateTermSetPopulatorWorker {
 	}
 	
 	protected static List<PartiallyPopulatedTermSet> combinePartialResults(List<List<PartiallyPopulatedTermSet>> partialResults) {
-		List<PartiallyPopulatedTermSet> combinedResults = new LinkedList<PartiallyPopulatedTermSet>();
+		List<PartiallyPopulatedTermSet> combinedResults = new LinkedList<>();
 		
 		if(!partialResults.isEmpty())
 		{

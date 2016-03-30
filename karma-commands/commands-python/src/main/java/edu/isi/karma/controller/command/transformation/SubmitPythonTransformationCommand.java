@@ -191,7 +191,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 	private void removeNestedTable(Workspace workspace) {
 		HNode hNode = workspace.getFactory().getHNode(pythonNodeId);
 		hNode.removeNestedTable();
-		List<Node> nodes = new ArrayList<Node>();
+		List<Node> nodes = new ArrayList<>();
 		workspace.getWorksheet(worksheetId).getDataTable().collectNodes(hNode.getHNodePath(workspace.getFactory()), nodes, getSuperSelection(workspace.getWorksheet(worksheetId)));
 		for (Node node : nodes) {
 			node.setNestedTable(null, workspace.getFactory());
@@ -248,8 +248,8 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		RepFactory f = workspace.getFactory();
 		HNode hNode = f.getHNode(pythonNodeId);
 
-		this.originalColumnValues = new ArrayList<String>();
-		Collection<Node> nodes = new ArrayList<Node>();
+		this.originalColumnValues = new ArrayList<>();
+		Collection<Node> nodes = new ArrayList<>();
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 		for(Node node : nodes) {
 			originalColumnValues.add(node.serializeToJSON(selection, f).toString());

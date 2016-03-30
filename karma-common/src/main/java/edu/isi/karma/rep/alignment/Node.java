@@ -63,7 +63,7 @@ public abstract class Node implements Comparable<Node>, Cloneable {
 		Label l = null;
 		this.label = new Label(l);
 		this.type = NodeType.None;
-		this.modelIds = new HashSet<String>();
+		this.modelIds = new HashSet<>();
 	}
 	
 	public String getId() {
@@ -104,7 +104,7 @@ public abstract class Node implements Comparable<Node>, Cloneable {
 	
 	public Set<String> getModelIds() {
 		if (this.modelIds == null)
-			return new HashSet<String>();
+			return new HashSet<>();
 		return modelIds;
 	}
 

@@ -92,7 +92,7 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		Scanner scanner;
+		Scanner scanner = null;
 		int rowCount = 0;
 		int previewRowCounter = 0;
 
@@ -120,7 +120,7 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 					CSVReader reader = new CSVReader(new StringReader(line),
 							delimiter, quoteCharacter, escapeCharacter);
 					String[] rowValues = reader.readNext();
-					List<String> headers = new ArrayList<String>();
+					List<String> headers = new ArrayList<>();
 					if (rowValues == null || rowValues.length == 0) {
 						logger.error("No data found in the Header row!");
 						rowCount++;
@@ -151,7 +151,7 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 					CSVReader reader = new CSVReader(new StringReader(line),
 							delimiter, quoteCharacter, escapeCharacter);
 					String[] rowValues = reader.readNext();
-					List<String> vals = new ArrayList<String>();
+					List<String> vals = new ArrayList<>();
 					if (rowValues != null) {
 						for (int i = 0; i < rowValues.length; i++) {
 							vals.add(rowValues[i]);
@@ -181,6 +181,9 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 			logger.error("Error occured while reading the file!", e);
 		} catch (JSONException e) {
 			logger.error("Error occured while writing to JSON", e);
+		} finally {
+			if(scanner != null)
+				scanner.close();
 		}
 	}
 	

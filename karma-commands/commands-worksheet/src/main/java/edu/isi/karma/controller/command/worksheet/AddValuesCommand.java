@@ -91,7 +91,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 		inputColumns.clear();
 		outputColumns.clear();
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
-		String addValues = null;	
+		String addValues;	
 		HNode ndid = null;
 		try{
 			if (para instanceof JSONArray) {
@@ -164,7 +164,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 
 		//add new column to this table
 		//add column after the column with hNodeId
-		HNode ndid = null;
+		HNode ndid;
 		if (newColumnName != null && !newColumnName.trim().isEmpty()) {
 			if (hTable.getHNodeFromColumnName(newColumnName) != null) {
 				ndid = hTable.getHNodeFromColumnName(newColumnName);
@@ -213,7 +213,7 @@ public class AddValuesCommand extends WorksheetSelectionCommand{
 					selectedPath = path;
 			}
 		}
-		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
+		Collection<Node> nodes = new ArrayList<>(Math.max(1000, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);	
 		for (Node node : nodes) {
 			for (int i = 0; i < array.length(); i++) {

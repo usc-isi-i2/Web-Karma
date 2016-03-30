@@ -89,7 +89,7 @@ public class GraphPreProcess {
 	}
 
 	public UndirectedGraph<Node, DefaultLink> getUndirectedGraph() {	
-		return  new AsUndirectedGraph<Node, DefaultLink>(this.gPrime);
+		return new AsUndirectedGraph<>(this.gPrime);
 	}
 	
 }

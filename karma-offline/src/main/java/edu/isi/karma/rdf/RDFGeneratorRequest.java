@@ -23,7 +23,7 @@ public class RDFGeneratorRequest {
 	private InputStream inputStream;
 	private InputType dataType;
 	private boolean addProvenance;
-	private List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+	private List<KR2RMLRDFWriter> writers = new LinkedList<>();
 	private String modelName;
 	private String sourceName;
 	private String contextName;
@@ -42,9 +42,9 @@ public class RDFGeneratorRequest {
 		this.inputFile = null;
 		this.inputStream = null;
 		this.contextName = null;
-		tripleMapToKill = new ArrayList<String>();
-		tripleMapToStop = new ArrayList<String>();
-		POMToKill = new ArrayList<String>();
+		tripleMapToKill = new ArrayList<>();
+		tripleMapToStop = new ArrayList<>();
+		POMToKill = new ArrayList<>();
 		contextParameters = null;
 	}
 

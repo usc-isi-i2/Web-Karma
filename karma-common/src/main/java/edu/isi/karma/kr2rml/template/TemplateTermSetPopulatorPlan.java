@@ -41,9 +41,9 @@ import edu.isi.karma.rep.Row;
 
 public class TemplateTermSetPopulatorPlan {
 	
-	protected Map<ColumnTemplateTerm, TemplateTermSetPopulatorWorker> independentWorkers = new HashMap<ColumnTemplateTerm, TemplateTermSetPopulatorWorker>();
-	protected Map<ColumnTemplateTerm, TemplateTermSetPopulatorWorker> workers = new HashMap<ColumnTemplateTerm, TemplateTermSetPopulatorWorker>();
-	protected Map<ColumnTemplateTerm, List<TemplateTermSetPopulatorWorker>> workerDependencyPlaceholder = new HashMap<ColumnTemplateTerm, List<TemplateTermSetPopulatorWorker>>();
+	protected Map<ColumnTemplateTerm, TemplateTermSetPopulatorWorker> independentWorkers = new HashMap<>();
+	protected Map<ColumnTemplateTerm, TemplateTermSetPopulatorWorker> workers = new HashMap<>();
+	protected Map<ColumnTemplateTerm, List<TemplateTermSetPopulatorWorker>> workerDependencyPlaceholder = new HashMap<>();
 	protected Map<ColumnTemplateTerm, HNodePath> termToPath;
 	protected TemplateTermSetPopulatorWorker firstWorker;
 	protected LinkedList<ColumnTemplateTerm> columnTerms;
@@ -51,7 +51,7 @@ public class TemplateTermSetPopulatorPlan {
 	protected SuperSelection selection;
 	private static final List<ColumnAffinity> affinities;
 	static {
-		affinities = new LinkedList<ColumnAffinity>();
+		affinities = new LinkedList<>();
 		affinities.add(RowColumnAffinity.INSTANCE);
 		affinities.add(ParentRowColumnAffinity.INSTANCE);
 		affinities.add(CommonParentRowColumnAffinity.INSTANCE);
@@ -63,7 +63,7 @@ public class TemplateTermSetPopulatorPlan {
 	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, SuperSelection sel)
 	{
 		this.termToPath = termToPath;
-		this.columnTerms = new LinkedList<ColumnTemplateTerm>();
+		this.columnTerms = new LinkedList<>();
 		this.comparisonTerms = this.columnTerms;
 		this.columnTerms.addAll(columnTerms);
 		this.firstWorker = null;
@@ -73,7 +73,7 @@ public class TemplateTermSetPopulatorPlan {
 	public TemplateTermSetPopulatorPlan(Map<ColumnTemplateTerm, HNodePath> termToPath, Collection<ColumnTemplateTerm> columnTerms, TemplateTermSetPopulatorWorker firstWorker, SuperSelection sel)
 	{
 		this.termToPath = termToPath;
-		this.columnTerms = new LinkedList<ColumnTemplateTerm>();
+		this.columnTerms = new LinkedList<>();
 		this.comparisonTerms = this.columnTerms;
 		this.columnTerms.addAll(columnTerms);
 		this.firstWorker = firstWorker;
@@ -95,7 +95,7 @@ public class TemplateTermSetPopulatorPlan {
 
 	private void generate()
 	{
-		LinkedList<ColumnTemplateTerm> columnTermsLocal = new LinkedList<ColumnTemplateTerm>();
+		LinkedList<ColumnTemplateTerm> columnTermsLocal = new LinkedList<>();
 		columnTermsLocal.addAll(columnTerms);
 		sortColumnTermsByHNodePathDepth(columnTermsLocal);
 		Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn = generateTermsToTermDependentOn(columnTermsLocal, comparisonTerms);
@@ -128,7 +128,7 @@ public class TemplateTermSetPopulatorPlan {
 	}
 
 	protected Map<ColumnTemplateTerm, ColumnTemplateTerm> generateTermsToTermDependentOn(LinkedList<ColumnTemplateTerm> columnTermsLocal, List<ColumnTemplateTerm> comparisonTermsLocal) {
-		Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn = new HashMap<ColumnTemplateTerm, ColumnTemplateTerm>();
+		Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn = new HashMap<>();
 		while(!columnTermsLocal.isEmpty())
 		{
 			
@@ -189,7 +189,7 @@ public class TemplateTermSetPopulatorPlan {
 
 	private TemplateTermSetPopulatorStrategy generateStrategy(
 			ColumnTemplateTerm currentTerm, ColumnTemplateTerm dependentTerm) {
-		TemplateTermSetPopulatorStrategy strategy = null;
+		TemplateTermSetPopulatorStrategy strategy;
 		if(dependentTerm == null && firstWorker == null) 
 		{
 			strategy = new MemoizedTemplateTermSetPopulatorStrategy(termToPath.get(currentTerm));
@@ -225,7 +225,7 @@ public class TemplateTermSetPopulatorPlan {
 
 	private void generateDependency(ColumnTemplateTerm dependentTerm,
 			TemplateTermSetPopulatorWorker worker) {
-		TemplateTermSetPopulatorWorker dependentOnWorker = null;
+		TemplateTermSetPopulatorWorker dependentOnWorker;
 		dependentOnWorker = workers.get(dependentTerm);
 		if(dependentOnWorker != null)
 		{
@@ -292,7 +292,7 @@ public class TemplateTermSetPopulatorPlan {
 	{
 		if(columnTerms == null || columnTerms.isEmpty())
 		{
-			List<PartiallyPopulatedTermSet> predicates = new LinkedList<PartiallyPopulatedTermSet>();
+			List<PartiallyPopulatedTermSet> predicates = new LinkedList<>();
 			predicates.add(new PartiallyPopulatedTermSet());
 			return predicates;
 		}
@@ -300,7 +300,7 @@ public class TemplateTermSetPopulatorPlan {
 		{
 			return firstWorker.work(topRow);
 		}
-		return new LinkedList<PartiallyPopulatedTermSet>();
+		return new LinkedList<>();
 	}
 	public List<PartiallyPopulatedTermSet> executeComplicated(Row topRow, Node value) {
 		return firstWorker.work(topRow, value);

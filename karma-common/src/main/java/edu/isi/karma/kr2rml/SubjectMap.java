@@ -36,7 +36,7 @@ public class SubjectMap extends TermMap {
 	public SubjectMap(String id) {
 		super(id);
 		this.template = new TemplateTermSet();
-		this.rdfsTypes = new ArrayList<TemplateTermSet>();
+		this.rdfsTypes = new ArrayList<>();
 		this.isBlankNode = false;
 		this.setAsSteinerTreeRootNode(false);
 	}

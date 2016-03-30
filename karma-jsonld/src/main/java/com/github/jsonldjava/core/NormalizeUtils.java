@@ -33,10 +33,10 @@ class NormalizeUtils {
 
     // generates unique and duplicate hashes for bnodes
     public Object hashBlankNodes(Collection<String> unnamed_) throws JsonLdError {
-        List<String> unnamed = new ArrayList<String>(unnamed_);
-        List<String> nextUnnamed = new ArrayList<String>();
-        Map<String, List<String>> duplicates = new LinkedHashMap<String, List<String>>();
-        Map<String, String> unique = new LinkedHashMap<String, String>();
+        List<String> unnamed = new ArrayList<>(unnamed_);
+        List<String> nextUnnamed = new ArrayList<>();
+        Map<String, List<String>> duplicates = new LinkedHashMap<>();
+        Map<String, String> unique = new LinkedHashMap<>();
 
         // NOTE: not using the same structure as javascript here to avoid
         // possible stack overflows
@@ -45,7 +45,7 @@ class NormalizeUtils {
             if (hui == unnamed.size()) {
                 // done, name blank nodes
                 Boolean named = false;
-                List<String> hashes = new ArrayList<String>(unique.keySet());
+                List<String> hashes = new ArrayList<>(unique.keySet());
                 Collections.sort(hashes);
                 for (final String hash : hashes) {
                     final String bnode = unique.get(hash);
@@ -62,16 +62,16 @@ class NormalizeUtils {
                     // hashBlankNodes(unnamed);
                     hui = -1;
                     unnamed = nextUnnamed;
-                    nextUnnamed = new ArrayList<String>();
-                    duplicates = new LinkedHashMap<String, List<String>>();
-                    unique = new LinkedHashMap<String, String>();
+                    nextUnnamed = new ArrayList<>();
+                    duplicates = new LinkedHashMap<>();
+                    unique = new LinkedHashMap<>();
                     continue;
                 }
                 // name the duplicate hash bnods
                 else {
                     // names duplicate hash bnodes
                     // enumerate duplicate hash groups in sorted order
-                    hashes = new ArrayList<String>(duplicates.keySet());
+                    hashes = new ArrayList<>(duplicates.keySet());
                     Collections.sort(hashes);
 
                     // process each group
@@ -79,7 +79,7 @@ class NormalizeUtils {
                         if (pgi == hashes.size()) {
                             // done, create JSON-LD array
                             // return createArray();
-                            final List<String> normalized = new ArrayList<String>();
+                            final List<String> normalized = new ArrayList<>();
 
                             // Note: At this point all bnodes in the set of RDF
                             // quads have been
@@ -138,7 +138,7 @@ class NormalizeUtils {
 
                         // name each group member
                         final List<String> group = duplicates.get(hashes.get(pgi));
-                        final List<HashResult> results = new ArrayList<HashResult>();
+                        final List<HashResult> results = new ArrayList<>();
                         for (int n = 0;; n++) {
                             if (n == group.size()) {
                                 // name bnodes in hash order
@@ -188,7 +188,7 @@ class NormalizeUtils {
                 duplicates.get(hash).add(bnode);
                 nextUnnamed.add(bnode);
             } else if (unique.containsKey(hash)) {
-                final List<String> tmp = new ArrayList<String>();
+                final List<String> tmp = new ArrayList<>();
                 tmp.add(unique.get(hash));
                 tmp.add(bnode);
                 duplicates.put(hash, tmp);
@@ -229,7 +229,7 @@ class NormalizeUtils {
             // create SHA-1 digest
             final MessageDigest md = MessageDigest.getInstance("SHA-1");
 
-            final Map<String, List<String>> groups = new LinkedHashMap<String, List<String>>();
+            final Map<String, List<String>> groups = new LinkedHashMap<>();
             List<String> groupHashes;
             final List<Object> quads = (List<Object>) ((Map<String, Object>) bnodes.get(id))
                     .get("quads");
@@ -237,7 +237,7 @@ class NormalizeUtils {
             for (int hpi = 0;; hpi++) {
                 if (hpi == quads.size()) {
                     // done , hash groups
-                    groupHashes = new ArrayList<String>(groups.keySet());
+                    groupHashes = new ArrayList<>(groups.keySet());
                     Collections.sort(groupHashes);
                     for (int hgi = 0;; hgi++) {
                         if (hgi == groupHashes.size()) {
@@ -263,7 +263,7 @@ class NormalizeUtils {
 
                             // build adjacent path
                             String path = "";
-                            final List<String> recurse = new ArrayList<String>();
+                            final List<String> recurse = new ArrayList<>();
                             for (final String bnode : permutation) {
                                 // use canonical name if available
                                 if (namer.isNamed(bnode)) {
@@ -393,7 +393,7 @@ class NormalizeUtils {
                     if (groups.containsKey(groupHash)) {
                         groups.get(groupHash).add(bnode);
                     } else {
-                        final List<String> tmp = new ArrayList<String>();
+                        final List<String> tmp = new ArrayList<>();
                         tmp.add(bnode);
                         groups.put(groupHash, tmp);
                     }
@@ -432,7 +432,7 @@ class NormalizeUtils {
         // serialize all of bnode's quads
         final List<Map<String, Object>> quads = (List<Map<String, Object>>) ((Map<String, Object>) bnodes
                 .get(id)).get("quads");
-        final List<String> nquads = new ArrayList<String>();
+        final List<String> nquads = new ArrayList<>();
         for (int i = 0; i < quads.size(); ++i) {
             nquads.add(toNQuad((RDFDataset.Quad) quads.get(i),
                     quads.get(i).get("name") != null ? (String) ((Map<String, Object>) quads.get(i)
@@ -504,7 +504,7 @@ class NormalizeUtils {
             this.list = (List<String>) JsonLdUtils.clone(list);
             Collections.sort(this.list);
             this.done = false;
-            this.left = new LinkedHashMap<String, Boolean>();
+            this.left = new LinkedHashMap<>();
             for (final String i : this.list) {
                 this.left.put(i, true);
             }

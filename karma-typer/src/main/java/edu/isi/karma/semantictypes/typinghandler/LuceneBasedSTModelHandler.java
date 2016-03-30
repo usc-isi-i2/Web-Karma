@@ -70,7 +70,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		}
 		
 		label = label.trim();
-		ArrayList<String> cleanedExamples = new ArrayList<String>();
+		ArrayList<String> cleanedExamples = new ArrayList<>();
 		cleanedExamplesList(examples, cleanedExamples);
 		
 		// making sure that the condition where the examples list is not empty
@@ -317,7 +317,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 * @return Returns list of allowed Characters
 	 */
 	private ArrayList<String> allowedCharacters() {
-		ArrayList<String> allowed = new ArrayList<String>();
+		ArrayList<String> allowed = new ArrayList<>();
 		// Adding A-Z
 		for (int c = 65; c <= 90; c++) {
 			allowed.add(String.valueOf((char) c));

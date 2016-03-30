@@ -61,8 +61,7 @@ public class TriplesMapPlanExecutor {
 			
 			if(submitPlansIndividually)
 			{
-				List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
-				results = service.invokeAll(plan.workers);
+				List<Future<Boolean>> results = service.invokeAll(plan.workers);
 				for(Future<Boolean> result : results)
 				{
 					result.get(1, TimeUnit.MINUTES);

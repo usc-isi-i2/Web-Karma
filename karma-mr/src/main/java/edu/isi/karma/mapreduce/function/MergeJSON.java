@@ -33,7 +33,7 @@ public class MergeJSON extends UDF{
 	}
 	protected static String mergeJSON(String sourceString, String targetString,
 			String pathString, String atId) {
-		List<String> sourceStrings = new LinkedList<String>();
+		List<String> sourceStrings = new LinkedList<>();
 		sourceStrings.add(sourceString);
 		return mergeJSON(sourceStrings, targetString, pathString, atId);
 	}
@@ -43,7 +43,7 @@ public class MergeJSON extends UDF{
 		
 		JSONObject rootTargetObj = new JSONObject(targetString);
 		JSONObject targetResult = rootTargetObj;
-		ArrayList<String> pathElements = new ArrayList<String>();
+		ArrayList<String> pathElements = new ArrayList<>();
 		for(String element:array)
 		{
 			if(element.equals("$"))
@@ -74,7 +74,7 @@ public class MergeJSON extends UDF{
 	}
 	protected static List<JSONObject> collectObjectsFromJSONPath(List<String> pathElements, Object targetObj)
 	{
-		List<JSONObject> collectedObjects = new LinkedList<JSONObject>();
+		List<JSONObject> collectedObjects = new LinkedList<>();
 		collectObjectsFromJSONPath(collectedObjects, pathElements, targetObj);
 		return collectedObjects;
 	}

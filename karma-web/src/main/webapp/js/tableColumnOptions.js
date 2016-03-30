@@ -52,11 +52,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			func: aggregation,
 			leafOnly: true,
 			leafExcluded: false
-		}, {
-			name: "Transform",
-			func: transform,
-			leafOnly: true,
-			leafExcluded: false
 		},
 		//{name:"Generate Cluster Values", func:clusterValues, leafOnly:true, leafExcluded: false},
 		//{name:"Merge Cluster Values", func:mergeValues, leafOnly:true, leafExcluded: false},
@@ -294,12 +289,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 	function splitValue() {
 		hideDropdown();
 		SplitValueDialog.getInstance().show(worksheetId, columnId);
-		return false;
-	}
-
-	function transform() {
-		hideDropdown();
-		TransformColumnDialog.getInstance().show(worksheetId, columnId);
 		return false;
 	}
 

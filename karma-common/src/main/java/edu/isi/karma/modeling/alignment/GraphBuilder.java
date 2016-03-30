@@ -109,32 +109,32 @@ public class GraphBuilder {
 		this.ontologyManager = ontologyManager;
 		this.nodeIdFactory = new NodeIdFactory();
 
-		this.idToNodeMap = new HashMap<String, Node>();
-		this.idToLinkMap = new HashMap<String, LabeledLink>();
-		this.uriToNodesMap = new HashMap<String, Set<Node>>();
-		this.uriToLinksMap = new HashMap<String, Set<LabeledLink>>();
-		this.typeToNodesMap = new HashMap<NodeType, Set<Node>>();
-		this.typeToLinksMap = new HashMap<LinkType, Set<LabeledLink>>();
-		this.statusToLinksMap = new HashMap<LinkStatus, Set<LabeledLink>>();
+		this.idToNodeMap = new HashMap<>();
+		this.idToLinkMap = new HashMap<>();
+		this.uriToNodesMap = new HashMap<>();
+		this.uriToLinksMap = new HashMap<>();
+		this.typeToNodesMap = new HashMap<>();
+		this.typeToLinksMap = new HashMap<>();
+		this.statusToLinksMap = new HashMap<>();
 		
-		this.uriClosure = new HashMap<String, Set<String>>();
+		this.uriClosure = new HashMap<>();
 
-		this.graph = new DirectedWeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		this.graph = new DirectedWeightedMultigraph<>(DefaultLink.class);
 		
-		this.visitedSourceTargetPairs = new HashSet<String>();
+		this.visitedSourceTargetPairs = new HashSet<>();
 			
-		this.modelIds = new HashSet<String>();
-		this.linkCountMap = new HashMap<String, Integer>();
-		this.nodeDataPropertyCount = new HashMap<String, Integer>();
-		this.semanticTypeMatches = new HashMap<String, Set<SemanticTypeMapping>>();
-		this.patternLinks = new HashMap<String, List<LabeledLink>>();
+		this.modelIds = new HashSet<>();
+		this.linkCountMap = new HashMap<>();
+		this.nodeDataPropertyCount = new HashMap<>();
+		this.semanticTypeMatches = new HashMap<>();
+		this.patternLinks = new HashMap<>();
 
-		this.nodeDataProperties= new HashMap<String,Set<Node>>(); 
+		this.nodeDataProperties= new HashMap<>(); 
 		
-		this.nodeIncomingLinks = new HashMap<String, Set<LabeledLink>>();
-		this.nodeOutgoingLinks = new HashMap<String, Set<LabeledLink>>();
+		this.nodeIncomingLinks = new HashMap<>();
+		this.nodeOutgoingLinks = new HashMap<>();
 		
-		this.forcedNodes = new HashSet<Node>();
+		this.forcedNodes = new HashSet<>();
 		if (addThingNode) 
 			this.initialGraph();
 		
@@ -274,7 +274,7 @@ public class GraphBuilder {
 			return result;
 
 		if (addedNodes == null) 
-			addedNodes = new HashSet<Node>();
+			addedNodes = new HashSet<>();
 		addedNodes.add(node);
 		if (node instanceof InternalNode) 
 			addClosureAndUpdateLinks((InternalNode)node, addedNodes);
@@ -296,7 +296,7 @@ public class GraphBuilder {
 	private void addClosureAndUpdateLinks(InternalNode node, Set<Node> addedNodes) {
 		
 		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(ontologyManager.getContextId()).getKarmaHome());
-		if (addedNodes == null) addedNodes = new HashSet<Node>();
+		if (addedNodes == null) addedNodes = new HashSet<>();
 		if (node instanceof InternalNode) {
 
 			long start = System.currentTimeMillis();
@@ -339,7 +339,7 @@ public class GraphBuilder {
 	public void addClosureAndUpdateLinks(Set<InternalNode> internalNodes, Set<Node> addedNodes) {
 		
 		logger.debug("<enter");
-		if (addedNodes == null) addedNodes = new HashSet<Node>();
+		if (addedNodes == null) addedNodes = new HashSet<>();
 
 		long start = System.currentTimeMillis();
 		float elapsedTimeSec;
@@ -401,14 +401,14 @@ public class GraphBuilder {
 //		logger.info("Added in idToNodeMap:" + node.getId());
 		Set<Node> nodesWithSameUri = uriToNodesMap.get(node.getUri());
 		if (nodesWithSameUri == null) {
-			nodesWithSameUri = new HashSet<Node>();
+			nodesWithSameUri = new HashSet<>();
 			uriToNodesMap.put(node.getUri(), nodesWithSameUri);
 		}
 		nodesWithSameUri.add(node);
 		
 		Set<Node> nodesWithSameType = typeToNodesMap.get(node.getType());
 		if (nodesWithSameType == null) {
-			nodesWithSameType = new HashSet<Node>();
+			nodesWithSameType = new HashSet<>();
 			typeToNodesMap.put(node.getType(), nodesWithSameType);
 		}
 		nodesWithSameType.add(node);
@@ -540,14 +540,14 @@ public class GraphBuilder {
 		
 		Set<LabeledLink> linksWithSameUri = uriToLinksMap.get(labeledLink.getUri());
 		if (linksWithSameUri == null) {
-			linksWithSameUri = new HashSet<LabeledLink>();
+			linksWithSameUri = new HashSet<>();
 			uriToLinksMap.put(labeledLink.getUri(), linksWithSameUri);
 		}
 		linksWithSameUri.add(labeledLink);
 				
 		Set<LabeledLink> linksWithSameType = typeToLinksMap.get(labeledLink.getType());
 		if (linksWithSameType == null) {
-			linksWithSameType = new HashSet<LabeledLink>();
+			linksWithSameType = new HashSet<>();
 			typeToLinksMap.put(labeledLink.getType(), linksWithSameType);
 		}
 		linksWithSameType.add(labeledLink);
@@ -555,7 +555,7 @@ public class GraphBuilder {
 		if (labeledLink.getStatus() != LinkStatus.Normal) {
 			Set<LabeledLink> linksWithSameStatus = statusToLinksMap.get(labeledLink.getStatus());
 			if (linksWithSameStatus == null) { 
-				linksWithSameStatus = new HashSet<LabeledLink>();
+				linksWithSameStatus = new HashSet<>();
 				statusToLinksMap.put(labeledLink.getStatus(), linksWithSameStatus);
 			}
 		}
@@ -580,7 +580,7 @@ public class GraphBuilder {
 			
 			Set<Node> dataPropertyColumnNodes = this.nodeDataProperties.get(key);
 			if (dataPropertyColumnNodes == null) {
-				dataPropertyColumnNodes = new HashSet<Node>();
+				dataPropertyColumnNodes = new HashSet<>();
 				this.nodeDataProperties.put(key, dataPropertyColumnNodes);
 			}
 			dataPropertyColumnNodes.add(target);
@@ -588,7 +588,7 @@ public class GraphBuilder {
 			key = source.getUri() + link.getUri();
 			Set<SemanticTypeMapping> SemanticTypeMappings = this.semanticTypeMatches.get(key);
 			if (SemanticTypeMappings == null) {
-				SemanticTypeMappings = new HashSet<SemanticTypeMapping>();
+				SemanticTypeMappings = new HashSet<>();
 				this.semanticTypeMatches.put(key, SemanticTypeMappings);
 			}
 			SemanticTypeMappings.add(new SemanticTypeMapping(null, null, (InternalNode)source, labeledLink, (ColumnNode)target));
@@ -609,7 +609,7 @@ public class GraphBuilder {
 		String key = l.getSource().getUri() + l.getUri() + l.getTarget().getUri();
 		List<LabeledLink> links = this.patternLinks.get(key);
 		if (links == null) {
-			links = new LinkedList<LabeledLink>();
+			links = new LinkedList<>();
 			this.patternLinks.put(key, links);
 		}
 		links.add(l);
@@ -684,7 +684,7 @@ public class GraphBuilder {
 		
 		Set<LabeledLink> linksWithNewStatus = this.statusToLinksMap.get(newStatus);
 		if (linksWithNewStatus == null) {
-			linksWithNewStatus = new HashSet<LabeledLink>();
+			linksWithNewStatus = new HashSet<>();
 			statusToLinksMap.put(newStatus, linksWithNewStatus);
 		}
 		linksWithNewStatus.add(graphLink);
@@ -801,7 +801,7 @@ public class GraphBuilder {
 	
 	public LinkFrequency getMoreFrequentLinkBetweenNodes(String sourceUri, String targetUri) {
 
-		List<String> possibleLinksFromSourceToTarget = new ArrayList<String>();
+		List<String> possibleLinksFromSourceToTarget = new ArrayList<>();
 
 		HashSet<String> objectPropertiesDirect;
 		HashSet<String> objectPropertiesIndirect;
@@ -932,7 +932,7 @@ public class GraphBuilder {
 				selectedLinkUri = Uris.RDFS_SUBCLASS_URI;
 				type = 9;
 			} else {	// if (objectPropertiesWithoutDomainAndRange != null && objectPropertiesWithoutDomainAndRange.keySet().size() > 0) {
-				selectedLinkUri = new ArrayList<String>(objectPropertiesWithoutDomainAndRange.keySet()).get(0);
+				selectedLinkUri = new ArrayList<>(objectPropertiesWithoutDomainAndRange.keySet()).get(0);
 				type = 10;
 			}
 
@@ -1000,7 +1000,7 @@ public class GraphBuilder {
 
 	private HashSet<String> getUriDirectConnections(String uri) {
 		
-		HashSet<String> uriDirectConnections = new HashSet<String>();
+		HashSet<String> uriDirectConnections = new HashSet<>();
 		
 		HashSet<String> opDomainClasses = null;
 		HashMap<String, Label> superClasses = null;
@@ -1026,9 +1026,9 @@ public class GraphBuilder {
 		if (closure != null) 
 			return closure;
 	
-		closure = new HashSet<String>();
-		List<String> closedList = new ArrayList<String>();
-		HashMap<String, Set<String>> dependentUrisMap = new HashMap<String, Set<String>>();
+		closure = new HashSet<>();
+		List<String> closedList = new ArrayList<>();
+		HashMap<String, Set<String>> dependentUrisMap = new HashMap<>();
 		computeUriClosureRecursive(uri, closure, closedList, dependentUrisMap);
 		if (closedList.contains(uri) && !closure.contains(uri))
 			closure.add(uri);
@@ -1075,7 +1075,7 @@ public class GraphBuilder {
 				if (closedList.contains(c)) {
 					Set<String> dependentUris = dependentUrisMap.get(uri);
 					if (dependentUris == null) {
-						dependentUris = new HashSet<String>();
+						dependentUris = new HashSet<>();
 						dependentUrisMap.put(uri, dependentUris);
 					}
 					if (!dependentUris.contains(c)) dependentUris.add(c);
@@ -1083,7 +1083,7 @@ public class GraphBuilder {
 				}
 				if (!closure.contains(c)) closure.add(c);
 				if (!closedList.contains(c)) closedList.add(c);
-				Set<String> localClosure = new HashSet<String>();
+				Set<String> localClosure = new HashSet<>();
 				computeUriClosureRecursive(c, localClosure, closedList, dependentUrisMap);
 				for (String s : localClosure)
 					if (!closure.contains(s)) closure.add(s);
@@ -1096,7 +1096,7 @@ public class GraphBuilder {
 	
 	public List<Node> getNodeClosure(Node node) {
 		
-		List<Node> nodeClosure = new ArrayList<Node>();
+		List<Node> nodeClosure = new ArrayList<>();
 		if (node instanceof ColumnNode) return nodeClosure;
 		
 		String uri = node.getUri();
@@ -1122,7 +1122,7 @@ public class GraphBuilder {
 
 		logger.debug("<enter");
 		
-		if (newAddedNodes == null) newAddedNodes = new HashSet<Node>();
+		if (newAddedNodes == null) newAddedNodes = new HashSet<>();
 		
 		String uri = node.getUri();
 		if (this.uriClosure.get(uri) != null) // the closure is already computed and added to the graph.
@@ -1152,7 +1152,7 @@ public class GraphBuilder {
 		if (nodeSet == null || nodeSet.isEmpty())
 			return;
 		
-		List<Node> nodes = new ArrayList<Node>(nodeSet);
+		List<Node> nodes = new ArrayList<>(nodeSet);
 		logger.debug("number of internal nodes: " + nodes.size());
 		
 		Node source;
@@ -1301,7 +1301,7 @@ public class GraphBuilder {
 	public List<LabeledLink> getPossibleLinks(String sourceId, String targetId, LinkType linkType, 
 			ObjectPropertyType objectProertyType) {
 		
-		List<LabeledLink> sortedLinks = new ArrayList<LabeledLink>();
+		List<LabeledLink> sortedLinks = new ArrayList<>();
 
 		Node source = this.idToNodeMap.get(sourceId);
 		Node target = this.idToNodeMap.get(targetId);
@@ -1361,7 +1361,7 @@ public class GraphBuilder {
 	
 	public List<LabeledLink> getLinks(String sourceId, String targetId) {
 		
-		List<LabeledLink> links  = new LinkedList<LabeledLink>();
+		List<LabeledLink> links  = new LinkedList<>();
 
 		Node source = this.getIdToNodeMap().get(sourceId);
 		if (source == null) return links;
@@ -1383,7 +1383,7 @@ public class GraphBuilder {
 
 	public List<LabeledLink> getIncomingLinks(String nodeId) {
 		
-		List<LabeledLink> incomingLinks  = new LinkedList<LabeledLink>();
+		List<LabeledLink> incomingLinks  = new LinkedList<>();
 
 		Node node = this.getIdToNodeMap().get(nodeId);
 		if (node == null) return incomingLinks;
@@ -1402,7 +1402,7 @@ public class GraphBuilder {
 	
 	public List<LabeledLink> getOutgoingLinks(String nodeId) {
 		
-		List<LabeledLink> outgoingLinks  = new LinkedList<LabeledLink>();
+		List<LabeledLink> outgoingLinks  = new LinkedList<>();
 
 		Node node = this.getIdToNodeMap().get(nodeId);
 		if (node == null) return outgoingLinks;

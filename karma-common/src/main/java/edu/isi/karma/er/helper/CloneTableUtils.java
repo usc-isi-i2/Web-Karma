@@ -35,7 +35,7 @@ public class CloneTableUtils {
 			if (hnode.hasNestedTable()) {
 				HTable oldNested = hnode.getNestedTable();
 				HTable newNested = newHNode.addNestedTable(hnode.getNestedTable().getTableName(), newWorksheet, factory);
-				tmp.putAll(cloneHTable(newNested, newWorksheet, factory, new ArrayList<HNode>(oldNested.getHNodes()), false));
+				tmp.putAll(cloneHTable(newNested, newWorksheet, factory, new ArrayList<>(oldNested.getHNodes()), false));
 			}
 		}
 		return tmp;

@@ -610,14 +610,6 @@ function parse(data) {
 			} else {
 				$.sticky(element["numRowsNotInserted"] + " rows not saved in database! Check log file for details.");
 			}
-		} else if (element["updateType"] == "CleaningResultUpdate") {
-			if (element["result"] != null) {
-				if (element["result"][0] == null || element["result"][0]["top"].length == 0) {
-					alert("Cannot find any transformations! ");
-				}
-
-				TransformColumnDialog.getInstance().handleCleaningResultUpdate(element["result"]);
-			}
 		} else if (element["updateType"] == "InfoUpdate") {
 			$.sticky(element["Info"]);
 		} else if (element["updateType"] == "AlignmentSVGVisualizationUpdate") {

@@ -160,7 +160,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 				"Error occured while populating the source. Cannot find any services to be invoked according to this source model."));
 		}
 		
-		List<String> requestIds = new ArrayList<String>();
+		List<String> requestIds = new ArrayList<>();
 		Map<String, String> serviceToSourceAttMapping =  servicesAndMappings.get(service);
 		List<String> requestURLStrings = getUrlStrings(service, source, wk, serviceToSourceAttMapping, requestIds);
 		if (requestURLStrings == null || requestURLStrings.isEmpty()) {
@@ -189,7 +189,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		}
 		
 		// Create new vWorksheet using the new header order
-		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+		List<HNodePath> columnPaths = new ArrayList<>();
 		for (HNode node : wk.getHeaders().getSortedHNodes()) {
 			HNodePath path = new HNodePath(node);
 			columnPaths.add(path);
@@ -210,7 +210,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 			Worksheet wk, Map<String, String> serviceToSourceAttMapping, 
 			List<String> requestIds) {
 		SuperSelection selection = getSuperSelection(wk);
-		List<String> requestURLStrings = new ArrayList<String>();
+		List<String> requestURLStrings = new ArrayList<>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
 		if (rows == null || rows.isEmpty()) {
 			logger.error("Data table does not have any row.");
@@ -219,7 +219,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		
 		Map<String, String> attIdToValue = null;
 		for (int i = 0; i < rows.size(); i++) {
-			attIdToValue = new HashMap<String, String>();
+			attIdToValue = new HashMap<>();
 			for (Map.Entry<String, String> stringStringEntry : serviceToSourceAttMapping.entrySet()) {
 				String sourceAttId = stringStringEntry.getValue();
 				Attribute sourceAtt = source.getAttribute(sourceAttId);
@@ -259,7 +259,7 @@ public class PopulateCommand extends WorksheetSelectionCommand{
 		UpdateContainer c = new UpdateContainer();
 		
 		// Create new vWorksheet using the new header order
-		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+		List<HNodePath> columnPaths = new ArrayList<>();
 		for (HNode node : worksheetBeforeInvocation.getHeaders().getSortedHNodes()) {
 			HNodePath path = new HNodePath(node);
 			columnPaths.add(path);

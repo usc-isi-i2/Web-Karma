@@ -38,7 +38,7 @@ import edu.isi.karma.rep.RepFactory;
 public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 
 	private static Logger LOG = LoggerFactory.getLogger(AvroKR2RMLRDFWriter.class);
-	protected Map<String, Schema> triplesMapIdToSchema = new HashMap<String, Schema>();
+	protected Map<String, Schema> triplesMapIdToSchema = new HashMap<>();
 	protected RepFactory rep;
 	protected Schema rootSchema;
 	private OutputStream output; 
@@ -69,8 +69,8 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		String rootTriplesMapId = this.rootTriplesMapIds.iterator().next();
 		rootSchema = triplesMapIdToSchema.get(rootTriplesMapId);
 
-		datumWriter = new GenericDatumWriter<GenericRecord>(rootSchema);
-		dfw = new DataFileWriter<GenericRecord>(datumWriter);
+		datumWriter = new GenericDatumWriter<>(rootSchema);
+		dfw = new DataFileWriter<>(datumWriter);
 		dfw.create(rootSchema, output);
 		
 		
@@ -81,7 +81,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		TriplesMap map = graph.getTriplesMap(triplesMapId);
 		RecordBuilder<Schema> rb = SchemaBuilder.record("subjr"+(id++));
 		
-		Set<String> currentPredicates = new HashSet<String>(); 
+		Set<String> currentPredicates = new HashSet<>(); 
 		FieldAssembler<Schema> fieldAssembler = rb.fields();
 		for(PredicateObjectMap pom : map.getPredicateObjectMaps())
 		{
@@ -213,7 +213,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		String mapPredicateName = pom.getPredicate().getId().replaceAll("[^\\w]", "_");
 		if(object instanceof String)
 		{
-			Map<String, String> values = null;
+			Map<String, String> values;
 			if(subject.get(mapPredicateName)== null)
 			{
 				subject.put(mapPredicateName, new ConcurrentHashMap<String, String>());
@@ -223,7 +223,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		}
 		else if(object instanceof GenericRecord)
 		{
-			Map<String, GenericRecord> values = null;
+			Map<String, GenericRecord> values;
 			if(subject.get(mapPredicateName)== null)
 			{
 				subject.put(mapPredicateName, new ConcurrentHashMap<String, GenericRecord>());
@@ -253,7 +253,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 				}
 				else if(currentObj instanceof GenericRecord)
 				{
-					array = new GenericData.Array<GenericRecord>(subject.getSchema().getField(shortHandPredicateURI).schema().getTypes().get(0), new LinkedList<GenericRecord>());
+					array = new GenericData.Array<>(subject.getSchema().getField(shortHandPredicateURI).schema().getTypes().get(0), new LinkedList<GenericRecord>());
 					array.add((GenericRecord)object);
 					array.add((GenericRecord)currentObj);
 				}
@@ -261,7 +261,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 			else
 			{
 					GenericRecord objectToAdd = (GenericRecord)object;
-					array = new GenericData.Array<GenericRecord>(objectToAdd.getSchema(), new LinkedList<GenericRecord>());
+					array = new GenericData.Array<>(objectToAdd.getSchema(), new LinkedList<GenericRecord>());
 					array.add(objectToAdd);
 				
 			}
@@ -278,7 +278,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 				}
 				else if(currentObj instanceof String)
 				{
-					strings = new GenericData.Array<String>(SchemaBuilder.array().items().stringType(), new LinkedList<String>());
+					strings = new GenericData.Array<>(SchemaBuilder.array().items().stringType(), new LinkedList<String>());
 					strings.add((String)object);
 					strings.add((String)currentObj);
 				}
@@ -286,7 +286,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 			else
 			{
 					String objectToAdd = (String)object;
-					strings = new GenericData.Array<String>(SchemaBuilder.array().items().stringType(), new LinkedList<String>());
+					strings = new GenericData.Array<>(SchemaBuilder.array().items().stringType(), new LinkedList<String>());
 					strings.add(objectToAdd);
 				
 			}
@@ -297,7 +297,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 	
 	@Override
 	public void finishRow() {
-		for(ConcurrentHashMap<String, GenericRecord> records : this.rootObjectsByTriplesMapId.values())
+		for(Map<String, GenericRecord> records : this.rootObjectsByTriplesMapId.values())
 		{
 			
 			for(GenericRecord record : records.values()){ 
@@ -350,7 +350,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 				collapseSameType((GenericRecord)value);
 			if (value instanceof GenericArray) {
 				GenericArray array = (GenericArray)value;
-				Set<Object> valuesHash = new HashSet<Object>();
+				Set<Object> valuesHash = new HashSet<>();
 				boolean unmodified = true;
 				for (int i = 0; i < array.size(); i++) {
 					Object o = array.get(i);
@@ -363,7 +363,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 				}
 				if(!unmodified)
 				{
-					GenericArray<Object> newValues = new GenericData.Array<Object>(array.getSchema(), valuesHash);
+					GenericArray<Object> newValues = new GenericData.Array<>(array.getSchema(), valuesHash);
 					obj.put(f.name(), newValues);
 				}
 			}

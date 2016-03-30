@@ -70,4 +70,8 @@ public class RegenerateWorksheetUpdate extends AbstractUpdate {
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		return this.worksheetId != null ? this.worksheetId.hashCode() : 0;
+	}
 }

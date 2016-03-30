@@ -67,7 +67,6 @@ and related projects, please see: http://www.isi.edu/integration
         <link rel="stylesheet" type="text/css" href="./css/ServiceImport.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/headerParsingExample.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/AlignmentHeaders.css?<jsp:include page='version.jsp' />" />
-        <link rel="stylesheet" type="text/css" href="./css/cleaning.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/alignment.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/d3.css?<jsp:include page='version.jsp' />" />
         <link rel="stylesheet" type="text/css" href="./css/main.css?<jsp:include page='version.jsp' />" />
@@ -352,7 +351,6 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/databaseImportDialog.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/d3-model-manager.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/fileImport.js?<jsp:include page='version.jsp' />"></script>
-        <script type="text/javascript" src="js/cleaning.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/reset-options.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/cleaning-charts.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/showModel.js?<jsp:include page='version.jsp' />"></script>

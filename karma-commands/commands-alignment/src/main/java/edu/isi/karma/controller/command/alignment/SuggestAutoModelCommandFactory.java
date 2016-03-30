@@ -107,7 +107,7 @@ public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
 			JSONObject value = (JSONObject) typeObj
 					.get(ClientJsonKeys.value.name());
 
-			SemanticType type = null;
+			SemanticType type;
 			String domain = (String) value
 					.get(SemanticType.ClientJsonKeys.DomainUri.name());
 			String fullType = (String) value

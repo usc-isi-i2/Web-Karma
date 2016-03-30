@@ -57,7 +57,7 @@ public abstract class AbstractJDBCUtil {
 	public abstract ArrayList<String> getListOfTables(Connection conn) throws SQLException, ClassNotFoundException;
 
 	protected Connection getConnection(String driver, String connectString) throws SQLException, ClassNotFoundException {
-		Connection localConn = null;
+		Connection localConn;
 		Class.forName(driver);
 		localConn = DriverManager.getConnection(connectString);
 		return localConn;
@@ -154,19 +154,19 @@ public abstract class AbstractJDBCUtil {
 	private static boolean warnedSqlException = false;
 	
 	protected ArrayList<ArrayList<String>> parseResultSetIntoArrayListOfRows(ResultSet r) throws SQLException {
-		ArrayList<ArrayList<String>> vals = new ArrayList<ArrayList<String>>();
+		ArrayList<ArrayList<String>> vals = new ArrayList<>();
 
 		ResultSetMetaData meta = r.getMetaData();
 
 		// Add the column names
-		ArrayList<String> columnNamesRow = new ArrayList<String>();
+		ArrayList<String> columnNamesRow = new ArrayList<>();
 		for (int i = 1; i <= meta.getColumnCount(); i++) {
 			columnNamesRow.add(meta.getColumnName(i));
 		}
 		vals.add(columnNamesRow);
 		
 		// Add an ArrayList for each row
-		ArrayList<String> row = null;
+		ArrayList<String> row;
 		while ((row = parseResultSetRow(r)) != null) {
 			vals.add(row);
 		}
@@ -177,7 +177,7 @@ public abstract class AbstractJDBCUtil {
 	public ArrayList<String> parseResultSetRow(ResultSet r) throws SQLException {
 		if(r.next()) {
 			ResultSetMetaData meta = r.getMetaData();
-			ArrayList<String> row = new ArrayList<String>();
+			ArrayList<String> row = new ArrayList<>();
 			for (int i = 1; i <= meta.getColumnCount(); i++) {
 
 				String val;
@@ -207,7 +207,7 @@ public abstract class AbstractJDBCUtil {
 	 * @throws ClassNotFoundException
 	 */
 	public boolean tableExists(String tableName, Connection conn) throws SQLException, ClassNotFoundException {
-		ArrayList<String> tn = getListOfTables(conn);
+		List<String> tn = getListOfTables(conn);
 
 		if (tn.contains(tableName)) {
 			return true;
@@ -226,7 +226,7 @@ public abstract class AbstractJDBCUtil {
 	 */
 	public List<String> getColumnNames(String db, String tableName, Connection conn) throws SQLException
 	{
-		List<String> columnNames = new ArrayList<String>(10);
+		List<String> columnNames = new ArrayList<>(10);
 		ResultSet rs = conn.getMetaData().getColumns(db, null, tableName, null);
 		while(rs.next())
 		{
@@ -245,7 +245,7 @@ public abstract class AbstractJDBCUtil {
 	 */
 	public List<String> getColumnTypes(String db, String tableName, Connection conn) throws SQLException
 	{
-		List<String> columnTypes = new ArrayList<String>(10);
+		List<String> columnTypes = new ArrayList<>(10);
 		ResultSet rs = conn.getMetaData().getColumns(db, null, tableName, null);
 		while(rs.next())
 		{

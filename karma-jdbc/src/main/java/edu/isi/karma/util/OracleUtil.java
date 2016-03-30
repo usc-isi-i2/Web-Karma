@@ -42,7 +42,7 @@ public class OracleUtil extends AbstractJDBCUtil {
 	@Override
 	public ArrayList<String> getListOfTables(Connection conn)
 			throws SQLException, ClassNotFoundException {
-		ArrayList<String> tableNames = new ArrayList<String>();
+		ArrayList<String> tableNames = new ArrayList<>();
 		
 		Statement stmt = conn.createStatement(); 
 	    ResultSet rs = stmt.executeQuery("select object_name from user_objects " +
@@ -52,6 +52,9 @@ public class OracleUtil extends AbstractJDBCUtil {
 	      String tableName = rs.getString(1);
 	      tableNames.add(tableName);
 	    }
+		rs.close();
+		stmt.close();
+		
 	    Collections.sort(tableNames);
 		return tableNames;
 	}

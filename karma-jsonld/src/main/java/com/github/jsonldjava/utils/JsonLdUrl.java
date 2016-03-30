@@ -119,13 +119,13 @@ public class JsonLdUrl {
         }
 
         // RFC 3986 5.2.4 (reworked)
-        final List<String> input = new ArrayList<String>(Arrays.asList(path.split("/")));
+        final List<String> input = new ArrayList<>(Arrays.asList(path.split("/")));
         if (path.endsWith("/")) {
             // javascript .split includes a blank entry if the string ends with
             // the delimiter, java .split does not so we need to add it manually
             input.add("");
         }
-        final List<String> output = new ArrayList<String>();
+        final List<String> output = new ArrayList<>();
         for (int i = 0; i < input.size(); i++) {
             if (".".equals(input.get(i)) || ("".equals(input.get(i)) && input.size() - i > 1)) {
                 // input.remove(0);
@@ -189,12 +189,12 @@ public class JsonLdUrl {
         final JsonLdUrl rel = JsonLdUrl.parse(iri.substring(root.length()));
 
         // remove path segments that match
-        final List<String> baseSegments = new ArrayList<String>(Arrays.asList(base.normalizedPath
+        final List<String> baseSegments = new ArrayList<>(Arrays.asList(base.normalizedPath
                 .split("/")));
         if (base.normalizedPath.endsWith("/")) {
             baseSegments.add("");
         }
-        final List<String> iriSegments = new ArrayList<String>(Arrays.asList(rel.normalizedPath
+        final List<String> iriSegments = new ArrayList<>(Arrays.asList(rel.normalizedPath
                 .split("/")));
         if (rel.normalizedPath.endsWith("/")) {
             iriSegments.add("");

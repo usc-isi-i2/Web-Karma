@@ -133,7 +133,7 @@ public class WorksheetR2RMLJenaModelParser {
 		Property modelVersionNameProp = model.getProperty(Uris.KM_MODEL_VERSION_URI);
 		Statement s = model.getProperty(mappingResource, modelVersionNameProp);
 		
-		KR2RMLVersion version = null;
+		KR2RMLVersion version;
 		try 
 		{
 			version = new KR2RMLVersion(s.getString());
@@ -172,7 +172,7 @@ public class WorksheetR2RMLJenaModelParser {
 	private void createGraphNodeToTriplesNodeMap(KR2RMLMapping kr2rmlMapping) throws FileNotFoundException, UnsupportedEncodingException{
 		
 		StmtIterator itr = model.listStatements(null, model.getProperty(Uris.KM_NODE_ID_URI), (RDFNode)null);
-		Resource subject = null;
+		Resource subject;
 		Map<String,String> graphNodeIdToTriplesMapIdMap = kr2rmlMapping.getAuxInfo().getGraphNodeIdToTriplesMapIdMap();
 		while (itr.hasNext()) {
 			Statement subjMapToNodeIdStmt = itr.next();
@@ -193,7 +193,7 @@ public class WorksheetR2RMLJenaModelParser {
 	{
 		Property sourceNameProp = model.getProperty(Uris.KM_SOURCE_TYPE_URI);
 		Statement s = model.getProperty(mappingResource, sourceNameProp);
-		String sourceType = null;
+		String sourceType;
 		if(s != null)
 		{
 			RDFNode node = s.getObject();
@@ -289,7 +289,7 @@ public class WorksheetR2RMLJenaModelParser {
 	}
 
 	private List<Resource> createSubjectMaps(Resource mappingResource, KR2RMLMapping kr2rmlMapping) throws JSONException {
-		List<Resource> subjectMapResources = new ArrayList<Resource>();
+		List<Resource> subjectMapResources = new ArrayList<>();
 		Property hasTrMapUri = model.getProperty(Uris.KM_HAS_TRIPLES_MAP_URI);
 		
 		// Get all the triple maps
@@ -476,7 +476,7 @@ public class WorksheetR2RMLJenaModelParser {
 				List<PredicateObjectMap> existingPomList = kr2rmlMapping.getAuxInfo().
 						getColumnNameToPredObjLinks().get(columnNameWithoutFormatting);  
 				if (existingPomList == null) {
-					existingPomList = new ArrayList<PredicateObjectMap>();
+					existingPomList = new ArrayList<>();
 				}
 				existingPomList.add(pom);
 				kr2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().put(columnNameWithoutFormatting, existingPomList);
@@ -514,7 +514,7 @@ public class WorksheetR2RMLJenaModelParser {
 				String template = templNode.toString();
 				subjTemplTermSet = TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlTemplateString(
 						template, kr2rmlMapping.getColumnNameFormatter());
-				List<String> columnsCovered = new LinkedList<String>();
+				List<String> columnsCovered = new LinkedList<>();
 				for(TemplateTerm term : subjTemplTermSet.getAllColumnNameTermElements())
 				{
 					columnsCovered.add(term.getTemplateTermValue());
@@ -579,7 +579,7 @@ public class WorksheetR2RMLJenaModelParser {
 		for (Resource subjMapRes:subjectMapResources) {
 			
 			if (model.contains(subjMapRes, termTypeProp, blankNodeRes)) {
-				List<String> columnsCovered = new ArrayList<String>();
+				List<String> columnsCovered = new ArrayList<>();
 				Resource blankNodeSubjRes = blankNodeSubjMapItr.next();
 				
 				SubjectMap subjMap = kr2rmlMapping.getSubjectMapIndex().get(blankNodeSubjRes.getId().getLabelString());
@@ -590,7 +590,7 @@ public class WorksheetR2RMLJenaModelParser {
 							bnodePrefixItr.next().toString());
 				}
 				
-				TriplesMap mytm = null;
+				TriplesMap mytm;
 				for(TriplesMap tm : kr2rmlMapping.getTriplesMapList())
 				{
 					if(tm.getSubject().getId().equalsIgnoreCase(subjMap.getId()))

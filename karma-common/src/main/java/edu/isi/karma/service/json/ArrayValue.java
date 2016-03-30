@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayValue extends Value{
-	private List<Element> elements = new ArrayList<Element>();
+	private List<Element> elements = new ArrayList<>();
 
 	public List<Element> getElements() {
 		return elements;

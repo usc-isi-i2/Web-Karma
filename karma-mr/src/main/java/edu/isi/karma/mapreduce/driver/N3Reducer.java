@@ -13,7 +13,7 @@ public class N3Reducer extends Reducer<Text,Text,Text,Text>{
 	protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
 	{
 		Iterator<Text> iterator = values.iterator();
-		Set<String> allTriples = new HashSet<String>();
+		Set<String> allTriples = new HashSet<>();
 		while(iterator.hasNext())
 		{
 			String value = iterator.next().toString();

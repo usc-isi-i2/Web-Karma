@@ -20,7 +20,7 @@ import edu.isi.karma.rep.Workspace;
 public class MultipleValueEditColumnCommand extends WorksheetCommand {
 	private String hNodeID;
 	private Map<String, String> newRowValueMap;
-	private Map<String, String> oldRowValueMap = new HashMap<String, String>();
+	private Map<String, String> oldRowValueMap = new HashMap<>();
 
 	private static Logger logger = LoggerFactory.getLogger(MultipleValueEditColumnCommand.class);
 	

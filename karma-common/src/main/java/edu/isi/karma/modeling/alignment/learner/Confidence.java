@@ -9,11 +9,11 @@ public class Confidence {
 	private List<Double> values;
 	
 	public Confidence() {
-		this.values = new ArrayList<Double>();
+		this.values = new ArrayList<>();
 	}
 	
 	public Confidence(Confidence confidence) {
-		this.values = new ArrayList<Double>(confidence.getValues());
+		this.values = new ArrayList<>(confidence.getValues());
 	}
 
 	public List<Double> getValues() {

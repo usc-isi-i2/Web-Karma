@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -36,8 +37,7 @@ import org.json.JSONTokener;
 import edu.isi.karma.rdf.CommandLineArgumentParser;
 
 public class CreateSequenceFile {
-
-	ConcurrentHashMap<String, SequenceFile.Writer> writers = new ConcurrentHashMap<String, SequenceFile.Writer>();
+	Map<String, Writer> writers = new ConcurrentHashMap<>();
 	boolean useKey = true;
 	boolean outputFileName = false;
 	String filePath = null;
@@ -52,7 +52,7 @@ public class CreateSequenceFile {
 		ExecutorService executor = Executors.newFixedThreadPool(4);
 		FileSystem hdfs = FileSystem.get(new Configuration());
 		RemoteIterator<LocatedFileStatus> itr = hdfs.listFiles(new Path(filePath), true);
-		List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
+		List<Future<Boolean>> results = new LinkedList<>();
 		while (itr.hasNext()) {
 			LocatedFileStatus status = itr.next();
 			String fileName = status.getPath().getName();

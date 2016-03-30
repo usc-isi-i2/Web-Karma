@@ -40,7 +40,7 @@ public class ErrorReport {
 	}
 	
 	public ErrorReport() {
-		this.reports = new HashSet<ReportMessage>();
+		this.reports = new HashSet<>();
 	}
 	
 	public void addReportMessage(ReportMessage errMsg) {

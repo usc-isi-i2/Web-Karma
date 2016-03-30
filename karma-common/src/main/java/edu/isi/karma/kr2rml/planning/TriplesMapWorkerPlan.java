@@ -88,7 +88,7 @@ public class TriplesMapWorkerPlan {
 	{ 
 		subjectMapPlan = new SubjectMapPlan(triplesMap, kr2rmlMapping,uriFormatter, factory, translator, selection);
 		
-		internalLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
+		internalLinksPlans = new LinkedList<>();
 		
 		List<TriplesMapLink> links = null;
 		for(TriplesMapGraph graph : graphTriplesMapsProcessingOrder.keySet())
@@ -106,7 +106,7 @@ public class TriplesMapWorkerPlan {
 						link.getTargetMap().getId().compareTo(triplesMap.getId()) == 0 && link.isFlipped())
 				{
 					PredicateObjectMap pom = link.getPredicateObjectMapLink();
-					TriplesMap objectTriplesMap = null;
+					TriplesMap objectTriplesMap;
 					if(link.isFlipped())
 					{
 						objectTriplesMap = link.getSourceMap();
@@ -132,8 +132,8 @@ public class TriplesMapWorkerPlan {
 			}
 		}
 		
-		columnLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
-		constantLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
+		columnLinksPlans = new LinkedList<>();
+		constantLinksPlans = new LinkedList<>();
 		// Subject 
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:triplesMap.getSubject().getRdfsType()) {
@@ -163,7 +163,7 @@ public class TriplesMapWorkerPlan {
 				continue;
 			}
 			try{
-				PredicateObjectMappingPlan pomPlan = null;
+				PredicateObjectMappingPlan pomPlan;
 				if(pom.getObject().getTemplate().getAllColumnNameTermElements().isEmpty())
 				{
 					pomPlan = new ConstantPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, kr2rmlMapping,subjectMapPlan.getSubjectTermsToPaths(), uriFormatter, factory, translator, selection);

@@ -75,11 +75,11 @@ public class WebService extends Source {
 	public WebService(String id, URL urlExample) {
 		super(id, URLManager.getOperationName(urlExample));
 		this.urlExample= urlExample;
-		this.hNodeIdToAttribute = new HashMap<String, Attribute>();
-		this.variables = new ArrayList<String>();
-		this.inputAttributes = new ArrayList<Attribute>();
-		this.outputAttributes = new ArrayList<Attribute>();
-		this.attIdToAttMap = new HashMap<String, Attribute>();
+		this.hNodeIdToAttribute = new HashMap<>();
+		this.variables = new ArrayList<>();
+		this.inputAttributes = new ArrayList<>();
+		this.outputAttributes = new ArrayList<>();
+		this.attIdToAttMap = new HashMap<>();
 	}
 	
 	public WebService(String id, String name, URL urlExample) {
@@ -87,35 +87,35 @@ public class WebService extends Source {
 		this.urlExample= urlExample;
 		this.setMethod(HttpMethods.GET.name());
 		this.urlExample = urlExample;
-		this.inputAttributes = new ArrayList<Attribute>();
-		this.outputAttributes = new ArrayList<Attribute>();
-		this.attIdToAttMap = new HashMap<String, Attribute>();
+		this.inputAttributes = new ArrayList<>();
+		this.outputAttributes = new ArrayList<>();
+		this.attIdToAttMap = new HashMap<>();
 	}
 	
 	public WebService(String id, String addressTemplate) {
 		super(id);
 		this.address= addressTemplate;
-		this.inputAttributes = new ArrayList<Attribute>();
-		this.outputAttributes = new ArrayList<Attribute>();
-		this.attIdToAttMap = new HashMap<String, Attribute>();
+		this.inputAttributes = new ArrayList<>();
+		this.outputAttributes = new ArrayList<>();
+		this.attIdToAttMap = new HashMap<>();
 	}
 	
 	public WebService(String id, String name, String addressTemplate) {
 		super(id);
 		this.setName(name);
 		this.address= addressTemplate;
-		this.inputAttributes = new ArrayList<Attribute>();
-		this.outputAttributes = new ArrayList<Attribute>();
-		this.attIdToAttMap = new HashMap<String, Attribute>();
+		this.inputAttributes = new ArrayList<>();
+		this.outputAttributes = new ArrayList<>();
+		this.attIdToAttMap = new HashMap<>();
 	}
 
 	public WebService(String id, String name, URL urlExample, String method) {
 		super(id, name);
 		this.urlExample = urlExample;
 		this.setMethod(method);
-		this.inputAttributes = new ArrayList<Attribute>();
-		this.outputAttributes = new ArrayList<Attribute>();
-		this.attIdToAttMap = new HashMap<String, Attribute>();
+		this.inputAttributes = new ArrayList<>();
+		this.outputAttributes = new ArrayList<>();
+		this.attIdToAttMap = new HashMap<>();
 	}
 
 	public String getOperationName() {
@@ -143,7 +143,7 @@ public class WebService extends Source {
 		String populatedAddress = address;
 		
 		if (missingAttributes == null)
-			missingAttributes = new ArrayList<Attribute>();
+			missingAttributes = new ArrayList<>();
 		
 		for (Attribute att : this.inputAttributes) {
 			
@@ -339,16 +339,16 @@ public class WebService extends Source {
 		if (treeModel == null)
 			return;
 		
-		List<Node> inputAttributesNodes = new ArrayList<Node>();
-		List<Node> outputAttributesNodes = new ArrayList<Node>();
+		List<Node> inputAttributesNodes = new ArrayList<>();
+		List<Node> outputAttributesNodes = new ArrayList<>();
 		
-		HashMap<String, Argument> vertexIdToArgument = new HashMap<String, Argument>();
+		HashMap<String, Argument> vertexIdToArgument = new HashMap<>();
 
 		this.hNodeIdToAttribute.clear();
 		buildHNodeId2AttributeMapping();
 		
 		// set the rdf ids of all the vertices. The rdf id of leaf vertices are the attribute ids. 
-		String hNodeId = "";
+		String hNodeId;
 		for (Node n : treeModel.vertexSet()) {
 			if (n instanceof ColumnNode) {
 				logger.debug("Node " + n.getLocalId() + " is a column node.");
@@ -378,8 +378,8 @@ public class WebService extends Source {
 		}
 
 		
-		List<String> inputModelVertexes = new ArrayList<String>();
-		List<String> inputModelEdges = new ArrayList<String>();		
+		List<String> inputModelVertexes = new ArrayList<>();
+		List<String> inputModelEdges = new ArrayList<>();		
 		
 		Model inputModel = getInputModel(treeModel, inputAttributesNodes, 
 				inputModelVertexes, inputModelEdges,
@@ -403,8 +403,8 @@ public class WebService extends Source {
 			return null;
 				
 		logger.debug("compute the steiner tree from the alignment tree with input nodes as steiner nodes ...");
-		UndirectedGraph<Node, LabeledLink> undirectedGraph = 
-			new AsUndirectedGraph<Node, LabeledLink>(treeModel);
+		UndirectedGraph<Node, LabeledLink> undirectedGraph =
+				new AsUndirectedGraph<>(treeModel);
 		List<Node> steinerNodes = inputNodes;
 		SteinerTree steinerTree = new SteinerTree(GraphUtil.asDefaultGraph(undirectedGraph), steinerNodes);
 		
@@ -438,7 +438,7 @@ public class WebService extends Source {
 				continue;
 			
 			Label propertyPredicate = new Label(e.getLabel().getUri(), e.getLabel().getNs(), e.getLabel().getPrefix());
-			IndividualPropertyAtom propertyAtom = null;
+			IndividualPropertyAtom propertyAtom;
 			
 //			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
 //			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){
@@ -494,7 +494,7 @@ public class WebService extends Source {
 				continue;
 			
 			Label propertyPredicate = new Label(e.getLabel().getUri(), e.getLabel().getNs(), e.getLabel().getPrefix());
-			IndividualPropertyAtom propertyAtom = null;
+			IndividualPropertyAtom propertyAtom;
 			
 			// has_subclass is from source to target, we substitute this with a rdfs:subClassOf from target to source
 //			if (propertyPredicate.getUriString().equalsIgnoreCase(ModelingParams.HAS_SUBCLASS_URI)){

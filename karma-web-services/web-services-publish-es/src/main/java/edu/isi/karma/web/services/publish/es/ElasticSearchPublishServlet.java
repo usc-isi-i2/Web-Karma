@@ -12,6 +12,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
@@ -338,7 +339,8 @@ public class ElasticSearchPublishServlet extends Application {
 	public static void initContextParameters(ServletContext ctx, ServletContextParameterMap contextParameters)
 	{
 		Enumeration<?> params = ctx.getInitParameterNames();
-		ArrayList<String> validParams = new ArrayList<String>();
+		List<String> validParams = new ArrayList<>();
+
 		for (ContextParameter param : ContextParameter.values()) {
 			validParams.add(param.name());
 		}

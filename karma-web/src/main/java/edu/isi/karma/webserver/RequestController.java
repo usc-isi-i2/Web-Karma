@@ -60,7 +60,7 @@ public class RequestController extends HttpServlet {
 		}
 
 		VWorkspace vWorkspace = VWorkspaceRegistry.getInstance().getVWorkspace(workspaceId);
-		String responseString = "";
+		String responseString;
 		boolean isPreview = Boolean.parseBoolean(request.getParameter("isPreview"));
 		boolean isUserInteraction = Boolean.parseBoolean(request.getParameter("isUserInteraction"));
 		boolean isExecute = Boolean.parseBoolean(request.getParameter("execute"));

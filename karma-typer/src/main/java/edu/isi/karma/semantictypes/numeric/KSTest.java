@@ -14,7 +14,7 @@ public class KSTest {
 	public List<SemanticTypeLabel> predictLabelsForColumn(int numPredictions, Map<String, List<Double>> trainingLabelToExamplesMap,
 			List<Double> testExamples) {
 
-		List<SemanticTypeLabel> sortedPredictions = new ArrayList<SemanticTypeLabel>();	// descending order of p-Value
+		List<SemanticTypeLabel> sortedPredictions = new ArrayList<>();	// descending order of p-Value
 		KolmogorovSmirnovTest test = new KolmogorovSmirnovTest();
 	  	double pValue;
 	    

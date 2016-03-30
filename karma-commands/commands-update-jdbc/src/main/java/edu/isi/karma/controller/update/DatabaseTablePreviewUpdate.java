@@ -23,6 +23,7 @@ package edu.isi.karma.controller.update;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,7 +70,7 @@ public class DatabaseTablePreviewUpdate extends AbstractUpdate {
 		try {
 			AbstractJDBCUtil dbUtil = JDBCUtilFactory.getInstance(dbType);
 			
-			ArrayList<ArrayList<String>> data = dbUtil.getDataForLimitedRows(dbType, hostname, 
+			List<ArrayList<String>> data = dbUtil.getDataForLimitedRows(dbType, hostname, 
 					portnumber, username, password, tableName, dBorSIDName, 10);
 			
 			JSONStringer jsonStr = new JSONStringer();

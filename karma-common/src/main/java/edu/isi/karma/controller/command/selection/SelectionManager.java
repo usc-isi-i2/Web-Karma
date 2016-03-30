@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SelectionManager {
-	private Map<String, List<Selection> > selectionMapping = new ConcurrentHashMap<String, List<Selection> >();
+	private Map<String, List<Selection> > selectionMapping = new ConcurrentHashMap<>();
 	public static String defaultCode = "return False";
 	
 	public void removeSelection(Selection sel) {
@@ -17,7 +17,7 @@ public class SelectionManager {
 	}
 	
 	public List<Selection> getAllDefinedSelection() {
-		List<Selection> selections = new ArrayList<Selection>();
+		List<Selection> selections = new ArrayList<>();
 		for (Entry<String, List<Selection> > entry : selectionMapping.entrySet()) {
 			List<Selection> sels = entry.getValue();
 			if (sels != null)
@@ -30,7 +30,7 @@ public class SelectionManager {
 		String hTableId = sel.getHTableId();
 		List<Selection> selections = selectionMapping.get(hTableId);
 		if (selections == null)
-			selections = new ArrayList<Selection>();
+			selections = new ArrayList<>();
 		selections.add(sel);
 		selectionMapping.put(hTableId, selections);
 	}

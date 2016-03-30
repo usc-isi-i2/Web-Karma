@@ -49,7 +49,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 	public ArrayList<String> getListOfTables(Connection conn) 
 			throws SQLException, ClassNotFoundException {
 		
-		ArrayList<String> tableNames = new ArrayList<String>();
+		ArrayList<String> tableNames = new ArrayList<>();
 		DatabaseMetaData dmd = conn.getMetaData();
 		//Pedro: 2012/12/03 comment out to enable loading Views in Karma (on behalf of Maria)
 		//ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE"});
@@ -121,7 +121,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 
 	@Override
 	public String prepareName(String name) {
-		String s = name;
+		String s;
 		s = name.replace('-', '_');
 		s = "[" + s + "]";
 		return s;
@@ -159,7 +159,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 	 */
 	public List<String> getColumnNames(String db, String tableName, Connection conn) throws SQLException
 	{
-		List<String> columnNames = new ArrayList<String>(10);
+		List<String> columnNames = new ArrayList<>(10);
 		String schema = null;
 		int idx = tableName.indexOf(".");
 		if(idx != -1) {
@@ -184,7 +184,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 	 */
 	public List<String> getColumnTypes(String db, String tableName, Connection conn) throws SQLException
 	{
-		List<String> columnTypes = new ArrayList<String>(10);
+		List<String> columnTypes = new ArrayList<>(10);
 		String schema = null;
 		int idx = tableName.indexOf(".");
 		if(idx != -1) {

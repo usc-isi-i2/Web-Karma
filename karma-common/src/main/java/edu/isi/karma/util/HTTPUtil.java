@@ -69,7 +69,7 @@ public class HTTPUtil {
 					throws ClientProtocolException, IOException {
 		
 		// Prepare the message body parameters
-		List<NameValuePair> formParams = new ArrayList<NameValuePair>();
+		List<NameValuePair> formParams = new ArrayList<>();
 		for (Map.Entry<String, String> stringStringEntry : formParameters.entrySet()) {
 			formParams.add(new BasicNameValuePair(stringStringEntry.getKey(), stringStringEntry.getValue()));
 		}

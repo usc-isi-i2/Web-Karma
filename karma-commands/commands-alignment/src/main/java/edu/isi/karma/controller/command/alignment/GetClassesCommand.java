@@ -106,7 +106,7 @@ public class GetClassesCommand extends WorksheetCommand {
 		}
 
 		if (nodeSet == null) {
-			nodeSet = new HashMap<Node,Boolean>();
+			nodeSet = new HashMap<>();
 		}
 		final Map<Node,Boolean> finalNodeSet = nodeSet;
 
@@ -167,7 +167,7 @@ public class GetClassesCommand extends WorksheetCommand {
 	private Map<Node,Boolean> getClassesInModel(Workspace workspace) {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(
 				workspace.getId(), worksheetId);
-		Map<Node,Boolean> nodeSet = new HashMap<Node,Boolean>();
+		Map<Node,Boolean> nodeSet = new HashMap<>();
 		Set<Node> treeNodes = alignment.getSteinerTree().vertexSet();
 		if (treeNodes != null) {
 			for (Node n : treeNodes) {
@@ -198,12 +198,12 @@ public class GetClassesCommand extends WorksheetCommand {
 	}
 
 	private Map<Node, Boolean> getNodesUsingAlignment(Workspace workspace, Set<Label> nodeLabels) {
-		Map<Node,Boolean> nodeSet = new HashMap<Node,Boolean>();
+		Map<Node,Boolean> nodeSet = new HashMap<>();
 		
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(
 				workspace.getId(), worksheetId);
 
-		final Set<String> steinerTreeNodeIds = new HashSet<String>();
+		final Set<String> steinerTreeNodeIds = new HashSet<>();
 
 		if (alignment != null && !alignment.isEmpty()) {
 			for (Node node: alignment.getSteinerTree().vertexSet()) {

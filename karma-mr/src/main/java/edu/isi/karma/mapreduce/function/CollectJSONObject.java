@@ -33,7 +33,7 @@ public class CollectJSONObject extends UDF {
 	}
 
 	protected static String[] splitPath(String aPath) {
-		List<String> levelsCandidates = new LinkedList<String>();
+		List<String> levelsCandidates = new LinkedList<>();
 		int lastSplit = 0;
 		for(int i = 0; i < aPath.length() - 1; i++)
 		{
