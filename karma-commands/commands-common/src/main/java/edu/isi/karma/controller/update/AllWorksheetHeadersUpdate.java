@@ -96,4 +96,10 @@ public class AllWorksheetHeadersUpdate extends AbstractUpdate {
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		int result = this.worksheetId != null ? this.worksheetId.hashCode() : 0;
+		result = 31 * result + (this.deleteAfterGenerate ? 1 : 0);
+		return result;
+	}
 }
