@@ -119,13 +119,13 @@ public class JsonLdUrl {
         }
 
         // RFC 3986 5.2.4 (reworked)
-        final List<String> input = new ArrayList<String>(Arrays.asList(path.split("/")));
+        final List<String> input = new ArrayList<>(Arrays.asList(path.split("/")));
         if (path.endsWith("/")) {
             // javascript .split includes a blank entry if the string ends with
             // the delimiter, java .split does not so we need to add it manually
             input.add("");
         }
-        final List<String> output = new ArrayList<String>();
+        final List<String> output = new ArrayList<>();
         for (int i = 0; i < input.size(); i++) {
             if (".".equals(input.get(i)) || ("".equals(input.get(i)) && input.size() - i > 1)) {
                 // input.remove(0);
@@ -134,10 +134,10 @@ public class JsonLdUrl {
             if ("..".equals(input.get(i))) {
                 // input.remove(0);
                 if (hasAuthority
-                        || (output.size() > 0 && !"..".equals(output.get(output.size() - 1)))) {
+                        || (!output.isEmpty() && !"..".equals(output.get(output.size() - 1)))) {
                     // [].pop() doesn't fail, to replicate this we need to check
                     // that there is something to remove
-                    if (output.size() > 0) {
+                    if (!output.isEmpty()) {
                         output.remove(output.size() - 1);
                     }
                 } else {
@@ -149,7 +149,7 @@ public class JsonLdUrl {
             // input.remove(0);
         }
 
-        if (output.size() > 0) {
+        if (!output.isEmpty()) {
             rval += output.get(0);
             for (int i = 1; i < output.size(); i++) {
                 rval += "/" + output.get(i);
@@ -189,32 +189,32 @@ public class JsonLdUrl {
         final JsonLdUrl rel = JsonLdUrl.parse(iri.substring(root.length()));
 
         // remove path segments that match
-        final List<String> baseSegments = new ArrayList<String>(Arrays.asList(base.normalizedPath
+        final List<String> baseSegments = new ArrayList<>(Arrays.asList(base.normalizedPath
                 .split("/")));
         if (base.normalizedPath.endsWith("/")) {
             baseSegments.add("");
         }
-        final List<String> iriSegments = new ArrayList<String>(Arrays.asList(rel.normalizedPath
+        final List<String> iriSegments = new ArrayList<>(Arrays.asList(rel.normalizedPath
                 .split("/")));
         if (rel.normalizedPath.endsWith("/")) {
             iriSegments.add("");
         }
 
-        while (baseSegments.size() > 0 && iriSegments.size() > 0) {
+        while (!baseSegments.isEmpty() && !iriSegments.isEmpty()) {
             if (!baseSegments.get(0).equals(iriSegments.get(0))) {
                 break;
             }
-            if (baseSegments.size() > 0) {
+            if (!baseSegments.isEmpty()) {
                 baseSegments.remove(0);
             }
-            if (iriSegments.size() > 0) {
+            if (!iriSegments.isEmpty()) {
                 iriSegments.remove(0);
             }
         }
 
         // use '../' for each non-matching base segment
         String rval = "";
-        if (baseSegments.size() > 0) {
+        if (!baseSegments.isEmpty()) {
             // don't count the last segment if it isn't a path (doesn't end in
             // '/')
             // don't count empty first segment, it means base began with '/'
@@ -227,7 +227,7 @@ public class JsonLdUrl {
         }
 
         // prepend remaining segments
-        if (iriSegments.size() > 0) {
+        if (!iriSegments.isEmpty()) {
             rval += iriSegments.get(0);
         }
         for (int i = 1; i < iriSegments.size(); i++) {

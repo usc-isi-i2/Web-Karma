@@ -31,6 +31,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,18 +65,19 @@ public class CSVFileExport {
 				filename;
 		logger.info("CSV file exported. Location:"
 				+ outputFile);
-		HashMap<String, String> modeledColumnTable = new HashMap<String, String>();
+
+		Map<String, String> modeledColumnTable = new HashMap<>();
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			modeledColumnTable.put(type.getHNodeId(),"");
 		}
-		if(modeledColumnTable.size()==0) return null;
+		if(modeledColumnTable.isEmpty()) return null;
 		int numRows = worksheet.getDataTable().getNumRows();
 		if(numRows==0) 
 			return "";
 		StringBuilder sb = new StringBuilder();
 		ArrayList<Row> rows =  worksheet.getDataTable().getRows(0, numRows, SuperSelectionManager.DEFAULT_SELECTION);
-		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
-		List<String> hNodeIdList = new ArrayList<String>();
+		List<HNode> sortedLeafHNodes = new ArrayList<>();
+		List<String> hNodeIdList = new ArrayList<>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 		for (HNode hNode : sortedLeafHNodes) {
 			if(modeledColumnTable.containsKey(hNode.getId())) {

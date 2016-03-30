@@ -162,7 +162,7 @@ public class JsonManager {
 		for (int i = 0; i < srcColumns.size(); i++) {
 			for (int j = 0; j < srcColumns.get(i).size(); j++)
 			{
-				colName = srcColumns.get(i).get(j).toString();
+				colName = srcColumns.get(i).get(j);
 				if (columns.indexOf(colName) == -1)
 					columns.add(colName);
 			}
@@ -175,11 +175,11 @@ public class JsonManager {
 			rawNames = srcColumns.get(i);
 			for (int j = 0; j < srcValues.get(i).size(); j++) {
 				
-				List<String> populatedValues = new ArrayList<String>();
+				List<String> populatedValues = new ArrayList<>();
 				rawValues = srcValues.get(i).get(j);
 				
 				for (int k = 0; k < columns.size(); k++) {
-					int index = rawNames.indexOf(columns.get(k).toString());
+					int index = rawNames.indexOf(columns.get(k));
 					if (index == -1)
 						singleValue = null;
 					else
@@ -200,7 +200,7 @@ public class JsonManager {
 		for (int i = 0; i < srcColumns.size(); i++) {
 			for (int j = 0; j < srcColumns.get(i).size(); j++)
 			{
-				colName = srcColumns.get(i).get(j).toString();
+				colName = srcColumns.get(i).get(j);
 				if (columns.indexOf(colName) == -1) {
 					columns.add(colName);
 					types.add(srcTypes.get(i).get(j));
@@ -215,11 +215,11 @@ public class JsonManager {
 			rawNames = srcColumns.get(i);
 			for (int j = 0; j < srcValues.get(i).size(); j++) {
 				
-				List<String> populatedValues = new ArrayList<String>();
+				List<String> populatedValues = new ArrayList<>();
 				rawValues = srcValues.get(i).get(j);
 				
 				for (int k = 0; k < columns.size(); k++) {
-					int index = rawNames.indexOf(columns.get(k).toString());
+					int index = rawNames.indexOf(columns.get(k));
 					if (index == -1)
 //						singleValue = null;
 						singleValue = "";
@@ -241,10 +241,10 @@ public class JsonManager {
     	Table t = element.getFlatTable();
 
     	if (columns == null)
-    		columns = new ArrayList<String>();
+    		columns = new ArrayList<>();
     	
     	if (values == null)
-    		values = new ArrayList<List<String>>();
+    		values = new ArrayList<>();
     	
     	if (t.getColumnsCount() > 0) {
 	    	for (Attribute att : t.getHeaders())
@@ -306,8 +306,8 @@ public class JsonManager {
 
 	public static String jsonToCSV(String json, Character separator, Character quotechar, Character endlinechar) {
 		
-        List<String> columns = new ArrayList<String>();
-        List<List<String>> values = new ArrayList<List<String>>();
+        List<String> columns = new ArrayList<>();
+        List<List<String>> values = new ArrayList<>();
         
         getJsonFlat(json, columns, values);
         
@@ -318,7 +318,7 @@ public class JsonManager {
 		
 		try {
 			
-			if (columns != null && columns.size() > 0) {
+			if (columns != null && !columns.isEmpty()) {
 				for (int i = 0; i < columns.size(); i++) {
 					if (i != 0)
 						csv += separator.charValue();
@@ -329,7 +329,7 @@ public class JsonManager {
 				System.out.println("Json does not have any header.");
 
 			
-			if (values != null && values.size() > 0) {
+			if (values != null && !values.isEmpty()) {
 				for (int i = 0; i < values.size(); i++) {
 					for (int j = 0; j < values.get(i).size(); j++) {
 						if (j != 0)

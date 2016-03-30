@@ -46,14 +46,14 @@ public class N3KR2RMLRDFWriter extends KR2RMLRDFWriter {
 	{
 		this.outWriter = new PrintWriter(outputStream);
 		this.uriFormatter = uriFormatter;
-		generatedTriples = new ConcurrentHashMap<String, String>();
+		generatedTriples = new ConcurrentHashMap<>();
 		baseURI = null;
 	}
 	public N3KR2RMLRDFWriter(URIFormatter uriFormatter, PrintWriter writer)
 	{
 		this.outWriter =writer;
 		this.uriFormatter = uriFormatter;
-		generatedTriples = new ConcurrentHashMap<String, String>();
+		generatedTriples = new ConcurrentHashMap<>();
 	}
 
 	private void outputTriple(String triple)
@@ -144,7 +144,7 @@ public class N3KR2RMLRDFWriter extends KR2RMLRDFWriter {
 			outWriter.println(value);
 		}
 		outWriter.println("");
-		generatedTriples = new ConcurrentHashMap<String, String>();
+		generatedTriples = new ConcurrentHashMap<>();
 	}
 	@Override
 	public void flush() {

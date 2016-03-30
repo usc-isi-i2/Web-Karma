@@ -37,15 +37,15 @@ public class Table {
 	private List<String> rowIds;
 	
 	public Table() {
-		headers = new ArrayList<Attribute>();
-		values = new ArrayList<List<String>>();
-		rowIds = new ArrayList<String>();
+		headers = new ArrayList<>();
+		values = new ArrayList<>();
+		rowIds = new ArrayList<>();
 	}
 	
 	public Table(Table table) {
-		this.headers = new ArrayList<Attribute>(table.headers);
-		this.values = new ArrayList<List<String>>(table.values);
-		this.rowIds = new ArrayList<String>(table.rowIds);
+		this.headers = new ArrayList<>(table.headers);
+		this.values = new ArrayList<>(table.values);
+		this.rowIds = new ArrayList<>(table.rowIds);
 	}
 	
 	public int getRowsCount() {
@@ -145,8 +145,8 @@ public class Table {
 		if (this.getColumnsCount() != t.getColumnsCount())
 			return false;
 		
-		List<String> attNames = new ArrayList<String>();
-		List<String> tAttNames = new ArrayList<String>();
+		List<String> attNames = new ArrayList<>();
+		List<String> tAttNames = new ArrayList<>();
 		
 		for (Attribute att : this.getHeaders()) 
 			attNames.add(att.getName());
@@ -171,22 +171,22 @@ public class Table {
     	else if (t1Cols == 0) {
     		
     		if (this.headers == null)
-    			this.headers = new ArrayList<Attribute>();
+    			this.headers = new ArrayList<>();
     		
     		for (Attribute att : t.getHeaders())
     			this.headers.add(new Attribute(att));
 
     		if (this.values == null)
-    			this.values = new ArrayList<List<String>>();
+    			this.values = new ArrayList<>();
 
     		if (t.getValues() != null)
     			for (List<String> v : t.getValues())
     				if (v != null)
-    					values.add(new ArrayList<String>(v));
+    					values.add(new ArrayList<>(v));
     	} else {
     		
     		if (sameHeaders(t)) {
-    			List<Table> tables = new ArrayList<Table>();
+    			List<Table> tables = new ArrayList<>();
     			tables.add(this);
     			tables.add(t);
     			Table result = union(tables);
@@ -202,11 +202,11 @@ public class Table {
         	int t2Rows = t.getRowsCount();
         	int totalRows = t1Rows == 0 || t2Rows == 0 ? t1Rows + t2Rows : t1Rows * t2Rows;
         	
-        	List<List<String>> values = new ArrayList<List<String>>();
+        	List<List<String>> values = new ArrayList<>();
 
     		for (int i = 0; i < totalRows; i++) {
         		
-        		List<String> row = new ArrayList<String>();
+        		List<String> row = new ArrayList<>();
         		
         		for (int j = 0; j < t1Cols; j++) {
         			int index = t1Rows == 0 ? -1 : i % t1Rows;
@@ -243,17 +243,16 @@ public class Table {
     		return null;
     	
     	Table resultTable = new Table();
-    	
-		String attributeId = "";
-		List<String> uniqueAttributeIDs = new ArrayList<String>();
+		String attributeId;
+		List<String> uniqueAttributeIDs = new ArrayList<>();
 		
-		List<List<Attribute>> srcAttributes = new ArrayList<List<Attribute>>();
-		List<List<List<String>>> srcValues = new ArrayList<List<List<String>>>();
-		List<List<String>> srcRowIds = new ArrayList<List<String>>();
+		List<List<Attribute>> srcAttributes = new ArrayList<>();
+		List<List<List<String>>> srcValues = new ArrayList<>();
+		List<List<String>> srcRowIds = new ArrayList<>();
 		
-		List<Attribute> resultAttributes = new ArrayList<Attribute>();
-		List<List<String>> resultValues = new ArrayList<List<String>>();
-		List<String> resultRowIds = new ArrayList<String>();
+		List<Attribute> resultAttributes = new ArrayList<>();
+		List<List<String>> resultValues = new ArrayList<>();
+		List<String> resultRowIds = new ArrayList<>();
 		
 		for (Table t : srcTables) {
 			srcAttributes.add(t.getHeaders());
@@ -272,10 +271,11 @@ public class Table {
 			}
 		}
 		
-		List<Attribute> rawAttributes = null;
-		List<String> rawAttributeIDs = new ArrayList<String>();
-		List<String> rawValues = null;
-		String singleValue = null;
+		List<Attribute> rawAttributes;
+		List<String> rawAttributeIDs = new ArrayList<>();
+		List<String> rawValues;
+		String singleValue;
+
 		for (int i = 0; i < srcAttributes.size(); i++) {
 			
 			rawAttributes = srcAttributes.get(i);
@@ -286,7 +286,7 @@ public class Table {
 //			logger.debug("table " + i);
 			for (int j = 0; j < srcValues.get(i).size(); j++) {
 				
-				List<String> populatedValues = new ArrayList<String>();
+				List<String> populatedValues = new ArrayList<>();
 				rawValues = srcValues.get(i).get(j);
 				
 //				logger.debug("\t row " + j);
@@ -301,8 +301,8 @@ public class Table {
 					populatedValues.add(singleValue);
 				}
 				
-				if (srcRowIds != null && srcRowIds.size() > 0 &&
-						srcRowIds.get(i) != null && srcRowIds.get(i).size() > 0 &&  
+				if (srcRowIds != null && !srcRowIds.isEmpty() &&
+						srcRowIds.get(i) != null && !srcRowIds.get(i).isEmpty() &&  
 						srcRowIds.get(i).get(j) != null)
 					resultRowIds.add(srcRowIds.get(i).get(j));
 				resultValues.add(populatedValues);
@@ -329,7 +329,7 @@ public class Table {
 		
 		try {
 			
-			if (this.headers != null && this.headers.size() > 0) {
+			if (this.headers != null && !this.headers.isEmpty()) {
 				for (int i = 0; i < this.headers.size(); i++) {
 					if (i != 0)
 						csv += separator.charValue();

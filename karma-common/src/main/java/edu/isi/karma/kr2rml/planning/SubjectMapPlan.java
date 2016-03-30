@@ -55,7 +55,7 @@ public class SubjectMapPlan extends MapPlan {
 	}
 	public SubjectMap configureSubjectMapPlan(TriplesMap triplesMap)
 			throws HNodeNotFoundKarmaException {
-		subjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
+		subjectTermsToPaths = new HashMap<>();
 		SubjectMap subjMap = triplesMap.getSubject();
 		subjectMapTTSPopulator = generateTemplateTermSetPopulatorForSubjectMap(subjMap);
 		populateTermsToPathForSubject(subjectTermsToPaths, subjectMapTTSPopulator.getTerms());
@@ -65,7 +65,7 @@ public class SubjectMapPlan extends MapPlan {
 	
 	public List<PopulatedTemplateTermSet> execute(Row r)
 	{
-		List<PopulatedTemplateTermSet> subjects = new LinkedList<PopulatedTemplateTermSet>();
+		List<PopulatedTemplateTermSet> subjects = new LinkedList<>();
 		subjects.addAll(subjectMapTTSPopulator.populate(r, subjectPlan));
 		return subjects;
 	}

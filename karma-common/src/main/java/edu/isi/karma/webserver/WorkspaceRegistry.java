@@ -33,7 +33,7 @@ public class WorkspaceRegistry {
 
 	private static WorkspaceRegistry singleton = new WorkspaceRegistry();
 
-	private final Map<String, ExecutionController> workspaceId2ExecutionController = new ConcurrentHashMap<String, ExecutionController>();
+	private final Map<String, ExecutionController> workspaceId2ExecutionController = new ConcurrentHashMap<>();
 
 	public static WorkspaceRegistry getInstance() {
 		return singleton;

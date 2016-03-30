@@ -123,11 +123,11 @@ public class WebServiceLoader extends SourceLoader
     @Override
 	public List<Source> getSourcesAbstractInfo(Integer serviceLimit) {
 		
-		List<Source> serviceList = new ArrayList<Source>();
+		List<Source> serviceList = new ArrayList<>();
 		
 		Model model = Repository.Instance().getModel();
 		
-		String service_id = "";
+		String service_id;
 		String service_name = "";
 		String service_address = "";
 		
@@ -209,7 +209,7 @@ public class WebServiceLoader extends SourceLoader
 	public List<Source> getSourcesDetailedInfo(Integer serviceLimit) {
 
 		List<Source> serviceList = getSourcesAbstractInfo(serviceLimit);
-		List<Source> serviceListCompleteInfo = new ArrayList<Source>();
+		List<Source> serviceListCompleteInfo = new ArrayList<>();
 		for (Source s : serviceList) {
 			serviceListCompleteInfo.add(getSourceByUri(s.getUri()));
 		}
@@ -292,13 +292,13 @@ public class WebServiceLoader extends SourceLoader
 			Integer serviceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
+				|| semanticModel.getAtoms().isEmpty()) {
 			logger.info("The input model is nul or it does not have any atom");
 			return null;
 		}
 		
-		Map<WebService, Map<String, String>> servicesAndMappings = 
-			new HashMap<WebService, Map<String,String>>();
+		Map<WebService, Map<String, String>> servicesAndMappings =
+				new HashMap<>();
 		
 		Map<String, Map<String, String>> serviceIdsAndMappings = 
 			semanticModel.findInServiceInputs(Repository.Instance().getModel(), serviceLimit);
@@ -306,10 +306,10 @@ public class WebServiceLoader extends SourceLoader
 		if (serviceIdsAndMappings == null)
 			return null;
 		
-		for (String serviceId : serviceIdsAndMappings.keySet()) {
-			Model m = Repository.Instance().getNamedModel(serviceId);
+		for (Map.Entry<String, Map<String, String>> stringMapEntry : serviceIdsAndMappings.entrySet()) {
+			Model m = Repository.Instance().getNamedModel(stringMapEntry.getKey());
 			if (m != null)
-				servicesAndMappings.put(importSourceFromJenaModel(m), serviceIdsAndMappings.get(serviceId));
+				servicesAndMappings.put(importSourceFromJenaModel(m), stringMapEntry.getValue());
 		}
 		
 		return servicesAndMappings;
@@ -326,13 +326,13 @@ public class WebServiceLoader extends SourceLoader
 			Integer serviceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
+				|| semanticModel.getAtoms().isEmpty()) {
 			logger.info("The input model is nul or it does not have any atom");
 			return null;
 		}
 		
-		Map<WebService, Map<String, String>> servicesAndMappings = 
-			new HashMap<WebService, Map<String,String>>();
+		Map<WebService, Map<String, String>> servicesAndMappings =
+				new HashMap<>();
 		
 		Map<String, Map<String, String>> serviceIdsAndMappings = 
 			semanticModel.findInServiceOutputs(Repository.Instance().getModel(), serviceLimit);
@@ -340,10 +340,10 @@ public class WebServiceLoader extends SourceLoader
 		if (serviceIdsAndMappings == null)
 			return null;
 		
-		for (String serviceId : serviceIdsAndMappings.keySet()) {
-			Model m = Repository.Instance().getNamedModel(serviceId);
+		for (Map.Entry<String, Map<String, String>> stringMapEntry : serviceIdsAndMappings.entrySet()) {
+			Model m = Repository.Instance().getNamedModel(stringMapEntry.getKey());
 			if (m != null)
-				servicesAndMappings.put(importSourceFromJenaModel(m), serviceIdsAndMappings.get(serviceId));
+				servicesAndMappings.put(importSourceFromJenaModel(m), stringMapEntry.getValue());
 		}
 		
 		return servicesAndMappings;
@@ -362,8 +362,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		List<Source> serviceList = getSourcesDetailedInfo(serviceLimit);
 		
-		Map<WebService, Map<String, String>> servicesAndMappings = 
-			new HashMap<WebService, Map<String,String>>();
+		Map<WebService, Map<String, String>> servicesAndMappings =
+				new HashMap<>();
 
 		Model jenaModel = semanticModel.getJenaModel();
 		for (Source service : serviceList) {
@@ -405,8 +405,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		List<Source> serviceList = getSourcesDetailedInfo(serviceLimit);
 		
-		Map<WebService, Map<String, String>> servicesAndMappings = 
-			new HashMap<WebService, Map<String,String>>();
+		Map<WebService, Map<String, String>> servicesAndMappings =
+				new HashMap<>();
 
 		Model jenaModel = semanticModel.getJenaModel();
 		for (Source service : serviceList) {
@@ -445,8 +445,8 @@ public class WebServiceLoader extends SourceLoader
 		logger.debug("model size: " + model.getGraph().size());
 
 		String service_name = "";
-		String service_uri = "";
-		String service_id = "";
+		String service_uri;
+		String service_id;
 		String service_address = "";
 		String service_method = "";
 
@@ -466,8 +466,8 @@ public class WebServiceLoader extends SourceLoader
 
 		Resource service_resource = model.getResource(service_uri);
 		
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// service name
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_name_property);
@@ -493,7 +493,7 @@ public class WebServiceLoader extends SourceLoader
 		} else
 			logger.debug("service does not have a method.");
 
-		List<String> variables = null;
+		List<String> variables;
 		List<Attribute> inputAttributes = null;
 		List<Attribute> outputAttributes = null;
 		edu.isi.karma.rep.model.Model inputModel = null;
@@ -533,10 +533,9 @@ public class WebServiceLoader extends SourceLoader
 	private List<String> getVariables(Model model, Resource service_resource) {
 		
 		Property has_variable_property = model.getProperty(Namespaces.KARMA + "hasVariable");
-	
-		List<String> variables = new ArrayList<String>();
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		List<String> variables = new ArrayList<>();
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// hasAttribute
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_variable_property);
@@ -561,10 +560,10 @@ public class WebServiceLoader extends SourceLoader
 		Property has_mandatory_attribute_property = model.getProperty(Namespaces.KARMA + "hasMandatoryAttribute");
 		Property has_optional_attribute_property = model.getProperty(Namespaces.KARMA + "hasOptionalAttribute");
 
-		List<Attribute> attList = new ArrayList<Attribute>();
+		List<Attribute> attList = new ArrayList<>();
 		
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// hasAttribute
 		nodeIterator = model.listObjectsOfProperty(io_resource, has_attribute_property);
@@ -611,7 +610,7 @@ public class WebServiceLoader extends SourceLoader
 	
 	private Attribute getAttribute(Model model, Resource att_resource, String ioType, AttributeRequirement requirement) {
 		
-		String att_id = "";
+		String att_id;
 		String att_name = "";
 		String att_groundedIn = "";
 
@@ -622,8 +621,8 @@ public class WebServiceLoader extends SourceLoader
 		att_id = att_resource.getLocalName();
 		logger.debug("attribute id: " + att_id);
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 		
 
 		// attribute name
@@ -642,7 +641,7 @@ public class WebServiceLoader extends SourceLoader
 		} else
 			logger.debug("attribute does not have agroundedIn value.");
 
-		Attribute att = null;
+		Attribute att;
 		if (att_groundedIn.length() > 0)
 			att = new Attribute(att_id, att_resource.getNameSpace(), att_name, ioType, requirement, att_groundedIn );
 		else
@@ -657,9 +656,9 @@ public class WebServiceLoader extends SourceLoader
 		Property has_model_property = model.getProperty(Namespaces.KARMA + "hasModel");
 		Property has_atom_property = model.getProperty(Namespaces.KARMA + "hasAtom");
 		
-		NodeIterator nodeIterator = null;
-		RDFNode modelNode = null;
-		RDFNode atomNode = null;
+		NodeIterator nodeIterator;
+		RDFNode modelNode;
+		RDFNode atomNode;
 
 		// hasModel
 		nodeIterator = model.listObjectsOfProperty(io_resource, has_model_property);
@@ -670,7 +669,7 @@ public class WebServiceLoader extends SourceLoader
 
 		edu.isi.karma.rep.model.Model semanticModel = 
 			new edu.isi.karma.rep.model.Model(modelNode.asResource().getLocalName());
-		List<Atom> atoms = new ArrayList<Atom>();
+		List<Atom> atoms = new ArrayList<>();
 		
 
 		// hasAtom
@@ -695,8 +694,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		Property rdf_type = model.getProperty(Namespaces.RDF + "type");
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		String classAtomUri = Namespaces.SWRL + "ClassAtom";
 		String propertyAtomUri = Namespaces.SWRL + "IndividualPropertyAtom";
@@ -723,11 +722,11 @@ public class WebServiceLoader extends SourceLoader
 	
 	private ClassAtom getClassAtom(Model model, Resource atom_resource) {
 		
-		String predicateUri = null;
-		String predicatePrefix = null;
-		String predicateNs = null;
+		String predicateUri;
+		String predicatePrefix;
+		String predicateNs;
 		
-		String argument1Id = null;
+		String argument1Id;
 		String argument1Type = null;
 		
 		Resource attribute = ResourceFactory.createResource(Namespaces.KARMA + "Attribute");
@@ -737,8 +736,8 @@ public class WebServiceLoader extends SourceLoader
 		Property argument1_property = model.getProperty(Namespaces.SWRL + "argument1");
 
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, class_predicate_property);
@@ -779,12 +778,12 @@ public class WebServiceLoader extends SourceLoader
 	
 	private IndividualPropertyAtom getPropertyAtom(Model model, Resource atom_resource) {
 		
-		String predicateUri = null;
-		String predicatePrefix = null;
-		String predicateNs = null;
+		String predicateUri;
+		String predicatePrefix;
+		String predicateNs;
 		
-		String argument1Id = null;
-		String argument2Id = null; 
+		String argument1Id;
+		String argument2Id; 
 
 		String argument1Type = null;
 		String argument2Type = null; 
@@ -796,8 +795,8 @@ public class WebServiceLoader extends SourceLoader
 		Property argument1_property = model.getProperty(Namespaces.SWRL + "argument1");
 		Property argument2_property = model.getProperty(Namespaces.SWRL + "argument2");
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, property_predicate_property);
@@ -925,12 +924,12 @@ public class WebServiceLoader extends SourceLoader
 		}
 		
 		System.out.println("Mappings from matched source to model arguments:");
-		for (WebService s : servicesAndMappings.keySet()) {
-			System.out.println("Service: " + s.getId());
-			if (servicesAndMappings.get(s) == null)
+		for (Map.Entry<WebService, Map<String, String>> webServiceMapEntry : servicesAndMappings.entrySet()) {
+			System.out.println("Service: " + webServiceMapEntry.getKey().getId());
+			if (webServiceMapEntry.getValue() == null)
 				continue;
-			for (String str : servicesAndMappings.get(s).keySet())
-				System.out.println(str + "-------" + servicesAndMappings.get(s).get(str));
+			for (String str : webServiceMapEntry.getValue().keySet())
+				System.out.println(str + "-------" + webServiceMapEntry.getValue().get(str));
 		}
 
 	}

@@ -135,7 +135,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 
 			initialGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 			
-			List<HNode> orderedNodeIds = new ArrayList<HNode>();
+			List<HNode> orderedNodeIds = new ArrayList<>();
 			worksheet.getHeaders().getSortedLeafHNodes(orderedNodeIds);
 			
 			List<String> visibleHNodeIds = null;
@@ -175,7 +175,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		}
 
 		steinerNodes = alignment.computeSteinerNodes();
-		ModelLearner modelLearner = null;
+		ModelLearner modelLearner;
 
 		if (modelingConfiguration.getKnownModelsAlignment()) 
 			modelLearner = new ModelLearner(alignment.getGraphBuilder(), steinerNodes);
@@ -193,7 +193,7 @@ public class SuggestModelCommand extends WorksheetSelectionCommand {
 		
 //		logger.info(GraphUtil.labeledGraphToString(model.getGraph()));
 		
-		List<SemanticType> semanticTypes = new LinkedList<SemanticType>();
+		List<SemanticType> semanticTypes = new LinkedList<>();
 		alignment.updateAlignment(model, semanticTypes);
 		logger.info(GraphUtil.labeledGraphToString(alignment.getSteinerTree()));
 

@@ -37,15 +37,15 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 	@Override
 	public List<String> dagify(TriplesMapGraph graph, RootStrategy rootStrategy) {
 	
-		HashSet<String> triplesMapsIds = new HashSet<String>();
+		HashSet<String> triplesMapsIds = new HashSet<>();
 
-		if(graph.getTriplesMapIds().size() == 0)
+		if(graph.getTriplesMapIds().isEmpty())
 		{
-			return new LinkedList<String>();
+			return new LinkedList<>();
 		}
 		if(graph.getTriplesMapIds().size() == 1)
 		{
-			List<String> results = new LinkedList<String>();
+			List<String> results = new LinkedList<>();
 			results.addAll(graph.getTriplesMapIds());
 			return results;
 		}
@@ -69,12 +69,12 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 		return spilledNodes;
 	}
 
-	private List<String> cleanGraph(HashSet<String> triplesMapsIds,
+	private List<String> cleanGraph(Set<String> triplesMapsIds,
 			TriplesMapGraph newGraph, String rootTriplesMapId) {
 		boolean modifications = true;
-		List<String> spilledTriplesMaps = new LinkedList<String>();
+		List<String> spilledTriplesMaps = new LinkedList<>();
 		
-		while(triplesMapsIds.size() > 0 && modifications)
+		while(!triplesMapsIds.isEmpty() && modifications)
 		{
 			logger.trace("starting a cleaning cycle");
 			modifications = false;
@@ -94,7 +94,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 				}
 				if(links.size() <= 1 || allLinksAreIncoming(triplesMapId, links))
 				{
-					List<TriplesMapLink> tempLinks = new LinkedList<TriplesMapLink>();
+					List<TriplesMapLink> tempLinks = new LinkedList<>();
 					tempLinks.addAll(links);
 					// leave the root alone unless it's empty!
 					if(triplesMapId.compareTo(rootTriplesMapId) == 0)
@@ -149,8 +149,8 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 		final String localTriplesMapId = triplesMapId;
 		visited.add(triplesMapId);
 		List<TriplesMapLink> links = graph.getAllNeighboringTriplesMap(triplesMapId);
-		List<String> nodesToVisit = new LinkedList<String>();
-		List<TriplesMapLink> sortedLinks = new LinkedList<TriplesMapLink>();
+		List<String> nodesToVisit = new LinkedList<>();
+		List<TriplesMapLink> sortedLinks = new LinkedList<>();
 		sortedLinks.addAll(links);
 		Collections.sort(sortedLinks, new Comparator<TriplesMapLink>(){
 
@@ -206,7 +206,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 	}
 	private void dfs(TriplesMapGraph graph, String rootTriplesMapId)
 	{
-		Set<String> visited = new HashSet<String>();
+		Set<String> visited = new HashSet<>();
 		dfs(graph, rootTriplesMapId, visited, rootTriplesMapId);
 	}
 

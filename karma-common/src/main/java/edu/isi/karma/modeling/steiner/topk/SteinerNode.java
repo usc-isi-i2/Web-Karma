@@ -34,7 +34,7 @@ public class SteinerNode extends Entity {
 	
 	public SteinerNode(String id){
 		super(id);
-		edges=new TreeSet<SteinerEdge>();		
+		edges= new TreeSet<>();		
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public class SteinerNode extends Entity {
 	 * @return all neighbors of this steiner node
 	 */
 	public TreeSet<SteinerNode> getNeighbors(){
-		TreeSet<SteinerNode> ts = new TreeSet<SteinerNode>();
+		TreeSet<SteinerNode> ts = new TreeSet<>();
 		for(SteinerEdge e: edges){
 			if(e.sourceNode.equals(this))
 				ts.add(e.sinkNode);
@@ -115,7 +115,7 @@ public class SteinerNode extends Entity {
 	 * through exceptForEdge
 	 */
 	public TreeSet<SteinerNode> getNeighbors(SteinerEdge exceptForEdge){
-		TreeSet<SteinerNode> ts = new TreeSet<SteinerNode>();
+		TreeSet<SteinerNode> ts = new TreeSet<>();
 		if(exceptForEdge==null){
 			return getNeighbors();
 		}
@@ -160,14 +160,14 @@ public class SteinerNode extends Entity {
 	 *
 	 */
 	public void deleteEdges(){
-		edges= new TreeSet<SteinerEdge>();
+		edges= new TreeSet<>();
 	}
 	
 	/**
 	 * @param e steiner edge to be removed
 	 */
 	public void deleteEdge(SteinerEdge e){
-		Set<SteinerEdge> badEdges= new TreeSet<SteinerEdge>();
+		Set<SteinerEdge> badEdges= new TreeSet<>();
 		for(SteinerEdge e1: edges)
 			if(e1.sinkNode.equals(e.sinkNode)&& e1.sourceNode.equals(e.sourceNode))
 				badEdges.add(e1);

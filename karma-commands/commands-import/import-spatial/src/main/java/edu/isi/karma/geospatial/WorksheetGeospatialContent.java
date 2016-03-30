@@ -58,10 +58,10 @@ import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
 public class WorksheetGeospatialContent {
 	private Worksheet worksheet;
 	private SuperSelection selection;
-	private List<edu.isi.karma.geospatial.Point> points = new ArrayList<edu.isi.karma.geospatial.Point>();
-	private List<edu.isi.karma.geospatial.LineString> lines = new ArrayList<edu.isi.karma.geospatial.LineString>();
-	private List<Polygon> polygons = new ArrayList<Polygon>();
-	private List<FeatureTable> polygonTable = new ArrayList<FeatureTable>();
+	private List<edu.isi.karma.geospatial.Point> points = new ArrayList<>();
+	private List<edu.isi.karma.geospatial.LineString> lines = new ArrayList<>();
+	private List<Polygon> polygons = new ArrayList<>();
+	private List<FeatureTable> polygonTable = new ArrayList<>();
 	
 	private static String SRID_PROPERTY = ContextParametersRegistry.getInstance().getDefault()
 			.getParameterValue(ContextParameter.SRID_PROPERTY);
@@ -101,7 +101,7 @@ public class WorksheetGeospatialContent {
 
 	private void populateGeospatialData() {
 		
-		List<String> coordinateHNodeIds = new ArrayList<String>();
+		List<String> coordinateHNodeIds = new ArrayList<>();
 		CoordinateCase currentCase = CoordinateCase.NOT_PRESENT;
 		boolean latFound = false;
 		boolean lngFound = false;
@@ -210,14 +210,14 @@ public class WorksheetGeospatialContent {
 		        LineString JTSLine = (LineString)reader.read(posList);
 		        if(JTSLine == null) continue;
 		        int lineLength = JTSLine.getNumPoints();
-				List<Coordinate> coordsList = new ArrayList<Coordinate>();
+				List<Coordinate> coordsList = new ArrayList<>();
 				for (int i=0;i<lineLength;i++) {
 					
 					Coordinate coord = new Coordinate(JTSLine.getPointN(i).getX(),JTSLine.getPointN(i).getY());
 					coordsList.add(coord);
 				}
 
-				if (coordsList.size() == 0)
+				if (coordsList.isEmpty())
 					continue;
 
 				edu.isi.karma.geospatial.LineString line = new edu.isi.karma.geospatial.LineString(coordsList);
@@ -320,9 +320,9 @@ public class WorksheetGeospatialContent {
 
 	private Map<String, String> getColumnMap() {
 		// Prepare a map of the column names that we use for descriptions
-		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+		List<HNode> sortedLeafHNodes = new ArrayList<>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
-		Map<String, String> columnNameMap = new HashMap<String, String>();
+		Map<String, String> columnNameMap = new HashMap<>();
 		for (HNode hNode : sortedLeafHNodes) {
 			columnNameMap.put(hNode.getId(), hNode.getColumnName());
 		}
@@ -381,7 +381,7 @@ public class WorksheetGeospatialContent {
 			final LinearRing outerlinearring = new LinearRing();
 			outerboundary.setLinearRing(outerlinearring);
 
-			List<Coordinate> outercoord = new ArrayList<Coordinate>();
+			List<Coordinate> outercoord = new ArrayList<>();
 			outerlinearring.setCoordinates(outercoord);
 			for (int i=0;i<polygon.getExteriorRing().getNumPoints();i++) {
 				outercoord.add(new Coordinate(polygon.getExteriorRing().getPointN(i).getX(),polygon.getExteriorRing().getPointN(i).getY()));
@@ -396,7 +396,7 @@ public class WorksheetGeospatialContent {
 				final LinearRing innerlinearring = new LinearRing();
 				innerboundary.setLinearRing(innerlinearring);
 	
-				List<Coordinate> innercoord = new ArrayList<Coordinate>();
+				List<Coordinate> innercoord = new ArrayList<>();
 				innerlinearring.setCoordinates(innercoord);
 				int numOfPoints = polygon.getInteriorRingN(i).getNumPoints();
 				for(int j=0;j<numOfPoints;j++)
@@ -413,7 +413,7 @@ public class WorksheetGeospatialContent {
 	}
 
 	public boolean hasNoGeospatialData() {
-		if (points.size() == 0 && lines.size() == 0 && polygons.size()==0)
+		if (points.isEmpty() && lines.isEmpty() && polygons.isEmpty())
 			return true;
 		return false;
 	}

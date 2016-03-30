@@ -19,7 +19,7 @@ import edu.isi.karma.modeling.Uris;
 public class ContextGenerator {
 	private Model model;
 	private boolean isGenerateAtIdType;
-	Map<String, Set<ContextObject>> contextMapping = new HashMap<String, Set<ContextObject>>();
+	Map<String, Set<ContextObject>> contextMapping = new HashMap<>();
 	private abstract class ContextObject {
 		public String prefix;
 		public String URI;
@@ -96,7 +96,7 @@ public class ContextGenerator {
 						String prefix = shortForm.substring(0, shortForm.lastIndexOf(":"));
 						Set<ContextObject> existPrefixes = contextMapping.get(postfix);
 						if (existPrefixes == null) {
-							existPrefixes = new HashSet<ContextObject>();
+							existPrefixes = new HashSet<>();
 						}
 						existPrefixes.add(new ClassContextObject(prefix, fullURI));
 						contextMapping.put(postfix, existPrefixes);
@@ -122,7 +122,7 @@ public class ContextGenerator {
 						String prefix = shortForm.substring(0, shortForm.lastIndexOf(":"));
 						Set<ContextObject> existPrefixes = contextMapping.get(postfix);
 						if (existPrefixes == null) {
-							existPrefixes = new HashSet<ContextObject>();
+							existPrefixes = new HashSet<>();
 						}
 						existPrefixes.add(new PredicateContextObject(prefix, fullURI, dataType));
 						contextMapping.put(postfix, existPrefixes);

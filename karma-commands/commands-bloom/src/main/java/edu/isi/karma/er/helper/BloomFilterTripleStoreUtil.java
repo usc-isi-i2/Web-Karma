@@ -37,8 +37,8 @@ public class BloomFilterTripleStoreUtil extends TripleStoreUtil {
 		boolean result = true;
 		try{
 		result &= updateTripleStore(obj, bloomfilterMapping, modelRepoUrl, modelContext);
-		Map<String, String> verification = new HashMap<String, String>();
-		Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
+		Map<String, String> verification = new HashMap<>();
+		Set<String> triplemaps = new HashSet<>(Arrays.asList(obj.getString("ids").split(",")));
 		boolean verify = verify(verification, triplemaps,modelRepoUrl ,modelContext,obj);
 		if (!verify) {
 			result &= updateTripleStore(obj, verification, modelRepoUrl, modelContext);
@@ -83,9 +83,9 @@ public class BloomFilterTripleStoreUtil extends TripleStoreUtil {
 	}
 
 	public boolean updateTripleStore(JSONObject obj, Map<String, String> bloomfilterMapping, String modelRepoUrl, String modelContext) throws KarmaException, IOException {
-		Set<String> triplemaps = new HashSet<String>(Arrays.asList(obj.getString("ids").split(",")));
+		Set<String> triplemaps = new HashSet<>(Arrays.asList(obj.getString("ids").split(",")));
 		bloomfilterMapping.putAll(getBloomFiltersForMaps(modelRepoUrl, modelContext, triplemaps));
-		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
+		Map<String, KR2RMLBloomFilter> bfs = new HashMap<>();
 		for (String tripleUri : triplemaps) {
 			String serializedBloomFilter = obj.getString(tripleUri);
 			KR2RMLBloomFilter bf = new KR2RMLBloomFilter();
@@ -99,7 +99,7 @@ public class BloomFilterTripleStoreUtil extends TripleStoreUtil {
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
 
-		Map<String, String> bloomfilters = new HashMap<String, String>();
+		Map<String, String> bloomfilters = new HashMap<>();
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -129,7 +129,7 @@ public class BloomFilterTripleStoreUtil extends TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 
@@ -191,7 +191,7 @@ public class BloomFilterTripleStoreUtil extends TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("update", queryString);
 
 			String responseString = HTTPUtil.executeHTTPPostRequest(
@@ -205,15 +205,15 @@ public class BloomFilterTripleStoreUtil extends TripleStoreUtil {
 
 	public boolean updateTripleStoreWithBloomFilters(Map<String, KR2RMLBloomFilter> bfs, Map<String, String> bloomfilterMapping, String modelurl, String context) throws KarmaException, IOException {
 		Set<String> triplemaps = bfs.keySet();
-		for (String tripleUri : triplemaps) {
-			KR2RMLBloomFilter bf = bfs.get(tripleUri);
-			String oldserializedBloomFilter = bloomfilterMapping.get(tripleUri);
+		for (Entry<String, KR2RMLBloomFilter> stringKR2RMLBloomFilterEntry : bfs.entrySet()) {
+			KR2RMLBloomFilter bf = stringKR2RMLBloomFilterEntry.getValue();
+			String oldserializedBloomFilter = bloomfilterMapping.get(stringKR2RMLBloomFilterEntry.getKey());
 			if (oldserializedBloomFilter != null) {
 				KR2RMLBloomFilter bf2 = new KR2RMLBloomFilter();
 				bf2.populateFromCompressedAndBase64EncodedString(oldserializedBloomFilter);
 				bf.or(bf2);
 			}
-			bfs.put(tripleUri, bf);
+			bfs.put(stringKR2RMLBloomFilterEntry.getKey(), bf);
 		}
 		deleteBloomFiltersForMaps(modelurl, null, triplemaps);
 		StringWriter sw = new StringWriter();

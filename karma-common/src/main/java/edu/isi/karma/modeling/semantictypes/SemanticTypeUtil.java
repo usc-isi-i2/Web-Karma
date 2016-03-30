@@ -83,19 +83,19 @@ public class SemanticTypeUtil {
 			HNodePath path, SuperSelection sel) {
 		if(!getSemanticTypeTrainingEnabled() || path == null)
 		{
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		int TRAINING_EXAMPLE_MAX_COUNT = Integer
 		.parseInt(contextParameters
 				.getParameterValue(ContextParameter.TRAINING_EXAMPLE_MAX_COUNT));
-		ArrayList<Node> nodes = new ArrayList<Node>(Math.max(100, worksheet.getDataTable().getNumRows()));
+		ArrayList<Node> nodes = new ArrayList<>(Math.max(100, worksheet.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(path, nodes, sel);
 
 		Random r = new Random();
-		ArrayList<String> subset = new ArrayList<String>(TRAINING_EXAMPLE_MAX_COUNT);
+		ArrayList<String> subset = new ArrayList<>(TRAINING_EXAMPLE_MAX_COUNT);
 		if (nodes.size() > TRAINING_EXAMPLE_MAX_COUNT *2) {
-			HashSet<Integer> seenValues = new HashSet<Integer>(TRAINING_EXAMPLE_MAX_COUNT);
+			HashSet<Integer> seenValues = new HashSet<>(TRAINING_EXAMPLE_MAX_COUNT);
 			// SubList method of ArrayList causes ClassCast exception
 			int attempts = 0;
 			while(subset.size() < TRAINING_EXAMPLE_MAX_COUNT && attempts < Math.min(nodes.size(), TRAINING_EXAMPLE_MAX_COUNT*2))
@@ -130,7 +130,7 @@ public class SemanticTypeUtil {
 		private Condition taskAvailable;
 		
 		TrainingFactory() {
-			this.tasks = new ArrayList<TrainingJob>();
+			this.tasks = new ArrayList<>();
 			this.lock = new ReentrantLock();
 			this.taskAvailable = this.lock.newCondition();
 			this.start();
@@ -217,7 +217,7 @@ public class SemanticTypeUtil {
 	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions, SuperSelection sel) {
 		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet,
 				path, sel);
-		if (trainingExamples.size() == 0)
+		if (trainingExamples.isEmpty())
 			return null;
 
 		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
@@ -228,12 +228,12 @@ public class SemanticTypeUtil {
 			logger.debug("Error occured while predicting semantic type.");
 			return null;
 		}
-		if (result.size() == 0) {
+		if (result.isEmpty()) {
 			return null;
 		}
 
 		/** Remove the labels that are not in the ontology or are already used as the semantic type **/
-		List<SemanticTypeLabel> removeLabels = new ArrayList<SemanticTypeLabel>();
+		List<SemanticTypeLabel> removeLabels = new ArrayList<>();
 		String domainUri, typeUri;
 		Label domain, type;
 		for (int i=0; i<result.size(); i++) {
@@ -266,7 +266,7 @@ public class SemanticTypeUtil {
 		for (SemanticTypeLabel removeLabel : removeLabels) {
 			result.remove(removeLabel);
 		}
-		if (result.size() == 0) {
+		if (result.isEmpty()) {
 			return null;
 		}
 
@@ -276,7 +276,7 @@ public class SemanticTypeUtil {
 	public List<SemanticType> getSuggestedTypes(OntologyManager ontologyManager, 
 			ColumnNode columnNode, SemanticTypeColumnModel columnModel) {
 		
-		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
+		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<>();
 		if (columnModel == null)
 			return suggestedSemanticTypes;
 		
@@ -307,7 +307,7 @@ public class SemanticTypeUtil {
 	}
 	
 	public ArrayList<SemanticType> getColumnSemanticSuggestions(Workspace workspace, Worksheet worksheet, ColumnNode columnNode, int numSuggestions, SuperSelection sel) {
-		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<SemanticType>();
+		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<>();
 		logger.info("Column Semantic Suggestions for:" + columnNode.getColumnName());
 		if(workspace != null && worksheet != null) {
 			OntologyManager ontologyManager = workspace.getOntologyManager();
@@ -367,20 +367,20 @@ public class SemanticTypeUtil {
 	 */
 	public static void identifyOutliers(Worksheet worksheet, String predictedType, HNodePath path, Tag outlierTag,
 			ISemanticTypeModelHandler modelHandler, SuperSelection sel) {
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<>();
 		worksheet.getDataTable().collectNodes(path, nodes, sel);
 
 		// Identify the top semantic type for each node
 		// It it does not matches the predicted type, it is a outlier.
-		Set<String> allNodeIds = new HashSet<String>();
-		Set<String> outlierNodeIds = new HashSet<String>();
+		Set<String> allNodeIds = new HashSet<>();
+		Set<String> outlierNodeIds = new HashSet<>();
 
 		int outlierCounter = 0;
 		for (Node node : nodes) {
 			allNodeIds.add(node.getId());
 
 			// Compute the semantic type for the node value
-			List<String> examples = new ArrayList<String>();
+			List<String> examples = new ArrayList<>();
 
 			String nodeVal = node.getValue().asString();
 			if (nodeVal != null && !nodeVal.equals("")) {

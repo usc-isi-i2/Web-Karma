@@ -116,7 +116,7 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 		Node classNode = alignment.addInternalNode(internalNodeLabel);
 		
 		// Create column nodes for all columns 
-		List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+		List<HNode> sortedLeafHNodes = new ArrayList<>();
 		worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 		for (HNode hNode : sortedLeafHNodes){
 			String columnName = hNode.getColumnName().trim().replaceAll(" ", "_");

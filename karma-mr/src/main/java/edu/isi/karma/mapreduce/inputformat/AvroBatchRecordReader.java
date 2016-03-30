@@ -15,7 +15,7 @@ public class AvroBatchRecordReader<T> extends AvroRecordReaderBase<Text, Text, T
 	protected AvroBatchRecordReader(Schema readerSchema) {
 		super(readerSchema);
 	}
-	List<JSONObject> data = new LinkedList<JSONObject>();
+	List<JSONObject> data = new LinkedList<>();
 
 	@Override
 	public Text getCurrentKey() throws IOException, InterruptedException {
@@ -54,7 +54,7 @@ public class AvroBatchRecordReader<T> extends AvroRecordReaderBase<Text, Text, T
 				break;
 			}
 		}
-		return (data.size() != 0);
+		return (!data.isEmpty());
 	}
 
 }

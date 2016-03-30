@@ -172,7 +172,7 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 		
 		int counter = 0;
 		
-		ArrayList<String> rowValues = null;
+		List<String> rowValues = null;
 		while ((rowValues = dbUtil.parseResultSetRow(r)) != null) {
 			// Generate RDF and create a new worksheet for every DATABASE_TABLE_FETCH_SIZE rows
 			if(counter%DATABASE_TABLE_FETCH_SIZE == 0 && counter != 0) {
@@ -233,7 +233,8 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	private List<String> addHeaders (Worksheet wk, List<String> columnNames,
 			RepFactory factory) {
 		HTable headers = wk.getHeaders();
-		ArrayList<String> headersList = new ArrayList<String>();
+		List<String> headersList = new ArrayList<>();
+
         for(int i=0; i< columnNames.size(); i++){
         	HNode hNode = null;
         	hNode = headers.addHNode(columnNames.get(i), HNodeType.Regular, wk, factory);

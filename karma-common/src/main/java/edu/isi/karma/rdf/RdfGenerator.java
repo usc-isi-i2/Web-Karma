@@ -75,10 +75,10 @@ public abstract class RdfGenerator {
 		WorksheetCommandHistoryExecutor wchr = new WorksheetCommandHistoryExecutor(worksheet.getId(), workspace);
 		try
 		{
-			List<CommandTag> tags = new ArrayList<CommandTag>();
+			List<CommandTag> tags = new ArrayList<>();
 			tags.add(CommandTag.Transformation);
 			
-			List<CommandTag> ignoreTags = new ArrayList<CommandTag>();
+			List<CommandTag> ignoreTags = new ArrayList<>();
 			ignoreTags.add(CommandTag.IgnoreInBatch);
 			wchr.executeCommandsByTags(tags, 
 					ignoreTags,

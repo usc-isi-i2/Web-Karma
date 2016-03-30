@@ -109,8 +109,8 @@ public class Invocation {
 	private void updateResponse() {
 		
 		Table results = new Table();
-		List<String> columns = new ArrayList<String>();
-        HashMap<String, Integer> attributeNameCounter = new HashMap<String, Integer>();
+		List<String> columns = new ArrayList<>();
+        HashMap<String, Integer> attributeNameCounter = new HashMap<>();
 
         logger.info("output type is: " + response.getType());
         if (response.getType() == null) {
@@ -224,7 +224,7 @@ public class Invocation {
     	
 		jointInputAndOutput = new Table(this.response.getTable());
 		
-		List<String> inputValues = new ArrayList<String>();
+		List<String> inputValues = new ArrayList<>();
 		if (this.request.getAttributes() != null)
 		for (int j = this.request.getAttributes().size() - 1; j >= 0; j--) {
 			
@@ -239,7 +239,7 @@ public class Invocation {
 		}
 		
 		// there is no output
-		if (this.response.getTable().getHeaders().size() == 0) {
+		if (this.response.getTable().getHeaders().isEmpty()) {
 			jointInputAndOutput.getValues().add(inputValues);
 		}
 

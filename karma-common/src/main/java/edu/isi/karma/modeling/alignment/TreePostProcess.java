@@ -92,7 +92,7 @@ public class TreePostProcess {
 	
 	private static List<Node> findPossibleRoots(DirectedWeightedMultigraph<Node, DefaultLink> tree) {
 
-		List<Node> possibleRoots = new ArrayList<Node>();
+		List<Node> possibleRoots = new ArrayList<>();
 
 		// If tree contains the Thing, we return it as the root
 		for (Node v: tree.vertexSet()) { 
@@ -102,14 +102,14 @@ public class TreePostProcess {
 		}
 
 		int maxReachableNodes = -1;
-		int reachableNodes = -1;
+		int reachableNodes;
 		
-		List<Node> vertexList = new ArrayList<Node>();
-		List<Integer> reachableNodesList = new ArrayList<Integer>();
+		List<Node> vertexList = new ArrayList<>();
+		List<Integer> reachableNodesList = new ArrayList<>();
 		
 		for (Node v: tree.vertexSet()) {
-			BreadthFirstIterator<Node, DefaultLink> i = 
-				new BreadthFirstIterator<Node, DefaultLink>(tree, v);
+			BreadthFirstIterator<Node, DefaultLink> i =
+					new BreadthFirstIterator<>(tree, v);
 			
 			reachableNodes = -1;
 			while (i.hasNext()) {
@@ -136,7 +136,7 @@ public class TreePostProcess {
 		
 		List<Node> possibleRoots = findPossibleRoots(tree);
 		
-		if (possibleRoots == null || possibleRoots.size() == 0)
+		if (possibleRoots == null || possibleRoots.isEmpty())
 			return null;
 		
 		Collections.sort(possibleRoots);
@@ -152,7 +152,7 @@ public class TreePostProcess {
 
 		List<LabeledLink> temp1 = null;
 //		List<LabeledLink> temp2 = null;
-		List<LabeledLink> possibleLinks = new ArrayList<LabeledLink>();
+		List<LabeledLink> possibleLinks = new ArrayList<>();
 		
 		for (DefaultLink link : links) {
 			if (link instanceof CompactLink) {
@@ -176,7 +176,7 @@ public class TreePostProcess {
 //				if (temp2 != null) possibleLinks.addAll(temp2);
 	
 				Collections.sort(possibleLinks, new LinkPriorityComparator());
-				if (possibleLinks.size() > 0) {
+				if (!possibleLinks.isEmpty()) {
 					
 					// pick the first one 
 					LabeledLink newLink = possibleLinks.get(0);

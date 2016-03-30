@@ -33,8 +33,8 @@ public class XMLElementExtractorMapper extends
 		String ouputKey = key.toString();
 		reusableKey.set(ouputKey);
 		int start =0;
-		int end = 0;
-		int position = 0;
+		int end;
+		int position;
 		while(-1 != (position = makeSureTagIsValid(value.getBytes(), startTag, start)))
 		{
 			end = rawIndexOf(value.getBytes(), endTag, position);

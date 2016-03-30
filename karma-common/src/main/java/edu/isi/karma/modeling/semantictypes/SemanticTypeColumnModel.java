@@ -23,6 +23,7 @@ package edu.isi.karma.modeling.semantictypes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.json.JSONArray;
@@ -41,7 +42,7 @@ import edu.isi.karma.util.Util;
 
 public class SemanticTypeColumnModel implements Jsonizable {
 
-	private final HashMap<String, Double> scoreMap = new HashMap<String, Double>();
+	private final HashMap<String, Double> scoreMap = new HashMap<>();
 
 	public SemanticTypeColumnModel(List<SemanticTypeLabel> labels) {
 		for (int i = 0; i < labels.size(); i++) {
@@ -61,10 +62,10 @@ public class SemanticTypeColumnModel implements Jsonizable {
 	public void write(JSONWriter writer) throws JSONException {
 		writer.object();
 		writer.array();
-		for (String label : scoreMap.keySet()) {
+		for (Map.Entry<String, Double> stringDoubleEntry : scoreMap.entrySet()) {
 			writer.object();
-			writer.key(SemanticTypesUpdate.JsonKeys.FullType.name()).value(label);
-			writer.key("probability").value(scoreMap.get(label));
+			writer.key(SemanticTypesUpdate.JsonKeys.FullType.name()).value(stringDoubleEntry.getKey());
+			writer.key("probability").value(stringDoubleEntry.getValue());
 			writer.endObject();
 		}
 		writer.endArray();
@@ -109,7 +110,7 @@ public class SemanticTypeColumnModel implements Jsonizable {
 		JSONArray arr = new JSONArray();
 		
 		/** Create a set of node ids of internal nodes of Steiner Tree **/
-		Set<String> steinerTreeNodeIds = new HashSet<String>();
+		Set<String> steinerTreeNodeIds = new HashSet<>();
 		if (alignment != null && !alignment.isEmpty()) {
 			for (Node node: alignment.getSteinerTree().vertexSet()) {
 				if (node.getType() == NodeType.InternalNode) {

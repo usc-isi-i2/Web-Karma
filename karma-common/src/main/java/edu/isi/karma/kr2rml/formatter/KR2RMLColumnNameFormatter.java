@@ -25,8 +25,8 @@ import java.util.Map;
 
 public abstract class KR2RMLColumnNameFormatter {
 
-	protected Map<String, String> formattedColumnNames = new HashMap<String, String>();
-	protected Map<String, String> formattingRemovedColumnNames = new HashMap<String, String>();
+	protected Map<String, String> formattedColumnNames = new HashMap<>();
+	protected Map<String, String> formattingRemovedColumnNames = new HashMap<>();
 	
 	public String getFormattedColumnName(String columnName) {
 		if(!isFormattedColumnNameMemoized(columnName))

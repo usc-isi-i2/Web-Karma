@@ -128,11 +128,11 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		PythonInterpreter interpreter = repo.getInterpreter();
 
 		repo.initializeInterpreter(interpreter);
-		Collection<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet
+		Collection<Node> nodes = new ArrayList<>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
 		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
 
-		Map<String, String> rowToValueMap = new HashMap<String, String>();
+		Map<String, String> rowToValueMap = new HashMap<>();
 
 		int counter = 0;
 		long starttime = System.currentTimeMillis();

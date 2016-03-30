@@ -55,7 +55,7 @@ public class SpatialReferenceSystemTransformationUtil {
 		if(sourceCRS.equals(targetCRS))
 			return inGeom;
 		
-		MathTransform transform = null;
+		MathTransform transform;
 		
 		try {
 			transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
@@ -102,8 +102,8 @@ public class SpatialReferenceSystemTransformationUtil {
 		if (!toSRID.contains(":"))
 			toSRID = "EPSG:" + toSRID;
 
-		CoordinateReferenceSystem sourceCRS = null;
-		CoordinateReferenceSystem targetCRS = null;
+		CoordinateReferenceSystem sourceCRS;
+		CoordinateReferenceSystem targetCRS;
 		try {
 			sourceCRS = CRS.decode(fromSRID, true);
 			targetCRS = CRS.decode(toSRID, true);
@@ -115,7 +115,7 @@ public class SpatialReferenceSystemTransformationUtil {
 			return inGeomWKT;
 		}
 
-		MathTransform transform = null;
+		MathTransform transform;
 		try {
 			transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
 		} catch (FactoryException e) {
@@ -123,7 +123,7 @@ public class SpatialReferenceSystemTransformationUtil {
 			return inGeomWKT;
 		}
 
-		Geometry outGeom = null;
+		Geometry outGeom;
 		try {
 			outGeom = JTS.transform(JTSGeometry, transform);
 		} catch (MismatchedDimensionException e) {

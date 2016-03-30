@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.cli.BasicParser;
@@ -183,8 +184,8 @@ public class KarmaDriver {
             public Iterable<Tuple2<String, String>> call(Tuple2<String, String> writableIterableTuple2) throws Exception {
                 List<Tuple2<String, String>> results = new LinkedList<>();
                 Properties karmaContentSettings = new Properties();
-                for(Object key: karmaSettings.keySet())
-                	karmaContentSettings.put(key, karmaSettings.get(key));
+                for(Map.Entry<Object, Object> objectObjectEntry : karmaSettings.entrySet())
+                	karmaContentSettings.put(objectObjectEntry.getKey(), objectObjectEntry.getValue());
                 karmaContentSettings.put("model.content", model.value());
                 karmaContentSettings.put("context.content", context.getValue());
                 
@@ -259,7 +260,7 @@ public class KarmaDriver {
 	    for (@SuppressWarnings("unchecked")
 		Iterator<String> keysIterator = properties.keys(); keysIterator.hasNext(); ) {
 			String objPropertyName = keysIterator.next();
-			String propertyName = objPropertyName.toString();
+			String propertyName = objPropertyName;
 			String value = properties.getString(propertyName);
 			logger.info("Set " + propertyName + "=" + value);
 			prop.setProperty(propertyName, value);

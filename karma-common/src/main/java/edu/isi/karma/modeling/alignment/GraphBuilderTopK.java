@@ -46,25 +46,25 @@ public class GraphBuilderTopK extends GraphBuilder {
 	
 	public GraphBuilderTopK(OntologyManager ontologyManager, boolean addThingNode) { 
 		super(ontologyManager, addThingNode);
-		if (topKGraph == null) topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
-		if (topKGraphNodes == null) topKGraphNodes = new HashMap<String, SteinerNode>();
+		if (topKGraph == null) topKGraph = new HashMap<>();
+		if (topKGraphNodes == null) topKGraphNodes = new HashMap<>();
 	}
 	
 	public GraphBuilderTopK(OntologyManager ontologyManager, DirectedWeightedMultigraph<Node, DefaultLink> graph) {
 		super(ontologyManager, graph, true);
-		if (topKGraph == null) topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
-		if (topKGraphNodes == null) topKGraphNodes = new HashMap<String, SteinerNode>();
+		if (topKGraph == null) topKGraph = new HashMap<>();
+		if (topKGraphNodes == null) topKGraphNodes = new HashMap<>();
 	}
 	
 	public HashMap<SteinerNode, TreeSet<SteinerEdge>> getTopKGraph() {
 		if (topKGraph == null)
-			topKGraph = new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
+			topKGraph = new HashMap<>();
 		return topKGraph;
 	}
 
 	public HashMap<String, SteinerNode> getTopKGraphNodes() {
 		if (topKGraphNodes == null)
-			topKGraphNodes = new HashMap<String, SteinerNode>();
+			topKGraphNodes = new HashMap<>();
 		return topKGraphNodes;
 	}
 	
@@ -169,7 +169,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 //		for (Node n : steinerNodes)
 //			System.out.println(n instanceof ColumnNode ? ((ColumnNode)n).getColumnName() : n.getId());
 		
-		TreeSet<SteinerNode> terminals= new TreeSet<SteinerNode>();
+		TreeSet<SteinerNode> terminals= new TreeSet<>();
 		for (Node n : steinerNodes) {
 			if (onlyAddInternalNodes && !(n instanceof InternalNode)) {
 				continue;
@@ -211,13 +211,13 @@ public class GraphBuilderTopK extends GraphBuilder {
 		CustomizedBANKS.graph = this.getTopKGraph();
 		CustomizedBANKS.nodes = this.getTopKGraphNodes();
 		
-		List<DirectedWeightedMultigraph<Node, LabeledLink>> results = new 
-				LinkedList<DirectedWeightedMultigraph<Node, LabeledLink>>();
+		List<DirectedWeightedMultigraph<Node, LabeledLink>> results = new
+				LinkedList<>();
 		
 		N.getTopKTrees(k);
 		DirectedWeightedMultigraph<Node, LabeledLink> processedTree = null;
 		
-		if (terminals.size() > 0 && N.getResultQueue().isEmpty()) { 
+		if (!terminals.isEmpty() && N.getResultQueue().isEmpty()) { 
 			// No edge in the tree, we still want to return a graph with only nodes
 			// no solution found! --> return a tree with just terminal nodes
 //			ResultGraph emptyTree = new ResultGraph();
@@ -274,7 +274,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 			return null;
 		
 		WeightedMultigraph<Node, DefaultLink> tree =
-				new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+				new WeightedMultigraph<>(DefaultLink.class);
 		
 		if (initialTree.getFacts().isEmpty()) { //add all terminal nodes
 			for (SteinerNode t : terminals) {
@@ -282,7 +282,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 			}
 		}
 		
-		HashSet<Node> visitedNodes = new HashSet<Node>();
+		HashSet<Node> visitedNodes = new HashSet<>();
 		Node source, target;
 		DefaultLink l; 
 		double weight;
@@ -392,7 +392,7 @@ public class GraphBuilderTopK extends GraphBuilder {
 		gbtk.addLink(n2, n3, e7, 0.5);
 		
 		
-		Set<Node> steinerNodes = new HashSet<Node>();
+		Set<Node> steinerNodes = new HashSet<>();
 		steinerNodes.add(n2);
 		steinerNodes.add(n3);
 		

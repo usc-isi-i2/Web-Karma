@@ -38,7 +38,7 @@ public class URIFormatter {
 	{
 		reportErrors = false;
 		replacePrefixesWithNamespaces = false;
-		prefixToNamespaceMap = new HashMap<String, String>();
+		prefixToNamespaceMap = new HashMap<>();
 		errorReport = null;
 	}
 
@@ -46,7 +46,7 @@ public class URIFormatter {
 	{
 		reportErrors = true;
 		replacePrefixesWithNamespaces = true;
-		prefixToNamespaceMap = new HashMap<String, String>();
+		prefixToNamespaceMap = new HashMap<>();
 		populatePrefixToNamespaceMap(ontMgr);
 		this.errorReport = errorReport;
 	}
@@ -54,7 +54,7 @@ public class URIFormatter {
 	{
 		reportErrors = true;
 		replacePrefixesWithNamespaces = true;
-		prefixToNamespaceMap = new HashMap<String, String>();
+		prefixToNamespaceMap = new HashMap<>();
 		populatePrefixToNamespaceMap(prefixes);
 		this.errorReport = errorReport;
 	}
@@ -139,9 +139,9 @@ public class URIFormatter {
 	
 	private void populatePrefixToNamespaceMap(OntologyManager ontMgr) {
 		Map<String, String> prefixMapOntMgr = ontMgr.getPrefixMap(); 
-		for (String ns:prefixMapOntMgr.keySet()) {
-			String prefix = prefixMapOntMgr.get(ns);
-			this.prefixToNamespaceMap.put(prefix, ns);
+		for (Map.Entry<String, String> stringStringEntry : prefixMapOntMgr.entrySet()) {
+			String prefix = stringStringEntry.getValue();
+			this.prefixToNamespaceMap.put(prefix, stringStringEntry.getKey());
 		}
 	}
 	

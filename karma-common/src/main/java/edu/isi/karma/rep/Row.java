@@ -45,7 +45,7 @@ public class Row extends RepEntity implements Neighbor {
 
 	// My nodes, columns containing cells or nested tables, a map from HNode ids
 	// to Node.
-	private final Map<String, Node> nodes = new HashMap<String, Node>();
+	private final Map<String, Node> nodes = new HashMap<>();
 
 	// mariam
 	/**
@@ -315,9 +315,9 @@ public class Row extends RepEntity implements Neighbor {
 			{
 				List<Row> rowsNestedTable = n.getNestedTable().getRows(0,
 						numRows, sel);
-				if (rowsNestedTable != null && rowsNestedTable.size() != 0) {
+				if (rowsNestedTable != null && !rowsNestedTable.isEmpty()) {
 					List<Row> rows = n.getNestedTable().getRows(0, 1, sel);
-					if(rows.size() > 0 && rows.get(0).getNode(rest.getFirst().getId()) != null)
+					if(!rows.isEmpty() && rows.get(0).getNode(rest.getFirst().getId()) != null)
 					{
 						return n.getNestedTable().collectNodes(path.getRest(), nodes, sel);
 					}

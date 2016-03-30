@@ -71,7 +71,7 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 		}
 		CommandHistory history = workspace.getCommandHistory();
 		List<Command> tmp = gatherAllOperateSelectionCommands(history.getCommandsFromWorksheetId(worksheetId), workspace);
-		if (tmp.size() > 0) {
+		if (!tmp.isEmpty()) {
 			JSONArray inputJSON = new JSONArray();
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("worksheetId", worksheetId, ParameterType.worksheetId));
 			inputJSON.put(CommandInputJSONUtil.createJsonObject("hNodeId", hNodeId, ParameterType.hNodeId));
@@ -104,7 +104,7 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 	}
 
 	private List<Command> gatherAllOperateSelectionCommands(List<Command> commands, Workspace workspace) {
-		List<Command> operationCommands = new ArrayList<Command>();
+		List<Command> operationCommands = new ArrayList<>();
 		for (Command c : commands) {
 			if (c instanceof OperateSelectionCommand) {
 				OperateSelectionCommand t = (OperateSelectionCommand)c;

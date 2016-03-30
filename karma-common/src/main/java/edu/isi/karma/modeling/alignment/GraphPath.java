@@ -36,13 +36,13 @@ public class GraphPath {
 	
 	
 	public GraphPath() {
-		this.edgeList = new LinkedList<DefaultLink>();
+		this.edgeList = new LinkedList<>();
 		this.startNode = null;
 		this.endNode = null;
 	}
 	
 	public GraphPath(GraphPath gp) {
-		this.edgeList = new LinkedList<DefaultLink>();
+		this.edgeList = new LinkedList<>();
 		for (DefaultLink l : gp.getLinks())
 			this.addLink(l);
 	}

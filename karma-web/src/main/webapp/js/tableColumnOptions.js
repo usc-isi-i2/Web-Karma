@@ -52,11 +52,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			func: aggregation,
 			leafOnly: true,
 			leafExcluded: false
-		}, {
-			name: "Transform",
-			func: transform,
-			leafOnly: true,
-			leafExcluded: false
 		},
 		//{name:"Generate Cluster Values", func:clusterValues, leafOnly:true, leafExcluded: false},
 		//{name:"Merge Cluster Values", func:mergeValues, leafOnly:true, leafExcluded: false},
@@ -294,12 +289,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 	function splitValue() {
 		hideDropdown();
 		SplitValueDialog.getInstance().show(worksheetId, columnId);
-		return false;
-	}
-
-	function transform() {
-		hideDropdown();
-		TransformColumnDialog.getInstance().show(worksheetId, columnId);
 		return false;
 	}
 
@@ -1178,12 +1167,13 @@ var ExtractEntitiesDialog = (function() {
 
 				$.each(jsonresp, function(index, data) {
 					var row = $("<div>").addClass("checkbox");
-					var label = $("<label>").text(data.capability);
+					var label = $("<label>");
 					var input = $("<input>")
 						.attr("type", "checkbox")
 						.attr("id", "selectentities")
 						.attr("value", data.capability);
 					label.append(input);
+					label.append($("<span>").html(data.capability));
 					row.append(label);
 					dialogContent.append(row);
 				});

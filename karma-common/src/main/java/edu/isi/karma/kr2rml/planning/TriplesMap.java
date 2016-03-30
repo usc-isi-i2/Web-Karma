@@ -32,7 +32,7 @@ public class TriplesMap {
 	
 	private final String id;
 	private SubjectMap subject;
-	private List<PredicateObjectMap> predicateObjectMaps = new ArrayList<PredicateObjectMap>();
+	private List<PredicateObjectMap> predicateObjectMaps = new ArrayList<>();
 	private final static String TRIPLES_MAP_PREFIX = "TriplesMap";
 	
 	public TriplesMap(String id, SubjectMap subject) {

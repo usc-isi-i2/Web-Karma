@@ -27,7 +27,7 @@ public class Point {
 	private final double latitude;
 	private final double longitude;
 
-	private Map<String, String> popupData = new HashMap<String, String>();
+	private Map<String, String> popupData = new HashMap<>();
 
 	public Point(double longitude, double latitude) {
 		this.longitude = longitude;
@@ -48,8 +48,8 @@ public class Point {
 
 	public String getHTMLDescription() {
 		StringBuilder str = new StringBuilder();
-		for (String name : popupData.keySet()) {
-			str.append("<b>" + name + "</b>: " + popupData.get(name)
+		for (Map.Entry<String, String> stringStringEntry : popupData.entrySet()) {
+			str.append("<b>" + stringStringEntry.getKey() + "</b>: " + stringStringEntry.getValue()
 					+ " <br />");
 		}
 		return str.toString();

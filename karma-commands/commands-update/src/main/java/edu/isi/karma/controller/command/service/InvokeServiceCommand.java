@@ -102,14 +102,14 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 			initialGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 		}
 		
-		List<String> requestURLStrings = new ArrayList<String>();
+		List<String> requestURLStrings = new ArrayList<>();
 		List<Row> rows = wk.getDataTable().getRows(0, wk.getDataTable().getNumRows(), selection);
-		if (rows == null || rows.size() == 0) {
+		if (rows == null || rows.isEmpty()) {
 			logger.error("Data table does not have any row.");
 			return new UpdateContainer(new ErrorUpdate("Data table does not have any row."));	
 		}
 		
-		List<String> requestIds = new ArrayList<String>();
+		List<String> requestIds = new ArrayList<>();
 		for (int i = 0; i < rows.size(); i++) {
 			requestIds.add(rows.get(i).getId());
 			requestURLStrings.add(rows.get(i).getNode(hNodeId).getValue().asString());
@@ -150,7 +150,7 @@ public class InvokeServiceCommand extends WorksheetSelectionCommand {
 		}
 		
 		// Create new vWorksheet using the new header order
-		List<HNodePath> columnPaths = new ArrayList<HNodePath>();
+		List<HNodePath> columnPaths = new ArrayList<>();
 		for (HNode node : wk.getHeaders().getSortedHNodes()) {
 			HNodePath path = new HNodePath(node);
 			columnPaths.add(path);

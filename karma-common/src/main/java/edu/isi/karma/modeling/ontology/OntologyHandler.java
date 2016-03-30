@@ -97,7 +97,7 @@ class OntologyHandler {
 	 * @return
 	 */
 	public HashSet<String> getResourcesUris(HashSet<OntResource> resources) {
-		HashSet<String> resourcesURIs = new HashSet<String>();
+		HashSet<String> resourcesURIs = new HashSet<>();
 		if (resources != null)
 			for (OntResource r: resources) {
 				resourcesURIs.add(r.getURI());
@@ -111,7 +111,7 @@ class OntologyHandler {
 	 * @return
 	 */
 	public HashMap<String, Label> getResourcesLabels(HashSet<OntResource> resources) {
-		HashMap<String, Label> resourcesLabels = new HashMap<String, Label>();
+		HashMap<String, Label> resourcesLabels = new HashMap<>();
 		if (resources != null)
 			for (OntResource r: resources) {
 				resourcesLabels.put(r.getURI(), getResourceLabel(r));
@@ -212,7 +212,7 @@ class OntologyHandler {
 		OntProperty p = null;
 		
 		if (resources == null) 
-			resources = new HashSet<OntResource>();
+			resources = new HashSet<>();
 
 		if (r == null)
 			return;
@@ -241,7 +241,7 @@ class OntologyHandler {
                 	if (recursive)
                 		getParents(superC, resources, recursive);
                 } else {
-                	HashSet<OntResource> members = new HashSet<OntResource>();
+                	HashSet<OntResource> members = new HashSet<>();
                 	getMembers(superC, members, false);
                 	for (OntResource or : members) {
                 		resources.add(or);
@@ -297,7 +297,7 @@ class OntologyHandler {
 		OntProperty p = null;
 		
 		if (resources == null) 
-			resources = new HashSet<OntResource>();
+			resources = new HashSet<>();
 
 		if (r == null)
 			return;
@@ -326,7 +326,7 @@ class OntologyHandler {
                 	if (recursive)
                 		getChildren(subC, resources, recursive);
                 } else {
-                	HashSet<OntResource> members = new HashSet<OntResource>();
+                	HashSet<OntResource> members = new HashSet<>();
                 	getMembers(subC, members, false);
                 	for (OntResource or : members) {
                 		resources.add(or);
@@ -378,7 +378,7 @@ class OntologyHandler {
 	public void getMembers(OntResource r, HashSet<OntResource> resources, boolean recursive) {
 
 		if (resources == null) 
-			resources = new HashSet<OntResource>();
+			resources = new HashSet<>();
 
 		if (r == null)
 			return;
@@ -431,9 +431,9 @@ class OntologyHandler {
 	 */
 	public HashMap<String, Label> getSubClasses(String classUri, boolean recursive) {
 
-		HashSet<OntResource> resources = new HashSet<OntResource>();
+		HashSet<OntResource> resources = new HashSet<>();
 		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return new HashMap<String, Label>();
+		if (r == null) return new HashMap<>();
 		getChildren(r, resources, recursive);
 		return getResourcesLabels(resources);
 	}
@@ -446,9 +446,9 @@ class OntologyHandler {
 	 */
 	public HashMap<String, Label> getSuperClasses(String classUri, boolean recursive) {
 		
-		HashSet<OntResource> resources = new HashSet<OntResource>();
+		HashSet<OntResource> resources = new HashSet<>();
 		OntResource r = ontModel.getOntClass(classUri);
-		if (r == null) return new HashMap<String, Label>();
+		if (r == null) return new HashMap<>();
 		getParents(r, resources, recursive);
 		return getResourcesLabels(resources);
 	}
@@ -461,9 +461,9 @@ class OntologyHandler {
 	 */
 	public HashMap<String, Label> getSubProperties(String propertyUri, boolean recursive) {
 
-		HashSet<OntResource> resources = new HashSet<OntResource>();
+		HashSet<OntResource> resources = new HashSet<>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return new HashMap<String, Label>();
+		if (r == null) return new HashMap<>();
 		getChildren(r, resources, recursive);
 		return getResourcesLabels(resources);
 	}
@@ -476,9 +476,9 @@ class OntologyHandler {
 	 */
 	public HashMap<String, Label> getSuperProperties(String propertyUri, boolean recursive) {
 
-		HashSet<OntResource> resources = new HashSet<OntResource>();
+		HashSet<OntResource> resources = new HashSet<>();
 		OntResource r = ontModel.getOntProperty(propertyUri);
-		if (r == null) return new HashMap<String, Label>();
+		if (r == null) return new HashMap<>();
 		getParents(r, resources, recursive);
 		return getResourcesLabels(resources);
 	}

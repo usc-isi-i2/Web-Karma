@@ -289,7 +289,7 @@ public class RDFGeneratorServlet implements ServletContextListener{
 			
 			String r2rmlURI = formParams.getFirst(FormParameters.R2RML_URL);
 			String r2rmlFileName = new File(r2rmlURI).getName();
-	        String contextFileName = null;
+	        String contextFileName;
 	       
 	        if(urlContext == null){
 	        	
@@ -312,7 +312,7 @@ public class RDFGeneratorServlet implements ServletContextListener{
 			JSONTokener token = new JSONTokener(IOUtils.toInputStream(jsonContext)); 
 
 			ContextIdentifier contextId = new ContextIdentifier("generic-context", urlContext);
-			JSONKR2RMLRDFWriter writer =null;
+			JSONKR2RMLRDFWriter writer;
 			if (baseUri != null)
 				 writer = new JSONKR2RMLRDFWriter(pw,baseUri);
 			else

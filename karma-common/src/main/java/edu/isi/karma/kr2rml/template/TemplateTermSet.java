@@ -40,7 +40,7 @@ public class TemplateTermSet {
 	private final List<TemplateTerm> termSet;
 	
 	public TemplateTermSet() {
-		termSet = new LinkedList<TemplateTerm>();
+		termSet = new LinkedList<>();
 	}
 	
 	public void addTemplateTermToSet(TemplateTerm term) {
@@ -52,7 +52,7 @@ public class TemplateTermSet {
 	}
 	
 	public List<ColumnTemplateTerm> getAllColumnNameTermElements() {
-		List<ColumnTemplateTerm> cnList = new ArrayList<ColumnTemplateTerm>();
+		List<ColumnTemplateTerm> cnList = new ArrayList<>();
 		for (TemplateTerm term:termSet) {
 			if (term instanceof ColumnTemplateTerm) {
 				cnList.add((ColumnTemplateTerm)term);
@@ -79,7 +79,7 @@ public class TemplateTermSet {
 	}
 	
 	public boolean isEmpty() {
-		return termSet.size() == 0;
+		return termSet.isEmpty();
 	}
 	
 	public String getR2rmlTemplateString(RepFactory factory) {
@@ -94,7 +94,7 @@ public class TemplateTermSet {
 			} else if (term instanceof ColumnTemplateTerm) {
 				HNode hNode = factory.getHNode(term.getTemplateTermValue());
 				if (hNode != null) {
-					String colNameStr = "";
+					String colNameStr;
 					try {
 						JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
 						if (colNameArr.length() == 1) {
@@ -133,7 +133,7 @@ public class TemplateTermSet {
 			} else if (term instanceof ColumnTemplateTerm) {
 				HNode hNode = factory.getHNode(term.getTemplateTermValue());
 				if (hNode != null) {
-					String colNameStr = "";
+					String colNameStr;
 					try {
 						JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
 						if (colNameArr.length() == 1) {

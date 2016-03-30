@@ -28,7 +28,7 @@ public class TripleMapper extends Mapper<Text, Text, Text, NullWritable> {
 			triple = triple.substring(0, triple.length() - 5) + " .";
 		}
 
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(triple);
 		while (m.find())
 			list.add(m.group(1));

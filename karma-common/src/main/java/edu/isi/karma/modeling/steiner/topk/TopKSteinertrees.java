@@ -38,7 +38,7 @@ public abstract class TopKSteinertrees {
 	public static Map<String, SteinerNode> nodes;
 	
 	//maps node names to ids
-	public static Map<String, Integer> nodeToId= new HashMap<String, Integer>();
+	public static Map<String, Integer> nodeToId= new HashMap<>();
 
 	
 	
@@ -56,11 +56,11 @@ public abstract class TopKSteinertrees {
 		for(SteinerNode n: graph.keySet()){
 			fw.write(nodeToId.get(n.name())+" "+"0.0 "+nodeToId.get(n.name())+" \n");
 		}
-		for(SteinerNode n: graph.keySet()){
-			for(SteinerEdge e: graph.get(n)){
-				if(nodeToId.get(n.name())==null) nodeToId.put(n.name(),1);
-				fw.write(nodeToId.get(n.name())+" "
-						+nodeToId.get(n.getNeighborInEdge(e).name())+" "+e.weight()+"\n");
+		for(Map.Entry<SteinerNode, TreeSet<SteinerEdge>> steinerNodeTreeSetEntry : graph.entrySet()){
+			for(SteinerEdge e: steinerNodeTreeSetEntry.getValue()){
+				if(nodeToId.get(steinerNodeTreeSetEntry.getKey().name())==null) nodeToId.put(steinerNodeTreeSetEntry.getKey().name(),1);
+				fw.write(nodeToId.get(steinerNodeTreeSetEntry.getKey().name())+" "
+						+nodeToId.get(steinerNodeTreeSetEntry.getKey().getNeighborInEdge(e).name())+" "+e.weight()+"\n");
 			}
 		}
 		fw.close();
@@ -89,11 +89,11 @@ public abstract class TopKSteinertrees {
 		new File(folder).mkdir();
 		
 		FileWriter fw= new FileWriter(folder+fileName+"STAR.txt");
-		TreeSet<SteinerEdge> ts = new TreeSet<SteinerEdge>();
-		for(SteinerNode n: graph.keySet()){
-			for(SteinerEdge e: graph.get(n)){
+		TreeSet<SteinerEdge> ts = new TreeSet<>();
+		for(Map.Entry<SteinerNode, TreeSet<SteinerEdge>> steinerNodeTreeSetEntry : graph.entrySet()){
+			for(SteinerEdge e: steinerNodeTreeSetEntry.getValue()){
 				if(ts.contains(e))continue;
-				fw.write(e.getEdgeLabel()+" : "+e.weight()+" : "+n.name()+" : "+n.getNeighborInEdge(e).name()+" : "+e.sourceNode.equals(n)+"\n");
+				fw.write(e.getEdgeLabel()+" : "+e.weight()+" : "+ steinerNodeTreeSetEntry.getKey().name()+" : "+ steinerNodeTreeSetEntry.getKey().getNeighborInEdge(e).name()+" : "+e.sourceNode.equals(steinerNodeTreeSetEntry.getKey())+"\n");
 				ts.add(e);
 			}
 		}
@@ -109,8 +109,8 @@ public abstract class TopKSteinertrees {
 	 * @throws IOException
 	 */
 	public void loadGraphFromFiles(boolean uniformWeights)throws IOException{
-		graph= new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
-		nodes = new HashMap<String, SteinerNode>();
+		graph= new HashMap<>();
+		nodes = new HashMap<>();
 		//FileReader fr = new FileReader("d:\\DBLPgraph\\IMDBSTAR.txt");
 		FileReader fr = new FileReader("d:\\DBLPgraph\\dblpgraphNeighS.txt");
 		//FileReader fr = new FileReader("d:\\DBLPgraph\\DBLPSTAR.txt");
@@ -134,7 +134,7 @@ public abstract class TopKSteinertrees {
 				nodes.put(arr[3], new SteinerNode(arr[3]));
 				graph.put(nodes.get(arr[3]), new TreeSet<SteinerEdge>());
 			}
-			SteinerEdge e=null;
+			SteinerEdge e;
 			if(!uniformWeights){
 				Random r= new Random();
 				arr[1]=String.valueOf(r.nextFloat());
@@ -154,8 +154,8 @@ public abstract class TopKSteinertrees {
 	}
 	
 	public void loadGraphFromFile(String filename)throws IOException{
-		graph= new HashMap<SteinerNode, TreeSet<SteinerEdge>>();
-		nodes = new HashMap<String, SteinerNode>();
+		graph= new HashMap<>();
+		nodes = new HashMap<>();
 		//FileReader fr = new FileReader("d:\\DBLPgraph\\IMDBSTAR.txt");
 		FileReader fr = new FileReader(filename);
 		//FileReader fr = new FileReader("d:\\DBLPgraph\\DBLPSTAR.txt");
@@ -179,7 +179,7 @@ public abstract class TopKSteinertrees {
 				nodes.put(arr[3], new SteinerNode(arr[3]));
 				graph.put(nodes.get(arr[3]), new TreeSet<SteinerEdge>());
 			}
-			SteinerEdge e=null;
+			SteinerEdge e;
 			if(isArg1) e= new SteinerEdge(nodes.get(arr[3]), arr[0].intern(), nodes.get(arr[2]) ,Float.valueOf(arr[1])); 
 			else e= new SteinerEdge(nodes.get(arr[2]), arr[0].intern(), nodes.get(arr[3]),Float.valueOf(arr[1]));
 				
@@ -214,7 +214,7 @@ public abstract class TopKSteinertrees {
 	public TopKSteinertrees() {
 		// TODO Auto-generated constructor stub
 		// added by mohsen
-		this.addedSteinerTrees = new LinkedList<ApprSteinerTree>();
+		this.addedSteinerTrees = new LinkedList<>();
 	}
 	
 	
@@ -227,14 +227,14 @@ public abstract class TopKSteinertrees {
 	 */
 	public TopKSteinertrees(TreeSet<SteinerNode> terminals)throws Exception {
 		terminalNodes=terminals;
-		iterators=new ArrayList<Queue<SteinerNode>>(terminals.size());
-		visitedNodes= new ArrayList<HashMap<String, SteinerNode>>();
-		forbiddenNodes = new HashMap<String, SteinerNode>();
-		almostForbiddenNodes = new HashMap<String, SteinerNode>();
-		resultQueue=new LinkedList<ResultGraph>();
+		iterators= new ArrayList<>(terminals.size());
+		visitedNodes= new ArrayList<>();
+		forbiddenNodes = new HashMap<>();
+		almostForbiddenNodes = new HashMap<>();
+		resultQueue= new LinkedList<>();
 		
 		// added by mohsen
-		this.addedSteinerTrees = new LinkedList<ApprSteinerTree>();
+		this.addedSteinerTrees = new LinkedList<>();
 
 		//for each terminal set an iterator
 		for(int i=0; i< terminals.size(); i++){
@@ -260,8 +260,8 @@ public abstract class TopKSteinertrees {
 	 * @throws Exception 
 	 */
 	public void getTaxonomicTree(SteinerNode ancestor) throws Exception{
-		TreeSet<SteinerNode> treeNodes = new TreeSet<SteinerNode>();
-		Map<String , SteinerNode> taxonomicTreeNodes= new HashMap<String, SteinerNode>();
+		TreeSet<SteinerNode> treeNodes = new TreeSet<>();
+		Map<String , SteinerNode> taxonomicTreeNodes= new HashMap<>();
 		taxonomicTreeNodes.put(ancestor.getNodeId(),new SteinerNode(ancestor.getNodeId()));
 		for(Map<String, SteinerNode> pnM:  visitedNodes){
 			SteinerNode newNode=pnM.get(ancestor.getNodeId());
@@ -295,7 +295,7 @@ public abstract class TopKSteinertrees {
 	 * @param map
 	 */
 	protected void clean (Map<String, SteinerNode> map){
-		LinkedList<SteinerNode> outliers = new LinkedList<SteinerNode>();
+		LinkedList<SteinerNode> outliers = new LinkedList<>();
 		for(SteinerNode n: map.values())
 			if(!terminalNodes.contains(n)&& n.getDegree()==1)
 				outliers.add(n);
@@ -355,8 +355,8 @@ public abstract class TopKSteinertrees {
 			}
 		}
 		v=v.predecessor;
-		Map<String, SteinerNode> resultSet= new HashMap<String,SteinerNode>();
-		Map<String, SteinerNode> treeNodeSet= new HashMap<String,SteinerNode>();
+		Map<String, SteinerNode> resultSet= new HashMap<>();
+		Map<String, SteinerNode> treeNodeSet= new HashMap<>();
 		for(SteinerNode n: initialSet1){resultSet.put(n.name(), n);treeNodeSet.put(n.name(), new SteinerNode(n.name()));}
 		for(SteinerNode n: initialSet2){resultSet.put(n.name(), n);treeNodeSet.put(n.name(), new SteinerNode(n.name()));}
 		//follow the predecessors of v until a predecessor
@@ -369,7 +369,7 @@ public abstract class TopKSteinertrees {
 			v = newNode;
 		}
 		// make sure all edges are ok!
-		TreeSet<SteinerEdge> copyOfEdges= new TreeSet<SteinerEdge>();
+		TreeSet<SteinerEdge> copyOfEdges= new TreeSet<>();
 		for(SteinerNode n: resultSet.values()){
 			copyOfEdges.addAll(n.edges);
 		}
@@ -377,7 +377,7 @@ public abstract class TopKSteinertrees {
 			treeNodeSet.get(e.sourceNode.name()).addEdge(
 					treeNodeSet.get(e.sinkNode.name()), false, e.getEdgeLabel(), e.weight());
 		}
-		Set<SteinerNode> treeNodes= new TreeSet<SteinerNode>();
+		Set<SteinerNode> treeNodes= new TreeSet<>();
 		treeNodes.addAll(treeNodeSet.values());
 		//D.p(resultSet.values());
 		return new ApprSteinerTree(terminalNodes, treeNodes);
@@ -397,7 +397,7 @@ public abstract class TopKSteinertrees {
 	protected ApprSteinerTree getApprTreeFrom(SteinerNode v, Map<String, SteinerNode>visitedNodes1, 
 			 Map<String, SteinerNode>visitedNodes2, Set<SteinerNode>initialSet1, 
 			 Set<SteinerNode>initialSet2){
-		Map<String, SteinerNode> resultSet= new HashMap<String,SteinerNode>();
+		Map<String, SteinerNode> resultSet= new HashMap<>();
 		for(SteinerNode n: initialSet1)resultSet.put(n.name(), n);
 		for(SteinerNode n: initialSet2)resultSet.put(n.name(), n);
 		SteinerNode newNode= v.predecessor;
@@ -423,7 +423,7 @@ public abstract class TopKSteinertrees {
 		}
 		//make sure all edges are ok!
 		for(SteinerNode node: resultSet.values()){
-			TreeSet<SteinerEdge> copyOfEdges= new TreeSet<SteinerEdge>();
+			TreeSet<SteinerEdge> copyOfEdges= new TreeSet<>();
 			copyOfEdges.addAll(node.edges);
 			for(SteinerEdge e: copyOfEdges){
 				node.edges.remove(e);
@@ -431,7 +431,7 @@ public abstract class TopKSteinertrees {
 						e.getEdgeLabel(), resultSet.get(e.sinkNode.name()),e.weight()));
 			}
 		}
-		Set<SteinerNode> treeNodes= new TreeSet<SteinerNode>();
+		Set<SteinerNode> treeNodes= new TreeSet<>();
 		treeNodes.addAll(resultSet.values());
 		//D.p(resultSet.values());
 		return new ApprSteinerTree(terminalNodes, treeNodes);

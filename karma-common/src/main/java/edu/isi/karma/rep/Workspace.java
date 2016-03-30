@@ -60,7 +60,7 @@ public class Workspace extends Entity {
 	/**
 	 * Record all the worksheets defined in this workspace.
 	 */
-	private final Map<String, Worksheet> worksheets = new ConcurrentHashMap<String, Worksheet>();
+	private final Map<String, Worksheet> worksheets = new ConcurrentHashMap<>();
 	
 	/**
 	 * Saves all the tagging information
@@ -128,7 +128,7 @@ public class Workspace extends Entity {
 	}
 
 	public Collection<Worksheet> getWorksheets() {
-		return new ArrayList<Worksheet>(worksheets.values());
+		return new ArrayList<>(worksheets.values());
 	}
 
 	public RepFactory getFactory() {

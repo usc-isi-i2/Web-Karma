@@ -15,10 +15,10 @@ import edu.isi.karma.view.VWorkspace;
 
 public class CleaningResultUpdate extends AbstractUpdate {
 
-	private HashMap<String,HashMap<String, String>> map = new HashMap<String, HashMap<String,String>>();
+	private HashMap<String,HashMap<String, String>> map = new HashMap<>();
 	private String hNodeId = "";
 	private String varString;
-	private Set<String> topkey = new HashSet<String>();
+	private Set<String> topkey = new HashSet<>();
 	public enum JsonKeys {
 		worksheetId, hNodeId, result
 	}
@@ -40,7 +40,7 @@ public class CleaningResultUpdate extends AbstractUpdate {
 
 			JSONArray jsa = new JSONArray();
 			JSONObject bestpac = new JSONObject();
-			if(map.keySet().size()>0)
+			if(!map.keySet().isEmpty())
 			{
 				JSONObject jsBest = new JSONObject(map);
 				bestpac.put("data", jsBest);

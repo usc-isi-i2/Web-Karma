@@ -28,7 +28,7 @@ import de.micromata.opengis.kml.v_2_2_0.Coordinate;
 
 public class LineString {
 	private final List<Coordinate> coordinatesList;
-	private Map<String, String> popupData = new HashMap<String, String>();
+	private Map<String, String> popupData = new HashMap<>();
 
 	public LineString(List<Coordinate> posList) {
 		super();
@@ -45,8 +45,8 @@ public class LineString {
 
 	public String getHTMLDescription() {
 		StringBuilder str = new StringBuilder();
-		for (String name : popupData.keySet()) {
-			str.append("<b>" + name + "</b>: " + popupData.get(name)
+		for (Map.Entry<String, String> stringStringEntry : popupData.entrySet()) {
+			str.append("<b>" + stringStringEntry.getKey() + "</b>: " + stringStringEntry.getValue()
 					+ " <br />");
 		}
 		return str.toString();

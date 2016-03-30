@@ -23,7 +23,7 @@ extends RecordReader<Writable, Text> {
 	recordReader;
 	protected String header = null;
 	private LongWritable key = null;
-	List<String> data = new LinkedList<String>();
+	List<String> data = new LinkedList<>();
 	private static final int batchSize = 10000;
 	public CSVBatchRecordReader()
 			throws IOException {
@@ -77,7 +77,7 @@ extends RecordReader<Writable, Text> {
 			}
 			key = recordReader.getCurrentKey();
 		}
-		return (data.size() != 0);
+		return (!data.isEmpty());
 	}
 
 	public float getProgress() throws IOException,  InterruptedException {

@@ -49,8 +49,8 @@ public class CombineBloomFiltersFromRDF {
         if (filepath == null || triplestoreURL == null || context == null)
         	return;
 		File file = new File(filepath);
-		Map<String, BloomFilterWorker> workers = new HashMap<String, BloomFilterWorker>();
-		Map<String, KR2RMLBloomFilter> bfs = new HashMap<String, KR2RMLBloomFilter>();
+		Map<String, BloomFilterWorker> workers = new HashMap<>();
+		Map<String, KR2RMLBloomFilter> bfs = new HashMap<>();
 		long start = System.currentTimeMillis();
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
@@ -89,11 +89,11 @@ public class CombineBloomFiltersFromRDF {
 			}
 			BloomFilterTripleStoreUtil utilObj = new BloomFilterTripleStoreUtil();
 			Set<String> triplemaps = bfs.keySet();
-			Map<String, String> bloomfilterMapping = new HashMap<String, String>();
+			Map<String, String> bloomfilterMapping = new HashMap<>();
 			bloomfilterMapping.putAll(utilObj.getBloomFiltersForMaps(triplestoreURL, context, triplemaps));
 			utilObj.updateTripleStoreWithBloomFilters(bfs, bloomfilterMapping, triplestoreURL, context);
 			System.out.println("process time: " + (System.currentTimeMillis() - start));
-			Map<String, String> verification = new HashMap<String, String>();
+			Map<String, String> verification = new HashMap<>();
 			verification.putAll(utilObj.getBloomFiltersForMaps(triplestoreURL, context, triplemaps));
 			boolean verify = true;
 			for (Entry<String, String> entry : verification.entrySet()) {

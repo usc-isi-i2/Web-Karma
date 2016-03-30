@@ -416,7 +416,7 @@ function parse(data) {
 				var tdTag = $("td#" + type["HNodeId"], wk);
 				tdTag.data("typesJsonObject", type);
 			});
-			ClassTabs.getInstance().reloadCache();
+			ClassTabs.getInstance().reloadCache(element["worksheetId"]);
 		} else if (element["updateType"] == "ImportOntologyCommand") {
 			if (!element["Import"])
 				$.sticky("Ontology import failed!");
@@ -609,14 +609,6 @@ function parse(data) {
 				$.sticky("Data saved successfully!");
 			} else {
 				$.sticky(element["numRowsNotInserted"] + " rows not saved in database! Check log file for details.");
-			}
-		} else if (element["updateType"] == "CleaningResultUpdate") {
-			if (element["result"] != null) {
-				if (element["result"][0] == null || element["result"][0]["top"].length == 0) {
-					alert("Cannot find any transformations! ");
-				}
-
-				TransformColumnDialog.getInstance().handleCleaningResultUpdate(element["result"]);
 			}
 		} else if (element["updateType"] == "InfoUpdate") {
 			$.sticky(element["Info"]);

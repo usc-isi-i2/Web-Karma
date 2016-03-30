@@ -140,13 +140,13 @@ public class Element {
     	
     	if (root.valueType == ValueType.SINGLE) { 
     		innerT.getHeaders().add(new Attribute(root.getKey(), root.getKey()));
-    		List<String> v = new ArrayList<String>();
+    		List<String> v = new ArrayList<>();
     		v.add(((SingleValue)root.getValue()).getValueString());
     		innerT.getValues().add(v);
     		t.cartesianProductOrUnionIfSameHeaders(innerT);
     		return;
     	} else {
-    		List<String> v = new ArrayList<String>();
+    		List<String> v = new ArrayList<>();
 			for (Element child : ((ArrayValue)root.getValue()).getElements()) 
 			{
 				if (child.valueType == ValueType.SINGLE) {
@@ -154,7 +154,7 @@ public class Element {
 		    		v.add(((SingleValue)child.getValue()).getValueString());
 				}
 			}
-			if (v.size() > 0) {
+			if (!v.isEmpty()) {
 				innerT.getValues().add(v);
 				t.cartesianProductOrUnionIfSameHeaders(innerT);
 			}		
@@ -185,7 +185,7 @@ public class Element {
     			if (((ArrayValue)root.getValue()).getElements().size() > 1) 
 	    			break;
 	    		
-    			if (((ArrayValue)root.getValue()).getElements().size() == 0) {
+    			if (((ArrayValue) root.getValue()).getElements().isEmpty()) {
 //    				if (root.getParent() != null)
 //    					((ArrayValue)root.getParent().getValue()).getElements().remove(root);
     				return;

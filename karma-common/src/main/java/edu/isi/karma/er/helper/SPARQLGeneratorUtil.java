@@ -61,20 +61,20 @@ public class SPARQLGeneratorUtil {
 	
 	private String generate_sparql(TriplesMap node, String node_symbol, String graph) {
 		
-		ArrayList<Object> queue = new ArrayList<Object>();
+		ArrayList<Object> queue = new ArrayList<>();
 		queue.add(node);
 		StringBuffer query = new StringBuffer();
 		this.var_count = 1;
-		this.prefix_list = new HashMap<String, String>();
+		this.prefix_list = new HashMap<>();
 		this.select_params = new StringBuffer();
-		HashMap<TriplesMap, String> markedTriples = new HashMap<TriplesMap, String>();
+		HashMap<TriplesMap, String> markedTriples = new HashMap<>();
 		
-		this.ParentMapingInfoList = new HashMap<String, SPARQLGeneratorUtil.ParentMapingInfo>();
+		this.ParentMapingInfoList = new HashMap<>();
 		
-		HashMap<Predicate, String> predicateList = new HashMap<Predicate, String>();
+		HashMap<Predicate, String> predicateList = new HashMap<>();
 		
 		// using a BFS approach, we traverse the tree from the root node and add triples/predicates to the queue
-		while(queue.size() > 0) {
+		while(!queue.isEmpty()) {
 			Object currentObj = queue.remove(0);
 			
 			// if this is a tripleMap, then add all its RefObjects to the queue
@@ -203,22 +203,22 @@ public class SPARQLGeneratorUtil {
 	 * */
 	public String get_query(TriplesMap root, ArrayList<HashMap<String, String>> columns, boolean distinct_query) {
 		
-		ArrayList<Object> queue = new ArrayList<Object>();
+		ArrayList<Object> queue = new ArrayList<>();
 		queue.add(root);
 		StringBuffer query = new StringBuffer();
 		this.var_count = 1;
-		this.prefix_list = new HashMap<String, String>();
+		this.prefix_list = new HashMap<>();
 		this.select_params = new StringBuffer();
 //		ArrayList<String> select_param = new ArrayList<String>();
-		HashMap<TriplesMap, String> markedTriples = new HashMap<TriplesMap, String>();
+		HashMap<TriplesMap, String> markedTriples = new HashMap<>();
 		
-		ArrayList<String> visited_columns = new ArrayList<String>();
-		this.ParentMapingInfoList = new HashMap<String, SPARQLGeneratorUtil.ParentMapingInfo>();
+		ArrayList<String> visited_columns = new ArrayList<>();
+		this.ParentMapingInfoList = new HashMap<>();
 		
 		// save the column predicate url and the column name to be dislayed
-		HashMap<Predicate, String> predicateList = new HashMap<Predicate, String>();
-		HashMap<String, String> columnList = new HashMap<String, String>();
-		if(columns != null && columns.size() > 0) {
+		HashMap<Predicate, String> predicateList = new HashMap<>();
+		HashMap<String, String> columnList = new HashMap<>();
+		if(columns != null && !columns.isEmpty()) {
 //			for (String k : columns) {
 //				int index = 0;
 //				if(k.indexOf("#") > 0) {
@@ -234,7 +234,7 @@ public class SPARQLGeneratorUtil {
 		}
 		
 		// using a BFS approach, we traverse the tree from the root node and add triples/predicates to the queue
-		while(queue.size() > 0) {
+		while(!queue.isEmpty()) {
 			Object currentObj = queue.remove(0);
 			
 			// if this is a tripleMap, then add all its RefObjects to the queue
@@ -308,7 +308,7 @@ public class SPARQLGeneratorUtil {
 				Predicate predicate = (Predicate)currentObj;
 				String k = predicate.getTemplate().toString();
 				k = k.replace('<', ' ').replace('>', ' ').trim();
-				if(columns != null && columns.size() > 0) {
+				if(columns != null && !columns.isEmpty()) {
 //					if(columnList.containsKey(k)) {
 					if(columnList.containsValue(k)) {
 						Iterator<String> itr = columnList.keySet().iterator();
@@ -383,7 +383,7 @@ public class SPARQLGeneratorUtil {
 	 }
 	
 	private String checkParentMarked(TriplesMap triple, HashMap<TriplesMap, String> markedTriples, String var1) {
-		Stack<String> stk = new Stack<String>(); 
+		Stack<String> stk = new Stack<>(); 
 		ParentMapingInfo parentTriple = this.ParentMapingInfoList.get(triple.getSubject().getId());
 		boolean markedParent = false;
 		int count = 1;

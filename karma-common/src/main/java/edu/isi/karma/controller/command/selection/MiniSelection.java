@@ -70,7 +70,7 @@ public class MiniSelection extends Selection {
 
 	private void populateSelection() {
 		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
-		List<Table> tables = new ArrayList<Table>();
+		List<Table> tables = new ArrayList<>();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), workspace.getFactory().getHTable(hTableId), tables, SuperSelectionManager.DEFAULT_SELECTION);
 		String selectionId = String.format("%d_%d_%s", System.currentTimeMillis(), Thread.currentThread().getId(), this.superSelectionName);//Thread.currentThread().getId() + this.superSelectionName;
@@ -99,7 +99,7 @@ public class MiniSelection extends Selection {
 	private boolean evaluatePythonExpression(Row r, PyCode code, PythonInterpreter interpreter) {
 		evalColumns.clear();
 		try {
-			ArrayList<Node> nodes = new ArrayList<Node>(r.getNodes());
+			ArrayList<Node> nodes = new ArrayList<>(r.getNodes());
 			Node node = nodes.get(0);
 			interpreter.getLocals().__setitem__("nodeid", new PyString(node.getId()));
 			PyObject output = interpreter.eval(code);

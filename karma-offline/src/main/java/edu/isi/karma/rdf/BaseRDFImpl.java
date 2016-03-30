@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +37,7 @@ public abstract class BaseRDFImpl implements Serializable {
     protected boolean hasHeader = false;
     boolean readKarmaConfig = false;
     protected JSONArray jKarmaConfig = null;
-    protected HashMap<String, Pattern> urlPatterns=null;
+    protected Map<String, Pattern> urlPatterns=null;
     protected boolean disableNesting = false;
     public BaseRDFImpl(String propertyPath) {
         try {
@@ -111,13 +112,13 @@ public abstract class BaseRDFImpl implements Serializable {
     public String mapResult(String key, String value) throws IOException,
             InterruptedException {
 
-        String contents = value.toString();
+        String contents = value;
 
-        JSONObject jMatchedKarmaConfig = matchKeyToKarmaConfig(key.toString());
+        JSONObject jMatchedKarmaConfig = matchKeyToKarmaConfig(key);
         String results = "";
         if (contents.trim() != ""){
 
-            LOG.debug(key.toString() + " started");
+            LOG.debug(key + " started");
             if(hasHeader && header ==null)
             {
                 header=contents;
@@ -154,7 +155,7 @@ public abstract class BaseRDFImpl implements Serializable {
             else{
                 results = checkResultsAndWriteToContext(key,value,"model");
             }
-            LOG.debug(key.toString() + " finished");
+            LOG.debug(key + " finished");
         }
         return results;
     }
@@ -228,8 +229,8 @@ public abstract class BaseRDFImpl implements Serializable {
 
     protected String generateJSONLD(String key, String value, String modelName)
     {
-        String filename = key.toString();
-        String contents = value.toString();
+        String filename = key;
+        String contents = value;
         StringWriter sw = new StringWriter();
 
         String results = "";

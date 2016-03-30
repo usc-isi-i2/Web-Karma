@@ -23,12 +23,12 @@ extends RecordReader<Text, Text> {
 	private final SequenceFileRecordReader<WritableComparable<?>, Writable>
 	sequenceFileRecordReader;
 
-	List<JSONObject> data = new LinkedList<JSONObject>();
+	List<JSONObject> data = new LinkedList<>();
 	private static final int batchSize = 10000;
 	public SequenceFileAsJSONRecordBatchReader()
 			throws IOException {
 		sequenceFileRecordReader =
-				new SequenceFileRecordReader<WritableComparable<?>, Writable>();
+				new SequenceFileRecordReader<>();
 	}
 
 	public void initialize(InputSplit split, TaskAttemptContext context)
@@ -74,7 +74,7 @@ extends RecordReader<Text, Text> {
 				break;
 			}
 		}
-		return (data.size() != 0);
+		return (!data.isEmpty());
 	}
 
 	public float getProgress() throws IOException,  InterruptedException {

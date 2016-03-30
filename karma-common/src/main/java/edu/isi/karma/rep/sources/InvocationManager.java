@@ -65,11 +65,11 @@ public class InvocationManager {
 		this.idList = idList;
 		this.encoding = encoding;
 		requestURLs = URLManager.getURLsFromStrings(requestURLStrings);
-		if (requestURLs == null || requestURLs.size() == 0)
+		if (requestURLs == null || requestURLs.isEmpty())
 			throw new KarmaException("Cannot model a service without any request example.");
 		
 		this.serviceData = null;
-		this.invocations = new ArrayList<Invocation>();
+		this.invocations = new ArrayList<>();
 		
 		json = new JsonArray();
 		jsonUrl = new JsonArray();
@@ -85,16 +85,16 @@ public class InvocationManager {
 	public InvocationManager(String urlColumnName, String requestURLString) 
 	throws MalformedURLException, KarmaException {
 		this.urlColumnName = (urlColumnName == null || urlColumnName.trim().length() == 0) ? "url" : urlColumnName;
-		this.idList = new ArrayList<String>();
+		this.idList = new ArrayList<>();
 		this.idList.add("1");
-		List<String> requestURLList = new ArrayList<String>();
+		List<String> requestURLList = new ArrayList<>();
 		requestURLList.add(requestURLString);
 		requestURLs = URLManager.getURLsFromStrings(requestURLList);
-		if (requestURLs == null || requestURLs.size() == 0)
+		if (requestURLs == null || requestURLs.isEmpty())
 			throw new KarmaException("Cannot model a service without any request example.");
 		
 		this.serviceData = null;
-		this.invocations = new ArrayList<Invocation>();
+		this.invocations = new ArrayList<>();
 		
 		json = new JsonArray();
 		jsonUrl = new JsonArray();
@@ -119,7 +119,7 @@ public class InvocationManager {
 			invocation.invokeAPI();
 			invocations.add(invocation);
 		}
-		List<Table> invocationData = new ArrayList<Table>();
+		List<Table> invocationData = new ArrayList<>();
 		for (Invocation inv : this.invocations) {
 			populateJsonArraysFromInvocation(inv);
 			invocationData.add(inv.getJointInputAndOutput());
@@ -208,14 +208,14 @@ public class InvocationManager {
 		List<List<String>> values = this.serviceData.getValues();
 
 		Table newTable = new Table();
-		List<Attribute> newHeader = new ArrayList<Attribute>();
-		List<List<String>> newValues = new ArrayList<List<String>>();
-		List<String> newRowIds = new ArrayList<String>(this.serviceData.getRowIds());
+		List<Attribute> newHeader = new ArrayList<>();
+		List<List<String>> newValues = new ArrayList<>();
+		List<String> newRowIds = new ArrayList<>(this.serviceData.getRowIds());
 		
-		List<Integer> includingColumns = new ArrayList<Integer>();
+		List<Integer> includingColumns = new ArrayList<>();
 		
 		if (headers != null) {
-			if (includeURL && headers.size() > 0)
+			if (includeURL && !headers.isEmpty())
 				includingColumns.add(0);
 			
 			for (int i = 1; i < this.serviceData.getHeaders().size(); i++) {
@@ -230,7 +230,7 @@ public class InvocationManager {
 			newHeader.add(headers.get(colIndex));
 		}
 		for (List<String> vals : values) {
-			List<String> rowVals = new ArrayList<String>();
+			List<String> rowVals = new ArrayList<>();
 			for (Integer colIndex : includingColumns)
 				rowVals.add(vals.get(colIndex));
 			newValues.add(rowVals);
@@ -254,7 +254,7 @@ public class InvocationManager {
 	}
 	
 	private List<Attribute> getInputAttributes() {
-		List<Attribute> inAttributes = new ArrayList<Attribute>();
+		List<Attribute> inAttributes = new ArrayList<>();
 		
 		Table serviceTable = getServiceData();
 		for (Attribute p : serviceTable.getHeaders()) {
@@ -267,7 +267,7 @@ public class InvocationManager {
 	}
 	
 	private List<Attribute> getOutputAttributes() {
-		List<Attribute> outAttributes = new ArrayList<Attribute>();
+		List<Attribute> outAttributes = new ArrayList<>();
 		
 		Table serviceTable = getServiceData();
 		for (Attribute p : serviceTable.getHeaders()) {

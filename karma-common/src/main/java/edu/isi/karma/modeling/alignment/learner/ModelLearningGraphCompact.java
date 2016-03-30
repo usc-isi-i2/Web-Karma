@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -71,9 +72,9 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		if (model == null || model.getGraph() == null) 
 			return;
 		
-		if (addedNodes == null) addedNodes = new HashSet<InternalNode>();
+		if (addedNodes == null) addedNodes = new HashSet<>();
 
-		HashMap<String, Integer> uriCount = new HashMap<String, Integer>();
+		HashMap<String, Integer> uriCount = new HashMap<>();
 		for (Node n : model.getGraph().vertexSet()) {
 			if (n instanceof InternalNode) {
 				Integer count = uriCount.get(n.getUri());
@@ -82,14 +83,14 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 			}
 		}
 		
-		for (String uri : uriCount.keySet()) {
-			int modelNodeCount = uriCount.get(uri);
-			Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(uri);
+		for (Map.Entry<String, Integer> stringIntegerEntry : uriCount.entrySet()) {
+			int modelNodeCount = stringIntegerEntry.getValue();
+			Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(stringIntegerEntry.getKey());
 			int graphNodeCount = matchedNodes == null ? 0 : matchedNodes.size();
 			
 			for (int i = 0; i < modelNodeCount - graphNodeCount; i++) {
-				String id = this.nodeIdFactory.getNodeId(uri);
-				Node n = new InternalNode(id, new Label(uri));
+				String id = this.nodeIdFactory.getNodeId(stringIntegerEntry.getKey());
+				Node n = new InternalNode(id, new Label(stringIntegerEntry.getKey()));
 				if (this.graphBuilder.addNode(n))
 					addedNodes.add((InternalNode)n);
 			}
@@ -98,14 +99,14 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 	
 	private HashMap<Node,Node> getInternalNodeMapping(SemanticModel model) {
 		
-		HashMap<Node,Node> internalNodeMapping = 
-				new HashMap<Node,Node>();
+		HashMap<Node,Node> internalNodeMapping =
+				new HashMap<>();
 		
-		HashMap<String, List<Node>> uriMatchedNodes = 
-				new HashMap<String, List<Node>>();
+		HashMap<String, List<Node>> uriMatchedNodes =
+				new HashMap<>();
 		
 		String uri;
-		List<Node> sortedNodes = new ArrayList<Node>();
+		List<Node> sortedNodes = new ArrayList<>();
 		for (Node n : model.getGraph().vertexSet()) {
 			sortedNodes.add(n);
 		}
@@ -115,7 +116,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				uri = n.getUri();
 				List<Node> sortedMatchedNodes = uriMatchedNodes.get(uri);
 				if (sortedMatchedNodes == null) {
-					sortedMatchedNodes = new ArrayList<Node>();
+					sortedMatchedNodes = new ArrayList<>();
 					Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(uri);
 					if (matchedNodes != null) sortedMatchedNodes.addAll(matchedNodes);
 					Collections.sort(sortedMatchedNodes, new NodeSupportingModelsComparator());
@@ -144,9 +145,9 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		if (internalNodeMapping == null || internalNodeMapping.isEmpty()) 
 			return null;
 
-		HashMap<String,List<Node>> dataPropertyColumnNodes = new HashMap<String,List<Node>>();
+		HashMap<String,List<Node>> dataPropertyColumnNodes = new HashMap<>();
 		
-		HashMap<Node,Node> columnNodeMapping = new HashMap<Node,Node>();
+		HashMap<Node,Node> columnNodeMapping = new HashMap<>();
 		
 		for (Node n : model.getGraph().vertexSet()) {
 			if (n instanceof ColumnNode) {
@@ -166,7 +167,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 						sortedMatchedNodes = dataPropertyColumnNodes.get(key);
 					} else {
 						Set<Node> matchedColumnNodes = this.graphBuilder.getNodeDataProperties().get(key);
-						sortedMatchedNodes = new ArrayList<Node>();
+						sortedMatchedNodes = new ArrayList<>();
 						if (matchedColumnNodes != null) sortedMatchedNodes.addAll(matchedColumnNodes);
 						Collections.sort(sortedMatchedNodes, new NodeSupportingModelsComparator());
 						dataPropertyColumnNodes.put(key, sortedMatchedNodes);
@@ -201,7 +202,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		Node source, target;
 		Node n1, n2;
 
-		HashMap<Node,Node> mapping = new HashMap<Node,Node>();
+		HashMap<Node,Node> mapping = new HashMap<>();
 		if (internalNodeMapping != null) mapping.putAll(internalNodeMapping);
 		if (columnNodeMapping != null) mapping.putAll(columnNodeMapping);
 		
@@ -323,7 +324,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		this.totalNumberOfKnownModels ++;
 
 		// add the model  nodes that are not in the graph
-		Set<InternalNode> addedInternalNodes = new HashSet<InternalNode>();
+		Set<InternalNode> addedInternalNodes = new HashSet<>();
 		this.addInternalNodes(model, addedInternalNodes);
 		HashMap<Node, Node> internalNodeMapping = this.getInternalNodeMapping(model);
 
@@ -337,7 +338,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 	public Set<InternalNode> addLodPattern(SemanticModel model) {
 		
-		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+		Set<InternalNode> addedNodes = new HashSet<>();
 		
 		if (model == null) 
 			return addedNodes;
@@ -350,15 +351,15 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 		String sourceUri, targetUri, linkUri; 
 		String id, key;
 		
-		Set<String> mappedLinks = new HashSet<String>();
-		Set<String> mappedNodes = new HashSet<String>();
+		Set<String> mappedLinks = new HashSet<>();
+		Set<String> mappedNodes = new HashSet<>();
 
-		HashMap<Node,Node> mapping = new HashMap<Node,Node>();
+		HashMap<Node,Node> mapping = new HashMap<>();
 		
-		HashMap<String, List<Node>> uriMatchedNodes = new HashMap<String, List<Node>>();
+		HashMap<String, List<Node>> uriMatchedNodes = new HashMap<>();
 
-		List<LabeledLink> sortedLinks = new ArrayList<LabeledLink>();
-		List<LabeledLink> idSortedLinks = new ArrayList<LabeledLink>();
+		List<LabeledLink> sortedLinks = new ArrayList<>();
+		List<LabeledLink> idSortedLinks = new ArrayList<>();
 		idSortedLinks.addAll(model.getGraph().edgeSet());
 		Collections.sort(idSortedLinks);
 		for (LabeledLink l : idSortedLinks) {
@@ -460,7 +461,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 				
 				List<Node> sortedMatchedNodes = uriMatchedNodes.get(sourceUri);
 				if (sortedMatchedNodes == null) {
-					sortedMatchedNodes = new LinkedList<Node>();
+					sortedMatchedNodes = new LinkedList<>();
 					Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(sourceUri);
 					if (matchedNodes != null && !matchedNodes.isEmpty()) {
 						sortedMatchedNodes.addAll(matchedNodes);
@@ -515,7 +516,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 //				}
 				List<Node> sortedMatchedNodes = uriMatchedNodes.get(targetUri);
 				if (sortedMatchedNodes == null) {
-					sortedMatchedNodes = new LinkedList<Node>();
+					sortedMatchedNodes = new LinkedList<>();
 					Set<Node> matchedNodes = this.graphBuilder.getUriToNodesMap().get(targetUri);
 					if (matchedNodes != null && !matchedNodes.isEmpty()) {
 						sortedMatchedNodes.addAll(matchedNodes);
@@ -621,7 +622,7 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 
 		ModelLearningGraph ml = ModelLearningGraph.getEmptyInstance(ontologyManager, ModelLearningGraphType.Compact);
 		int i = 0;
-		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+		Set<InternalNode> addedNodes = new HashSet<>();
 		Set<InternalNode> temp;
 		for (SemanticModel sm : semanticModels) {
 			i++;

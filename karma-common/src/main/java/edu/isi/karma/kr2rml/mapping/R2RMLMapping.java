@@ -29,8 +29,8 @@ import edu.isi.karma.kr2rml.planning.TriplesMap;
 
 public class R2RMLMapping {
 	
-	private List<TriplesMap> triplesMapList = new ArrayList<TriplesMap>();
-	private List<Prefix> prefixes = new ArrayList<Prefix>();
+	private List<TriplesMap> triplesMapList = new ArrayList<>();
+	private List<Prefix> prefixes = new ArrayList<>();
 	private R2RMLMappingIdentifier id;
 	
 	public R2RMLMapping(R2RMLMappingIdentifier id) {

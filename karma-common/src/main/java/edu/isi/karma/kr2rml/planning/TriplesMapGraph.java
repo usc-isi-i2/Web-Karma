@@ -35,9 +35,9 @@ public class TriplesMapGraph {
 	private Map<String, TriplesMap> triplesMapIndex;
 
 	public TriplesMapGraph() {
-		this.links = new HashSet<TriplesMapLink>();
-		this.neighboringTriplesMapCache = new HashMap<String, List<TriplesMapLink>>();
-		this.triplesMapIndex = new HashMap<String, TriplesMap>();
+		this.links = new HashSet<>();
+		this.neighboringTriplesMapCache = new HashMap<>();
+		this.triplesMapIndex = new HashMap<>();
 	}
 
 	public Set<TriplesMapLink> getLinks() {
@@ -49,7 +49,7 @@ public class TriplesMapGraph {
 		triplesMapIndex.put(triplesMap.getId(), triplesMap);
 		List<TriplesMapLink> neighbouringLinks = neighboringTriplesMapCache.get(triplesMap.getId());
 		if (neighbouringLinks == null) {
-			neighbouringLinks = new LinkedList<TriplesMapLink>();
+			neighbouringLinks = new LinkedList<>();
 			neighboringTriplesMapCache.put(triplesMap.getId(), neighbouringLinks);
 		}
 	}
@@ -77,7 +77,7 @@ public class TriplesMapGraph {
 		// Add source neighboring links to the cache
 		List<TriplesMapLink> sourceNeighbouringLinks = neighboringTriplesMapCache.get(link.getSourceMap().getId());
 		if (sourceNeighbouringLinks == null) {
-			sourceNeighbouringLinks = new LinkedList<TriplesMapLink>();
+			sourceNeighbouringLinks = new LinkedList<>();
 		}
 		sourceNeighbouringLinks.add(link);
 		triplesMapIndex.put(link.getSourceMap().getId(),link.getSourceMap());
@@ -86,7 +86,7 @@ public class TriplesMapGraph {
 		// Add target neighboring links to the cache
 		List<TriplesMapLink> targetNeighbouringLinks = neighboringTriplesMapCache.get(link.getTargetMap().getId());
 		if (targetNeighbouringLinks == null) {
-			targetNeighbouringLinks = new LinkedList<TriplesMapLink>();
+			targetNeighbouringLinks = new LinkedList<>();
 		}
 		targetNeighbouringLinks.add(link);
 		triplesMapIndex.put(link.getTargetMap().getId(),link.getTargetMap());
@@ -95,13 +95,13 @@ public class TriplesMapGraph {
 
 	public List<TriplesMapLink> getAllNeighboringTriplesMap(String triplesMapId) {
 		if (neighboringTriplesMapCache.get(triplesMapId) == null)
-			return new LinkedList<TriplesMapLink>();
+			return new LinkedList<>();
 
 		return neighboringTriplesMapCache.get(triplesMapId);
 	}
 
 	public List<String> removeLink(TriplesMapLink link) {
-		List<String> removedTriplesMaps = new LinkedList<String>();
+		List<String> removedTriplesMaps = new LinkedList<>();
 		links.remove(link);
 		removedTriplesMaps.addAll(removeLinkFromCache(link, link.getTargetMap().getId()));
 		removedTriplesMaps.addAll(removeLinkFromCache(link, link.getSourceMap().getId()));
@@ -109,7 +109,7 @@ public class TriplesMapGraph {
 	}
 
 	private List<String> removeLinkFromCache(TriplesMapLink link, String mapId) {
-		List<String> removedTriplesMaps = new LinkedList<String>();
+		List<String> removedTriplesMaps = new LinkedList<>();
 		List<TriplesMapLink> targetLinks = neighboringTriplesMapCache.get(mapId);
 		targetLinks.remove(link);
 		if(targetLinks.isEmpty())
@@ -137,7 +137,7 @@ public class TriplesMapGraph {
 
 	public List<String> removeTriplesMap(String triplesMapId) {
 
-		List<String> removedTriplesMaps = new LinkedList<String>();
+		List<String> removedTriplesMaps = new LinkedList<>();
 		List<TriplesMapLink> targetLinks = neighboringTriplesMapCache.get(triplesMapId);
 		if(targetLinks != null)
 		{
@@ -187,17 +187,17 @@ public class TriplesMapGraph {
 		newGraph.links.addAll(links);
 		for (Entry<String, List<TriplesMapLink>> entry : neighboringTriplesMapCache.entrySet()) {
 			
-			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new LinkedList<TriplesMapLink>(entry.getValue()));
+			newGraph.neighboringTriplesMapCache.put(entry.getKey(), new LinkedList<>(entry.getValue()));
 		}
 		newGraph.triplesMapIndex.putAll(triplesMapIndex);
 		return newGraph;
 	}
 	public void killTriplesMap(List<String> tripleMapToKill, RootStrategy strategy) {
-		if (tripleMapToKill.size() == 0) {
+		if (tripleMapToKill.isEmpty()) {
 			return;
 		}
-		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();
-		Set<String> visited = new HashSet<String>();
+		List<TriplesMapLink> remainedLinks = new LinkedList<>();
+		Set<String> visited = new HashSet<>();
 		killTriplesMap(strategy.findRoot(this), tripleMapToKill, remainedLinks, visited);
 		links.clear();
 		neighboringTriplesMapCache.clear();
@@ -209,7 +209,7 @@ public class TriplesMapGraph {
 
 	private void killTriplesMap(String rootId, List<String> tripleMapToKill, List<TriplesMapLink> remainedLinks, Set<String> visited) {
 		visited.add(rootId);
-		Set<String> next = new HashSet<String>();
+		Set<String> next = new HashSet<>();
 		List<TriplesMapLink> links = neighboringTriplesMapCache.get(rootId);
 		if (links != null) {
 			for (TriplesMapLink link : links) {
@@ -227,11 +227,11 @@ public class TriplesMapGraph {
 	}
 	
 	public void killPredicateObjectMap(List<String> POMToKill, RootStrategy strategy) {
-		if (POMToKill.size() == 0) {
+		if (POMToKill.isEmpty()) {
 			return;
 		}
-		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();
-		Set<String> visited = new HashSet<String>();
+		List<TriplesMapLink> remainedLinks = new LinkedList<>();
+		Set<String> visited = new HashSet<>();
 		killPredicateObjectMap(strategy.findRoot(this), POMToKill, remainedLinks, visited);
 		links.clear();
 		neighboringTriplesMapCache.clear();
@@ -243,7 +243,7 @@ public class TriplesMapGraph {
 
 	private void killPredicateObjectMap(String rootId, List<String> POMToKill, List<TriplesMapLink> remainedLinks, Set<String> visited) {
 		visited.add(rootId);
-		Set<String> next = new HashSet<String>();
+		Set<String> next = new HashSet<>();
 		List<TriplesMapLink> links = neighboringTriplesMapCache.get(rootId);
 		if (links != null) {
 			for (TriplesMapLink link : links) {
@@ -261,11 +261,11 @@ public class TriplesMapGraph {
 	}
 	
 	public void stopTriplesMap(List<String> tripleMapToStop, RootStrategy strategy) {
-		if (tripleMapToStop.size() == 0) {
+		if (tripleMapToStop.isEmpty()) {
 			return;
 		}
-		List<TriplesMapLink> remainedLinks = new LinkedList<TriplesMapLink>();
-		Set<String> visited = new HashSet<String>();
+		List<TriplesMapLink> remainedLinks = new LinkedList<>();
+		Set<String> visited = new HashSet<>();
 		stopTriplesMap(strategy.findRoot(this), tripleMapToStop, remainedLinks, visited);
 		links.clear();
 		neighboringTriplesMapCache.clear();
@@ -280,7 +280,7 @@ public class TriplesMapGraph {
 		if (tripleMapToStop.contains(rootId)) {
 			return;
 		}
-		Set<String> next = new HashSet<String>();
+		Set<String> next = new HashSet<>();
 		List<TriplesMapLink> links = neighboringTriplesMapCache.get(rootId);
 		if (links != null) {
 			for (TriplesMapLink link : links) {

@@ -42,7 +42,7 @@ public class CandidateSteinerSets {
 	private String contextId;
 	public CandidateSteinerSets(int maxNumberOfSteinerNodes, String contextId) {
 		this.contextId = contextId;
-		this.steinerSets = new ArrayList<SteinerNodes>();
+		this.steinerSets = new ArrayList<>();
 	}
 	
 	public int numberOfCandidateSets() {
@@ -55,15 +55,15 @@ public class CandidateSteinerSets {
 	
 	public void updateSteinerSets(Set<SemanticTypeMapping> mappings) {
 		
-		List<SteinerNodes> newSteinerNodes = new ArrayList<SteinerNodes>();
+		List<SteinerNodes> newSteinerNodes = new ArrayList<>();
 		if (mappings == null || mappings.isEmpty()) 
 			return;
 
-		List<SemanticTypeMapping> sortedMappings = new ArrayList<SemanticTypeMapping>(mappings);
+		List<SemanticTypeMapping> sortedMappings = new ArrayList<>(mappings);
 		Collections.sort(sortedMappings);
 
 		
-		if (this.steinerSets.size() == 0) {
+		if (this.steinerSets.isEmpty()) {
 			for (SemanticTypeMapping stm : sortedMappings) {
 				SteinerNodes sn = new SteinerNodes(contextId);
 				if (sn.addNodes(stm))
@@ -112,11 +112,11 @@ public class CandidateSteinerSets {
 	
 	public void updateSteinerSets(InternalNode n) {
 		
-		List<SteinerNodes> newSteinerNodes = new ArrayList<SteinerNodes>();
+		List<SteinerNodes> newSteinerNodes = new ArrayList<>();
 		if (n == null) 
 			return;
 		
-		if (this.steinerSets.size() == 0) {
+		if (this.steinerSets.isEmpty()) {
 			SteinerNodes sn = new SteinerNodes(contextId);
 			if (sn.addNode(n))
 				this.steinerSets.add(sn);
@@ -166,8 +166,8 @@ public class CandidateSteinerSets {
 		
 		logger.info("number of steiner sets before computing pareto optimal: " + steinerSets.size());
 		
-		List<SteinerNodes> paretoFrontierSteinerSets = 
-				new ArrayList<SteinerNodes>();
+		List<SteinerNodes> paretoFrontierSteinerSets =
+				new ArrayList<>();
 		
 		if (steinerSets == null || steinerSets.isEmpty() || k <= 0)
 			return paretoFrontierSteinerSets;
@@ -191,7 +191,7 @@ public class CandidateSteinerSets {
 		
 		logger.info("number of steiner sets after computing pareto optimal: " + paretoFrontierSteinerSets.size());
 
-		List<SteinerNodes> results = new ArrayList<SteinerNodes>();
+		List<SteinerNodes> results = new ArrayList<>();
 		for (int i = 0; i < ModelingConfigurationRegistry.getInstance().getModelingConfiguration(contextId).getMappingBranchingFactor() && i < paretoFrontierSteinerSets.size(); i++) {
 			if (i == 0) {
 				System.out.println(paretoFrontierSteinerSets.get(i).getScoreDetailsString());

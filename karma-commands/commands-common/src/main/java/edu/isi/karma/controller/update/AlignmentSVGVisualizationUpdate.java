@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -115,6 +116,14 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 	}
 
 	@Override
+	public int hashCode() {
+		int result = this.worksheetId != null ? this.worksheetId.hashCode() : 0;
+		result = 31 * result + (this.alignmentGraph != null ? this.alignmentGraph.hashCode() : 0);
+		result = 31 * result + (this.alignment != null ? this.alignment.hashCode() : 0);
+		return result;
+	}
+
+	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
 		Workspace workspace = vWorkspace.getWorkspace();
@@ -150,11 +159,11 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			JSONArray linksArr = new JSONArray();
 			JSONArray edgeLinksArr = new JSONArray();
 
-			HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
-			HashMap<String, ColumnNode> columnNodes = new HashMap<>();
+			Map<Node, Integer> verticesIndex = new HashMap<>();
+			Map<String, ColumnNode> columnNodes = new HashMap<>();
 
 			if (alignmentGraph != null
-					&& alignmentGraph.vertexSet().size() != 0) {
+					&& !alignmentGraph.vertexSet().isEmpty()) {
 				Set<Node> nodes = alignmentGraph.vertexSet();
 				for (Node node : nodes) {
 					if (node instanceof ColumnNode) {
@@ -187,7 +196,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			int nodesIndexcounter = hNodeIdList.size();
 
 			if (alignmentGraph != null
-					&& alignmentGraph.vertexSet().size() != 0) {
+					&& !alignmentGraph.vertexSet().isEmpty()) {
 				/** Add the nodes **/
 				Set<Node> nodes = alignmentGraph.vertexSet();
 				for (Node node : nodes) {
@@ -330,23 +339,23 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			DisplayModel dm = new DisplayModel(alignmentGraph, vWorksheet
 					.getWorksheet().getHeaders());
 			HashMap<Node, Integer> nodeHeightsMap = dm.getNodesLevel();
-			HashMap<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
+			Map<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
 			/** Identify the max height **/
 			int maxTreeHeight = 0;
-			for (Node node : nodeHeightsMap.keySet()) {
-				if (nodeHeightsMap.get(node) >= maxTreeHeight) {
-					maxTreeHeight = nodeHeightsMap.get(node);
+			for (Map.Entry<Node, Integer> nodeIntegerEntry : nodeHeightsMap.entrySet()) {
+				if (nodeIntegerEntry.getValue() >= maxTreeHeight) {
+					maxTreeHeight = nodeIntegerEntry.getValue();
 				}
 			}
 			/*** Add the nodes and the links from the Steiner tree ***/
-			List<String> hNodeIdsAdded = new ArrayList<String>();
+			List<String> hNodeIdsAdded = new ArrayList<>();
 			JSONArray nodesArr = new JSONArray();
 			JSONArray linksArr = new JSONArray();
 			if (alignmentGraph != null
-					&& alignmentGraph.vertexSet().size() != 0) {
+					&& !alignmentGraph.vertexSet().isEmpty()) {
 				/** Add the nodes **/
 				Set<Node> nodes = alignmentGraph.vertexSet();
-				HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
+				Map<Node, Integer> verticesIndex = new HashMap<>();
 				int nodesIndexcounter = 0;
 				for (Node node : nodes) {
 					/**

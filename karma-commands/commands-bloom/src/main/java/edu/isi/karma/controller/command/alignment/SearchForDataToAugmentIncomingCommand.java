@@ -90,7 +90,7 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 		HashMap<String, List<String>> result = null;
 		nodeUri = nodeUri.trim();
 		Map<String, Label> parents = workspace.getOntologyManager().getSuperClasses(nodeUri, true);
-		Set<String> classes = new HashSet<String>(parents.keySet());
+		Set<String> classes = new HashSet<>(parents.keySet());
 		classes.add(nodeUri);
 		StringBuilder builder = new StringBuilder();
 		nodeUri = builder.append("<").append(nodeUri).append(">").toString();
@@ -100,7 +100,7 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 			LOG.error("Unable to find predicates for triples maps with same class as: " + nodeUri, e);
 		}
 		final JSONArray array = new JSONArray();
-		List<JSONObject> objects = new ArrayList<JSONObject>();
+		List<JSONObject> objects = new ArrayList<>();
 		List<String> concatenatedPredicateObjectMapsList = result.get("refObjectMaps");
 		List<String> predicates = result.get("predicates");
 		List<String> otherClasses = result.get("otherClasses");
@@ -109,10 +109,10 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 		Iterator<String> otherClassesItr = otherClasses.iterator();
 		String hNodeId = FetchHNodeIdFromAlignmentCommand.gethNodeId(AlignmentManager.Instance().constructAlignmentId(workspace.getId(), worksheetId), columnUri);
 		HNode hnode = factory.getHNode(hNodeId);
-		List<Table> dataTables = new ArrayList<Table>();
+		List<Table> dataTables = new ArrayList<>();
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), factory.getHTable(hnode.getHTableId()), dataTables, selection);
 		KR2RMLBloomFilter uris = new KR2RMLBloomFilter(KR2RMLBloomFilter.defaultVectorSize, KR2RMLBloomFilter.defaultnbHash, Hash.JENKINS_HASH);
-		Set<String> uriSet = new HashSet<String>();
+		Set<String> uriSet = new HashSet<>();
 		for(Table t : dataTables) {
 			for(Row r : t.getRows(0, t.getNumRows(), selection)) {
 				Node n = r.getNode(hNodeId);
@@ -133,18 +133,18 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 				}
 			}
 		}
-		Set<String> maps = new HashSet<String>();
-		Map<String, String> bloomfilterMapping = new HashMap<String, String>();
+		Set<String> maps = new HashSet<>();
+		Map<String, String> bloomfilterMapping = new HashMap<>();
 		try{
 			for (String concatenatedPredicateObjectMaps : concatenatedPredicateObjectMapsList) {
-				List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
+				List<String> predicateObjectMaps = new ArrayList<>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 				maps.addAll(predicateObjectMaps);
 				if (maps.size() > limit) {
 					bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, null, maps));
-					maps = new HashSet<String>();
+					maps = new HashSet<>();
 				}
 			}
-			if (maps.size() > 0)
+			if (!maps.isEmpty())
 				bloomfilterMapping.putAll(util.getBloomFiltersForMaps(tripleStoreUrl, null, maps));
 		} catch (KarmaException e1) {
 			e1.printStackTrace();
@@ -152,7 +152,7 @@ public class SearchForDataToAugmentIncomingCommand extends WorksheetSelectionCom
 		while(concatenatedPredicateObjectMapsListItr.hasNext() && predicatesItr.hasNext() && otherClassesItr.hasNext())
 		{
 			String concatenatedPredicateObjectMaps = concatenatedPredicateObjectMapsListItr.next();
-			List<String> predicateObjectMaps = new ArrayList<String>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
+			List<String> predicateObjectMaps = new ArrayList<>(Arrays.asList(concatenatedPredicateObjectMaps.split(",")));
 			String predicate =  predicatesItr.next();
 			String otherClass = otherClassesItr.next();
 			try {

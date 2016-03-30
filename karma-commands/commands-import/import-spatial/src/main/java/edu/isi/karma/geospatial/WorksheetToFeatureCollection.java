@@ -100,14 +100,14 @@ public class WorksheetToFeatureCollection {
 	private Worksheet worksheet;
 	private OntologyManager om;
 
-	List<SimpleFeature> pointFeatureList = new ArrayList<SimpleFeature>();
-	List<SimpleFeature> lineFeatureList = new ArrayList<SimpleFeature>();
-	List<SimpleFeature> polygonFeatureList = new ArrayList<SimpleFeature>();
-	List<AttributeDescriptor> featureSchema = new ArrayList<AttributeDescriptor>();
-	List<String> geomHNodeIdList = new ArrayList<String>();
-	List<String> modeledHNodeIds = new ArrayList<String>();
+	List<SimpleFeature> pointFeatureList = new ArrayList<>();
+	List<SimpleFeature> lineFeatureList = new ArrayList<>();
+	List<SimpleFeature> polygonFeatureList = new ArrayList<>();
+	List<AttributeDescriptor> featureSchema = new ArrayList<>();
+	List<String> geomHNodeIdList = new ArrayList<>();
+	List<String> modeledHNodeIds = new ArrayList<>();
 
-	private HashMap<String, String> kmlStyles = new HashMap<String, String>();
+	private HashMap<String, String> kmlStyles = new HashMap<>();
 	private int kmlStylesCounter = 0;
 	private String[] kmlPushPings = {
 			"http://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png",
@@ -182,14 +182,14 @@ public class WorksheetToFeatureCollection {
 
 	private boolean isSubClassOf(String subClassUri, String superClassUri,
 			boolean recursive) {
-		boolean isSub = false;
+		boolean isSub;
 		isSub = this.om.isSubClass(subClassUri, superClassUri, recursive);
 		return isSub;
 	}
 
 	private boolean isSubPropertyOf(String subPropertyUri,
 			String superPropertyUri, boolean recursive) {
-		boolean isSub = false;
+		boolean isSub;
 		isSub = this.om.isSubProperty(subPropertyUri, superPropertyUri,
 				recursive);
 		return isSub;
@@ -223,7 +223,7 @@ public class WorksheetToFeatureCollection {
 					"", getRows(), polygonFeatureList, Polygon.class);
 	}
 	private void prepareFeatureSchema() {
-		List<String> spatialHNodeIds = new ArrayList<String>();
+		List<String> spatialHNodeIds = new ArrayList<>();
 
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			/*
@@ -285,8 +285,9 @@ public class WorksheetToFeatureCollection {
 			modeledHNodeIds.add(0, type.getHNodeId());
 		}
 
-		if (spatialHNodeIds.size() > 0) {
-			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+
+		if (!spatialHNodeIds.isEmpty()) {
+			List<HNode> sortedLeafHNodes = new ArrayList<>();
 			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 			for (HNode hNode : sortedLeafHNodes) {
 
@@ -316,8 +317,8 @@ public class WorksheetToFeatureCollection {
 
 		for (Row row : rows) {
 			try {
-				Geometry JTSGeometry = null;
-				String posList = null;
+				Geometry JTSGeometry;
+				String posList;
 				if (geometry2HNodeId == "") {
 					posList = row.getNode(geometryHNodeId).getValue()
 							.asString();
@@ -347,7 +348,7 @@ public class WorksheetToFeatureCollection {
 				if (JTSGeometry == null) 
 					continue;
 
-				String srid = "";
+				String srid;
 				if (SRIDHNodeId != "")
 					srid = row.getNode(SRIDHNodeId).getValue().asString();
 				else
@@ -486,7 +487,7 @@ public class WorksheetToFeatureCollection {
 			throws FileNotFoundException, Exception {
 		File outputFile = new File(spatialDataFolder + fileName + ".shp");
 		
-		List<SimpleFeature> remainingFeatures = new ArrayList<SimpleFeature>();
+		List<SimpleFeature> remainingFeatures = new ArrayList<>();
 		
 		try {
 			/*
@@ -494,7 +495,7 @@ public class WorksheetToFeatureCollection {
 			 */
 			ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
 
-			Map<String, Serializable> params = new HashMap<String, Serializable>();
+			Map<String, Serializable> params = new HashMap<>();
 			params.put("url", outputFile.toURI().toURL());
 			params.put("create spatial index", Boolean.TRUE);
 
@@ -523,7 +524,7 @@ public class WorksheetToFeatureCollection {
 				if(crs2==null)
 					continue;
 				
-				if(!crs.equals(crs2)) {
+				if(crs != null && !crs.equals(crs2)) {
 					remainingFeatures.add(feature);
 					features.remove(i);
 					i--;
@@ -690,7 +691,7 @@ public class WorksheetToFeatureCollection {
 					.Transform((Geometry) lineFeature.getAttribute(GEOM),
 							sourceCRS, targetCRS);
 
-			List<Coordinate> coordsList = new ArrayList<Coordinate>();
+			List<Coordinate> coordsList = new ArrayList<>();
 			double pointX = 0, pointY = 0;
 			for (int i = 0; i < line.getNumPoints(); i++) {
 				Coordinate coord = new Coordinate(
@@ -751,7 +752,7 @@ public class WorksheetToFeatureCollection {
 			final LinearRing outerlinearring = new LinearRing();
 			outerboundary.setLinearRing(outerlinearring);
 
-			List<Coordinate> outercoord = new ArrayList<Coordinate>();
+			List<Coordinate> outercoord = new ArrayList<>();
 			outerlinearring.setCoordinates(outercoord);
 			double pointX = 0, pointY = 0;
 			int pointCounter = 0;
@@ -771,7 +772,7 @@ public class WorksheetToFeatureCollection {
 				final LinearRing innerlinearring = new LinearRing();
 				innerboundary.setLinearRing(innerlinearring);
 
-				List<Coordinate> innercoord = new ArrayList<Coordinate>();
+				List<Coordinate> innercoord = new ArrayList<>();
 				innerlinearring.setCoordinates(innercoord);
 				int numOfPoints = polygon.getInteriorRingN(i).getNumPoints();
 				for (int j = 0; j < numOfPoints; j++) {
@@ -803,7 +804,7 @@ public class WorksheetToFeatureCollection {
 		final StringWriter out = new StringWriter();
 		kml.marshal(out);
 		String test = out.toString();
-		Writer outUTF8 = null;
+		Writer outUTF8;
 		try {
 			outUTF8 = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(outputFile), "UTF8"));
@@ -907,8 +908,8 @@ public class WorksheetToFeatureCollection {
 	}
 
 	public boolean hasNoGeospatialData() {
-		if (pointFeatureList.size() == 0 && lineFeatureList.size() == 0
-				&& polygonFeatureList.size() == 0)
+		if (pointFeatureList.isEmpty() && lineFeatureList.isEmpty()
+				&& polygonFeatureList.isEmpty())
 			return true;
 		return false;
 	}

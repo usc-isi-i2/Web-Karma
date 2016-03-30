@@ -20,7 +20,7 @@ import edu.isi.karma.rep.Workspace;
 public class MultipleValueEditColumnCommand extends WorksheetCommand {
 	private String hNodeID;
 	private Map<String, String> newRowValueMap;
-	private Map<String, String> oldRowValueMap = new HashMap<String, String>();
+	private Map<String, String> oldRowValueMap = new HashMap<>();
 
 	private static Logger logger = LoggerFactory.getLogger(MultipleValueEditColumnCommand.class);
 	
@@ -53,16 +53,16 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		RepFactory factory = workspace.getFactory();
-		for (String rowID: newRowValueMap.keySet()) {
-			Row row = factory.getRow(rowID);
+		for (Map.Entry<String, String> stringStringEntry : newRowValueMap.entrySet()) {
+			Row row = factory.getRow(stringStringEntry.getKey());
 			Node existingNode = row.getNode(hNodeID);
 			if (existingNode.hasNestedTable()) {
 				logger.error("Existing node has a nested table. Cannot overwrite such node with new value. NodeID: " + existingNode.getId());
 				continue;
 			}
 			String existingCellValue = existingNode.getValue().asString();
-			oldRowValueMap.put(rowID, existingCellValue);
-			String newCellValue = newRowValueMap.get(rowID);
+			oldRowValueMap.put(stringStringEntry.getKey(), existingCellValue);
+			String newCellValue = stringStringEntry.getValue();
 			row.setValue(hNodeID, newCellValue, factory);
 		}
 		return WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(this.worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());
@@ -71,15 +71,15 @@ public class MultipleValueEditColumnCommand extends WorksheetCommand {
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		RepFactory factory = workspace.getFactory();
-		for (String rowID: oldRowValueMap.keySet()) {
-			Row row = factory.getRow(rowID);
+		for (Map.Entry<String, String> stringStringEntry : oldRowValueMap.entrySet()) {
+			Row row = factory.getRow(stringStringEntry.getKey());
 			
 			Node existingNode = row.getNode(hNodeID);
 			if (existingNode.hasNestedTable()) {
 				logger.error("Existing node has a nested table. Cannot overwrite such node with new value. NodeID: " + existingNode.getId());
 				continue;
 			}
-			String oldCellValue = oldRowValueMap.get(rowID);
+			String oldCellValue = stringStringEntry.getValue();
 			row.setValue(hNodeID, oldCellValue, factory);
 		}
 		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, SuperSelectionManager.DEFAULT_SELECTION, workspace.getContextId());

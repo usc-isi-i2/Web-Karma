@@ -96,7 +96,7 @@ public class TripleStoreUtil {
 	static {
 		initialize();
 
-		mime_types = new HashMap<String, String>();
+		mime_types = new HashMap<>();
 		mime_types.put(RDF_Types.TriG.name(), "application/x-trig");
 		mime_types.put(RDF_Types.BinaryRDF.name(), "application/x-binary-rdf");
 		mime_types.put(RDF_Types.TriX.name(), "application/trix");
@@ -120,7 +120,7 @@ public class TripleStoreUtil {
 		HttpGet httpget;
 		HttpResponse response;
 		HttpEntity entity;
-		List<String> repositories = new ArrayList<String>();
+		List<String> repositories = new ArrayList<>();
 
 		try {
 			// query the list of repositories
@@ -225,7 +225,7 @@ public class TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 
@@ -249,11 +249,11 @@ public class TripleStoreUtil {
 
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-		Map<String, List<String>> results = new HashMap<String,List<String>>();
-		List<String> resultSubjects = new LinkedList<String>();
-		List<String> resultPredicates = new LinkedList<String>();
-		List<String> resultObjects = new LinkedList<String>();
-		List<String> resultClasses = new LinkedList<String>();
+		Map<String, List<String>> results = new HashMap<>();
+		List<String> resultSubjects = new LinkedList<>();
+		List<String> resultPredicates = new LinkedList<>();
+		List<String> resultObjects = new LinkedList<>();
+		List<String> resultClasses = new LinkedList<>();
 		results.put("resultSubjects", resultSubjects);
 		results.put("resultPredicates", resultPredicates);
 		results.put("resultObjects", resultObjects);
@@ -339,7 +339,7 @@ public class TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 
@@ -377,11 +377,11 @@ public class TripleStoreUtil {
 
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
-		Map<String, List<String>> results = new HashMap<String,List<String>>();
-		List<String> resultSubjects = new LinkedList<String>();
-		List<String> resultPredicates = new LinkedList<String>();
-		List<String> resultObjects = new LinkedList<String>();
-		List<String> resultClasses = new LinkedList<String>();
+		Map<String, List<String>> results = new HashMap<>();
+		List<String> resultSubjects = new LinkedList<>();
+		List<String> resultPredicates = new LinkedList<>();
+		List<String> resultObjects = new LinkedList<>();
+		List<String> resultClasses = new LinkedList<>();
 		results.put("resultSubjects", resultSubjects);
 		results.put("resultPredicates", resultPredicates);
 		results.put("resultObjects", resultObjects);
@@ -461,7 +461,7 @@ public class TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 
@@ -519,7 +519,7 @@ public class TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("update", queryString);
 
 			String responseString = HTTPUtil.executeHTTPPostRequest(
@@ -607,7 +607,7 @@ public class TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 
@@ -651,9 +651,9 @@ public class TripleStoreUtil {
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
 
-		List<String> predicates = new LinkedList<String>();
-		List<String> matchingRefObjMaps = new LinkedList<String>();
-		List<String> otherClasses = new LinkedList<String>();
+		List<String> predicates = new LinkedList<>();
+		List<String> matchingRefObjMaps = new LinkedList<>();
+		List<String> otherClasses = new LinkedList<>();
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -691,7 +691,7 @@ public class TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 
@@ -721,7 +721,7 @@ public class TripleStoreUtil {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> values = new HashMap<>();
 		values.put("predicates", predicates);
 		values.put("refObjectMaps", matchingRefObjMaps);
 		values.put("otherClasses", otherClasses);
@@ -734,9 +734,9 @@ public class TripleStoreUtil {
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
 
-		List<String> predicates = new LinkedList<String>();
-		List<String> matchingPOMs = new LinkedList<String>();
-		List<String> otherClasses = new LinkedList<String>();
+		List<String> predicates = new LinkedList<>();
+		List<String> matchingPOMs = new LinkedList<>();
+		List<String> otherClasses = new LinkedList<>();
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -775,7 +775,7 @@ public class TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 
@@ -805,7 +805,7 @@ public class TripleStoreUtil {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> values = new HashMap<>();
 		values.put("predicates", predicates);
 		values.put("predicateObjectMaps", matchingPOMs);
 		values.put("otherClasses", otherClasses);
@@ -848,11 +848,11 @@ public class TripleStoreUtil {
 		TripleStoreURL = normalizeTripleStoreURL(TripleStoreURL);
 		testTripleStoreConnection(TripleStoreURL);
 
-		List<String> times = new ArrayList<String>();
-		List<String> names = new ArrayList<String>();
-		List<String> urls = new ArrayList<String>();
-		List<String> inputColumns = new ArrayList<String>();
-		List<String> contexts = new ArrayList<String>();
+		List<String> times = new ArrayList<>();
+		List<String> names = new ArrayList<>();
+		List<String> urls = new ArrayList<>();
+		List<String> inputColumns = new ArrayList<>();
+		List<String> contexts = new ArrayList<>();
 		try {
 
 			StringBuilder query = new StringBuilder();
@@ -872,7 +872,7 @@ public class TripleStoreUtil {
 			logger.debug("query: " + queryString);
 
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 
@@ -903,7 +903,7 @@ public class TripleStoreUtil {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> values = new HashMap<>();
 		values.put("model_publishtimes", times);
 		values.put("model_names", names);
 		values.put("model_urls", urls);
@@ -920,8 +920,8 @@ public class TripleStoreUtil {
 	 * */
 	public HashMap<String, List<String>> fetchModelNames(String TripleStoreURL) throws KarmaException {
 
-		List<String> names = new ArrayList<String>();
-		List<String> urls = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
+		List<String> urls = new ArrayList<>();
 
 		TripleStoreURL = normalizeTripleStoreURL(TripleStoreURL);
 		testTripleStoreConnection(TripleStoreURL);
@@ -930,7 +930,7 @@ public class TripleStoreUtil {
 			String queryString = "PREFIX km-dev:<http://isi.edu/integration/karma/dev#> SELECT ?y ?z where { ?x km-dev:sourceName ?y . ?x km-dev:serviceUrl ?z . } ORDER BY ?y ?z";
 			logger.debug("query: " + queryString);
 
-			Map<String, String> formparams = new HashMap<String, String>();
+			Map<String, String> formparams = new HashMap<>();
 			formparams.put("query", queryString);
 			formparams.put("queryLn", "SPARQL");
 			String responseString = HTTPUtil.executeHTTPPostRequest(
@@ -952,7 +952,7 @@ public class TripleStoreUtil {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
-		HashMap<String, List<String>> values = new HashMap<String, List<String>>();
+		HashMap<String, List<String>> values = new HashMap<>();
 		values.put("model_names", names);
 		values.put("model_urls", urls);
 		return values;
@@ -980,7 +980,7 @@ public class TripleStoreUtil {
 			String context, boolean replaceFlag, 
 			String rdfType, String baseURL) throws KarmaException {
 		boolean retVal = false;
-		HttpResponse response = null;
+		HttpResponse response;
 
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);
@@ -1111,7 +1111,7 @@ public class TripleStoreUtil {
 			String acceptContentType, String contextType)
 					throws ClientProtocolException, IOException, JSONException {
 
-		Map<String, String> formParams = new HashMap<String, String>();
+		Map<String, String> formParams = new HashMap<>();
 		formParams.put("query", query);
 		formParams.put("queryLn", "SPARQL");
 
@@ -1140,7 +1140,7 @@ public class TripleStoreUtil {
 		try {
 			HttpPost httppost = new HttpPost(defaultWorkbenchUrl
 					+ "/NONE/create");
-			List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+			List<NameValuePair> formparams = new ArrayList<>();
 			formparams.add(new BasicNameValuePair("Repository ID", repo_name));
 			formparams
 			.add(new BasicNameValuePair("Repository title", repo_name));
@@ -1184,7 +1184,7 @@ public class TripleStoreUtil {
 			url = defaultModelsRepoUrl;
 		}
 		url += "/contexts";
-		List<String> graphs = new ArrayList<String>();
+		List<String> graphs = new ArrayList<>();
 
 		String responseString;
 		try {

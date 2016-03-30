@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class FeatureTable {
 	
-	private Map<String, String> popupData = new HashMap<String, String>();
+	private Map<String, String> popupData = new HashMap<>();
 
 	public FeatureTable() {
 		super();
@@ -40,8 +40,8 @@ public class FeatureTable {
 
 	public String getHTMLDescription() {
 		StringBuilder str = new StringBuilder();
-		for (String name : popupData.keySet()) {
-			str.append("<b>" + name + "</b>: " + popupData.get(name)
+		for (Map.Entry<String, String> stringStringEntry : popupData.entrySet()) {
+			str.append("<b>" + stringStringEntry.getKey() + "</b>: " + stringStringEntry.getValue()
 					+ " <br />");
 		}
 		return str.toString();

@@ -13,7 +13,7 @@ var ClassTabs = (function() {
 		var onSelectCallback;
 
 		function init() {
-			reloadCache();
+			reloadAllCache();
 			$('input', dialog).on('keyup', filterDropdown);
 
 			$('#class_tabs a[href="#class_all"]').on('shown.bs.tab', function(e) {
@@ -25,10 +25,18 @@ var ClassTabs = (function() {
 			});
 		}
 
-		function reloadCache() {
+		function reloadAllCache() {
 			allClassCache = null;
 			window.setTimeout(function() {
-				allClassCache = getAllClasses(worksheetId);
+				allClassCache = [];
+				allClassCache[worksheetId] = getAllClasses(worksheetId);
+			}, 10);
+		}
+
+		function reloadCache(worksheetId) {
+			allClassCache[worksheetId] = null;
+			window.setTimeout(function() {
+				allClassCache[worksheetId] = getAllClasses(worksheetId);
 			}, 10);
 		}
 
@@ -62,10 +70,14 @@ var ClassTabs = (function() {
 				window.setTimeout(populateAll, 10);
 				return;
 			}
+			if(allClassCache[worksheetId] == null ) {
+				window.setTimeout(populateAll, 10);
+				return;
+			}
 
 			var allTypes = [];
 			
-			$.each(allClassCache, function(index, type) {
+			$.each(allClassCache[worksheetId], function(index, type) {
 				allTypes.push({"label": type["label"], "uri": type["uri"], "id": type["id"]});
 			});
 
@@ -117,7 +129,7 @@ var ClassTabs = (function() {
 		          hide();
 		          break;
 		        default:
-		          	items = allClassCache;
+		          	items = allClassCache[worksheetId];
 		          	items = $.grep(items, function (item) {
 			        	return (item["label"].toLowerCase().indexOf(query.toLowerCase()) != -1);
 			      	});
@@ -193,7 +205,8 @@ var ClassTabs = (function() {
 		return { //Return back the public methods
 			show: show,
 			init: init,
-			reloadCache: reloadCache
+			reloadCache: reloadCache,
+			reloadAllCache: reloadAllCache
 		};
 	};
 

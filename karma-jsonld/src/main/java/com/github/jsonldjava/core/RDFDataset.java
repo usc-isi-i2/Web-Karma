@@ -354,7 +354,7 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     public RDFDataset() {
         super();
         put("@default", new ArrayList<Quad>());
-        context = new LinkedHashMap<String, String>();
+        context = new LinkedHashMap<>();
         // put("@context", context);
     }
 
@@ -423,15 +423,15 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
         // And then leak to us the potential 'prefixes'
         final Map<String, String> prefixes = context.getPrefixes(true);
 
-        for (final String key : prefixes.keySet()) {
-            final String val = prefixes.get(key);
-            if ("@vocab".equals(key)) {
+        for (final Map.Entry<String, String> stringStringEntry : prefixes.entrySet()) {
+            final String val = stringStringEntry.getValue();
+            if ("@vocab".equals(stringStringEntry.getKey())) {
                 if (val == null || isString(val)) {
                     setNamespace("", val);
                 } else {
                 }
-            } else if (!isKeyword(key)) {
-                setNamespace(key, val);
+            } else if (!isKeyword(stringStringEntry.getKey())) {
+                setNamespace(stringStringEntry.getKey(), val);
                 // TODO: should we make sure val is a valid URI prefix (i.e. it
                 // ends with /# or ?)
                 // or is it ok that full URIs for terms are used?
@@ -534,16 +534,16 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
      */
     void graphToRDF(String graphName, Map<String, Object> graph) {
         // 4.2)
-        final List<Quad> triples = new ArrayList<Quad>();
+        final List<Quad> triples = new ArrayList<>();
         // 4.3)
-        final List<String> subjects = new ArrayList<String>(graph.keySet());
+        final List<String> subjects = new ArrayList<>(graph.keySet());
         // Collections.sort(subjects);
         for (final String id : subjects) {
             if (JsonLdUtils.isRelativeIri(id)) {
                 continue;
             }
             final Map<String, Object> node = (Map<String, Object>) graph.get(id);
-            final List<String> properties = new ArrayList<String>(node.keySet());
+            final List<String> properties = new ArrayList<>(node.keySet());
             Collections.sort(properties);
             for (String property : properties) {
                 final List<Object> values;

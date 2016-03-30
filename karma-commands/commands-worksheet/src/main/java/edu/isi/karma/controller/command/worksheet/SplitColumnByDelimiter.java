@@ -86,7 +86,7 @@ public class SplitColumnByDelimiter {
 		}
 
 		// Convert the delimiter into character primitive type
-		char delimiterChar = ',';
+		char delimiterChar;
 		if (delimiter.equalsIgnoreCase("space"))
 			delimiterChar = ' ';
 		else if (delimiter.equalsIgnoreCase("tab"))
@@ -95,7 +95,7 @@ public class SplitColumnByDelimiter {
 			delimiterChar = new Character(delimiter.charAt(0));
 		}
 
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<>();
 		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);
 
 		//pedro: 2012-10-09
@@ -167,7 +167,7 @@ public class SplitColumnByDelimiter {
 	public void empty() {
 		RepFactory factory = workspace.getFactory();
 		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
-		List<Table> tables = new ArrayList<Table>();
+		List<Table> tables = new ArrayList<>();
 		
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables, selection);
 		for (Table t : tables) {
@@ -181,8 +181,9 @@ public class SplitColumnByDelimiter {
 	public void split() throws IOException {
 		RepFactory factory = workspace.getFactory();
 		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
-		List<Table> tables = new ArrayList<Table>();
-		char delimiterChar = ',';
+		List<Table> tables = new ArrayList<>();
+		char delimiterChar;
+
 		if (delimiter.equalsIgnoreCase("space"))
 			delimiterChar = ' ';
 		else if (delimiter.equalsIgnoreCase("tab"))

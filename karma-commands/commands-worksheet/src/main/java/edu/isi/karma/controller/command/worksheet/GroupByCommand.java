@@ -86,9 +86,9 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 		RepFactory factory = workspace.getFactory();
 		Worksheet oldws = workspace.getWorksheet(worksheetId);
 		Object para = JSONUtil.createJson(this.getInputParameterJson());
-		List<String> hnodeIDs = new ArrayList<String>();
-		List<HNode> keyhnodes = new ArrayList<HNode>();
-		List<HNode> valuehnodes = new ArrayList<HNode>();
+		List<String> hnodeIDs = new ArrayList<>();
+		List<HNode> keyhnodes = new ArrayList<>();
+		List<HNode> valuehnodes = new ArrayList<>();
 		JSONArray checked = (JSONArray) JSONUtil.createJson(CommandInputJSONUtil.getStringValue("values", (JSONArray)para));
 		HTable ht;
 		if (hNodeId.compareTo("") != 0)
@@ -176,12 +176,12 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 		HTable newht =  newws.getHeaders();
 		ArrayList<Row> rows = oldws.getDataTable().getRows(0, oldws.getDataTable().getNumRows(), selection);
 		HTable oldht =  oldws.getHeaders();
-		Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
+		Map<String, ArrayList<String>> hash = new TreeMap<>();
 		for (Row row : rows) {
 			String hashValue = HashValueManager.getHashValue(row, hnodeIDs);
 			ArrayList<String> ids = hash.get(hashValue);
 			if (ids == null)
-				ids = new ArrayList<String>();
+				ids = new ArrayList<>();
 			ids.add(row.getId());
 			hash.put(hashValue, ids);
 		}
@@ -189,8 +189,8 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 		newht.addHNode("Values", HNodeType.Transformation, newws, factory);
 		HTable newValueTable = newht.getHNodeFromColumnName("Values").addNestedTable("Table for values", newws, factory);
 		CloneTableUtils.cloneHTable(newValueTable, newws, factory, valuehnodes, false);
-		for (String key : hash.keySet()) {
-			ArrayList<String> r = hash.get(key);
+		for (Entry<String, ArrayList<String>> stringArrayListEntry : hash.entrySet()) {
+			ArrayList<String> r = stringArrayListEntry.getValue();
 			Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), newws.getDataTable(), newht, keyhnodes, factory, selection);
 			for (String rowid : r) {
 				Row cur = factory.getRow(rowid);
@@ -205,9 +205,9 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 	private void groupByNestedTable(Worksheet oldws, Workspace workspace, HTable ht, List<String> hnodeIDs, List<HNode> keyhnodes, List<HNode> valuehnodes, RepFactory factory) {
 		SuperSelection selection = getSuperSelection(oldws);
 		HTable parentHT = ht.getParentHNode().getHTable(factory);
-		List<Table> parentTables = new ArrayList<Table>();
+		List<Table> parentTables = new ArrayList<>();
 		CloneTableUtils.getDatatable(oldws.getDataTable(), parentHT,parentTables, selection);
-		ArrayList<Row> parentRows = new ArrayList<Row>();
+		ArrayList<Row> parentRows = new ArrayList<>();
 		for (Table tmp : parentTables) {
 			for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
 				parentRows.add(row);
@@ -234,18 +234,18 @@ public class GroupByCommand extends WorksheetSelectionCommand {
 				}	
 			}
 			ArrayList<Row> rows = t.getRows(0, t.getNumRows(), selection);
-			Map<String, ArrayList<String>> hash = new TreeMap<String, ArrayList<String>>();
+			Map<String, ArrayList<String>> hash = new TreeMap<>();
 			for (Row row : rows) {
 				String hashValue = HashValueManager.getHashValue(row, hnodeIDs);
 				ArrayList<String> ids = hash.get(hashValue);
 				if (ids == null)
-					ids = new ArrayList<String>();
+					ids = new ArrayList<>();
 				ids.add(row.getId());
 				hash.put(hashValue, ids);
 			}	
 			
-			for (String key : hash.keySet()) {
-				ArrayList<String> r = hash.get(key);
+			for (Entry<String, ArrayList<String>> stringArrayListEntry : hash.entrySet()) {
+				ArrayList<String> r = stringArrayListEntry.getValue();
 				Node node = parentRow.getNeighbor(newNode.getId());
 				Row lastRow = CloneTableUtils.cloneDataTable(factory.getRow(r.get(0)), node.getNestedTable(), newht, keyhnodes, factory, selection);
 				for (String rowid : r) {

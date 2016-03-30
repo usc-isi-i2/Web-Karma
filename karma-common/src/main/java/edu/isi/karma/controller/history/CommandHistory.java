@@ -71,7 +71,7 @@ public class CommandHistory implements Cloneable{
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	private static HashMap<String, IHistorySaver> historySavers = new HashMap<>();
+	private static Map<String, IHistorySaver> historySavers = new HashMap<>();
 
 	private final static Set<CommandConsolidator> consolidators = new HashSet<>();
 
@@ -198,7 +198,8 @@ public class CommandHistory implements Cloneable{
 
 	private void writeHistoryPerWorksheet(Workspace workspace, IHistorySaver historySaver) throws Exception {
 		String workspaceId = workspace.getId();
-		HashMap<String, JSONArray> comMap = new HashMap<String, JSONArray>();
+		Map<String, JSONArray> comMap = new HashMap<>();
+
 		for(ICommand command : _getHistory()) {
 			if(command.isSavedInHistory() &&
 					(command.hasTag(CommandTag.Modeling)
@@ -217,9 +218,9 @@ public class CommandHistory implements Cloneable{
 			}
 		}
 
-		for(String worksheetId : comMap.keySet()) {
-			JSONArray comms = comMap.get(worksheetId);
-			historySaver.saveHistory(workspaceId, worksheetId, comms);
+		for(Map.Entry<String, JSONArray> stringJSONArrayEntry : comMap.entrySet()) {
+			JSONArray comms = stringJSONArrayEntry.getValue();
+			historySaver.saveHistory(workspaceId, stringJSONArrayEntry.getKey(), comms);
 		}
 	}
 

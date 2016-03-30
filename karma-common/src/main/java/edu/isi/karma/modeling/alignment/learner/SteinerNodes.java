@@ -52,9 +52,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	private String contextId;
 	public SteinerNodes(String contextId) {
 		this.contextId = contextId;
-		this.nodes = new HashSet<Node>();
-		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
-		this.columnNodeInfo = new HashMap<ColumnNode, SemanticTypeMapping>();
+		this.nodes = new HashSet<>();
+		this.mappingToSourceColumns = new HashMap<>();
+		this.columnNodeInfo = new HashMap<>();
 		this.semanticTypesCount = 0;
 		this.confidence = new Confidence();
 		this.nodeCoherence = new NodeCoherence();
@@ -65,9 +65,9 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	public SteinerNodes(SteinerNodes steinerNodes,String contextId) {
 		this.contextId = contextId;
-		this.nodes = new HashSet<Node>(steinerNodes.getNodes());
-		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>(steinerNodes.getMappingToSourceColumns());
-		this.columnNodeInfo = new HashMap<ColumnNode, SemanticTypeMapping>(steinerNodes.getColumnNodeInfo());
+		this.nodes = new HashSet<>(steinerNodes.getNodes());
+		this.mappingToSourceColumns = new HashMap<>(steinerNodes.getMappingToSourceColumns());
+		this.columnNodeInfo = new HashMap<>(steinerNodes.getColumnNodeInfo());
 		this.confidence = new Confidence(steinerNodes.getConfidence());
 		this.nodeCoherence = new NodeCoherence(steinerNodes.getCoherence());
 //		this.frequency = steinerNodes.getFrequency();
@@ -235,7 +235,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	private double getArithmeticMean(double[] input) {
 		
-		double result = 0.0;
+		double result;
 		if (input == null)
 			return 0.0;
 		

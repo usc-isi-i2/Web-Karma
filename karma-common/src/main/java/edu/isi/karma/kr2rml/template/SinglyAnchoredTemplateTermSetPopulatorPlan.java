@@ -52,15 +52,15 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 		{
 			return;
 		}
-		nestedPlans = new HashMap<ColumnTemplateTerm, TemplateTermSetPopulatorPlan>();
-		LinkedList<ColumnTemplateTerm> columnTermsLocal = new LinkedList<ColumnTemplateTerm>();
+		nestedPlans = new HashMap<>();
+		LinkedList<ColumnTemplateTerm> columnTermsLocal = new LinkedList<>();
 		columnTermsLocal.addAll(columnTerms);
 		sortColumnTermsByHNodePathDepth(columnTermsLocal);
 		Map<ColumnTemplateTerm, ColumnTemplateTerm> termsToTermDependentOn = generateTermsToTermDependentOn(columnTermsLocal, comparisonTerms);
 		
 		//Now we should have a column terms mapped to their closest affinity in the other group.
-		Map<ColumnTemplateTerm, List<ColumnTemplateTerm>> otherToGenerate = new HashMap<ColumnTemplateTerm, List<ColumnTemplateTerm>>();
-		List<ColumnTemplateTerm> independentNestedTerms = new LinkedList<ColumnTemplateTerm>();
+		Map<ColumnTemplateTerm, List<ColumnTemplateTerm>> otherToGenerate = new HashMap<>();
+		List<ColumnTemplateTerm> independentNestedTerms = new LinkedList<>();
 		for(Entry<ColumnTemplateTerm, ColumnTemplateTerm> termToTermDependentOn : termsToTermDependentOn.entrySet())
 		{
 			ColumnTemplateTerm dependentTerm = termToTermDependentOn.getValue();
@@ -82,7 +82,7 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 		for(Entry<ColumnTemplateTerm, List<ColumnTemplateTerm>> other : otherToGenerate.entrySet())
 		{
 			TemplateTermSetPopulatorWorker parentWorker = new TemplateTermSetPopulatorWorker(other.getKey(), termToPath.get(other.getKey()), null, selection);
-			Map<ColumnTemplateTerm, HNodePath> truncatedTermToPath = new HashMap<ColumnTemplateTerm, HNodePath>();
+			Map<ColumnTemplateTerm, HNodePath> truncatedTermToPath = new HashMap<>();
 			for(Entry<ColumnTemplateTerm, HNodePath> terms : termToPath.entrySet())
 			{
 				truncatedTermToPath.put(terms.getKey(), HNodePath.findPathBetweenLeavesWithCommonHead(termToPath.get(other.getKey()), terms.getValue()));
@@ -91,7 +91,7 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 			nestedPlans.put(other.getKey(), plan);
 		}
 		
-		Map<ColumnTemplateTerm, ColumnTemplateTerm> parentTermsToTermDependentOn = new HashMap<ColumnTemplateTerm, ColumnTemplateTerm>();
+		Map<ColumnTemplateTerm, ColumnTemplateTerm> parentTermsToTermDependentOn = new HashMap<>();
 		
 		columnTermsLocal.addAll(independentNestedTerms);
 		sortColumnTermsByHNodePathDepth(columnTermsLocal);
@@ -103,12 +103,12 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 	
 	public Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> execute(Row topRow, List<PopulatedTemplateTermSet> anchors)
 	{
-		Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> results = new HashMap<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>>();
+		Map<PopulatedTemplateTermSet, List<PartiallyPopulatedTermSet>> results = new HashMap<>();
 		if(columnTerms == null || columnTerms.isEmpty())
 		{
 			for(PopulatedTemplateTermSet anchor: anchors)
 			{
-				List<PartiallyPopulatedTermSet> references = new LinkedList<PartiallyPopulatedTermSet>();
+				List<PartiallyPopulatedTermSet> references = new LinkedList<>();
 				references.add(new PartiallyPopulatedTermSet());
 				results.put(anchor, references);
 			}
@@ -119,7 +119,7 @@ public class SinglyAnchoredTemplateTermSetPopulatorPlan extends
 		
 		for(PopulatedTemplateTermSet anchor: anchors)
 		{
-			List<List<PartiallyPopulatedTermSet>> toMerge = new LinkedList<List<PartiallyPopulatedTermSet>>();
+			List<List<PartiallyPopulatedTermSet>> toMerge = new LinkedList<>();
 			if(!independentResults.isEmpty())
 			{
 				toMerge.add(independentResults);

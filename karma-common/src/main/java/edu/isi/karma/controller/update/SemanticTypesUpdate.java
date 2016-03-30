@@ -222,7 +222,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	}
 
 	private Map<String, SemanticTypeNode> createDomainNodeMap() {
-		Map<String, SemanticTypeNode> hNodeIdToDomainNodeMap = new HashMap<String, SemanticTypeNode>();
+		Map<String, SemanticTypeNode> hNodeIdToDomainNodeMap = new HashMap<>();
 		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
 		if (alignmentColumnNodes == null)
 			return hNodeIdToDomainNodeMap;
@@ -233,7 +233,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
 					String hNodeId = ((ColumnNode)cNode).getHNodeId();
 					if(incomingLink instanceof DataPropertyOfColumnLink || incomingLink instanceof ObjectPropertySpecializationLink) {
-						String id = null;
+						String id;
 						if(incomingLink instanceof DataPropertyOfColumnLink)
 							id = ((DataPropertyOfColumnLink)incomingLink).getSpecializedLinkId();
 						else 
@@ -253,7 +253,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 
 	private Map<String, ColumnNode> createColumnNodeMap() {
 		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
-		Map<String, ColumnNode> hNodeIdToColumnNodeMap = new HashMap<String, ColumnNode>();
+		Map<String, ColumnNode> hNodeIdToColumnNodeMap = new HashMap<>();
 		if (alignmentColumnNodes == null)
 			return hNodeIdToColumnNodeMap;
 		for (Node cNode : alignmentColumnNodes) {

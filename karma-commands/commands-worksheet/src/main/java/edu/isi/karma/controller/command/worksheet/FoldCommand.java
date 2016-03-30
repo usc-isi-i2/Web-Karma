@@ -37,7 +37,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 	//add column to this table
 	private String hTableId;
 	Command cmd;
-	private List<HNode> hnodes = new ArrayList<HNode>();
+	private List<HNode> hnodes = new ArrayList<>();
 	//the id of the new column that was created
 	//needed for undo
 	private String newHNodeId;
@@ -104,9 +104,9 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		ArrayList<Row> rows = worksheet.getDataTable().getRows(0, worksheet.getDataTable().getNumRows(), selection);
 		if (htable != worksheet.getHeaders()) {
 			HTable parentHT = htable.getParentHNode().getHTable(Repfactory);
-			List<Table> parentTables = new ArrayList<Table>();
+			List<Table> parentTables = new ArrayList<>();
 			CloneTableUtils.getDatatable(worksheet.getDataTable(), parentHT,parentTables, selection);
-			ArrayList<Row> parentRows = new ArrayList<Row>();
+			ArrayList<Row> parentRows = new ArrayList<>();
 			rows.clear();
 			for (Table tmp : parentTables) {
 				for (Row row : tmp.getRows(0, tmp.getNumRows(), selection)) {
@@ -129,7 +129,7 @@ public class FoldCommand extends WorksheetSelectionCommand {
 		}
 		
 		this.label = "";
-		if(hnodes.size() > 0)
+		if(!hnodes.isEmpty())
 			this.label = hnodes.get(0).getParentColumnName(Repfactory);
 		String sep = " &gt; ";
 		for(HNode hnode : hnodes) {

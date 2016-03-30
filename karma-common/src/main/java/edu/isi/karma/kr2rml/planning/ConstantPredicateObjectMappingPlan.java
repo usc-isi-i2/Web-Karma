@@ -49,7 +49,7 @@ PredicateObjectMappingPlan {
 			throws HNodeNotFoundKarmaException {
 		
 		this.pom = pom;
-		combinedSubjectObjectTermsToPaths = new HashMap<ColumnTemplateTerm, HNodePath>();
+		combinedSubjectObjectTermsToPaths = new HashMap<>();
 		combinedSubjectObjectTermsToPaths.putAll(subjectTermsToPaths);
 		this.isLiteral = true;
 		TemplateTermSet literalTemplate = pom.getObject().getRdfLiteralType();

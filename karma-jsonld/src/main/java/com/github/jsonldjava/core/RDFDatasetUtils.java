@@ -29,10 +29,11 @@ public class RDFDatasetUtils {
      */
     @Deprecated
     static List<Object> graphToRDF(Map<String, Object> graph, UniqueNamer namer) {
-        final List<Object> rval = new ArrayList<Object>();
-        for (final String id : graph.keySet()) {
-            final Map<String, Object> node = (Map<String, Object>) graph.get(id);
-            final List<String> properties = new ArrayList<String>(node.keySet());
+        final List<Object> rval = new ArrayList<>();
+        for (final Map.Entry<String, Object> stringObjectEntry : graph.entrySet()) {
+            final Map<String, Object> node = (Map<String, Object>) stringObjectEntry.getValue();
+            final List<String> properties = new ArrayList<>(node.keySet());
+
             Collections.sort(properties);
             for (String property : properties) {
                 final Object items = node.get(property);
@@ -45,12 +46,12 @@ public class RDFDatasetUtils {
                 for (final Object item : (List<Object>) items) {
                     // RDF subjects
                     final Map<String, Object> subject = newMap();
-                    if (id.indexOf("_:") == 0) {
+                    if (stringObjectEntry.getKey().indexOf("_:") == 0) {
                         subject.put("type", "blank node");
-                        subject.put("value", namer.getName(id));
+                        subject.put("value", namer.getName(stringObjectEntry.getKey()));
                     } else {
                         subject.put("type", "IRI");
-                        subject.put("value", id);
+                        subject.put("value", stringObjectEntry.getKey());
                     }
 
                     // RDF predicates
@@ -203,7 +204,7 @@ public class RDFDatasetUtils {
     }
 
     public static String toNQuads(RDFDataset dataset) {
-        final List<String> quads = new ArrayList<String>();
+        final List<String> quads = new ArrayList<>();
         for (String graphName : dataset.graphNames()) {
             final List<RDFDataset.Quad> triples = dataset.getQuads(graphName);
             if ("@default".equals(graphName)) {
@@ -517,7 +518,7 @@ public class RDFDatasetUtils {
 
             // initialise graph in dataset
             if (!dataset.containsKey(name)) {
-                final List<RDFDataset.Quad> tmp = new ArrayList<RDFDataset.Quad>();
+                final List<RDFDataset.Quad> tmp = new ArrayList<>();
                 tmp.add(triple);
                 dataset.put(name, tmp);
             }

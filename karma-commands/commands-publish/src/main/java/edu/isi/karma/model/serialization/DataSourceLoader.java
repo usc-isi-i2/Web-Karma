@@ -124,7 +124,7 @@ public class DataSourceLoader extends SourceLoader {
     @Override
 	public List<Source> getSourcesAbstractInfo(Integer sourceLimit) {
 		
-		List<Source> sourceList = new ArrayList<Source>();
+		List<Source> sourceList = new ArrayList<>();
 		
 		Model model = Repository.Instance().getModel();
 		
@@ -204,7 +204,7 @@ public class DataSourceLoader extends SourceLoader {
 	public List<Source> getSourcesDetailedInfo(Integer sourceLimit) {
 
 		List<Source> sourceList = getSourcesAbstractInfo(sourceLimit);
-		List<Source> sourceListCompleteInfo = new ArrayList<Source>();
+		List<Source> sourceListCompleteInfo = new ArrayList<>();
 		for (Source s : sourceList) {
 			sourceListCompleteInfo.add(getSourceByUri(s.getUri()));
 		}
@@ -223,13 +223,13 @@ public class DataSourceLoader extends SourceLoader {
 			Integer sourceLimit) {
 		
 		if (semanticModel == null || semanticModel.getAtoms() == null 
-				|| semanticModel.getAtoms().size() == 0) {
+				|| semanticModel.getAtoms().isEmpty()) {
 			logger.info("The input model is nul or it does not have any atom");
 			return null;
 		}
 		
-		Map<DataSource, Map<String, String>> sourcesAndMappings = 
-			new HashMap<DataSource, Map<String,String>>();
+		Map<DataSource, Map<String, String>> sourcesAndMappings =
+				new HashMap<>();
 		
 		Map<String, Map<String, String>> sourceIdsAndMappings =
 			semanticModel.findInJenaModel(Repository.Instance().getModel(), sourceLimit);
@@ -237,10 +237,10 @@ public class DataSourceLoader extends SourceLoader {
 		if (sourceIdsAndMappings == null)
 			return null;
 		
-		for (String sourceId : sourceIdsAndMappings.keySet()) {
-			Model m = Repository.Instance().getNamedModel(sourceId);
+		for (Map.Entry<String, Map<String, String>> stringMapEntry : sourceIdsAndMappings.entrySet()) {
+			Model m = Repository.Instance().getNamedModel(stringMapEntry.getKey());
 			if (m != null)
-				sourcesAndMappings.put(importSourceFromJenaModel(m), sourceIdsAndMappings.get(sourceId));
+				sourcesAndMappings.put(importSourceFromJenaModel(m), stringMapEntry.getValue());
 		}
 		
 		return sourcesAndMappings;
@@ -260,8 +260,8 @@ public class DataSourceLoader extends SourceLoader {
 		
 		List<Source> sourceList = getSourcesDetailedInfo(sourceLimit);
 		
-		Map<DataSource, Map<String, String>> sourcesAndMappings = 
-			new HashMap<DataSource, Map<String,String>>();
+		Map<DataSource, Map<String, String>> sourcesAndMappings =
+				new HashMap<>();
 
 		Model jenaModel = semanticModel.getJenaModel();
 		for (Source source : sourceList) {
@@ -346,7 +346,7 @@ public class DataSourceLoader extends SourceLoader {
 		
 		Property has_variable_property = model.getProperty(Namespaces.KARMA + "hasVariable");
 	
-		List<String> variables = new ArrayList<String>();
+		List<String> variables = new ArrayList<>();
 		NodeIterator nodeIterator = null;
 		RDFNode node = null;
 
@@ -371,7 +371,7 @@ public class DataSourceLoader extends SourceLoader {
 		
 		Property has_attribute_property = model.getProperty(Namespaces.KARMA + "hasAttribute");
 	
-		List<Attribute> attList = new ArrayList<Attribute>();
+		List<Attribute> attList = new ArrayList<>();
 		
 		NodeIterator nodeIterator = null;
 		RDFNode node = null;
@@ -439,7 +439,7 @@ public class DataSourceLoader extends SourceLoader {
 
 		edu.isi.karma.rep.model.Model semanticModel = 
 			new edu.isi.karma.rep.model.Model(modelNode.asResource().getLocalName());
-		List<Atom> atoms = new ArrayList<Atom>();
+		List<Atom> atoms = new ArrayList<>();
 		
 
 		// hasAtom
@@ -680,12 +680,12 @@ public class DataSourceLoader extends SourceLoader {
 		}
 		
 		System.out.println("Mappings from matched source to model arguments:");
-		for (Source s : sourcesAndMappings.keySet()) {
-			System.out.println("Source: " + s.getId());
-			if (sourcesAndMappings.get(s) == null)
+		for (Map.Entry<DataSource, Map<String, String>> dataSourceMapEntry : sourcesAndMappings.entrySet()) {
+			System.out.println("Source: " + dataSourceMapEntry.getKey().getId());
+			if (dataSourceMapEntry.getValue() == null)
 				continue;
-			for (String str : sourcesAndMappings.get(s).keySet())
-				System.out.println(str + "-------" + sourcesAndMappings.get(s).get(str));
+			for (String str : dataSourceMapEntry.getValue().keySet())
+				System.out.println(str + "-------" + dataSourceMapEntry.getValue().get(str));
 		}
 
 	}

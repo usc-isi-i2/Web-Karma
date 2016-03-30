@@ -68,12 +68,12 @@ public class CSVImport extends Import {
 
         // Index for row currently being read
         int rowCount = 0;
-        Map<Integer, String> hNodeIdList = new HashMap<Integer, String>();
+        Map<Integer, String> hNodeIdList = new HashMap<>();
 
         // If no row is present for the column headers
         if (headerRowIndex == 0) {
             hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory(), br);
-            if (hNodeIdList == null || hNodeIdList.size() == 0) {
+            if (hNodeIdList == null || hNodeIdList.isEmpty()) {
                 br.close();
                 throw new KarmaException("Error occured while counting header "
                         + "nodes for the worksheet!");
@@ -122,7 +122,7 @@ public class CSVImport extends Import {
     private Map<Integer, String> addHeaders(Worksheet worksheet, RepFactory fac,
             String line, BufferedReader br) throws IOException {
         HTable headers = worksheet.getHeaders();
-        Map<Integer, String> headersMap = new HashMap<Integer, String>();
+        Map<Integer, String> headersMap = new HashMap<>();
 
         CSVReader reader = new CSVReader(new StringReader(line), delimiter,
                 quoteCharacter, escapeCharacter);
@@ -183,7 +183,7 @@ public class CSVImport extends Import {
     private Map<Integer, String> addEmptyHeaders(Worksheet worksheet,
             RepFactory fac, BufferedReader br) throws IOException {
         HTable headers = worksheet.getHeaders();
-        Map<Integer, String> headersMap = new HashMap<Integer, String>();
+        Map<Integer, String> headersMap = new HashMap<>();
 
         
         br.mark(1000000);

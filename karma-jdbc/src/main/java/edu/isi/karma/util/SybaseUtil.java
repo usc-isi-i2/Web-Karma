@@ -35,7 +35,7 @@ public class SybaseUtil extends AbstractJDBCUtil {
 	}
 
 	public Connection getConnection(String driver, String url, String username, String pwd) throws SQLException, ClassNotFoundException {
-		Connection localConn = null;
+		Connection localConn;
 		Class.forName(driver);
 		localConn = DriverManager.getConnection(url, username, pwd);
 		return localConn;
@@ -59,7 +59,7 @@ public class SybaseUtil extends AbstractJDBCUtil {
 	public ArrayList<String> getListOfTables(Connection conn) 
 			throws SQLException, ClassNotFoundException {
 		
-		ArrayList<String> tableNames = new ArrayList<String>();
+		ArrayList<String> tableNames = new ArrayList<>();
 		DatabaseMetaData dmd = conn.getMetaData();
 		ResultSet rs = dmd.getTables(null, null, null, new String[] {"TABLE","VIEW"});
 		while (rs.next())
@@ -120,7 +120,7 @@ public class SybaseUtil extends AbstractJDBCUtil {
 	
 	@Override
 	public String prepareName(String name) {
-		String s = name;
+		String s;
 		s = name.replace('-', '_');
 		s = "`" + s + "`";
 		return s;

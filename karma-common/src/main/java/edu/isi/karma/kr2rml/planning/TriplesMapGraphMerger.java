@@ -30,7 +30,7 @@ public class TriplesMapGraphMerger {
 	
 	public TriplesMapGraphMerger()
 	{
-		graphs = new LinkedList<TriplesMapGraph>();
+		graphs = new LinkedList<>();
 	}
 	
 	public TriplesMapGraph getTriplesMapGraph(String triplesMapId)
@@ -60,7 +60,7 @@ public class TriplesMapGraphMerger {
 			graphs.add(graph);
 			return;
 		}
-		List<TriplesMapGraph> graphsForMerging = new LinkedList<TriplesMapGraph>();
+		List<TriplesMapGraph> graphsForMerging = new LinkedList<>();
 		Iterator<TriplesMapGraph> iter = graphs.iterator();
 		while(iter.hasNext())
 		{
@@ -75,7 +75,7 @@ public class TriplesMapGraphMerger {
 		}
 		iter = graphsForMerging.iterator();
 		TriplesMapGraph mergedGraph = iter.next();
-		TriplesMapGraph graphToMerge = null;
+		TriplesMapGraph graphToMerge;
 		while(iter.hasNext())
 		{
 			graphToMerge = iter.next();

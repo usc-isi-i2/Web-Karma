@@ -54,7 +54,7 @@ public abstract class ModelLearningGraph {
 
 	private static Logger logger = LoggerFactory.getLogger(ModelLearningGraph.class);
 	
-	private static ConcurrentHashMap<OntologyManager, ModelLearningGraph> instances = new ConcurrentHashMap<OntologyManager, ModelLearningGraph>();
+	private static ConcurrentHashMap<OntologyManager, ModelLearningGraph> instances = new ConcurrentHashMap<>();
 	protected OntologyManager ontologyManager;
 	protected GraphBuilder graphBuilder;
 	protected NodeIdFactory nodeIdFactory; 
@@ -191,7 +191,7 @@ public abstract class ModelLearningGraph {
 			this.graphBuilder = new GraphBuilderTopK(ontologyManager, false);
 		this.nodeIdFactory = new NodeIdFactory();
 		
-		Set<InternalNode> addedNodes = new HashSet<InternalNode>();
+		Set<InternalNode> addedNodes = new HashSet<>();
 		Set<InternalNode> temp;
 		File ff = new File(contextParameters.getParameterValue(ContextParameter.JSON_MODELS_DIR));
 		if (ff.exists()) {
@@ -286,7 +286,7 @@ public abstract class ModelLearningGraph {
 				if (commonModelIds == null || matchedLink.getModelIds() == null)
 					return false;
 				commonModelIds = Sets.intersection(matchedLink.getModelIds(), commonModelIds);
-				if (commonModelIds.size() == 0) // no intersection
+				if (commonModelIds.isEmpty()) // no intersection
 					return false;
 			}
 		}
