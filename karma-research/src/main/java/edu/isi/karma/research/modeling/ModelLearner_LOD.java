@@ -709,7 +709,7 @@ public class ModelLearner_LOD {
 		int maxPatternSize = 1;
 		boolean recreateGraphs = true;
 		boolean useModifiedDS = false;
-		String lodDSName = "ds29";
+		String lodDSName = "ds";
 //		String lodDSName = "saam";
 //		String lodDSName = "musicbrainz";
 		
@@ -750,7 +750,7 @@ public class ModelLearner_LOD {
 
 		for (int i = 0; i < semanticModels.size(); i++) {
 //		for (int i = 0; i <= 10; i++) {
-//		int i = 0; {
+//		int i = 11; {
 
 			int newSourceIndex = i;
 			SemanticModel newSource = semanticModels.get(newSourceIndex);
@@ -805,7 +805,7 @@ public class ModelLearner_LOD {
 //						Params.LOD_OBJECT_PROPERIES_FILE, 
 //						Params.LOD_DATA_PROPERIES_FILE);
 				String patternPath;
-				if (lodDSName.equalsIgnoreCase("ds29")) 
+				if (lodDSName.equalsIgnoreCase("ds")) 
 					patternPath = Params.LOD_DIR + sourceName + "/" + Params.PATTERNS_OUTPUT_DIR;
 				else
 					patternPath = Params.LOD_DIR + lodDSName + "/" + Params.PATTERNS_OUTPUT_DIR;
@@ -848,7 +848,8 @@ public class ModelLearner_LOD {
 
 					String label = "candidate " + k + "\n" + 
 //							(m.getSteinerNodes() == null ? "" : m.getSteinerNodes().getScoreDetailsString()) +
-							"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n";
+//							"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getLinkCoherence().getCoherenceValue()) + "\n";
+							"link coherence:" + (m.getLinkCoherence() == null ? "" : m.getCoherenceString()) + "\n";
 					label += (m.getSteinerNodes() == null || m.getSteinerNodes().getCoherence() == null) ? 
 							"" : "node coherence:" + m.getSteinerNodes().getCoherence().getCoherenceValue() + "\n";
 					label += "confidence:" + m.getConfidenceScore() + "\n";
@@ -877,7 +878,7 @@ public class ModelLearner_LOD {
 			String outputPath, outputName;
 			outputName = newSource.getName();
 			if (useModifiedDS) outputName += ".modified";
-			outputName += "." + lodDSName;
+			outputName += lodDSName.equals("ds") ? "" : ("." + lodDSName);
 			outputName += onlyUseOntology ? ".p0" : ".p" + maxPatternSize;
 			outputName += Params.GRAPHVIS_OUT_FILE_EXT;
 			outputPath = outputDir + outputName;

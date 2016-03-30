@@ -300,7 +300,7 @@ public class VirtuosoManager {
 		String instance = "fusionRepository.isi.edu";
 //		int port = 1140;//music;  
 //		int port = 1300;  
-		int port = 1400;  
+		int port = 1500;  
 		String username = "dba";
 		String password = "dba";
 		
@@ -308,7 +308,7 @@ public class VirtuosoManager {
 		VirtuosoManager vm = new VirtuosoManager(vc);
 
 		
-		String baseGraph = "http://museum-edm-lod/";
+		String baseGraph = "http://weapon-lod/";
 		String filename, graphNameSuffix, graphName;
 		String patternInputDirStr;
 		List<String> graphIRIs = new ArrayList<String>();
