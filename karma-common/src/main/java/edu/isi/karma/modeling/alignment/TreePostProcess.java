@@ -102,7 +102,7 @@ public class TreePostProcess {
 		}
 
 		int maxReachableNodes = -1;
-		int reachableNodes = -1;
+		int reachableNodes;
 		
 		List<Node> vertexList = new ArrayList<Node>();
 		List<Integer> reachableNodesList = new ArrayList<Integer>();

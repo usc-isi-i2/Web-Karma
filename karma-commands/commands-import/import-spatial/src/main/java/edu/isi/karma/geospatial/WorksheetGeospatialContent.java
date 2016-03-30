@@ -102,7 +102,7 @@ public class WorksheetGeospatialContent {
 	private void populateGeospatialData() {
 		
 		List<String> coordinateHNodeIds = new ArrayList<String>();
-		CoordinateCase currentCase = CoordinateCase.NOT_PRESENT;
+		CoordinateCase currentCase;
 		boolean latFound = false;
 		boolean lngFound = false;
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {

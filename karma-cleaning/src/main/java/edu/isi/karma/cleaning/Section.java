@@ -48,7 +48,7 @@ public class Section implements GrammarTreeNode {
 		return res;
 	}
 	public String verifySpace() {
-		String rule = "";
+		String rule;
 		this.pair[0].isinloop = this.isinloop;
 		this.pair[1].isinloop = this.isinloop;
 		while (curState < this.rules.size()) {
@@ -200,7 +200,7 @@ public class Section implements GrammarTreeNode {
 	public String getRule(long index) {
 		if (index > this.rules.size())
 			return "null";
-		String rule = "";
+		String rule;
 		int[] loc = this.rules.get(((int) index));
 		pair[0].isinloop = this.isinloop;
 		pair[1].isinloop = this.isinloop;

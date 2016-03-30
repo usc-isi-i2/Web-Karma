@@ -106,7 +106,7 @@ public class TriplesMapWorkerPlan {
 						link.getTargetMap().getId().compareTo(triplesMap.getId()) == 0 && link.isFlipped())
 				{
 					PredicateObjectMap pom = link.getPredicateObjectMapLink();
-					TriplesMap objectTriplesMap = null;
+					TriplesMap objectTriplesMap;
 					if(link.isFlipped())
 					{
 						objectTriplesMap = link.getSourceMap();
@@ -163,7 +163,7 @@ public class TriplesMapWorkerPlan {
 				continue;
 			}
 			try{
-				PredicateObjectMappingPlan pomPlan = null;
+				PredicateObjectMappingPlan pomPlan;
 				if(pom.getObject().getTemplate().getAllColumnNameTermElements().isEmpty())
 				{
 					pomPlan = new ConstantPredicateObjectMappingPlan(subjectMapPlan.getTemplate(), pom, kr2rmlMapping,subjectMapPlan.getSubjectTermsToPaths(), uriFormatter, factory, translator, selection);

@@ -329,8 +329,8 @@ public class ToCSV {
 			IllegalArgumentException, InvalidFormatException {
 		File source = new File(strSource);
 		File destination = new File(strDestination);
-		File[] filesList = null;
-		String destinationFilename = null;
+		File[] filesList;
+		String destinationFilename;
 
 		// Check that the source file/folder exists.
 		if (!source.exists()) {
@@ -475,9 +475,9 @@ public class ToCSV {
 	 */
 	private void convertToCSV(File destination, String excelFileName)
 			throws FileNotFoundException, IOException {
-		Sheet sheet = null;
-		Row row = null;
-		int lastRowNum = 0;
+		Sheet sheet;
+		Row row;
+		int lastRowNum;
 		this.csvData = new ArrayList<ArrayList<String>>();
 
 		logger.info("Converting files contents to CSV format.");
@@ -520,8 +520,8 @@ public class ToCSV {
 
 	private void convertWorksheetToCSV(int wsIdx, Writer writer) throws IOException {
 		Sheet sheet = this.workbook.getSheetAt(wsIdx);
-		Row row = null;
-		int lastRowNum = 0;
+		Row row;
+		int lastRowNum;
 		this.csvData = new ArrayList<ArrayList<String>>();
 		this.maxRowWidth = -1;
 		
@@ -581,11 +581,11 @@ public class ToCSV {
 	 */
 	private void saveCSVFile(File file) throws FileNotFoundException,
 			IOException {
-		FileWriter fw = null;
+		FileWriter fw;
 		BufferedWriter bw = null;
-		ArrayList<String> line = null;
-		StringBuffer buffer = null;
-		String csvLineElement = null;
+		ArrayList<String> line;
+		StringBuffer buffer;
+		String csvLineElement;
 		try {
 
 			logger.info("Saving the CSV file [" + file.getName() + "]");
@@ -660,8 +660,8 @@ public class ToCSV {
 	 *            an Excel workbook.
 	 */
 	private void rowToCSV(Row row) {
-		Cell cell = null;
-		int lastCellNum = 0;
+		Cell cell;
+		int lastCellNum;
 		ArrayList<String> csvLine = new ArrayList<String>();
 
 		// Check to ensure that a row was recovered from the sheet as it is
@@ -740,7 +740,7 @@ public class ToCSV {
 	 *         mark characters correctly escaped.
 	 */
 	private String escapeEmbeddedCharacters(String field) {
-		StringBuffer buffer = null;
+		StringBuffer buffer;
 
 		// If the fields contents should be formatted to confrom with Excel's
 		// convention....
@@ -810,7 +810,7 @@ public class ToCSV {
 		// with matching names but different extensions - Test.xls and Test.xlsx
 		// for example - then the CSV file generated from one will overwrite
 		// that generated from the other.
-		ToCSV converter = null;
+		ToCSV converter;
 		try {
 			converter = new ToCSV();
 			if (args.length == 2) {

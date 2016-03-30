@@ -127,7 +127,7 @@ public class WebServiceLoader extends SourceLoader
 		
 		Model model = Repository.Instance().getModel();
 		
-		String service_id = "";
+		String service_id;
 		String service_name = "";
 		String service_address = "";
 		
@@ -445,8 +445,8 @@ public class WebServiceLoader extends SourceLoader
 		logger.debug("model size: " + model.getGraph().size());
 
 		String service_name = "";
-		String service_uri = "";
-		String service_id = "";
+		String service_uri;
+		String service_id;
 		String service_address = "";
 		String service_method = "";
 
@@ -466,8 +466,8 @@ public class WebServiceLoader extends SourceLoader
 
 		Resource service_resource = model.getResource(service_uri);
 		
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// service name
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_name_property);
@@ -493,7 +493,7 @@ public class WebServiceLoader extends SourceLoader
 		} else
 			logger.debug("service does not have a method.");
 
-		List<String> variables = null;
+		List<String> variables;
 		List<Attribute> inputAttributes = null;
 		List<Attribute> outputAttributes = null;
 		edu.isi.karma.rep.model.Model inputModel = null;
@@ -535,8 +535,8 @@ public class WebServiceLoader extends SourceLoader
 		Property has_variable_property = model.getProperty(Namespaces.KARMA + "hasVariable");
 	
 		List<String> variables = new ArrayList<String>();
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// hasAttribute
 		nodeIterator = model.listObjectsOfProperty(service_resource, has_variable_property);
@@ -563,8 +563,8 @@ public class WebServiceLoader extends SourceLoader
 
 		List<Attribute> attList = new ArrayList<Attribute>();
 		
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// hasAttribute
 		nodeIterator = model.listObjectsOfProperty(io_resource, has_attribute_property);
@@ -611,7 +611,7 @@ public class WebServiceLoader extends SourceLoader
 	
 	private Attribute getAttribute(Model model, Resource att_resource, String ioType, AttributeRequirement requirement) {
 		
-		String att_id = "";
+		String att_id;
 		String att_name = "";
 		String att_groundedIn = "";
 
@@ -622,8 +622,8 @@ public class WebServiceLoader extends SourceLoader
 		att_id = att_resource.getLocalName();
 		logger.debug("attribute id: " + att_id);
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 		
 
 		// attribute name
@@ -642,7 +642,7 @@ public class WebServiceLoader extends SourceLoader
 		} else
 			logger.debug("attribute does not have agroundedIn value.");
 
-		Attribute att = null;
+		Attribute att;
 		if (att_groundedIn.length() > 0)
 			att = new Attribute(att_id, att_resource.getNameSpace(), att_name, ioType, requirement, att_groundedIn );
 		else
@@ -657,9 +657,9 @@ public class WebServiceLoader extends SourceLoader
 		Property has_model_property = model.getProperty(Namespaces.KARMA + "hasModel");
 		Property has_atom_property = model.getProperty(Namespaces.KARMA + "hasAtom");
 		
-		NodeIterator nodeIterator = null;
-		RDFNode modelNode = null;
-		RDFNode atomNode = null;
+		NodeIterator nodeIterator;
+		RDFNode modelNode;
+		RDFNode atomNode;
 
 		// hasModel
 		nodeIterator = model.listObjectsOfProperty(io_resource, has_model_property);
@@ -695,8 +695,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		Property rdf_type = model.getProperty(Namespaces.RDF + "type");
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		String classAtomUri = Namespaces.SWRL + "ClassAtom";
 		String propertyAtomUri = Namespaces.SWRL + "IndividualPropertyAtom";
@@ -723,11 +723,11 @@ public class WebServiceLoader extends SourceLoader
 	
 	private ClassAtom getClassAtom(Model model, Resource atom_resource) {
 		
-		String predicateUri = null;
-		String predicatePrefix = null;
-		String predicateNs = null;
+		String predicateUri;
+		String predicatePrefix;
+		String predicateNs;
 		
-		String argument1Id = null;
+		String argument1Id;
 		String argument1Type = null;
 		
 		Resource attribute = ResourceFactory.createResource(Namespaces.KARMA + "Attribute");
@@ -737,8 +737,8 @@ public class WebServiceLoader extends SourceLoader
 		Property argument1_property = model.getProperty(Namespaces.SWRL + "argument1");
 
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, class_predicate_property);
@@ -779,12 +779,12 @@ public class WebServiceLoader extends SourceLoader
 	
 	private IndividualPropertyAtom getPropertyAtom(Model model, Resource atom_resource) {
 		
-		String predicateUri = null;
-		String predicatePrefix = null;
-		String predicateNs = null;
+		String predicateUri;
+		String predicatePrefix;
+		String predicateNs;
 		
-		String argument1Id = null;
-		String argument2Id = null; 
+		String argument1Id;
+		String argument2Id; 
 
 		String argument1Type = null;
 		String argument2Type = null; 
@@ -796,8 +796,8 @@ public class WebServiceLoader extends SourceLoader
 		Property argument1_property = model.getProperty(Namespaces.SWRL + "argument1");
 		Property argument2_property = model.getProperty(Namespaces.SWRL + "argument2");
 
-		NodeIterator nodeIterator = null;
-		RDFNode node = null;
+		NodeIterator nodeIterator;
+		RDFNode node;
 
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, property_predicate_property);

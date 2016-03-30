@@ -160,7 +160,7 @@ public class SubmitCleaningCommand extends WorksheetSelectionCommand {
 		String Msg = String.format("submit end, Time,%d, Worksheet,%s",
 				System.currentTimeMillis(), worksheetId);
 		logger.info(Msg);
-		String colnameString = "";
+		String colnameString;
 		UpdateContainer c = new UpdateContainer();
 		HNodePath selectedPath = null;
 		try {

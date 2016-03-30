@@ -57,7 +57,7 @@ public abstract class AbstractJDBCUtil {
 	public abstract ArrayList<String> getListOfTables(Connection conn) throws SQLException, ClassNotFoundException;
 
 	protected Connection getConnection(String driver, String connectString) throws SQLException, ClassNotFoundException {
-		Connection localConn = null;
+		Connection localConn;
 		Class.forName(driver);
 		localConn = DriverManager.getConnection(connectString);
 		return localConn;
@@ -166,7 +166,7 @@ public abstract class AbstractJDBCUtil {
 		vals.add(columnNamesRow);
 		
 		// Add an ArrayList for each row
-		ArrayList<String> row = null;
+		ArrayList<String> row;
 		while ((row = parseResultSetRow(r)) != null) {
 			vals.add(row);
 		}

@@ -283,7 +283,7 @@ public class SemanticModel {
 		}
 		
 		Set<String> baseTriples = getTriples(baseModel.getGraph(), baseNodeIds, ignoreSemanticTypes, ignoreColumnNodes);
-		Set<String> targetTriples = null;
+		Set<String> targetTriples;
 		List<HashMap<Node,String>> targetNodeIdSets = getPossibleNodeIdSets();
 		if (targetNodeIdSets == null)
 			return null;
@@ -375,7 +375,7 @@ public class SemanticModel {
 			NodeIdFactory nodeIdFactory = new NodeIdFactory();
 			
 			for (Node n : columnNodes) {
-				ColumnNode cn = null;
+				ColumnNode cn;
 				if (this.mappingToSourceColumns != null && 
 						(cn = this.mappingToSourceColumns.get((ColumnNode)n)) != null) {
 					nodeIds.put(n, cn.getId());
@@ -573,7 +573,7 @@ public class SemanticModel {
 		HashMap<String, Set<String>> targetNodePairToLinks = new HashMap<String, Set<String>>();
 
 		String key, sourceStr, targetStr, linkStr;
-		Integer count = 0;
+		Integer count;
 		
 		// Adding the nodes to the maps
 		for (Node n : mainModel.graph.vertexSet()) {

@@ -299,7 +299,7 @@ public class TurtleRDFParser implements RDFParser {
                 // match predicate
                 match = Regex.PREDICATE.matcher(state.line);
                 if (match.find()) {
-                    String iri = "";
+                    String iri;
                     if (match.group(1) != null) {
                         // matched IRI
                         iri = unescape(match.group(1));

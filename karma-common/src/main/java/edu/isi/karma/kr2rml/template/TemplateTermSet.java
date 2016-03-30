@@ -94,7 +94,7 @@ public class TemplateTermSet {
 			} else if (term instanceof ColumnTemplateTerm) {
 				HNode hNode = factory.getHNode(term.getTemplateTermValue());
 				if (hNode != null) {
-					String colNameStr = "";
+					String colNameStr;
 					try {
 						JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
 						if (colNameArr.length() == 1) {
@@ -133,7 +133,7 @@ public class TemplateTermSet {
 			} else if (term instanceof ColumnTemplateTerm) {
 				HNode hNode = factory.getHNode(term.getTemplateTermValue());
 				if (hNode != null) {
-					String colNameStr = "";
+					String colNameStr;
 					try {
 						JSONArray colNameArr = hNode.getJSONArrayRepresentation(factory);
 						if (colNameArr.length() == 1) {

@@ -235,7 +235,7 @@ public class SteinerNodes implements Comparable<SteinerNodes> {
 	
 	private double getArithmeticMean(double[] input) {
 		
-		double result = 0.0;
+		double result;
 		if (input == null)
 			return 0.0;
 		

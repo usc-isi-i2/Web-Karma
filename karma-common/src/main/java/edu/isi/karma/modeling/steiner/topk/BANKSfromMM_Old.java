@@ -196,7 +196,7 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 		TreeSet<SteinerNode> steinerNodes = new TreeSet<SteinerNode>();
 		Map<String , SteinerNode> treeNodes= new HashMap<String, SteinerNode>();
 		
-		SteinerNode replacedNode = null;
+		SteinerNode replacedNode;
 		if (this.recurseNodeMap.containsKey(ancestor)) {
 			replacedNode = this.recurseNodeMap.get(ancestor);
 			treeNodes.put(replacedNode.name,new SteinerNode(replacedNode.name));
@@ -363,7 +363,7 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 					while(!rs.isEmpty()){
 						
 						accessedEdges++;
-						SteinerNode newNode=null;
+						SteinerNode newNode;
 						
 						// getting (creating) neighbor of n
 						SteinerEdge e= rs.poll();

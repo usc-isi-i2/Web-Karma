@@ -213,7 +213,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		String mapPredicateName = pom.getPredicate().getId().replaceAll("[^\\w]", "_");
 		if(object instanceof String)
 		{
-			Map<String, String> values = null;
+			Map<String, String> values;
 			if(subject.get(mapPredicateName)== null)
 			{
 				subject.put(mapPredicateName, new ConcurrentHashMap<String, String>());
@@ -223,7 +223,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 		}
 		else if(object instanceof GenericRecord)
 		{
-			Map<String, GenericRecord> values = null;
+			Map<String, GenericRecord> values;
 			if(subject.get(mapPredicateName)== null)
 			{
 				subject.put(mapPredicateName, new ConcurrentHashMap<String, GenericRecord>());

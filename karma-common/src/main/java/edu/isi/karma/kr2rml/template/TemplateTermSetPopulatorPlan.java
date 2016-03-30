@@ -189,7 +189,7 @@ public class TemplateTermSetPopulatorPlan {
 
 	private TemplateTermSetPopulatorStrategy generateStrategy(
 			ColumnTemplateTerm currentTerm, ColumnTemplateTerm dependentTerm) {
-		TemplateTermSetPopulatorStrategy strategy = null;
+		TemplateTermSetPopulatorStrategy strategy;
 		if(dependentTerm == null && firstWorker == null) 
 		{
 			strategy = new MemoizedTemplateTermSetPopulatorStrategy(termToPath.get(currentTerm));
@@ -225,7 +225,7 @@ public class TemplateTermSetPopulatorPlan {
 
 	private void generateDependency(ColumnTemplateTerm dependentTerm,
 			TemplateTermSetPopulatorWorker worker) {
-		TemplateTermSetPopulatorWorker dependentOnWorker = null;
+		TemplateTermSetPopulatorWorker dependentOnWorker;
 		dependentOnWorker = workers.get(dependentTerm);
 		if(dependentOnWorker != null)
 		{

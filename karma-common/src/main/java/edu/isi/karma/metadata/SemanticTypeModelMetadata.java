@@ -23,7 +23,7 @@ public class SemanticTypeModelMetadata extends KarmaUserMetadata {
 	
 	@Override
 	public void setup(UpdateContainer uc, Workspace workspace) {
-		File modelFile = null;
+		File modelFile;
 		modelFile = new File(contextParameters.getParameterValue(ContextParameter.SEMTYPE_MODEL_DIRECTORY));
 		/* Read and populate CRF Model from a file */
 		if(!modelFile.exists())

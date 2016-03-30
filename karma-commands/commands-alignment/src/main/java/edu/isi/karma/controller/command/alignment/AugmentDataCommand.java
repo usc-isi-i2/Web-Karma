@@ -184,7 +184,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 				subjectsIterator.remove();
 			}
 			try {
-				Map<String, List<String>> temp = null;
+				Map<String, List<String>> temp;
 				if (!incoming)
 					temp = util.getObjectsForSubjectsAndPredicates(dataRepoUrl, null, tempSubjects , predicates, otherClasses, sameAsPredicate);
 				else

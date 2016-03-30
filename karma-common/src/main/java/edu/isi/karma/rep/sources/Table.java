@@ -244,7 +244,7 @@ public class Table {
     	
     	Table resultTable = new Table();
     	
-		String attributeId = "";
+		String attributeId;
 		List<String> uniqueAttributeIDs = new ArrayList<String>();
 		
 		List<List<Attribute>> srcAttributes = new ArrayList<List<Attribute>>();
@@ -272,10 +272,10 @@ public class Table {
 			}
 		}
 		
-		List<Attribute> rawAttributes = null;
+		List<Attribute> rawAttributes;
 		List<String> rawAttributeIDs = new ArrayList<String>();
-		List<String> rawValues = null;
-		String singleValue = null;
+		List<String> rawValues;
+		String singleValue;
 		for (int i = 0; i < srcAttributes.size(); i++) {
 			
 			rawAttributes = srcAttributes.get(i);

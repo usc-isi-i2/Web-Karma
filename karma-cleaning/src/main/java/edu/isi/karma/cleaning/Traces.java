@@ -122,7 +122,7 @@ public class Traces implements GrammarTreeNode {
 	}
 
 	Vector<Segment> findSegs(int pos){
-		Vector<Segment> ret = new Vector<Segment>();
+		Vector<Segment> ret;
 		ret = SegmentMapper.findMapping(orgNodes, tarNodes, pos);
 		return ret;
 	}
@@ -537,7 +537,7 @@ public class Traces implements GrammarTreeNode {
 	public Vector<GrammarTreeNode> consolidate_tool(Vector<Vector<GrammarTreeNode>> lists)
 	{
 		Vector<GrammarTreeNode> res = lists.get(0);
-		Vector<GrammarTreeNode> result = new Vector<GrammarTreeNode>();
+		Vector<GrammarTreeNode> result;
 		for (int i = 1; i < lists.size(); i++) {
 			result = new Vector<GrammarTreeNode>();
 			for (int j = 0; j < res.size(); j++) {
@@ -550,7 +550,7 @@ public class Traces implements GrammarTreeNode {
 	}
 	public Template consolidate(Vector<Template> paths) {
 		Vector<GrammarTreeNode> res = paths.get(0).body;
-		Vector<GrammarTreeNode> result = new Vector<GrammarTreeNode>();
+		Vector<GrammarTreeNode> result;
 		for (int i = 1; i < paths.size(); i++) {
 
 			result = new Vector<GrammarTreeNode>();
@@ -895,7 +895,7 @@ public class Traces implements GrammarTreeNode {
 	}
 
 	public String toProgram() {
-		String resString = "";
+		String resString;
 		while (curState < totalOrderVector.size()) {
 			resString = this.totalOrderVector.get(curState).toProgram();
 			if (!resString.contains("null")) {
