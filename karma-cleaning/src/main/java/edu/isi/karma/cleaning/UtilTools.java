@@ -28,6 +28,9 @@ public class UtilTools {
 	private UtilTools() {
 	}
 
+	private UtilTools() {
+	}
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Map sortByComparator(Map unsortMap) {
 		List list = new LinkedList(unsortMap.entrySet());
