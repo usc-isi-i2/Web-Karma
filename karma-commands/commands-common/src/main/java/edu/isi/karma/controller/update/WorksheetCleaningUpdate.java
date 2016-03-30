@@ -226,4 +226,12 @@ AbstractUpdate {
 		}
 		return false;
 	}
+
+	@Override
+	public int hashCode() {
+		int result = this.worksheetId != null ? this.worksheetId.hashCode() : 0;
+		result = 31 * result + (this.forceUpdates ? 1 : 0);
+		result = 31 * result + (this.selection != null ? this.selection.hashCode() : 0);
+		return result;
+	}
 }
