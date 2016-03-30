@@ -2,6 +2,7 @@ package edu.isi.karma.cleaning;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Vector;
 /*
  *store the traces for all the examples
@@ -39,14 +40,14 @@ public class ExampleTraces {
 		String key = String.format("%s|%s", example[0],example[1]);
 		return expTraces.get(key);
 	}
-	public Vector<Vector<Segment>> getCurrentSegments(String[] example)
+	public ArrayList<ArrayList<Segment>> getCurrentSegments(String[] example)
 	{
-		Vector<Vector<Segment>> res = new Vector<Vector<Segment>>();
+		ArrayList<ArrayList<Segment>> res = new ArrayList<ArrayList<Segment>>();
 		Traces t = this.getTrace(example);
 		Collection<Template> x = t.traceline.values();
 		for(Template tmp:x)
 		{
-			Vector<Segment> line = new Vector<Segment>();
+			ArrayList<Segment> line = new ArrayList<Segment>();
 			for(GrammarTreeNode node:tmp.body)
 			{
 				line.add((Segment)node);
@@ -66,7 +67,7 @@ public class ExampleTraces {
 			return s.tarString;
 		}
 	}
-	public Vector<int[]> getSegmentPos(Segment s)
+	public ArrayList<int[]> getSegmentPos(Segment s)
 	{
 		if(s.isConstSegment())
 		{
@@ -74,7 +75,7 @@ public class ExampleTraces {
 		}
 		else
 		{
-			Vector<int[]> poses = new Vector<int[]>();
+			ArrayList<int[]> poses = new ArrayList<int[]>();
 			for(Section sec:s.section)
 			{
 				int[] x = {sec.pair[0].absPosition.get(0),sec.pair[1].absPosition.get(0)};
