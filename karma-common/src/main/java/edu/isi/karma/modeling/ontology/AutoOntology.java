@@ -71,7 +71,7 @@ public class AutoOntology {
 		op.addDomain(topClass);
 //		op.addRange(thingClass);
 		
-		Writer outUTF8 =null;
+		Writer outUTF8;
 		try {
 			outUTF8 = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(path), "UTF8"));

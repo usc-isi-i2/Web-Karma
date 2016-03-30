@@ -182,14 +182,14 @@ public class WorksheetToFeatureCollection {
 
 	private boolean isSubClassOf(String subClassUri, String superClassUri,
 			boolean recursive) {
-		boolean isSub = false;
+		boolean isSub;
 		isSub = this.om.isSubClass(subClassUri, superClassUri, recursive);
 		return isSub;
 	}
 
 	private boolean isSubPropertyOf(String subPropertyUri,
 			String superPropertyUri, boolean recursive) {
-		boolean isSub = false;
+		boolean isSub;
 		isSub = this.om.isSubProperty(subPropertyUri, superPropertyUri,
 				recursive);
 		return isSub;
@@ -316,8 +316,8 @@ public class WorksheetToFeatureCollection {
 
 		for (Row row : rows) {
 			try {
-				Geometry JTSGeometry = null;
-				String posList = null;
+				Geometry JTSGeometry;
+				String posList;
 				if (geometry2HNodeId == "") {
 					posList = row.getNode(geometryHNodeId).getValue()
 							.asString();
@@ -347,7 +347,7 @@ public class WorksheetToFeatureCollection {
 				if (JTSGeometry == null) 
 					continue;
 
-				String srid = "";
+				String srid;
 				if (SRIDHNodeId != "")
 					srid = row.getNode(SRIDHNodeId).getValue().asString();
 				else
@@ -803,7 +803,7 @@ public class WorksheetToFeatureCollection {
 		final StringWriter out = new StringWriter();
 		kml.marshal(out);
 		String test = out.toString();
-		Writer outUTF8 = null;
+		Writer outUTF8;
 		try {
 			outUTF8 = new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(outputFile), "UTF8"));

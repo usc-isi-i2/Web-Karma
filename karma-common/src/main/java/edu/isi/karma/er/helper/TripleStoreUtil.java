@@ -980,7 +980,7 @@ public class TripleStoreUtil {
 			String context, boolean replaceFlag, 
 			String rdfType, String baseURL) throws KarmaException {
 		boolean retVal = false;
-		HttpResponse response = null;
+		HttpResponse response;
 
 		tripleStoreURL = normalizeTripleStoreURL(tripleStoreURL);
 		testTripleStoreConnection(tripleStoreURL);

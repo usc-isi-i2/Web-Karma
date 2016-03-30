@@ -173,7 +173,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 
 		// Generate the KR2RML data structures for the RDF generation
 		final ErrorReport errorReport = new ErrorReport();
-		KR2RMLMappingGenerator mappingGen = null;
+		KR2RMLMappingGenerator mappingGen;
 		String url = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelUrl);
 		String modelContext = worksheet.getMetadataContainer().getWorksheetProperties().getPropertyValue(Property.modelContext);
 		TripleStoreUtil utilObj = new TripleStoreUtil();
@@ -214,7 +214,7 @@ public class PublishRDFCommand extends WorksheetSelectionCommand {
 
 		StringWriter sw = new StringWriter();
 		// Generate the RDF using KR2RML data structures
-		long start = 0;
+		long start;
 		try {
 			List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
 			File f = new File(rdfFileLocalPath);

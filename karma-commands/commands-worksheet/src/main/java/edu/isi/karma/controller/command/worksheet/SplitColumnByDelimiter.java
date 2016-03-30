@@ -86,7 +86,7 @@ public class SplitColumnByDelimiter {
 		}
 
 		// Convert the delimiter into character primitive type
-		char delimiterChar = ',';
+		char delimiterChar;
 		if (delimiter.equalsIgnoreCase("space"))
 			delimiterChar = ' ';
 		else if (delimiter.equalsIgnoreCase("tab"))
@@ -182,7 +182,7 @@ public class SplitColumnByDelimiter {
 		RepFactory factory = workspace.getFactory();
 		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
 		List<Table> tables = new ArrayList<Table>();
-		char delimiterChar = ',';
+		char delimiterChar;
 		if (delimiter.equalsIgnoreCase("space"))
 			delimiterChar = ' ';
 		else if (delimiter.equalsIgnoreCase("tab"))

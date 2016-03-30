@@ -75,7 +75,7 @@ public class TriplesMapGraphMerger {
 		}
 		iter = graphsForMerging.iterator();
 		TriplesMapGraph mergedGraph = iter.next();
-		TriplesMapGraph graphToMerge = null;
+		TriplesMapGraph graphToMerge;
 		while(iter.hasNext())
 		{
 			graphToMerge = iter.next();

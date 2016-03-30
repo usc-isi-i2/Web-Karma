@@ -166,7 +166,7 @@ public class RandomGUID extends Object {
 
         try {
             long time = System.currentTimeMillis();
-            long rand = 0;
+            long rand;
 
             if (secure) {
                 rand = mySecureRand.nextLong();

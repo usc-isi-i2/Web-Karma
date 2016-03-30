@@ -56,7 +56,7 @@ public class PythonRepository {
 
 	public PyCode compileAndAddToRepositoryAndExec(PythonInterpreter interpreter, String statement)
 	{
-		PyCode py  = null;
+		PyCode py;
 		if(!scripts.containsKey(statement))
 		{
 			py = compileAndAddToRepository(interpreter,statement);
@@ -69,7 +69,7 @@ public class PythonRepository {
 	}
 	public PyCode compileAndAddToRepository(PythonInterpreter interpreter,
 			String statement) {
-		PyCode py  = null;
+		PyCode py;
 		if(!scripts.containsKey(statement))
 		{
 			py = compile(interpreter, statement);

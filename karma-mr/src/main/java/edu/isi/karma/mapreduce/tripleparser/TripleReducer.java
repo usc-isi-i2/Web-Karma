@@ -29,7 +29,7 @@ public class TripleReducer extends
 		String target;
 		
 		String object = parts[2]; 
-		String literalValue = "";
+		String literalValue;
 		
 		String prefix = "Literal:";
 		if (object.startsWith(prefix)) { // object is literal

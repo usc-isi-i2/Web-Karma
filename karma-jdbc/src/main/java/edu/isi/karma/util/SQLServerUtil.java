@@ -121,7 +121,7 @@ public class SQLServerUtil extends AbstractJDBCUtil {
 
 	@Override
 	public String prepareName(String name) {
-		String s = name;
+		String s;
 		s = name.replace('-', '_');
 		s = "[" + s + "]";
 		return s;

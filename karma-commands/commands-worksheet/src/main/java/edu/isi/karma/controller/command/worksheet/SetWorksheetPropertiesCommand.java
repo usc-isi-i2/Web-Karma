@@ -85,7 +85,7 @@ public class SetWorksheetPropertiesCommand extends WorksheetCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		worksheet = workspace.getWorksheet(worksheetId);
 		
-		JSONObject propertiesJson = null;
+		JSONObject propertiesJson;
 		try {
 			propertiesJson = new JSONObject(properties);
 			WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
