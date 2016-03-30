@@ -96,7 +96,7 @@ public class DatabaseTableImport extends Import {
         return generateWorksheet(dbUtil, data);
     }
 
-    private Worksheet generateWorksheet(AbstractJDBCUtil dbUtil, ArrayList<ArrayList<String>> data)
+    private Worksheet generateWorksheet(AbstractJDBCUtil dbUtil, List<ArrayList<String>> data)
     {
 	    /**
 	     * Add the headers *
@@ -117,7 +117,7 @@ public class DatabaseTableImport extends Import {
 	    for (int i = 1; i < data.size(); i++)
 	    {
 		    Row row = dataTable.addRow(getFactory());
-		    ArrayList<String> rowData = data.get(i);
+		    List<String> rowData = data.get(i);
 		    for (int j = 0; j < rowData.size(); j++)
 		    {
 			    row.setValue(headersList.get(j), rowData.get(j), getFactory());

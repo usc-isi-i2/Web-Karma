@@ -69,7 +69,7 @@ public class DFSTriplesMapGraphDAGifier implements TriplesMapGraphDAGifier {
 		return spilledNodes;
 	}
 
-	private List<String> cleanGraph(HashSet<String> triplesMapsIds,
+	private List<String> cleanGraph(Set<String> triplesMapsIds,
 			TriplesMapGraph newGraph, String rootTriplesMapId) {
 		boolean modifications = true;
 		List<String> spilledTriplesMaps = new LinkedList<String>();

@@ -297,7 +297,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 	
 	@Override
 	public void finishRow() {
-		for(ConcurrentHashMap<String, GenericRecord> records : this.rootObjectsByTriplesMapId.values())
+		for(Map<String, GenericRecord> records : this.rootObjectsByTriplesMapId.values())
 		{
 			
 			for(GenericRecord record : records.values()){ 

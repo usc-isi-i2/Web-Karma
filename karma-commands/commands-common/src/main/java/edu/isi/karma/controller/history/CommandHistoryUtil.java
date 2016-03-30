@@ -28,7 +28,7 @@ public class CommandHistoryUtil {
 	private final List<Command> commands = new ArrayList<Command>();
 	private Workspace workspace;
 	private String worksheetId;
-	HashMap<String, CommandFactory> commandFactoryMap;
+	Map<String, CommandFactory> commandFactoryMap;
 	static Logger logger = Logger.getLogger(CommandHistoryUtil.class);
 
 	public CommandHistoryUtil(List<Command> commands, Workspace workspace, String worksheetId) {

@@ -3,6 +3,7 @@ package edu.isi.karma.cleaning.Research;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import edu.isi.karma.cleaning.Program;
 // input: classifier, results for each record
@@ -10,8 +11,8 @@ import edu.isi.karma.cleaning.Program;
 
 public class ClassifierRefiner {
 	Program prog;
-	HashMap<String, HashMap<String,String>> uData;
-	HashMap<String, ArrayList<String>> clusters = new HashMap<String, ArrayList<String>>();
+	Map<String, HashMap<String,String>> uData;
+	Map<String, ArrayList<String>> clusters = new HashMap<String, ArrayList<String>>();
 	public ClassifierRefiner(Program prog, HashMap<String, HashMap<String,String>> uData)
 	{
 		this.prog = prog;
@@ -28,7 +29,7 @@ public class ClassifierRefiner {
 	{
 		for(String row:uData.keySet())
 		{
-			HashMap<String, String> dict = uData.get(row);
+			Map<String, String> dict = uData.get(row);
 			String ckey = dict.get("class");
 			String org = dict.get("Org");
 			if(clusters.containsKey(ckey))

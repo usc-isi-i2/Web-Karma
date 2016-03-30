@@ -207,7 +207,7 @@ public abstract class AbstractJDBCUtil {
 	 * @throws ClassNotFoundException
 	 */
 	public boolean tableExists(String tableName, Connection conn) throws SQLException, ClassNotFoundException {
-		ArrayList<String> tn = getListOfTables(conn);
+		List<String> tn = getListOfTables(conn);
 
 		if (tn.contains(tableName)) {
 			return true;

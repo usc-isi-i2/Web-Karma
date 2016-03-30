@@ -2,6 +2,7 @@ package edu.isi.karma.cleaning.features;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.Ruler;
@@ -23,8 +24,8 @@ public class CntFeature implements Feature {
 	}
 
 	// x is the old y is the new example
-	public double calFeatures(ArrayList<Vector<TNode>> x,
-			ArrayList<Vector<TNode>> y) {
+	public double calFeatures(List<Vector<TNode>> x,
+			List<Vector<TNode>> y) {
 		HashMap<Integer, Integer> tmp = new HashMap<Integer, Integer>();
 		for (int i = 0; i < y.size(); i++) {
 			int cnt = 0;

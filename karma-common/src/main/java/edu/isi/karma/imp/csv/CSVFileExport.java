@@ -31,6 +31,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,7 @@ public class CSVFileExport {
 				filename;
 		logger.info("CSV file exported. Location:"
 				+ outputFile);
-		HashMap<String, String> modeledColumnTable = new HashMap<String, String>();
+		Map<String, String> modeledColumnTable = new HashMap<String, String>();
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			modeledColumnTable.put(type.getHNodeId(),"");
 		}

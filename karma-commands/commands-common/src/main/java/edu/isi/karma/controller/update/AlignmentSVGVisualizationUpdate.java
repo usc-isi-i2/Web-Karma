@@ -25,6 +25,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
@@ -150,8 +151,8 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			JSONArray linksArr = new JSONArray();
 			JSONArray edgeLinksArr = new JSONArray();
 
-			HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
-			HashMap<String, ColumnNode> columnNodes = new HashMap<>();
+			Map<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
+			Map<String, ColumnNode> columnNodes = new HashMap<>();
 
 			if (alignmentGraph != null
 					&& alignmentGraph.vertexSet().size() != 0) {
@@ -330,7 +331,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			DisplayModel dm = new DisplayModel(alignmentGraph, vWorksheet
 					.getWorksheet().getHeaders());
 			HashMap<Node, Integer> nodeHeightsMap = dm.getNodesLevel();
-			HashMap<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
+			Map<Node, Set<ColumnNode>> nodeCoverage = dm.getNodesSpan();
 			/** Identify the max height **/
 			int maxTreeHeight = 0;
 			for (Node node : nodeHeightsMap.keySet()) {
@@ -346,7 +347,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 					&& alignmentGraph.vertexSet().size() != 0) {
 				/** Add the nodes **/
 				Set<Node> nodes = alignmentGraph.vertexSet();
-				HashMap<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
+				Map<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
 				int nodesIndexcounter = 0;
 				for (Node node : nodes) {
 					/**

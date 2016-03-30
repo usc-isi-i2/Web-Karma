@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +37,7 @@ public abstract class BaseRDFImpl implements Serializable {
     protected boolean hasHeader = false;
     boolean readKarmaConfig = false;
     protected JSONArray jKarmaConfig = null;
-    protected HashMap<String, Pattern> urlPatterns=null;
+    protected Map<String, Pattern> urlPatterns=null;
     protected boolean disableNesting = false;
     public BaseRDFImpl(String propertyPath) {
         try {

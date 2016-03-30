@@ -26,14 +26,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import edu.isi.karma.cleaning.MyLogger;
 
 public class DataCollection {
 	public static String config = "";
-	Vector<FileStat> fstates = new Vector<FileStat>();
-	public HashSet<String> succeededFiles = new HashSet<String>();
+	List<FileStat> fstates = new Vector<FileStat>();
+	public Set<String> succeededFiles = new HashSet<String>();
 	@SuppressWarnings("unused")
 	public DataCollection() {
 		MyLogger myLogger = new MyLogger();
