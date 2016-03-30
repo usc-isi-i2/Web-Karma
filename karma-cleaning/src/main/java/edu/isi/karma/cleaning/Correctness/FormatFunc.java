@@ -18,8 +18,8 @@ import edu.isi.karma.cleaning.UtilTools;
 
 public class FormatFunc implements VerificationFunc {
 	private int funid = 1;
-	private HashMap<String, double[]> cmeans = new HashMap<String, double[]>();
-	private HashMap<String, double[]> mean_var = new HashMap<String, double[]>();
+	private HashMap<String, double[]> cmeans = new HashMap<>();
+	private HashMap<String, double[]> mean_var = new HashMap<>();
 	private double[] dmetric= null;
 	public FormatFunc(ArrayList<TransRecord> records, double[] dmetric)
 	{
@@ -31,7 +31,7 @@ public class FormatFunc implements VerificationFunc {
 	//identify the mean vector of each cluster
 	private void getMeanandDists(ArrayList<TransRecord> records, double[] dmetric)
 	{
-		HashMap<String, ArrayList<TransRecord>> tmp = new HashMap<String,ArrayList<TransRecord>>();
+		HashMap<String, ArrayList<TransRecord>> tmp = new HashMap<>();
 		for(TransRecord rec:records)
 		{
 			if(tmp.containsKey(rec.label))
@@ -40,7 +40,7 @@ public class FormatFunc implements VerificationFunc {
 			}
 			else
 			{
-				ArrayList<TransRecord> x = new ArrayList<TransRecord>();
+				ArrayList<TransRecord> x = new ArrayList<>();
 				x.add(rec);
 				tmp.put(rec.label, x);
 			}
@@ -51,7 +51,7 @@ public class FormatFunc implements VerificationFunc {
 			ArrayList<TransRecord> tdata = tmp.get(key);
 			if(tdata.size() > 0 || tdata.get(0).features.length > 0)
 			{
-				ArrayList<double[]> tcl = new ArrayList<double[]>();
+				ArrayList<double[]> tcl = new ArrayList<>();
 				for(int i =0; i< tdata.size(); i++)
 				{
 					 tcl.add(tdata.get(i).features); 

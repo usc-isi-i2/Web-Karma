@@ -28,7 +28,7 @@ public abstract class Selection {
 	protected SelectionStatus status;
 	protected Workspace workspace;
 	protected String worksheetId;
-	protected List<Tag> tags = new ArrayList<Tag>();
+	protected List<Tag> tags = new ArrayList<>();
 	protected String hTableId;
 	protected String Id;
 	protected Map<Row, Boolean> selectedRowsCache;
@@ -48,9 +48,9 @@ public abstract class Selection {
 		{
 			this.superSelectionName = "";
 		}
-		selectedRowsCache = new HashMap<Row, Boolean>();
-		evalColumns = new HashSet<String>();
-		selectedRowsColumns = new HashSet<String>();
+		selectedRowsCache = new HashMap<>();
+		evalColumns = new HashSet<>();
+		selectedRowsColumns = new HashSet<>();
 		hasSelectedRowsMethod = false;
 	}
 		
@@ -104,11 +104,11 @@ public abstract class Selection {
 	public abstract void updateSelection();
 	
 	public Set<String> getInputColumns() {
-		return new HashSet<String>(evalColumns);
+		return new HashSet<>(evalColumns);
 	}
 	
 	public Set<String> getSelectedRowsColumns() {
-		return new HashSet<String>(selectedRowsColumns);
+		return new HashSet<>(selectedRowsColumns);
 	}
 	
 	public String getParentSuperSelection() {

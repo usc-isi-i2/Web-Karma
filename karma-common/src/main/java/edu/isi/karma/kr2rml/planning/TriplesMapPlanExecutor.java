@@ -61,7 +61,7 @@ public class TriplesMapPlanExecutor {
 			
 			if(submitPlansIndividually)
 			{
-				List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
+				List<Future<Boolean>> results = new LinkedList<>();
 				results = service.invokeAll(plan.workers);
 				for(Future<Boolean> result : results)
 				{

@@ -94,7 +94,7 @@ public class ModelLearningGraphSparse extends ModelLearningGraph {
 			return null;
 		}
 
-		visitedNodes = new HashMap<Node, Node>();
+		visitedNodes = new HashMap<>();
 
 		for (LabeledLink e : model.getGraph().edgeSet()) {
 

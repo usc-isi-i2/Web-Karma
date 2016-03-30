@@ -52,7 +52,7 @@ public class WorksheetProperties {
 	}
 	
 	public WorksheetProperties() {
-		propertyValueMap = new HashMap<Property, String>();
+		propertyValueMap = new HashMap<>();
 	}
 
 	public void setPropertyValue(Property property, String value) {

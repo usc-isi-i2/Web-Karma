@@ -27,8 +27,8 @@ import edu.isi.karma.cleaning.TNode;
 
 public class Feature4 implements RecFeature {
 	public String target;
-	public Vector<TNode> xNodes = new Vector<TNode>();
-	public Vector<TNode> yNodes = new Vector<TNode>();
+	public Vector<TNode> xNodes = new Vector<>();
+	public Vector<TNode> yNodes = new Vector<>();
 	public double weight = 1.0;
 
 	public Feature4(String tar, Vector<TNode> xNodes, Vector<TNode> yNodes,

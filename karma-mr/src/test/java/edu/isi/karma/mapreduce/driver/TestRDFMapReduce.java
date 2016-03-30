@@ -30,13 +30,13 @@ public abstract class TestRDFMapReduce {
 	{
 		String fileText = IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream(file));
 		String[] serializedPairs = fileText.split("\\)(\r\n|\n)\\(");
-		List<Pair<Text,Text>> pairs = new LinkedList<Pair<Text,Text>>();
+		List<Pair<Text,Text>> pairs = new LinkedList<>();
 		for(String serializedPair : serializedPairs)
 		{
 			int firstComma = serializedPair.indexOf(",");
 			String key = serializedPair.substring(serializedPair.startsWith("(")?1: 0, firstComma);
 			String value = serializedPair.substring(firstComma + 2, serializedPair.length()-(serializedPair.endsWith(")")? 1:0));
-			pairs.add(new Pair<Text,Text>(new Text(key), new Text(value)));
+			pairs.add(new Pair<>(new Text(key), new Text(value)));
 		}
 		return pairs;
 	}
@@ -44,7 +44,7 @@ public abstract class TestRDFMapReduce {
 	{
 		String fileText = IOUtils.toString(TestJSONMapReduce.class.getClassLoader().getResourceAsStream(file));
 		String[] values = fileText.split("(\r\n|\n)");
-		List<Pair<Writable,Text>> pairs = new LinkedList<Pair<Writable,Text>>();
+		List<Pair<Writable,Text>> pairs = new LinkedList<>();
 		for(String value : values)
 		{
 			pairs.add(new Pair<Writable,Text>(NullWritable.get(), new Text(value)));
@@ -54,16 +54,16 @@ public abstract class TestRDFMapReduce {
 	public List<Pair<Text,List<Text>>> getReducerPairsFromFile(String file) throws IOException
 	{
 		List<Pair<Text, Text>> unsplitPairs = this.getPairsFromFile(file);
-		List<Pair<Text, List<Text>>> splitPairs = new LinkedList<Pair<Text, List<Text>>>();
+		List<Pair<Text, List<Text>>> splitPairs = new LinkedList<>();
 		for(Pair<Text, Text> unsplitPair : unsplitPairs)
 		{
-			List<Text> splitValues = new LinkedList<Text>();
+			List<Text> splitValues = new LinkedList<>();
 			String [] splits = unsplitPair.getSecond().toString().split("(\r\n|\n)");
 			for(String split : splits)
 			{
 				splitValues.add(new Text(split));
 			}
-			splitPairs.add(new Pair<Text,List<Text>>(unsplitPair.getFirst(), splitValues));
+			splitPairs.add(new Pair<>(unsplitPair.getFirst(), splitValues));
 			
 		}
 		return splitPairs;

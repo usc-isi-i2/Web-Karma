@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ContextParametersRegistry {
 	private static ContextParametersRegistry singleton = new ContextParametersRegistry();
 
-	private final ConcurrentHashMap<String, ServletContextParameterMap> karmaHomeToContextParameters = new ConcurrentHashMap<String, ServletContextParameterMap>();
+	private final ConcurrentHashMap<String, ServletContextParameterMap> karmaHomeToContextParameters = new ConcurrentHashMap<>();
 
 	public static ContextParametersRegistry getInstance() {
 		return singleton;

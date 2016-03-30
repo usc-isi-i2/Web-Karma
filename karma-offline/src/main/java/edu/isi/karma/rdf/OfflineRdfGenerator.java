@@ -130,7 +130,7 @@ public class OfflineRdfGenerator {
 	public OfflineRdfGenerator(CommandLine cl)
 	{
 
-		this.writers = new LinkedList<KR2RMLRDFWriter>();
+		this.writers = new LinkedList<>();
 		parseCommandLineOptions(cl);	
 	}
 
@@ -243,10 +243,10 @@ public class OfflineRdfGenerator {
 			rootTripleMap = "";
 		}
 		if (killTripleMap == null) {
-			this.killTripleMap = new ArrayList<String>();
+			this.killTripleMap = new ArrayList<>();
 		}
 		else {
-			this.killTripleMap = new ArrayList<String>(Arrays.asList(killTripleMap.split(",")));
+			this.killTripleMap = new ArrayList<>(Arrays.asList(killTripleMap.split(",")));
 			int size = this.killTripleMap.size();
 			for (int i = 0; i < size; i++) {
 				String t = this.killTripleMap.remove(0);
@@ -254,10 +254,10 @@ public class OfflineRdfGenerator {
 			}
 		}
 		if (stopTripleMap == null) {
-			this.stopTripleMap = new ArrayList<String>();
+			this.stopTripleMap = new ArrayList<>();
 		}
 		else {
-			this.stopTripleMap = new ArrayList<String>(Arrays.asList(stopTripleMap.split(",")));
+			this.stopTripleMap = new ArrayList<>(Arrays.asList(stopTripleMap.split(",")));
 			int size = this.stopTripleMap.size();
 			for (int i = 0; i < size; i++) {
 				String t = this.stopTripleMap.remove(0);
@@ -265,10 +265,10 @@ public class OfflineRdfGenerator {
 			}
 		}
 		if (POMToKill == null) {
-			this.POMToKill = new ArrayList<String>();
+			this.POMToKill = new ArrayList<>();
 		}
 		else {
-			this.POMToKill = new ArrayList<String>(Arrays.asList(POMToKill.split(",")));
+			this.POMToKill = new ArrayList<>(Arrays.asList(POMToKill.split(",")));
 			int size = this.POMToKill.size();
 			for (int i = 0; i < size; i++) {
 				String t = this.POMToKill.remove(0);

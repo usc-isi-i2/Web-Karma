@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ModelingConfigurationRegistry {
 	private static ModelingConfigurationRegistry singleton = new ModelingConfigurationRegistry();
 
-	private final ConcurrentHashMap<String, ModelingConfiguration> contextIdToModelingConfiguration = new ConcurrentHashMap<String, ModelingConfiguration>();
+	private final ConcurrentHashMap<String, ModelingConfiguration> contextIdToModelingConfiguration = new ConcurrentHashMap<>();
 
 	public static ModelingConfigurationRegistry getInstance() {
 		return singleton;

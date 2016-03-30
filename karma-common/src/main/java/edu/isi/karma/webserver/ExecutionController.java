@@ -47,7 +47,7 @@ public class ExecutionController {
 
 	private static Logger logger = LoggerFactory
 			.getLogger(ExecutionController.class);
-	private static final HashMap<String, CommandFactory> commandFactoryMap = new HashMap<String, CommandFactory>();
+	private static final HashMap<String, CommandFactory> commandFactoryMap = new HashMap<>();
 	private final Workspace workspace;
 
 	static{

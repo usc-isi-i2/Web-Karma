@@ -41,9 +41,9 @@ public class RegularityFeatureSet implements FeatureSet {
 			":", "?", "<", ">", ".", "bnk", "syb", "wrd", "num" };
 
 	public RegularityFeatureSet() {
-		tokenseqs = new ArrayList<Vector<TNode>>();
-		otokenseqs = new ArrayList<Vector<TNode>>();
-		fnames = new Vector<String>();
+		tokenseqs = new ArrayList<>();
+		otokenseqs = new ArrayList<>();
+		fnames = new Vector<>();
 	}
 
 	public Vector<TNode> tokenizer(String Org) {
@@ -51,7 +51,7 @@ public class RegularityFeatureSet implements FeatureSet {
 		Tokenizer tk = new Tokenizer(cs);
 		Token t;
 		t = tk.nextToken();
-		Vector<TNode> x = new Vector<TNode>();
+		Vector<TNode> x = new Vector<>();
 		while (t.getType() != -1) {
 			int mytype = -1;
 			if (t.getType() == 15) {
@@ -74,7 +74,7 @@ public class RegularityFeatureSet implements FeatureSet {
 
 	public Collection<Feature> computeFeatures(Collection<String> examples,
 			Collection<String> oexamples) {
-		Vector<Feature> r = new Vector<Feature>();
+		Vector<Feature> r = new Vector<>();
 
 		for (String s : examples) {
 			Vector<TNode> x = this.tokenizer(s);
@@ -88,12 +88,12 @@ public class RegularityFeatureSet implements FeatureSet {
 		String[] symbol = { "#", ";", ",", "!", "~", "@", "$", "%", "^", "&",
 				"*", "(", ")", "_", "-", "{", "}", "[", "]", "\"", "'", ":",
 				"?", "<", ">", "." };
-		Vector<CntFeature> cntfs = new Vector<CntFeature>(symbol.length);
+		Vector<CntFeature> cntfs = new Vector<>(symbol.length);
 		// moving feature
-		Vector<MovFeature> movfs = new Vector<MovFeature>(symbol.length);
+		Vector<MovFeature> movfs = new Vector<>(symbol.length);
 		for (int i = 0; i < symbol.length; i++) {
 			TNode t = new TNode(TNode.SYBSTYP, symbol[i]);
-			Vector<TNode> li = new Vector<TNode>();
+			Vector<TNode> li = new Vector<>();
 			li.add(t);
 			cntfs.add(i, new CntFeature(this.otokenseqs, this.tokenseqs, li));
 			cntfs.get(i).setName("entr_cnt_" + symbol[i]);
@@ -102,22 +102,22 @@ public class RegularityFeatureSet implements FeatureSet {
 		}
 		// count the blank, symbol wrd and number token
 		TNode t = new TNode(TNode.BNKTYP, TNode.ANYTOK);
-		Vector<TNode> li = new Vector<TNode>();
+		Vector<TNode> li = new Vector<>();
 		li.add(t);
 		CntFeature cf = new CntFeature(this.otokenseqs, this.tokenseqs, li);
 		cf.setName("entr_cnt_bnk");
 		TNode t1 = new TNode(TNode.SYBSTYP, TNode.ANYTOK);
-		Vector<TNode> li1 = new Vector<TNode>();
+		Vector<TNode> li1 = new Vector<>();
 		li1.add(t1);
 		CntFeature cf1 = new CntFeature(this.otokenseqs, this.tokenseqs, li1);
 		cf1.setName("entr_cnt_syb");
 		TNode t2 = new TNode(TNode.LWRDTYP, TNode.ANYTOK);
-		Vector<TNode> li2 = new Vector<TNode>();
+		Vector<TNode> li2 = new Vector<>();
 		li2.add(t2);
 		CntFeature cf2 = new CntFeature(this.otokenseqs, this.tokenseqs, li2);
 		cf2.setName("entr_cnt_lwrd");
 		TNode t3 = new TNode(TNode.NUMTYP, TNode.ANYTOK);
-		Vector<TNode> li3 = new Vector<TNode>();
+		Vector<TNode> li3 = new Vector<>();
 		li3.add(t3);
 		CntFeature cf3 = new CntFeature(this.otokenseqs, this.tokenseqs, li3);
 		cf3.setName("entr_cnt_num");

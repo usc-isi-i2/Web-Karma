@@ -35,11 +35,11 @@ public class RecordClassifier implements PartitionClassifierType {
 	Logger ulogger = LoggerFactory.getLogger(RecordClassifier.class);
 	RecordFeatureSet rf;
 	svm_model model;
-	ArrayList<svm_node[]> trainData = new ArrayList<svm_node[]>();
-	ArrayList<String> rawData = new ArrayList<String>();
-	ArrayList<Double> targets = new ArrayList<Double>();
+	ArrayList<svm_node[]> trainData = new ArrayList<>();
+	ArrayList<String> rawData = new ArrayList<>();
+	ArrayList<Double> targets = new ArrayList<>();
 	int exampleCnt = 0;
-	HashMap<String, Double> labelMapping = new HashMap<String, Double>();
+	HashMap<String, Double> labelMapping = new HashMap<>();
 	public double[] maxValues;
 	public double[] minValues;
 	public int ctype = svm_parameter.C_SVC; 
@@ -55,9 +55,9 @@ public class RecordClassifier implements PartitionClassifierType {
 		ctype = type;
 	}
 	public void init() {
-		this.trainData = new ArrayList<svm_node[]>();
-		this.targets = new ArrayList<Double>();
-		labelMapping = new HashMap<String, Double>();
+		this.trainData = new ArrayList<>();
+		this.targets = new ArrayList<>();
+		labelMapping = new HashMap<>();
 		exampleCnt = 0;
 		model = null;
 		this.minValues = null;
@@ -147,7 +147,7 @@ public class RecordClassifier implements PartitionClassifierType {
 
 	// used to balance unbalanced data.
 	public HashMap<Double, Double> adjustunbalancedData() {
-		HashMap<Double, Double> class2weight = new HashMap<Double, Double>();
+		HashMap<Double, Double> class2weight = new HashMap<>();
 		for (Double b : targets) {
 			if (class2weight.containsKey(b)) {
 				class2weight.put(b, class2weight.get(b) + 1);
@@ -181,7 +181,7 @@ public class RecordClassifier implements PartitionClassifierType {
 	}
 
 	public void convertToCSVfile() {
-		ArrayList<String[]> xArrayList = new ArrayList<String[]>();
+		ArrayList<String[]> xArrayList = new ArrayList<>();
 		String[] attrname = new String[rf.getFeatureNames().size() + 1];
 		String[] names = rf.getFeatureNames().toArray(
 				new String[attrname.length - 1]);
@@ -315,23 +315,23 @@ public class RecordClassifier implements PartitionClassifierType {
 	public double cross_verify(double gamma, double c) {
 		double acc = 0.0;
 		int fold = 5;
-		HashMap<Double, ArrayList<Integer>> labPos = new HashMap<Double, ArrayList<Integer>>();
+		HashMap<Double, ArrayList<Integer>> labPos = new HashMap<>();
 		for (int i = 0; i < targets.size(); i++) {
 			Double l = targets.get(i);
 			if (labPos.containsKey(l)) {
 				labPos.get(l).add(i);
 			} else {
-				ArrayList<Integer> pos = new ArrayList<Integer>();
+				ArrayList<Integer> pos = new ArrayList<>();
 				pos.add(i);
 				labPos.put(l, pos);
 			}
 		}
 
 		for (int i = 0; i < fold; i++) {
-			ArrayList<svm_node[]> tmpTrain = new ArrayList<svm_node[]>();
-			ArrayList<svm_node[]> tmpTest = new ArrayList<svm_node[]>();
-			ArrayList<Double> tmpTraintar = new ArrayList<Double>();
-			ArrayList<Double> tmpTesttar = new ArrayList<Double>();
+			ArrayList<svm_node[]> tmpTrain = new ArrayList<>();
+			ArrayList<svm_node[]> tmpTest = new ArrayList<>();
+			ArrayList<Double> tmpTraintar = new ArrayList<>();
+			ArrayList<Double> tmpTesttar = new ArrayList<>();
 			for (Double l : labPos.keySet()) {
 				int datasize = labPos.get(l).size();
 				if (datasize < fold) {
@@ -500,8 +500,8 @@ public class RecordClassifier implements PartitionClassifierType {
 			BufferedReader br1 = new BufferedReader(new FileReader(fpath1));
 			BufferedReader br2 = new BufferedReader(new FileReader(fpath2));
 			String line = "";
-			ArrayList<String> data = new ArrayList<String>();
-			ArrayList<String> labels = new ArrayList<String>();
+			ArrayList<String> data = new ArrayList<>();
+			ArrayList<String> labels = new ArrayList<>();
 			while ((line = br1.readLine()) != null) {
 				if (line.trim().length() > 0) {
 					data.add(line);

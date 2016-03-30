@@ -39,7 +39,7 @@ public class Request {
 		this.type = request.type;
 		this.url = request.url;
 		this.endPoint = request.endPoint;
-		this.attributes = new ArrayList<Attribute>(request.getAttributes());
+		this.attributes = new ArrayList<>(request.getAttributes());
 	}
 	
 	public Request(URL url) {

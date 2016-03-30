@@ -163,7 +163,7 @@ public class ToCSV {
 	private DataFormatter formatter = null;
 	private FormulaEvaluator evaluator = null;
 	private String separator = null;
-	private List<File> csvFiles = new ArrayList<File>();
+	private List<File> csvFiles = new ArrayList<>();
 
 	private static final String CSV_FILE_EXTENSION = ".csv";
 	private static final String DEFAULT_SEPARATOR = ",";
@@ -478,7 +478,7 @@ public class ToCSV {
 		Sheet sheet = null;
 		Row row = null;
 		int lastRowNum = 0;
-		this.csvData = new ArrayList<ArrayList<String>>();
+		this.csvData = new ArrayList<>();
 
 		logger.info("Converting files contents to CSV format.");
 
@@ -522,7 +522,7 @@ public class ToCSV {
 		Sheet sheet = this.workbook.getSheetAt(wsIdx);
 		Row row = null;
 		int lastRowNum = 0;
-		this.csvData = new ArrayList<ArrayList<String>>();
+		this.csvData = new ArrayList<>();
 		this.maxRowWidth = -1;
 		
 		if(sheet != null && sheet.getPhysicalNumberOfRows() > 0) {
@@ -662,7 +662,7 @@ public class ToCSV {
 	private void rowToCSV(Row row) {
 		Cell cell = null;
 		int lastCellNum = 0;
-		ArrayList<String> csvLine = new ArrayList<String>();
+		ArrayList<String> csvLine = new ArrayList<>();
 
 		// Check to ensure that a row was recovered from the sheet as it is
 		// possible that one or more rows between other populated rows could be

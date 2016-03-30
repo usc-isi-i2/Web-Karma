@@ -25,11 +25,11 @@ import java.util.Vector;
 
 //used in alignment
 public class ANode {
-	public Vector<Integer> orgPos = new Vector<Integer>();
-	public Vector<Integer> tarPos = new Vector<Integer>();
-	public Vector<Integer> length = new Vector<Integer>();
-	public Vector<String[]> exps = new Vector<String[]>();
-	public Vector<ANode> children = new Vector<ANode>();
+	public Vector<Integer> orgPos = new Vector<>();
+	public Vector<Integer> tarPos = new Vector<>();
+	public Vector<Integer> length = new Vector<>();
+	public Vector<String[]> exps = new Vector<>();
+	public Vector<ANode> children = new Vector<>();
 
 	public ANode(Vector<Integer> orgPos, Vector<Integer> tarPos,
 			Vector<Integer> length, Vector<String[]> exps) {

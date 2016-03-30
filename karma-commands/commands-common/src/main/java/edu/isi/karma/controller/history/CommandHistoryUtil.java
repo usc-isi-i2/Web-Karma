@@ -25,7 +25,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class CommandHistoryUtil {
-	private final List<Command> commands = new ArrayList<Command>();
+	private final List<Command> commands = new ArrayList<>();
 	private Workspace workspace;
 	private String worksheetId;
 	HashMap<String, CommandFactory> commandFactoryMap;
@@ -73,7 +73,7 @@ public class CommandHistoryUtil {
 
 	public Set<String> generateInputColumns() {
 		Map<Command, List<Command> > dag = generateGraph();
-		Set<String> inputColumns = new HashSet<String>();
+		Set<String> inputColumns = new HashSet<>();
 		for (Command t : commands) {
 			if (t.getCommandName().equals("SetSemanticTypeCommand") || t.getCommandName().equals("SetMetaPropertyCommand")) {
 				inputColumns.addAll(getParents(t, dag));
@@ -83,7 +83,7 @@ public class CommandHistoryUtil {
 	}
 
 	public Set<String> generateOutputColumns() {
-		Set<String> outputColumns = new HashSet<String>();
+		Set<String> outputColumns = new HashSet<>();
 		for (Command t : commands) {
 			if (t.getOutputColumns() != null)
 				outputColumns.addAll(t.getOutputColumns());
@@ -94,7 +94,7 @@ public class CommandHistoryUtil {
 
 	private Set<String> getParents(Command c, Map<Command, List<Command> >dag) {
 		List<Command> parents = dag.get(c);
-		Set<String> terminalColumns = new HashSet<String>();
+		Set<String> terminalColumns = new HashSet<>();
 		if (parents == null || parents.size() == 0)
 			terminalColumns.addAll(c.getInputColumns());
 		else {

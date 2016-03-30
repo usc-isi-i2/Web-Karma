@@ -40,7 +40,7 @@ public class TriplesMapPlanGenerator {
 	private static Logger LOG = LoggerFactory.getLogger(TriplesMapPlanGenerator.class);
 	
 	private Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan;
-	private Set<String> unprocessedTriplesMapsIds = new HashSet<String>();
+	private Set<String> unprocessedTriplesMapsIds = new HashSet<>();
 	private Row r;
 	private List<KR2RMLRDFWriter> outWriters;
 	
@@ -53,8 +53,8 @@ public class TriplesMapPlanGenerator {
 
 	public TriplesMapPlan generatePlan(TriplesMapGraphMerger tmf, RootStrategy strategy)
 	{
-		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
-		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<String, List<PopulatedTemplateTermSet>>();
+		List<TriplesMapWorker> workers = new LinkedList<>();
+		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<>();
 		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapSubjects);
 		
 		List<TriplesMapGraph> graphs = tmf.getGraphs();
@@ -68,8 +68,8 @@ public class TriplesMapPlanGenerator {
 
 	public TriplesMapPlan generatePlan(TriplesMapGraph graph, List<String> triplesMapProcessingOrder, RootStrategy strategy)
 	{
-		List<TriplesMapWorker> workers = new LinkedList<TriplesMapWorker>();
-		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<String, List<PopulatedTemplateTermSet>>();
+		List<TriplesMapWorker> workers = new LinkedList<>();
+		Map<String, List<PopulatedTemplateTermSet>>triplesMapSubjects = new ConcurrentHashMap<>();
 		TriplesMapPlan plan = new TriplesMapPlan(workers, r, triplesMapSubjects);
 		Map<TriplesMap, TriplesMapWorker> mapToWorker = generatePlan(graph, plan, strategy);
 		for(String triplesMapId : triplesMapProcessingOrder)
@@ -100,7 +100,7 @@ public class TriplesMapPlanGenerator {
 	{
 		unprocessedTriplesMapsIds.addAll(graph.getTriplesMapIds());
 		//add strategy
-		Map<TriplesMap, TriplesMapWorker> mapToWorker = new HashMap<TriplesMap, TriplesMapWorker>();
+		Map<TriplesMap, TriplesMapWorker> mapToWorker = new HashMap<>();
 		if(strategy == null)
 		{
 			strategy = new SteinerTreeRootStrategy(new WorksheetDepthRootStrategy());
@@ -141,7 +141,7 @@ public class TriplesMapPlanGenerator {
 		List<TriplesMapLink> links = graph.getAllNeighboringTriplesMap(map.getId());
 		
 		
-		List<TriplesMapWorker> workersDependentOn = new LinkedList<TriplesMapWorker>();
+		List<TriplesMapWorker> workersDependentOn = new LinkedList<>();
 		for(TriplesMapLink link : links)
 		{
 			if((link.getSourceMap() == map && !link.isFlipped()) || (link.getTargetMap() == map && link.isFlipped()))

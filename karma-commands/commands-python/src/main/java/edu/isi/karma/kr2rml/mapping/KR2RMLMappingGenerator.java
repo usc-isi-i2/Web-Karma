@@ -201,7 +201,7 @@ public class KR2RMLMappingGenerator {
 				SubjectMap subjMap = r2rmlMapping.getSubjectMapIndex().get(treeNode.getId());
 				
 				if (subjMap.isBlankNode()) {
-					List<String> columnsCovered = new ArrayList<String>();
+					List<String> columnsCovered = new ArrayList<>();
 					Set<LabeledLink> links = dm.getOutgoingEdgesOf(treeNode);
 					Iterator<LabeledLink> linkIterator = links.iterator();
 					while(linkIterator.hasNext())
@@ -283,7 +283,7 @@ public class KR2RMLMappingGenerator {
 								subj.addRdfsType(typeTermSet2);
 							}
 							
-							List<String> columnsCovered = new LinkedList<String>();
+							List<String> columnsCovered = new LinkedList<>();
 							for(TemplateTerm term : subj.getTemplate().getAllColumnNameTermElements())
 							{
 								columnsCovered.add(term.getTemplateTermValue());
@@ -471,7 +471,7 @@ public class KR2RMLMappingGenerator {
 		
 		List<PredicateObjectMap> pomList = r2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().get(columnName);  
 		if (pomList == null) {
-			pomList = new ArrayList<PredicateObjectMap>();
+			pomList = new ArrayList<>();
 		}
 		pomList.add(poMap);
 		r2rmlMapping.getAuxInfo().getColumnNameToPredObjLinks().put(columnName, pomList);

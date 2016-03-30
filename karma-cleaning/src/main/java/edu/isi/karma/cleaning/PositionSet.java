@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public class PositionSet implements GrammarTreeNode {
 
-	ArrayList<Position> spaces = new ArrayList<Position>();
+	ArrayList<Position> spaces = new ArrayList<>();
 	int size = 1;
 
 	public PositionSet(Collection<Position> poss) {
@@ -35,7 +35,7 @@ public class PositionSet implements GrammarTreeNode {
 	@Override
 	public GrammarTreeNode mergewith(GrammarTreeNode a) {
 		Position position = (Position) a;
-		ArrayList<Position> x = new ArrayList<Position>();
+		ArrayList<Position> x = new ArrayList<>();
 		for (int i = 0; i < this.spaces.size(); i++) {
 			Position xp = spaces.get(i).mergewith(position);
 			x.add(xp);

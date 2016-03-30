@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SourceInformation {
-	private Map<InfoAttribute, String> attributeValueMap = new HashMap<InfoAttribute, String>();
+	private Map<InfoAttribute, String> attributeValueMap = new HashMap<>();
 	
 	public enum InfoAttribute {
 		/*** Database source information attributes ***/

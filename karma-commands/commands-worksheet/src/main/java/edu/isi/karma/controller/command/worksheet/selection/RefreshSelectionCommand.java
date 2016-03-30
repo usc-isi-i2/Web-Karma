@@ -104,7 +104,7 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 	}
 
 	private List<Command> gatherAllOperateSelectionCommands(List<Command> commands, Workspace workspace) {
-		List<Command> operationCommands = new ArrayList<Command>();
+		List<Command> operationCommands = new ArrayList<>();
 		for (Command c : commands) {
 			if (c instanceof OperateSelectionCommand) {
 				OperateSelectionCommand t = (OperateSelectionCommand)c;

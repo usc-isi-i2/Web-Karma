@@ -76,14 +76,14 @@ public class TestBasicKarmaTopology {
 							
 							builder.setBolt("karma-generate-json", new KarmaBolt(basicKarmaBoltProperties, null)).shuffleGrouping("karma-json-spout");
 
-							Set<String> sources = new HashSet<String>();
+							Set<String> sources = new HashSet<>();
 							sources.add(source);
 							KarmaReducerBolt reducerBolt = new KarmaReducerBolt(sources);
 							builder.setBolt("karma-reducer-json", reducerBolt).fieldsGrouping("karma-generate-json", new Fields("id"));
 							
 							String inputs = IOUtils.toString(getTestResource("input/people.json"));
 							JSONArray array = new JSONArray(inputs);
-							List<Values> values = new LinkedList<Values>();
+							List<Values> values = new LinkedList<>();
 							for(int i = 0; i < array.length(); i++)
 							{
 								JSONObject obj = array.getJSONObject(i);

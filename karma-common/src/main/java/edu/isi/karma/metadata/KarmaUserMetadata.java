@@ -70,7 +70,7 @@ public abstract class KarmaUserMetadata extends KarmaMetadata{
 	
 	private static void renameExistingFolder(String userDirPath, ContextParameter parameter, String directory) {
 		
-		HashMap<ContextParameter, String> oldNames = new HashMap<ContextParameter, String>();
+		HashMap<ContextParameter, String> oldNames = new HashMap<>();
 		oldNames.put(ContextParameter.ALIGNMENT_GRAPH_DIRECTORY, "AlignmentGraph");
 		oldNames.put(ContextParameter.JSON_MODELS_DIR, "JSON");
 		oldNames.put(ContextParameter.R2RML_USER_DIR, "R2RML");

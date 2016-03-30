@@ -6,7 +6,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 public class Segment implements GrammarTreeNode {
-	public Vector<Section> section = new Vector<Section>();
+	public Vector<Section> section = new Vector<>();
 	public static final int cxtsize_limit = 4;
 	public static final int time_limit = 5;
 	public String tarString = "";
@@ -18,10 +18,10 @@ public class Segment implements GrammarTreeNode {
 	public int end = 0; // end position in tarNodes, Token index
 	public Vector<int[]> mappings; // corresponding multiple sources areas in org, Token indexes 
 	public boolean isinloop = false;
-	public Vector<TNode> constNodes = new Vector<TNode>();
+	public Vector<TNode> constNodes = new Vector<>();
 	public String repString = "";
 	public int curState = 0;
-	public Vector<String> segStrings = new Vector<String>();
+	public Vector<String> segStrings = new Vector<>();
 	public int VersionSP_size = 0;
 	public String program = "null";
 	public String contextId; 
@@ -83,7 +83,7 @@ public class Segment implements GrammarTreeNode {
 	 */
 	public Vector<TNode> getLeftCxt(int c, Vector<TNode> x) {
 		int i = cxtsize_limit;
-		Vector<TNode> res = new Vector<TNode>();
+		Vector<TNode> res = new Vector<>();
 		while (i > 0) {
 			if ((c - i) < 0) {
 				i--;
@@ -97,7 +97,7 @@ public class Segment implements GrammarTreeNode {
 
 	public Vector<TNode> getRightCxt(int c, Vector<TNode> x) {
 		int i = 0;
-		Vector<TNode> res = new Vector<TNode>();
+		Vector<TNode> res = new Vector<>();
 		while (i < cxtsize_limit) {
 			if ((c + i) >= x.size())
 				break;
@@ -139,8 +139,8 @@ public class Segment implements GrammarTreeNode {
 			int s = elem[0];
 			int e = elem[1];
 			// record the data
-			Vector<String> orgStrings = new Vector<String>();
-			Vector<String> tarStrings = new Vector<String>();
+			Vector<String> orgStrings = new Vector<>();
+			Vector<String> tarStrings = new Vector<>();
 			String org = "";
 			for (int i = 0; i < orgNodes.size(); i++) {
 				org += orgNodes.get(i).text;
@@ -148,17 +148,17 @@ public class Segment implements GrammarTreeNode {
 			orgStrings.add(org);
 			tarStrings.add(tarString);
 			// create the startPosition
-			Vector<Integer> sset = new Vector<Integer>();
+			Vector<Integer> sset = new Vector<>();
 			sset = UtilTools.getStringPos(s, orgNodes);
-			Vector<String> tars = new Vector<String>();
+			Vector<String> tars = new Vector<>();
 			tars.add(sset.get(0).toString());
 			Position sPosition = new Position(sset, getLeftCxt(s, orgNodes),
 					getRightCxt(s, orgNodes), orgStrings, tars, this.isinloop, contextId);
 			sPosition.isinloop = this.isinloop;
 			// create the endPosition
-			Vector<Integer> eset = new Vector<Integer>();
+			Vector<Integer> eset = new Vector<>();
 			eset = UtilTools.getStringPos(e, orgNodes);
-			Vector<String> tars1 = new Vector<String>();
+			Vector<String> tars1 = new Vector<>();
 			tars1.add(eset.get(0).toString());
 			Position ePosition = new Position(eset, getLeftCxt(e, orgNodes),
 					getRightCxt(e, orgNodes), orgStrings, tars1, this.isinloop, contextId);
@@ -217,8 +217,8 @@ public class Segment implements GrammarTreeNode {
 			return res;
 		}
 		// merge the position
-		HashSet<String> uniqueKeys = new HashSet<String>();
-		Vector<Section> newSections = new Vector<Section>();
+		HashSet<String> uniqueKeys = new HashSet<>();
+		Vector<Section> newSections = new Vector<>();
 		for (Section x : this.section) {
 			for (Section y : s.section) {
 				GrammarTreeNode zSection = x.mergewith(y);
@@ -273,10 +273,10 @@ public class Segment implements GrammarTreeNode {
 		return r;
 	}
 
-	public Vector<Integer> rules = new Vector<Integer>();
+	public Vector<Integer> rules = new Vector<>();
 
 	public void createTotalOrderVector() {
-		SortedMap<Double, Vector<Integer>> xmap = new TreeMap<Double, Vector<Integer>>();
+		SortedMap<Double, Vector<Integer>> xmap = new TreeMap<>();
 		for (int i = 0; i < section.size(); i++) {
 			Double double1 = 0.0;
 			// reverse the order to get higher values sorted in front
@@ -285,7 +285,7 @@ public class Segment implements GrammarTreeNode {
 			if (xmap.containsKey(key)) {
 				xmap.get(key).add(i);
 			} else {
-				Vector<Integer> vi = new Vector<Integer>();
+				Vector<Integer> vi = new Vector<>();
 				vi.add(i);
 				xmap.put(key, vi);
 			}

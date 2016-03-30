@@ -31,7 +31,7 @@ public class MultipleValueEditColumnCommandFactory extends JSONInputCommandFacto
 		String worksheetId = CommandInputJSONUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
 		JSONArray rows = CommandInputJSONUtil.getJSONArrayValue(Arguments.rows.name(), inputJson);
 		
-		Map<String, String> rowValueMap = new HashMap<String, String>();
+		Map<String, String> rowValueMap = new HashMap<>();
 		for (int i=0; i<rows.length(); i++) {
 			JSONObject rowObj = rows.getJSONObject(i);
 			rowValueMap.put(rowObj.getString(Arguments.rowID.name()), 

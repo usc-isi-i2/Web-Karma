@@ -92,7 +92,7 @@ public class Alignment implements OntologyUpdateListener {
 		this.contextId = ontologyManager.getContextId();
 		this.ontologyManager = ontologyManager;
 		this.ontologyManager.subscribeListener(this);
-		this.sourceColumnNodes = new HashSet<ColumnNode>(); 
+		this.sourceColumnNodes = new HashSet<>(); 
 		ModelingConfiguration conf = ModelingConfigurationRegistry.getInstance().
 				getModelingConfiguration(ContextParametersRegistry.getInstance().getContextParameters(contextId).getKarmaHome());
 		if (conf.getKnownModelsAlignment()) {
@@ -137,7 +137,7 @@ public class Alignment implements OntologyUpdateListener {
 		// GraphUtil.printGraph(this.steinerTree);
 		
 		if (this.steinerTree == null)
-			steinerTree = new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+			steinerTree = new DirectedWeightedMultigraph<>(LabeledLink.class);
 		
 		return this.steinerTree;
 	}
@@ -531,7 +531,7 @@ public class Alignment implements OntologyUpdateListener {
 	}
 
 	public Set<LabeledLink> getIncomingLinksInTree(String nodeId) {
-		Set<LabeledLink> results = new HashSet<LabeledLink>();
+		Set<LabeledLink> results = new HashSet<>();
 		
 		if (steinerTree == null)
 			return results;
@@ -555,7 +555,7 @@ public class Alignment implements OntologyUpdateListener {
 	}
 	
 	public Set<LabeledLink> getOutgoingLinksInTree(String nodeId) {
-		Set<LabeledLink> results = new HashSet<LabeledLink>();
+		Set<LabeledLink> results = new HashSet<>();
 		
 		if (steinerTree == null)
 			return results;
@@ -700,7 +700,7 @@ public class Alignment implements OntologyUpdateListener {
 	}
 	
 	public List<Node> computeSteinerNodes() {
-		Set<Node> steinerNodes = new HashSet<Node>();
+		Set<Node> steinerNodes = new HashSet<>();
 		
 		// Add column nodes and their domain
 		// it is better to set isForced flag when setting a semantic type
@@ -752,7 +752,7 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public List<LabeledLink> suggestLinks(String nodeId) {
 		
-		List<LabeledLink> suggestedLinks = new LinkedList<LabeledLink>();
+		List<LabeledLink> suggestedLinks = new LinkedList<>();
 		
 		if (this.steinerTree == null) {
 			logger.error("the model is null.");
@@ -766,7 +766,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 		
 		
-		Set<String> currentLinkIds = new HashSet<String>();
+		Set<String> currentLinkIds = new HashSet<>();
 		Set<LabeledLink> currentIncomingLinks, currentOutgoingLinks;
 		currentIncomingLinks = this.getIncomingLinksInTree(nodeId);
 		currentOutgoingLinks = this.getOutgoingLinksInTree(nodeId);
@@ -777,7 +777,7 @@ public class Alignment implements OntologyUpdateListener {
 			for (LabeledLink l : currentOutgoingLinks)
 				currentLinkIds.add(l.getId());
 		
-		Set<LabeledLink> candidateLinks = new HashSet<LabeledLink>();
+		Set<LabeledLink> candidateLinks = new HashSet<>();
 		List<LabeledLink> incomingLinks, outgoingLinks;
 		incomingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
 				getGraphBuilder().getIncomingLinks(nodeId);
@@ -800,7 +800,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 		
 		AlignmentScore currentScore = new AlignmentScore(modelCoherence, modelCost);
-		List<AlignmentScore> alignmentScores = new LinkedList<AlignmentScore>();
+		List<AlignmentScore> alignmentScores = new LinkedList<>();
 		for (LabeledLink l : candidateLinks) {
 			if (l.getModelIds() == null || l.getModelIds().isEmpty()) // ignore the links that are added by the user (not present in the known models)
 				continue;
@@ -820,7 +820,7 @@ public class Alignment implements OntologyUpdateListener {
 
 	public List<LabeledLink> suggestAlternativeLinks(String linkId) {
 
-		List<LabeledLink> alternativeLinks = new LinkedList<LabeledLink>();
+		List<LabeledLink> alternativeLinks = new LinkedList<>();
 		
 		if (this.steinerTree == null) {
 			logger.error("the model is null.");
@@ -845,7 +845,7 @@ public class Alignment implements OntologyUpdateListener {
 			return alternativeLinks;
 		}
 		
-		Set<LabeledLink> candidateLinks = new HashSet<LabeledLink>();
+		Set<LabeledLink> candidateLinks = new HashSet<>();
 		List<LabeledLink> incomingLinks, outgoingLinks;
 		incomingLinks = ModelLearningGraph.getInstance(ontologyManager, ModelLearningGraphType.Compact).
 				getGraphBuilder().getLinks(target.getId(), source.getId());
@@ -868,7 +868,7 @@ public class Alignment implements OntologyUpdateListener {
 		}
 		
 		AlignmentScore currentScore = new AlignmentScore(modelCoherence, modelCost);
-		List<AlignmentScore> alignmentScores = new LinkedList<AlignmentScore>();
+		List<AlignmentScore> alignmentScores = new LinkedList<>();
 		for (LabeledLink l : candidateLinks) {
 			if (l.getModelIds() == null || l.getModelIds().isEmpty()) // ignore the links that are added by the user (not present in the known models)
 				continue;
@@ -938,7 +938,7 @@ public class Alignment implements OntologyUpdateListener {
 //		GraphPreProcess graphPreProcess = new GraphPreProcess(this.graphBuilder.getGraph(), 
 //				this.getLinksByStatus(LinkStatus.PreferredByUI),
 //				this.getLinksByStatus(LinkStatus.ForcedByUser));		
-		UndirectedGraph<Node, DefaultLink> undirectedGraph = new AsUndirectedGraph<Node, DefaultLink>(this.getGraph());
+		UndirectedGraph<Node, DefaultLink> undirectedGraph = new AsUndirectedGraph<>(this.getGraph());
 
 		logger.debug("computing steiner nodes ...");
 		List<Node> steinerNodes = this.computeSteinerNodes();
@@ -982,8 +982,8 @@ public class Alignment implements OntologyUpdateListener {
 			logger.error("could not learn any model for this source!");
 			if (this.steinerTree == null)
 			{
-				this.steinerTree = 
-						new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+				this.steinerTree =
+						new DirectedWeightedMultigraph<>(LabeledLink.class);
 			}
 			this.addForcedNodes();
 			this.addForcedLinks(); //add new semantic type to the tree
@@ -1037,12 +1037,12 @@ public class Alignment implements OntologyUpdateListener {
 		if (model == null) 
 			return;
 		
-		if (semanticTypes == null) semanticTypes = new LinkedList<SemanticType>();
+		if (semanticTypes == null) semanticTypes = new LinkedList<>();
 		
-		DirectedWeightedMultigraph<Node, LabeledLink> tree = 
-				new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+		DirectedWeightedMultigraph<Node, LabeledLink> tree =
+				new DirectedWeightedMultigraph<>(LabeledLink.class);
 
-		HashMap<Node, Node> modelToAlignmentNode = new HashMap<Node, Node>();
+		HashMap<Node, Node> modelToAlignmentNode = new HashMap<>();
 		for (Node n : model.getGraph().vertexSet()) {
 			if (n instanceof InternalNode) {
 

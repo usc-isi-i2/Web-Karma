@@ -3,8 +3,8 @@ package edu.isi.karma.cleaning;
 import java.util.HashMap;
 
 public class ProgramRule {
-	public HashMap<String, InterpreterType> rules = new HashMap<String, InterpreterType>();
-	public HashMap<String, String> strRules = new HashMap<String, String>();
+	public HashMap<String, InterpreterType> rules = new HashMap<>();
+	public HashMap<String, String> strRules = new HashMap<>();
 	public PartitionClassifierType pClassifier;
 	public static Interpretor itInterpretor;
 	public String signString = "";

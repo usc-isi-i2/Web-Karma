@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class MyLogger {
 	public static BufferedWriter out;
 	public static String user_id = "";
-	public static HashMap<String, Long> timespan = new HashMap<String, Long>();
+	public static HashMap<String, Long> timespan = new HashMap<>();
 
 	public MyLogger() {
 		if (out == null) {

@@ -66,13 +66,13 @@ public class TestJSONMapReduce extends TestRDFMapReduce {
 	@Test
 	public void testReduce() throws IOException 
 	{
-		List<Pair<Text,List<Text>>> inputs = new LinkedList<Pair<Text,List<Text>>>();
+		List<Pair<Text,List<Text>>> inputs = new LinkedList<>();
 
-		List<Text> jasonTriples = new LinkedList<Text>();
+		List<Text> jasonTriples = new LinkedList<>();
 		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason.json"))));
 		jasonTriples.add(new Text(IOUtils.toString(TestN3MapReduce.class.getClassLoader().getResourceAsStream("jason3.json"))));
 
-		inputs.add(new Pair<Text,List<Text>>(new Text("http://lod.isi.edu/cs548/person/Slepicka"), jasonTriples));
+		inputs.add(new Pair<>(new Text("http://lod.isi.edu/cs548/person/Slepicka"), jasonTriples));
 		reduceDriver.withAllOutput(getPairsFromFile("output/jason.output.json"));
 		reduceDriver.withAll(inputs);
 		reduceDriver.runTest();

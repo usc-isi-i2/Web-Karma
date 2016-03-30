@@ -338,7 +338,7 @@ public class ElasticSearchPublishServlet extends Application {
 	public static void initContextParameters(ServletContext ctx, ServletContextParameterMap contextParameters)
 	{
 		Enumeration<?> params = ctx.getInitParameterNames();
-		ArrayList<String> validParams = new ArrayList<String>();
+		ArrayList<String> validParams = new ArrayList<>();
 		for (ContextParameter param : ContextParameter.values()) {
 			validParams.add(param.name());
 		}

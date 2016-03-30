@@ -134,8 +134,8 @@ public class Neo4jCSVGenerator {
 //	}
 	
 	private static void printUsage() {
-		List<String> parameters = new ArrayList<String>();
-		List<String> descriptions = new ArrayList<String>();
+		List<String> parameters = new ArrayList<>();
+		List<String> descriptions = new ArrayList<>();
 		
 		parameters.add("-base");   
 		descriptions.add("path of the base folder, default is \".\"");
@@ -185,7 +185,7 @@ public class Neo4jCSVGenerator {
 			}
 		}
 		
-		HashMap<String, String> arguments = new HashMap<String, String>();
+		HashMap<String, String> arguments = new HashMap<>();
 		for (int i = 0; i < args.length; i+=2) {
 			if ( i + 1 < args.length) {
 				arguments.put(args[i].trim().toLowerCase(), args[i+1].trim());

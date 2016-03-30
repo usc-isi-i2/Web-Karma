@@ -41,11 +41,11 @@ public class KR2RMLMappingAuxillaryInformation {
 	
 	public KR2RMLMappingAuxillaryInformation() {
 		this.triplesMapGraphMerger = new TriplesMapGraphMerger();
-		this.blankNodesUriPrefixMap = new HashMap<String, String>();
-		this.blankNodesColumnCoverage = new HashMap<String, List<String>>();
-		this.columnNameToPredObjMLinks = new HashMap<String, List<PredicateObjectMap>>();
-		this.subjectMapIdToTemplateAnchor = new HashMap<String, String>();
-		this.graphNodeIdToTriplesMapIdMap = new HashMap<String, String>();
+		this.blankNodesUriPrefixMap = new HashMap<>();
+		this.blankNodesColumnCoverage = new HashMap<>();
+		this.columnNameToPredObjMLinks = new HashMap<>();
+		this.subjectMapIdToTemplateAnchor = new HashMap<>();
+		this.graphNodeIdToTriplesMapIdMap = new HashMap<>();
 	}
 
 	public TriplesMapGraphMerger getTriplesMapGraph() {

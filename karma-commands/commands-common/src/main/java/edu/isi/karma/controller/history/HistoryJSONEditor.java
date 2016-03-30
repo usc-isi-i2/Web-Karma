@@ -41,7 +41,7 @@ public class HistoryJSONEditor {
 				}
 				else {
 					JSONArray array = new JSONArray(tmp);
-					Set<String> newOutputColumns = new HashSet<String>();
+					Set<String> newOutputColumns = new HashSet<>();
 					for (int j = 0; j < array.length(); j++) {
 						JSONObject obj = new JSONObject(array.get(j).toString());
 						newOutputColumns.add(obj.get("value").toString());
@@ -76,7 +76,7 @@ public class HistoryJSONEditor {
 				}
 				else {
 					JSONArray array = new JSONArray(tmp);
-					Set<String> newOutputColumns = new HashSet<String>();
+					Set<String> newOutputColumns = new HashSet<>();
 					for (int j = 0; j < array.length(); j++) {
 						JSONObject obj = new JSONObject(array.get(j).toString());
 						newOutputColumns.add(obj.get("value").toString());

@@ -13,13 +13,13 @@ import java.util.Vector;
 import edu.isi.karma.cleaning.features.Feature;
 
 public class ExampleCluster {
-	public HashMap<String, Boolean> legalParitions = new HashMap<String, Boolean>();
-	Vector<Partition> examples = new Vector<Partition>();
-	HashSet<String> exampleInputs = new HashSet<String>();
-	Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+	public HashMap<String, Boolean> legalParitions = new HashMap<>();
+	Vector<Partition> examples = new Vector<>();
+	HashSet<String> exampleInputs = new HashSet<>();
+	Vector<Vector<String[]>> constraints = new Vector<>();
 	public ProgSynthesis pSynthesis; // data
-	HashMap<String, Vector<String>> uorgclusters = new HashMap<String, Vector<String>>();
-	HashMap<String, double[]> string2Vector = new HashMap<String, double[]>();
+	HashMap<String, Vector<String>> uorgclusters = new HashMap<>();
+	HashMap<String, double[]> string2Vector = new HashMap<>();
 	int unlabelDataAmount = 10;
 	double assignThreshold = 0.1;
 	public int featuresize = 0;
@@ -67,11 +67,11 @@ public class ExampleCluster {
 	public void updateConstraints(Vector<Vector<String[]>> cnts) {
 		if (option == method.CPIC || option == method.DPIC
 				|| option == method.SPIC) {
-			HashMap<String, Vector<String[]>> xHashMap1 = new HashMap<String, Vector<String[]>>();
+			HashMap<String, Vector<String[]>> xHashMap1 = new HashMap<>();
 			for (Vector<String[]> group : cnts) {
 				xHashMap1.put(constraintKey(group), group);
 			}
-			HashSet<String> xHashSet2 = new HashSet<String>();
+			HashSet<String> xHashSet2 = new HashSet<>();
 			for (Vector<String[]> group : constraints) {
 				xHashSet2.add(constraintKey(group));
 			}
@@ -82,13 +82,13 @@ public class ExampleCluster {
 			}
 			// update islegal ds
 			for (Vector<String[]> group : constraints) {
-				ArrayList<String> g = new ArrayList<String>();
+				ArrayList<String> g = new ArrayList<>();
 				for (String[] p : group) {
 					String line = String.format("%s, %s\n", p[0], p[1]);
 					g.add(line);
 				}
 				String res = "";
-				res = UtilTools.createkey(new ArrayList<String[]>(group));
+				res = UtilTools.createkey(new ArrayList<>(group));
 				legalParitions.put(res, false);
 			}
 		}
@@ -99,7 +99,7 @@ public class ExampleCluster {
 	}
 
 	public String constraintKey(Vector<String[]> group) {
-		ArrayList<String> xArrayList = new ArrayList<String>();
+		ArrayList<String> xArrayList = new ArrayList<>();
 		for (String[] e : group) {
 			xArrayList.add(Arrays.toString(e));
 		}
@@ -181,7 +181,7 @@ public class ExampleCluster {
 				legalParitions.put(
 						getStringKey(pars.get(x_ind), pars.get(y_ind)), false);
 				// update the constraints
-				Vector<String[]> clique = new Vector<String[]>();
+				Vector<String[]> clique = new Vector<>();
 				for (int k = 0; k < pars.get(x_ind).orgNodes.size(); k++) {
 					String org = UtilTools.print(pars.get(x_ind).orgNodes
 							.get(k));
@@ -274,7 +274,7 @@ public class ExampleCluster {
 				legalParitions.put(
 						getStringKey(pars.get(x_ind), pars.get(y_ind)), false);
 				// update the constraints
-				Vector<String[]> clique = new Vector<String[]>();
+				Vector<String[]> clique = new Vector<>();
 				for (int k = 0; k < pars.get(x_ind).orgNodes.size(); k++) {
 					String org = UtilTools.print(pars.get(x_ind).orgNodes
 							.get(k));
@@ -312,7 +312,7 @@ public class ExampleCluster {
 	}
 
 	public void assignUnlabeledData(Vector<Partition> pars) {
-		HashMap<String, Double> dists = new HashMap<String, Double>();
+		HashMap<String, Double> dists = new HashMap<>();
 		// find the distance between partitions
 		for (int i = 0; i < pars.size(); i++) {
 			for (int j = i + 1; j < pars.size(); j++) {
@@ -322,7 +322,7 @@ public class ExampleCluster {
 				}
 			}
 		}
-		HashMap<Partition, HashMap<String, Double>> testResult = new HashMap<Partition, HashMap<String, Double>>();
+		HashMap<Partition, HashMap<String, Double>> testResult = new HashMap<>();
 
 		for (String val : string2Vector.keySet()) {
 			Partition p_index = null;
@@ -353,7 +353,7 @@ public class ExampleCluster {
 			double pDist = dists.get(tKey);
 			if (var_dist > pDist * assignThreshold) {
 				if (!testResult.containsKey(p_index)) {
-					HashMap<String, Double> cluster = new HashMap<String, Double>();
+					HashMap<String, Double> cluster = new HashMap<>();
 					cluster.put(val, min_val);
 					testResult.put(p_index, cluster);
 				} else {
@@ -391,7 +391,7 @@ public class ExampleCluster {
 	// current return all the examples.
 	// monitor whether all constraints are positive.
 	public ArrayList<String> findMaximalSeperated() {
-		ArrayList<String> dists = new ArrayList<String>();
+		ArrayList<String> dists = new ArrayList<>();
 		for (Partition e : examples) {
 			for (Vector<TNode> elem : e.orgNodes) {
 				String line = UtilTools.print(elem);
@@ -403,14 +403,14 @@ public class ExampleCluster {
 
 	public ArrayList<ArrayList<Double>> convertStringSetToContrainMatrix(
 			ArrayList<String> strings) {
-		ArrayList<ArrayList<Double>> res = new ArrayList<ArrayList<Double>>();
+		ArrayList<ArrayList<Double>> res = new ArrayList<>();
 		for (int i = 0; i < strings.size(); i++) {
 			for (int j = i + 1; j < strings.size(); j++) {
 				String s1 = strings.get(i);
 				String s2 = strings.get(j);
 				double[] s1_vec = getFeatureArray(s1);
 				double[] s2_vec = getFeatureArray(s2);
-				ArrayList<Double> xArrayList = new ArrayList<Double>();
+				ArrayList<Double> xArrayList = new ArrayList<>();
 				for (int k = 0; k < s1_vec.length; k++) {
 					xArrayList.add(s2_vec[k] - s1_vec[k]); // does sign matter?
 				}
@@ -425,10 +425,10 @@ public class ExampleCluster {
 		if (option == method.DP || option == method.DPIC) {
 			GradientDecendOptimizer gdo = new GradientDecendOptimizer();
 			// calculate example array and individual groups
-			ArrayList<double[]> centers = new ArrayList<double[]>();
-			ArrayList<ArrayList<double[]>> individuals = new ArrayList<ArrayList<double[]>>();
+			ArrayList<double[]> centers = new ArrayList<>();
+			ArrayList<ArrayList<double[]>> individuals = new ArrayList<>();
 			for (Partition p : pars) {
-				ArrayList<double[]> list = new ArrayList<double[]>();
+				ArrayList<double[]> list = new ArrayList<>();
 				double[] center = new double[featuresize];
 				center = UtilTools.initArray(center, 0);
 				for (Vector<TNode> org : p.orgNodes) {
@@ -442,15 +442,15 @@ public class ExampleCluster {
 				centers.add(center);
 			}
 			// calculate instance array
-			ArrayList<double[]> instances = new ArrayList<double[]>();
+			ArrayList<double[]> instances = new ArrayList<>();
 			for (String s : string2Vector.keySet()) {
 				double[] elem = string2Vector.get(s);
 				instances.add(elem);
 			}
 			// calculate constraint array
-			ArrayList<ArrayList<double[]>> constraintgroup = new ArrayList<ArrayList<double[]>>();
+			ArrayList<ArrayList<double[]>> constraintgroup = new ArrayList<>();
 			for (Vector<String[]> consts : constraints) {
-				ArrayList<double[]> group = new ArrayList<double[]>();
+				ArrayList<double[]> group = new ArrayList<>();
 				for (String[] exp : consts) {
 					double[] e = string2Vector.get(exp[0]);
 					group.add(e);
@@ -533,7 +533,7 @@ public class ExampleCluster {
 		if (!isLegalPartition(p)) {
 			legalParitions.put(key, false);
 			// update the constraints
-			Vector<String[]> clique = new Vector<String[]>();
+			Vector<String[]> clique = new Vector<>();
 			for (int k = 0; k < a.orgNodes.size(); k++) {
 				String org = UtilTools.print(a.orgNodes.get(k));
 				String tar = UtilTools.print(a.tarNodes.get(k));
@@ -603,7 +603,7 @@ public class ExampleCluster {
 			}
 		}
 		ProgramAdaptator pAdapter = new ProgramAdaptator(contextId);
-		ArrayList<Partition> nPs = new ArrayList<Partition>();
+		ArrayList<Partition> nPs = new ArrayList<>();
 		nPs.add(p);
 		ArrayList<String[]> examps = UtilTools.extractExamplesinPartition(nPs);
 		String fprogram = pAdapter.adapt(pSynthesis.msGer.exp2Space,pSynthesis.msGer.exp2program, examps);
@@ -633,7 +633,7 @@ public class ExampleCluster {
 				return false;
 			}
 		}
-		Vector<Partition> xPar = new Vector<Partition>();
+		Vector<Partition> xPar = new Vector<>();
 		xPar.add(p);
 		Collection<ProgramRule> cpr = pSynthesis.producePrograms(xPar);
 		if (cpr == null || cpr.size() == 0) {
@@ -649,7 +649,7 @@ public class ExampleCluster {
 	public Vector<Partition> UpdatePartitions(int i, int j,
 			Vector<Partition> pars) {
 		Partition p = pars.get(i).mergewith(pars.get(j));
-		Vector<Partition> res = new Vector<Partition>();
+		Vector<Partition> res = new Vector<>();
 		res.addAll(pars);
 		res.set(i, p);
 		res.remove(j);
@@ -657,7 +657,7 @@ public class ExampleCluster {
 	}
 
 	public String getStringKey(Partition a, Partition b) {
-		ArrayList<Partition> pars = new ArrayList<Partition>();
+		ArrayList<Partition> pars = new ArrayList<>();
 		pars.add(a);
 		pars.add(b);
 		String res = Partition.getStringKey(pars);
@@ -667,7 +667,7 @@ public class ExampleCluster {
 	// get a vector that can represent a partition
 	public double[] getPartitionVector(Partition p) {
 
-		ArrayList<double[]> vecs = new ArrayList<double[]>();
+		ArrayList<double[]> vecs = new ArrayList<>();
 		for (Vector<TNode> orgs : p.orgNodes) {
 			vecs.add(string2Vector.get(UtilTools.print(orgs)));
 		}

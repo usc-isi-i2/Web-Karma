@@ -123,7 +123,7 @@ public class WebServiceLoader extends SourceLoader
     @Override
 	public List<Source> getSourcesAbstractInfo(Integer serviceLimit) {
 		
-		List<Source> serviceList = new ArrayList<Source>();
+		List<Source> serviceList = new ArrayList<>();
 		
 		Model model = Repository.Instance().getModel();
 		
@@ -209,7 +209,7 @@ public class WebServiceLoader extends SourceLoader
 	public List<Source> getSourcesDetailedInfo(Integer serviceLimit) {
 
 		List<Source> serviceList = getSourcesAbstractInfo(serviceLimit);
-		List<Source> serviceListCompleteInfo = new ArrayList<Source>();
+		List<Source> serviceListCompleteInfo = new ArrayList<>();
 		for (Source s : serviceList) {
 			serviceListCompleteInfo.add(getSourceByUri(s.getUri()));
 		}
@@ -297,8 +297,8 @@ public class WebServiceLoader extends SourceLoader
 			return null;
 		}
 		
-		Map<WebService, Map<String, String>> servicesAndMappings = 
-			new HashMap<WebService, Map<String,String>>();
+		Map<WebService, Map<String, String>> servicesAndMappings =
+				new HashMap<>();
 		
 		Map<String, Map<String, String>> serviceIdsAndMappings = 
 			semanticModel.findInServiceInputs(Repository.Instance().getModel(), serviceLimit);
@@ -331,8 +331,8 @@ public class WebServiceLoader extends SourceLoader
 			return null;
 		}
 		
-		Map<WebService, Map<String, String>> servicesAndMappings = 
-			new HashMap<WebService, Map<String,String>>();
+		Map<WebService, Map<String, String>> servicesAndMappings =
+				new HashMap<>();
 		
 		Map<String, Map<String, String>> serviceIdsAndMappings = 
 			semanticModel.findInServiceOutputs(Repository.Instance().getModel(), serviceLimit);
@@ -362,8 +362,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		List<Source> serviceList = getSourcesDetailedInfo(serviceLimit);
 		
-		Map<WebService, Map<String, String>> servicesAndMappings = 
-			new HashMap<WebService, Map<String,String>>();
+		Map<WebService, Map<String, String>> servicesAndMappings =
+				new HashMap<>();
 
 		Model jenaModel = semanticModel.getJenaModel();
 		for (Source service : serviceList) {
@@ -405,8 +405,8 @@ public class WebServiceLoader extends SourceLoader
 		
 		List<Source> serviceList = getSourcesDetailedInfo(serviceLimit);
 		
-		Map<WebService, Map<String, String>> servicesAndMappings = 
-			new HashMap<WebService, Map<String,String>>();
+		Map<WebService, Map<String, String>> servicesAndMappings =
+				new HashMap<>();
 
 		Model jenaModel = semanticModel.getJenaModel();
 		for (Source service : serviceList) {
@@ -534,7 +534,7 @@ public class WebServiceLoader extends SourceLoader
 		
 		Property has_variable_property = model.getProperty(Namespaces.KARMA + "hasVariable");
 	
-		List<String> variables = new ArrayList<String>();
+		List<String> variables = new ArrayList<>();
 		NodeIterator nodeIterator = null;
 		RDFNode node = null;
 
@@ -561,7 +561,7 @@ public class WebServiceLoader extends SourceLoader
 		Property has_mandatory_attribute_property = model.getProperty(Namespaces.KARMA + "hasMandatoryAttribute");
 		Property has_optional_attribute_property = model.getProperty(Namespaces.KARMA + "hasOptionalAttribute");
 
-		List<Attribute> attList = new ArrayList<Attribute>();
+		List<Attribute> attList = new ArrayList<>();
 		
 		NodeIterator nodeIterator = null;
 		RDFNode node = null;
@@ -670,7 +670,7 @@ public class WebServiceLoader extends SourceLoader
 
 		edu.isi.karma.rep.model.Model semanticModel = 
 			new edu.isi.karma.rep.model.Model(modelNode.asResource().getLocalName());
-		List<Atom> atoms = new ArrayList<Atom>();
+		List<Atom> atoms = new ArrayList<>();
 		
 
 		// hasAtom

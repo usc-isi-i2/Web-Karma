@@ -20,9 +20,9 @@ public class ModelCoherence {
 	public ModelCoherence(int size, int k) {
 		this.k = k;
 		this.modelFrequency = new ModelFrequencyPair[size];
-		this.modelIndex = new HashMap<String,Integer>();
-		this.topKModels = new ArrayList<ModelFrequencyPair>();
-		this.visitedLinks = new HashSet<String>();
+		this.modelIndex = new HashMap<>();
+		this.topKModels = new ArrayList<>();
+		this.visitedLinks = new HashSet<>();
 	}
 
 	public void update(SteinerEdge e) {

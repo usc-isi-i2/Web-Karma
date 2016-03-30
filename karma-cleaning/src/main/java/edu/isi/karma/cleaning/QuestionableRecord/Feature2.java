@@ -29,7 +29,7 @@ import edu.isi.karma.cleaning.TNode;
 public class Feature2 implements RecFeature {
 
 	public int type;
-	public Vector<TNode> xNodes = new Vector<TNode>();
+	public Vector<TNode> xNodes = new Vector<>();
 	public double weight = 1.0;
 
 	public Feature2(int type, Vector<TNode> xNodes, double weight) {

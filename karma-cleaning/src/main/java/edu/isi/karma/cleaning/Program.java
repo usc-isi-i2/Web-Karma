@@ -8,7 +8,7 @@ import org.perf4j.StopWatch;
 import org.perf4j.log4j.Log4JStopWatch;
 
 public class Program implements GrammarTreeNode {
-	public Vector<Partition> partitions = new Vector<Partition>();
+	public Vector<Partition> partitions = new Vector<>();
 	public String cls = "";
 	public double score = 0.0;
 	public PartitionClassifierType classifier;
@@ -107,7 +107,7 @@ public class Program implements GrammarTreeNode {
 				}
 				else
 				{
-					ArrayList<Partition> xpars = new ArrayList<Partition>();
+					ArrayList<Partition> xpars = new ArrayList<>();
 					xpars.add(p);
 					ArrayList<String[]> examples = UtilTools.extractExamplesinPartition(xpars);
 					rule = programAdaptator.adapt(msger.exp2Space, msger.exp2program, examples);
@@ -137,7 +137,7 @@ public class Program implements GrammarTreeNode {
 			}
 			else
 			{
-				ArrayList<Partition> xpars = new ArrayList<Partition>();
+				ArrayList<Partition> xpars = new ArrayList<>();
 				xpars.add(partitions.get(0));
 				ArrayList<String[]> examples = UtilTools.extractExamplesinPartition(xpars);
 				s = programAdaptator.adapt(msger.exp2Space, msger.exp2program, examples);

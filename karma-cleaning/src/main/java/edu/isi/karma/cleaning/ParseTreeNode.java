@@ -10,7 +10,7 @@ public class ParseTreeNode {
 	    loop,segment, position,root
 	}
 	ParseTreeNode parent;
-	ArrayList<ParseTreeNode> children = new ArrayList<ParseTreeNode>();
+	ArrayList<ParseTreeNode> children = new ArrayList<>();
 	String contextId;
 	public ParseTreeNode(nodetype type, String value, String contextId)
 	{

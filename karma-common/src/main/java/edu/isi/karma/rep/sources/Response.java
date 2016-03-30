@@ -61,7 +61,7 @@ public class Response {
 		return this.attributes;
 	}
 	private void buildAttributeListFromTable() {
-		this.attributes = new ArrayList<Attribute>();
+		this.attributes = new ArrayList<>();
 		if (table == null)
 			return;
 		for (Attribute p : table.getHeaders()) {

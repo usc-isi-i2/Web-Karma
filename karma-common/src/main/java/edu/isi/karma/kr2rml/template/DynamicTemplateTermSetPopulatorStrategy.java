@@ -40,7 +40,7 @@ public class DynamicTemplateTermSetPopulatorStrategy implements
 	}
 	@Override
 	public Collection<Node> getNodes(Row topRow, Row currentRow, SuperSelection sel) {
-		Collection<Node> nodes = new LinkedList<Node>();
+		Collection<Node> nodes = new LinkedList<>();
 		currentRow.collectNodes(relativePath, nodes, sel);
 		return nodes;
 	}

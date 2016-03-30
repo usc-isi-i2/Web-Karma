@@ -28,7 +28,7 @@ import java.util.Vector;
 
 public class RecordFeatureSet {
 	public String record;
-	public HashSet<String> labels = new HashSet<String>();
+	public HashSet<String> labels = new HashSet<>();
 	public String[] xStrings = { "=","\\|","#", ";", ",", "!", "~", "@", "\\$", "%", "\\^",
 			"&", "\\*", "\\(", "\\)", "_", "-", "\\{", "\\}", "\\[", "\\]", "\\\"", "\\\'", ":",
 			"\\?", "<", ">", "\\.", "/", "\\\\", "\\d+", "[A-Z]+", "[a-z]+", "[\\s]" };
@@ -44,11 +44,11 @@ public class RecordFeatureSet {
 	}
 	public void init()
 	{
-		this.labels = new HashSet<String>();
+		this.labels = new HashSet<>();
 	}
 	public void removeFeatures(ArrayList<Integer> fs)
 	{
-		ArrayList<String> xList = new ArrayList<String>();
+		ArrayList<String> xList = new ArrayList<>();
 		for(int i = 0; i<xStrings.length; i++)
 		{
 			boolean found = false;
@@ -72,7 +72,7 @@ public class RecordFeatureSet {
 			return;
 		}
 		//update xString to constain new Vocabs
-		ArrayList<String> res = new ArrayList<String>();
+		ArrayList<String> res = new ArrayList<>();
 		for(String syb: xStrings)
 		{
 			res.add(syb);
@@ -93,7 +93,7 @@ public class RecordFeatureSet {
 		this.xStrings = res.toArray(new String[res.size()]);
 	}
 	public Collection<Feature> computeFeatures(String record, String label) {
-		Vector<Feature> xCollection = new Vector<Feature>();
+		Vector<Feature> xCollection = new Vector<>();
 		for (String c : xStrings) {
 			Feature f = new RecordCntFeatures(c, record, c);
 			xCollection.add(f);
@@ -105,7 +105,7 @@ public class RecordFeatureSet {
 	}
 
 	public Collection<String> getFeatureNames() {
-		Vector<String> x = new Vector<String>();
+		Vector<String> x = new Vector<>();
 		for (String s : xStrings) {
 			if (s.compareTo("\"") == 0) {
 				s = "Quote";

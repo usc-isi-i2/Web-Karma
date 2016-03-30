@@ -28,7 +28,7 @@ import de.micromata.opengis.kml.v_2_2_0.Coordinate;
 
 public class LineString {
 	private final List<Coordinate> coordinatesList;
-	private Map<String, String> popupData = new HashMap<String, String>();
+	private Map<String, String> popupData = new HashMap<>();
 
 	public LineString(List<Coordinate> posList) {
 		super();

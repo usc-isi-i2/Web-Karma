@@ -29,15 +29,15 @@ import java.util.Vector;
 import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
 
 public class ExampleSelection {
-	public HashMap<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();
-	public HashMap<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
-	public HashMap<String, String[]> raw = new HashMap<String, String[]>();
+	public HashMap<String, Vector<TNode>> org = new HashMap<>();
+	public HashMap<String, Vector<TNode>> tran = new HashMap<>();
+	public HashMap<String, String[]> raw = new HashMap<>();
 	public boolean isDetectingQuestionableRecord = false;
 	public OutlierDetector out;
 	// testdata rowid:{tar, tarcolor}
-	public HashMap<String, HashMap<String, String[]>> testdata = new HashMap<String, HashMap<String, String[]>>();
+	public HashMap<String, HashMap<String, String[]>> testdata = new HashMap<>();
 	public int way = 7;
-	public HashSet<String> dictionary = new HashSet<String>();
+	public HashSet<String> dictionary = new HashSet<>();
 
 	public ExampleSelection() {
 		this.out = new OutlierDetector();
@@ -77,7 +77,7 @@ public class ExampleSelection {
 	}
 
 	public Vector<String[]> getOrgTarPair(HashMap<String, String[]> exps) {
-		Vector<String[]> result = new Vector<String[]>();
+		Vector<String[]> result = new Vector<>();
 		for (String key : exps.keySet()) {
 			String[] record = exps.get(key);
 			String[] tmp = { record[0], record[1] };
@@ -115,7 +115,7 @@ public class ExampleSelection {
 						xelem.put(keyString, pair);
 					}
 				} else {
-					HashMap<String, String[]> vstr = new HashMap<String, String[]>();
+					HashMap<String, String[]> vstr = new HashMap<>();
 					vstr.put(keyString, pair);
 					testdata.put(exps.get(keyString)[3], vstr);
 				}
@@ -168,7 +168,7 @@ public class ExampleSelection {
 	}
 
 	public int ambiguityScore(Vector<TNode> vec) {
-		HashMap<String, Integer> d = new HashMap<String, Integer>();
+		HashMap<String, Integer> d = new HashMap<>();
 		int score = 0;
 		for (int i = 0; i < vec.size(); i++) {
 			if (d.containsKey(vec.get(i).text))
@@ -209,7 +209,7 @@ public class ExampleSelection {
 			firsttime = false;
 			return this.way2();
 		}
-		Vector<String> examples = new Vector<String>();
+		Vector<String> examples = new Vector<>();
 		for (String key : raw.keySet()) {
 			int cnt = 0;
 			String[] tmp = raw.get(key)[2]
@@ -259,7 +259,7 @@ public class ExampleSelection {
 			firsttime = false;
 			return this.way2();
 		}
-		Vector<String> examples = new Vector<String>();
+		Vector<String> examples = new Vector<>();
 		for (String key : raw.keySet()) {
 			int cnt = 0;
 			String[] tmp = raw.get(key)[2]

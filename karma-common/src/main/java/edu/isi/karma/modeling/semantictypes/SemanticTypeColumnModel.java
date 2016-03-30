@@ -41,7 +41,7 @@ import edu.isi.karma.util.Util;
 
 public class SemanticTypeColumnModel implements Jsonizable {
 
-	private final HashMap<String, Double> scoreMap = new HashMap<String, Double>();
+	private final HashMap<String, Double> scoreMap = new HashMap<>();
 
 	public SemanticTypeColumnModel(List<SemanticTypeLabel> labels) {
 		for (int i = 0; i < labels.size(); i++) {
@@ -109,7 +109,7 @@ public class SemanticTypeColumnModel implements Jsonizable {
 		JSONArray arr = new JSONArray();
 		
 		/** Create a set of node ids of internal nodes of Steiner Tree **/
-		Set<String> steinerTreeNodeIds = new HashSet<String>();
+		Set<String> steinerTreeNodeIds = new HashSet<>();
 		if (alignment != null && !alignment.isEmpty()) {
 			for (Node node: alignment.getSteinerTree().vertexSet()) {
 				if (node.getType() == NodeType.InternalNode) {

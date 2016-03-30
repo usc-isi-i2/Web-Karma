@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UIConfigurationRegistry {
 	private static UIConfigurationRegistry singleton = new UIConfigurationRegistry();
 
-	private final ConcurrentHashMap<String, UIConfiguration> contextIdToUIConfiguration = new ConcurrentHashMap<String, UIConfiguration>();
+	private final ConcurrentHashMap<String, UIConfiguration> contextIdToUIConfiguration = new ConcurrentHashMap<>();
 
 	public static UIConfigurationRegistry getInstance() {
 		return singleton;

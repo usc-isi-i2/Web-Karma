@@ -89,7 +89,7 @@ public class SemanticModel {
 		this.graph = graph;
 
 		this.sourceColumns = this.getColumnNodes();
-		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		this.mappingToSourceColumns = new HashMap<>();
 		for (ColumnNode c : this.sourceColumns)
 			this.mappingToSourceColumns.put(c, c);
 	}
@@ -104,7 +104,7 @@ public class SemanticModel {
 		this.setUserTypesForColumnNodes();
 
 		this.sourceColumns = this.getColumnNodes();
-		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		this.mappingToSourceColumns = new HashMap<>();
 		for (ColumnNode c : this.sourceColumns)
 			this.mappingToSourceColumns.put(c, c);
 	}
@@ -122,7 +122,7 @@ public class SemanticModel {
 		this.setUserTypesForColumnNodes();
 		
 		this.sourceColumns = this.getColumnNodes();
-		this.mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		this.mappingToSourceColumns = new HashMap<>();
 		for (ColumnNode c : this.sourceColumns)
 			this.mappingToSourceColumns.put(c, c);
 	}
@@ -198,7 +198,7 @@ public class SemanticModel {
 	}
 
 	public Set<InternalNode> getInternalNodes() {
-		Set<InternalNode> internalNodes = new HashSet<InternalNode>();
+		Set<InternalNode> internalNodes = new HashSet<>();
 		if (this.graph != null) {
 			for (Node n : this.graph.vertexSet())
 				if (n instanceof InternalNode)
@@ -208,7 +208,7 @@ public class SemanticModel {
 	}
 
 	public List<ColumnNode> getColumnNodes() {
-		List<ColumnNode> columnNodes = new LinkedList<ColumnNode>();
+		List<ColumnNode> columnNodes = new LinkedList<>();
 		if (this.graph != null) {
 			for (Node n : this.graph.vertexSet())
 				if (n instanceof ColumnNode)
@@ -274,7 +274,7 @@ public class SemanticModel {
 			return new ModelEvaluation(null, null, null, null);
 		
 		NodeIdFactory nodeIdFactory = new NodeIdFactory();
-		HashMap<Node,String> baseNodeIds = new HashMap<Node,String>();
+		HashMap<Node,String> baseNodeIds = new HashMap<>();
 		for (Node n : baseModel.getGraph().vertexSet()) {
 			if (n instanceof InternalNode)
 				baseNodeIds.put(n, nodeIdFactory.getNodeId(n.getUri()));
@@ -313,7 +313,7 @@ public class SemanticModel {
 			boolean ignoreSemanticTypes, boolean ignoreColumnNodes) {
 		
 		String separator = "|";
-		Set<String> triples = new HashSet<String>();
+		Set<String> triples = new HashSet<>();
 		if (g == null)
 			return triples;
 		
@@ -338,16 +338,16 @@ public class SemanticModel {
 	private List<HashMap<Node,String>> getPossibleNodeIdSets() {
 		
 		DirectedWeightedMultigraph<Node, LabeledLink> g = this.getGraph();
-		List<HashMap<Node,String>> nodeIdSets = new ArrayList<HashMap<Node,String>>();
+		List<HashMap<Node,String>> nodeIdSets = new ArrayList<>();
 		if (g == null)
 			return nodeIdSets;
 		
-		Set<Node> internalNodes = new HashSet<Node>();
+		Set<Node> internalNodes = new HashSet<>();
 		for (Node n : g.vertexSet()) 
 			if (n instanceof InternalNode) 
 				internalNodes.add(n);
 
-		Set<Node> columnNodes = new HashSet<Node>();
+		Set<Node> columnNodes = new HashSet<>();
 		for (Node n : g.vertexSet()) 
 			if (n instanceof ColumnNode) 
 				columnNodes.add(n);
@@ -371,7 +371,7 @@ public class SemanticModel {
 //		System.out.println(numberOfPossibleSets);
 
 		for (int i = 0; i < numberOfPossibleSets; i++) {
-			HashMap<Node, String> nodeIds = new HashMap<Node,String>();
+			HashMap<Node, String> nodeIds = new HashMap<>();
 			NodeIdFactory nodeIdFactory = new NodeIdFactory();
 			
 			for (Node n : columnNodes) {
@@ -429,14 +429,14 @@ public class SemanticModel {
 		for (String s : index.keySet()) {
 			Collection<Node> nodeGroup = index.get(s);
 			if (nodeGroup != null && nodeGroup.size() > 1) {
-				Set<String> ids = new HashSet<String>();
-				List<Node> nodes = new ArrayList<Node>();
+				Set<String> ids = new HashSet<>();
+				List<Node> nodes = new ArrayList<>();
 				nodes.addAll(nodeGroup);
 				for (Node n : nodes)
 					ids.add(nodeIdFactory.getNodeId(n.getLabel().getUri()));
 
 				Collection<List<String>> permutations = Collections2.permutations(ids);
-				List<List<String>> permList = new ArrayList<List<String>>();
+				List<List<String>> permList = new ArrayList<>();
 				permList.addAll(permutations);
 				
 				interval = interval / BigIntegerMath.factorial(nodeGroup.size()).intValue();
@@ -465,8 +465,8 @@ public class SemanticModel {
 		Double distance = getDistance(baseModel);
 		
 		int maxLength = maxPathLengthForEvaluation;
-		List<GraphPath> basePaths = new LinkedList<GraphPath>();
-		List<GraphPath> modelPaths = new LinkedList<GraphPath>();
+		List<GraphPath> basePaths = new LinkedList<>();
+		List<GraphPath> modelPaths = new LinkedList<>();
 		List<GraphPath> gpList;
 		String pathStr;
 		for (int i = 1; i <= maxLength; i++) {
@@ -475,10 +475,10 @@ public class SemanticModel {
 			gpList = GraphUtil.getPaths(GraphUtil.asDefaultGraph(this.graph), i);
 			if (gpList != null) modelPaths.addAll(gpList);
 		}
-		Set<String> basePathString = new HashSet<String>();
-		Set<String> modelPathString = new HashSet<String>();
+		Set<String> basePathString = new HashSet<>();
+		Set<String> modelPathString = new HashSet<>();
 		
-		Map<String, Integer> visitedPaths = new HashMap<String, Integer>();
+		Map<String, Integer> visitedPaths = new HashMap<>();
 		Integer count;
 		for (GraphPath gp : basePaths) {
 			pathStr = getPathString(baseModel, gp);
@@ -563,14 +563,14 @@ public class SemanticModel {
 				linkDeletion = 0,
 				linkRelabeling = 0;
 		
-		HashMap<String, Integer> mainNodes = new HashMap<String, Integer>();
-		HashMap<String, Integer> targetNodes = new HashMap<String, Integer>();
+		HashMap<String, Integer> mainNodes = new HashMap<>();
+		HashMap<String, Integer> targetNodes = new HashMap<>();
 
-		HashMap<String, Integer> mainLinks = new HashMap<String, Integer>();
-		HashMap<String, Integer> targetLinks = new HashMap<String, Integer>();
+		HashMap<String, Integer> mainLinks = new HashMap<>();
+		HashMap<String, Integer> targetLinks = new HashMap<>();
 		
-		HashMap<String, Set<String>> mainNodePairToLinks = new HashMap<String, Set<String>>();
-		HashMap<String, Set<String>> targetNodePairToLinks = new HashMap<String, Set<String>>();
+		HashMap<String, Set<String>> mainNodePairToLinks = new HashMap<>();
+		HashMap<String, Set<String>> targetNodePairToLinks = new HashMap<>();
 
 		String key, sourceStr, targetStr, linkStr;
 		Integer count = 0;
@@ -624,7 +624,7 @@ public class SemanticModel {
 			else mainLinks.put(key, ++count);
 			
 			Set<String> links = mainNodePairToLinks.get(sourceStr + targetStr);
-			if (links == null) { links = new HashSet<String>(); mainNodePairToLinks.put(sourceStr + targetStr, links); }
+			if (links == null) { links = new HashSet<>(); mainNodePairToLinks.put(sourceStr + targetStr, links); }
 			links.add(linkStr);
 		}
 		for (LabeledLink l : targetModel.graph.edgeSet()) {
@@ -648,7 +648,7 @@ public class SemanticModel {
 			else targetLinks.put(key, ++count);
 			
 			Set<String> links = targetNodePairToLinks.get(sourceStr + targetStr);
-			if (links == null) { links = new HashSet<String>(); targetNodePairToLinks.put(sourceStr + targetStr, links); }
+			if (links == null) { links = new HashSet<>(); targetNodePairToLinks.put(sourceStr + targetStr, links); }
 			links.add(linkStr);
 		}
 		
@@ -856,8 +856,8 @@ public class SemanticModel {
 			} else if (key.equals("description") && reader.peek() != JsonToken.NULL) {
 				description = reader.nextString();
 			} else if (key.equals("sourceColumns") && reader.peek() != JsonToken.NULL) {
-				sourceColumns = new LinkedList<ColumnNode>();
-				sourceColumnIds = new HashMap<String, ColumnNode>();
+				sourceColumns = new LinkedList<>();
+				sourceColumnIds = new HashMap<>();
 				reader.beginArray();
 			    while (reader.hasNext()) {
 			    	ColumnNode cn = readSourceColumn(reader);
@@ -868,7 +868,7 @@ public class SemanticModel {
 				}
 		    	reader.endArray();				
 			} else if (key.equals("mappingToSourceColumns") && reader.peek() != JsonToken.NULL) {
-				mappingToSourceColumnsIds = new HashMap<String, String>();
+				mappingToSourceColumnsIds = new HashMap<>();
 				Map <String, String> oneEntryMapping;
 				reader.beginArray();
 			    while (reader.hasNext()) {
@@ -885,7 +885,7 @@ public class SemanticModel {
 		}
     	reader.endObject();
     	
-		Map<ColumnNode, ColumnNode> mappingToSourceColumns = new HashMap<ColumnNode, ColumnNode>();
+		Map<ColumnNode, ColumnNode> mappingToSourceColumns = new HashMap<>();
 		if (graph != null && mappingToSourceColumnsIds != null && !mappingToSourceColumnsIds.isEmpty()) {
 			for (Node n : graph.vertexSet()) {
 				if (n instanceof ColumnNode) {
@@ -948,7 +948,7 @@ public class SemanticModel {
 		}
     	reader.endObject();
     	
-    	Map<String, String> mapping = new HashMap<String, String>();
+    	Map<String, String> mapping = new HashMap<>();
     	mapping.put(id, sourceColumnId);
     	return mapping;
 	}

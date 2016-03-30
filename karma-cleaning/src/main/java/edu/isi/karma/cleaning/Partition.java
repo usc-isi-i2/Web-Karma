@@ -11,8 +11,8 @@ public class Partition implements GrammarTreeNode {
 	public Traces trace;
 	public Vector<Vector<TNode>> orgNodes;
 	public Vector<Vector<TNode>> tarNodes;
-	public Vector<String> orgUnlabeledData = new Vector<String>();
-	public Vector<String> mapping = new Vector<String>();
+	public Vector<String> orgUnlabeledData = new Vector<>();
+	public Vector<String> mapping = new Vector<>();
 	public String label; // the class label of current partition
 	public String cls;
 	public String program = "";
@@ -35,7 +35,7 @@ public class Partition implements GrammarTreeNode {
 	public Partition(Vector<Vector<TNode>> org, Vector<Vector<TNode>> tar) {
 		this.orgNodes = org;
 		this.tarNodes = tar;
-		Vector<Traces> ts = new Vector<Traces>();
+		Vector<Traces> ts = new Vector<>();
 		for (int i = 0; i < orgNodes.size(); i++) {
 			Traces t = new Traces(orgNodes.get(i), tarNodes.get(i),contextId);
 			ts.add(t);
@@ -68,8 +68,8 @@ public class Partition implements GrammarTreeNode {
 	public Partition mergewith(Partition b) {
 		Traces mt = this.trace.mergewith(b.trace);
 		// add the examples
-		Vector<Vector<TNode>> norg = new Vector<Vector<TNode>>();
-		Vector<Vector<TNode>> ntar = new Vector<Vector<TNode>>();
+		Vector<Vector<TNode>> norg = new Vector<>();
+		Vector<Vector<TNode>> ntar = new Vector<>();
 		norg.addAll(this.orgNodes);
 		norg.addAll(b.orgNodes);
 		ntar.addAll(this.tarNodes);
@@ -91,14 +91,14 @@ public class Partition implements GrammarTreeNode {
 	}
 	public String getHashKey()
 	{
-		ArrayList<Partition> pars = new ArrayList<Partition>();
+		ArrayList<Partition> pars = new ArrayList<>();
 		pars.add(this);
 		return Partition.getStringKey(pars);
  	}
 	public static String getStringKey(ArrayList<Partition> pars)
 	{
 		String s = "";
-		ArrayList<String[]> lines = new ArrayList<String[]>();
+		ArrayList<String[]> lines = new ArrayList<>();
 		for(Partition p: pars)
 		{
 			for (int i = 0; i < p.orgNodes.size(); i++) {
@@ -115,7 +115,7 @@ public class Partition implements GrammarTreeNode {
 	public String toString() {
 		String s = "partition:" + this.label + "\n";
 		s += "Examples:\n";
-		ArrayList<String> lines = new ArrayList<String>();
+		ArrayList<String> lines = new ArrayList<>();
 		for(int i = 0; i<this.orgNodes.size(); i++)
 		{
 			String line= UtilTools.print(this.orgNodes.get(i))+"   "+UtilTools.print(this.tarNodes.get(i))+"\n";

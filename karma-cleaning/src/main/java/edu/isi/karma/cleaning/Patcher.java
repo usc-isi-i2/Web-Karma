@@ -3,8 +3,8 @@ import java.util.Vector;
 
 
 public class Patcher {
-	public Vector<GrammarTreeNode> patchSpace = new Vector<GrammarTreeNode>();
-	public Vector<GrammarTreeNode> groundTruth = new Vector<GrammarTreeNode>();
-	public Vector<ParseTreeNode> programNodes = new Vector<ParseTreeNode>();
-	public Vector<ParseTreeNode> replaceNodes = new Vector<ParseTreeNode>();
+	public Vector<GrammarTreeNode> patchSpace = new Vector<>();
+	public Vector<GrammarTreeNode> groundTruth = new Vector<>();
+	public Vector<ParseTreeNode> programNodes = new Vector<>();
+	public Vector<ParseTreeNode> replaceNodes = new Vector<>();
 }

@@ -50,7 +50,7 @@ public class CreateJSONFromSequenceFile {
 			String fileName = status.getPath().getName();
 			if (status.getLen() > 0) {
 				String outputFileName = outputPath + File.separator + fileName;// + ".json";
-				List<FSDataOutputStream> streams = new LinkedList<FSDataOutputStream>();
+				List<FSDataOutputStream> streams = new LinkedList<>();
 				if(cl.hasOption("splits"))
 				{
 					Integer splits = Integer.parseInt((String) cl.getOptionValue("splits"));
@@ -71,7 +71,7 @@ public class CreateJSONFromSequenceFile {
 	public static void createJSONFromSequenceFileFrom(Path input, List<FSDataOutputStream> streams) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Path inputPath = input;
 		Configuration conf = new Configuration();
-		List<PrintWriter> fws = new LinkedList<PrintWriter>();
+		List<PrintWriter> fws = new LinkedList<>();
 		for(FSDataOutputStream stream : streams)
 		{
 			PrintWriter fw = new PrintWriter(stream);

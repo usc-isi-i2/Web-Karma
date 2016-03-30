@@ -29,7 +29,7 @@ public class Test {
 	// check whether it longest or shortest
 	public static boolean visible(HashMap<String, String[]> xHashMap, String Id) {
 		String[] pair = xHashMap.get(Id);
-		HashMap<String, String> tmp = new HashMap<String, String>();
+		HashMap<String, String> tmp = new HashMap<>();
 		try {
 			UtilTools.StringColorCode(pair[0], pair[1], tmp);
 		} catch (Exception e) {
@@ -45,7 +45,7 @@ public class Test {
 		boolean shortest = true;
 		boolean longest = true;
 		for (String[] elem : xHashMap.values()) {
-			HashMap<String, String> t = new HashMap<String, String>();
+			HashMap<String, String> t = new HashMap<>();
 			try {
 				UtilTools.StringColorCode(elem[0], elem[1], t);
 			} catch (Exception ex) {
@@ -71,8 +71,8 @@ public class Test {
 	}
 
 	public void parameterSelection(String dirpath) {
-		ArrayList<String> selectParams = new ArrayList<String>();
-		ArrayList<String> runningInfo = new ArrayList<String>();
+		ArrayList<String> selectParams = new ArrayList<>();
+		ArrayList<String> runningInfo = new ArrayList<>();
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
 		double[] r = { 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8 };
@@ -107,18 +107,18 @@ public class Test {
 	public double transform(File f) {
 		double measure = Double.MAX_VALUE;
 		try {
-			Vector<String[]> examples = new Vector<String[]>();
-			Vector<String[]> addExamples = new Vector<String[]>();
-			Vector<String[]> entries = new Vector<String[]>();
+			Vector<String[]> examples = new Vector<>();
+			Vector<String[]> addExamples = new Vector<>();
+			Vector<String[]> entries = new Vector<>();
 			if (f.getName().indexOf(".csv") != -1
 					&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
 				// MyLogger.logsth("========"+f.getName()+"============\n");
-				HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+				HashMap<String, String[]> xHashMap = new HashMap<>();
 				@SuppressWarnings("resource")
 				CSVReader cr = new CSVReader(new FileReader(f), ',', '"', '\0');
 				String[] pair;
 				int index = 0;
-				Vector<String> vtmp = new Vector<String>();
+				Vector<String> vtmp = new Vector<>();
 				while ((pair = cr.readNext()) != null) {
 					if (pair == null || pair.length <= 1)
 						break;
@@ -134,7 +134,7 @@ public class Test {
 				DataPreProcessor dpp = new DataPreProcessor(vtmp);
 				dpp.run();
 				Messager msger = new Messager();
-				Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+				Vector<Vector<String[]>> constraints = new Vector<>();
 				if (entries.size() <= 1)
 					return Double.MAX_VALUE;
 				ExampleSelection expsel = new ExampleSelection();
@@ -146,7 +146,7 @@ public class Test {
 				examples.add(mt);
 				ExampleSelection.firsttime = false;
 				// accuracy record code
-				ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+				ArrayList<double[]> accArrayList = new ArrayList<>();
 				while (true) // repeat as no incorrect answer appears.
 				{
 					if (examples.size() == 4) {
@@ -155,16 +155,16 @@ public class Test {
 					long checknumber = 1;
 					long iterAfterNoFatalError = 0;
 					long isvisible = 0;
-					HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
-					Vector<String> resultString = new Vector<String>();
-					xHashMap = new HashMap<String, String[]>();
+					HashMap<String, Vector<String[]>> expFeData = new HashMap<>();
+					Vector<String> resultString = new Vector<>();
+					xHashMap = new HashMap<>();
 					ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
-					HashMap<String, String> unlabeledData = new HashMap<String, String>();
+					HashMap<String, String> unlabeledData = new HashMap<>();
 					for (int i = 0; i < vtmp.size(); i++) {
 						unlabeledData.put("" + i, vtmp.get(i));
 					}
 					psProgSynthesis.inite(examples, dpp, msger);
-					Vector<ProgramRule> pls = new Vector<ProgramRule>();
+					Vector<ProgramRule> pls = new Vector<>();
 					Collection<ProgramRule> ps = psProgSynthesis.run_main();
 					// collect history contraints
 					msger.updateCM_Constr(psProgSynthesis.partiCluster
@@ -183,7 +183,7 @@ public class Test {
 					int ErrorCnt = 0;
 					int clf_acc_error_cnt = 0;
 					int clf_acc_total_cnt = 0;
-					HashMap<String, HashMap<String, String>> uData = new HashMap<String, HashMap<String, String>>();
+					HashMap<String, HashMap<String, String>> uData = new HashMap<>();
 					for (int i = 0; i < pls.size(); i++) {
 						ProgramRule script = pls.get(i);
 						// System.out.println(script);
@@ -195,7 +195,7 @@ public class Test {
 									.get(j)[0]);
 							String tmps = worker
 									.execute_debug(entries.get(j)[0]);
-							HashMap<String, String> dict = new HashMap<String, String>();
+							HashMap<String, String> dict = new HashMap<>();
 							dict.put("class", classlabel);
 							UtilTools.StringColorCode(entries.get(j)[0], tmps,
 									dict);
@@ -246,7 +246,7 @@ public class Test {
 										+ dict.get("Org") + "<_END>") == 0) {
 									String[] exp = { dict.get("Org"), tmps };
 									if (!expFeData.containsKey(classlabel)) {
-										Vector<String[]> vstr = new Vector<String[]>();
+										Vector<String[]> vstr = new Vector<>();
 										vstr.add(exp);
 										expFeData.put(classlabel, vstr);
 									} else {
@@ -262,7 +262,7 @@ public class Test {
 										&& tmpx[1].compareTo(dict.get("Tar")) == 0) {
 									String[] exp = { dict.get("Org"), tmps };
 									if (!expFeData.containsKey(classlabel)) {
-										Vector<String[]> vstr = new Vector<String[]>();
+										Vector<String[]> vstr = new Vector<>();
 										vstr.add(exp);
 										expFeData.put(classlabel, vstr);
 									} else {
@@ -353,10 +353,10 @@ public class Test {
 	}
 	public static String test_seq(ArrayList<String[]> exps) {
 		String timeres = "";
-		HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+		HashMap<String, String[]> xHashMap = new HashMap<>();
 		int index = 0;
-		Vector<String> vtmp = new Vector<String>();
-		Vector<String[]> examples = new Vector<String[]>();
+		Vector<String> vtmp = new Vector<>();
+		Vector<String[]> examples = new Vector<>();
 		for (String[] pair : exps) {
 			if (pair == null || pair.length <= 1)
 				break;
@@ -368,17 +368,17 @@ public class Test {
 		DataPreProcessor dpp = new DataPreProcessor(vtmp);
 		dpp.run();
 		Messager msger = new Messager();
-		Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
-		ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+		Vector<Vector<String[]>> constraints = new Vector<>();
+		ArrayList<double[]> accArrayList = new ArrayList<>();
 		int i = 0;
 		while (i<exps.size()) // repeat as no incorrect answer appears.
 		{
 			String[] tmt = { "<_START>" + exps.get(i)[0] + "<_END>", exps.get(i)[1] };
 			examples.add(tmt);
-			xHashMap = new HashMap<String, String[]>();
+			xHashMap = new HashMap<>();
 			ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 			psProgSynthesis.inite(examples, dpp, msger);
-			Vector<ProgramRule> pls = new Vector<ProgramRule>();
+			Vector<ProgramRule> pls = new Vector<>();
 			long t1 = System.currentTimeMillis();
 			Collection<ProgramRule> ps = psProgSynthesis.run_main();
 			long span = System.currentTimeMillis()-t1;
@@ -401,10 +401,10 @@ public class Test {
 	}
 	public static String test_adaptive_seq(ArrayList<String[]> exps) {
 		String timeres = "";
-		HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+		HashMap<String, String[]> xHashMap = new HashMap<>();
 		int index = 0;
-		Vector<String> vtmp = new Vector<String>();
-		Vector<String[]> examples = new Vector<String[]>();
+		Vector<String> vtmp = new Vector<>();
+		Vector<String[]> examples = new Vector<>();
 		for (String[] pair : exps) {
 			if (pair == null || pair.length <= 1)
 				break;
@@ -416,17 +416,17 @@ public class Test {
 		DataPreProcessor dpp = new DataPreProcessor(vtmp);
 		dpp.run();
 		Messager msger = new Messager();
-		Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
-		ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+		Vector<Vector<String[]>> constraints = new Vector<>();
+		ArrayList<double[]> accArrayList = new ArrayList<>();
 		int i = 0;
 		while (i<exps.size()) // repeat as no incorrect answer appears.
 		{
 			String[] tmt = { "<_START>" + exps.get(i)[0] + "<_END>", exps.get(i)[1] };
 			examples.add(tmt);
-			xHashMap = new HashMap<String, String[]>();
+			xHashMap = new HashMap<>();
 			ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 			psProgSynthesis.inite(examples, dpp, msger);
-			Vector<ProgramRule> pls = new Vector<ProgramRule>();
+			Vector<ProgramRule> pls = new Vector<>();
 			long t1 = System.currentTimeMillis();
 			Collection<ProgramRule> ps = psProgSynthesis.adaptive_main();
 			long span = System.currentTimeMillis()-t1;
@@ -449,27 +449,27 @@ public class Test {
 	}
 
 	public static void test3(String dirpath) {
-		HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
+		HashMap<String, Vector<String>> records = new HashMap<>();
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
 		// statistics
 		DataCollection dCollection = new DataCollection();
 		// list all the csv file under the dir
 		for (File f : allfiles) {
-			Vector<String[]> examples = new Vector<String[]>();
-			Vector<String[]> addExamples = new Vector<String[]>();
-			Vector<String[]> entries = new Vector<String[]>();
+			Vector<String[]> examples = new Vector<>();
+			Vector<String[]> addExamples = new Vector<>();
+			Vector<String[]> entries = new Vector<>();
 			try {
 				if (f.getName().indexOf(".csv") != -1
 						&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
 					// MyLogger.logsth("========"+f.getName()+"============\n");
-					HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+					HashMap<String, String[]> xHashMap = new HashMap<>();
 					@SuppressWarnings("resource")
 					CSVReader cr = new CSVReader(new FileReader(f), ',', '"',
 							'\0');
 					String[] pair;
 					int index = 0;
-					Vector<String> vtmp = new Vector<String>();
+					Vector<String> vtmp = new Vector<>();
 					while ((pair = cr.readNext()) != null) {
 						if (pair == null || pair.length <= 1)
 							break;
@@ -485,7 +485,7 @@ public class Test {
 					DataPreProcessor dpp = new DataPreProcessor(vtmp);
 					dpp.run();
 					Messager msger = new Messager();
-					Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+					Vector<Vector<String[]>> constraints = new Vector<>();
 					if (entries.size() <= 1)
 						continue;
 					ExampleSelection expsel = new ExampleSelection();
@@ -498,22 +498,22 @@ public class Test {
 					examples.add(mt);
 					ExampleSelection.firsttime = false;
 					// accuracy record code
-					ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+					ArrayList<double[]> accArrayList = new ArrayList<>();
 
 					while (true) // repeat as no incorrect answer appears.
 					{
 						long checknumber = 1;
 						long iterAfterNoFatalError = 0;
-						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
-						Vector<String> resultString = new Vector<String>();
-						xHashMap = new HashMap<String, String[]>();
+						HashMap<String, Vector<String[]>> expFeData = new HashMap<>();
+						Vector<String> resultString = new Vector<>();
+						xHashMap = new HashMap<>();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
-						HashMap<String, String> unlabeledData = new HashMap<String, String>();
+						HashMap<String, String> unlabeledData = new HashMap<>();
 						for (int i = 0; i < vtmp.size(); i++) {
 							unlabeledData.put("" + i, vtmp.get(i));
 						}
 						psProgSynthesis.inite(examples, dpp, msger);
-						Vector<ProgramRule> pls = new Vector<ProgramRule>();
+						Vector<ProgramRule> pls = new Vector<>();
 						Collection<ProgramRule> ps = psProgSynthesis
 								.adaptive_main();
 						// collect history contraints
@@ -533,7 +533,7 @@ public class Test {
 						int ErrorCnt = 0;
 						int clf_acc_error_cnt = 0;
 						int clf_acc_total_cnt = 0;
-						HashMap<String, HashMap<String, String>> uData = new HashMap<String, HashMap<String, String>>();
+						HashMap<String, HashMap<String, String>> uData = new HashMap<>();
 						for (int i = 0; i < pls.size(); i++) {
 							ProgramRule script = pls.get(i);
 							// System.out.println(script);
@@ -545,7 +545,7 @@ public class Test {
 										.getClassForValue(entries.get(j)[0]);
 								String tmps = worker.execute_debug(entries
 										.get(j)[0]);
-								HashMap<String, String> dict = new HashMap<String, String>();
+								HashMap<String, String> dict = new HashMap<>();
 								dict.put("class", classlabel);
 								UtilTools.StringColorCode(entries.get(j)[0],
 										tmps, dict);
@@ -597,7 +597,7 @@ public class Test {
 											+ dict.get("Org") + "<_END>") == 0) {
 										String[] exp = { dict.get("Org"), tmps };
 										if (!expFeData.containsKey(classlabel)) {
-											Vector<String[]> vstr = new Vector<String[]>();
+											Vector<String[]> vstr = new Vector<>();
 											vstr.add(exp);
 											expFeData.put(classlabel, vstr);
 										} else {
@@ -614,7 +614,7 @@ public class Test {
 													.get("Tar")) == 0) {
 										String[] exp = { dict.get("Org"), tmps };
 										if (!expFeData.containsKey(classlabel)) {
-											Vector<String[]> vstr = new Vector<String[]>();
+											Vector<String[]> vstr = new Vector<>();
 											vstr.add(exp);
 											expFeData.put(classlabel, vstr);
 										} else {
@@ -724,7 +724,7 @@ public class Test {
 	}
 
 	public static void test4(String dirpath) {
-		HashMap<String, Vector<String>> records = new HashMap<String, Vector<String>>();
+		HashMap<String, Vector<String>> records = new HashMap<>();
 		File nf = new File(dirpath);
 		File[] allfiles = nf.listFiles();
 		// statistics
@@ -732,20 +732,20 @@ public class Test {
 		RecordClassifier rcf;
 		// list all the csv file under the dir
 		for (File f : allfiles) {
-			Vector<String[]> examples = new Vector<String[]>();
-			Vector<String[]> addExamples = new Vector<String[]>();
-			Vector<String[]> entries = new Vector<String[]>();
+			Vector<String[]> examples = new Vector<>();
+			Vector<String[]> addExamples = new Vector<>();
+			Vector<String[]> entries = new Vector<>();
 			try {
 				if (f.getName().indexOf(".csv") != -1
 						&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
 					// MyLogger.logsth("========"+f.getName()+"============\n");
-					HashMap<String, String[]> xHashMap = new HashMap<String, String[]>();
+					HashMap<String, String[]> xHashMap = new HashMap<>();
 					@SuppressWarnings("resource")
 					CSVReader cr = new CSVReader(new FileReader(f), ',', '"',
 							'\0');
 					String[] pair;
 					int index = 0;
-					Vector<String> vtmp = new Vector<String>();
+					Vector<String> vtmp = new Vector<>();
 					while ((pair = cr.readNext()) != null) {
 						if (pair == null || pair.length <= 1)
 							break;
@@ -761,7 +761,7 @@ public class Test {
 					DataPreProcessor dpp = new DataPreProcessor(vtmp);
 					dpp.run();
 					Messager msger = new Messager();
-					Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
+					Vector<Vector<String[]>> constraints = new Vector<>();
 					if (entries.size() <= 1)
 						continue;
 					ExampleSelection expsel = new ExampleSelection();
@@ -774,7 +774,7 @@ public class Test {
 					examples.add(mt);
 					ExampleSelection.firsttime = false;
 					// accuracy record code
-					ArrayList<double[]> accArrayList = new ArrayList<double[]>();
+					ArrayList<double[]> accArrayList = new ArrayList<>();
 					long stime = System.currentTimeMillis();
 					boolean overtime = true;
 					while (true) // repeat as no incorrect answer appears.
@@ -782,16 +782,16 @@ public class Test {
 						long checknumber = 1;
 						long iterAfterNoFatalError = 0;
 						long isvisible = 0;
-						HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
-						Vector<String> resultString = new Vector<String>();
-						xHashMap = new HashMap<String, String[]>();
+						HashMap<String, Vector<String[]>> expFeData = new HashMap<>();
+						Vector<String> resultString = new Vector<>();
+						xHashMap = new HashMap<>();
 						ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
-						HashMap<String, String> unlabeledData = new HashMap<String, String>();
+						HashMap<String, String> unlabeledData = new HashMap<>();
 						for (int i = 0; i < vtmp.size(); i++) {
 							unlabeledData.put("" + i, vtmp.get(i));
 						}
 						psProgSynthesis.inite(examples, dpp, msger);
-						Vector<ProgramRule> pls = new Vector<ProgramRule>();
+						Vector<ProgramRule> pls = new Vector<>();
 						Collection<ProgramRule> ps = psProgSynthesis.run_main();
 						// collect history contraints
 						msger.updateCM_Constr(psProgSynthesis.partiCluster
@@ -812,7 +812,7 @@ public class Test {
 						int ErrorCnt = 0;
 						int clf_acc_error_cnt = 0;
 						int clf_acc_total_cnt = 0;
-						HashMap<String, HashMap<String, String>> uData = new HashMap<String, HashMap<String, String>>();
+						HashMap<String, HashMap<String, String>> uData = new HashMap<>();
 						for (int i = 0; i < pls.size(); i++) {
 							ProgramRule script = pls.get(i);
 							// System.out.println(script);
@@ -825,7 +825,7 @@ public class Test {
 								String tmps = worker.execute_debug(entries
 										.get(j)[0]);
 								
-								HashMap<String, String> dict = new HashMap<String, String>();
+								HashMap<String, String> dict = new HashMap<>();
 								dict.put("class", classlabel);
 								UtilTools.StringColorCode(entries.get(j)[0],
 										tmps, dict);
@@ -878,7 +878,7 @@ public class Test {
 											+ dict.get("Org") + "<_END>") == 0) {
 										String[] exp = { dict.get("Org"), tmps };
 										if (!expFeData.containsKey(classlabel)) {
-											Vector<String[]> vstr = new Vector<String[]>();
+											Vector<String[]> vstr = new Vector<>();
 											vstr.add(exp);
 											expFeData.put(classlabel, vstr);
 										} else {
@@ -895,7 +895,7 @@ public class Test {
 													.get("Tar")) == 0) {
 										String[] exp = { dict.get("Org"), tmps };
 										if (!expFeData.containsKey(classlabel)) {
-											Vector<String[]> vstr = new Vector<String[]>();
+											Vector<String[]> vstr = new Vector<>();
 											vstr.add(exp);
 											expFeData.put(classlabel, vstr);
 										} else {
@@ -1066,8 +1066,8 @@ public class Test {
 
 	public static int MaximalNumber = -1;
 	public static int MinimalNumber = 100;
-	public static Vector<String[]> larexamples = new Vector<String[]>();
-	public static Vector<String[]> smalexamples = new Vector<String[]>();
+	public static Vector<String[]> larexamples = new Vector<>();
+	public static Vector<String[]> smalexamples = new Vector<>();
 
 	public static void main(String[] args) {
 		// load parameters

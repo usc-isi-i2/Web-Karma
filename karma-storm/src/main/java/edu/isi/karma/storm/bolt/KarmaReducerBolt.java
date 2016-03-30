@@ -39,7 +39,7 @@ public class KarmaReducerBolt extends BaseRichBolt {
 	@Override
 	public void prepare(Map globalConf, TopologyContext context,
 			OutputCollector collector) {
-		allJsonToMerge = new HashMap<String, JSONToMerge>();
+		allJsonToMerge = new HashMap<>();
 		this.collector = collector;
 		
 	}

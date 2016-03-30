@@ -175,7 +175,7 @@ public class JsonManager {
 			rawNames = srcColumns.get(i);
 			for (int j = 0; j < srcValues.get(i).size(); j++) {
 				
-				List<String> populatedValues = new ArrayList<String>();
+				List<String> populatedValues = new ArrayList<>();
 				rawValues = srcValues.get(i).get(j);
 				
 				for (int k = 0; k < columns.size(); k++) {
@@ -215,7 +215,7 @@ public class JsonManager {
 			rawNames = srcColumns.get(i);
 			for (int j = 0; j < srcValues.get(i).size(); j++) {
 				
-				List<String> populatedValues = new ArrayList<String>();
+				List<String> populatedValues = new ArrayList<>();
 				rawValues = srcValues.get(i).get(j);
 				
 				for (int k = 0; k < columns.size(); k++) {
@@ -241,10 +241,10 @@ public class JsonManager {
     	Table t = element.getFlatTable();
 
     	if (columns == null)
-    		columns = new ArrayList<String>();
+    		columns = new ArrayList<>();
     	
     	if (values == null)
-    		values = new ArrayList<List<String>>();
+    		values = new ArrayList<>();
     	
     	if (t.getColumnsCount() > 0) {
 	    	for (Attribute att : t.getHeaders())
@@ -306,8 +306,8 @@ public class JsonManager {
 
 	public static String jsonToCSV(String json, Character separator, Character quotechar, Character endlinechar) {
 		
-        List<String> columns = new ArrayList<String>();
-        List<List<String>> values = new ArrayList<List<String>>();
+        List<String> columns = new ArrayList<>();
+        List<List<String>> values = new ArrayList<>();
         
         getJsonFlat(json, columns, values);
         

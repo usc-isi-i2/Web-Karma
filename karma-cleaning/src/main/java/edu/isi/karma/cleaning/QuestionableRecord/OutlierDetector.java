@@ -32,9 +32,9 @@ import edu.isi.karma.cleaning.Ruler;
 import edu.isi.karma.cleaning.TNode;
 
 public class OutlierDetector {
-	public HashMap<String, double[]> rVectors = new HashMap<String, double[]>();
+	public HashMap<String, double[]> rVectors = new HashMap<>();
 	public double currentMax = -1;
-	public HashSet<String> dict = new HashSet<String>();
+	public HashSet<String> dict = new HashSet<>();
 
 	public OutlierDetector() {
 
@@ -52,7 +52,7 @@ public class OutlierDetector {
 
 	// find all the word appearing in org and tar records
 	public void buildDict(Collection<String[]> data) {
-		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
+		HashMap<String, Integer> mapHashSet = new HashMap<>();
 		for (String[] pair : data) {
 			String s1 = pair[0];
 			String s2 = pair[1];
@@ -73,7 +73,7 @@ public class OutlierDetector {
 			Vector<TNode> v = r.vec;
 			r.setNewInput(s2);
 			v.addAll(r.vec);
-			HashSet<String> curRow = new HashSet<String>();
+			HashSet<String> curRow = new HashSet<>();
 			for (TNode t : v) {
 				String k = t.text;
 				k = k.replaceAll("[0-9]+", "DIGITs");
@@ -102,7 +102,7 @@ public class OutlierDetector {
 				iter.remove();
 			}
 		}
-		this.dict = new HashSet<String>(mapHashSet.keySet());
+		this.dict = new HashSet<>(mapHashSet.keySet());
 	}
 
 	// find outliers for one partition
