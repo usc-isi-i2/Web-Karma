@@ -16,6 +16,9 @@ public class Data2Features {
 
 	private static Logger logger = LoggerFactory.getLogger(Data2Features.class);
 
+	private Data2Features() {
+	}
+
 	// convert the csv file to arff file
 	// return the fpath of arff file
 	/*

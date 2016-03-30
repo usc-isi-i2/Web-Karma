@@ -13,6 +13,9 @@ import static com.github.jsonldjava.utils.Obj.newMap;
 
 public class RDFDatasetUtils {
 
+    private RDFDatasetUtils() {
+    }
+
     /**
      * Creates an array of RDF triples for the given graph.
      *

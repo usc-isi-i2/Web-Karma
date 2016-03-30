@@ -32,6 +32,9 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 
 public class Util {
+	private Util() {
+	}
+
 	/**
 	 * Sorts a HashMap based on the values with Double data type
 	 * 

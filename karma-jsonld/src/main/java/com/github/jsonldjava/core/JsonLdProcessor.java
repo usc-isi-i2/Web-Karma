@@ -26,6 +26,9 @@ import com.github.jsonldjava.impl.TurtleTripleCallback;
  */
 public class JsonLdProcessor {
 
+    private JsonLdProcessor() {
+    }
+
     /**
      * Compacts the given input using the context according to the steps in the
      * <a href="http://www.w3.org/TR/json-ld-api/#compaction-algorithm">

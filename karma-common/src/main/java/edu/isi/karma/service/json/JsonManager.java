@@ -44,7 +44,10 @@ import edu.isi.karma.rep.sources.Table;
 
 public class JsonManager {
 
-    public static String readFile(File file) throws IOException {
+	private JsonManager() {
+	}
+
+	public static String readFile(File file) throws IOException {
     	InputStream in = new FileInputStream(file);
     	byte[] b  = new byte[(int)file.length()];
     	int len = b.length;

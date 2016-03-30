@@ -74,6 +74,9 @@ public class GraphUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(GraphUtil.class);
 
+	private GraphUtil() {
+	}
+
 	public static DirectedGraph<Node, DefaultLink> asDirectedGraph(UndirectedGraph<Node, DefaultLink> undirectedGraph) {
 		
 		if (undirectedGraph == null) {

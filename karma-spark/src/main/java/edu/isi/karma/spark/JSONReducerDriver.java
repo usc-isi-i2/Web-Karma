@@ -28,7 +28,10 @@ import edu.isi.karma.util.JSONLDUtil;
 
 public class JSONReducerDriver {
 	private static Logger logger = LoggerFactory.getLogger(JSONReducerDriver.class);
-    
+
+    private JSONReducerDriver() {
+    }
+
     public static void main(String[] args) throws ParseException, IOException, ClassNotFoundException {
     	int defaultPartitions = 100;
     	

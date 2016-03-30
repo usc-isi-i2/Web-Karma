@@ -29,6 +29,10 @@ public class PythonTransformationAsURITokenizer {
 		}
 		
 	}
+
+	private PythonTransformationAsURITokenizer() {
+	}
+
 	public static List<PythonTransformationToken> tokenize(PythonTransformationCommand command)
 	{
 		return tokenize(command.getTransformationCode());

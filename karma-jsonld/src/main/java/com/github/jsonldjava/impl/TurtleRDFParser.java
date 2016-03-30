@@ -94,6 +94,9 @@ public class TurtleRDFParser implements RDFParser {
 
         final public static Pattern COMMENT_OR_WS = Pattern.compile("^(?:(?:[#].*(?:" + EOLN + ")"
                 + WS_0_N + ")|(?:" + WS_1_N + "))");
+
+        private Regex() {
+        }
     }
 
     private class State {

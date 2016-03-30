@@ -16,6 +16,9 @@ public class JsonLdUtils {
 
     private static final int MAX_CONTEXT_URLS = 10;
 
+    private JsonLdUtils() {
+    }
+
     /**
      * Returns whether or not the given value is a keyword (or a keyword alias).
      *

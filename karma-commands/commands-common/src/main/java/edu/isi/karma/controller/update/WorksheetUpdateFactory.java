@@ -36,6 +36,9 @@ import edu.isi.karma.rep.Workspace;
 
 public class WorksheetUpdateFactory {
 
+	private WorksheetUpdateFactory() {
+	}
+
 	public static UpdateContainer createWorksheetHierarchicalAndCleaningResultsUpdates(String worksheetId, SuperSelection sel, String contextId) {
 		UpdateContainer c = new UpdateContainer();
 		createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, c, sel, contextId);

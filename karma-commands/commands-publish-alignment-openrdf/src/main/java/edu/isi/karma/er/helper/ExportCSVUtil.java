@@ -53,6 +53,9 @@ public class ExportCSVUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(ExportCSVUtil.class);
 
+	private ExportCSVUtil() {
+	}
+
 	/**
 	 * @author shri
 	 * 
