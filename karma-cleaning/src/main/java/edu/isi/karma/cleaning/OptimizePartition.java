@@ -15,13 +15,13 @@ import org.slf4j.LoggerFactory;
 import edu.isi.karma.cleaning.features.RecordClassifier;
 
 public class OptimizePartition {
-	public HashMap<String, Partition> existedPartition = new HashMap<String, Partition>();
-	public HashSet<String> existedFringe = new HashSet<String>();
-	public HashMap<String, Double> key2Partition = new HashMap<String, Double>();
-	public HashMap<String, Boolean> legalParitions = new HashMap<String, Boolean>();
+	public HashMap<String, Partition> existedPartition = new HashMap<>();
+	public HashSet<String> existedFringe = new HashSet<>();
+	public HashMap<String, Double> key2Partition = new HashMap<>();
+	public HashMap<String, Boolean> legalParitions = new HashMap<>();
 	public ProgSynthesis pSynthesis;
 	public PartitionClassifierType classifier;
-	public HashMap<Vector<Partition>, Double> fringe = new HashMap<Vector<Partition>, Double>();
+	public HashMap<Vector<Partition>, Double> fringe = new HashMap<>();
 	public int failedCnt = 0;
 	public Logger ulogger = LoggerFactory.getLogger(RecordClassifier.class);
 	public OptimizePartition(ProgSynthesis ps,PartitionClassifierType classifier) {
@@ -69,9 +69,9 @@ public class OptimizePartition {
 		if (pars.size() == 1) {
 			return pars;
 		}
-		fringe = new HashMap<Vector<Partition>, Double>();
+		fringe = new HashMap<>();
 		fringe.put(pars, Double.MAX_VALUE);
-		Vector<Partition> res = new Vector<Partition>();
+		Vector<Partition> res = new Vector<>();
 		while (!fringe.isEmpty()) {
 			//ulogger.info("Fringe size: "+fringe.size());
 			// choose one with minimal value from fringe to expand
@@ -118,7 +118,7 @@ public class OptimizePartition {
 				if (i != -1 && j != -1) {
 					Vector<Partition> next = UpdatePartitions(i, j, pars);
 					if(res == null)
-						res = new HashMap<Vector<Partition>, Double>();
+						res = new HashMap<>();
 					if(!fringe.containsKey(next))
 						res.put(next, s);
 				}
@@ -140,7 +140,7 @@ public class OptimizePartition {
 		{
 			p = existedPartition.get(key);
 		}
-		Vector<Partition> res = new Vector<Partition>();
+		Vector<Partition> res = new Vector<>();
 		res.addAll(pars);
 		res.set(i, p);
 		res.remove(j);
@@ -212,7 +212,7 @@ public class OptimizePartition {
 				return false;
 			}
 		}
-		Vector<Partition> xPar = new Vector<Partition>();
+		Vector<Partition> xPar = new Vector<>();
 		xPar.add(p);
 		Collection<ProgramRule> cpr = pSynthesis.producePrograms(xPar);
 		if (cpr == null || cpr.isEmpty()) {
@@ -226,7 +226,7 @@ public class OptimizePartition {
 	//speed optimization
 	public String getMergedKey(Partition a, Partition b)
 	{
-		ArrayList<String> xArrayList = new ArrayList<String>();
+		ArrayList<String> xArrayList = new ArrayList<>();
 		for(int i = 0; i< a.orgNodes.size(); i++)
 		{
 			String line = UtilTools.print(a.orgNodes.get(i));

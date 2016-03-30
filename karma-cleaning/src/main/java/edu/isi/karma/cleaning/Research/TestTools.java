@@ -24,9 +24,9 @@ public class TestTools {
 	public void handledata() throws IOException {
 		File nf = new File("./log/data");
 		File[] allfiles = nf.listFiles();
-		ArrayList<Vector<String[]>> res = new ArrayList<Vector<String[]>>();
+		ArrayList<Vector<String[]>> res = new ArrayList<>();
 		for (File f : allfiles) {
-			Vector<String[]> entries = new Vector<String[]>();
+			Vector<String[]> entries = new Vector<>();
 			try {
 				if (f.getName().indexOf(".csv") != -1
 						&& f.getName().indexOf(".csv") == (f.getName().length() - 4)) {
@@ -46,7 +46,7 @@ public class TestTools {
 		}
 		String x = "./log/data/00_";
 		for (int i = 0; i < res.size(); i++) {
-			Vector<String[]> temp = new Vector<String[]>();
+			Vector<String[]> temp = new Vector<>();
 			for (int j = 0; j <= i; j++) {
 				temp.addAll(res.get(j));
 			}

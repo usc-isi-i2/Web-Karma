@@ -78,10 +78,10 @@ public class GenericRDFGenerator extends RdfGenerator {
 	
 	public GenericRDFGenerator(String selectionName) {
 		super(selectionName);
-		this.modelIdentifiers = new ConcurrentHashMap<String, R2RMLMappingIdentifier>();
-		this.readModelParsers = new ConcurrentHashMap<String, WorksheetR2RMLJenaModelParser>();
-		this.contextCache = new HashMap<String, JSONObject>();
-		this.contextIdentifiers = new HashMap<String, ContextIdentifier>();
+		this.modelIdentifiers = new ConcurrentHashMap<>();
+		this.readModelParsers = new ConcurrentHashMap<>();
+		this.contextCache = new HashMap<>();
+		this.contextIdentifiers = new HashMap<>();
 	}
 
 	public void addModel(R2RMLMappingIdentifier modelIdentifier) {

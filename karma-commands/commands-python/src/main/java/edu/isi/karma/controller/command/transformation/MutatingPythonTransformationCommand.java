@@ -62,7 +62,7 @@ public abstract class MutatingPythonTransformationCommand extends
 	private static Logger logger = LoggerFactory.getLogger(MutatingPythonTransformationCommand.class);
 	
 	protected final String newColumnName;
-	protected List<Node> affectedNodes = new LinkedList<Node>();
+	protected List<Node> affectedNodes = new LinkedList<>();
 	protected boolean isJSONOutput = false;
 	public MutatingPythonTransformationCommand(String id, String model, String newColumnName,
 			String transformationCode, String worksheetId, String hNodeId,
@@ -128,9 +128,9 @@ public abstract class MutatingPythonTransformationCommand extends
 	}
 	
 	protected Map<String, String> gatherTransformedResults(Workspace workspace, String hNodeId) {
-		Map<String, String> rowToValueMapping = new HashMap<String, String>();
+		Map<String, String> rowToValueMapping = new HashMap<>();
 		HNodePath hNodePath = workspace.getFactory().getHNode(hNodeId).getHNodePath(workspace.getFactory());
-		List<Node> nodes = new ArrayList<Node>();
+		List<Node> nodes = new ArrayList<>();
 		workspace.getWorksheet(worksheetId).getDataTable().collectNodes(hNodePath, nodes, getSuperSelection(workspace));
 		for (Node node : nodes) {
 			rowToValueMapping.put(node.getBelongsToRow().getId(), node.getValue().asString());

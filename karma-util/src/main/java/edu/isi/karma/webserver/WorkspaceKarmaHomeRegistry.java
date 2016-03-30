@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WorkspaceKarmaHomeRegistry {
 	private static WorkspaceKarmaHomeRegistry singleton = new WorkspaceKarmaHomeRegistry();
 
-	private final Map<String, String> workspaceToKarmaHome = new ConcurrentHashMap<String, String>();
+	private final Map<String, String> workspaceToKarmaHome = new ConcurrentHashMap<>();
 
 	public static WorkspaceKarmaHomeRegistry getInstance() {
 		return singleton;

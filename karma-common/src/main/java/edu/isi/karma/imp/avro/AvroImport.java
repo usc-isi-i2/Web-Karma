@@ -66,14 +66,14 @@ public class AvroImport extends Import {
 	@Override
 	public Worksheet generateWorksheet() throws JSONException, IOException,
 			KarmaException {
-		DataFileReader<Void> schemareader = new DataFileReader<Void>(file, new GenericDatumReader<Void>());
+		DataFileReader<Void> schemareader = new DataFileReader<>(file, new GenericDatumReader<Void>());
 		Schema schema = schemareader.getSchema();
 		schemareader.close();
-		DataFileReader<GenericRecord> reader = new DataFileReader<GenericRecord>(file, new GenericDatumReader<GenericRecord>(schema));
+		DataFileReader<GenericRecord> reader = new DataFileReader<>(file, new GenericDatumReader<GenericRecord>(schema));
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		baos.write('[');
 		baos.write('\n');
-		GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<GenericRecord>(reader.getSchema());
+		GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(reader.getSchema());
 		while(reader.hasNext())
 		{
 			

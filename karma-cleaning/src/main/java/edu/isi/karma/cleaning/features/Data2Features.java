@@ -44,7 +44,7 @@ public class Data2Features {
 			attr_names[attr_names.length - 1] = "label";
 			writer.writeNext(attr_names);
 			for (String Record : tests) {
-				Vector<String> row = new Vector<String>();
+				Vector<String> row = new Vector<>();
 				Collection<Feature> cf = rf.computeFeatures(Record, "");
 				Feature[] x = cf.toArray(new Feature[cf.size()]);
 				// row.add(f.getName());
@@ -68,7 +68,8 @@ public class Data2Features {
 			RecordFeatureSet rf) {
 		try {
 			CSVWriter writer = new CSVWriter(new FileWriter(new File(fpath)));
-			List<String> vsStrings = new Vector<String>();
+			List<String> vsStrings = new Vector<>();
+
 			for (Vector<String> vecs : class2Records.values()) {
 				vsStrings.addAll(vecs);
 			}
@@ -79,9 +80,8 @@ public class Data2Features {
 			attr_names[attr_names.length - 1] = "label";
 			writer.writeNext(attr_names);
 			for (Map.Entry<String, Vector<String>> stringVectorEntry : class2Records.entrySet()) {
-
 				for (String Record : stringVectorEntry.getValue()) {
-					Vector<String> row = new Vector<String>();
+					Vector<String> row = new Vector<>();
 					Collection<Feature> cf = rf.computeFeatures(Record, stringVectorEntry.getKey());
 					Feature[] x = cf.toArray(new Feature[cf.size()]);
 					// row.add(f.getName());

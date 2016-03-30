@@ -48,26 +48,17 @@ public class ServiceTableUtil {
 
 
 	public static void populateEmptyWorksheet(Table table, Worksheet worksheet, RepFactory factory) {
-
 		logger.info("Populating an empty worksheet with the service data ...");
-
-		List<String> hNodeIdList;
-		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
-
+		List<String> hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
 		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
 		addRows(table.getValues(), worksheet, factory, hNodeIdList, dataTable);
 
 	}
 	
 	public static void populateWorksheet(Table table, Worksheet worksheet, RepFactory factory, SuperSelection sel) {
-		
 		logger.info("Populating existing worksheet with the service data ...");
-		
-		List<String> oldHNodeIdList = new ArrayList<String>(worksheet.getHeaders().getHNodeIds());
-
-		List<String> hNodeIdList;
-		hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
-
+		List<String> oldHNodeIdList = new ArrayList<>(worksheet.getHeaders().getHNodeIds());
+		List<String> hNodeIdList = addHeaders(table.getHeaders(), worksheet, factory);
 		edu.isi.karma.rep.Table dataTable = worksheet.getDataTable();
 		updateRows(table.getValues(), table.getRowIds(), worksheet, factory, oldHNodeIdList, hNodeIdList, dataTable, sel);
 
@@ -75,7 +66,7 @@ public class ServiceTableUtil {
 	
 	private static List<String> addHeaders(List<Attribute> tableHeader, Worksheet worksheet, RepFactory factory) {
 		HTable headers = worksheet.getHeaders();
-		List<String> headersList = new ArrayList<String>();
+		List<String> headersList = new ArrayList<>();
 		
 		for (int i = 0; i < tableHeader.size(); i++) {
 			Attribute att = tableHeader.get(i);
@@ -109,11 +100,11 @@ public class ServiceTableUtil {
 		
 		int rowsCount = dataTable.getNumRows();
 		List<Row> oldRows = dataTable.getRows(0, rowsCount, sel);
-		List<HashMap<String, String>> oldRowValues = new ArrayList<HashMap<String,String>>();
-		List<String> oldRowIds = new ArrayList<String>();
+		List<HashMap<String, String>> oldRowValues = new ArrayList<>();
+		List<String> oldRowIds = new ArrayList<>();
 		
 		for (Row r : oldRows) {
-			HashMap<String, String> vals = new HashMap<String, String>();
+			HashMap<String, String> vals = new HashMap<>();
 			for (Node n : r.getNodes()) {
 				vals.put(n.getHNodeId(), n.getValue().asString());
 			}

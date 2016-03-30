@@ -22,12 +22,12 @@ public class KR2RMLBloomFilterManager {
 	protected R2RMLMappingIdentifier mappingIdentifier;
 	public KR2RMLBloomFilterManager(R2RMLMappingIdentifier mappingIdentifier)
 	{
-		idToBloomFilter = new ConcurrentHashMap<String, KR2RMLBloomFilter>();
+		idToBloomFilter = new ConcurrentHashMap<>();
 		this.mappingIdentifier = mappingIdentifier;
 	}
 	public KR2RMLBloomFilterManager(JSONObject serializedManager) throws IOException
 	{
-		idToBloomFilter = new ConcurrentHashMap<String, KR2RMLBloomFilter>();
+		idToBloomFilter = new ConcurrentHashMap<>();
 		String idsConcatenated = serializedManager.getString("ids");
 		String[] ids = idsConcatenated.split(",");
 		for(String id : ids)

@@ -32,7 +32,7 @@ public class ProgramAdaptator {
 			ExampleTraces tool = new ExampleTraces(contextId);
 			Traces t1 = tool.createTrace(examples.get(0));
 			String prog = t1.toProgram();
-			ArrayList<String[]> tmpKey = new ArrayList<String[]>();
+			ArrayList<String[]> tmpKey = new ArrayList<>();
 			tmpKey.add(examples.get(0));
 			String tK = UtilTools.createkey(tmpKey);
 			exp2Space.put(tK, t1);
@@ -40,7 +40,7 @@ public class ProgramAdaptator {
 			keys.add(0);
 			//return prog;
 		}
-		ArrayList<String[]> inExps = new ArrayList<String[]>();
+		ArrayList<String[]> inExps = new ArrayList<>();
 		for (Integer i : keys) {
 			inExps.add(examples.get(i));
 		}
@@ -71,7 +71,7 @@ public class ProgramAdaptator {
 		// add unknown examples incrementally
 		String evres = "";
 		evres = ptree.eval(exp[0]);
-		ArrayList<String[]> exps = new ArrayList<String[]>();
+		ArrayList<String[]> exps = new ArrayList<>();
 		String skey = UtilTools.createkey(exps);
 		Traces tIn = null;
 		if(exp2Space.containsKey(skey))
@@ -82,12 +82,12 @@ public class ProgramAdaptator {
 		{
 			tIn = createSingleTrace(exp); 
 		}
-		HashMap<String, ArrayList<String>> prog2Evals = new HashMap<String,ArrayList<String>>();
-		HashMap<String, String> prog2Nevals = new HashMap<String,String>();
+		HashMap<String, ArrayList<String>> prog2Evals = new HashMap<>();
+		HashMap<String, String> prog2Nevals = new HashMap<>();
 		if(evres.compareTo(exp[1]) == 0)
 		{
 			Traces nTraces = wholespace.mergewith(tIn);
-			ArrayList<String[]> expr = new ArrayList<String[]>();
+			ArrayList<String[]> expr = new ArrayList<>();
 			expr.add(exp);
 			expr.addAll(inExps);
 			String nKey = formKey(expr,new ArrayList<Integer>(), false);				
@@ -97,7 +97,7 @@ public class ProgramAdaptator {
 		}
 		ArrayList<ArrayList<Patcher>> tree_refers = createCandidates(ptree, tIn);
 		//prepare the necessary information 
-		Vector<String> orgs = new Vector<String>();
+		Vector<String> orgs = new Vector<>();
 		//get all original values
 		for(GrammarTreeNode node: wholespace.traceline.values().iterator().next().body)
 		{
@@ -110,7 +110,7 @@ public class ProgramAdaptator {
 		}
 		ArrayList<ParseTreeNode> progs = ptree.children;
 		for (ParseTreeNode node : progs) {
-			ArrayList<String> tmpTars = new ArrayList<String>();
+			ArrayList<String> tmpTars = new ArrayList<>();
 			for (String org : orgs) {
 				ProgramRule tpp = new ProgramRule(node.value, contextId);
 				String tmpSeg= tpp.transform(org);
@@ -147,7 +147,7 @@ public class ProgramAdaptator {
 			if (valid) {
 				// NEED TO UPDATE THE SUBSPACE RATHER THAN THE WHOLE ONE!!!
 				Traces nTraces = cwspace.mergewith(tIn);
-				ArrayList<String[]> expr = new ArrayList<String[]>();
+				ArrayList<String[]> expr = new ArrayList<>();
 				expr.add(exp);
 				expr.addAll(inExps);
 				String nKey = formKey(expr,new ArrayList<Integer>(), false);				
@@ -163,11 +163,11 @@ public class ProgramAdaptator {
 	}
 	public ArrayList<Patcher> refinePositionLevel(Vector<GrammarTreeNode> gtruth, Vector<ParseTreeNode> pNodes, Vector<GrammarTreeNode> gNodes)
 	{
-		ArrayList<Patcher> res = new ArrayList<Patcher>();
+		ArrayList<Patcher> res = new ArrayList<>();
 		if(pNodes.size()!= gtruth.size())
 		{
 			Patcher nPatcher = new Patcher();
-			nPatcher.groundTruth = new Vector<GrammarTreeNode>(gtruth);
+			nPatcher.groundTruth = new Vector<>(gtruth);
 			nPatcher.patchSpace = gNodes;
 			nPatcher.programNodes = pNodes;
 			res.add(nPatcher);
@@ -182,11 +182,11 @@ public class ProgramAdaptator {
 				//check if it constant segment
 				if(seg.section.isEmpty())
 				{
-					Vector<GrammarTreeNode> gs = new Vector<GrammarTreeNode>();
+					Vector<GrammarTreeNode> gs = new Vector<>();
 					gs.add(gNodes.get(i));
-					Vector<ParseTreeNode> ps = new Vector<ParseTreeNode>();
+					Vector<ParseTreeNode> ps = new Vector<>();
 					ps.add(pNodes.get(i));
-					Vector<GrammarTreeNode> ts = new Vector<GrammarTreeNode>();
+					Vector<GrammarTreeNode> ts = new Vector<>();
 					ts.add(seg);
 					nPatcher.groundTruth = ts;
 					nPatcher.patchSpace = gs;
@@ -203,18 +203,18 @@ public class ProgramAdaptator {
 				//fix end position expression
 				if(tsVal.compareTo(sVal)==0)
 				{
-					ArrayList<Position> ap = new ArrayList<Position>();
+					ArrayList<Position> ap = new ArrayList<>();
 					for(int k = 0; k < secs.size(); k++)
 					{
 						if(secs.get(k).pair[1]!=null)
 							ap.add(secs.get(k).pair[1]);
 					}
 					PositionSet pos = new PositionSet(ap);
-					Vector<GrammarTreeNode> gs = new Vector<GrammarTreeNode>();
+					Vector<GrammarTreeNode> gs = new Vector<>();
 					gs.add(pos);
-					Vector<ParseTreeNode> ps = new Vector<ParseTreeNode>();
+					Vector<ParseTreeNode> ps = new Vector<>();
 					ps.add(pNodes.get(i).children.get(1));
-					Vector<GrammarTreeNode> ts = new Vector<GrammarTreeNode>();
+					Vector<GrammarTreeNode> ts = new Vector<>();
 					ts.add(seg.section.get(0).pair[1]);
 					nPatcher.groundTruth = ts;
 					nPatcher.patchSpace = gs;
@@ -223,18 +223,18 @@ public class ProgramAdaptator {
 				}
 				else if(teVal.compareTo(eVal)==0)
 				{
-					ArrayList<Position> ap = new ArrayList<Position>();
+					ArrayList<Position> ap = new ArrayList<>();
 					for(int k = 0; k < secs.size(); k++)
 					{
 						if(secs.get(k).pair[0]!=null)
 							ap.add(secs.get(k).pair[0]);
 					}
 					PositionSet pos = new PositionSet(ap);
-					Vector<GrammarTreeNode> gs = new Vector<GrammarTreeNode>();
+					Vector<GrammarTreeNode> gs = new Vector<>();
 					gs.add(pos);
-					Vector<ParseTreeNode> ps = new Vector<ParseTreeNode>();
+					Vector<ParseTreeNode> ps = new Vector<>();
 					ps.add(pNodes.get(i).children.get(0));
-					Vector<GrammarTreeNode> ts = new Vector<GrammarTreeNode>();
+					Vector<GrammarTreeNode> ts = new Vector<>();
 					ts.add(seg.section.get(0).pair[0]);
 					nPatcher.groundTruth = ts;
 					nPatcher.patchSpace = gs;
@@ -244,11 +244,11 @@ public class ProgramAdaptator {
 				else
 				{
 					//directly update the segment
-					Vector<GrammarTreeNode> gs = new Vector<GrammarTreeNode>();
+					Vector<GrammarTreeNode> gs = new Vector<>();
 					gs.add(gNodes.get(i));
-					Vector<ParseTreeNode> ps = new Vector<ParseTreeNode>();
+					Vector<ParseTreeNode> ps = new Vector<>();
 					ps.add(pNodes.get(i));
-					Vector<GrammarTreeNode> ts = new Vector<GrammarTreeNode>();
+					Vector<GrammarTreeNode> ts = new Vector<>();
 					ts.add(seg);
 					nPatcher.groundTruth = ts;
 					nPatcher.patchSpace = gs;
@@ -261,12 +261,12 @@ public class ProgramAdaptator {
 	}
 	public ArrayList<Patcher> refinePather(Patcher pat, Vector<GrammarTreeNode> gtruth, ArrayList<Path> pathes)
 	{
-		ArrayList<Patcher> res = new ArrayList<Patcher>();
+		ArrayList<Patcher> res = new ArrayList<>();
 		if(pathes.isEmpty())
 		{
 			return res;
 		}
-		HashMap<Integer, int[]> prog2Sections = new HashMap<Integer,int[]>();
+		HashMap<Integer, int[]> prog2Sections = new HashMap<>();
 		//consolidate the paths into one arraylist
 		//only one segmentation exists
 		Vector<GrammarTreeNode> xtemp = convertPathtoSpace(pathes);
@@ -303,9 +303,9 @@ public class ProgramAdaptator {
 			if(prog2Sections.containsKey(i))
 			{
 				int end = prog2Sections.get(i)[0];
-				Vector<GrammarTreeNode> gtru = new Vector<GrammarTreeNode>(pat.groundTruth.subList(start, end+1));
-				Vector<GrammarTreeNode> x = new Vector<GrammarTreeNode>(xtemp.subList(start, end+1));
-				Vector<ParseTreeNode> pNodes = new Vector<ParseTreeNode>(pat.programNodes.subList(progStart, i+1));
+				Vector<GrammarTreeNode> gtru = new Vector<>(pat.groundTruth.subList(start, end + 1));
+				Vector<GrammarTreeNode> x = new Vector<>(xtemp.subList(start, end + 1));
+				Vector<ParseTreeNode> pNodes = new Vector<>(pat.programNodes.subList(progStart, i + 1));
 				ArrayList<Patcher> tres = refinePositionLevel(gtru, pNodes, x);
 				start = prog2Sections.get(i)[1]+1;
 				progStart = i+1;
@@ -316,9 +316,9 @@ public class ProgramAdaptator {
 		if(progStart < pat.programNodes.size())
 		{
 			int end = pat.groundTruth.size();
-			Vector<GrammarTreeNode> gtru = new Vector<GrammarTreeNode>(pat.groundTruth.subList(start, end));
-			Vector<GrammarTreeNode> x = new Vector<GrammarTreeNode>(xtemp.subList(start, end));
-			Vector<ParseTreeNode> pNodes = new Vector<ParseTreeNode>(pat.programNodes.subList(progStart, pat.programNodes.size()));
+			Vector<GrammarTreeNode> gtru = new Vector<>(pat.groundTruth.subList(start, end));
+			Vector<GrammarTreeNode> x = new Vector<>(xtemp.subList(start, end));
+			Vector<ParseTreeNode> pNodes = new Vector<>(pat.programNodes.subList(progStart, pat.programNodes.size()));
 			ArrayList<Patcher> tres = refinePositionLevel(gtru, pNodes, x);
 			res.addAll(tres);
 		}
@@ -339,7 +339,7 @@ public class ProgramAdaptator {
 				xiter.remove();
 			}
 		}
-		HashMap<String, ArrayList<ParseTreeNode>> map = new HashMap<String, ArrayList<ParseTreeNode>>();
+		HashMap<String, ArrayList<ParseTreeNode>> map = new HashMap<>();
 		String[] bitmap = new String[tree.children.size()];
 		for (int i = 0; i < bitmap.length; i++) {
 			bitmap[i] = "null";
@@ -352,11 +352,11 @@ public class ProgramAdaptator {
 			for (int i = start; i <= end; i++) {
 				bitmap[i] = key;
 			}
-			map.put(key, new ArrayList<ParseTreeNode>(pat.replaceNodes));
+			map.put(key, new ArrayList<>(pat.replaceNodes));
 		}
 		//
-		ArrayList<ParseTreeNode> nChildren = new ArrayList<ParseTreeNode>();
-		HashSet<String> visited = new HashSet<String>();
+		ArrayList<ParseTreeNode> nChildren = new ArrayList<>();
+		HashSet<String> visited = new HashSet<>();
 		for (int i = 0; i < bitmap.length; i++) {
 			if (bitmap[i].compareTo("null") != 0 && !visited.contains(bitmap[i])) {
 				String key = bitmap[i];
@@ -414,10 +414,10 @@ public class ProgramAdaptator {
 	}
 	public ArrayList<ArrayList<String>> transpose(ArrayList<ArrayList<String>> vals,ArrayList<String> tarStrings)
 	{
-		ArrayList<ArrayList<String>> res = new ArrayList<ArrayList<String>>();
+		ArrayList<ArrayList<String>> res = new ArrayList<>();
 		for(int i = 0; i < vals.get(0).size(); i++)
 		{
-			ArrayList<String> line = new ArrayList<String>();
+			ArrayList<String> line = new ArrayList<>();
 			String total = "";
 			for( int j = 0; j < vals.size(); j++)
 			{
@@ -431,7 +431,7 @@ public class ProgramAdaptator {
 	}
 	public ArrayList<Patcher> align(ArrayList<Patcher> tTree, Traces wSpace,
 			ArrayList<String[]> preExps,HashMap<String, ArrayList<String>> prog2Eval, HashMap<String, String> prog2New) {
-		ArrayList<Patcher> res = new ArrayList<Patcher>();
+		ArrayList<Patcher> res = new ArrayList<>();
 		/*Vector<String> orgs = new Vector<String>();
 		//get all original values
 		for(GrammarTreeNode node: wSpace.traceline.values().iterator().next().body)
@@ -445,10 +445,10 @@ public class ProgramAdaptator {
 		}*/
 		for (Patcher pat : tTree) {
 			//prepare the raw data
-			ArrayList<String> tarStrings = new ArrayList<String>();
-			ArrayList<ArrayList<String>> tarSegs = new ArrayList<ArrayList<String>>();
-			ArrayList<String> evalNewExp = new ArrayList<String>();
-			ArrayList<ArrayList<String>> tmp = new ArrayList<ArrayList<String>>();
+			ArrayList<String> tarStrings = new ArrayList<>();
+			ArrayList<ArrayList<String>> tarSegs = new ArrayList<>();
+			ArrayList<String> evalNewExp = new ArrayList<>();
+			ArrayList<ArrayList<String>> tmp = new ArrayList<>();
 			for(ParseTreeNode node: pat.programNodes)
 			{
 				ArrayList<String> lvals = prog2Eval.get(node.value);
@@ -459,7 +459,7 @@ public class ProgramAdaptator {
 			// extract the corresponding program spaces
 			HashMap<Integer, Template> tmpts = wSpace.traceline;
 			Vector<GrammarTreeNode> groundTruth = pat.groundTruth;
-			ArrayList<Path> allPaths = new ArrayList<Path>();
+			ArrayList<Path> allPaths = new ArrayList<>();
 			for (Map.Entry<Integer, Template> integerTemplateEntry : tmpts.entrySet()) {
 				Vector<GrammarTreeNode> tBody = integerTemplateEntry.getValue().body;
 				ArrayList<Path> paths = extractPath(tBody, tarStrings, tarSegs, evalNewExp);
@@ -480,12 +480,12 @@ public class ProgramAdaptator {
 	}
 
 	public Vector<GrammarTreeNode> convertPathtoSpace(ArrayList<Path> paths) {
-		Vector<Vector<GrammarTreeNode>> res = new Vector<Vector<GrammarTreeNode>>();
+		Vector<Vector<GrammarTreeNode>> res = new Vector<>();
 		for (Path p : paths) {
-			Vector<GrammarTreeNode> line = new Vector<GrammarTreeNode>();
+			Vector<GrammarTreeNode> line = new Vector<>();
 			ArrayList<Section> secs = p.sections;
 			for (Section sec : secs) {
-				Vector<Section> st = new Vector<Section>();
+				Vector<Section> st = new Vector<>();
 				st.add(sec);
 				Segment seg = new Segment(st, false, contextId);
 				line.add(seg);
@@ -493,7 +493,7 @@ public class ProgramAdaptator {
 			res.add(line);
 		}
 		Traces uTraces = new Traces(contextId);
-		Vector<GrammarTreeNode> tempres = new Vector<GrammarTreeNode>(); 
+		Vector<GrammarTreeNode> tempres = new Vector<>(); 
 		if(!res.isEmpty())
 		{
 			tempres = uTraces.consolidate_tool(res);
@@ -503,20 +503,20 @@ public class ProgramAdaptator {
 
 	public ArrayList<Path> extractPath(Vector<GrammarTreeNode> tBody,
 			ArrayList<String> tarStrings,ArrayList<ArrayList<String>> tarSegs, ArrayList<String> evalNewExp) {
-		ArrayList<Path> res = new ArrayList<Path>();
-		ArrayList<Path> seeds = new ArrayList<Path>();
+		ArrayList<Path> res = new ArrayList<>();
+		ArrayList<Path> seeds = new ArrayList<>();
 		// initialize the seeds
 		for (int i = 0; i < tBody.size(); i++) {
 			Segment seg = (Segment) tBody.get(i);
 			for (Section sec : seg.section) {
-				ArrayList<Integer> markers = new ArrayList<Integer>();
+				ArrayList<Integer> markers = new ArrayList<>();
 				for (int j = 0; j < sec.tarStrings.size(); j++) {
 					markers.add(0);
 				}
 				Vector<String> subs = sec.tarStrings;
 				ArrayList<Integer> x = updateMarker(subs, tarStrings, markers);
 				if (x != null) {
-					ArrayList<Section> sections = new ArrayList<Section>();
+					ArrayList<Section> sections = new ArrayList<>();
 					sections.add(sec);
 					Path nP = new Path(sections, x, tarStrings, i + 1, tarSegs, evalNewExp);
 					seeds.add(nP);
@@ -556,7 +556,7 @@ public class ProgramAdaptator {
 
 	// -1 failed, 0 succeed, 1 finished
 	public ArrayList<Path> updatePath(Path np, Vector<GrammarTreeNode> tBody) {
-		ArrayList<Path> res = new ArrayList<Path>();
+		ArrayList<Path> res = new ArrayList<>();
 		if(np.tmplateMarker >= tBody.size())
 		{
 			return res;
@@ -576,7 +576,7 @@ public class ProgramAdaptator {
 	// if anyone is not a prefix of the other return null
 	public ArrayList<Integer> updateMarker(Vector<String> subs,
 			ArrayList<String> target, ArrayList<Integer> markers) {
-		ArrayList<Integer> res = new ArrayList<Integer>();
+		ArrayList<Integer> res = new ArrayList<>();
 		for (int i = 0; i < subs.size(); i++) {
 			String sub = subs.get(i);
 			String tar = target.get(i).substring(markers.get(i));
@@ -593,7 +593,7 @@ public class ProgramAdaptator {
 	// instance tree
 	public ArrayList<ArrayList<Patcher>> createCandidates(ParseTreeNode tree,
 			Traces concrete) {
-		ArrayList<ArrayList<Patcher>> res = new ArrayList<ArrayList<Patcher>>();
+		ArrayList<ArrayList<Patcher>> res = new ArrayList<>();
 		// get all the parseTree segments
 		ArrayList<ParseTreeNode> segments = tree.getChildren();
 		// get all the different segmentations of the example
@@ -603,7 +603,7 @@ public class ProgramAdaptator {
 				continue;
 			}
 			int len = tBody.size();
-			ArrayList<Patcher> list = new ArrayList<Patcher>();
+			ArrayList<Patcher> list = new ArrayList<>();
 			if (len == segments.size()) {
 				// one on one match
 				for (int i = 0; i < len; i++) {
@@ -612,9 +612,9 @@ public class ProgramAdaptator {
 						continue;
 					} else {
 						Patcher pa = new Patcher();
-						Vector<GrammarTreeNode> grt = new Vector<GrammarTreeNode>();
+						Vector<GrammarTreeNode> grt = new Vector<>();
 						grt.add(tBody.get(i));
-						Vector<ParseTreeNode> progs = new Vector<ParseTreeNode>();
+						Vector<ParseTreeNode> progs = new Vector<>();
 						progs.add(segments.get(i));
 						pa.groundTruth = grt;
 						pa.programNodes = progs;
@@ -655,11 +655,11 @@ public class ProgramAdaptator {
 				break;
 			}
 		}
-		Vector<GrammarTreeNode> grt = new Vector<GrammarTreeNode>();
+		Vector<GrammarTreeNode> grt = new Vector<>();
 		for (int i = tS; i <= tbody.size()-1-endSpan; i++) {
 			grt.add(tbody.get(i));
 		}
-		Vector<ParseTreeNode> progs = new Vector<ParseTreeNode>();
+		Vector<ParseTreeNode> progs = new Vector<>();
 		for (int i = progS; i <= segments.size()-1-endSpan; i++) {
 			progs.add(segments.get(i));
 		}
@@ -678,10 +678,10 @@ public class ProgramAdaptator {
 
 	public ArrayList<Integer> chooseLargestSubset(
 			HashMap<String, String> exp2program, ArrayList<String[]> examples) {
-		ArrayList<Integer> res = new ArrayList<Integer>();
+		ArrayList<Integer> res = new ArrayList<>();
 		int maxsize = -1;
 		for (String key : exp2program.keySet()) {
-			ArrayList<Integer> tmp = new ArrayList<Integer>();
+			ArrayList<Integer> tmp = new ArrayList<>();
 			for (int i = 0; i < examples.size(); i++) {
 				String line = UtilTools.formatExp(examples.get(i));
 				if (key.indexOf(line) != -1)
@@ -717,7 +717,7 @@ public class ProgramAdaptator {
 
 	public ArrayList<String[]> getRestExamples(ArrayList<String[]> examples,
 			ArrayList<Integer> keys) {
-		ArrayList<String[]> restExp = new ArrayList<String[]>();
+		ArrayList<String[]> restExp = new ArrayList<>();
 		for (int i = 0; i < examples.size(); i++) {
 			if (!keys.contains(i)) {
 				restExp.add(examples.get(i));
@@ -728,7 +728,7 @@ public class ProgramAdaptator {
 
 	public String formKey(ArrayList<String[]> examples,
 			ArrayList<Integer> keys, boolean include) {
-		ArrayList<String[]> resList = new ArrayList<String[]>();
+		ArrayList<String[]> resList = new ArrayList<>();
 		if (include) {
 			for (int i = 0; i < examples.size(); i++) {
 				if (keys.contains(i)) {
@@ -749,19 +749,19 @@ public class ProgramAdaptator {
 
 
 class Path {
-	ArrayList<Section> sections = new ArrayList<Section>();
-	ArrayList<int[]> progCrepLandMarkers = new ArrayList<int[]>();
+	ArrayList<Section> sections = new ArrayList<>();
+	ArrayList<int[]> progCrepLandMarkers = new ArrayList<>();
 	//the individual evaluation results for the new example
-	ArrayList<String> evalNewExp = new ArrayList<String>();
+	ArrayList<String> evalNewExp = new ArrayList<>();
 	// record the progress for this path on all examples
-	ArrayList<Integer> markers = new ArrayList<Integer>();
+	ArrayList<Integer> markers = new ArrayList<>();
 	// record the target substring that should be covered
-	ArrayList<String> tarStrings = new ArrayList<String>();
+	ArrayList<String> tarStrings = new ArrayList<>();
 	// tmplate position marker
 	int tmplateMarker = -1;
 	//each evaled segments
-	ArrayList<ArrayList<String>> tarSegs = new ArrayList<ArrayList<String>>();
-	ArrayList<ArrayList<Integer>> landMarkers = new ArrayList<ArrayList<Integer>>();
+	ArrayList<ArrayList<String>> tarSegs = new ArrayList<>();
+	ArrayList<ArrayList<Integer>> landMarkers = new ArrayList<>();
 	//point to the start position of the segments
 	//0 unexplored , positive number matched, -2 passed without match
 	int[] indicator = null;
@@ -785,7 +785,7 @@ class Path {
 	
 	public void processData()
 	{
-		ArrayList<Integer> xArrayList = new ArrayList<Integer>();
+		ArrayList<Integer> xArrayList = new ArrayList<>();
 		for(int i = 0; i < tarSegs.size(); i++)
 		{
 			xArrayList.add(0);
@@ -793,7 +793,7 @@ class Path {
 		landMarkers.add(xArrayList);
 		for(int i = 0; i < tarSegs.get(0).size(); i++)
 		{
-			ArrayList<Integer> tmp = new ArrayList<Integer>();
+			ArrayList<Integer> tmp = new ArrayList<>();
 			for(int j = 0; j < tarSegs.size(); j ++)
 			{
 				int curLen = landMarkers.get(i).get(j)+tarSegs.get(j).get(i).length();
@@ -833,10 +833,10 @@ class Path {
 	}
 	public Path updatePath(Section sec, ArrayList<Integer> markers) {
 		//this.sections.add(sec);
-		ArrayList<Section> xsections = new ArrayList<Section>();
+		ArrayList<Section> xsections = new ArrayList<>();
 		xsections.addAll(this.sections);
 		xsections.add(sec);
-		ArrayList<Integer> nmarkers = new ArrayList<Integer>();
+		ArrayList<Integer> nmarkers = new ArrayList<>();
 		nmarkers = markers;
 		int mark = this.tmplateMarker+1;
 		//update the mapping info

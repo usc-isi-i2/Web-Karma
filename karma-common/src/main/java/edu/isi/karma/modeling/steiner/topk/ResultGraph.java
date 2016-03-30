@@ -9,7 +9,7 @@ public class ResultGraph {
 	private List<Fact> facts;
 	
 	public ResultGraph() {
-		this.facts = new LinkedList<Fact>();
+		this.facts = new LinkedList<>();
 	}
 	
 	public Double getScore() {

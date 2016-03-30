@@ -181,7 +181,7 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 			if (sData == null | sData.isEmpty()) {
 				logger.error("Empty response object from query : " + query);
 			}
-			HashMap<String,String> cols = new HashMap<String,String>();
+			HashMap<String,String> cols = new HashMap<>();
 			try {
 				JSONObject obj1 = new JSONObject(sData);
 				JSONArray arr = obj1.getJSONObject("results").getJSONArray("bindings");

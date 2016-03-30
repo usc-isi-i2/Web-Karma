@@ -84,7 +84,7 @@ public class GraphUtil {
 			return null;
 		}		
 
-		DirectedGraph<Node, DefaultLink> g = new DirectedWeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		DirectedGraph<Node, DefaultLink> g = new DirectedWeightedMultigraph<>(DefaultLink.class);
 		
 		for (Node v : undirectedGraph.vertexSet())
 			g.addVertex(v);
@@ -103,7 +103,7 @@ public class GraphUtil {
 			return null;
 		}		
 
-		DirectedWeightedMultigraph<Node, DefaultLink> g = new DirectedWeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		DirectedWeightedMultigraph<Node, DefaultLink> g = new DirectedWeightedMultigraph<>(DefaultLink.class);
 		
 		for (Node v : graph.vertexSet())
 			g.addVertex(v);
@@ -121,7 +121,7 @@ public class GraphUtil {
 			return null;
 		}		
 
-		DirectedWeightedMultigraph<Node, LabeledLink> g = new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+		DirectedWeightedMultigraph<Node, LabeledLink> g = new DirectedWeightedMultigraph<>(LabeledLink.class);
 		
 		for (Node v : graph.vertexSet())
 			g.addVertex(v);
@@ -140,7 +140,7 @@ public class GraphUtil {
 			return null;
 		}		
 
-		UndirectedGraph<Node, DefaultLink> g = new WeightedMultigraph<Node, DefaultLink>(DefaultLink.class);
+		UndirectedGraph<Node, DefaultLink> g = new WeightedMultigraph<>(DefaultLink.class);
 		
 		for (Node v : graph.vertexSet())
 			g.addVertex(v);
@@ -158,7 +158,7 @@ public class GraphUtil {
 			return null;
 		}		
 
-		WeightedMultigraph<Node, LabeledLink> g = new WeightedMultigraph<Node, LabeledLink>(LabeledLink.class);
+		WeightedMultigraph<Node, LabeledLink> g = new WeightedMultigraph<>(LabeledLink.class);
 		
 		for (Node v : graph.vertexSet())
 			g.addVertex(v);
@@ -274,8 +274,8 @@ public class GraphUtil {
 	
 	public static List<GraphPath> getPaths(DirectedGraph<Node, DefaultLink> g, int length) {
 		
-		List<GraphPath> graphPaths = 
-				new LinkedList<GraphPath>();
+		List<GraphPath> graphPaths =
+				new LinkedList<>();
 
 		if (g == null)
 			return graphPaths;
@@ -291,8 +291,8 @@ public class GraphUtil {
 	
 	public static List<GraphPath> getOutgoingPaths(DirectedGraph<Node, DefaultLink> g, Node n, int length) {
 		
-		List<GraphPath> graphPaths = 
-				new LinkedList<GraphPath>();
+		List<GraphPath> graphPaths =
+				new LinkedList<>();
 
 		if (g == null || n == null || length <= 0 || !g.vertexSet().contains(n))
 			return graphPaths;
@@ -324,7 +324,7 @@ public class GraphUtil {
 	
 	public static Set<Node> getOutNeighbors(DirectedGraph<Node, DefaultLink> g, Node n) {
 		
-		Set<Node> neighbors = new HashSet<Node>();
+		Set<Node> neighbors = new HashSet<>();
 		if (g == null || n == null || !g.vertexSet().contains(n))
 			return neighbors;
 		
@@ -341,7 +341,7 @@ public class GraphUtil {
 
 	public static Set<Node> getInNeighbors(DirectedGraph<Node, DefaultLink> g, Node n) {
 		
-		Set<Node> neighbors = new HashSet<Node>();
+		Set<Node> neighbors = new HashSet<>();
 		if (g == null || n == null || !g.vertexSet().contains(n))
 			return neighbors;
 		
@@ -357,7 +357,7 @@ public class GraphUtil {
 	
 	public static Set<LabeledLink> getDomainLinksInLabeledGraph(DirectedGraph<Node, LabeledLink> g, ColumnNode n) {
 		
-		Set<LabeledLink> domainLinks = new HashSet<LabeledLink>();
+		Set<LabeledLink> domainLinks = new HashSet<>();
 		if (g == null || 
 				n == null || 
 				!g.vertexSet().contains(n))
@@ -375,7 +375,7 @@ public class GraphUtil {
 	
 	public static Set<LabeledLink> getDomainLinksInDefaultGraph(DirectedGraph<Node, DefaultLink> g, ColumnNode n) {
 		
-		Set<LabeledLink> domainLinks = new HashSet<LabeledLink>();
+		Set<LabeledLink> domainLinks = new HashSet<>();
 		if (g == null || 
 				n == null || 
 				!g.vertexSet().contains(n))
@@ -394,7 +394,7 @@ public class GraphUtil {
 	
 	public static HashMap<SemanticType, LabeledLink> getDomainLinks(DirectedGraph<Node, DefaultLink> g, ColumnNode n, List<SemanticType> semanticTypes) {
 		
-		HashMap<SemanticType, LabeledLink> domainLinks = new HashMap<SemanticType, LabeledLink>();
+		HashMap<SemanticType, LabeledLink> domainLinks = new HashMap<>();
 		if (g == null || 
 				n == null || 
 				semanticTypes == null ||
@@ -695,7 +695,7 @@ public class GraphUtil {
 		Node n, source, target;
 		DefaultLink l;
 		Double[] weight = new Double[1];
-		HashMap<String, Node> idToNodes = new HashMap<String, Node>();
+		HashMap<String, Node> idToNodes = new HashMap<>();
 		
 		reader.beginObject();
 	    while (reader.hasNext()) {
@@ -773,7 +773,7 @@ public class GraphUtil {
 			} else if (key.equals("userSelectedSemanticType") && reader.peek() != JsonToken.NULL) {
 				userSelectedSemanticType = readSemanticType(reader);
 			} else if (key.equals("suggestedSemanticTypes") && reader.peek() != JsonToken.NULL) {
-				learnedSemanticTypes = new ArrayList<SemanticType>();
+				learnedSemanticTypes = new ArrayList<>();
 				reader.beginArray();
 			    while (reader.hasNext()) {
 			    	SemanticType semanticType = readSemanticType(reader);
@@ -781,7 +781,7 @@ public class GraphUtil {
 				}
 		    	reader.endArray();				
 			} else if (key.equals("userSemanticTypes") && reader.peek() != JsonToken.NULL) {
-				userSemanticTypes = new ArrayList<SemanticType>();
+				userSemanticTypes = new ArrayList<>();
 				reader.beginArray();
 			    while (reader.hasNext()) {
 			    	SemanticType semanticType = readSemanticType(reader);
@@ -789,7 +789,7 @@ public class GraphUtil {
 				}
 		    	reader.endArray();				} 
 			else if (key.equals("learnedSemanticTypes") && reader.peek() != JsonToken.NULL) {
-				learnedSemanticTypes = new ArrayList<SemanticType>();
+				learnedSemanticTypes = new ArrayList<>();
 				reader.beginArray();
 			    while (reader.hasNext()) {
 			    	SemanticType semanticType = readSemanticType(reader);
@@ -810,7 +810,7 @@ public class GraphUtil {
     	} else if (type == NodeType.ColumnNode) {
     		n = new ColumnNode(id, hNodeId, columnName, rdfLiteralType);
     		if (userSemanticTypes == null && userSelectedSemanticType != null) {
-				userSemanticTypes = new ArrayList<SemanticType>();
+				userSemanticTypes = new ArrayList<>();
 				userSemanticTypes.add(userSelectedSemanticType);
     		}
     		if (userSemanticTypes != null) {
@@ -968,7 +968,7 @@ public class GraphUtil {
 	
 	private static Set<String> readModelIds(JsonReader reader) throws IOException {
 		
-		Set<String> modelIds = new HashSet<String>();
+		Set<String> modelIds = new HashSet<>();
 		
 		reader.beginArray();
 	    while (reader.hasNext()) {

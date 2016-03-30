@@ -8,12 +8,12 @@ public class Section implements GrammarTreeNode {
 	public Position[] pair;
 	public int convert = InternalTransformationLibrary.Functions.NonExist.getValue();
 	public static int time_limit = 10;
-	public Vector<int[]> rules = new Vector<int[]>();
+	public Vector<int[]> rules = new Vector<>();
 	public int rule_cxt_size = Segment.cxtsize_limit;
 	public int curState = 0;
 	public boolean isinloop = false;
-	public Vector<String> orgStrings = new Vector<String>();
-	public Vector<String> tarStrings = new Vector<String>();
+	public Vector<String> orgStrings = new Vector<>();
+	public Vector<String> tarStrings = new Vector<>();
 	public static Interpretor itInterpretor = null;
 	public static final int supermode = 1;
 	public String program = "null";
@@ -108,8 +108,8 @@ public class Section implements GrammarTreeNode {
 		else {
 			Position[] pa = { x, y };
 			boolean loop = this.isinloop || sec.isinloop;
-			Vector<String> strs = new Vector<String>();
-			Vector<String> tars = new Vector<String>();
+			Vector<String> strs = new Vector<>();
+			Vector<String> tars = new Vector<>();
 			if (this.orgStrings.size() == sec.orgStrings.size()
 					&& this.orgStrings.size() == 1
 					&& this.orgStrings.get(0).compareTo(sec.orgStrings.get(0)) == 0) {
@@ -157,10 +157,10 @@ public class Section implements GrammarTreeNode {
 	}
 
 	public void reiniteRules() {
-		Vector<Long> indexs = new Vector<Long>();
+		Vector<Long> indexs = new Vector<>();
 		indexs.add((long) 16);
 		indexs.add((long) 16);
-		Vector<Vector<Integer>> configs = new Vector<Vector<Integer>>();
+		Vector<Vector<Integer>> configs = new Vector<>();
 		rules.clear();
 		getCrossIndex(indexs, 0, "", configs);
 		for (int i = 0; i < configs.size(); i++) {
@@ -174,7 +174,7 @@ public class Section implements GrammarTreeNode {
 		String tpath = path;
 		if (cur >= indexs.size()) {
 			String[] elems = tpath.split(",");
-			Vector<Integer> line = new Vector<Integer>();
+			Vector<Integer> line = new Vector<>();
 			for (String s : elems) {
 				String x = s.trim();
 				if (x.length() > 0) {

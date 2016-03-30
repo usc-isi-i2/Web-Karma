@@ -37,23 +37,23 @@ public class Ruler {
 	String[] seperator = { " ", "," };
 	public Vector<TNode> vec;
 	int curPos = 0;
-	Vector<Object[]> operators = new Vector<Object[]>();
+	Vector<Object[]> operators = new Vector<>();
 	Vector<Integer> positions;
 	Vector<TNode> whats;
 	Vector<Integer> consPos;
 
 	public Ruler() {
-		positions = new Vector<Integer>();
-		consPos = new Vector<Integer>();
-		whats = new Vector<TNode>();
+		positions = new Vector<>();
+		consPos = new Vector<>();
+		whats = new Vector<>();
 	}
 
 	public Ruler(String x) {
-		positions = new Vector<Integer>();
-		consPos = new Vector<Integer>();
-		whats = new Vector<TNode>();
+		positions = new Vector<>();
+		consPos = new Vector<>();
+		whats = new Vector<>();
 		this.initConstantPosition();
-		vec = new Vector<TNode>();
+		vec = new Vector<>();
 		Org = x;
 		tokenize();
 	}
@@ -71,7 +71,7 @@ public class Ruler {
 	public void setNewInput(String x) {
 		this.Org = x;
 		this.Trgt = "";
-		this.vec = new Vector<TNode>();
+		this.vec = new Vector<>();
 		this.curPos = 0;
 		this.tokenize();
 		this.initConstantPosition();
@@ -80,7 +80,7 @@ public class Ruler {
 	public void setNewInput(Vector<TNode> x) {
 		this.Org = x.toString();
 		this.Trgt = "";
-		this.vec = new Vector<TNode>();
+		this.vec = new Vector<>();
 		this.curPos = 0;
 		this.vec = x;
 		this.initConstantPosition();
@@ -339,7 +339,7 @@ public class Ruler {
 		ListIterator<TNode> l = this.vec.listIterator(pos);
 		// ListIterator<TNode> dl = this.vec.listIterator(dpos);
 		int c;
-		Vector<TNode> x = new Vector<TNode>();
+		Vector<TNode> x = new Vector<>();
 		for (c = 0; c < size; c++) {
 			// this.collectPoss(pos);
 			TNode tn = l.next();

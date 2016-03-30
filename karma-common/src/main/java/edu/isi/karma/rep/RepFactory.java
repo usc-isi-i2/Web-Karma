@@ -35,12 +35,12 @@ import edu.isi.karma.rep.HNode.HNodeType;
 public class RepFactory {
 
 
-	private final Map<String, HNode> hNodes = new ConcurrentHashMap<String, HNode>(100);
-	private final Map<String, HTable> hTables = new ConcurrentHashMap<String, HTable>(10);
-	private final Map<String, Worksheet> worksheets = new ConcurrentHashMap<String, Worksheet>(10);
-	private final Map<String, Table> tables = new ConcurrentHashMap<String, Table>(10);
-	private final Map<String, Row> rows = new ConcurrentHashMap<String, Row>(1000);
-	private final Map<String, Node> nodes = new ConcurrentHashMap<String, Node>(10000);
+	private final Map<String, HNode> hNodes = new ConcurrentHashMap<>(100);
+	private final Map<String, HTable> hTables = new ConcurrentHashMap<>(10);
+	private final Map<String, Worksheet> worksheets = new ConcurrentHashMap<>(10);
+	private final Map<String, Table> tables = new ConcurrentHashMap<>(10);
+	private final Map<String, Row> rows = new ConcurrentHashMap<>(1000);
+	private final Map<String, Node> nodes = new ConcurrentHashMap<>(10000);
 	private int id = 0;
 	
 	public Worksheet createWorksheet(String tableName, Workspace workspace, String encoding) {

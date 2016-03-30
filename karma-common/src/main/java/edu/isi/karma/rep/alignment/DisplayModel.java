@@ -51,8 +51,8 @@ public class DisplayModel {
 	public DisplayModel(DirectedWeightedMultigraph<Node, LabeledLink> model) {
 		this.models = new ArrayList<>();
 		this.computeModels(model);
-		this.nodesLevel = new HashMap<Node, Integer>();
-		this.nodesSpan = new HashMap<Node, Set<ColumnNode>>();
+		this.nodesLevel = new HashMap<>();
+		this.nodesSpan = new HashMap<>();
 		this.hTable = null;
 		
 		for(DirectedWeightedMultigraph<Node, LabeledLink> subModel : models) {
@@ -64,8 +64,8 @@ public class DisplayModel {
 	public DisplayModel(DirectedWeightedMultigraph<Node, LabeledLink> model, HTable hTable) {
 		this.models = new ArrayList<>();
 		this.computeModels(model);
-		this.nodesLevel = new HashMap<Node, Integer>();
-		this.nodesSpan = new HashMap<Node, Set<ColumnNode>>();
+		this.nodesLevel = new HashMap<>();
+		this.nodesSpan = new HashMap<>();
 		this.hTable = hTable;
 
 		int modelNum = 1;
@@ -156,7 +156,7 @@ public class DisplayModel {
 	private static HashMap<Node, Integer> inDegreeInSet(DirectedWeightedMultigraph<Node, LabeledLink> g, 
 			Set<Node> nodes, boolean includeSelfLinks) {
 		
-		HashMap<Node, Integer> nodeToInDegree = new HashMap<Node, Integer>();
+		HashMap<Node, Integer> nodeToInDegree = new HashMap<>();
 		if (g == null || nodes == null) return nodeToInDegree;
 		for (Node n : nodes) {
 			Set<LabeledLink> incomingLinks = g.incomingEdgesOf(n);
@@ -180,7 +180,7 @@ public class DisplayModel {
 	private static HashMap<Node, Integer> outDegreeInSet(DirectedWeightedMultigraph<Node, LabeledLink> g, 
 			Set<Node> nodes, boolean includeSelfLinks) {
 		
-		HashMap<Node, Integer> nodeToOutDegree = new HashMap<Node, Integer>();
+		HashMap<Node, Integer> nodeToOutDegree = new HashMap<>();
 		if (g == null || nodes == null) return nodeToOutDegree;
 		for (Node n : nodes) {
 			Set<LabeledLink> outgoingLinks = g.outgoingEdgesOf(n);
@@ -213,7 +213,7 @@ public class DisplayModel {
 	}
 	
 	private Set<Node> getAllColumnNodes(DirectedWeightedMultigraph<Node, LabeledLink> model) {
-		Set<Node> columnNodes = new HashSet<Node>();
+		Set<Node> columnNodes = new HashSet<>();
 		for (Node u : model.vertexSet()) {
 			if (u instanceof ColumnNode)
 				columnNodes.add(u);
@@ -251,7 +251,7 @@ public class DisplayModel {
 		Set<Node> markedNodes = new HashSet<>();
 		markedNodes.addAll(columnNodes);
 		
-		Queue<Node> q = new LinkedList<Node>();
+		Queue<Node> q = new LinkedList<>();
 		int maxLevel = model.vertexSet().size();
 				
 		for (Node u : model.vertexSet()) {
@@ -348,8 +348,8 @@ public class DisplayModel {
 	public HashMap<Integer, Set<Node>> getLevelToNodes(DirectedWeightedMultigraph<Node, LabeledLink> model, 
 			boolean considerColumnNodes) {
 
-		HashMap<Integer, Set<Node>> levelToNodes = 
-				new HashMap<Integer, Set<Node>>();
+		HashMap<Integer, Set<Node>> levelToNodes =
+				new HashMap<>();
 		
 		if (this.nodesLevel == null)
 			return levelToNodes;
@@ -357,7 +357,7 @@ public class DisplayModel {
 		for (Entry<Node, Integer> entry : nodesLevel.entrySet()) {
 			Set<Node> nodes = levelToNodes.get(entry.getValue());
 			if (nodes == null) {
-				nodes = new HashSet<Node>();
+				nodes = new HashSet<>();
 				levelToNodes.put(entry.getValue(), nodes);
 			}
 			
@@ -415,12 +415,12 @@ public class DisplayModel {
 		
 		// Add empty set for all internal nodes
 		for (Node n : model.vertexSet()) {
-			Set<ColumnNode> columnNodes = new HashSet<ColumnNode>();
+			Set<ColumnNode> columnNodes = new HashSet<>();
 			nodesSpan.put(n, columnNodes);
 		}
 		
 		Map<Integer, Set<Node>> levelToNodes = getLevelToNodes(model, true);
-		Set<ColumnNode> allColumnNodes = new HashSet<ColumnNode>();
+		Set<ColumnNode> allColumnNodes = new HashSet<>();
 		
 		int i = getMaxLevel(true);
 		while (i >= 0) {
@@ -435,7 +435,7 @@ public class DisplayModel {
 						continue;
 					}
 					
-					List<Node> neighborsInLowerLevel = new ArrayList<Node>();
+					List<Node> neighborsInLowerLevel = new ArrayList<>();
 					
 					// finding the nodes connected to n (incoming & outgoing) from a lower level
 					Set<LabeledLink> outgoingLinks = model.outgoingEdgesOf(n);
@@ -482,8 +482,8 @@ public class DisplayModel {
 		if (n1Span == null || n2Span == null)
 			return false;
 
-		Set<String> n1NodeIds = new HashSet<String>();
-		Set<String> n2NodeIds = new HashSet<String>();
+		Set<String> n1NodeIds = new HashSet<>();
+		Set<String> n2NodeIds = new HashSet<>();
 		
 		for (ColumnNode c : n1Span)
 			if (c != null)
@@ -494,10 +494,10 @@ public class DisplayModel {
 				n2NodeIds.add(c.getHNodeId());
 
 		
-		List<Integer> n1SpanPositions = new ArrayList<Integer>();
-		List<Integer> n2SpanPositions = new ArrayList<Integer>();
-		
-		List<HNode> orderedNodeIds = new ArrayList<HNode>();
+		List<Integer> n1SpanPositions = new ArrayList<>();
+		List<Integer> n2SpanPositions = new ArrayList<>();
+		List<HNode> orderedNodeIds = new ArrayList<>();
+
 		this.hTable.getSortedLeafHNodes(orderedNodeIds);
 		if (orderedNodeIds != null)
 		for (int i = 0; i < orderedNodeIds.size(); i++) {
@@ -526,7 +526,7 @@ public class DisplayModel {
 	
 	private HashMap<Node, Integer> getNodeOverlap(Set<Node> nodes) {
 		
-		HashMap<Node, Integer> nodesOverlap = new HashMap<Node, Integer>();
+		HashMap<Node, Integer> nodesOverlap = new HashMap<>();
 		
 		int count;
 		for (Node n1 : nodes) {
@@ -668,7 +668,7 @@ public class DisplayModel {
 		for(Node n : model.vertexSet()) {
 			DirectedWeightedMultigraph<Node, LabeledLink> nodeModel = findModel(n);
 			if(nodeModel == null) {
-				nodeModel = new DirectedWeightedMultigraph<Node, LabeledLink>(LabeledLink.class); 
+				nodeModel = new DirectedWeightedMultigraph<>(LabeledLink.class); 
 				this.models.add(nodeModel);
 				nodeModel.addVertex(n);
 			}

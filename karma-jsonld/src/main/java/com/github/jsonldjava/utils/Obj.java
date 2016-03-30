@@ -11,7 +11,7 @@ public class Obj {
      * @return A new {@link Map} instance.
      */
     public static Map<String, Object> newMap() {
-        return new LinkedHashMap<String, Object>(2, 0.75f);
+        return new LinkedHashMap<>(2, 0.75f);
     }
 
     /**

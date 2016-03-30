@@ -89,12 +89,12 @@ public class TemplateTermSetPopulator {
 	}
 	protected List<PopulatedTemplateTermSet> generatePopulatedTemplates(List<PartiallyPopulatedTermSet> partials, StringBuilder output,
 			List<TemplateTerm> terms) {
-		List<PopulatedTemplateTermSet> templates = new LinkedList<PopulatedTemplateTermSet>();
+		List<PopulatedTemplateTermSet> templates = new LinkedList<>();
 		
 		for(PartiallyPopulatedTermSet partial : partials)
 		{
 			StringBuilder uri = new StringBuilder();
-			Map<ColumnTemplateTerm, Node> references = new HashMap<ColumnTemplateTerm, Node>();
+			Map<ColumnTemplateTerm, Node> references = new HashMap<>();
 			boolean allTermsSatisifed = true;
 			boolean atLeastOneTermSatisified = false;
 			for(TemplateTerm term : terms)

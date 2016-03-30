@@ -41,12 +41,13 @@ public class Tools {
 	public static String contextId = ContextParametersRegistry.getInstance().getDefault().getId();
 	public void transformFile(String fpath) {
 		try {
-			Vector<String[]> examples = new Vector<String[]>();
+			Vector<String[]> examples = new Vector<>();
 			// read and write the data
 			File nf = new File(fpath);
 			BufferedReader cr = new BufferedReader(new FileReader(fpath));
+
 			String pair;
-			Vector<String> vtmp = new Vector<String>();
+			Vector<String> vtmp = new Vector<>();
 			while ((pair = cr.readLine()) != null) {
 				pair = pair.trim();
 				if (pair.length() == 0)
@@ -64,7 +65,7 @@ public class Tools {
 			Messager msger = new Messager();
 			while (true) {
 
-				Vector<String[]> result = new Vector<String[]>();
+				Vector<String[]> result = new Vector<>();
 				System.out.print("Enter raw value\n");
 				// open up standard input
 				BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -114,7 +115,7 @@ public class Tools {
 	}
 
 	public void test1() {
-		Vector<String[]> examples = new Vector<String[]>();
+		Vector<String[]> examples = new Vector<>();
 		String[] xStrings = { "<_START>Ruth Asawa<_END>", "Asawa, Ruth" };
 		String[] yStrings = { "<_START>Robert Boardman Howard<_END>",
 				"Howard, Robert Boardman" };
@@ -122,11 +123,11 @@ public class Tools {
 		// {"<_START>Artist unknown Salem, Massachusetts area<_END>","Artist unknown"};
 		examples.add(xStrings);
 		examples.add(yStrings);
-		ArrayList<String> data = new ArrayList<String>();
+		ArrayList<String> data = new ArrayList<>();
 		// examples.add(zStrings);
 		ProgSynthesis psProgSynthesis = new ProgSynthesis(contextId);
 		DataPreProcessor dbDataPreProcessor = new DataPreProcessor(data);
-		Vector<Vector<String[]>> cstrns = new Vector<Vector<String[]>>();
+		Vector<Vector<String[]>> cstrns = new Vector<>();
 
 		psProgSynthesis.inite(examples,dbDataPreProcessor,cstrns);
 		Collection<ProgramRule> ps = psProgSynthesis.run_main();

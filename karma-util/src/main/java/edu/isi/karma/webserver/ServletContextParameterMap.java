@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServletContextParameterMap {
-	private Map<ContextParameter, String> valuesMap = new ConcurrentHashMap<ContextParameter, String>();
+	private Map<ContextParameter, String> valuesMap = new ConcurrentHashMap<>();
 
 	protected final String id;
 	

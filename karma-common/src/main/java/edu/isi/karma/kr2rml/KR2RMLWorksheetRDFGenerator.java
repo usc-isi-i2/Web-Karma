@@ -79,9 +79,9 @@ public class KR2RMLWorksheetRDFGenerator {
 	protected KR2RMLMappingColumnNameHNodeTranslator translator;
 	protected ConcurrentHashMap<String, String> hNodeToContextUriMap;
 	protected List<KR2RMLRDFWriter> outWriters;
-	protected List<String> tripleMapToKill = new ArrayList<String>();
-	protected List<String> tripleMapToStop = new ArrayList<String>();
-	protected List<String> POMToKill = new ArrayList<String>();
+	protected List<String> tripleMapToKill = new ArrayList<>();
+	protected List<String> tripleMapToStop = new ArrayList<>();
+	protected List<String> POMToKill = new ArrayList<>();
 	private Logger logger = LoggerFactory.getLogger(KR2RMLWorksheetRDFGenerator.class);
 	private URIFormatter uriFormatter;
 	private RootStrategy strategy;
@@ -156,10 +156,10 @@ public class KR2RMLWorksheetRDFGenerator {
 		this.outputFileName = outputFileName;
 		this.errorReport = errorReport;
 		this.uriFormatter = new URIFormatter(kr2rmlMapping.getPrefixes(), errorReport);
-		this.hNodeToContextUriMap = new ConcurrentHashMap<String, String>();
+		this.hNodeToContextUriMap = new ConcurrentHashMap<>();
 		this.addColumnContextInformation = addColumnContextInformation;
 		this.translator = new KR2RMLMappingColumnNameHNodeTranslator(factory, worksheet);
-		this.outWriters = new LinkedList<KR2RMLRDFWriter>();
+		this.outWriters = new LinkedList<>();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -173,7 +173,7 @@ public class KR2RMLWorksheetRDFGenerator {
 
 
 
-			Map<TriplesMapGraph, List<String>> graphTriplesMapsProcessingOrder = new HashMap<TriplesMapGraph, List<String>>();
+			Map<TriplesMapGraph, List<String>> graphTriplesMapsProcessingOrder = new HashMap<>();
 			for(TriplesMapGraph graph : kr2rmlMapping.getAuxInfo().getTriplesMapGraph().getGraphs())
 			{
 				TriplesMapGraph copyGraph = graph.copyGraph();
@@ -186,7 +186,7 @@ public class KR2RMLWorksheetRDFGenerator {
 				try{
 					DFSTriplesMapGraphDAGifier dagifier = new DFSTriplesMapGraphDAGifier();
 					
-					List<String> triplesMapsProcessingOrder = new LinkedList<String>();
+					List<String> triplesMapsProcessingOrder = new LinkedList<>();
 					triplesMapsProcessingOrder = dagifier.dagify(copyGraph, strategy);
 					graphTriplesMapsProcessingOrder.put(copyGraph, triplesMapsProcessingOrder);
 				}catch (Exception e)
@@ -214,7 +214,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			}
 			int i=1;
 			TriplesMapPlanExecutor e = new TriplesMapPlanExecutor(false);
-			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<TriplesMap, TriplesMapWorkerPlan>() ;
+			Map<TriplesMap, TriplesMapWorkerPlan> triplesMapToWorkerPlan = new HashMap<>() ;
 			for(TriplesMap triplesMap : kr2rmlMapping.getTriplesMapList())
 			{
 				try{

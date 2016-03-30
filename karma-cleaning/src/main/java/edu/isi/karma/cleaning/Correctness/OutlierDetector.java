@@ -33,7 +33,7 @@ public class OutlierDetector {
 		OutlierDetector outDet = new OutlierDetector();
 		String[] dat = {"A", "AA","B", "BB"};
 		String[] tst = {"B", "b", "AAAAAAAAAAAA","."};
-		ArrayList<String> data = new ArrayList<String>(Arrays.asList(dat));
+		ArrayList<String> data = new ArrayList<>(Arrays.asList(dat));
 		outDet.train(data);
 		for(String l:tst)
 		{

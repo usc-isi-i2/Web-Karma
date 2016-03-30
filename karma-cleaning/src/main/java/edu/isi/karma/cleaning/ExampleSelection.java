@@ -31,19 +31,16 @@ import java.util.Vector;
 import edu.isi.karma.cleaning.QuestionableRecord.OutlierDetector;
 
 public class ExampleSelection {
-	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
-	public Map<String, Vector<TNode>> org = new HashMap<String, Vector<TNode>>();
-	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
-	public Map<String, Vector<TNode>> tran = new HashMap<String, Vector<TNode>>();
-	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
-	public Map<String, String[]> raw = new HashMap<String, String[]>();
+
+	public Map<String, Vector<TNode>> org = new HashMap<>();
+	public Map<String, Vector<TNode>> tran = new HashMap<>();
+	public Map<String, String[]> raw = new HashMap<>();
 	public boolean isDetectingQuestionableRecord = false;
 	public OutlierDetector out;
-	// testdata rowid:{tar, tarcolor}
-	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
-	public Map<String, HashMap<String, String[]>> testdata = new HashMap<String, HashMap<String, String[]>>();
+	public Map<String, HashMap<String, String[]>> testdata = new HashMap<>();
+
 	public int way = 7;
-	public HashSet<String> dictionary = new HashSet<String>();
+	public HashSet<String> dictionary = new HashSet<>();
 
 	public ExampleSelection() {
 		this.out = new OutlierDetector();
@@ -83,7 +80,7 @@ public class ExampleSelection {
 	}
 
 	public Vector<String[]> getOrgTarPair(HashMap<String, String[]> exps) {
-		Vector<String[]> result = new Vector<String[]>();
+		Vector<String[]> result = new Vector<>();
 		for (Map.Entry<String, String[]> stringEntry : exps.entrySet()) {
 			String[] record = stringEntry.getValue();
 			String[] tmp = { record[0], record[1] };
@@ -121,7 +118,7 @@ public class ExampleSelection {
 						xelem.put(stringEntry.getKey(), pair);
 					}
 				} else {
-					HashMap<String, String[]> vstr = new HashMap<String, String[]>();
+					HashMap<String, String[]> vstr = new HashMap<>();
 					vstr.put(stringEntry.getKey(), pair);
 					testdata.put(stringEntry.getValue()[3], vstr);
 				}
@@ -173,9 +170,9 @@ public class ExampleSelection {
 		return ID;
 	}
 
-	@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 	public int ambiguityScore(List<TNode> vec) {
-		Map<String, Integer> d = new HashMap<String, Integer>();
+		Map<String, Integer> d = new HashMap<>();
+
 		int score = 0;
 		for (int i = 0; i < vec.size(); i++) {
 			if (d.containsKey(vec.get(i).text))
@@ -217,7 +214,8 @@ public class ExampleSelection {
 			firsttime = false;
 			return this.way2();
 		}
-		List<String> examples = new Vector<String>();
+
+		List<String> examples = new Vector<>();
 		for (Map.Entry<String, String[]> stringEntry : raw.entrySet()) {
 			int cnt = 0;
 			String[] tmp = stringEntry.getValue()[2]
@@ -268,7 +266,8 @@ public class ExampleSelection {
 			firsttime = false;
 			return this.way2();
 		}
-		List<String> examples = new Vector<String>();
+
+		List<String> examples = new Vector<>();
 		for (Map.Entry<String, String[]> stringEntry : raw.entrySet()) {
 			int cnt = 0;
 			String[] tmp = stringEntry.getValue()[2]

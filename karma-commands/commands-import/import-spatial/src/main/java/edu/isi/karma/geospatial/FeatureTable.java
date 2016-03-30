@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class FeatureTable {
 	
-	private Map<String, String> popupData = new HashMap<String, String>();
+	private Map<String, String> popupData = new HashMap<>();
 
 	public FeatureTable() {
 		super();

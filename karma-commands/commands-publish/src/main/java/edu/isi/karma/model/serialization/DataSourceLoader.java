@@ -124,7 +124,7 @@ public class DataSourceLoader extends SourceLoader {
     @Override
 	public List<Source> getSourcesAbstractInfo(Integer sourceLimit) {
 		
-		List<Source> sourceList = new ArrayList<Source>();
+		List<Source> sourceList = new ArrayList<>();
 		
 		Model model = Repository.Instance().getModel();
 		
@@ -204,7 +204,7 @@ public class DataSourceLoader extends SourceLoader {
 	public List<Source> getSourcesDetailedInfo(Integer sourceLimit) {
 
 		List<Source> sourceList = getSourcesAbstractInfo(sourceLimit);
-		List<Source> sourceListCompleteInfo = new ArrayList<Source>();
+		List<Source> sourceListCompleteInfo = new ArrayList<>();
 		for (Source s : sourceList) {
 			sourceListCompleteInfo.add(getSourceByUri(s.getUri()));
 		}
@@ -228,8 +228,8 @@ public class DataSourceLoader extends SourceLoader {
 			return null;
 		}
 		
-		Map<DataSource, Map<String, String>> sourcesAndMappings = 
-			new HashMap<DataSource, Map<String,String>>();
+		Map<DataSource, Map<String, String>> sourcesAndMappings =
+				new HashMap<>();
 		
 		Map<String, Map<String, String>> sourceIdsAndMappings =
 			semanticModel.findInJenaModel(Repository.Instance().getModel(), sourceLimit);
@@ -260,8 +260,8 @@ public class DataSourceLoader extends SourceLoader {
 		
 		List<Source> sourceList = getSourcesDetailedInfo(sourceLimit);
 		
-		Map<DataSource, Map<String, String>> sourcesAndMappings = 
-			new HashMap<DataSource, Map<String,String>>();
+		Map<DataSource, Map<String, String>> sourcesAndMappings =
+				new HashMap<>();
 
 		Model jenaModel = semanticModel.getJenaModel();
 		for (Source source : sourceList) {
@@ -346,7 +346,7 @@ public class DataSourceLoader extends SourceLoader {
 		
 		Property has_variable_property = model.getProperty(Namespaces.KARMA + "hasVariable");
 	
-		List<String> variables = new ArrayList<String>();
+		List<String> variables = new ArrayList<>();
 		NodeIterator nodeIterator = null;
 		RDFNode node = null;
 
@@ -371,7 +371,7 @@ public class DataSourceLoader extends SourceLoader {
 		
 		Property has_attribute_property = model.getProperty(Namespaces.KARMA + "hasAttribute");
 	
-		List<Attribute> attList = new ArrayList<Attribute>();
+		List<Attribute> attList = new ArrayList<>();
 		
 		NodeIterator nodeIterator = null;
 		RDFNode node = null;
@@ -439,7 +439,7 @@ public class DataSourceLoader extends SourceLoader {
 
 		edu.isi.karma.rep.model.Model semanticModel = 
 			new edu.isi.karma.rep.model.Model(modelNode.asResource().getLocalName());
-		List<Atom> atoms = new ArrayList<Atom>();
+		List<Atom> atoms = new ArrayList<>();
 		
 
 		// hasAtom

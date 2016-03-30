@@ -109,7 +109,7 @@ public class GradientDecendOptimizer {
 	}
 
 	public double selectcoef(double[] r_rum, double[] tvec) {
-		ArrayList<Double> ratios = new ArrayList<Double>();
+		ArrayList<Double> ratios = new ArrayList<>();
 		for (int i = 0; i < r_rum.length; i++) {
 			if (tvec[i] != 0 && r_rum[i] != 0) {
 				double x = r_rum[i] * 1.0 / tvec[i];
@@ -242,7 +242,7 @@ public class GradientDecendOptimizer {
 	// compute the r vectors
 	public ArrayList<double[]> compute_r(ArrayList<double[]> centers,
 			ArrayList<double[]> instances, double[] w) {
-		ArrayList<double[]> res = new ArrayList<double[]>();
+		ArrayList<double[]> res = new ArrayList<>();
 		// assign instance to different centers
 		for (double[] e : instances) {
 			double[] cent_vec = null;
@@ -267,7 +267,7 @@ public class GradientDecendOptimizer {
 	// compute the t vectors
 	public ArrayList<double[]> compute_t(
 			ArrayList<ArrayList<double[]>> constraints, double[] w) {
-		ArrayList<double[]> res = new ArrayList<double[]>();
+		ArrayList<double[]> res = new ArrayList<>();
 		// for each constraint group, find most apart two points
 		for (ArrayList<double[]> group : constraints) {
 			double max_dist = 0;
@@ -296,11 +296,11 @@ public class GradientDecendOptimizer {
 	// computer the s vectors
 	public ArrayList<double[]> compute_s(ArrayList<ArrayList<double[]>> groups,
 			double[] w) {
-		ArrayList<double[]> res = new ArrayList<double[]>();
+		ArrayList<double[]> res = new ArrayList<>();
 		for (ArrayList<double[]> group : groups) {
 			if (group.size() <= 1)
 				continue;
-			ArrayList<double[]> tmp = new ArrayList<double[]>();
+			ArrayList<double[]> tmp = new ArrayList<>();
 			for (int i = 0; i < group.size(); i++) {
 				double[] t = new double[w.length];
 				if (i == group.size() - 1) {
@@ -332,12 +332,12 @@ public class GradientDecendOptimizer {
 		double[] p5 = { 55, 1.5 };
 		double[] p6 = { 60, 2 };
 		double[] p7 = { 60, 3 };
-		ArrayList<double[]> examples = new ArrayList<double[]>();
+		ArrayList<double[]> examples = new ArrayList<>();
 		double[] center1 = { 37.75, 1.75 };
 		double[] center2 = { 60, 2.5 };
 		examples.add(center1);
 		examples.add(center2);
-		ArrayList<double[]> instances = new ArrayList<double[]>();
+		ArrayList<double[]> instances = new ArrayList<>();
 		instances.add(p1);
 		instances.add(p2);
 		instances.add(p3);
@@ -345,10 +345,10 @@ public class GradientDecendOptimizer {
 		instances.add(p5);
 		instances.add(p6);
 		instances.add(p7);
-		ArrayList<ArrayList<double[]>> mconstraints = new ArrayList<ArrayList<double[]>>();
-		ArrayList<ArrayList<double[]>> cconstraints = new ArrayList<ArrayList<double[]>>();
+		ArrayList<ArrayList<double[]>> mconstraints = new ArrayList<>();
+		ArrayList<ArrayList<double[]>> cconstraints = new ArrayList<>();
 		// group 1
-		ArrayList<double[]> group1 = new ArrayList<double[]>();
+		ArrayList<double[]> group1 = new ArrayList<>();
 		group1.add(p1);
 		group1.add(p2);
 		group1.add(p3);
@@ -356,11 +356,11 @@ public class GradientDecendOptimizer {
 		// group1.add(p3);
 		// group1.add(p4);
 		mconstraints.add(group1);
-		ArrayList<double[]> group2 = new ArrayList<double[]>();
+		ArrayList<double[]> group2 = new ArrayList<>();
 		group2.add(p6);
 		group2.add(p7);
 		mconstraints.add(group2);
-		ArrayList<double[]> group3 = new ArrayList<double[]>();
+		ArrayList<double[]> group3 = new ArrayList<>();
 		group3.add(p1);
 		group3.add(p2);
 		group3.add(p3);

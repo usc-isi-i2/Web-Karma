@@ -35,8 +35,9 @@ import edu.isi.karma.cleaning.MyLogger;
 
 public class DataCollection {
 	public static String config = "";
-	List<FileStat> fstates = new Vector<FileStat>();
-	public Set<String> succeededFiles = new HashSet<String>();
+	List<FileStat> fstates = new Vector<>();
+	public Set<String> succeededFiles = new HashSet<>();
+
 	@SuppressWarnings("unused")
 	public DataCollection() {
 		MyLogger myLogger = new MyLogger();
@@ -71,7 +72,7 @@ public class DataCollection {
 		// gen time
 		// 4 tot exec time 5 ave exec time
 		// 6 exp num 7 tot ruleNo 8 checkedrows
-		HashMap<String, Double[]> stats = new HashMap<String, Double[]>();
+		HashMap<String, Double[]> stats = new HashMap<>();
 		for (FileStat f : fstates) {
 			String fname = f.fileNameString;
 			if (stats.containsKey(fname)) {

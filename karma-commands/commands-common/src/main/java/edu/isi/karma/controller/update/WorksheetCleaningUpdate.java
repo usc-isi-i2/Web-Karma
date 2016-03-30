@@ -76,11 +76,11 @@ AbstractUpdate {
 		List<HNodePath> columnPaths = worksheet.getHeaders().getAllPaths();
 		ColumnMetadata colMetadata = worksheet.getMetadataContainer().getColumnMetadata();
 
-		List<String> columnsInvoked = new ArrayList<String>();
+		List<String> columnsInvoked = new ArrayList<>();
 
 		for (HNodePath path:columnPaths) {
 			String leafHNodeId = path.getLeaf().getId();
-			List<Node> nodes = new ArrayList<Node>(Math.max(1000, worksheet.getDataTable().getNumRows()));
+			List<Node> nodes = new ArrayList<>(Math.max(1000, worksheet.getDataTable().getNumRows()));
 			worksheet.getDataTable().collectNodes(path, nodes, selection);
 			final int sampleSize = (nodes.size() > 1000) ? 1000 : nodes.size();
 			columnsInvoked.add(leafHNodeId);
@@ -101,7 +101,7 @@ AbstractUpdate {
 						}
 					}
 					else {
-						Set<Integer> randomNums = new HashSet<Integer>();
+						Set<Integer> randomNums = new HashSet<>();
 						Random gen = new Random();
 						for (int i = 0; i < sampleSize; i++) {
 							int r = gen.nextInt(nodes.size());
@@ -129,7 +129,7 @@ AbstractUpdate {
 													.getContextParameters(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspaceId))
 													.getParameterValue(ContextParameter.CLEANING_SERVICE_URL);
 				
-					Map<String, String> formParams = new HashMap<String, String>();
+					Map<String, String> formParams = new HashMap<>();
 					formParams.put(JsonKeys.json.name(), requestJsonArray.toString());
 					String reqResponse = HTTPUtil.executeHTTPPostRequest(cleaningServiceURL, null,
 							null, formParams);

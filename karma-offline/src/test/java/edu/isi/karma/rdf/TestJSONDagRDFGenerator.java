@@ -98,7 +98,7 @@ public class TestJSONDagRDFGenerator extends TestJSONRDFGenerator{
 	@Test
 	public void testGenerateRDFThreaded()
 	{
-		List<Future<Boolean>> results = new LinkedList<Future<Boolean>>();
+		List<Future<Boolean>> results = new LinkedList<>();
 		ExecutorService es  = Executors.newFixedThreadPool(4);
 		for(int i = 0; i < 4 ; i++)
 		{

@@ -42,7 +42,7 @@ import edu.isi.karma.view.VWorkspace;
  */
 public class UpdateContainer {
 
-	private final List<AbstractUpdate> updates = new LinkedList<AbstractUpdate>();
+	private final List<AbstractUpdate> updates = new LinkedList<>();
 
 	public enum JsonKeys {
 		elements, workspaceId
@@ -60,7 +60,7 @@ public class UpdateContainer {
 	}
 
 	public void append(UpdateContainer updateContainer) {
-		Set<AbstractUpdate> needToDeleted = new HashSet<AbstractUpdate>();
+		Set<AbstractUpdate> needToDeleted = new HashSet<>();
 		for (AbstractUpdate update : updateContainer.updates) {
 			for (AbstractUpdate update2 : updates) {
 				if (update2.equals(update)) {

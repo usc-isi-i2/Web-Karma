@@ -88,7 +88,7 @@ public class TriplesMapWorkerPlan {
 	{ 
 		subjectMapPlan = new SubjectMapPlan(triplesMap, kr2rmlMapping,uriFormatter, factory, translator, selection);
 		
-		internalLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
+		internalLinksPlans = new LinkedList<>();
 		
 		List<TriplesMapLink> links = null;
 		for(TriplesMapGraph graph : graphTriplesMapsProcessingOrder.keySet())
@@ -132,8 +132,8 @@ public class TriplesMapWorkerPlan {
 			}
 		}
 		
-		columnLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
-		constantLinksPlans = new LinkedList<PredicateObjectMappingPlan>();
+		columnLinksPlans = new LinkedList<>();
+		constantLinksPlans = new LinkedList<>();
 		// Subject 
 		// Generate triples for specifying the types
 		for (TemplateTermSet typeTerm:triplesMap.getSubject().getRdfsType()) {

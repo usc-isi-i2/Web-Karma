@@ -61,7 +61,7 @@ import edu.isi.karma.rep.cleaning.ValueCollection;
 public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	final String hNodeId;
 	private Vector<TransformationExample> examples;
-	private HashSet<String> nodeIds = new HashSet<String>();
+	private HashSet<String> nodeIds = new HashSet<>();
 	RamblerTransformationInputs inputs;
 	public String compResultString = "";
 	private static Logger logger = LoggerFactory.getLogger(GenerateCleaningRulesCommand.class);
@@ -78,7 +78,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	}
 
 	private HashSet<String> parseNodeIds(String Ids) {
-		HashSet<String> tSet = new HashSet<String>();
+		HashSet<String> tSet = new HashSet<>();
 		try {
 			JSONArray jsa = new JSONArray(Ids);
 			for (int i = 0; i < jsa.length(); i++) {
@@ -92,7 +92,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 	}
 
 	public static Vector<TransformationExample> parseExample(String example) {
-		Vector<TransformationExample> x = new Vector<TransformationExample>();
+		Vector<TransformationExample> x = new Vector<>();
 		try {
 			JSONArray jsa = new JSONArray(example);
 			for (int i = 0; i < jsa.length(); i++) {
@@ -148,8 +148,8 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		String msg = String.format("Gen rule start,Time,%d, Worksheet,%s",System.currentTimeMillis(),worksheetId);
 		logger.info(msg);
 		// Get the HNode
-		HashMap<String, String> rows = new HashMap<String, String>();
-		HashMap<String, Integer> amb = new HashMap<String, Integer>();
+		HashMap<String, String> rows = new HashMap<>();
+		HashMap<String, Integer> amb = new HashMap<>();
 		HNodePath selectedPath = null;
 		List<HNodePath> columnPaths = wk.getHeaders().getAllPaths();
 		for (HNodePath path : columnPaths) {
@@ -158,7 +158,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			}
 		}
 		
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<>();
 		wk.getDataTable().collectNodes(selectedPath, nodes, selection);
 		for (Node node : nodes) {
 			String id = node.getId();
@@ -170,7 +170,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			calAmbScore(id, originalVal, amb);
 		}
 		RamblerValueCollection vc = new RamblerValueCollection(rows);
-		HashMap<String, Vector<String[]>> expFeData = new HashMap<String, Vector<String[]>>();
+		HashMap<String, Vector<String[]>> expFeData = new HashMap<>();
 		Messager mg = null;
 		if(wk.getMsg()!= null)
 		{
@@ -199,7 +199,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		RamblerTransformationOutput rtf = null;
 		// initialize the vocabulary
 		Iterator<String> iterx = inputs.getInputValues().getValues().iterator();
-		Vector<String> v = new Vector<String>();
+		Vector<String> v = new Vector<>();
 		int vb_cnt = 0;
 		while(iterx.hasNext() && vb_cnt < 30)
 		{
@@ -217,17 +217,17 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		}
 		Iterator<String> iter = rtf.getTransformations().keySet().iterator();
 		// id:{org: tar: orgdis: tardis: }
-		HashMap<String, HashMap<String, String>> resdata = new HashMap<String, HashMap<String, String>>();
-		HashSet<String> keys = new HashSet<String>();
+		HashMap<String, HashMap<String, String>> resdata = new HashMap<>();
+		HashSet<String> keys = new HashSet<>();
 		while (iter.hasNext()) {
 			String tpid = iter.next();
 			ValueCollection rvco = rtf.getTransformedValues_debug(tpid);
 			if (rvco == null)
 				continue;
 			// constructing displaying data
-			HashMap<String, String[]> xyzHashMap = new HashMap<String, String[]>();
+			HashMap<String, String[]> xyzHashMap = new HashMap<>();
 			for (String key : rvco.getNodeIDs()) {
-				HashMap<String, String> dict = new HashMap<String, String>();
+				HashMap<String, String> dict = new HashMap<>();
 				// add to the example selection
 				boolean isExp = false;
 				String org = vc.getValue(key);
@@ -255,7 +255,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 				for (TransformationExample exp : examples) {
 					if (exp.getNodeId().compareTo(key) == 0) {
 						if (!expFeData.containsKey(classLabel)) {
-							Vector<String[]> vstr = new Vector<String[]>();
+							Vector<String[]> vstr = new Vector<>();
 							String[] texp = {dict.get("Org"), pretar};
 							vstr.add(texp);
 							expFeData.put(classLabel, vstr);
@@ -348,7 +348,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 			if (values.containsKey(id)) {
 				dict = values.get(id);
 			} else {
-				dict = new HashMap<String, Integer>();
+				dict = new HashMap<>();
 				values.put(id, dict);
 			}
 			if (dict.containsKey(value)) {
@@ -366,7 +366,7 @@ public class GenerateCleaningRulesCommand extends WorksheetSelectionCommand {
 		int topKsize = 1;
 		if (sw)
 			topKsize = Integer.MAX_VALUE;
-		HashMap<String, Double> topK = new HashMap<String, Double>();
+		HashMap<String, Double> topK = new HashMap<>();
 		Iterator<String> iditer = dicts.keySet().iterator();
 		while (iditer.hasNext()) {
 			String id = iditer.next();

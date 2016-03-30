@@ -30,7 +30,7 @@ import edu.isi.karma.cleaning.TNode;
 public class RecordTextFeature implements Feature {
 	public double score = 1.0;
 	public String text = "";
-	public Vector<TNode> nodes = new Vector<TNode>();
+	public Vector<TNode> nodes = new Vector<>();
 	public String value = "";
 
 	public RecordTextFeature(String text, String value) {

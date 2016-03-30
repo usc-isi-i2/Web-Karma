@@ -153,12 +153,12 @@ public class JsonLdProcessor {
                 && ((Map) expanded).size() == 1) {
             expanded = ((Map<String, Object>) expanded).get("@graph");
         } else if (expanded == null) {
-            expanded = new ArrayList<Object>();
+            expanded = new ArrayList<>();
         }
 
         // normalize to an array
         if (!(expanded instanceof List)) {
-            final List<Object> tmp = new ArrayList<Object>();
+            final List<Object> tmp = new ArrayList<>();
             tmp.add(expanded);
             expanded = tmp;
         }
@@ -215,9 +215,9 @@ public class JsonLdProcessor {
             // TODO: SPEC doesn't specify that this should only be added if it
             // doesn't exists
             if (!entry.containsKey("@graph")) {
-                entry.put("@graph", new ArrayList<Object>());
+                entry.put("@graph", new ArrayList<>());
             }
-            final List<String> keys = new ArrayList<String>(graph.keySet());
+            final List<String> keys = new ArrayList<>(graph.keySet());
             Collections.sort(keys);
             for (final String id : keys) {
                 final Map<String, Object> node = (Map<String, Object>) graph.get(id);
@@ -228,9 +228,9 @@ public class JsonLdProcessor {
 
         }
         // 5)
-        final List<Object> flattened = new ArrayList<Object>();
+        final List<Object> flattened = new ArrayList<>();
         // 6)
-        final List<String> keys = new ArrayList<String>(defaultGraph.keySet());
+        final List<String> keys = new ArrayList<>(defaultGraph.keySet());
         Collections.sort(keys);
         for (final String id : keys) {
             final Map<String, Object> node = (Map<String, Object>) defaultGraph.get(id);
@@ -246,7 +246,7 @@ public class JsonLdProcessor {
             Object compacted = new JsonLdApi(opts).compact(activeCtx, null, flattened,
                     opts.getCompactArrays());
             if (!(compacted instanceof List)) {
-                final List<Object> tmp = new ArrayList<Object>();
+                final List<Object> tmp = new ArrayList<>();
                 tmp.add(compacted);
                 compacted = tmp;
             }
@@ -311,7 +311,7 @@ public class JsonLdProcessor {
 
         Object compacted = api.compact(activeCtx, null, framed);
         if (!(compacted instanceof List)) {
-            final List<Object> tmp = new ArrayList<Object>();
+            final List<Object> tmp = new ArrayList<>();
             tmp.add(compacted);
             compacted = tmp;
         }
@@ -493,7 +493,7 @@ public class JsonLdProcessor {
             if (input instanceof List) {
                 _input = (List<Map<String, Object>>) input;
             } else {
-                _input = new ArrayList<Map<String, Object>>();
+                _input = new ArrayList<>();
                 _input.add((Map<String, Object>) input);
             }
             for (final Map<String, Object> e : _input) {

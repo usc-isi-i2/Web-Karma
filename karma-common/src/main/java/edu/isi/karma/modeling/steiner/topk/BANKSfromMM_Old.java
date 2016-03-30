@@ -40,10 +40,10 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 	class SortedSteinerNodes{
 		Set<SteinerNode> set;
 		SortedSteinerNodes(){
-			set= new TreeSet<SteinerNode>(new Comparator<SteinerNode>(){
-				public int compare(SteinerNode n1, SteinerNode n2){
-					if(n1.distancesToSources[0]>n2.distancesToSources[0]) return 1;
-					else if(n1.distancesToSources[0]<n2.distancesToSources[0])return -1;
+			set= new TreeSet<>(new Comparator<SteinerNode>() {
+				public int compare(SteinerNode n1, SteinerNode n2) {
+					if (n1.distancesToSources[0] > n2.distancesToSources[0]) return 1;
+					else if (n1.distancesToSources[0] < n2.distancesToSources[0]) return -1;
 					else return 0;
 				}
 			});
@@ -61,10 +61,10 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 		double distanceToSource;
 		BANKSIterator(){
 			id=iteratorCounter;
-			banksIterator= new PriorityQueue<SteinerNode>(10, new Comparator<SteinerNode>(){
-				public int compare(SteinerNode n1, SteinerNode n2){
-					if(n1.distancesToSources[0]>n2.distancesToSources[0]) return 1;
-					else if(n1.distancesToSources[0]<n2.distancesToSources[0])return -1;
+			banksIterator= new PriorityQueue<>(10, new Comparator<SteinerNode>() {
+				public int compare(SteinerNode n1, SteinerNode n2) {
+					if (n1.distancesToSources[0] > n2.distancesToSources[0]) return 1;
+					else if (n1.distancesToSources[0] < n2.distancesToSources[0]) return -1;
 					else return 0;
 				}
 			});
@@ -86,23 +86,23 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 		this.recursiveLevel = recursiveLevel;
 		this.maxPermutations = maxPermutations;
 		
-		banksIterators=new PriorityQueue<BANKSIterator>(terminals.size(), new Comparator<BANKSIterator>(){
-			public int compare(BANKSIterator it1, BANKSIterator it2){
-				if(it1.distanceToSource>it2.distanceToSource) return 1;
-				else if (it1.distanceToSource<it2.distanceToSource) return -1;
+		banksIterators= new PriorityQueue<>(terminals.size(), new Comparator<BANKSIterator>() {
+			public int compare(BANKSIterator it1, BANKSIterator it2) {
+				if (it1.distanceToSource > it2.distanceToSource) return 1;
+				else if (it1.distanceToSource < it2.distanceToSource) return -1;
 				else return 0;
 			}
 		});
 		
-		shortestNodeIndex = new ArrayList<HashMap<SteinerNode, SteinerNode>>();
-		duplicateIndex = new ArrayList<HashMap<SteinerNode,SortedSteinerNodes>>();
+		shortestNodeIndex = new ArrayList<>();
+		duplicateIndex = new ArrayList<>();
 		
 		for(int i=0; i<terminalNodes.size();i++){
 			banksIterators.offer(new BANKSIterator());
 			shortestNodeIndex.add(new HashMap<SteinerNode,SteinerNode>());
 		}
 		
-		recurseNodeMap = new HashMap<SteinerNode, SteinerNode>();
+		recurseNodeMap = new HashMap<>();
 		
 	}
 	
@@ -120,7 +120,7 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 		}
 		
 		SortedSteinerNodes sortedNodes = duplicateIndex.get(queueId).get(searchNode);
-		List<SteinerNode> steinerNodes = new LinkedList<SteinerNode>();
+		List<SteinerNode> steinerNodes = new LinkedList<>();
 		Iterator<SteinerNode> nodeIterator = sortedNodes.set.iterator();
 		for (int i = 0; i < sortedNodes.set.size() && i < max; i++) {
 			SteinerNode n = nodeIterator.next();
@@ -128,13 +128,13 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 				steinerNodes.add(n);
 		}
 		
-		List<HashMap<Integer, SteinerNode>> newSearchNodeInQueues = 
-				new LinkedList<HashMap<Integer, SteinerNode>>();
+		List<HashMap<Integer, SteinerNode>> newSearchNodeInQueues =
+				new LinkedList<>();
 		
 		for (HashMap<Integer, SteinerNode> map : searchNodeInQueues) {
 			for (SteinerNode n : steinerNodes) {
-				HashMap<Integer, SteinerNode> newMap = 
-						new HashMap<Integer, SteinerNode>(map);
+				HashMap<Integer, SteinerNode> newMap =
+						new HashMap<>(map);
 				newMap.put(queueId, n);
 				newSearchNodeInQueues.add(newMap);
 			}
@@ -149,11 +149,11 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 		if (this.recurseNodeMap.containsKey(ancestor)) 
 			searchNode = this.recurseNodeMap.get(ancestor);
 
-		List<HashMap<Integer, SteinerNode>> searchNodeInQueues = 
-				new LinkedList<HashMap<Integer, SteinerNode>>();
+		List<HashMap<Integer, SteinerNode>> searchNodeInQueues =
+				new LinkedList<>();
 
-		HashMap<Integer, SteinerNode> mainQueueMap = 
-				new HashMap<Integer, SteinerNode>();
+		HashMap<Integer, SteinerNode> mainQueueMap =
+				new HashMap<>();
 		mainQueueMap.put(queueId, ancestor);
 		searchNodeInQueues.add(mainQueueMap);
 
@@ -193,8 +193,8 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 			Map<Integer, SteinerNode> searchNodeInQueues, 
 			List<Map<String, SteinerNode>> processedNodes, 
 			int queueId) throws Exception{
-		TreeSet<SteinerNode> steinerNodes = new TreeSet<SteinerNode>();
-		Map<String , SteinerNode> treeNodes= new HashMap<String, SteinerNode>();
+		TreeSet<SteinerNode> steinerNodes = new TreeSet<>();
+		Map<String , SteinerNode> treeNodes= new HashMap<>();
 		
 		SteinerNode replacedNode;
 		if (this.recurseNodeMap.containsKey(ancestor)) {
@@ -281,14 +281,14 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 		boolean debug = false;
 		
 		//nodes polled from queues
-		List<Map<String, SteinerNode>> processedNodes= 
-				new ArrayList<Map<String, SteinerNode>>();
-		List<Map<String, SteinerNode>> processedNodesHelper= 
-				new ArrayList<Map<String, SteinerNode>>();
+		List<Map<String, SteinerNode>> processedNodes=
+				new ArrayList<>();
+		List<Map<String, SteinerNode>> processedNodesHelper=
+				new ArrayList<>();
 
 		
-		List<HashMap<String, Integer>> recursesForNodesInQueue = 
-				new ArrayList<HashMap<String, Integer>>();
+		List<HashMap<String, Integer>> recursesForNodesInQueue =
+				new ArrayList<>();
 		
 		//mark nodes in the iterators as visited
 		int j=0;
@@ -303,8 +303,8 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 				visitedNodes.get(j).put(n.name(),n);
 				shortestNodeIndex.get(j).put(n, n);
 				
-				HashMap<SteinerNode, SortedSteinerNodes> map = 
-						new HashMap<SteinerNode, SortedSteinerNodes>();
+				HashMap<SteinerNode, SortedSteinerNodes> map =
+						new HashMap<>();
 				
 				SortedSteinerNodes treeSet = new SortedSteinerNodes();
 				treeSet.set.add(n);
@@ -350,10 +350,10 @@ public class BANKSfromMM_Old extends TopKSteinertrees {
 					
 					if (count>k) break;
 					
-					Queue<SteinerEdge> rs= new PriorityQueue<SteinerEdge>(10, new Comparator<SteinerEdge>(){
-						public int compare(SteinerEdge e1, SteinerEdge e2){
-							if(e1.weight()>e2.weight()) return 1;
-							else if (e1.weight()<e2.weight()) return -1;
+					Queue<SteinerEdge> rs= new PriorityQueue<>(10, new Comparator<SteinerEdge>() {
+						public int compare(SteinerEdge e1, SteinerEdge e2) {
+							if (e1.weight() > e2.weight()) return 1;
+							else if (e1.weight() < e2.weight()) return -1;
 							else return 0;
 						}
 					});

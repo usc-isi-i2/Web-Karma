@@ -16,12 +16,12 @@ public class Traces implements GrammarTreeNode {
 	public Vector<TNode> orgNodes;
 	public Vector<TNode> tarNodes;
 	public Vector<Vector<GrammarTreeNode>> rawlines; // used for program adaptation
-	public HashMap<Integer, Template> traceline = new HashMap<Integer, Template>();
-	public HashMap<Integer, HashMap<String, Template>> loopline = new HashMap<Integer, HashMap<String, Template>>();
+	public HashMap<Integer, Template> traceline = new HashMap<>();
+	public HashMap<Integer, HashMap<String, Template>> loopline = new HashMap<>();
 	public int curState = 0;
-	public Vector<Template> totalOrderVector = new Vector<Template>();
+	public Vector<Template> totalOrderVector = new Vector<>();
 	// keep all the segment expression to prevent repeated construction
-	public static HashMap<String, Segment> AllSegs = new HashMap<String, Segment>();
+	public static HashMap<String, Segment> AllSegs = new HashMap<>();
 	public String program = "null";
 	public String contextId;
 	public Traces(String contextId)
@@ -37,7 +37,7 @@ public class Traces implements GrammarTreeNode {
 	}
 
 	public void createTotalOrderVector() {
-		ArrayList<Integer> xArrayList = new ArrayList<Integer>();
+		ArrayList<Integer> xArrayList = new ArrayList<>();
 		xArrayList.addAll(traceline.keySet());
 		xArrayList.addAll(loopline.keySet());
 		Integer[] a = new Integer[xArrayList.size()];
@@ -61,18 +61,18 @@ public class Traces implements GrammarTreeNode {
 
 	// initialize the tree to represent the grammar tree
 	public void createTraces() {
-		Vector<Vector<Segment>> lines = new Vector<Vector<Segment>>();
-		HashMap<Integer, Vector<Segment>> pos2Segs = new HashMap<Integer, Vector<Segment>>();
+		Vector<Vector<Segment>> lines = new Vector<>();
+		HashMap<Integer, Vector<Segment>> pos2Segs = new HashMap<>();
 		Vector<Segment> children = findSegs(0);
-		Vector<Vector<Segment>> tlines = new Vector<Vector<Segment>>();
+		Vector<Vector<Segment>> tlines = new Vector<>();
 		for (Segment c : children) {
-			Vector<Segment> vs = new Vector<Segment>();
+			Vector<Segment> vs = new Vector<>();
 			vs.add(c);
 			tlines.add(vs);
 		}
 		// find all possible segments starting from a position
 		while (!tlines.isEmpty()) {
-			Vector<Vector<Segment>> nlines = new Vector<Vector<Segment>>();
+			Vector<Vector<Segment>> nlines = new Vector<>();
 			Vector<Segment> segs = tlines.remove(0);
 			int curPos = segs.get(segs.size() - 1).end;
 			if (curPos == 0) // target string is empty
@@ -92,7 +92,7 @@ public class Traces implements GrammarTreeNode {
 			} 
 			//create a new sequence for each new children node. add them into nlines
 			for (Segment s : children) {
-				Vector<Segment> tmp = new Vector<Segment>();
+				Vector<Segment> tmp = new Vector<>();
 				tmp.addAll(segs);
 				tmp.add(s);
 				nlines.add(tmp);
@@ -101,7 +101,7 @@ public class Traces implements GrammarTreeNode {
 			tlines.addAll(nlines);
 		}
 		
-		Vector<Vector<GrammarTreeNode>> vSeg = new Vector<Vector<GrammarTreeNode>>();
+		Vector<Vector<GrammarTreeNode>> vSeg = new Vector<>();
 		//Vector<Vector<GrammarTreeNode>> lSeg = new Vector<Vector<GrammarTreeNode>>();
 		for (Vector<Segment> vs : lines) {
 			Vector<GrammarTreeNode> vsGrammarTreeNodes = UtilTools
@@ -122,6 +122,7 @@ public class Traces implements GrammarTreeNode {
 	}
 
 	Vector<Segment> findSegs(int pos){
+
 		Vector<Segment> ret;
 		ret = SegmentMapper.findMapping(orgNodes, tarNodes, pos);
 		return ret;
@@ -254,10 +255,10 @@ public class Traces implements GrammarTreeNode {
 
 	public Traces mergewith(Traces t) {
 		// merge segment lines
-		Set<Integer> keyset = new HashSet<Integer>(this.traceline.keySet());
+		Set<Integer> keyset = new HashSet<>(this.traceline.keySet());
 		keyset.retainAll(t.traceline.keySet());
-		HashMap<Integer, Template> nLines = new HashMap<Integer, Template>();
-		HashMap<Integer, HashMap<String, Template>> lLines = new HashMap<Integer, HashMap<String, Template>>();
+		HashMap<Integer, Template> nLines = new HashMap<>();
+		HashMap<Integer, HashMap<String, Template>> lLines = new HashMap<>();
 		for (Integer index : keyset) {
 			Template line1 = this.traceline.get(index);
 			Template line2 = t.traceline.get(index);
@@ -269,8 +270,8 @@ public class Traces implements GrammarTreeNode {
 			nLines.put(index, nLine);
 		}
 		// merge loop and segment lines
-		HashMap<Integer, HashMap<String, Vector<Template>>> allLoops = new HashMap<Integer, HashMap<String, Vector<Template>>>();
-		Set<Integer> keyset1 = new HashSet<Integer>(this.traceline.keySet());
+		HashMap<Integer, HashMap<String, Vector<Template>>> allLoops = new HashMap<>();
+		Set<Integer> keyset1 = new HashSet<>(this.traceline.keySet());
 		keyset1.retainAll(t.loopline.keySet());
 		for (Integer index : keyset1) {
 			Template line1 = this.traceline.get(index);
@@ -286,21 +287,21 @@ public class Traces implements GrammarTreeNode {
 					if (allLoops.get(index).containsKey(line2)) {
 						allLoops.get(index).get(line2).add(nLine);
 					} else {
-						Vector<Template> vTemplates = new Vector<Template>();
+						Vector<Template> vTemplates = new Vector<>();
 						vTemplates.add(nLine);
 						allLoops.get(index).put(line2, vTemplates);
 					}
 				} else {
-					Vector<Template> tgt = new Vector<Template>();
+					Vector<Template> tgt = new Vector<>();
 					tgt.add(nLine);
-					HashMap<String, Vector<Template>> tHashMap = new HashMap<String, Vector<Template>>();
+					HashMap<String, Vector<Template>> tHashMap = new HashMap<>();
 					tHashMap.put(line2, tgt);
 					allLoops.put(index, tHashMap);
 				}
 			}
 		}
 		// merge loop and segment
-		keyset1 = new HashSet<Integer>(this.loopline.keySet());
+		keyset1 = new HashSet<>(this.loopline.keySet());
 		keyset1.retainAll(t.traceline.keySet());
 		for (Integer index : keyset1) {
 			Collection<String> line2s = this.loopline.get(index).keySet();
@@ -316,21 +317,21 @@ public class Traces implements GrammarTreeNode {
 					if (allLoops.get(index).containsKey(line2)) {
 						allLoops.get(index).get(line2).add(nLine);
 					} else {
-						Vector<Template> vTemplates = new Vector<Template>();
+						Vector<Template> vTemplates = new Vector<>();
 						vTemplates.add(nLine);
 						allLoops.get(index).put(line2, vTemplates);
 					}
 				} else {
-					Vector<Template> tgt = new Vector<Template>();
+					Vector<Template> tgt = new Vector<>();
 					tgt.add(nLine);
-					HashMap<String, Vector<Template>> tHashMap = new HashMap<String, Vector<Template>>();
+					HashMap<String, Vector<Template>> tHashMap = new HashMap<>();
 					tHashMap.put(line2, tgt);
 					allLoops.put(index, tHashMap);
 				}
 			}
 		}
 		// merge loop and loop
-		keyset1 = new HashSet<Integer>(this.loopline.keySet());
+		keyset1 = new HashSet<>(this.loopline.keySet());
 		keyset1.retainAll(t.loopline.keySet());
 		for (Integer index : keyset1) {
 			Collection<String> line1s = this.loopline.get(index).keySet();
@@ -351,14 +352,14 @@ public class Traces implements GrammarTreeNode {
 						if (allLoops.get(index).containsKey(line2)) {
 							allLoops.get(index).get(line2).add(nLine);
 						} else {
-							Vector<Template> vTemplates = new Vector<Template>();
+							Vector<Template> vTemplates = new Vector<>();
 							vTemplates.add(nLine);
 							allLoops.get(index).put(line2, vTemplates);
 						}
 					} else {
-						Vector<Template> tgt = new Vector<Template>();
+						Vector<Template> tgt = new Vector<>();
 						tgt.add(nLine);
-						HashMap<String, Vector<Template>> tHashMap = new HashMap<String, Vector<Template>>();
+						HashMap<String, Vector<Template>> tHashMap = new HashMap<>();
 						tHashMap.put(line2, tgt);
 						allLoops.put(index, tHashMap);
 					}
@@ -372,7 +373,7 @@ public class Traces implements GrammarTreeNode {
 				if (lLines.containsKey(integerHashMapEntry.getKey())) {
 					lLines.get(integerHashMapEntry.getKey()).put(subkey, xline);
 				} else {
-					HashMap<String, Template> xHashMap = new HashMap<String, Template>();
+					HashMap<String, Template> xHashMap = new HashMap<>();
 					xHashMap.put(subkey, xline);
 					lLines.put(integerHashMapEntry.getKey(), xHashMap);
 				}
@@ -390,8 +391,8 @@ public class Traces implements GrammarTreeNode {
 				&& y.getNodeType().compareTo("segment") == 0) {
 			Segment s = (Segment) x;
 			Segment t = (Segment) y;
-			Vector<Section> sec = new Vector<Section>();
-			HashSet<String> hset = new HashSet<String>();
+			Vector<Section> sec = new Vector<>();
+			HashSet<String> hset = new HashSet<>();
 			for (Section nSection : s.section) {
 				String key = nSection.toString();
 				if (hset.contains(key)) {
@@ -422,8 +423,8 @@ public class Traces implements GrammarTreeNode {
 				&& y.getNodeType().compareTo("loop") == 0) {
 			Loop s = (Loop) x;
 			Loop t = (Loop) y;
-			Vector<Section> sec = new Vector<Section>();
-			HashSet<String> hset = new HashSet<String>();
+			Vector<Section> sec = new Vector<>();
+			HashSet<String> hset = new HashSet<>();
 			for (Section nSection : s.loopbody.section) {
 				String key = nSection.toString();
 				if (hset.contains(key)) {
@@ -461,8 +462,8 @@ public class Traces implements GrammarTreeNode {
 
 	public HashMap<Integer, HashMap<String, Template>> consolidateDiffLoop(
 			Vector<Vector<GrammarTreeNode>> paths) {
-		HashMap<Integer, HashMap<String, Template>> resHashMap = new HashMap<Integer, HashMap<String, Template>>();
-		HashMap<Integer, HashMap<String, Vector<Template>>> tmpStore = new HashMap<Integer, HashMap<String, Vector<Template>>>();
+		HashMap<Integer, HashMap<String, Template>> resHashMap = new HashMap<>();
+		HashMap<Integer, HashMap<String, Vector<Template>>> tmpStore = new HashMap<>();
 		for (Vector<GrammarTreeNode> vg : paths) {
 			int key = vg.size();
 			String subkey = "";
@@ -473,16 +474,16 @@ public class Traces implements GrammarTreeNode {
 				if (tmpStore.get(key).containsKey(subkey)) {
 					tmpStore.get(key).get(subkey).add(new Template(vg));
 				} else {
-					Vector<Template> vte = new Vector<Template>();
+					Vector<Template> vte = new Vector<>();
 					vte.add(new Template(vg));
 					tmpStore.get(key).put(subkey, vte);
 				}
 			} else {
-				Vector<Template> xVector = new Vector<Template>();
+				Vector<Template> xVector = new Vector<>();
 				if (!isLegalVS(vg))
 					continue;
 				xVector.add(new Template(vg));
-				HashMap<String, Vector<Template>> xHashMap = new HashMap<String, Vector<Template>>();
+				HashMap<String, Vector<Template>> xHashMap = new HashMap<>();
 				xHashMap.put(subkey, xVector);
 				tmpStore.put(key, xHashMap);
 			}
@@ -493,7 +494,7 @@ public class Traces implements GrammarTreeNode {
 				if (resHashMap.containsKey(integerHashMapEntry.getKey())) {
 					resHashMap.get(integerHashMapEntry.getKey()).put(kInteger, x);
 				} else {
-					HashMap<String, Template> hashMap = new HashMap<String, Template>();
+					HashMap<String, Template> hashMap = new HashMap<>();
 					hashMap.put(kInteger, x);
 					resHashMap.put(integerHashMapEntry.getKey(), hashMap);
 				}
@@ -504,14 +505,14 @@ public class Traces implements GrammarTreeNode {
 
 	public HashMap<Integer, Template> consolidateDiffSize(
 			Vector<Vector<GrammarTreeNode>> paths) {
-		HashMap<Integer, Template> resHashMap = new HashMap<Integer, Template>();
-		HashMap<Integer, Vector<Template>> tmpStore = new HashMap<Integer, Vector<Template>>();
+		HashMap<Integer, Template> resHashMap = new HashMap<>();
+		HashMap<Integer, Vector<Template>> tmpStore = new HashMap<>();
 		for (Vector<GrammarTreeNode> vg : paths) {
 			int key = vg.size();
 			if (tmpStore.containsKey(key)) {
 				tmpStore.get(key).add(new Template(vg));
 			} else {
-				Vector<Template> xVector = new Vector<Template>();
+				Vector<Template> xVector = new Vector<>();
 				if (!isLegalVS(vg))
 					continue;
 				xVector.add(new Template(vg));
@@ -538,8 +539,9 @@ public class Traces implements GrammarTreeNode {
 	{
 		Vector<GrammarTreeNode> res = lists.get(0);
 		Vector<GrammarTreeNode> result;
+
 		for (int i = 1; i < lists.size(); i++) {
-			result = new Vector<GrammarTreeNode>();
+			result = new Vector<>();
 			for (int j = 0; j < res.size(); j++) {
 				GrammarTreeNode t = this.union(res.get(j), lists.get(i).get(j));
 				result.add(t);
@@ -551,9 +553,10 @@ public class Traces implements GrammarTreeNode {
 	public Template consolidate(Vector<Template> paths) {
 		Vector<GrammarTreeNode> res = paths.get(0).body;
 		Vector<GrammarTreeNode> result;
+
 		for (int i = 1; i < paths.size(); i++) {
 
-			result = new Vector<GrammarTreeNode>();
+			result = new Vector<>();
 			for (int j = 0; j < res.size(); j++) {
 				GrammarTreeNode t = this.union(res.get(j),
 						paths.get(i).body.get(j));
@@ -564,18 +567,18 @@ public class Traces implements GrammarTreeNode {
 		return new Template(res);
 	}
 
-	public Vector<Vector<GrammarTreeNode>> loopPathes = new Vector<Vector<GrammarTreeNode>>();
+	public Vector<Vector<GrammarTreeNode>> loopPathes = new Vector<>();
 
 	public Vector<Vector<GrammarTreeNode>> genLoop(Vector<Segment> curPath) {
 		// cluster chunk with the same head and tail token
-		Vector<Vector<GrammarTreeNode>> res = new Vector<Vector<GrammarTreeNode>>();
-		HashMap<String, Vector<Integer>> map = new HashMap<String, Vector<Integer>>();
+		Vector<Vector<GrammarTreeNode>> res = new Vector<>();
+		HashMap<String, Vector<Integer>> map = new HashMap<>();
 		for (int i = 0; i < curPath.size(); i++) {
 			String rep = curPath.get(i).repString;
 			if (map.containsKey(rep)) {
 				map.get(rep).add(i);
 			} else {
-				Vector<Integer> vIntegers = new Vector<Integer>();
+				Vector<Integer> vIntegers = new Vector<>();
 				vIntegers.add(i);
 				map.put(rep, vIntegers);
 			}
@@ -627,7 +630,7 @@ public class Traces implements GrammarTreeNode {
 			int end) {
 		if (start >= end || start < 0 || end > nodes.size())
 			return null;
-		Vector<GrammarTreeNode> vgt = new Vector<GrammarTreeNode>();
+		Vector<GrammarTreeNode> vgt = new Vector<>();
 		for (int i = start; i < end; i++) {
 			vgt.add(nodes.get(i));
 		}
@@ -638,11 +641,11 @@ public class Traces implements GrammarTreeNode {
 	// if None chunk could be merged together return null
 	public Vector<GrammarTreeNode> createLoop(Vector<GrammarTreeNode> nodes,
 			int span) {
-		Vector<GrammarTreeNode> res = new Vector<GrammarTreeNode>();
-		Vector<Vector<GrammarTreeNode>> gt = new Vector<Vector<GrammarTreeNode>>();
+		Vector<GrammarTreeNode> res = new Vector<>();
+		Vector<Vector<GrammarTreeNode>> gt = new Vector<>();
 		int pos = 0;
 		while (pos < nodes.size()) {
-			Vector<GrammarTreeNode> x = new Vector<GrammarTreeNode>();
+			Vector<GrammarTreeNode> x = new Vector<>();
 			for (int k = pos; k < pos + span && k < nodes.size(); k++) {
 				x.add(nodes.get(k));
 			}
@@ -657,11 +660,11 @@ public class Traces implements GrammarTreeNode {
 		int curStartPos = 0;// the lowest position the first element
 		int presize = gt.size();
 		while (gt.size() > 1) {
-			Vector<Vector<GrammarTreeNode>> tmp_gt = new Vector<Vector<GrammarTreeNode>>();
+			Vector<Vector<GrammarTreeNode>> tmp_gt = new Vector<>();
 			boolean isLegal = true;
 			for (int j = 0; j < gt.size() - 1; j++) {
 				isLegal = true;
-				Vector<GrammarTreeNode> elem = new Vector<GrammarTreeNode>();
+				Vector<GrammarTreeNode> elem = new Vector<>();
 				Vector<GrammarTreeNode> mx = gt.get(j);
 				Vector<GrammarTreeNode> nx = gt.get(j + 1);
 				if (mx.size() != nx.size())
@@ -731,8 +734,8 @@ public class Traces implements GrammarTreeNode {
 	public Vector<Vector<GrammarTreeNode>> detectLoop(Vector<Integer> rep,
 			Vector<Segment> curPath) {
 		int span = rep.get(1) - rep.get(0);
-		Vector<Vector<GrammarTreeNode>> resVector = new Vector<Vector<GrammarTreeNode>>();
-		Vector<GrammarTreeNode> nodelist = new Vector<GrammarTreeNode>();
+		Vector<Vector<GrammarTreeNode>> resVector = new Vector<>();
+		Vector<GrammarTreeNode> nodelist = new Vector<>();
 		if (span == 1) {
 			int startpos = rep.get(0);
 			int endpos = rep.get(rep.size() - 1);
@@ -810,7 +813,7 @@ public class Traces implements GrammarTreeNode {
 						nodelist.add(curPath.get(i));
 					}
 				}
-				Vector<GrammarTreeNode> nodelist1 = new Vector<GrammarTreeNode>();
+				Vector<GrammarTreeNode> nodelist1 = new Vector<>();
 				// skip the endpos
 				for (int i = 0; i < curPath.size(); i++) {
 					if (i < startpos) {
@@ -850,7 +853,7 @@ public class Traces implements GrammarTreeNode {
 						nodelist.add(curPath.get(i));
 					}
 				}
-				Vector<GrammarTreeNode> nodelist1 = new Vector<GrammarTreeNode>();
+				Vector<GrammarTreeNode> nodelist1 = new Vector<>();
 				for (int i = 0; i < curPath.size(); i++) {
 					// shift right
 					if (i < startpos) {

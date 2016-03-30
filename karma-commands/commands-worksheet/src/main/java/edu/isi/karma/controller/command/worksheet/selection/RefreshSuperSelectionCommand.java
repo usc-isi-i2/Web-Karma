@@ -73,7 +73,7 @@ public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection currentSel = getSuperSelection(worksheet);
-		List<SelectionWithPriority> selections = new ArrayList<SelectionWithPriority>();
+		List<SelectionWithPriority> selections = new ArrayList<>();
 		for (Selection sel : currentSel.getAllSelection()) {
 			HTable ht = workspace.getFactory().getHTable(sel.getHTableId());
 			selections.add(new SelectionWithPriority(sel, hTableDepth(ht, workspace.getFactory())));

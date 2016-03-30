@@ -7,7 +7,7 @@ public class PythonRepositoryRegistry {
 
 	private static PythonRepositoryRegistry singleton = new PythonRepositoryRegistry();
 
-	private final Map<String, PythonRepository> karmaHomeToPythonRepository = new ConcurrentHashMap<String, PythonRepository>();
+	private final Map<String, PythonRepository> karmaHomeToPythonRepository = new ConcurrentHashMap<>();
 
 	public static PythonRepositoryRegistry getInstance() {
 		return singleton;

@@ -45,7 +45,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 		
 		this.input = input;
 		this.contextId = contextId;
-		transformations = new HashMap<String, Transformation>();
+		transformations = new HashMap<>();
 		ExecutorService executor = Executors.newFixedThreadPool(1);
 		final Future<?> worker = executor.submit(new Runnable() {
 			public void run() {
@@ -67,7 +67,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 
 	private void learnTransformation() throws Exception {
 		Collection<TransformationExample> exs = input.getExamples();
-		Vector<String[]> exps = new Vector<String[]>();
+		Vector<String[]> exps = new Vector<>();
 		Iterator<TransformationExample> iter = exs.iterator();
 		while (iter.hasNext()) {
 			TransformationExample t = iter.next();
@@ -87,7 +87,7 @@ public class RamblerTransformationOutput implements TransformationOutput {
 			ProgramRule r = new ProgramRule(ProgramRule.IDENTITY, contextId);
 			r.nullRule = true;
 			this.nullRule = true;
-			rules = new Vector<ProgramRule>();
+			rules = new Vector<>();
 			rules.add(r);
 			// return;+
 		}

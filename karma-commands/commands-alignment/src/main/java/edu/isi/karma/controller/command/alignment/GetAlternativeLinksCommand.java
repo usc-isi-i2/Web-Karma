@@ -89,7 +89,7 @@ public class GetAlternativeLinksCommand extends Command {
 		final Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 //		OntologyManager ontMgr = workspace.getOntologyManager();
 		
-		Map<String, Label> linkList = new HashMap<String, Label>();
+		Map<String, Label> linkList = new HashMap<>();
 		if (linksRange == ALTERNATIVE_LINKS_RANGE.allObjectProperties) {
 			linkList = workspace.
 					getOntologyManager().getObjectProperties();

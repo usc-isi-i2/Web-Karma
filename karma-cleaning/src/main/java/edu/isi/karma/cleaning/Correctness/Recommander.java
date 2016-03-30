@@ -15,12 +15,12 @@ public class Recommander {
 	//
 	public ArrayList<String> getOutliers()
 	{
-		ArrayList<String> res = new ArrayList<String>();
+		ArrayList<String> res = new ArrayList<>();
 		return res;
 	}
 	public ArrayList<String> getBoundaryPoints()
 	{
-		ArrayList<String> res = new ArrayList<String>();
+		ArrayList<String> res = new ArrayList<>();
 		return res;
 	}
 }

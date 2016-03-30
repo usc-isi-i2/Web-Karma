@@ -111,7 +111,7 @@ public class JSONReducerDriver {
 					key = obj.getString("@id");
 				}
 				
-				return new Tuple2<String, String>(key, value);
+				return new Tuple2<>(key, value);
 			}
 		}).reduceByKey(new Function2<String, String, String>() {
 			

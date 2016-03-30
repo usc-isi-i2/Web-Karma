@@ -14,7 +14,7 @@ import edu.isi.karma.cleaning.Template;
 import edu.isi.karma.cleaning.Traces;
 
 public class ViewFunc implements VerificationFunc {
-	private HashMap<String, String> data = new HashMap<String, String>();
+	private HashMap<String, String> data = new HashMap<>();
 	private String contextId; 
 	public ViewFunc(ArrayList<TransRecord> records, ProgSynthesis ps, ProgramRule pr, String contextId)
 	{
@@ -28,7 +28,7 @@ public class ViewFunc implements VerificationFunc {
 	}
 	public HashMap<String, ArrayList<TransRecord>> cluster(ArrayList<TransRecord> reds)
 	{
-		HashMap<String, ArrayList<TransRecord>> res = new HashMap<String, ArrayList<TransRecord>>();
+		HashMap<String, ArrayList<TransRecord>> res = new HashMap<>();
 		for(TransRecord r: reds)
 		{
 			if(res.containsKey(r.label))
@@ -36,7 +36,7 @@ public class ViewFunc implements VerificationFunc {
 				res.get(r.label).add(r);
 			}
 			else {
-				ArrayList<TransRecord> line = new ArrayList<TransRecord>();
+				ArrayList<TransRecord> line = new ArrayList<>();
 				line.add(r);
 				res.put(r.label, line);
 			}
@@ -69,27 +69,27 @@ public class ViewFunc implements VerificationFunc {
 	}
 
 	public void identifyRecord(ArrayList<TransRecord> records, Traces trace) {
-		ArrayList<Template> all = new ArrayList<Template>();
+		ArrayList<Template> all = new ArrayList<>();
 		Collection<Template> tlines = trace.traceline.values();
 		all.addAll(tlines);
-		ArrayList<Template> llines = new ArrayList<Template>();
+		ArrayList<Template> llines = new ArrayList<>();
 		for (Integer k : trace.loopline.keySet()) {
 			llines.addAll(trace.loopline.get(k).values());
 		}
 		all.addAll(llines);
-		ArrayList<String> rdata = new ArrayList<String>();
+		ArrayList<String> rdata = new ArrayList<>();
 		for (TransRecord tr : records) {
 			rdata.add(tr.org);
 		}
 		int cnt = 0;
-		HashMap<String, ArrayList<ArrayList<String>>> views = new HashMap<String, ArrayList<ArrayList<String>>>();
+		HashMap<String, ArrayList<ArrayList<String>>> views = new HashMap<>();
 		for (Template t : all) {
 			Vector<GrammarTreeNode> bd = t.body;
-			ArrayList<ArrayList<String>> equviViews = new ArrayList<ArrayList<String>>();
+			ArrayList<ArrayList<String>> equviViews = new ArrayList<>();
 			for (GrammarTreeNode gt : bd) {
 				String rule;
-				HashSet<String> vs = new HashSet<String>();
-				ArrayList<String> lviews = new ArrayList<String>();
+				HashSet<String> vs = new HashSet<>();
+				ArrayList<String> lviews = new ArrayList<>();
 				do {
 					rule = gt.toProgram();
 					ProgramRule pr = new ProgramRule(rule,contextId);

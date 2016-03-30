@@ -90,7 +90,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			JSONKR2RMLRDFWriter jsonwriter = new JSONKR2RMLRDFWriter(pw);
-			List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+			List<KR2RMLRDFWriter> writers = new LinkedList<>();
 			writers.add(arvowriter);
 			writers.add(jsonwriter);
 			RDFGeneratorRequest request = new RDFGeneratorRequest("people-model", filename);
@@ -124,7 +124,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			JSONKR2RMLRDFWriter jsonwriter = new JSONKR2RMLRDFWriter(pw);
-			List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+			List<KR2RMLRDFWriter> writers = new LinkedList<>();
 			writers.add(arvowriter);
 			writers.add(jsonwriter);
 			RDFGeneratorRequest request = new RDFGeneratorRequest("people-avro-model", filename);
@@ -136,11 +136,11 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			rdfGen.generateRDF(request);
 			fos.flush();
 			fos.close();
-			DataFileReader<Void> schemareader = new DataFileReader<Void>(tempAvroOutput, new GenericDatumReader<Void>());
+			DataFileReader<Void> schemareader = new DataFileReader<>(tempAvroOutput, new GenericDatumReader<Void>());
 			Schema schema = schemareader.getSchema();
 			
 			DatumReader<GenericRecord> datumReader = new GenericDatumReader<>(schema);
-			DataFileReader<GenericRecord> reader = new DataFileReader<GenericRecord>(tempAvroOutput, datumReader);
+			DataFileReader<GenericRecord> reader = new DataFileReader<>(tempAvroOutput, datumReader);
 			
 			int count = 0;
 			while(reader.hasNext())
@@ -162,8 +162,8 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 		try {
 			Parser parser = new Schema.Parser();
 			Schema peopleSchema = parser.parse(new File(getTestResource("people.avsc").toURI()));
-			GenericDatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<GenericRecord>(peopleSchema);
-			DataFileWriter<GenericRecord> dfw = new DataFileWriter<GenericRecord>(datumWriter);
+			GenericDatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<>(peopleSchema);
+			DataFileWriter<GenericRecord> dfw = new DataFileWriter<>(datumWriter);
 			File tempfile = File.createTempFile("karma-people", "avro");
 			
 			tempfile.deleteOnExit();
@@ -194,7 +194,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			JSONKR2RMLRDFWriter jsonwriter = new JSONKR2RMLRDFWriter(pw);
-			List<KR2RMLRDFWriter> writers = new LinkedList<KR2RMLRDFWriter>();
+			List<KR2RMLRDFWriter> writers = new LinkedList<>();
 			writers.add(arvowriter);
 			writers.add(jsonwriter);
 			RDFGeneratorRequest request = new RDFGeneratorRequest("people-array.avro-model", filename);
@@ -230,7 +230,7 @@ public class TestAvroRDFGenerator extends TestJSONRDFGenerator {
 		record.put("twitter", twitter);
 		Schema userIdArraySchema = peopleSchema.getField("userids").schema();
 		Schema userIdSchema = userIdArraySchema.getElementType();
-		GenericArray<GenericRecord> useridrecords = new GenericData.Array<GenericRecord>(userIdArraySchema, new LinkedList<GenericRecord>());
+		GenericArray<GenericRecord> useridrecords = new GenericData.Array<>(userIdArraySchema, new LinkedList<GenericRecord>());
 		
 		Random r = new Random();
 		for(int j = 0; j < 2; j++)

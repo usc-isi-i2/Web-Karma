@@ -136,14 +136,14 @@ public class Context extends LinkedHashMap<String, Object> {
      */
     public Context parse(Object localContext, List<String> remoteContexts) throws JsonLdError {
         if (remoteContexts == null) {
-            remoteContexts = new ArrayList<String>();
+            remoteContexts = new ArrayList<>();
         }
         // 1. Initialize result to the result of cloning active context.
         Context result = this.clone(); // TODO: clone?
         // 2)
         if (!(localContext instanceof List)) {
             final Object temp = localContext;
-            localContext = new ArrayList<Object>();
+            localContext = new ArrayList<>();
             ((List<Object>) localContext).add(temp);
         }
         // 3)
@@ -237,7 +237,7 @@ public class Context extends LinkedHashMap<String, Object> {
             }
 
             // 3.7
-            final Map<String, Boolean> defined = new LinkedHashMap<String, Boolean>();
+            final Map<String, Boolean> defined = new LinkedHashMap<>();
             for (final String key : ((Map<String, Object>) context).keySet()) {
                 if ("@base".equals(key) || "@vocab".equals(key) || "@language".equals(key)) {
                     continue;
@@ -537,7 +537,7 @@ public class Context extends LinkedHashMap<String, Object> {
             }
 
             // 2.2)
-            final List<String> containers = new ArrayList<String>();
+            final List<String> containers = new ArrayList<>();
             // 2.3)
             String typeLanguage = "@language";
             String typeLanguageValue = "@null";
@@ -659,7 +659,7 @@ public class Context extends LinkedHashMap<String, Object> {
                 typeLanguageValue = "@null";
             }
             // 2.10)
-            final List<String> preferredValues = new ArrayList<String>();
+            final List<String> preferredValues = new ArrayList<>();
             // 2.11)
             if ("@reverse".equals(typeLanguageValue)) {
                 preferredValues.add("@reverse");
@@ -771,7 +771,7 @@ public class Context extends LinkedHashMap<String, Object> {
      * @return A map from prefix string to IRI string
      */
     public Map<String, String> getPrefixes(boolean onlyCommonPrefixes) {
-        final Map<String, String> prefixes = new LinkedHashMap<String, String>();
+        final Map<String, String> prefixes = new LinkedHashMap<>();
         for (final Map.Entry<String, Object> stringObjectEntry : termDefinitions.entrySet()) {
             if (stringObjectEntry.getKey().contains(":")) {
                 continue;
@@ -807,7 +807,7 @@ public class Context extends LinkedHashMap<String, Object> {
         final Context rval = (Context) super.clone();
         // TODO: is this shallow copy enough? probably not, but it passes all
         // the tests!
-        rval.termDefinitions = new LinkedHashMap<String, Object>(this.termDefinitions);
+        rval.termDefinitions = new LinkedHashMap<>(this.termDefinitions);
         return rval;
     }
 
@@ -839,7 +839,7 @@ public class Context extends LinkedHashMap<String, Object> {
 
         // create term selections for each mapping in the context, ordererd by
         // shortest and then lexicographically least
-        final List<String> terms = new ArrayList<String>(termDefinitions.keySet());
+        final List<String> terms = new ArrayList<>(termDefinitions.keySet());
         Collections.sort(terms, new Comparator<String>() {
             @Override
             public int compare(String a, String b) {

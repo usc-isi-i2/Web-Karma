@@ -23,21 +23,21 @@ public abstract class Coherence {
 	public Coherence() {
 		this.items = new ArrayList<>();
 		this.itemsCount = 0;
-		this.patternSize = new HashMap<String, Integer>();
-		this.patternGuid = new HashMap<String, String>();
+		this.patternSize = new HashMap<>();
+		this.patternGuid = new HashMap<>();
 		this.maxPatterns = new String[NUM_OF_MAX_SIZE_PATTERNS];
 		this.numOfElementsInMaxPatterns = 0;
-		this.patternIndex = new HashMap<String, Integer>();
+		this.patternIndex = new HashMap<>();
 	}
 	
 	public Coherence(Coherence coherence) {
-		this.items = new ArrayList<CoherenceItem>(coherence.getItems());
+		this.items = new ArrayList<>(coherence.getItems());
 		this.itemsCount = coherence.itemsCount;
-		this.patternSize = new HashMap<String, Integer>(coherence.patternSize);
-		this.patternGuid = new HashMap<String, String>(coherence.patternGuid);
+		this.patternSize = new HashMap<>(coherence.patternSize);
+		this.patternGuid = new HashMap<>(coherence.patternGuid);
 		this.maxPatterns = coherence.maxPatterns.clone();
 		this.numOfElementsInMaxPatterns = coherence.numOfElementsInMaxPatterns;
-		this.patternIndex = new HashMap<String, Integer>(coherence.patternIndex);
+		this.patternIndex = new HashMap<>(coherence.patternIndex);
 	}
 	
 	public List<CoherenceItem> getItems() {
@@ -59,7 +59,7 @@ public abstract class Coherence {
 	}
 
 	public List<Integer> getCoherenceList() {
-		List<Integer> coherenceList = new ArrayList<Integer>(patternSize.values());
+		List<Integer> coherenceList = new ArrayList<>(patternSize.values());
 		Collections.sort(coherenceList, Collections.reverseOrder());
 		coherenceList = coherenceList.subList(0, Math.min(coherenceList.size(), 5));
 		return coherenceList;

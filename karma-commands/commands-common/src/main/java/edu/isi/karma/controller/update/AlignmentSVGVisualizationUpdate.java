@@ -159,7 +159,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 			JSONArray linksArr = new JSONArray();
 			JSONArray edgeLinksArr = new JSONArray();
 
-			Map<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
+			Map<Node, Integer> verticesIndex = new HashMap<>();
 			Map<String, ColumnNode> columnNodes = new HashMap<>();
 
 			if (alignmentGraph != null
@@ -348,14 +348,14 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 				}
 			}
 			/*** Add the nodes and the links from the Steiner tree ***/
-			List<String> hNodeIdsAdded = new ArrayList<String>();
+			List<String> hNodeIdsAdded = new ArrayList<>();
 			JSONArray nodesArr = new JSONArray();
 			JSONArray linksArr = new JSONArray();
 			if (alignmentGraph != null
 					&& !alignmentGraph.vertexSet().isEmpty()) {
 				/** Add the nodes **/
 				Set<Node> nodes = alignmentGraph.vertexSet();
-				Map<Node, Integer> verticesIndex = new HashMap<Node, Integer>();
+				Map<Node, Integer> verticesIndex = new HashMap<>();
 				int nodesIndexcounter = 0;
 				for (Node node : nodes) {
 					/**

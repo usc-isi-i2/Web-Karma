@@ -196,7 +196,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			return new UpdateContainer(new ErrorUpdate(
 					"Please align the worksheet before generating R2RML Model!"));
 		}
-		Set<LabeledLink> links = new HashSet<LabeledLink>();
+		Set<LabeledLink> links = new HashSet<>();
 		if (alignment.getSteinerTree() != null) {
 			for (LabeledLink link : alignment.getSteinerTree().edgeSet()) {
 				if ((link.getStatus() == LinkStatus.Normal || link.getStatus() == LinkStatus.PreferredByUI) && (link.getType() == LinkType.ObjectPropertyLink)) {

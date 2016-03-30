@@ -54,7 +54,7 @@ public class VarianceFeatureSet implements FeatureSet {
 	public Collection<Feature> computeFeatures(Collection<String> oldexamples,
 			Collection<String> newexamples) {
 
-		Vector<Feature> fs = new Vector<Feature>();
+		Vector<Feature> fs = new Vector<>();
 		RegularityFeatureSet rf1 = new RegularityFeatureSet();
 		Collection<Feature> x = rf1.computeFeatures(oldexamples, newexamples);
 		RegularityFeatureSet rf2 = new RegularityFeatureSet();

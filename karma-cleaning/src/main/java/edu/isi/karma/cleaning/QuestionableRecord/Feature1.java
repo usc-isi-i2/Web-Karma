@@ -28,7 +28,7 @@ import edu.isi.karma.cleaning.TNode;
 //counting text feature
 public class Feature1 implements RecFeature {
 	public String target;
-	public Vector<TNode> xNodes = new Vector<TNode>();
+	public Vector<TNode> xNodes = new Vector<>();
 	public double weight = 1.0;
 
 	public Feature1(String tar, Vector<TNode> xNodes, double weight) {

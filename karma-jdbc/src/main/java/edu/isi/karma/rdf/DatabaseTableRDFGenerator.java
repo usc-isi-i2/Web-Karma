@@ -233,7 +233,8 @@ public class DatabaseTableRDFGenerator extends RdfGenerator {
 	private List<String> addHeaders (Worksheet wk, List<String> columnNames,
 			RepFactory factory) {
 		HTable headers = wk.getHeaders();
-		List<String> headersList = new ArrayList<String>();
+		List<String> headersList = new ArrayList<>();
+
         for(int i=0; i< columnNames.size(); i++){
         	HNode hNode = null;
         	hNode = headers.addHNode(columnNames.get(i), HNodeType.Regular, wk, factory);

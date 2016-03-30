@@ -35,7 +35,7 @@ public class JsonImportValues {
 	private RepFactory factory;
 	private Worksheet worksheet;
 	private JSONArray columnsJson;
-	private Map<String, Boolean> columnsCache = new HashMap<String, Boolean>();
+	private Map<String, Boolean> columnsCache = new HashMap<>();
 	public JsonImportValues(int maxNumLines, int numObjects, RepFactory factory, 
 			Worksheet worksheet, JSONArray columnsJson) {
 		this.maxNumLines = maxNumLines;
@@ -341,7 +341,7 @@ public class JsonImportValues {
 					worksheet, factory);
 
 			// Check for all the nodes that have value and nested tables
-			Collection<Node> nodes = new ArrayList<Node>();
+			Collection<Node> nodes = new ArrayList<>();
 			worksheet.getDataTable().collectNodes(
 					hNode.getHNodePath(factory), nodes, SuperSelectionManager.DEFAULT_SELECTION);
 			for (Node node : nodes) {

@@ -33,14 +33,14 @@ import org.slf4j.LoggerFactory;
 public class RamblerValueCollection implements ValueCollection {
 	private static Logger logger = LoggerFactory.getLogger(RamblerValueCollection.class);
 	private HashMap<String,String> data;
-	private HashMap<String, String> keyClass = new HashMap<String, String>();
+	private HashMap<String, String> keyClass = new HashMap<>();
 	public RamblerValueCollection(HashMap<String,String> data)
 	{
 		this.data = data;
 	}
 	public RamblerValueCollection()
 	{
-		data = new HashMap<String,String>();
+		data = new HashMap<>();
 	}
 	public void setKeyClass(String key,String cLabel)
 	{

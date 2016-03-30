@@ -23,7 +23,7 @@ import edu.isi.karma.cleaning.features.RecordClassifier;
 
 public class UtilTools {
 	public static int index = 0;
-	public static Vector<String> results = new Vector<String>();
+	public static Vector<String> results = new Vector<>();
 
 	private UtilTools() {
 	}
@@ -111,7 +111,7 @@ public class UtilTools {
 	public static Vector<Integer> getStringPos(int tokenpos,
 			Vector<TNode> example) {
 
-		Vector<Integer> poss = new Vector<Integer>();
+		Vector<Integer> poss = new Vector<>();
 		if (tokenpos < 0)
 			return poss;
 		int pos = 0;
@@ -128,7 +128,7 @@ public class UtilTools {
 	}
 
 	public static Vector<GrammarTreeNode> convertSegVector(Vector<Segment> x) {
-		Vector<GrammarTreeNode> res = new Vector<GrammarTreeNode>();
+		Vector<GrammarTreeNode> res = new Vector<>();
 		for (Segment e : x) {
 			res.add(e);
 		}
@@ -189,7 +189,7 @@ public class UtilTools {
 	public static void StringColorCode(String org, String res,
 			HashMap<String, String> dict) throws Exception {
 		int segmentCnt = 0;
-		Vector<int[]> allUpdates = new Vector<int[]>();
+		Vector<int[]> allUpdates = new Vector<>();
 		String pat = "((?<=\\{_L\\})|(?=\\{_L\\}))";
 		String pat1 = "((?<=\\{_S\\})|(?=\\{_S\\}))";
 		String orgdis = "";
@@ -277,7 +277,7 @@ public class UtilTools {
 
 	public static String escape(String s) {
 		s = s.replaceAll("\\\\", "\\\\\\\\\\\\\\\\");
-		HashMap<String, String> dict = new HashMap<String, String>();
+		HashMap<String, String> dict = new HashMap<>();
 		dict.put("\\(", "\\\\(");
 		dict.put("\\)", "\\\\)");
 		dict.put("\\+", "\\\\+");
@@ -299,7 +299,7 @@ public class UtilTools {
 	}
 
 	public static Vector<TNode> subtokenseqs(int a, int b, Vector<TNode> org) {
-		Vector<TNode> xNodes = new Vector<TNode>();
+		Vector<TNode> xNodes = new Vector<>();
 		if (a < 0 || b >= org.size() || a > b) {
 			return null;
 		} else {
@@ -316,7 +316,7 @@ public class UtilTools {
 	}
 
 	public static Vector<String> buildDict(Collection<String> data) {
-		HashMap<String, Integer> mapHashSet = new HashMap<String, Integer>();
+		HashMap<String, Integer> mapHashSet = new HashMap<>();
 		for (String pair : data) {
 			String s1 = pair;
 			if (s1.contains("<_START>")) {
@@ -328,7 +328,7 @@ public class UtilTools {
 			Ruler r = new Ruler();
 			r.setNewInput(s1);
 			Vector<TNode> v = r.vec;
-			HashSet<String> curRow = new HashSet<String>();
+			HashSet<String> curRow = new HashSet<>();
 			for (TNode t : v) {
 				String k = t.text;
 				k = k.replaceAll("[0-9]+", "DIGITs");
@@ -361,7 +361,7 @@ public class UtilTools {
 				iter.remove();
 			}
 		}
-		Vector<String> res = new Vector<String>();
+		Vector<String> res = new Vector<>();
 		res.addAll(mapHashSet.keySet());
 		return res;
 	}
@@ -385,7 +385,7 @@ public class UtilTools {
 	}
 
 	public static String createkey(ArrayList<String[]> examples) {
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<String> tmp = new ArrayList<>();
 		for (String[] ele : examples) {
 			String t = UtilTools.formatExp(ele);
 			tmp.add(t);
@@ -400,7 +400,7 @@ public class UtilTools {
 
 	public static ArrayList<String[]> extractExamplesinPartition(
 			Collection<Partition> pars) {
-		ArrayList<String[]> examples = new ArrayList<String[]>();
+		ArrayList<String[]> examples = new ArrayList<>();
 		for (Partition par : pars) {
 			for (int i = 0; i < par.orgNodes.size(); i++) {
 				String[] exp = { UtilTools.print(par.orgNodes.get(i)),
@@ -413,14 +413,14 @@ public class UtilTools {
 
 	public static void clusterData(
 			Collection<String[]> data, RecordClassifier rcf) {
-		HashMap<String, ArrayList<String[]>> res = new HashMap<String, ArrayList<String[]>>();
+		HashMap<String, ArrayList<String[]>> res = new HashMap<>();
 		for (String[] elem : data) {
 			String[] n = { elem[0], elem[1] };
 			String lab = rcf.getLabel(elem[0]);
 			if (res.containsKey(lab)) {
 				res.get(lab).add(n);
 			} else {
-				ArrayList<String[]> x = new ArrayList<String[]>();
+				ArrayList<String[]> x = new ArrayList<>();
 				x.add(n);
 				res.put(lab, x);
 			}

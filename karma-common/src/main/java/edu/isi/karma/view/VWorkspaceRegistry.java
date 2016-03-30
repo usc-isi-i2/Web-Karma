@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class VWorkspaceRegistry {
 
-	private static Map<String, VWorkspace> registry = new HashMap<String, VWorkspace>();
+	private static Map<String, VWorkspace> registry = new HashMap<>();
 
 	private static VWorkspaceRegistry instance = new VWorkspaceRegistry();
 	private VWorkspaceRegistry()

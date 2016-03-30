@@ -16,7 +16,7 @@ public class KarmaMetadataManager {
 	public KarmaMetadataManager(ServletContextParameterMap contextParameters) throws KarmaException
 	{
 		createDirectoryForMetadata(contextParameters);
-		metadataTypes = new HashMap<KarmaMetadataType, KarmaMetadata>();
+		metadataTypes = new HashMap<>();
 		
 	}
 	private void createDirectoryForMetadata(ServletContextParameterMap contextParameters) throws KarmaException {

@@ -48,14 +48,14 @@ public class DoublyAnchoredTemplateTermSetPopulator extends
 		
 		if(columnTerms == null || columnTerms.isEmpty())
 		{
-			List<PartiallyPopulatedTermSet> predicates = new LinkedList<PartiallyPopulatedTermSet>();
+			List<PartiallyPopulatedTermSet> predicates = new LinkedList<>();
 			predicates.add(new PartiallyPopulatedTermSet());
 			return predicates;
 		}
 		List<PartiallyPopulatedTermSet> independentResults = this.execute(topRow);
 		
 		
-		List<List<PartiallyPopulatedTermSet>> toMerge = new LinkedList<List<PartiallyPopulatedTermSet>>();
+		List<List<PartiallyPopulatedTermSet>> toMerge = new LinkedList<>();
 		if(!independentResults.isEmpty())
 		{
 			toMerge.add(independentResults);

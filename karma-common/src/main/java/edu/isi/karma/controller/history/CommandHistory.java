@@ -198,7 +198,8 @@ public class CommandHistory implements Cloneable{
 
 	private void writeHistoryPerWorksheet(Workspace workspace, IHistorySaver historySaver) throws Exception {
 		String workspaceId = workspace.getId();
-		Map<String, JSONArray> comMap = new HashMap<String, JSONArray>();
+		Map<String, JSONArray> comMap = new HashMap<>();
+
 		for(ICommand command : _getHistory()) {
 			if(command.isSavedInHistory() &&
 					(command.hasTag(CommandTag.Modeling)

@@ -26,7 +26,7 @@ public class CntFeature implements Feature {
 	// x is the old y is the new example
 	public double calFeatures(List<Vector<TNode>> x,
 			List<Vector<TNode>> y) {
-		HashMap<Integer, Integer> tmp = new HashMap<Integer, Integer>();
+		HashMap<Integer, Integer> tmp = new HashMap<>();
 		for (int i = 0; i < y.size(); i++) {
 			int cnt = 0;
 			Vector<TNode> z = x.get(i);

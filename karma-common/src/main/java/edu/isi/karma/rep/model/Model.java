@@ -60,7 +60,7 @@ public class Model {
 
 	public Model(String id) {
 		this.id = id;
-		atoms = new ArrayList<Atom>();
+		atoms = new ArrayList<>();
 	}
 	
 //	public Model(String id, String type) {
@@ -195,10 +195,10 @@ public class Model {
 	private Map<String, Map<String, String>> findSemanticModelInJenaModel( 
 			com.hp.hpl.jena.rdf.model.Model jenaModel, String ioType, Integer limit) {
 
-		Map<String, Map<String, String>> IdsAndMappings = 
-			new HashMap<String, Map<String,String>>();
+		Map<String, Map<String, String>> IdsAndMappings =
+				new HashMap<>();
 		
-		List<String> argList = new ArrayList<String>();
+		List<String> argList = new ArrayList<>();
 		String queryString = "";
 		if (ioType.equalsIgnoreCase(IOType.INPUT)) 
 			queryString = this.getSparqlToMatchServiceInputs(argList);
@@ -265,10 +265,10 @@ public class Model {
 	public List<Map<String, String>> findModelDataInJenaData( 
 			com.hp.hpl.jena.rdf.model.Model jenaModel, Integer limit) {
 
-		List<Map<String, String>> attValueList = 
-			new ArrayList<Map<String,String>>();
+		List<Map<String, String>> attValueList =
+				new ArrayList<>();
 		
-		List<String> argList = new ArrayList<String>();
+		List<String> argList = new ArrayList<>();
 		String queryString = "";
 		queryString = this.getSparqlDataQuery(argList);
 		
@@ -297,8 +297,8 @@ public class Model {
 			for ( ; results.hasNext() ; )
 			{
 				QuerySolution soln = results.nextSolution() ;
-				Map<String, String> attValues = 
-					new HashMap<String, String>();
+				Map<String, String> attValues =
+						new HashMap<>();
 				
 				for (String arg : argList) {
 					RDFNode argNode = soln.get(arg) ;
@@ -345,7 +345,7 @@ public class Model {
 		String queryString = "";
 		
 		// map of NS --> Prefix
-		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
+		Map<String, String> nsToPrefixMapping = new HashMap<>();
 		nsToPrefixMapping.put(Namespaces.RDF, Prefixes.RDF);
 		
 		String select_header = "SELECT \n";
@@ -359,7 +359,7 @@ public class Model {
 		String argument2Var = "";
 
 		if (argList == null) 
-			argList = new ArrayList<String>();
+			argList = new ArrayList<>();
 		
 		for (int i = 0; i < this.getAtoms().size(); i++) {
 			Atom atom = this.getAtoms().get(i);
@@ -441,7 +441,7 @@ public class Model {
 		String queryString = "";
 		
 		// map of NS --> Prefix
-		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
+		Map<String, String> nsToPrefixMapping = new HashMap<>();
 		nsToPrefixMapping.put(Namespaces.RDF, Prefixes.RDF);
 		
 		String construct_header = "CONSTRUCT { \n";
@@ -455,7 +455,7 @@ public class Model {
 		String argument2Var = "";
 
 		if (argList == null) 
-			argList = new ArrayList<String>();
+			argList = new ArrayList<>();
 		
 		for (int i = 0; i < this.getAtoms().size(); i++) {
 			Atom atom = this.getAtoms().get(i);
@@ -548,7 +548,7 @@ public class Model {
 		String queryString = "";
 		
 		// map of NS --> Prefix
-		Map<String, String> nsToPrefixMapping = new HashMap<String, String>();
+		Map<String, String> nsToPrefixMapping = new HashMap<>();
 		nsToPrefixMapping.put(Namespaces.KARMA, Prefixes.KARMA);
 		nsToPrefixMapping.put(Namespaces.SWRL, Prefixes.SWRL);
 		nsToPrefixMapping.put(Namespaces.HRESTS, Prefixes.HRESTS);
@@ -579,7 +579,7 @@ public class Model {
 		String argument2Var = "";
 
 		if (argList == null) 
-			argList = new ArrayList<String>();
+			argList = new ArrayList<>();
 
 		for (int i = 0; i < m.getAtoms().size(); i++) {
 			Atom atom = m.getAtoms().get(i);

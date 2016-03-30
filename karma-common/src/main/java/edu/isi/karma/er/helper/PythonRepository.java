@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 public class PythonRepository {
 
 	private static Logger logger = LoggerFactory.getLogger(PythonRepository.class);
-	private ConcurrentHashMap<String, PyCode> scripts = new ConcurrentHashMap<String, PyCode>();
-	private ConcurrentHashMap<String, PyCode> libraryScripts = new ConcurrentHashMap<String, PyCode>();
-	private ConcurrentHashMap<String, Long> fileNameTolastTimeRead = new ConcurrentHashMap<String, Long>();
+	private ConcurrentHashMap<String, PyCode> scripts = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<String, PyCode> libraryScripts = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<String, Long> fileNameTolastTimeRead = new ConcurrentHashMap<>();
 	private List<String> localKeys = Arrays.asList("workspaceid", "selectionName", "command", "worksheetId", "selection", "nodeid");
 	private boolean libraryHasBeenLoaded = false;
 	private boolean reloadLibrary = true;
@@ -38,7 +38,7 @@ public class PythonRepository {
 
 	private void initialize()
 	{
-		scripts = new ConcurrentHashMap<String, PyCode>();
+		scripts = new ConcurrentHashMap<>();
 		initialLocals = new PyStringMap();
 		interpreter = PythonInterpreter.threadLocalStateInterpreter(initialLocals);
 		
@@ -167,8 +167,8 @@ public class PythonRepository {
 
 	public synchronized void resetLibrary()
 	{
-		libraryScripts = new ConcurrentHashMap<String, PyCode>();
-		fileNameTolastTimeRead = new ConcurrentHashMap<String,Long>();		
+		libraryScripts = new ConcurrentHashMap<>();
+		fileNameTolastTimeRead = new ConcurrentHashMap<>();		
 		libraryHasBeenLoaded = false;
 
 	}

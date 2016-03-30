@@ -100,14 +100,14 @@ public class WorksheetToFeatureCollection {
 	private Worksheet worksheet;
 	private OntologyManager om;
 
-	List<SimpleFeature> pointFeatureList = new ArrayList<SimpleFeature>();
-	List<SimpleFeature> lineFeatureList = new ArrayList<SimpleFeature>();
-	List<SimpleFeature> polygonFeatureList = new ArrayList<SimpleFeature>();
-	List<AttributeDescriptor> featureSchema = new ArrayList<AttributeDescriptor>();
-	List<String> geomHNodeIdList = new ArrayList<String>();
-	List<String> modeledHNodeIds = new ArrayList<String>();
+	List<SimpleFeature> pointFeatureList = new ArrayList<>();
+	List<SimpleFeature> lineFeatureList = new ArrayList<>();
+	List<SimpleFeature> polygonFeatureList = new ArrayList<>();
+	List<AttributeDescriptor> featureSchema = new ArrayList<>();
+	List<String> geomHNodeIdList = new ArrayList<>();
+	List<String> modeledHNodeIds = new ArrayList<>();
 
-	private HashMap<String, String> kmlStyles = new HashMap<String, String>();
+	private HashMap<String, String> kmlStyles = new HashMap<>();
 	private int kmlStylesCounter = 0;
 	private String[] kmlPushPings = {
 			"http://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png",
@@ -223,7 +223,7 @@ public class WorksheetToFeatureCollection {
 					"", getRows(), polygonFeatureList, Polygon.class);
 	}
 	private void prepareFeatureSchema() {
-		List<String> spatialHNodeIds = new ArrayList<String>();
+		List<String> spatialHNodeIds = new ArrayList<>();
 
 		for (SemanticType type : worksheet.getSemanticTypes().getListOfTypes()) {
 			/*
@@ -285,8 +285,9 @@ public class WorksheetToFeatureCollection {
 			modeledHNodeIds.add(0, type.getHNodeId());
 		}
 
+
 		if (!spatialHNodeIds.isEmpty()) {
-			List<HNode> sortedLeafHNodes = new ArrayList<HNode>();
+			List<HNode> sortedLeafHNodes = new ArrayList<>();
 			worksheet.getHeaders().getSortedLeafHNodes(sortedLeafHNodes);
 			for (HNode hNode : sortedLeafHNodes) {
 
@@ -486,7 +487,7 @@ public class WorksheetToFeatureCollection {
 			throws FileNotFoundException, Exception {
 		File outputFile = new File(spatialDataFolder + fileName + ".shp");
 		
-		List<SimpleFeature> remainingFeatures = new ArrayList<SimpleFeature>();
+		List<SimpleFeature> remainingFeatures = new ArrayList<>();
 		
 		try {
 			/*
@@ -494,7 +495,7 @@ public class WorksheetToFeatureCollection {
 			 */
 			ShapefileDataStoreFactory dataStoreFactory = new ShapefileDataStoreFactory();
 
-			Map<String, Serializable> params = new HashMap<String, Serializable>();
+			Map<String, Serializable> params = new HashMap<>();
 			params.put("url", outputFile.toURI().toURL());
 			params.put("create spatial index", Boolean.TRUE);
 
@@ -690,7 +691,7 @@ public class WorksheetToFeatureCollection {
 					.Transform((Geometry) lineFeature.getAttribute(GEOM),
 							sourceCRS, targetCRS);
 
-			List<Coordinate> coordsList = new ArrayList<Coordinate>();
+			List<Coordinate> coordsList = new ArrayList<>();
 			double pointX = 0, pointY = 0;
 			for (int i = 0; i < line.getNumPoints(); i++) {
 				Coordinate coord = new Coordinate(
@@ -751,7 +752,7 @@ public class WorksheetToFeatureCollection {
 			final LinearRing outerlinearring = new LinearRing();
 			outerboundary.setLinearRing(outerlinearring);
 
-			List<Coordinate> outercoord = new ArrayList<Coordinate>();
+			List<Coordinate> outercoord = new ArrayList<>();
 			outerlinearring.setCoordinates(outercoord);
 			double pointX = 0, pointY = 0;
 			int pointCounter = 0;
@@ -771,7 +772,7 @@ public class WorksheetToFeatureCollection {
 				final LinearRing innerlinearring = new LinearRing();
 				innerboundary.setLinearRing(innerlinearring);
 
-				List<Coordinate> innercoord = new ArrayList<Coordinate>();
+				List<Coordinate> innercoord = new ArrayList<>();
 				innerlinearring.setCoordinates(innercoord);
 				int numOfPoints = polygon.getInteriorRingN(i).getNumPoints();
 				for (int j = 0; j < numOfPoints; j++) {

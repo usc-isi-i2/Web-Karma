@@ -49,8 +49,8 @@ public class KR2RMLMapping extends R2RMLMapping{
 		super(id);
 		this.version = version;
 		this.auxInfo = new KR2RMLMappingAuxillaryInformation();	
-		this.subjectMapIndex = new HashMap<String, SubjectMap>();
-		this.triplesMapIndex = new HashMap<String, TriplesMap>();
+		this.subjectMapIndex = new HashMap<>();
+		this.triplesMapIndex = new HashMap<>();
 	}
 
 	public KR2RMLVersion getVersion()

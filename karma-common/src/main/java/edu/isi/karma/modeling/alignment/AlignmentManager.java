@@ -37,7 +37,7 @@ public class AlignmentManager {
 		if (_InternalInstance == null)
 		{
 			_InternalInstance = new AlignmentManager();
-			alignmentMap = new ConcurrentHashMap<String, Alignment>();
+			alignmentMap = new ConcurrentHashMap<>();
 		}
 		return _InternalInstance;
 	}
@@ -81,7 +81,7 @@ public class AlignmentManager {
 	}
 
 	public void removeWorkspaceAlignments(String workspaceId) {
-		List<String> keysToBeRemoved = new ArrayList<String>();
+		List<String> keysToBeRemoved = new ArrayList<>();
 		for(String key:alignmentMap.keySet()) {
 			if(key.startsWith(workspaceId+":")) {
 				keysToBeRemoved.add(key);

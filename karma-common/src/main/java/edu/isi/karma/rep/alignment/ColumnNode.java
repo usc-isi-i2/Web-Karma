@@ -69,7 +69,7 @@ public class ColumnNode extends Node {
 				sum += st.getConfidenceScore() != null ? st.getConfidenceScore().doubleValue() : 0.0;
 			}
 			double confidence;
-			this.learnedSemanticTypes = new ArrayList<SemanticType>();
+			this.learnedSemanticTypes = new ArrayList<>();
 			for (SemanticType st : learnedSemanticTypes) {
 				confidence = st.getConfidenceScore() != null ? st.getConfidenceScore() : 0.0;
 				SemanticType semType = new SemanticType(st.getHNodeId(), 
@@ -111,7 +111,7 @@ public class ColumnNode extends Node {
 	
 	public List<SemanticType> getUserSemanticTypes() {
 		if (userSemanticTypes == null)
-			this.userSemanticTypes = new ArrayList<SemanticType>();
+			this.userSemanticTypes = new ArrayList<>();
 		return Collections.unmodifiableList(userSemanticTypes);
 	}
 
@@ -127,7 +127,7 @@ public class ColumnNode extends Node {
 			return;
 		
 		if (userSemanticTypes == null)
-			this.userSemanticTypes = new ArrayList<SemanticType>();
+			this.userSemanticTypes = new ArrayList<>();
 		
 		//FIXME: when user invokes SetSemanticType, we should unassign the old one, otherwise
 		// we don't know if user wants to add more types or replace the existing one
@@ -166,7 +166,7 @@ public class ColumnNode extends Node {
 
 	public List<SemanticType> getTopKLearnedSemanticTypes(int k) {
 		
-		List<SemanticType> semanticTypes = new ArrayList<SemanticType>();
+		List<SemanticType> semanticTypes = new ArrayList<>();
 		if (this.learnedSemanticTypes == null || this.learnedSemanticTypes.isEmpty())
 			return semanticTypes;
 		

@@ -26,7 +26,7 @@ import edu.isi.karma.rep.Workspace;
 public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 	private String hNodeId;
 	@SuppressWarnings("unused")
-	private Map<String, String> oldRowValueMap = new HashMap<String, String>();	
+	private Map<String, String> oldRowValueMap = new HashMap<>();	
 	MultipleValueEditColumnCommand edit;
 			
 	public MergeClusterValuesCommand(String id, String model, String hNodeId,
@@ -71,7 +71,7 @@ public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 				selectedPath = path;
 			}
 		}
-		Collection<Node> nodes = new ArrayList<Node>();
+		Collection<Node> nodes = new ArrayList<>();
 		workspace.getFactory().getWorksheet(worksheetId).getDataTable()
 				.collectNodes(selectedPath, nodes, selection);
 
@@ -101,10 +101,10 @@ public class MergeClusterValuesCommand extends WorksheetSelectionCommand {
 					mainSelectedPath = path;
 				}
 			}
-			Collection<Node> mainNodes = new ArrayList<Node>();
+			Collection<Node> mainNodes = new ArrayList<>();
 			workspace.getFactory().getWorksheet(mainWorksheetId).getDataTable().collectNodes(mainSelectedPath, mainNodes, selection);
 			int i = 0;
-			Map<String, String> rowValueMap = new TreeMap<String, String>();
+			Map<String, String> rowValueMap = new TreeMap<>();
 			
 			UpdateContainer c = new UpdateContainer();
 				for (Node node : mainNodes) {

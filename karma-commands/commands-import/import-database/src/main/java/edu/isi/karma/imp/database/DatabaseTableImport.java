@@ -102,7 +102,7 @@ public class DatabaseTableImport extends Import {
 	     * Add the headers *
 	     */
 	    HTable headers = getWorksheet().getHeaders();
-	    List<String> headersList = new ArrayList<String>();
+	    List<String> headersList = new ArrayList<>();
 	    for (int i = 0; i < data.get(0).size(); i++)
 	    {
 		    HNode hNode = null;

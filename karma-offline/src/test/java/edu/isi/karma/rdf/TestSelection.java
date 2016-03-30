@@ -129,7 +129,7 @@ public class TestSelection {
 		worksheet.getSuperSelectionManager().defineSelection("test").addSelection(sel);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
-		List<KR2RMLRDFWriter> writers = new ArrayList<KR2RMLRDFWriter>();
+		List<KR2RMLRDFWriter> writers = new ArrayList<>();
 		writers.add(new N3KR2RMLRDFWriter(new URIFormatter(), pw));
 		WorksheetR2RMLJenaModelParser modelParser = new WorksheetR2RMLJenaModelParser(modelIdentifier);
 		applyHistoryToWorksheet(workspace, worksheet, modelParser.parse());
@@ -153,10 +153,10 @@ public class TestSelection {
 		WorksheetCommandHistoryExecutor wchr = new WorksheetCommandHistoryExecutor(worksheet.getId(), workspace);
 		try
 		{
-			List<CommandTag> tags = new ArrayList<CommandTag>();
+			List<CommandTag> tags = new ArrayList<>();
 			tags.add(CommandTag.Transformation);
 			
-			List<CommandTag> ignoreTags = new ArrayList<CommandTag>();
+			List<CommandTag> ignoreTags = new ArrayList<>();
 			ignoreTags.add(CommandTag.IgnoreInBatch);
 			
 			wchr.executeCommandsByTags(tags, 

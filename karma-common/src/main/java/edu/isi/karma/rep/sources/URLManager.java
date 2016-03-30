@@ -47,7 +47,7 @@ public class URLManager {
 
 	public static List<URL> getURLsFromJSON(String requestURLsJSONArray) throws JSONException, MalformedURLException {
 
-		List<URL> urls = new ArrayList<URL>();
+		List<URL> urls = new ArrayList<>();
 		JSONArray jsonArray = new JSONArray(requestURLsJSONArray);
 		
 //		String firstEndpoint = "";
@@ -66,7 +66,7 @@ public class URLManager {
 	public static List<URL> getURLsFromStrings(List<String> requestURLStrings) 
 	throws MalformedURLException, KarmaException {
 
-		List<URL> urls = new ArrayList<URL>();
+		List<URL> urls = new ArrayList<>();
 		
 		String firstEndpoint = "";
 		for (int i = 0; i < requestURLStrings.size(); i++) {
@@ -181,11 +181,9 @@ public class URLManager {
 	    try {
 	    	
 	    	String urlString = url.toString();
-	    	
-	        Map<String, List<String>> attributes = new HashMap<String, List<String>>();
-	        
-	        List<Attribute> attributeList = new ArrayList<Attribute>();
-	        HashMap<String, Integer> attributeNameCounter = new HashMap<String, Integer>();
+	        Map<String, List<String>> attributes = new HashMap<>();
+	        List<Attribute> attributeList = new ArrayList<>();
+	        HashMap<String, Integer> attributeNameCounter = new HashMap<>();
 	        String attributeName;
 	        String attributeId;
 	        String attributeValue;
@@ -207,7 +205,7 @@ public class URLManager {
 	
 		                List<String> values = attributes.get(key);
 		                if (values == null) {
-		                    values = new ArrayList<String>();
+		                    values = new ArrayList<>();
 		                    attributes.put(key, values);
 		                }
 		                values.add(value);
@@ -267,7 +265,7 @@ public class URLManager {
 	 * @throws MalformedURLException 
 	 */
 	public static List<String>  extractAttributeNames(List<String> urlList) throws MalformedURLException {
-		List<String> attributesNameList = new ArrayList<String>();
+		List<String> attributesNameList = new ArrayList<>();
 
 		Attribute p;
 		String key;
@@ -288,7 +286,7 @@ public class URLManager {
 	
 	
 	public static List<List<String>>  attributeValuesInTable(List<String> urlList, List<String> attributeNames) throws MalformedURLException {
-		List<List<String>> allAttributes = new ArrayList<List<String>>();
+		List<List<String>> allAttributes = new ArrayList<>();
 
 		Attribute p;
 		String key;
@@ -316,7 +314,7 @@ public class URLManager {
 	}
 	
 	public static List<List<String>>  attributeValuesInSets(List<String> urlList, List<String> attributeNames) throws MalformedURLException {
-		List<List<String>> allAttributes = new ArrayList<List<String>>();
+		List<List<String>> allAttributes = new ArrayList<>();
 
 		Attribute p;
 		String key;

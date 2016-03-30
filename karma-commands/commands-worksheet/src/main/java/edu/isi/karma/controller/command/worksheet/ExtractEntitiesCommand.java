@@ -130,7 +130,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		SuperSelection selection = getSuperSelection(worksheet);
 		
 		String[] entities = entitiesToBeExt.split(",");
-		HashSet<String> entitiesReqd = new HashSet<String>();
+		HashSet<String> entitiesReqd = new HashSet<>();
 		
 		entitiesReqd.addAll(Arrays.asList(entities));
 
@@ -140,7 +140,7 @@ public class ExtractEntitiesCommand extends WorksheetSelectionCommand {
 		RepFactory repFactory = workspace.getFactory();
 		HTable ht = repFactory.getHTable(repFactory.getHNode(hNodeId).getHTableId());
 		
-		List<Table> tables = new ArrayList<Table>();
+		List<Table> tables = new ArrayList<>();
 		
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables, selection);
 		for(Table table : tables) {

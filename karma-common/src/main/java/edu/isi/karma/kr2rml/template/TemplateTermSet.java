@@ -40,7 +40,7 @@ public class TemplateTermSet {
 	private final List<TemplateTerm> termSet;
 	
 	public TemplateTermSet() {
-		termSet = new LinkedList<TemplateTerm>();
+		termSet = new LinkedList<>();
 	}
 	
 	public void addTemplateTermToSet(TemplateTerm term) {
@@ -52,7 +52,7 @@ public class TemplateTermSet {
 	}
 	
 	public List<ColumnTemplateTerm> getAllColumnNameTermElements() {
-		List<ColumnTemplateTerm> cnList = new ArrayList<ColumnTemplateTerm>();
+		List<ColumnTemplateTerm> cnList = new ArrayList<>();
 		for (TemplateTerm term:termSet) {
 			if (term instanceof ColumnTemplateTerm) {
 				cnList.add((ColumnTemplateTerm)term);

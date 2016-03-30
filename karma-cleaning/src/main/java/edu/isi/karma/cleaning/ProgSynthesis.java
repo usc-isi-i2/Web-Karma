@@ -18,18 +18,18 @@ import edu.isi.karma.cleaning.features.RecordFeatureSet;
 
 public class ProgSynthesis {
 	public static int time_limit = 20;
-	Vector<Vector<TNode>> orgVector = new Vector<Vector<TNode>>();
-	Vector<Vector<TNode>> tarVector = new Vector<Vector<TNode>>();
+	Vector<Vector<TNode>> orgVector = new Vector<>();
+	Vector<Vector<TNode>> tarVector = new Vector<>();
 	String bestRuleString = "";
 	// for tracking the stats
 	public long learnspan = 0;
 	public long genspan = 0;
 	public long ruleNo = 0;
-	public HashMap<String, double[]> string2Vector = new HashMap<String, double[]>();
+	public HashMap<String, double[]> string2Vector = new HashMap<>();
 	public PartitionClassifierType classifier;
 	public RecordFeatureSet featureSet = null;
-	public Vector<Vector<String[]>> constraints = new Vector<Vector<String[]>>();
-	public HashMap<String, Boolean> legalParitions = new HashMap<String, Boolean>();
+	public Vector<Vector<String[]>> constraints = new Vector<>();
+	public HashMap<String, Boolean> legalParitions = new HashMap<>();
 	public MyLogger logger = new MyLogger();
 	private static Logger ulogger = LoggerFactory
 			.getLogger(ProgSynthesis.class);
@@ -93,14 +93,14 @@ public class ProgSynthesis {
 	}
 	public Vector<Vector<Integer>> generateCrossIndex(Vector<Integer> poss,
 			Vector<Vector<Integer>> p, int index) {
-		Vector<Vector<Integer>> qVector = new Vector<Vector<Integer>>();
+		Vector<Vector<Integer>> qVector = new Vector<>();
 		if (index >= poss.size()) {
 			return p;
 		}
 		int curleng = poss.get(index);
 		if (p.isEmpty()) {
 			for (int i = 0; i < curleng; i++) {
-				Vector<Integer> x = new Vector<Integer>();
+				Vector<Integer> x = new Vector<>();
 				x.add(i);
 				qVector.add(x);
 			}
@@ -137,11 +137,11 @@ public class ProgSynthesis {
 	}
 
 	public Vector<Partition> initePartitions() {
-		Vector<Partition> pars = new Vector<Partition>();
+		Vector<Partition> pars = new Vector<>();
 		// inite partition for each example
 		for (int i = 0; i < orgVector.size(); i++) {
-			Vector<Vector<TNode>> ovt = new Vector<Vector<TNode>>();
-			Vector<Vector<TNode>> tvt = new Vector<Vector<TNode>>();
+			Vector<Vector<TNode>> ovt = new Vector<>();
+			Vector<Vector<TNode>> tvt = new Vector<>();
 			ovt.add(this.orgVector.get(i));
 			tvt.add(this.tarVector.get(i));
 			Partition pt = new Partition(ovt, tvt);
@@ -162,7 +162,7 @@ public class ProgSynthesis {
 				return false;
 			}
 		}
-		Vector<Partition> xPar = new Vector<Partition>();
+		Vector<Partition> xPar = new Vector<>();
 		xPar.add(p);
 		Collection<ProgramRule> cpr = this.producePrograms(xPar);
 		if (cpr == null || cpr.isEmpty()) {
@@ -234,7 +234,7 @@ public class ProgSynthesis {
 	public Collection<ProgramRule> producePrograms(Vector<Partition> pars) {
 		Program prog = new Program(pars, this.classifier,this.dataPreProcessor, contextId);
 		this.myprog = prog;
-		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
+		HashSet<ProgramRule> rules = new HashSet<>();
 		int prog_cnt = 1;
 		int i = 0;
 		while (i < prog_cnt) {
@@ -301,7 +301,7 @@ public class ProgSynthesis {
 	public Collection<ProgramRule> produceProgram_all(Vector<Partition> pars, Program prog)
 	{
 		this.myprog = prog;
-		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
+		HashSet<ProgramRule> rules = new HashSet<>();
 		int prog_cnt = Integer.MAX_VALUE;
 		int i = 0;
 		while(i < prog_cnt) {
@@ -343,7 +343,7 @@ public class ProgSynthesis {
 	{		
 		Program prog = new Program(pars, this.classifier,this.dataPreProcessor,contextId);
 		this.myprog = prog;
-		HashSet<ProgramRule> rules = new HashSet<ProgramRule>();
+		HashSet<ProgramRule> rules = new HashSet<>();
 		int prog_cnt = 1;
 		int i = 0;
 		while (i < prog_cnt) {

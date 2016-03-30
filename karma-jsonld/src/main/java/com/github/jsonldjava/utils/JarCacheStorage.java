@@ -125,7 +125,7 @@ public class JarCacheStorage implements HttpCacheStorage {
      *
      * @see #getJarCache(URL)
      */
-    protected ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<URI, SoftReference<JsonNode>>();
+    protected ConcurrentMap<URI, SoftReference<JsonNode>> jarCaches = new ConcurrentHashMap<>();
 
     protected JsonNode getJarCache(URL url) throws IOException, JsonProcessingException {
 
@@ -153,7 +153,7 @@ public class JarCacheStorage implements HttpCacheStorage {
         // Use putIfAbsent to ensure concurrent reads do not return different
         // JsonNode objects, for memory management purposes
         final SoftReference<JsonNode> putIfAbsent = jarCaches.putIfAbsent(uri,
-                new SoftReference<JsonNode>(tree));
+                new SoftReference<>(tree));
         if (putIfAbsent != null) {
             final JsonNode returnValue = putIfAbsent.get();
             if (returnValue != null) {
@@ -161,7 +161,7 @@ public class JarCacheStorage implements HttpCacheStorage {
             } else {
                 // Force update the reference if the existing reference had
                 // been garbage collected
-                jarCaches.put(uri, new SoftReference<JsonNode>(tree));
+                jarCaches.put(uri, new SoftReference<>(tree));
             }
         }
         return tree;
@@ -173,7 +173,7 @@ public class JarCacheStorage implements HttpCacheStorage {
         log.debug("Cache hit for " + requestedUri);
         log.trace("{}", cacheNode);
 
-        final List<Header> responseHeaders = new ArrayList<Header>();
+        final List<Header> responseHeaders = new ArrayList<>();
         if (!cacheNode.has(HTTP.DATE_HEADER)) {
             responseHeaders
             .add(new BasicHeader(HTTP.DATE_HEADER, DateUtils.formatDate(new Date())));

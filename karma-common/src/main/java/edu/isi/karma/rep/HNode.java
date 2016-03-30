@@ -70,7 +70,7 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 		this.columnName = columnName;
 		this.automaticallyAdded = automaticallyAdded;
 		this.type = type;
-		this.commandsApplied = new HashMap<String, HashSet<HNode>>();
+		this.commandsApplied = new HashMap<>();
 	}
 
 	public String getColumnName() {
@@ -214,7 +214,7 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	public JSONArray getJSONArrayRepresentation(RepFactory f)
 			throws JSONException {
 		JSONArray arr = new JSONArray();
-		Stack<HNode> st = new Stack<HNode>();
+		Stack<HNode> st = new Stack<>();
 		st.push(this);
 		HTable t = f.getHTable(hTableId);
 		HNode parentNode = t.getParentHNode();
@@ -234,7 +234,7 @@ public class HNode extends RepEntity implements Comparable<HNode> {
 	}
 	
 	public List<HNode> getHNodesAccessibleList(RepFactory f) {
-		List<HNode> hNodeList = new ArrayList<HNode>();
+		List<HNode> hNodeList = new ArrayList<>();
 		HTable table = this.getHTable(f);
 		
 		while (table != null) {

@@ -118,7 +118,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		
 		List<Attribute> missingAttributes= null;
 		
-		missingAttributes = new ArrayList<Attribute>();
+		missingAttributes = new ArrayList<>();
 		String url = service.getPopulatedAddress(inputAttValues, missingAttributes);
 		
 		//FIXME: Authentication Data
@@ -166,7 +166,7 @@ public class PostRequestManager extends LinkedApiRequestManager {
 		model.setNsPrefix(Prefixes.RDFS, Namespaces.RDFS);
 		Property rdf_type = model.createProperty(Namespaces.RDF , "type");
 
-		Map<String, Resource> outputVariablesToResource = new HashMap<String, Resource>();
+		Map<String, Resource> outputVariablesToResource = new HashMap<>();
 		String predicateUri = "";
 		String argument1 = "";
 		String argument2 = "";
@@ -297,8 +297,8 @@ public class PostRequestManager extends LinkedApiRequestManager {
 			this.outputJenaModel.setNsPrefixes(this.inputJenaModel.getNsPrefixMap());
 		}
 		
-		Map<String, String> outputAttNameToAttIds = new HashMap<String, String>();
-		Map<String, String> outputAttValues = new HashMap<String, String>();
+		Map<String, String> outputAttNameToAttIds = new HashMap<>();
+		Map<String, String> outputAttValues = new HashMap<>();
 		
 		if (blankInput) { // service without input parameter
 			String invocationURL = getUrlString(service, new HashMap<String, String>());

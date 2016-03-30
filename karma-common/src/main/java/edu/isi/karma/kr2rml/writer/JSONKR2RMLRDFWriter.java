@@ -228,7 +228,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			if (value instanceof JSONArray) {
 				JSONArray array = (JSONArray)value;
 				JSONArray newArray = new JSONArray();
-				Map<String, Object> types = new HashMap<String, Object>();
+				Map<String, Object> types = new HashMap<>();
 				int length = array.length();
 				for (int i = 0; i < length; i++) {
 					Object o = array.get(i);

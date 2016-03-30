@@ -82,7 +82,7 @@ public class VWorksheet extends ViewEntity {
 	 * We create a TablePager for the top level table and every nested table we
 	 * see. It records how the table is scrolled.
 	 */
-	private Map<String, TablePager> tableId2TablePager = new HashMap<String, TablePager>();
+	private Map<String, TablePager> tableId2TablePager = new HashMap<>();
 	
 	private static Logger logger = LoggerFactory
 			.getLogger(VWorksheet.class);
