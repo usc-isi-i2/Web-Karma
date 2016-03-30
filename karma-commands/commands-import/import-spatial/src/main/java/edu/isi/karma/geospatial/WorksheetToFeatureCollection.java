@@ -523,7 +523,7 @@ public class WorksheetToFeatureCollection {
 				if(crs2==null)
 					continue;
 				
-				if(!crs.equals(crs2)) {
+				if(crs != null && !crs.equals(crs2)) {
 					remainingFeatures.add(feature);
 					features.remove(i);
 					i--;
