@@ -51,6 +51,10 @@ public class RamblerTransformation implements Transformation {
 	}
 	public boolean equals(Object other) 
 	{
+		if (other == null) {
+			return false;
+		}
+		
 		RamblerTransformation e = (RamblerTransformation)other;
 		if(e.signature.compareTo(this.signature)==0)
 		{
