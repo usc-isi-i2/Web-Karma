@@ -497,9 +497,10 @@ public class RecordClassifier implements PartitionClassifierType {
 		String[] vocbs = { "x","DIGITs" };
 		String fpath1 = "/Users/bowu/Research/testdata/tmp/data.txt";
 		String fpath2 = "/Users/bowu/Research/testdata/tmp/labels.txt";
-		try {
-			BufferedReader br1 = new BufferedReader(new FileReader(fpath1));
-			BufferedReader br2 = new BufferedReader(new FileReader(fpath2));
+
+		try (BufferedReader br1 = new BufferedReader(new FileReader(fpath1));
+			 BufferedReader br2 = new BufferedReader(new FileReader(fpath2))) {
+			
 			String line;
 			ArrayList<String> data = new ArrayList<String>();
 			ArrayList<String> labels = new ArrayList<String>();
@@ -531,8 +532,6 @@ public class RecordClassifier implements PartitionClassifierType {
 						getLabel(test[i])));
 			}
 			selfVerify();
-			br1.close();
-			br2.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

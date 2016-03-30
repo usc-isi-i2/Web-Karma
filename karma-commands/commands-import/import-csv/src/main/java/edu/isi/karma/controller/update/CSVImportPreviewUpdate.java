@@ -92,7 +92,7 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		Scanner scanner;
+		Scanner scanner = null;
 		int rowCount = 0;
 		int previewRowCounter = 0;
 
@@ -181,6 +181,9 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 			logger.error("Error occured while reading the file!", e);
 		} catch (JSONException e) {
 			logger.error("Error occured while writing to JSON", e);
+		} finally {
+			if(scanner != null)
+				scanner.close();
 		}
 	}
 	

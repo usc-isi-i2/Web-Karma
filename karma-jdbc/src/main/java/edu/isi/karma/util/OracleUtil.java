@@ -52,6 +52,9 @@ public class OracleUtil extends AbstractJDBCUtil {
 	      String tableName = rs.getString(1);
 	      tableNames.add(tableName);
 	    }
+		rs.close();
+		stmt.close();
+		
 	    Collections.sort(tableNames);
 		return tableNames;
 	}
