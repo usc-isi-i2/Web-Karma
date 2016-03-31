@@ -37,6 +37,10 @@
 		    <artifactId>karma-common</artifactId>
 		    <version>${project.version}</version>
 	    </dependency>
-	    
+	    <dependency>
+		    <groupId>edu.isi.karma.services</groupId>
+		    <artifactId>entityExtraction</artifactId>
+		    <version>0.0.1</version>
+		</dependency>
     </dependencies>
 </project>

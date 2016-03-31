@@ -21,11 +21,6 @@
 		</dependency>
 		<dependency>
 			<groupId>edu.isi</groupId>
-			<artifactId>commands-cleaning</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.isi</groupId>
 			<artifactId>commands-alignment</artifactId>
 			<version>${project.version}</version>
 		</dependency>

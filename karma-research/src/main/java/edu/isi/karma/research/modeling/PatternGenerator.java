@@ -603,11 +603,11 @@ public class PatternGenerator {
 		String instance = "fusionRepository.isi.edu";
 //		int port = 1140;  
 //		int port = 1300;  
-		int port = 1400;  
+		int port = 1500;  
 		String username = "dba";
 		String password = "dba";
-		String baseGraph = "http://museum-edm-lod/";
-		int queryTimeout = 1;
+		String baseGraph = "http://weapon-lod/";
+		int queryTimeout = 5;
 		String graphIRI;
 		
 		File f = new File(Params.SOURCE_DIR);
@@ -689,14 +689,14 @@ public class PatternGenerator {
 
 		boolean generatePatternsFromSeeds = false;
 		
-//		if (generatePatternsFromSeeds) generatePatternsFromSeeds();
-//		else generatePatterns();
+		if (generatePatternsFromSeeds) generatePatternsFromSeeds();
+		else generatePatterns();
 
 		// two production URIs that have two time span
 		//uri1: nodeID://b4981707
 		//uri2: nodeID://b4988056
 		
-		prunePatterns();
+//		prunePatterns();
 		
 		
 		System.out.println("done.");
