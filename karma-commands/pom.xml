@@ -20,7 +20,6 @@
 		<module>commands-alignment-openrdf</module>
 		<module>commands-python</module>
 		<module>commands-import</module>
-		<module>commands-cleaning</module>
 		<module>commands-publish</module>
 		<module>commands-publish-jdbc</module>
 		<module>commands-publish-alignment-openrdf</module>
