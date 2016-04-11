@@ -117,7 +117,7 @@ public class Node extends RepEntity implements Neighbor {
 	public void setValue(CellValue value, NodeStatus status, RepFactory factory) {
 		// Pedro 2012/09/14
 		if (nestedTable != null) {
-			logger.info("Node in column '"
+			logger.debug("Node in column '"
 					+ factory.getColumnName(hNodeId)
 					+ "' contains a nested table and we are trying to set a value: '"
 					+ value.asString() + "'. Adding as orphan in nested table");
@@ -150,7 +150,7 @@ public class Node extends RepEntity implements Neighbor {
 			nestedTable.setNestedTableInNode(this);
 			// pedro 2012-09-15
 			if (!value.isEmptyValue()) {
-				logger.info("Adding nested table to node in column '"
+				logger.debug("Adding nested table to node in column '"
 						+ factory.getColumnName(hNodeId)
 						+ "' already contains a value: '"
 						+ value.asString()
