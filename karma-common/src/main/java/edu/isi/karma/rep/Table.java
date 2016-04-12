@@ -279,7 +279,7 @@ public class Table extends RepEntity {
 					+ value.asString() + ". Discarding it.");
 		}
 	
-		logger.info("Adding orphan value '" + value.asString()
+		logger.debug("Adding orphan value '" + value.asString()
 				+ "' to column '" + factory.getColumnName(hNodeIdWhereValueWas)
 				+ "'.");
 		newRow.setValue(columnForOrphan.getId(), value,
