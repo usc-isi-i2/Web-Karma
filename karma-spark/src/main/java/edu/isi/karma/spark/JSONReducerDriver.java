@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import scala.Tuple2;
 import edu.isi.karma.util.JSONLDUtil;
+import edu.isi.karma.util.JSONLDUtilSimple;
 
 public class JSONReducerDriver {
 	private static Logger logger = LoggerFactory.getLogger(JSONReducerDriver.class);
@@ -119,10 +120,14 @@ public class JSONReducerDriver {
 
 			@Override
 			public String call(String objStr1, String objStr2) throws Exception {
-				JSONObject obj1 = new JSONObject(objStr1);
-				JSONObject obj2 = new JSONObject(objStr2);
-				JSONObject result = JSONLDUtil.mergeJSONObjects(obj1, obj2);
-				return result.toString();
+				if(objStr1.length() == objStr2.length())
+				{
+					if(objStr1.compareTo(objStr2) == 0)
+					{
+						return objStr1;
+					}
+				}
+				return JSONLDUtilSimple.mergeJSONObjects(objStr1, objStr2).toString();
 			}
 		})
 		;
