@@ -115,11 +115,18 @@ public class KarmaDriver {
         applyModel(sc, pairs, properties, batchSize)
         		.saveAsNewAPIHadoopFile(outputPath, Text.class, Text.class, SequenceFileOutputFormat.class);
     }
-    
+ 
+	public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext sc,
+			JavaPairRDD<String, String> input, final Properties karmaSettings,
+			final int batchSize) throws IOException {
+		return applyModel(sc, input, karmaSettings, batchSize, sc.getConf()
+				.getInt("spark.default.parallelism", 1));
+	}
+	   
     public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext sc, 
     			JavaPairRDD<String, String> input, 
     			final Properties karmaSettings,
-        		final int batchSize) throws IOException {
+        		final int batchSize, int numPartitions) throws IOException {
     
 		String input_type = karmaSettings.getProperty("karma.input.type");
 		String modelUrl = karmaSettings.getProperty("model.uri");
@@ -180,11 +187,11 @@ public class KarmaDriver {
 		if(outputFormat != null && outputFormat.equals("n3")) {
 			return applyModelToGetN3(input, 
 		    		 karmaSettings,model, context,
-		    		outputFormat);
+		    		outputFormat, numPartitions);
 		}
 		else
 		{
-		    return applyModelToGetJSON(input, karmaSettings, model, context, outputFormat);	
+		    return applyModelToGetJSON(input, karmaSettings, model, context, outputFormat, numPartitions);	
 		}
 		
     }
@@ -192,7 +199,7 @@ public class KarmaDriver {
     public static JavaRDD<String> applyModel(JavaSparkContext jsc, 
     		JavaRDD<String> input, 
     		String propertiesStr,
-    		final int batchSize) throws IOException, org.json.simple.parser.ParseException {
+    		final int batchSize, int numPartitions) throws IOException, org.json.simple.parser.ParseException {
     	JSONParser parser = new JSONParser();
     	JSONObject properties = (JSONObject) parser.parse(propertiesStr);
 	    Properties prop = new Properties();
@@ -204,7 +211,7 @@ public class KarmaDriver {
 			logger.info("Set " + propertyName + "=" + value);
 			prop.setProperty(propertyName, value);
 		}
-		JavaPairRDD<Text, Text> pairs = applyModel(jsc, input, prop, batchSize);
+		JavaPairRDD<Text, Text> pairs = applyModel(jsc, input, prop, batchSize, numPartitions);
 		return pairs.map(new Function<Tuple2<Text,Text>, String>() {
 
 			private static final long serialVersionUID = 5833358013516510838L;
@@ -219,7 +226,7 @@ public class KarmaDriver {
 	public static JavaPairRDD<Text, Text> applyModelToGetJSON(
 			JavaPairRDD<String, String> input, final Properties karmaSettings,
 			final Broadcast<String> model, final Broadcast<String> context,
-			final String outputFormat) {
+			final String outputFormat, int numPartitions) {
 
 		JavaPairRDD<String, JSONObject> pairs = input
 				.flatMapToPair(new PairFlatMapFunction<Tuple2<String, String>, String, JSONObject>() {
@@ -273,27 +280,7 @@ public class KarmaDriver {
 					}
 				});
 
-		JavaPairRDD<String, JSONObject> reducedPairs = pairs
-				.reduceByKey(new Function2<JSONObject, JSONObject, JSONObject>() {
-					private static final long serialVersionUID = -3238789305990222436L;
-
-					@Override
-					public JSONObject call(JSONObject left, JSONObject right)
-							throws Exception {
-						return JSONLDUtilSimple.mergeJSONObjects(left, right);
-					}
-				});
-		JavaPairRDD<String, String> reducedSerializedPairs = reducedPairs
-				.mapValues(new Function<JSONObject, String>() {
-
-					private static final long serialVersionUID = -1945629738808728265L;
-
-					@Override
-					public String call(JSONObject object) throws Exception {
-
-						return object.toJSONString();
-					}
-				});
+		JavaPairRDD<String, String> reducedSerializedPairs = JSONReducerDriver.reduceJSON(numPartitions, pairs);
 		return reducedSerializedPairs
 				.mapToPair(new PairFunction<Tuple2<String, String>, Text, Text>() {
 					private static final long serialVersionUID = 2787821808872176951L;
@@ -310,7 +297,7 @@ public class KarmaDriver {
 
     public static JavaPairRDD<Text, Text>applyModelToGetN3(JavaPairRDD<String, String> input, 
     		final Properties karmaSettings,final Broadcast<String> model, final Broadcast<String> context,
-    		final String outputFormat )
+    		final String outputFormat, int numPartitions )
     {
     	JavaPairRDD<String, String> pairs = input.flatMapToPair(
 				new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
@@ -359,7 +346,7 @@ public class KarmaDriver {
     public static JavaPairRDD<Text, Text> applyModel(JavaSparkContext jsc, 
     		JavaRDD<String> input, 
     		Properties properties,
-    		final int batchSize) throws IOException {
+    		final int batchSize, int numPartitions) throws IOException {
     	JavaPairRDD<String, String> pairRDD = input.mapToPair(new PairFunction<String, String, String>() {
             private static final long serialVersionUID = -4153068088292891034L;
 
@@ -368,7 +355,7 @@ public class KarmaDriver {
                 return new Tuple2<>(s.substring(0, tabIndex), s.substring(tabIndex + 1));
             }
         });
-    	return applyModel(jsc, pairRDD, properties, batchSize);
+    	return applyModel(jsc, pairRDD, properties, batchSize, numPartitions);
     }
     
     private static Options createCommandLineOptions() {
