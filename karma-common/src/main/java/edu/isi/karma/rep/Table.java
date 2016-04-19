@@ -273,7 +273,7 @@ public class Table extends RepEntity {
 			// in it.
 			HTable headers = factory.getHTable(hTableId);
 			columnForOrphan = headers.addHNode(HTable.VALUES_COLUMN, factory.getHNode(hNodeIdWhereValueWas).getHNodeType(), factory.getWorksheet(worksheetId), factory);
-			logger.warn("Cannot find 'values' in nested table inside column '"
+			logger.debug("Cannot find 'values' in nested table inside column '"
 					+ factory.getColumnName(hNodeIdWhereValueWas)
 					+ "' Cannot find a column to assign the orphan value '"
 					+ value.asString() + ". Discarding it.");
