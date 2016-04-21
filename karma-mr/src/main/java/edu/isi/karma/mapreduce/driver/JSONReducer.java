@@ -4,9 +4,13 @@ import java.io.IOException;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
-import edu.isi.karma.util.JSONLDUtil;
+import edu.isi.karma.util.JSONLDUtilSimple;
+
+
+
 
 public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 
@@ -17,7 +21,12 @@ public class JSONReducer extends Reducer<Text,Text,Text,Text>{
 	}
 	protected void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
 	{
-		JSONObject accumulatorObject = JSONLDUtil.mergeJSONObjects(new TextToStringIterator(values.iterator()));
+		JSONObject accumulatorObject = null;
+		try {
+			accumulatorObject = JSONLDUtilSimple.mergeJSONObjects(new TextToStringIterator(values.iterator()));
+		} catch (ParseException e) {
+			throw new IOException(e);
+		}
 		reusableOutputValue.set(accumulatorObject.toString());
 		context.write(key, reusableOutputValue);
 	}

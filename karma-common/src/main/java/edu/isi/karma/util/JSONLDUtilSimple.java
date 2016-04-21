@@ -1,29 +1,42 @@
 package edu.isi.karma.util;
 
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.apache.commons.collections.IteratorUtils;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
-public class JSONLDUtil {
-	private static JSONLDReducerComparator comparator;
+public class JSONLDUtilSimple {
+	private static JSONLDReducerComparatorSimple comparator;
 	
 	static {
-		comparator =  new JSONLDReducerComparator();
+		comparator =  new JSONLDReducerComparatorSimple();
 	}
 
-	private JSONLDUtil() {
+	private JSONLDUtilSimple() {
+	}
+	
+	public static JSONObject mergeJSONObjects(String left, String right) throws ParseException
+	{
+
+		JSONParser parser = new JSONParser();
+		return mergeJSONObjects((JSONObject)parser.parse(left), (JSONObject)parser.parse(right));
 	}
 
-	public static JSONObject mergeJSONObjects(Iterator<String> iterator) {
+	public static JSONObject mergeJSONObjects(Iterator<String> iterator) throws ParseException {
 
+		JSONParser parser = new JSONParser(); 
 		JSONObject accumulatorObject = new JSONObject();
 		
 		while(iterator.hasNext())
 		{
 
 			String value = iterator.next();
-			JSONObject object = new JSONObject(value);
+			JSONObject object = (JSONObject)parser.parse(value);
 			accumulatorObject = mergeJSONObjects(accumulatorObject, object);
 		}
 		
@@ -32,10 +45,11 @@ public class JSONLDUtil {
 
 	public static JSONObject mergeJSONObjects(JSONObject left, JSONObject right)
 	{
-		String[] names = JSONObject.getNames(right);
-		for(String name : names)
+		Collection names = right.keySet();
+		for(Object rawName : names)
 		{
-			if(!left.has(name))
+			String name = (String) rawName;
+			if(!left.containsKey(name))
 			{
 				left.put(name, right.get(name));
 			}
@@ -52,7 +66,7 @@ public class JSONLDUtil {
 					else
 					{
 						JSONArray newRightArray = new JSONArray();
-						newRightArray.put(rightObject);
+						newRightArray.add(rightObject);
 						mergeArrays(left, name, (JSONArray) leftObject, newRightArray);
 					}
 
@@ -62,15 +76,15 @@ public class JSONLDUtil {
 					if(rightObject instanceof JSONArray)
 					{
 						JSONArray newLeftArray = new JSONArray();
-						newLeftArray.put(leftObject);
+						newLeftArray.add(leftObject);
 						mergeArrays(left, name, newLeftArray, (JSONArray)rightObject);
 					}
 					else
 					{
 						JSONArray newLeftArray = new JSONArray();
 						JSONArray newRightArray = new JSONArray();
-						newLeftArray.put(leftObject);
-						newRightArray.put(rightObject);
+						newLeftArray.add(leftObject);
+						newRightArray.add(rightObject);
 						mergeArrays(left, name, newLeftArray, newRightArray);
 					}
 				}
@@ -80,15 +94,15 @@ public class JSONLDUtil {
 	}
 	protected static void mergeArrays(JSONObject left, String name,
 			JSONArray leftArray, JSONArray rightArray) {
-		JSONArray newArray = new JSONArray();
+		LinkedList<Object> newArrayBuilder = new LinkedList<Object>();
 		int leftIndex = 0;
 		int rightIndex = 0;
-		while(leftIndex < leftArray.length() && rightIndex < rightArray.length() )
+		while(leftIndex < leftArray.size() && rightIndex < rightArray.size() )
 		{
 			int result = comparator.compare(leftArray.get(leftIndex),rightArray.get(rightIndex));
 			if(result < 0)
 			{
-				newArray.put(leftArray.get(leftIndex++));
+				newArrayBuilder.add(leftArray.get(leftIndex++));
 			}
 			else if (result == 0)
 			{
@@ -96,28 +110,30 @@ public class JSONLDUtil {
 				Object tempRight = rightArray.get(rightIndex++);
 				Object mergedResult = mergeStringsAndJSONObjects(
 						tempLeft, tempRight);
-				newArray.put(mergedResult);
+				newArrayBuilder.add(mergedResult);
 			}
 			else
 			{
-				newArray.put(rightArray.get(rightIndex++));
+				newArrayBuilder.add(rightArray.get(rightIndex++));
 			}
 		}
-		while(leftIndex < leftArray.length())
+		while(leftIndex < leftArray.size())
 		{
-			newArray.put(leftArray.get(leftIndex++));
+			newArrayBuilder.add(leftArray.get(leftIndex++));
 		}
-		while(rightIndex < rightArray.length())
+		while(rightIndex < rightArray.size())
 		{
-			newArray.put(rightArray.get(rightIndex++));
+			newArrayBuilder.add(rightArray.get(rightIndex++));
 		}
-		if(newArray.length() > 1)
+		if(newArrayBuilder.size() > 1)
 		{
+			JSONArray newArray = new JSONArray();
+			newArray.addAll(newArrayBuilder);
 			left.put(name, newArray);
 		}
-		else if(newArray.length() == 1)
+		else if(newArrayBuilder.size() == 1)
 		{
-			left.put(name, newArray.get(0));
+			left.put(name, newArrayBuilder.get(0));
 		}
 	}
 	private static Object mergeStringsAndJSONObjects(Object tempLeft,
