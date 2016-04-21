@@ -19,12 +19,13 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import scala.Tuple2;
-import edu.isi.karma.util.JSONLDUtil;
+import edu.isi.karma.util.JSONLDUtilSimple;
 
 public class JSONReducerDriver {
 	private static Logger logger = LoggerFactory.getLogger(JSONReducerDriver.class);
@@ -94,43 +95,68 @@ public class JSONReducerDriver {
     }
     
     public static JavaPairRDD<String, String> reduceJSON(JavaSparkContext sc, 
-    			JavaPairRDD<String, String> input) {
-    	return input.mapToPair(new PairFunction<Tuple2<String, String>, String, String>() {
+			JavaPairRDD<String, String> input) {
+    	return reduceJSON(sc, input, sc.getConf().getInt("spark.default.parallelism", 1));
+    }
+    public static JavaPairRDD<String, String> reduceJSON(JavaSparkContext sc, 
+    			JavaPairRDD<String, String> input, int numPartitions) {
+    	JavaPairRDD<String, JSONObject> pairs = input.mapToPair(new PairFunction<Tuple2<String, String>, String, JSONObject>() {
 
 			private static final long serialVersionUID = 8884768697918036449L;
-
+			
 			@Override
-			public Tuple2<String, String> call(Tuple2<String, String> tuple)
+			public Tuple2<String, JSONObject> call(Tuple2<String, String> tuple)
 					throws Exception {
+				JSONParser parser = new JSONParser();
 				String key = tuple._1();
 				String value = tuple._2();
-				JSONObject obj = new JSONObject(value);
-				if (obj.has("uri")) {
-					key = obj.getString("uri");
-				} else if (obj.has("@id")) {
-					key = obj.getString("@id");
+				JSONObject obj = (JSONObject)parser.parse(value);
+				if (obj.containsKey("uri")) {
+					key = (String)obj.get("uri");
+				} else if (obj.containsKey("@id")) {
+					key = (String)obj.get("@id");
 				}
 				
-				return new Tuple2<>(key, value);
+				return new Tuple2<>(key, obj);
 			}
-		}).reduceByKey(new Function2<String, String, String>() {
-			
-			private static final long serialVersionUID = 7395062825842899032L;
-
-			@Override
-			public String call(String objStr1, String objStr2) throws Exception {
-				JSONObject obj1 = new JSONObject(objStr1);
-				JSONObject obj2 = new JSONObject(objStr2);
-				JSONObject result = JSONLDUtil.mergeJSONObjects(obj1, obj2);
-				return result.toString();
-			}
-		})
-		;
+		});
+		
+		return reduceJSON(numPartitions, pairs);
+		
     	
     }
-    
+
+	public static JavaPairRDD<String, String> reduceJSON(int numPartitions,
+			JavaPairRDD<String, JSONObject> pairs) {
+		JavaPairRDD<String, JSONObject> reducedPairs = pairs
+		.reduceByKey(new Function2<JSONObject, JSONObject, JSONObject>() {
+			private static final long serialVersionUID = -3238789305990222436L;
+
+			@Override
+			public JSONObject call(JSONObject left, JSONObject right)
+					throws Exception {
+				return JSONLDUtilSimple.mergeJSONObjects(left, right);
+			}
+		}, numPartitions);
+		return reducedPairs
+		.mapValues(new Function<JSONObject, String>() {
+
+			private static final long serialVersionUID = -1945629738808728265L;
+
+			@Override
+			public String call(JSONObject object) throws Exception {
+
+				return object.toJSONString();
+			}
+		});
+	}
+   
     public static JavaRDD<String> reduceJSON(JavaSparkContext jsc, 
     		JavaRDD<String> input) {
+    	return reduceJSON(jsc, input, jsc.getConf().getInt("spark.default.parallelism", 1));
+    }
+    public static JavaRDD<String> reduceJSON(JavaSparkContext jsc, 
+    		JavaRDD<String> input, int numPartitions) {
     	JavaPairRDD<String, String> inputPair = input.mapToPair(new PairFunction<String, String, String>() {
             private static final long serialVersionUID = -4153068088292891034L;
 
@@ -139,7 +165,7 @@ public class JSONReducerDriver {
                 return new Tuple2<>(s.substring(0, tabIndex), s.substring(tabIndex + 1));
             }
         });
-		JavaPairRDD<String, String> pairs = reduceJSON(jsc, inputPair);
+		JavaPairRDD<String, String> pairs = reduceJSON(jsc, inputPair, numPartitions);
 		return pairs.map(new Function<Tuple2<String, String>, String>() {
 
 			private static final long serialVersionUID = 5833358013516510838L;
