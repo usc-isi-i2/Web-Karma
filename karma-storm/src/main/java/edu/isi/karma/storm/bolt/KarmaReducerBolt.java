@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.json.simple.parser.ParseException;
+
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -55,7 +57,13 @@ public class KarmaReducerBolt extends BaseRichBolt {
 		jsonToMerge.addJSON(input, input.getStringByField("model"), input.getStringByField("json"));
 		if(jsonToMerge.isReadyToMerge())
 		{
-			String mergedJson = jsonToMerge.merge();
+			String mergedJson;
+			try {
+				mergedJson = jsonToMerge.merge();
+			} catch (ParseException e) {
+				//TODO handle this properly
+				mergedJson = "";
+			}
 			if(outputId)
 			{
 				collector.emit(new Values(id, mergedJson));

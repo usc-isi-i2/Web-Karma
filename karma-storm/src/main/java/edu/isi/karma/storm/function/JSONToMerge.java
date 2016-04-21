@@ -5,8 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.parser.ParseException;
+
 import backtype.storm.tuple.Tuple;
-import edu.isi.karma.util.JSONLDUtil;
+import edu.isi.karma.util.JSONLDUtilSimple;
 
 public class JSONToMerge {
 
@@ -38,9 +40,9 @@ public class JSONToMerge {
 		jsonBySource.put(source, data);
 	}
 	
-	public String merge()
+	public String merge() throws ParseException
 	{
-		return JSONLDUtil.mergeJSONObjects(jsonBySource.values().iterator()).toString();
+		return JSONLDUtilSimple.mergeJSONObjects(jsonBySource.values().iterator()).toString();
 	}
 
 	public List<Tuple> getTuplesToAck() {
