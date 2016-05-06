@@ -161,7 +161,7 @@ AbstractUpdate {
 						
 					} catch (JSONException e) {
 						logger.error("Error occured with cleaning service for HNode: " 
-								+ path.toColumnNamePath(), e);
+								+ path.toColumnNamePath());
 
 						// Set to a default column word length
 						colMetadata.addColumnPreferredLength(leafHNodeId, DEFAULT_COLUMN_LENGTH);

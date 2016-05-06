@@ -193,6 +193,29 @@ public class VWorksheet extends ViewEntity {
 		return this.headerViewNodes;
 	}
 	
+	public JSONArray getHeaderViewNodesJSON() {
+		JSONArray newColumns = new JSONArray();
+		for(VHNode node : this.headerViewNodes) {
+			newColumns.put(getJSONRep(node));
+		}
+		return newColumns;
+	}
+	
+	private JSONObject getJSONRep(VHNode node) {
+		JSONObject obj = new JSONObject();
+		obj.put("id", node.getId());
+		obj.put("name", node.getColumnName());
+		obj.put("visible", node.isVisible());
+		if(node.hasNestedTable()) {
+			JSONArray children = new JSONArray();
+			for(VHNode childNode : node.getNestedNodes()) {
+				children.put(getJSONRep(childNode));
+			}
+			obj.put("children", children);
+		}
+		return obj;
+	}
+	
 	public ArrayList<String> getHeaderVisibleNodes() {
 		return getVisibleViewNodes(this.headerViewNodes);
 	}

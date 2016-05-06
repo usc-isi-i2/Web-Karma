@@ -144,6 +144,7 @@ public class CommandHistory implements Cloneable{
 				break;
 			}
 		}
+		
 		if (consolidatedCommand != null) {
 			worksheetCommandHistory.setStale(worksheetId, true);
 			if (consolidatorName.equals("PyTransformConsolidator")) {
@@ -157,13 +158,18 @@ public class CommandHistory implements Cloneable{
 				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
 				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
 			}
+			if (consolidatorName.equals("OrganizeColumnsConsolidator")) {
+				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
+				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
+			}
 		}
 		else {
 			effects.append(command.doIt(workspace));
 		}
 		command.setExecuted(true);
 
-
+		
+		
 		if (command.getCommandType() != CommandType.notInHistory) {
 			worksheetId = worksheetCommandHistory.getWorksheetId(command);
 			worksheetCommandHistory.clearRedoCommand(worksheetId);
@@ -211,9 +217,13 @@ public class CommandHistory implements Cloneable{
 				String worksheetId = HistoryJsonUtil.getStringValue(HistoryArguments.worksheetId.name(), json);
 				if(workspace.getWorksheet(worksheetId) != null)
 				{ 
-					if(comMap.get(worksheetId) == null)
-						comMap.put(worksheetId, new JSONArray());
-					comMap.get(worksheetId).put(getCommandJSON(workspace, command));
+					try {
+						if(comMap.get(worksheetId) == null)
+							comMap.put(worksheetId, new JSONArray());
+						comMap.get(worksheetId).put(getCommandJSON(workspace, command));
+					} catch(Exception e) {
+						logger.error("Error serializing command {} to history, Input:{}", command.getCommandName(), command.getInputParameterJson());
+					}
 				}
 			}
 		}
