@@ -9,6 +9,26 @@ var LITERAL_TYPE_ARRAY = [
     					"xsd:language","xsd:normalizedString","xsd:token","xsd:NMTOKEN","xsd:Namexsd:NCName"
     							 ];
 
+//Language codes from http://www.loc.gov/standards/iso639-2/php/code_list.php
+var LANGUAGE_ARRAY = [
+					"aa", "ab", "af", "ak", "sq", "am", "ar", "an", "hy", "as", "av", "ae", 
+					"ay", "az", "ba", "bm", "eu", "be", "bn", "bh", "bi", "bo", "bs", "br", 
+					"bg", "my", "ca", "cs", "ch", "ce", "zh", "cu", "cv", "kw", "co", "cr", 
+					"cy", "cs", "da", "de", "dv", "nl", "dz", "el", "en", "eo", "et", "eu", 
+					"ee", "fo", "fa", "fj", "fi", "fr", "fr", "fy", "ff", "ka", "de", "gd", 
+					"ga", "gl", "gv", "el", "gn", "gu", "ht", "ha", "he", "hz", "hi", "ho", 
+					"hr", "hu", "hy", "ig", "is", "io", "ii", "iu", "ie", "ia", "id", "ik", 
+					"is", "it", "jv", "ja", "kl", "kn", "ks", "ka", "kr", "kk", "km", "ki", 
+					"rw", "ky", "kv", "kg", "ko", "kj", "ku", "lo", "la", "lv", "li", "ln", 
+					"lt", "lb", "lu", "lg", "mk", "mh", "ml", "mi", "mr", "ms", "mk", "mg", 
+					"mt", "mn", "mi", "ms", "my", "na", "nv", "nr", "nd", "ng", "ne", "nl", 
+					"nn", "nb", "no", "ny", "oc", "oj", "or", "om", "os", "pa", "fa", "pi", 
+					"pl", "pt", "ps", "qu", "rm", "ro", "ro", "rn", "ru", "sg", "sa", "si", 
+					"sk", "sk", "sl", "se", "sm", "sn", "sd", "so", "st", "es", "sq", "sc", 
+					"sr", "ss", "su", "sw", "sv", "ty", "ta", "tt", "te", "tg", "tl", "th", 
+					"bo", "ti", "to", "tn", "ts", "tk", "tr", "tw", "ug", "uk", "ur", "uz", 
+					"ve", "vi", "vo", "cy", "wa", "wo", "xh", "yi", "yo", "za", "zh", "zu"
+]
 var MAX_NUM_SEMTYPE_SEARCH = 10;
 
 
@@ -50,6 +70,7 @@ var SetSemanticTypeDialog = (function() {
 				$("table#semanticTypesTable tr.semTypeRow", dialog).remove();
 				$("table#semanticTypesTable tr.editRow", dialog).remove();
 				$("#literalTypeSelect").val("");
+				$("#languageSelect").val("");
 
 				dialog.removeData("selectedPrimaryRow");
 				// Deselect all the advanced options check boxes
@@ -162,6 +183,9 @@ var SetSemanticTypeDialog = (function() {
 			
 			$("#literalTypeSelect").typeahead( 
 				{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
+
+			$("#languageSelect").typeahead( 
+				{source:LANGUAGE_ARRAY, minLength:0, items:"all"});
 		}
 		
 		function hideError() {
@@ -258,6 +282,7 @@ var SetSemanticTypeDialog = (function() {
 			var hNodeId = columnId;
 			
 			info["rdfLiteralType"] = $("#literalTypeSelect").val()
+			info["language"] = $("#languageSelect").val()
 
 			// Check if any meta property (advanced options) was selected
 			var semTypesArray = getCurrentSelectedTypes();
@@ -331,6 +356,7 @@ var SetSemanticTypeDialog = (function() {
 			newInfo.push(getParamObject("SemanticTypesArray", semTypesArray, "other"));
 			newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
 			newInfo.push(getParamObject("rdfLiteralType", $("#literalTypeSelect").val(), "other"));
+			newInfo.push(getParamObject("language", $("#languageSelect").val(), "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
 			console.log(info);
@@ -456,6 +482,7 @@ var SetSemanticTypeDialog = (function() {
 				$("input[name='isPrimaryGroup']:radio", trTag).prop('checked', true);
 				selectedPrimaryRow = trTag;
 				$("#literalTypeSelect").val(semTypeObject["rdfLiteralType"]);
+				$("#languageSelect").val(semTypeObject["language"]);
 			}
 
 			if (semTypeObject["DomainUri"].length == 0 || semTypeObject["DomainUri"] == "")
@@ -2560,6 +2587,8 @@ var AddLiteralNodeDialog = (function() {
 							}
 							$("#literalType").typeahead( 
 									{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
+							$("#literalLanguage").typeahead( 
+									{source:LANGUAGE_ARRAY, minLength:0, items:"all"});
 					});
 					
 					
@@ -2607,9 +2636,11 @@ var AddLiteralNodeDialog = (function() {
 				 var newInfo = [];
 				 var literal = $("#literal", dialog).val();
 				 var literalType = $("#literalType", dialog).val();  
+				 var language = $("#literalLanguage", dialog).val();  
 				 var isUri = $("input#isUri").is(":checked");
 				 newInfo.push(getParamObject("literalValue", literal, "other"));
 				 newInfo.push(getParamObject("literalType", literalType, "other"));
+				 newInfo.push(getParamObject("language", language, "other"));
 				 newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
 				 
 				 if(dialogMode == "edit")
@@ -2722,6 +2753,7 @@ var AddLiteralNodeDialog = (function() {
 				dialogMode = "add";
 				$("#literal", dialog).val("");
 				$("#literalType", dialog).val("");
+				$("#literalLanguage", dialog).val("");
 				$("input#isUri", dialog).attr("checked", false);
 				dialog.modal({keyboard:true, show:true, backdrop:'static'});
 			};
@@ -2735,7 +2767,7 @@ var AddLiteralNodeDialog = (function() {
 				 info["worksheetId"] = worksheetId;
 				 info["nodeId"] = nodeId;
 				 
-				 var value, type, isUri;
+				 var value, type, isUri, language;
 				 
 				 info["command"] = "GetLiteralNodeCommand";
 				 showLoading(worksheetId);
@@ -2753,6 +2785,7 @@ var AddLiteralNodeDialog = (function() {
 											 var node = update.node;
 											 value = node.value;
 											 type = node.type;
+											 language = node.language;
 											 isUri = node.isUri;
 										 } else {
 											 alert("Error getting information about the node");
@@ -2768,6 +2801,7 @@ var AddLiteralNodeDialog = (function() {
 				 
 				$("#literal", dialog).val(value);
 				$("#literalType", dialog).val(type);
+				$("#literalLanguage", dialog).val(language);
 				$("input#isUri", dialog).attr("checked", isUri);
 				dialogMode = "edit";
 				
@@ -2781,6 +2815,7 @@ var AddLiteralNodeDialog = (function() {
 				
 				$("#literal", dialog).val("");
 				$("#literalType", dialog).val("");
+				$("#literalLanguage", dialog).val("");
 				$("input#isUri", dialog).attr("checked", false);
 				dialogMode = "addWithProperty";
 				

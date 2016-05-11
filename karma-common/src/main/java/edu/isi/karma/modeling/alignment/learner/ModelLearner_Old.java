@@ -440,7 +440,7 @@ public class ModelLearner_Old {
 
 
 				String nodeId = new RandomGUID().toString();
-				ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
+				ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null, null);
 				if (!this.graphBuilder.addNode(target)) continue;;
 				addedNodes.add(target);
 
@@ -503,7 +503,7 @@ public class ModelLearner_Old {
 		if (!this.graphBuilder.addNodeAndUpdate(source, addedNodes)) return null;
 
 		nodeId = new RandomGUID().toString();
-		ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null);
+		ColumnNode target = new ColumnNode(nodeId, nodeId, sourceColumn.getColumnName(), null, null);
 		if (!this.graphBuilder.addNode(target)) return null;
 		addedNodes.add(target);
 

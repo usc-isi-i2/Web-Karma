@@ -576,6 +576,8 @@ public class GraphUtil {
 			writer.name("rdfLiteralType");
 			if (cn.getRdfLiteralType() == null) writer.value(nullStr);
 			else writeLabel(writer, cn.getRdfLiteralType());
+			if(cn.getLanguage() == null) writer.value(nullStr);
+			else writer.name("language").value(cn.getLanguage());
 			writer.name("userSemanticTypes");
 			if (cn.getUserSemanticTypes() == null) writer.value(nullStr);
 			else {
@@ -599,6 +601,7 @@ public class GraphUtil {
 			writer.name("datatype");
 			if (ln.getDatatype() == null) writer.value(nullStr);
 			else writeLabel(writer, ln.getDatatype());
+			writer.name("language").value(ln.getLanguage());
 			writer.name("isUri").value(Boolean.toString(ln.isUri()));
 		}
 		
@@ -741,6 +744,7 @@ public class GraphUtil {
 		String hNodeId = null;
 		String columnName = null;
 		Label rdfLiteralType = null;
+		String language = null;
 		Label datatype = null;
 		String value = null;
 		boolean isUri = false;
@@ -770,6 +774,8 @@ public class GraphUtil {
 				isUri = Boolean.parseBoolean(reader.nextString());
 			} else if (key.equals("rdfLiteralType") && reader.peek() != JsonToken.NULL) {
 				rdfLiteralType = readLabel(reader);
+			} else if (key.equals("language") && reader.peek() != JsonToken.NULL) {
+				language = reader.nextString();
 			} else if (key.equals("userSelectedSemanticType") && reader.peek() != JsonToken.NULL) {
 				userSelectedSemanticType = readSemanticType(reader);
 			} else if (key.equals("suggestedSemanticTypes") && reader.peek() != JsonToken.NULL) {
@@ -808,7 +814,7 @@ public class GraphUtil {
     	if (type == NodeType.InternalNode) {
     		n = new InternalNode(id, label);
     	} else if (type == NodeType.ColumnNode) {
-    		n = new ColumnNode(id, hNodeId, columnName, rdfLiteralType);
+    		n = new ColumnNode(id, hNodeId, columnName, rdfLiteralType, language);
     		if (userSemanticTypes == null && userSelectedSemanticType != null) {
 				userSemanticTypes = new ArrayList<>();
 				userSemanticTypes.add(userSelectedSemanticType);
@@ -819,7 +825,7 @@ public class GraphUtil {
     		}
     		((ColumnNode)n).setLearnedSemanticTypes(learnedSemanticTypes);
     	} else if (type == NodeType.LiteralNode) {
-    		n = new LiteralNode(id, value, datatype, isUri);
+    		n = new LiteralNode(id, value, datatype, language, isUri);
     	} else {
     		logger.error("cannot instanciate a node from the type: " + type.toString());
     		return null;

@@ -86,6 +86,7 @@ public class GetLiteralNodeCommand extends WorksheetCommand {
 						else
 							type = "";
 						writer.key("type").value(type);
+						writer.key("language").value(lNode.getLanguage());
 						writer.key("isUri").value(lNode.isUri());
 						writer.endObject();
 						

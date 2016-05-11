@@ -60,6 +60,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 	private final String hNodeId;
 	private boolean trainAndShowUpdates;
 	private String rdfLiteralType;
+	private String language;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	private SynonymSemanticTypes oldSynonymTypes;
 	private JSONArray typesArr;
@@ -72,13 +73,13 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 
 	protected SetSemanticTypeCommand(String id, String model, String worksheetId, String hNodeId,
 									 JSONArray typesArr, boolean trainAndShowUpdates,
-									 String rdfLiteralType, String selectionId) {
+									 String rdfLiteralType, String language, String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
 		this.typesArr = typesArr;
 		this.rdfLiteralType = rdfLiteralType;
-
+		this.language = language;
 		addTag(CommandTag.SemanticType);
 	}
 
@@ -196,6 +197,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				// Check if a semantic type already exists for the column
 				ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 				columnNode.setRdfLiteralType(rdfLiteralType);
+				columnNode.setLanguage(language);
 				List<LabeledLink> columnNodeIncomingLinks = alignment.getGraphBuilder().getIncomingLinks(columnNode.getId());
 				LabeledLink oldIncomingLinkToColumnNode = null;
 				Node oldDomainNode = null;

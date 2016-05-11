@@ -34,16 +34,18 @@ public class ColumnNode extends Node {
 	private final String hNodeId;
 	private final String columnName;
 	private Label rdfLiteralType;
+	private String language;
 	private ColumnSemanticTypeStatus semanticTypeStatus; 
 
 	private List<SemanticType> userSemanticTypes;
 	private List<SemanticType> learnedSemanticTypes;
 	
-	public ColumnNode(String id, String hNodeId, String columnName, Label rdfLiteralType) {
+	public ColumnNode(String id, String hNodeId, String columnName, Label rdfLiteralType, String language) {
 		super(id, new Label(hNodeId), NodeType.ColumnNode);
 		this.hNodeId = hNodeId;
 		this.columnName = columnName;
 		this.setRdfLiteralType(rdfLiteralType);
+		this.setLanguage(language);
 		this.userSemanticTypes = null;
 		this.learnedSemanticTypes = null;
 		this.semanticTypeStatus = ColumnSemanticTypeStatus.NotAssigned;
@@ -96,6 +98,10 @@ public class ColumnNode extends Node {
 		return rdfLiteralType;
 	}
 	
+	public String getLanguage() {
+		return language;
+	}
+	
 	public void setRdfLiteralType(String rdfLiteralType) {
 		if (rdfLiteralType != null && rdfLiteralType.trim().length() > 0) {
 			rdfLiteralType = rdfLiteralType.replace(Prefixes.XSD + ":", Namespaces.XSD);
@@ -105,6 +111,10 @@ public class ColumnNode extends Node {
 		}
 	}
 
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 	public void setRdfLiteralType(Label rdfLiteralType) {
 		this.rdfLiteralType = rdfLiteralType;
 	}

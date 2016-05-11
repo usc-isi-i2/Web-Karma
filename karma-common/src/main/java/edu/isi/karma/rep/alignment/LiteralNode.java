@@ -31,13 +31,15 @@ public class LiteralNode extends Node {
 	private static final long serialVersionUID = 1L;
 	private String value;
 	private Label datatype;
+	private String language;
 	private boolean isUri;
 	
 
-	public LiteralNode(String id, String value, Label datatype, boolean isUri) {
+	public LiteralNode(String id, String value, Label datatype, String language, boolean isUri) {
 		super(id, datatype, NodeType.LiteralNode);
 		this.value = value;
 		this.datatype = datatype;
+		this.language = language;
 		this.isUri = isUri;
 		
 		this.isForced = true;
@@ -49,6 +51,10 @@ public class LiteralNode extends Node {
 
 	public Label getDatatype() {
 		return datatype;
+	}
+	
+	public String getLanguage() {
+		return language;
 	}
 	
 	public boolean isUri() {
@@ -63,6 +69,10 @@ public class LiteralNode extends Node {
 		this.datatype = datatype;
 	}
 
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 	public void setUri(boolean isUri) {
 		this.isUri = isUri;
 	}

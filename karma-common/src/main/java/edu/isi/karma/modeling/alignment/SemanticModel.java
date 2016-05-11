@@ -927,7 +927,7 @@ public class SemanticModel {
 		}
     	reader.endObject();
     	
-    	ColumnNode cn = new ColumnNode(id, hNodeId, columnName, null);
+    	ColumnNode cn = new ColumnNode(id, hNodeId, columnName, null, null);
     	return cn;
 	}
 

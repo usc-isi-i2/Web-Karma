@@ -218,14 +218,14 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// AddNode methods
 	
-	public ColumnNode addColumnNode(String hNodeId, String columnName, Label rdfLiteralType) {
+	public ColumnNode addColumnNode(String hNodeId, String columnName, Label rdfLiteralType, String language) {
 		
 		if(this.getNodeById(hNodeId) != null)
 		{
 			return null;
 		}
 		// use hNodeId as id of the node
-		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType);
+		ColumnNode node = new ColumnNode(hNodeId, hNodeId, columnName, rdfLiteralType, language);
 		if (this.graphBuilder.addNodeAndUpdate(node)) {
 			this.sourceColumnNodes.add(node);
 			return node;
@@ -305,7 +305,7 @@ public class Alignment implements OntologyUpdateListener {
 //		return null;
 //	}
 	
-	public LiteralNode addLiteralNode(String value, String type, boolean isUri) {
+	public LiteralNode addLiteralNode(String value, String type, String language, boolean isUri) {
 		
 		type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
 		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
@@ -313,18 +313,19 @@ public class Alignment implements OntologyUpdateListener {
 		String id = nodeIdFactory.getNodeId(value);
 		if(isUri && value.startsWith("\"") && value.endsWith("\""))
 			value = value.substring(1, value.length()-1);
-		LiteralNode node = new LiteralNode(id, value, literalType, isUri);
+		LiteralNode node = new LiteralNode(id, value, literalType, language, isUri);
 		if(this.graphBuilder.addNode(node)) return node;
 		return null;
 	}
 	
-	public void updateLiteralNode(String nodeId, String value, String type, boolean isUri) {
+	public void updateLiteralNode(String nodeId, String value, String type, String language, boolean isUri) {
 		LiteralNode node = (LiteralNode) getNodeById(nodeId);
 		type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
 		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
 		
 		node.setDatatype(literalType);
 		node.setValue(value);
+		node.setLanguage(language);
 		node.setUri(isUri);
 	}
 	
@@ -1111,7 +1112,7 @@ public class Alignment implements OntologyUpdateListener {
 			String hNodeId = node.getId();
 			Node n = getNodeById(hNodeId);
 			if (n == null) {
-				addColumnNode(hNodeId, node.getColumnName(), null);
+				addColumnNode(hNodeId, node.getColumnName(), null, null);
 			}
 		}
 	

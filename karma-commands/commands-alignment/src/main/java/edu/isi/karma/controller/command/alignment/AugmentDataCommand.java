@@ -275,7 +275,8 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 
 
 				semanticTypesArray.put(semanticType);
-				Command sstCommand = sstFactory.createCommand(model, workspace, worksheetId, nestedHNodeId, false, semanticTypesArray, false, "", selection.getName());
+				Command sstCommand = sstFactory.createCommand(model, workspace, worksheetId, nestedHNodeId, 
+						false, semanticTypesArray, false, "", "", selection.getName());
 				appliedCommands.push(sstCommand);
 				sstCommand.doIt(workspace);
 				if(!resultClass.get(i).trim().isEmpty())
@@ -308,7 +309,7 @@ public class AugmentDataCommand extends WorksheetSelectionCommand{
 					changeInternalNodeLinksCommand.doIt(workspace);
 					appliedCommands.push(changeInternalNodeLinksCommand);
 					Command setMetaDataCommand = smpcf.createCommand(model, workspace, nestedHNodeId, worksheetId, "isUriOfClass", 
-							targetUri, targetId, false, "", selection.getName());
+							targetUri, targetId, false, "", "", selection.getName());
 					setMetaDataCommand.doIt(workspace);
 					appliedCommands.push(setMetaDataCommand);
 				}

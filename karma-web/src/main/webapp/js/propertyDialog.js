@@ -14,7 +14,7 @@ var PropertyDialog = (function() {
 		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
 		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
 		var propertyTabs;
-		var propertyLiteralType, propertyIsSubClass;
+		var propertyLiteralType, propertyIsSubClass, propertyLanguage;
 
 		var options = [
 			//Title, function to call, needs file upload     
@@ -117,19 +117,22 @@ var PropertyDialog = (function() {
 
 		function advanceOptionsUI(e) {
 			initRightDiv("Advanced Options");
-			PropertyAdvanceOptionsDialog.getInstance().show(propertyLiteralType, propertyIsSubClass, rightDiv, saveAdvanceOptions);
+			PropertyAdvanceOptionsDialog.getInstance().show(propertyLiteralType, 
+						propertyLanguage, propertyIsSubClass, 
+						rightDiv, saveAdvanceOptions);
 		}
 
-		function saveAdvanceOptions(literalType, isSubclassOfClass) {
+		function saveAdvanceOptions(literalType, language, isSubclassOfClass) {
 			if(isSubclassOfClass) {
-				setSubClassSemanticType(worksheetId, targetId, {"uri": sourceDomain, "id": sourceId, "label":sourceLabel}, literalType);
+				setSubClassSemanticType(worksheetId, targetId, {"uri": sourceDomain, 
+					"id": sourceId, "label":sourceLabel}, literalType, language);
 			} else {
 				var type = {};
 				type.label = propertyLabel;
 				type.uri = propertyUri;
 				type.source = {"uri": sourceDomain, "label": sourceLabel, "id": sourceId};
 				type.target = {"uri": targetDomain, "label": targetLabel, "id": targetId};
-				setSemanticType(worksheetId, targetId, type, literalType);
+				setSemanticType(worksheetId, targetId, type, literalType, language);
 			}
 			hide();
 		}
@@ -145,7 +148,7 @@ var PropertyDialog = (function() {
 						type.uri = propertyUri;
 						type.source = clazz;
 						type.target = {"uri": targetDomain, "label": targetLabel, "id": targetId};
-						setSemanticType(worksheetId, targetId, type, propertyLiteralType);
+						setSemanticType(worksheetId, targetId, type, propertyLiteralType, propertyLanguage);
 					} else {
 						//Change Links command
 						oldEdges = [];
@@ -211,7 +214,7 @@ var PropertyDialog = (function() {
 						"uri": property.uri,
 						"source": {"id": sourceId, "uri":sourceDomain, "label": sourceLabel}
 					}
-					setSemanticType(worksheetId, targetId, type, propertyLiteralType);
+					setSemanticType(worksheetId, targetId, type, propertyLiteralType, propertyLanguage);
 				} else {
 					oldEdges = [];
 					var oldEdgeObj = {};
@@ -363,6 +366,7 @@ var PropertyDialog = (function() {
 
 			propertyIsSubClass = false;
 			propertyLiteralType = "";
+			propertyLanguage = "";
 
 			if(p_targetNodeType == "ColumnNode") {
 				var tdTag = $("td#" + targetNodeId);
@@ -376,9 +380,13 @@ var PropertyDialog = (function() {
 					if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
 						propertyIsSubClass = true;
 						propertyLiteralType = type["rdfLiteralType"];
-					} else if(type["rdfLiteralType"]){
-						propertyLiteralType = type["rdfLiteralType"];
-					}
+						propertyLanguage = type["language"]
+					} else {
+						if(type["rdfLiteralType"])
+							propertyLiteralType = type["rdfLiteralType"];
+						if(type["language"])
+							propertyLanguage = type["language"];
+					} 
 				});
 			}
 
@@ -438,17 +446,21 @@ var PropertyAdvanceOptionsDialog = (function() {
 		function init() {
 			$("#btnSaveAdvanceOptions").on("click", function(e) {
 				var literalType = $("#propertyLiteralType", dialog).val();
+				var language = $("#propertyLanguage", dialog).val();
 				var isSubclassOfClass = $("#propertyIsSubclass", dialog).is(':checked');
-				callback(literalType, isSubclassOfClass);	
+				callback(literalType, language, isSubclassOfClass);	
 			});	
 			$("#propertyLiteralType").typeahead( 
 				{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
+			$("#propertyLanguage").typeahead(
+				{source:LANGUAGE_ARRAY, minLength:0, items:"all"});
 		}
 
-		function show(rdfLiteralType, isSubClass, div, p_callback) {
+		function show(rdfLiteralType, language, isSubClass, div, p_callback) {
 			callback = p_callback;
 
 			$("#propertyLiteralType", dialog).val(rdfLiteralType);
+			$("#propertyLanguage", dialog).val(language);
 			$("div#propertyAdvanceOptions input:checkbox").prop('checked', isSubClass);
 			
 			div.append(dialog);
