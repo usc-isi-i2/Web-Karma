@@ -70,9 +70,13 @@ public class ColumnPredicateObjectMappingPlan extends
 		TemplateTermSet literalTemplate = pom.getObject().getRdfLiteralType();
 		literalTemplateValue = null;
 		if(literalTemplate != null)
-		{
 			literalTemplateValue = generateStringValueForTemplate(literalTemplate);
-		}
+		
+		TemplateTermSet languageTemplate = pom.getObject().getLanguage();
+		literalLanguage = null;
+		if(languageTemplate != null)
+			literalLanguage = generateStringValueForTemplate(languageTemplate);
+		
 		objectTemplateTermSetPopulator = new TemplateTermSetPopulator(pom.getObject().getTemplate(), new StringBuilder(), uriFormatter, false, true);
 		generateInternal(subjectMapTemplate, pom, subjectTermsToPaths);
 		if(generateContext && objectTemplateTermSetPopulator.getTerms().isSingleColumnTerm())
@@ -102,14 +106,16 @@ public class ColumnPredicateObjectMappingPlan extends
 		else if(generateContext && objectTemplateTermSetPopulator.getTerms().isSingleColumnTerm())
 		{
 			try {
-				outWriter.outputQuadWithLiteralObject(pom, subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue,getColumnContextUri(translator.getHNodeIdForColumnName(objectTemplateTermSetPopulator.getTerms().getAllTerms().get(0).getTemplateTermValue())));
+				outWriter.outputQuadWithLiteralObject(pom, subject.getURI(), predicate.getURI(), object.getURI(), 
+						literalTemplateValue, literalLanguage,
+						getColumnContextUri(translator.getHNodeIdForColumnName(objectTemplateTermSetPopulator.getTerms().getAllTerms().get(0).getTemplateTermValue())));
 			} catch (HNodeNotFoundKarmaException e) {
 				LOG.error("No hnode found for context " +objectTemplateTermSetPopulator.getTerms().getAllTerms().get(0).getTemplateTermValue() + " " + e);
 			}
 		}
 		else
 		{
-			outWriter.outputTripleWithLiteralObject(pom, subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue);
+			outWriter.outputTripleWithLiteralObject(pom, subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue, literalLanguage);
 		}
 		
 	}

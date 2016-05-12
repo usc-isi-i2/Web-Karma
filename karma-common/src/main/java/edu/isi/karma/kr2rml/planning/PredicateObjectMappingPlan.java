@@ -61,6 +61,7 @@ public abstract class PredicateObjectMappingPlan extends MapPlan {
 	protected boolean isFlipped = false;
 	protected boolean isLiteral;
 	protected String literalTemplateValue;
+	protected String literalLanguage;
 	protected PredicateObjectMap pom; 
 	
 	protected void generateInternal(TemplateTermSet subjectMapTemplate,

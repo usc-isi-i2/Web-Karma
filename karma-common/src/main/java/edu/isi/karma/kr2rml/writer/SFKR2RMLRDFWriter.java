@@ -79,15 +79,15 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 
 	@Override
 	public void outputTripleWithLiteralObject(String subjUri,
-			String predicateUri, String value, String literalType) {
+			String predicateUri, String value, String literalType, String language) {
 		E subject = checkAndAddsubjUri(null, generatedObjectsWithoutTriplesMap, subjUri);
 		addValue(null, subject, predicateUri, convertValueWithLiteralType(literalType, value));
 	}
 
 	@Override
 	public void outputQuadWithLiteralObject(String subjUri,
-			String predicateUri, String value, String literalType, String graph) {
-		outputTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
+			String predicateUri, String value, String literalType, String language, String graph) {
+		outputTripleWithLiteralObject(subjUri, predicateUri, value, literalType, language);
 	}
 
 	protected E checkAndAddSubjUri(String triplesMapId, String subjUri)
@@ -170,7 +170,7 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 	@Override
 	public void outputTripleWithLiteralObject( PredicateObjectMap predicateObjectMap, 
 			String subjUri, String predicateUri, String value,
-			String literalType) {
+			String literalType, String language) {
 		E subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?
 		addValue(predicateObjectMap, subject, predicateUri, convertValueWithLiteralType(literalType, value));
@@ -179,7 +179,7 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 	@Override
 	public void outputQuadWithLiteralObject( PredicateObjectMap predicateObjectMap, 
 			String subjUri, String predicateUri, String value,
-			String literalType, String graph) {
+			String literalType, String language, String graph) {
 
 		E subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?

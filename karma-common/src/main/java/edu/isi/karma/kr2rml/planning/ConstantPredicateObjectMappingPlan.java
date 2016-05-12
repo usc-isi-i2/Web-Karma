@@ -55,9 +55,12 @@ PredicateObjectMappingPlan {
 		TemplateTermSet literalTemplate = pom.getObject().getRdfLiteralType();
 		literalTemplateValue = null;
 		if(literalTemplate != null)
-		{
 			literalTemplateValue = generateStringValueForTemplate(literalTemplate);
-		}
+		
+		TemplateTermSet languageTemplate = pom.getObject().getLanguage();
+		literalLanguage = null;
+		if(languageTemplate != null)
+			literalLanguage = generateStringValueForTemplate(languageTemplate);
 		
 		generatePredicatesForPom(pom);
 	}
@@ -92,7 +95,7 @@ PredicateObjectMappingPlan {
 		}
 		else
 		{
-			outWriter.outputTripleWithLiteralObject(pom, subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue);
+			outWriter.outputTripleWithLiteralObject(pom, subject.getURI(), predicate.getURI(), object.getURI(), literalTemplateValue, literalLanguage);
 		}
 		
 	}
