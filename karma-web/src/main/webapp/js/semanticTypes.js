@@ -15,7 +15,7 @@ var LANGUAGE_ARRAY = [
 					"ay", "az", "ba", "bm", "eu", "be", "bn", "bh", "bi", "bo", "bs", "br", 
 					"bg", "my", "ca", "cs", "ch", "ce", "zh", "cu", "cv", "kw", "co", "cr", 
 					"cy", "cs", "da", "de", "dv", "nl", "dz", "el", "en", "eo", "et", "eu", 
-					"ee", "fo", "fa", "fj", "fi", "fr", "fr", "fy", "ff", "ka", "de", "gd", 
+					"ee", "fo", "fa", "fj", "fi", "fr", "fy", "ff", "ka", "de", "gd", 
 					"ga", "gl", "gv", "el", "gn", "gu", "ht", "ha", "he", "hz", "hi", "ho", 
 					"hr", "hu", "hy", "ig", "is", "io", "ii", "iu", "ie", "ia", "id", "ik", 
 					"is", "it", "jv", "ja", "kl", "kn", "ks", "ka", "kr", "kk", "km", "ki", 
