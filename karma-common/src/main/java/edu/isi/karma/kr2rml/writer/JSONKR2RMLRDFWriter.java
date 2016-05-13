@@ -158,6 +158,15 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 	}
 
 	@Override
+	protected Object generateLanguageLiteral(Object literal, String language) {
+		//Generate expanded form JSON for the language
+		JSONObject literalJSON = new JSONObject();
+		literalJSON.put("@value", literal);
+		literalJSON.put("@language", language);
+		return literalJSON;
+	}
+	
+	@Override
 	public void finishRow() {
 		for(ConcurrentHashMap<String, JSONObject> records : this.rootObjectsByTriplesMapId.values())
 		{

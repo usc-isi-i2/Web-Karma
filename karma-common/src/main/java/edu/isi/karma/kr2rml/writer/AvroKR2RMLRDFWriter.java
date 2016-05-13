@@ -23,7 +23,6 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.DatumWriter;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -296,6 +295,11 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 	}
 	
 	@Override
+	protected Object generateLanguageLiteral(Object literal, String language) {
+		return literal;
+	}
+	
+	@Override
 	public void finishRow() {
 		for(Map<String, GenericRecord> records : this.rootObjectsByTriplesMapId.values())
 		{
@@ -379,7 +383,7 @@ public class AvroKR2RMLRDFWriter extends SFKR2RMLRDFWriter<GenericRecord> {
 	}
 	
 	@Override
-	protected Object convertValueWithLiteralType(String literalType, String value) {
+	protected Object convertLiteral(String value, String literalType, String language) {
 		return value;
 	}
 
