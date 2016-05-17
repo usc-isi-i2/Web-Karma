@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.Arguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.rep.Workspace;
@@ -74,7 +75,9 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		String arrStr = HistoryJsonUtil.getStringValue(Arguments.SemanticTypesArray.name(), inputJson);
 		boolean train = HistoryJsonUtil.getBooleanValue(Arguments.trainAndShowUpdates.name(), inputJson);
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
-		String language = HistoryJsonUtil.getStringValue(Arguments.language.name(), inputJson);
+		String language = null;
+		if(HistoryJsonUtil.valueExits(Arguments.language.name(), inputJson))
+			language = HistoryJsonUtil.getStringValue(Arguments.language.name(), inputJson);
 		
 		JSONArray arr;
 		try {

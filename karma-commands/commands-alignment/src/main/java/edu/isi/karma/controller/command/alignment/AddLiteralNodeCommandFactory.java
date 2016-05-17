@@ -34,10 +34,12 @@ public class AddLiteralNodeCommandFactory extends JSONInputCommandFactory {
 				workspace.getId(), worksheetId);
 		String literalType = HistoryJsonUtil.getStringValue(
 				Arguments.literalType.name(), inputJson);
-		String language = HistoryJsonUtil.getStringValue(
-				Arguments.language.name(), inputJson);
+		String language = null;
+		if(HistoryJsonUtil.valueExits(Arguments.language.name(), inputJson))
+			language = HistoryJsonUtil.getStringValue(Arguments.language.name(), inputJson);
 		String literalValue = HistoryJsonUtil.getStringValue(
 				Arguments.literalValue.name(), inputJson);
+		
 		boolean isUri = HistoryJsonUtil.getBooleanValue(Arguments.isUri.name(), inputJson);
 		String nodeId = null;
 		if(HistoryJsonUtil.valueExits(Arguments.nodeId.name(), inputJson))

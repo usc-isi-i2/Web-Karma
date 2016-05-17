@@ -89,7 +89,9 @@ public class SetMetaPropertyCommandFactory extends JSONInputCommandFactory {
 		}
 		boolean train = HistoryJsonUtil.getBooleanValue(Arguments.trainAndShowUpdates.name(), inputJson);
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
-		String language = HistoryJsonUtil.getStringValue(Arguments.language.name(), inputJson);
+		String language = null;
+		if(HistoryJsonUtil.valueExits(Arguments.language.name(), inputJson))
+			language = HistoryJsonUtil.getStringValue(Arguments.language.name(), inputJson);
 		this.normalizeSelectionId(worksheetId, inputJson, workspace);
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SetMetaPropertyCommand comm = new SetMetaPropertyCommand(getNewId(workspace), model, worksheetId, 
