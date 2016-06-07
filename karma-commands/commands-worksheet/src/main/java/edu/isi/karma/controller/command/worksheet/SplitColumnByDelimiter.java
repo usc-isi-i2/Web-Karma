@@ -3,12 +3,15 @@ package edu.isi.karma.controller.command.worksheet;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.kenai.jffi.Array;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.isi.karma.controller.command.selection.SuperSelection;
@@ -86,14 +89,7 @@ public class SplitColumnByDelimiter {
 		}
 
 		// Convert the delimiter into character primitive type
-		char delimiterChar;
-		if (delimiter.equalsIgnoreCase("space"))
-			delimiterChar = ' ';
-		else if (delimiter.equalsIgnoreCase("tab"))
-			delimiterChar = '\t';
-		else {
-			delimiterChar = new Character(delimiter.charAt(0));
-		}
+		char delimiterChar = getDelimiterChar();
 
 		Collection<Node> nodes = new ArrayList<>();
 		worksheet.getDataTable().collectNodes(selectedPath, nodes, selection);
@@ -125,10 +121,20 @@ public class SplitColumnByDelimiter {
 
 			if (originalVal != null && !originalVal.equals("")) {
 				// Split the values
-				CSVReader reader = new CSVReader(new StringReader(originalVal),
-						delimiterChar);
+				
 				try {
-					String[] rowValues = reader.readNext();
+					String[] rowValues;
+					int startIndex = 0;
+					if(delimiterChar == '\u0000') {
+						rowValues = originalVal.split("");
+						//First value is always an empty string, ignore that
+						startIndex = 1;
+					} else {
+						CSVReader reader = new CSVReader(new StringReader(originalVal),
+								delimiterChar);
+						rowValues = reader.readNext();
+						reader.close();
+					}
 					if (rowValues == null || rowValues.length == 0)
 						continue;
 
@@ -136,7 +142,7 @@ public class SplitColumnByDelimiter {
 					Table table = node.getNestedTable();
 
 					// Add the row one by one
-					for (int i = 0; i < rowValues.length; i++) {
+					for (int i = startIndex; i < rowValues.length; i++) {
 						String rowVal = rowValues[i];
 						if (!rowVal.trim().equals("")) {
 							Row row = table.addRow(factory);
@@ -144,7 +150,7 @@ public class SplitColumnByDelimiter {
 									NodeStatus.edited, factory);
 						}
 					}
-					reader.close();
+					
 				} catch (IOException e) {
 					logger.error("Error reading Line: " + originalVal, e);
 				}
@@ -182,26 +188,27 @@ public class SplitColumnByDelimiter {
 		RepFactory factory = workspace.getFactory();
 		HTable ht = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
 		List<Table> tables = new ArrayList<>();
-		char delimiterChar;
-
-		if (delimiter.equalsIgnoreCase("space"))
-			delimiterChar = ' ';
-		else if (delimiter.equalsIgnoreCase("tab"))
-			delimiterChar = '\t';
-		else {
-			delimiterChar = new Character(delimiter.charAt(0));
-		}
+		char delimiterChar  = getDelimiterChar();
+		
 		CloneTableUtils.getDatatable(worksheet.getDataTable(), ht, tables, selection);
 		for (Table t : tables) {
 			for (Row r : t.getRows(0, t.getNumRows(), selection)) {
 				String orgValue = r.getNeighbor(hNodeId).getValue().asString();
-				CSVReader reader = new CSVReader(new StringReader(orgValue),
-						delimiterChar);
-				String[] rowValues = reader.readNext();
-				reader.close();
+				String[] rowValues;
+				int startIndex = 0;
+				if(delimiterChar == '\u0000') {
+					rowValues = orgValue.split("");
+					//First value is always an empty string, ignore that
+					startIndex = 1;
+				} else {
+					CSVReader reader = new CSVReader(new StringReader(orgValue),
+							delimiterChar);
+					rowValues = reader.readNext();
+					reader.close();
+				}
 				if(rowValues != null) {
 					Node newNode = r.getNeighbor(newhNodeId);
-					for (int i = 0; i < rowValues.length; i++) {
+					for (int i = startIndex; i < rowValues.length; i++) {
 						Row dest = newNode.getNestedTable().addRow(factory);
 						Node destNode = dest.getNeighborByColumnName("Values", factory);
 						destNode.setValue(rowValues[i], NodeStatus.original, factory);
@@ -210,4 +217,19 @@ public class SplitColumnByDelimiter {
 			}
 		}
 	}
+
+	private char getDelimiterChar() {
+		char delimiterChar;
+		if (delimiter.equalsIgnoreCase("space"))
+			delimiterChar = ' ';
+		else if (delimiter.equalsIgnoreCase("tab"))
+			delimiterChar = '\t';
+		else if (delimiter.equalsIgnoreCase("character"))
+			delimiterChar = '\u0000';
+		else {
+			delimiterChar = new Character(delimiter.charAt(0));
+		}
+		return delimiterChar;
+	}
+	
 }

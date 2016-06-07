@@ -732,7 +732,7 @@ var SplitValueDialog = (function() {
 			
 			if (!delimiter) {
 				validationResult = false;
-			} else if (delimiter != "space" && delimiter != "tab" && delimiter.length != 1) {
+			} else if (delimiter != "space" && delimiter != "tab" && delimiter != "character" && delimiter.length != 1) {
 				validationResult = false;
 			}
 			if (!validationResult) {
