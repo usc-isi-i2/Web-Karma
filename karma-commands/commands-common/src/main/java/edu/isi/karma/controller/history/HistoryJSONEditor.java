@@ -1,6 +1,8 @@
 package edu.isi.karma.controller.history;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -28,14 +30,21 @@ public class HistoryJSONEditor {
 		CommandHistoryUtil util = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		Set<String> outputColumns = util.generateOutputColumns();
 		JSONArray newHistoryJSON = new JSONArray();
+		Object organizeCommand = null;
 		for (int i = 0; i < historyJSON.length(); i++) {
 			JSONArray inputParamArr = new JSONArray(historyJSON.getJSONObject(i).get(HistoryArguments.inputParameters.name()).toString());
 			WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
 			String commandName = (String)historyJSON.getJSONObject(i).get(HistoryArguments.commandName.name());
 			JSONArray commandTag = (JSONArray)historyJSON.getJSONObject(i).get(HistoryArguments.tags.name());
 			if (isCommandTag(commandTag, CommandTag.Transformation)) {
+				if(commandName.equals("OrganizeColumnsCommand")) {
+					organizeCommand = historyJSON.get(i);
+					continue;
+				}
+				
 				ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, false);
 				String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
+				
 				if (tmp == null) {
 					newHistoryJSON.put(historyJSON.get(i));
 				}
@@ -51,10 +60,15 @@ public class HistoryJSONEditor {
 					if (newOutputColumns.isEmpty())
 						newHistoryJSON.put(historyJSON.get(i));
 				}
-			}
-			else
+			} else { 
+				if(organizeCommand != null) {
+					newHistoryJSON.put(organizeCommand);
+					organizeCommand = null;
+				}
 				newHistoryJSON.put(historyJSON.get(i));
+			}
 		}
+		System.out.println("HISTORY:" + newHistoryJSON.toString(2));
 		historyJSON = newHistoryJSON;
 	}
 	
@@ -63,12 +77,23 @@ public class HistoryJSONEditor {
 		CommandHistoryUtil util = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		Set<String> outputColumns = util.generateOutputColumns();
 		JSONArray newHistoryJSON = new JSONArray();
+		List<Object> orderedColumnCommands = new ArrayList<>();
+		
 		for (int i = 0; i < historyJSON.length(); i++) {
 			JSONArray inputParamArr = new JSONArray(historyJSON.getJSONObject(i).get(HistoryArguments.inputParameters.name()).toString());
 			WorksheetCommandHistoryExecutor ex = new WorksheetCommandHistoryExecutor(worksheetId, workspace);
 			String commandName = (String)historyJSON.getJSONObject(i).get(HistoryArguments.commandName.name());
+			
 			JSONArray commandTag = (JSONArray)historyJSON.getJSONObject(i).get(HistoryArguments.tags.name());
 			if (isCommandTag(commandTag, CommandTag.Transformation)) {
+				if(CommandInputJSONUtil.getStringValue("orderedColumns", inputParamArr) != null) {
+					//We add commands that need orderedColumns into a list and these
+					//are the last executed at the end of all transformation commands
+					//as it could be that they order columns that are created by other
+					//Py Transformations
+					orderedColumnCommands.add(historyJSON.get(i));	
+					continue;
+				}
 				ex.normalizeCommandHistoryJsonInput(workspace, worksheetId, inputParamArr, commandName, false);
 				String tmp = CommandInputJSONUtil.getStringValue("outputColumns", inputParamArr);
 				if (tmp == null) {
@@ -86,9 +111,16 @@ public class HistoryJSONEditor {
 					if (newOutputColumns.isEmpty())
 						newHistoryJSON.put(historyJSON.get(i));
 				}
-			}
-			else if (!isCommandTag(commandTag, CommandTag.Modeling))
+			} else if (!isCommandTag(commandTag, CommandTag.Modeling)) {
+				for(Object orderedColCommand : orderedColumnCommands)
+					newHistoryJSON.put(orderedColCommand);
+				orderedColumnCommands.clear();
 				newHistoryJSON.put(historyJSON.get(i));
+			} else {
+				for(Object orderedColCommand : orderedColumnCommands)
+					newHistoryJSON.put(orderedColCommand);
+				orderedColumnCommands.clear();
+			}
 		}
 		historyJSON = newHistoryJSON;
 	}

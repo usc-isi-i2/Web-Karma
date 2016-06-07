@@ -78,6 +78,7 @@
 			<artifactId>mrunit</artifactId>
 			<version>1.1.0</version>
 			<classifier>hadoop2</classifier> 
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 		    <groupId>edu.isi</groupId>

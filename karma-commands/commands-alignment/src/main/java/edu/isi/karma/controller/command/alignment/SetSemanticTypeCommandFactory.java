@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.JSONInputCommandFactory;
+import edu.isi.karma.controller.command.alignment.SetMetaPropertyCommandFactory.Arguments;
 import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.SemanticTypesUpdate;
 import edu.isi.karma.rep.Workspace;
@@ -39,7 +40,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 
 	private enum Arguments {
 		worksheetId, hNodeId,
-		SemanticTypesArray, trainAndShowUpdates, rdfLiteralType, 
+		SemanticTypesArray, trainAndShowUpdates, rdfLiteralType, language,
 		selectionName
 	}
 
@@ -53,6 +54,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		String worksheetId = request.getParameter(Arguments.worksheetId.name());
 		String arrStr = request.getParameter(SemanticTypesUpdate.JsonKeys.SemanticTypesArray.name());
 		String rdfLiteralType = request.getParameter(Arguments.rdfLiteralType.name());
+		String language = request.getParameter(Arguments.language.name());
 		
 		JSONArray arr;
 		try {
@@ -63,7 +65,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		}
 		String selectionName = request.getParameter(Arguments.selectionName.name());
 		return new SetSemanticTypeCommand(getNewId(workspace), Command.NEW_MODEL, worksheetId, hNodeId, 
-				arr, true, rdfLiteralType, 
+				arr, true, rdfLiteralType, language,
 				selectionName);
 	}
 
@@ -73,6 +75,9 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		String arrStr = HistoryJsonUtil.getStringValue(Arguments.SemanticTypesArray.name(), inputJson);
 		boolean train = HistoryJsonUtil.getBooleanValue(Arguments.trainAndShowUpdates.name(), inputJson);
 		String rdfLiteralType = HistoryJsonUtil.getStringValue(Arguments.rdfLiteralType.name(), inputJson);
+		String language = null;
+		if(HistoryJsonUtil.valueExits(Arguments.language.name(), inputJson))
+			language = HistoryJsonUtil.getStringValue(Arguments.language.name(), inputJson);
 		
 		JSONArray arr;
 		try {
@@ -85,7 +90,7 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 		String selectionName = CommandInputJSONUtil.getStringValue(Arguments.selectionName.name(), inputJson);
 		SetSemanticTypeCommand comm = new SetSemanticTypeCommand(getNewId(workspace), model,
 				worksheetId, hNodeId, arr, 
-				train, rdfLiteralType, 
+				train, rdfLiteralType, language,
 				selectionName);
 		
 		comm.setInputParameterJson(inputJson.toString());
@@ -94,9 +99,9 @@ public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 	
 	public Command createCommand(String model, Workspace workspace, String worksheetId, String hNodeId, 
 			boolean isPartOfKey, JSONArray arr, boolean train, 
-			String rdfLiteralType, String selectionId) {
+			String rdfLiteralType, String language, String selectionId) {
 		return new SetSemanticTypeCommand(getNewId(workspace), model, worksheetId, hNodeId, 
-				arr, train, rdfLiteralType, selectionId);
+				arr, train, rdfLiteralType, language, selectionId);
 	}
 	@Override
 	public Class<? extends Command> getCorrespondingCommand()

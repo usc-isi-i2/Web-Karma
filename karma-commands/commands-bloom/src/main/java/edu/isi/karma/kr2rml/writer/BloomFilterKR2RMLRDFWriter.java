@@ -71,14 +71,14 @@ public class BloomFilterKR2RMLRDFWriter extends KR2RMLRDFWriter {
 
 	@Override
 	public void outputTripleWithLiteralObject(String subjUri,
-			String predicateUri, String value, String literalType) {
+			String predicateUri, String value, String literalType, String language) {
 		return;
 	}
 
 	@Override
 	public void outputTripleWithLiteralObject( PredicateObjectMap predicateObjectMap,
 			String subjUri, String predicateUri, String value,
-			String literalType) {
+			String literalType, String language) {
 		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
 			String tmp = subjUri.substring(1, subjUri.length() - 1);
 			subjUri = "<" + normalizeURI(tmp) + ">";
@@ -95,7 +95,7 @@ public class BloomFilterKR2RMLRDFWriter extends KR2RMLRDFWriter {
 
 	@Override
 	public void outputQuadWithLiteralObject(String subjUri,
-			String predicateUri, String value, String literalType, String graph) {
+			String predicateUri, String value, String literalType, String language, String graph) {
 		return;
 
 	}
@@ -103,7 +103,7 @@ public class BloomFilterKR2RMLRDFWriter extends KR2RMLRDFWriter {
 	@Override
 	public void outputQuadWithLiteralObject( PredicateObjectMap predicateObjectMap,
 			String subjUri, String predicateUri, String value,
-			String literalType, String graph) {
+			String literalType, String language, String graph) {
 		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
 			String tmp = subjUri.substring(1, subjUri.length() - 1);
 			subjUri = "<" + normalizeURI(tmp) + ">";

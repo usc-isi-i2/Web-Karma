@@ -76,6 +76,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 	private final String metaPropertyUri;
 	private String metaPropertyId;
 	private final String rdfLiteralType;
+	private final String language;
 	private String labelName = "";
 	private SynonymSemanticTypes oldSynonymTypes;
 	private Alignment oldAlignment;
@@ -91,7 +92,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			String hNodeId, METAPROPERTY_NAME metaPropertyName,
 			String metaPropertyUri, String metaPropertyId, 
 			boolean trainAndShowUpdates,
-			String rdfLiteralType, String selectionId) {
+			String rdfLiteralType, String language, String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		this.trainAndShowUpdates = trainAndShowUpdates;
@@ -99,6 +100,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		this.metaPropertyUri = metaPropertyUri;
 		this.metaPropertyId = metaPropertyId;
 		this.rdfLiteralType = rdfLiteralType;
+		this.language = language;
 
 		addTag(CommandTag.SemanticType);
 	}
@@ -158,6 +160,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		/** Check if a semantic type already exists for the column **/
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		columnNode.setRdfLiteralType(rdfLiteralType);
+		columnNode.setLanguage(language);
 		boolean semanticTypeAlreadyExists = false;
 		LabeledLink oldIncomingLinkToColumnNode = null;
 		Node oldDomainNode = null;
@@ -407,21 +410,4 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 	public Set<String> getOutputColumns() {
 		return new HashSet<>(Arrays.asList(hNodeId));
 	}
-
-	// private ColumnNode getColumnNode(Alignment alignment, HNode hNode) {
-	// String columnName = hNode.getColumnName();
-	// ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-	//
-	// if (columnNode == null) {
-	// columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType,
-	// null);
-	// } else {
-	// // Remove old column node if it exists
-	// alignment.removeNode(columnNode.getId());
-	// columnNode = alignment.addColumnNode(hNodeId, columnName, rdfLiteralType,
-	// null);
-	// }
-	// return columnNode;
-	// }
-
 }

@@ -141,7 +141,6 @@ public class TestBasicJSONRDFGenerator extends TestJSONRDFGenerator {
 			rdfGen.generateRDF(request);
 			
 			String rdf = sw.toString();
-			System.out.println(rdf);
 			assertNotEquals(rdf.length(), 0);
 			String[] lines = rdf.split("(\r\n|\n)");
 			int count = lines.length;

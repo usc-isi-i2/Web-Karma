@@ -727,7 +727,7 @@ function setSpecializedEdgeSemanticType(worksheetId, columnId, edge, rdfLiteralT
 	var returned = sendRequest(info, worksheetId);
 }
 
-function setSubClassSemanticType(worksheetId, columnId, clazz, rdfLiteralType) {
+function setSubClassSemanticType(worksheetId, columnId, clazz, rdfLiteralType, language) {
 	var info = generateInfoObject(worksheetId, columnId, "");
 	info["command"] = "SetMetaPropertyCommand";
 
@@ -742,24 +742,29 @@ function setSubClassSemanticType(worksheetId, columnId, clazz, rdfLiteralType) {
 
 	info["trainAndShowUpdates"] = true
 	info["rdfLiteralType"] = ''
+	info['language'] = '';
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
-	if(rdfLiteralType)
-		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
-	else
-		newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
+	newInfo.push(getParamObject("language", language, "other"));
+
 	info["newInfo"] = JSON.stringify(newInfo);
 	showLoading(info["worksheetId"]);
 	var returned = sendRequest(info, worksheetId);
 }
 
-function setSemanticType(worksheetId, columnId, type, rdfLiteralType) {
+function setSemanticType(worksheetId, columnId, type, rdfLiteralType, language) {
 	var info = generateInfoObject(worksheetId, columnId, "");
 	var newInfo = info['newInfo']; 
 	if(rdfLiteralType) {
 	} else {
-		rdfLiteralType = ''
+		rdfLiteralType = '';
+	}
+	if(language) {
+	} else {
+		language = '';
 	}
 	info["rdfLiteralType"] = rdfLiteralType;
+	info["language"] = language;
 	if(type.uri == "http://isi.edu/integration/karma/dev#classLink") {
 		info["command"] = "SetMetaPropertyCommand";
 		info["metaPropertyName"] = "isUriOfClass";
@@ -784,7 +789,7 @@ function setSemanticType(worksheetId, columnId, type, rdfLiteralType) {
 	}
 	newInfo.push(getParamObject("trainAndShowUpdates", true, "other"));
 	newInfo.push(getParamObject("rdfLiteralType", rdfLiteralType, "other"));
-	
+	newInfo.push(getParamObject("language", language, "other"));
 	info["newInfo"] = JSON.stringify(newInfo);
 	showLoading(info["worksheetId"]);
 	var returned = sendRequest(info, worksheetId);

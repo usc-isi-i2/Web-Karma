@@ -315,7 +315,7 @@ public class KR2RMLWorksheetRDFGenerator {
 			// Generate the label
 			HNode hNode = factory.getHNode(hNodeId);
 			outWriter.outputTripleWithLiteralObject("<" + colUri + ">", Uris.RDFS_LABEL_URI, 
-					hNode.getColumnName(), "");
+					hNode.getColumnName(), "", "");
 		}
 
 	}

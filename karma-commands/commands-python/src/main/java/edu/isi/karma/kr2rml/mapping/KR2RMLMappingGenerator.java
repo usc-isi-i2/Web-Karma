@@ -401,7 +401,12 @@ public class KR2RMLMappingGenerator {
 						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
 						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
 						
-						ObjectMap objMap = new ObjectMap(target.getId(), termSet, rdfLiteralTypeTermSet);
+						String language = lnode.getLanguage();
+						StringTemplateTerm languageTerm = new StringTemplateTerm(language, false);
+						TemplateTermSet languageTermSet = new TemplateTermSet();
+						languageTermSet.addTemplateTermToSet(languageTerm);
+						
+						ObjectMap objMap = new ObjectMap(target.getId(), termSet, rdfLiteralTypeTermSet, languageTermSet);
 						poMap.setObject(objMap);
 						
 						// Create the predicate
@@ -430,7 +435,12 @@ public class KR2RMLMappingGenerator {
 						TemplateTermSet rdfLiteralTypeTermSet = new TemplateTermSet();
 						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
 
-						ObjectMap objMap = new ObjectMap(hNodeId, termSet, rdfLiteralTypeTermSet);
+						String language = cnode.getLanguage();
+						StringTemplateTerm languageTerm = new StringTemplateTerm(language, false);
+						TemplateTermSet languageTermSet = new TemplateTermSet();
+						languageTermSet.addTemplateTermToSet(languageTerm);
+						
+						ObjectMap objMap = new ObjectMap(hNodeId, termSet, rdfLiteralTypeTermSet, languageTermSet);
 						poMap.setObject(objMap);
 						
 						// Create the predicate

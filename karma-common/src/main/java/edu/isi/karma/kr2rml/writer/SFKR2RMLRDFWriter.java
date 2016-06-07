@@ -79,15 +79,15 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 
 	@Override
 	public void outputTripleWithLiteralObject(String subjUri,
-			String predicateUri, String value, String literalType) {
+			String predicateUri, String value, String literalType, String language) {
 		E subject = checkAndAddsubjUri(null, generatedObjectsWithoutTriplesMap, subjUri);
-		addValue(null, subject, predicateUri, convertValueWithLiteralType(literalType, value));
+		addValue(null, subject, predicateUri, convertLiteral(value, literalType, language));
 	}
 
 	@Override
 	public void outputQuadWithLiteralObject(String subjUri,
-			String predicateUri, String value, String literalType, String graph) {
-		outputTripleWithLiteralObject(subjUri, predicateUri, value, literalType);
+			String predicateUri, String value, String literalType, String language, String graph) {
+		outputTripleWithLiteralObject(subjUri, predicateUri, value, literalType, language);
 	}
 
 	protected E checkAndAddSubjUri(String triplesMapId, String subjUri)
@@ -170,21 +170,21 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 	@Override
 	public void outputTripleWithLiteralObject( PredicateObjectMap predicateObjectMap, 
 			String subjUri, String predicateUri, String value,
-			String literalType) {
+			String literalType, String language) {
 		E subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?
-		addValue(predicateObjectMap, subject, predicateUri, convertValueWithLiteralType(literalType, value));
+		addValue(predicateObjectMap, subject, predicateUri, convertLiteral(value, literalType, language));
 	}
 
 	@Override
 	public void outputQuadWithLiteralObject( PredicateObjectMap predicateObjectMap, 
 			String subjUri, String predicateUri, String value,
-			String literalType, String graph) {
+			String literalType, String language, String graph) {
 
 		E subject = checkAndAddSubjUri(predicateObjectMap.getTriplesMap().getId(), subjUri);
 		//TODO should literal type be ignored?
 		//TODO should graph be ignored?
-		addValue(predicateObjectMap, subject, predicateUri, convertValueWithLiteralType(literalType, value));
+		addValue(predicateObjectMap, subject, predicateUri, convertLiteral(value, literalType, language));
 
 	}
 
@@ -221,8 +221,19 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 	}
 
 	protected abstract void collapseSameType(E obj);
-
-	protected Object convertValueWithLiteralType(String literalType, String value) {
+	protected abstract Object generateLanguageLiteral(Object literal, String language);
+	
+	
+	protected Object convertLiteral(String value, String literalType, String language) {
+		Object literalObj = generateLiteralWithType(value, literalType);
+		if(language != null && !language.equals("")) {
+			literalObj = generateLanguageLiteral(literalObj, language);
+		}
+		return literalObj;
+	}
+	
+	protected Object generateLiteralWithType(String value, String literalType) {
+		
 		if (numericLiteralTypes.contains(literalType)) {
 			ParsePosition parsePosition = new ParsePosition(0);
 			Number n = NumberFormat.getNumberInstance(Locale.US).parse(value, parsePosition);
@@ -238,8 +249,10 @@ public abstract class SFKR2RMLRDFWriter<E> extends KR2RMLRDFWriter {
 			else if (value.trim().equalsIgnoreCase("true"))
 				return true;
 		}
+		
 		return value;
 	}
+	
 	
 	public abstract E getNewObject(String triplesMapId, String subjUri);
 

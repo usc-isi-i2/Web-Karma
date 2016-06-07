@@ -49,16 +49,16 @@ public abstract class KR2RMLRDFWriter {
 			String objectUri);
 	
 	public abstract void outputTripleWithLiteralObject(String subjUri, String predicateUri,
-			String value, String literalType);
+			String value, String literalType, String language);
 
 	public abstract void outputTripleWithLiteralObject(PredicateObjectMap predicateObjectMap, String subjUri, String predicateUri,
-			String value, String literalType);
+			String value, String literalType, String language);
 	
 	public abstract void outputQuadWithLiteralObject(String subjUri, String predicateUri,
-			String value, String literalType, String graph);
+			String value, String literalType, String language, String graph);
 	
 	public abstract void outputQuadWithLiteralObject(PredicateObjectMap predicateObjectMap, String subjUri, String predicateUri,
-			String value, String literalType, String graph);
+			String value, String literalType, String language, String graph);
 	
 	public abstract void finishRow();
 	public abstract void flush();

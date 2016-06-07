@@ -73,6 +73,7 @@ public abstract class Uris {
 	public static final String RR_OBJECTMAP_URI = Namespaces.RR + "objectMap";
 	public static final String RR_COLUMN_URI = Namespaces.RR + "column";
 	public static final String RR_DATATYPE_URI = Namespaces.RR + "datatype";
+	public static final String RR_LANGUAGE_URI = Namespaces.RR + "language";
 	public static final String RR_LOGICAL_TABLE_URI = Namespaces.RR + "logicalTable";
 	public static final String RR_REF_OBJECT_MAP_CLASS_URI = Namespaces.RR + "RefObjectMap";
 	public static final String RR_PARENT_TRIPLE_MAP_URI = Namespaces.RR + "parentTriplesMap";

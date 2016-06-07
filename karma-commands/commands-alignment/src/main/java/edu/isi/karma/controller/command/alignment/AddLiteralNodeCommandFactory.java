@@ -16,7 +16,7 @@ public class AddLiteralNodeCommandFactory extends JSONInputCommandFactory {
 
 
 	enum Arguments {
-		worksheetId, nodeId, literalType, literalValue, isUri
+		worksheetId, nodeId, literalType, literalValue, isUri, language
 	}
 
 	@Override
@@ -34,13 +34,18 @@ public class AddLiteralNodeCommandFactory extends JSONInputCommandFactory {
 				workspace.getId(), worksheetId);
 		String literalType = HistoryJsonUtil.getStringValue(
 				Arguments.literalType.name(), inputJson);
+		String language = null;
+		if(HistoryJsonUtil.valueExits(Arguments.language.name(), inputJson))
+			language = HistoryJsonUtil.getStringValue(Arguments.language.name(), inputJson);
 		String literalValue = HistoryJsonUtil.getStringValue(
 				Arguments.literalValue.name(), inputJson);
+		
 		boolean isUri = HistoryJsonUtil.getBooleanValue(Arguments.isUri.name(), inputJson);
 		String nodeId = null;
 		if(HistoryJsonUtil.valueExits(Arguments.nodeId.name(), inputJson))
 			nodeId = HistoryJsonUtil.getStringValue(Arguments.nodeId.name(), inputJson);
-		AddLiteralNodeCommand cmd = new AddLiteralNodeCommand(getNewId(workspace), model, worksheetId, alignmentId, nodeId, literalValue, literalType, isUri);
+		AddLiteralNodeCommand cmd = new AddLiteralNodeCommand(getNewId(workspace), model, worksheetId, 
+				alignmentId, nodeId, literalValue, literalType, language, isUri);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

@@ -175,7 +175,8 @@ public class ModelLearningGraphCompact extends ModelLearningGraph {
 					
 					if (sortedMatchedNodes.isEmpty()) {
 						ColumnNode newNode = new ColumnNode(new RandomGUID().toString(), 
-								c.getHNodeId(), c.getColumnName(), c.getRdfLiteralType());
+								c.getHNodeId(), c.getColumnName(), c.getRdfLiteralType(),
+								c.getLanguage());
 						if (this.graphBuilder.addNode(newNode)) {
 							columnNodeMapping.put(n, newNode);
 						}

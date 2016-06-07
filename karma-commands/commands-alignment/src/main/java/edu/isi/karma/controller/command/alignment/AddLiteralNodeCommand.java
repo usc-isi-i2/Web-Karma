@@ -35,6 +35,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 	
 	private String literalValue;
 	private String literalType;
+	private String language;
 	private boolean isUri;
 	private String nodeId;
 	
@@ -46,11 +47,13 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected AddLiteralNodeCommand(String id, String model, String worksheetId, String alignmentId, String nodeId, String literalValue, String literalType, boolean isUri) {
+	protected AddLiteralNodeCommand(String id, String model, String worksheetId, String alignmentId, 
+			String nodeId, String literalValue, String literalType, String language, boolean isUri) {
 		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
 		this.literalValue = literalValue;
 		this.literalType = literalType;
+		this.language = language;
 		this.isUri = isUri;
 		this.nodeId = nodeId;
 
@@ -95,7 +98,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 		UpdateContainer uc = new UpdateContainer();
 		try {
 			if(nodeId == null) {
-				final LiteralNode ln = alignment.addLiteralNode(literalValue, literalType, isUri);
+				final LiteralNode ln = alignment.addLiteralNode(literalValue, literalType, language, isUri);
 				uc.add(new AbstractUpdate() {
 
 					@Override
@@ -120,7 +123,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 					
 				});
 			} else {
-				alignment.updateLiteralNode(nodeId, literalValue, literalType, isUri);
+				alignment.updateLiteralNode(nodeId, literalValue, literalType, language, isUri);
 			}
 			
 			if(!this.isExecutedInBatch())

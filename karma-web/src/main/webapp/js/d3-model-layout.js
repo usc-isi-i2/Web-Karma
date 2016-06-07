@@ -199,7 +199,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 
 	var drag = force.drag()
 		.on("dragstart", function(d) {
-			if (!d.outside.isOutside || d.noLayer){
+			if(d.type == "anchor") {
+				d3.select(this).classed("fixed", d.fixed = false);
+			} else if(!d.outside.isOutside || d.noLayer){
 	  			d3.select(this).classed("fixed", d.fixed = true);
 			}
 // 			console.log(JSON.stringify(d));
@@ -226,17 +228,18 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 				// labelForce.start();
 			}
 	  	})
-	    .on("dragend", function(d) {
+	  	.on("dragend", function(d) {
 	    	if(d.isTemporary) {
 	    		console.log("DragEnd of TemporaryLink")
 	    		originalNode = d.original;	
-	    		d3.select(event.target).call(function(d) {
+	    		var targetEvent = d3.event.sourceEvent;
+	    		d3.select(targetEvent.target).call(function(d) {
 	    			if(d.length > 0) {
 	    				if(d[0].length > 0 && d[0][0].__data__) {
 	    					data = d[0][0].__data__;
 	    					if(data.node) {
 	    						if(nodeDragDropListener != null) {
-	    							nodeDragDropListener(originalNode, data.node.original, event);
+	    							nodeDragDropListener(originalNode, data.node.original, targetEvent);
 	    						}
 	    					}
 	    				} 
@@ -258,7 +261,7 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	    // 		}
 	    	}
 
-	  		if (!d.outside.isOutside || d.noLayer){
+	  		if (d.type != "anchor" && (!d.outside.isOutside || d.noLayer)){
 	  			d.position.x = d.x;
 	  			d.position.y = d.y;
 	  		}

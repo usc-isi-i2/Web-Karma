@@ -27,6 +27,7 @@ public class ObjectMap extends TermMap {
 	
 	private final RefObjectMap refObjectMap;
 	private TemplateTermSet rdfLiteralType;
+	private TemplateTermSet language;
 
 //	public ObjectMap(String id, TemplateTermSet template) {
 //		super(id);
@@ -40,13 +41,25 @@ public class ObjectMap extends TermMap {
 		this.refObjectMap = refObjectMap;
 		this.template = null;
 		this.rdfLiteralType = null;
+		this.language = null;
 	}
 
-	public ObjectMap(String id, TemplateTermSet template, TemplateTermSet rdfLiteralTye) {
+	public ObjectMap(String id, TemplateTermSet template, 
+			TemplateTermSet rdfLiteralTye) {
 		super(id);
 		this.template = template;
 		this.refObjectMap = null;
 		this.rdfLiteralType = rdfLiteralTye;
+		this.language = null;
+	}
+	
+	public ObjectMap(String id, TemplateTermSet template, 
+			TemplateTermSet rdfLiteralTye, TemplateTermSet language) {
+		super(id);
+		this.template = template;
+		this.refObjectMap = null;
+		this.rdfLiteralType = rdfLiteralTye;
+		this.language = language;
 	}
 
 	@Override
@@ -54,7 +67,8 @@ public class ObjectMap extends TermMap {
 		if (template != null)
 			return "ObjectMap [\n" +
 					"template=" + template + ",\n" +
-					"rdfLiteralType+" + rdfLiteralType + "]";
+					"rdfLiteralType=" + rdfLiteralType + ",\n" +
+					"language=" + language + "]";
 		else if (refObjectMap != null)
 			return "RefObjectMap [" + refObjectMap.getParentTriplesMap().getId() + "]";
 		else return "<No ObjectMap or RefObjectMap found for the ObjectMap!>";
@@ -72,5 +86,8 @@ public class ObjectMap extends TermMap {
 		return rdfLiteralType;
 	}
 	
+	public TemplateTermSet getLanguage() {
+		return language;
+	}
 	
 }

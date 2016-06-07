@@ -179,7 +179,8 @@ public class ModelLearningGraphCompact_Old extends ModelLearningGraph {
 							Node newNode = null;
 							if (n instanceof ColumnNode) {
 								ColumnNode c = (ColumnNode)n;
-								newNode = new ColumnNode(new RandomGUID().toString(), c.getHNodeId(), c.getColumnName(), c.getRdfLiteralType());
+								newNode = new ColumnNode(new RandomGUID().toString(), c.getHNodeId(), 
+										c.getColumnName(), c.getRdfLiteralType(), c.getLanguage());
 							}
 							if (newNode == null) {
 								return null;
