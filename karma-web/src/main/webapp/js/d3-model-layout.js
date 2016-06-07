@@ -232,13 +232,14 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 	    	if(d.isTemporary) {
 	    		console.log("DragEnd of TemporaryLink")
 	    		originalNode = d.original;	
-	    		d3.select(event.target).call(function(d) {
+	    		var targetEvent = d3.event.sourceEvent;
+	    		d3.select(targetEvent.target).call(function(d) {
 	    			if(d.length > 0) {
 	    				if(d[0].length > 0 && d[0][0].__data__) {
 	    					data = d[0][0].__data__;
 	    					if(data.node) {
 	    						if(nodeDragDropListener != null) {
-	    							nodeDragDropListener(originalNode, data.node.original, event);
+	    							nodeDragDropListener(originalNode, data.node.original, targetEvent);
 	    						}
 	    					}
 	    				} 
