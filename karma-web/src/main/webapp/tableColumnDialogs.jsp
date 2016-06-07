@@ -139,6 +139,7 @@
 						<input class="form-control" type="text" id="valueSplitDelimiter" required>
 						<span class="help-block">Enter "space" to use single space</span>
 						<span class="help-block">Enter "tab" to use tab</span>
+						<span class="help-block">Enter "character" to split by every character</span>
 					</div>
 				
 					

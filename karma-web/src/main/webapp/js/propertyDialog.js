@@ -58,7 +58,7 @@ var PropertyDialog = (function() {
 			$("div.error", dialog).show();
 		}
 
-		function changeLinkUI() {
+		function changeLinkUI(event) {
 			initRightDiv("Change Link");
 			propertyTabs.show(worksheetId, alignmentId, propertyId, propertyUri, 
 													sourceNodeId, sourceNodeType, sourceLabel, sourceDomain, sourceId, sourceIsUri,
@@ -80,7 +80,7 @@ var PropertyDialog = (function() {
 			rightDiv.empty();
 		}
 
-		function deleteLink(e) {
+		function deleteLink(event) {
 			console.log("deleteLink");
 			if (confirm("Are you sure you wish to delete the link?")) {
 				var info;
@@ -112,10 +112,10 @@ var PropertyDialog = (function() {
 				showLoading(worksheetId);
 				var returned = sendRequest(info, worksheetId);
 			}
-			e.preventDefault();
+			event.preventDefault();
 		}
 
-		function advanceOptionsUI(e) {
+		function advanceOptionsUI(event) {
 			initRightDiv("Advanced Options");
 			PropertyAdvanceOptionsDialog.getInstance().show(propertyLiteralType, 
 						propertyLanguage, propertyIsSubClass, 
@@ -137,7 +137,7 @@ var PropertyDialog = (function() {
 			hide();
 		}
 
-		function changeFromUI(e) {
+		function changeFromUI(event) {
 			initRightDiv("Change From", "Change From Class for Link");
 
 			ClassTabs.getInstance().show(worksheetId, sourceNodeId, sourceLabel, sourceDomain, 
@@ -174,7 +174,7 @@ var PropertyDialog = (function() {
 
 		}
 
-		function changeToUI(e) {
+		function changeToUI(event) {
 			initRightDiv("Change To", "Change To Class for Link");
 
 			ClassTabs.getInstance().show(worksheetId, targetNodeId, targetLabel, targetDomain, 
@@ -201,11 +201,11 @@ var PropertyDialog = (function() {
 				event);
 		}
 
-		function selectPropertyFromMenu(property, e) {
+		function selectPropertyFromMenu(property, event) {
 			console.log("Selected property:" + label);
 			if(sourceDomain == "BlankNode" || targetDomain == "BlankNode") {
 				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, property.uri, property.label);
-				e.stopPropagation();
+				event.stopPropagation();
 				hide();
 			} else {
 				if(targetNodeType == "ColumnNode") {
