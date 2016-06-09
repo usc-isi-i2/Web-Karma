@@ -140,6 +140,7 @@
 						<span class="help-block">Enter "space" to use single space</span>
 						<span class="help-block">Enter "tab" to use tab</span>
 						<span class="help-block">Enter "character" to split by every character</span>
+						<span class="help-block">Enter "regex:" followed by a Regular Expression to split using java's String.split method</span>
 					</div>
 				
 					

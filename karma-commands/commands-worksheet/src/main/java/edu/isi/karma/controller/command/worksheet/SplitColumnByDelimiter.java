@@ -38,7 +38,7 @@ public class SplitColumnByDelimiter {
 	private SuperSelection selection;
 	private final String newhNodeId;
 	private String splitValueHNodeId;
-
+	private String regExSplitter;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public SplitColumnByDelimiter(String hNodeId, Worksheet worksheet,
@@ -50,6 +50,7 @@ public class SplitColumnByDelimiter {
 		this.workspace = workspace;
 		this.selection = sel;
 		this.newhNodeId = null;
+		this.regExSplitter = "";
 	}
 
 	public SplitColumnByDelimiter(String hNodeId, String newhNodeId, Worksheet worksheet,
@@ -61,6 +62,7 @@ public class SplitColumnByDelimiter {
 		this.workspace = workspace;
 		this.newhNodeId = newhNodeId;
 		this.selection = sel;
+		this.regExSplitter = "";
 	}
 
 	public String getSplitValueHNodeId() {
@@ -126,9 +128,10 @@ public class SplitColumnByDelimiter {
 					String[] rowValues;
 					int startIndex = 0;
 					if(delimiterChar == '\u0000') {
-						rowValues = originalVal.split("");
-						//First value is always an empty string, ignore that
-						startIndex = 1;
+						rowValues = originalVal.split(regExSplitter);
+						//Ignore first empty one
+						if(rowValues.length > 0 && rowValues[0].length() == 0)
+							startIndex = 1;
 					} else {
 						CSVReader reader = new CSVReader(new StringReader(originalVal),
 								delimiterChar);
@@ -197,9 +200,10 @@ public class SplitColumnByDelimiter {
 				String[] rowValues;
 				int startIndex = 0;
 				if(delimiterChar == '\u0000') {
-					rowValues = orgValue.split("");
-					//First value is always an empty string, ignore that
-					startIndex = 1;
+					rowValues = orgValue.split(regExSplitter);
+					////Ignore first empty one
+					if(rowValues.length > 0 && rowValues[0].length() == 0)
+						startIndex = 1;
 				} else {
 					CSVReader reader = new CSVReader(new StringReader(orgValue),
 							delimiterChar);
@@ -224,9 +228,13 @@ public class SplitColumnByDelimiter {
 			delimiterChar = ' ';
 		else if (delimiter.equalsIgnoreCase("tab"))
 			delimiterChar = '\t';
-		else if (delimiter.equalsIgnoreCase("character"))
+		else if (delimiter.equalsIgnoreCase("character")) {
 			delimiterChar = '\u0000';
-		else {
+			regExSplitter = "";
+		} else if(delimiter.toLowerCase().startsWith("regex:")) {
+			delimiterChar = '\u0000';
+			regExSplitter = delimiter.substring(6);
+		} else {
 			delimiterChar = new Character(delimiter.charAt(0));
 		}
 		return delimiterChar;
