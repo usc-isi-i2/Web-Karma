@@ -169,7 +169,12 @@ public class GetPropertiesCommand extends WorksheetCommand {
 							edgeLabelStr = linkLabel.getUri();
 						}
 						
-						edgeObj.put(JsonKeys.label.name(), edgeLabelStr);
+						// UPDATED 07-05-16 -  provide rdfs:label names when they are used.
+						if( linkLabel.getRdfsLabel() == null )
+							edgeObj.put(JsonKeys.label.name(), edgeLabelStr);
+						else 
+							edgeObj.put(JsonKeys.label.name(), linkLabel.getRdfsLabel());
+							
 						edgeObj.put(JsonKeys.uri.name(), linkLabel.getUri());
 						edgeObj.put(JsonKeys.id.name(), link.getId());
 						
