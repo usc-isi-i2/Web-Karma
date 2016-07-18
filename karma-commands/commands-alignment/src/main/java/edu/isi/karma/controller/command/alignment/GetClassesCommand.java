@@ -129,7 +129,13 @@ public class GetClassesCommand extends WorksheetCommand {
 						String nodeLabelStr = node.getDisplayId();
 
 						Label nodeLabel = node.getLabel();
-						if (nodeLabel.getUri() !=null && nodeLabel.getNs() != null 
+						// ~~~
+						// UPDATED 07-05-16 -  provide rdfs:label names when they are used.
+						if( nodeLabel.getRdfsLabel() != null ) {
+							nodeLabelStr = nodeLabel.getRdfsLabel();						
+						}
+	 					// ~~~
+						else if (nodeLabel.getUri() != null && nodeLabel.getNs() != null 
 								&& nodeLabel.getUri().equalsIgnoreCase(nodeLabel.getNs())) {
 							nodeLabelStr = node.getId();
 						} else if(nodeLabel.getPrefix() == null && nodeLabel.getUri() != null) {

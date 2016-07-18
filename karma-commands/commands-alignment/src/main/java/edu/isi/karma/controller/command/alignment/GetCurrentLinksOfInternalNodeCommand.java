@@ -144,15 +144,28 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 				String edgeTargetUri = edgeTarget.getUri();
 				
 				Label srcNodeLabel = edgeSource.getLabel();
-				if (srcNodeLabel.getUri() !=null && srcNodeLabel.getNs() != null 
+				// ~~~
+				// UPDATED 07-05-16 -  provide rdfs:label names when they are used.
+				if ( srcNodeLabel.getRdfsLabel() != null ) {
+					edgeSourceLabel = srcNodeLabel.getRdfsLabel();
+				} 
+				// ~~~
+				else if (srcNodeLabel.getUri() !=null && srcNodeLabel.getNs() != null 
 						&& srcNodeLabel.getUri().equalsIgnoreCase(srcNodeLabel.getNs())) {
 					edgeSourceLabel = edgeSource.getId();
 				}
 				Label trgNodeLabel = edgeTarget.getLabel();
-				if (trgNodeLabel.getUri() !=null && trgNodeLabel.getNs() != null 
+				// ~~~
+				// UPDATED 07-05-16 -  provide rdfs:label names when they are used.
+				if ( trgNodeLabel.getRdfsLabel() != null ) {
+					edgeTargetLabel = trgNodeLabel.getRdfsLabel();
+				} 
+				// ~~~
+				else if (trgNodeLabel.getUri() !=null && trgNodeLabel.getNs() != null 
 						&& trgNodeLabel.getUri().equalsIgnoreCase(trgNodeLabel.getNs())) {
 					edgeTargetLabel = edgeTarget.getId();
 				}
+				// ~~~
 					
 				JSONObject edgeObj = new JSONObject();
 				edgeObj.put(JsonKeys.edgeId.name(), link.getLabel().getUri());
