@@ -732,11 +732,13 @@ var SplitValueDialog = (function() {
 			
 			if (!delimiter) {
 				validationResult = false;
-			} else if (delimiter != "space" && delimiter != "tab" && delimiter.length != 1) {
+			} else if (delimiter != "space" && delimiter != "tab" 
+				&& delimiter != "character" && delimiter.indexOf("regex:") != 0
+				&& delimiter.length != 1) {
 				validationResult = false;
 			}
 			if (!validationResult) {
-				showError("Length of the delimter should be 1");
+				showError("Length of the delimter should be 1 or it should start with regex:");
 				$("#valueSplitDelimiter", dialog).focus();
 				return false;
 			}

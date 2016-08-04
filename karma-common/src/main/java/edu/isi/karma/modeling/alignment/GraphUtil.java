@@ -576,7 +576,7 @@ public class GraphUtil {
 			writer.name("rdfLiteralType");
 			if (cn.getRdfLiteralType() == null) writer.value(nullStr);
 			else writeLabel(writer, cn.getRdfLiteralType());
-			if(cn.getLanguage() == null) writer.value(nullStr);
+			if(cn.getLanguage() == null) writer.name("language").value(nullStr);
 			else writer.name("language").value(cn.getLanguage());
 			writer.name("userSemanticTypes");
 			if (cn.getUserSemanticTypes() == null) writer.value(nullStr);
