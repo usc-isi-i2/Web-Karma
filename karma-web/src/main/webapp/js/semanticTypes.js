@@ -2635,6 +2635,21 @@ var AddLiteralNodeDialog = (function() {
 				 info["workspaceId"] = $.workspaceGlobalInformation.id;
 				 var newInfo = [];
 				 var literal = $("#literal", dialog).val();
+
+				 if(literal.length == 0) {
+				 	alert("Please enter the literal");
+				 	e.preventDefault();
+				 	return;
+				 }
+
+				 if(dialogMode == "addWithProperty") {
+				 	var property = propertyUI.getSelectedProperty();
+				 	if(property.uri == "") {
+				 		alert("Please select a property");
+				 		e.preventDefault();
+				 		return;
+				 	}
+				 }
 				 var literalType = $("#literalType", dialog).val();  
 				 var language = $("#literalLanguage", dialog).val();  
 				 var isUri = $("input#isUri").is(":checked");
