@@ -39,6 +39,7 @@ import edu.isi.karma.kr2rml.template.TemplateTermSet;
 import edu.isi.karma.kr2rml.template.TemplateTermSetPopulator;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
 import edu.isi.karma.modeling.Namespaces;
+import edu.isi.karma.modeling.Uris;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.RepFactory;
 
@@ -99,7 +100,7 @@ public class ColumnPredicateObjectMappingPlan extends
 	protected void outputTriple(KR2RMLRDFWriter outWriter,
 			PopulatedTemplateTermSet subject,
 			PopulatedTemplateTermSet predicate, PopulatedTemplateTermSet object) {
-		if(objectTemplateTermSetPopulator.getTerms().isSingleUriString())
+		if(objectTemplateTermSetPopulator.getTerms().isSingleUriString() || predicate.getURI().equals("<" + Uris.RDF_TYPE_URI + ">"))
 		{
 			outWriter.outputTripleWithURIObject(pom, subject.getURI(), predicate.getURI(), uriFormatter.getExpandedAndNormalizedUri(object.getURI()));
 		}
