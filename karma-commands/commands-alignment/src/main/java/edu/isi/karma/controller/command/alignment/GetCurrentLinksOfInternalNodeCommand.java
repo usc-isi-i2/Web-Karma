@@ -49,7 +49,8 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 
 	private enum JsonKeys {
 		updateType, edgeLabel, edgeId, edgeSource, edgeTarget, 
-		edges, direction, edgeSourceId, edgeTargetId, edgeSourceUri, edgeTargetUri
+		edges, direction, edgeSourceId, edgeTargetId, edgeSourceUri, edgeTargetUri,
+		edgeSourceRDFSLabel, edgeTargetRDFSLabel
 	}
 	
 	private enum LINK_DIRECTION {
@@ -144,36 +145,25 @@ public class GetCurrentLinksOfInternalNodeCommand extends Command {
 				String edgeTargetUri = edgeTarget.getUri();
 				
 				Label srcNodeLabel = edgeSource.getLabel();
-				// ~~~
-				// UPDATED 07-05-16 -  provide rdfs:label names when they are used.
-				if ( srcNodeLabel.getRdfsLabel() != null ) {
-					edgeSourceLabel = srcNodeLabel.getRdfsLabel();
-				} 
-				// ~~~
-				else if (srcNodeLabel.getUri() !=null && srcNodeLabel.getNs() != null 
+				if (srcNodeLabel.getUri() !=null && srcNodeLabel.getNs() != null 
 						&& srcNodeLabel.getUri().equalsIgnoreCase(srcNodeLabel.getNs())) {
 					edgeSourceLabel = edgeSource.getId();
 				}
 				Label trgNodeLabel = edgeTarget.getLabel();
-				// ~~~
-				// UPDATED 07-05-16 -  provide rdfs:label names when they are used.
-				if ( trgNodeLabel.getRdfsLabel() != null ) {
-					edgeTargetLabel = trgNodeLabel.getRdfsLabel();
-				} 
-				// ~~~
-				else if (trgNodeLabel.getUri() !=null && trgNodeLabel.getNs() != null 
+				if (trgNodeLabel.getUri() !=null && trgNodeLabel.getNs() != null 
 						&& trgNodeLabel.getUri().equalsIgnoreCase(trgNodeLabel.getNs())) {
 					edgeTargetLabel = edgeTarget.getId();
 				}
-				// ~~~
 					
 				JSONObject edgeObj = new JSONObject();
 				edgeObj.put(JsonKeys.edgeId.name(), link.getLabel().getUri());
 				edgeObj.put(JsonKeys.edgeLabel.name(), linkLabel);
 				edgeObj.put(JsonKeys.edgeSource.name(), edgeSourceLabel);
+				edgeObj.put(JsonKeys.edgeSourceRDFSLabel.name(), srcNodeLabel.getRdfsLabel());
 				edgeObj.put(JsonKeys.edgeSourceId.name(), edgeSourceId);
 				edgeObj.put(JsonKeys.edgeSourceUri.name(), edgeSourceUri);
 				edgeObj.put(JsonKeys.direction.name(), direction.name());
+				edgeObj.put(JsonKeys.edgeTargetRDFSLabel.name(), trgNodeLabel.getRdfsLabel());
 				edgeObj.put(JsonKeys.edgeTarget.name(), edgeTargetLabel);
 				edgeObj.put(JsonKeys.edgeTargetId.name(), edgeTargetId);
 				edgeObj.put(JsonKeys.edgeTargetUri.name(), edgeTargetUri);

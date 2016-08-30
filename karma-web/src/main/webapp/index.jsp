@@ -180,6 +180,19 @@ and related projects, please see: http://www.isi.edu/integration
 		            
 		            <li><a href="#" id="modelManagerButton" data-html='true' data-toggle='tooltip' data-placement='bottom'>Manage Models</a></li>
 
+		            <li class="dropdown">
+		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
+		              <ul class="dropdown-menu multi-level">
+		                  <li class="dropdown-submenu"><a href="#" id="settingDisplayRDFSLabel">Display rdfs:label</a>
+		                  	<ul class="dropdown-menu">
+		                  		<li><a href="#" id="displayRDFSLabel_labelFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;rdfs:label First</a></li>
+								<li><a href="#" id="displayRDFSLabel_idFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Name or ID First</a></li>
+		                  	</ul>
+		                  </li>
+		                  
+		              </ul>
+		            </li>
+
 					<li><a href="#" id="resetButton" data-html='true' title='Delete all saved files,<br/>use with care!' data-toggle='tooltip' data-placement='bottom'>Reset ...</a></li>
 					
 		            <li>
@@ -372,6 +385,7 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/model.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/saveSvgAsPng.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/historyOptions.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/settings.js?<jsp:include page='version.jsp' />"></script>
         
         <%
         if(UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()) {
@@ -390,6 +404,9 @@ and related projects, please see: http://www.isi.edu/integration
         	var knownModelsAlignment = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getKnownModelsAlignment()%>;
         	var forceLayoutEnabled = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).isForceModelLayoutEnabled()%>;
         	var DEFAULT_PROPERTY_URI = "<%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getDefaultProperty()%>";
+        	var showRDFSLabel_LabelFirst = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).showRDFSLabelWithLabelFirst()%>;
+			var showRDFSLabel_IDFirst = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).showRDFSLabelWithIDFirst()%>;
+
 
             $(function() {
                 // Clear the workspace when closing the window
@@ -486,6 +503,7 @@ and related projects, please see: http://www.isi.edu/integration
             		showModeHeader("Automatic Mode");
 
             	loadPropertiesForCache();
+            	Settings.getInstance().setDisplayRDFSLabel(showRDFSLabel_LabelFirst, showRDFSLabel_IDFirst);
 			});
             
             var footerPositionTimer = null;

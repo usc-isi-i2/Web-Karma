@@ -44,7 +44,7 @@ public class GetPropertiesCommand extends WorksheetCommand {
 	}
 	
 	private enum JsonKeys {
-		updateType, label, id, properties, uri, type
+		updateType, label, id, properties, uri, type, rdfsLabel
 	}
 	
 	private String classURI, domainURI, rangeURI, linkId;
@@ -169,11 +169,8 @@ public class GetPropertiesCommand extends WorksheetCommand {
 							edgeLabelStr = linkLabel.getUri();
 						}
 						
-						// UPDATED 07-05-16 -  provide rdfs:label names when they are used.
-						if( linkLabel.getRdfsLabel() == null )
-							edgeObj.put(JsonKeys.label.name(), edgeLabelStr);
-						else 
-							edgeObj.put(JsonKeys.label.name(), linkLabel.getRdfsLabel());
+						edgeObj.put(JsonKeys.label.name(), edgeLabelStr);
+						edgeObj.put(JsonKeys.rdfsLabel.name(), linkLabel.getRdfsLabel());
 							
 						edgeObj.put(JsonKeys.uri.name(), linkLabel.getUri());
 						edgeObj.put(JsonKeys.id.name(), link.getId());

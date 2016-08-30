@@ -329,11 +329,13 @@ function parseClassJSON(clazz, result, allLabels) {
 	var uri = clazz.nodeUri;
 	var id = clazz.nodeId;
 	var label = clazz.nodeLabel;
+	var rdfsLabel = clazz.nodeRDFSLabel;
 
 	var node = {
 		"label": label,
 		"id": id,
-		"uri": uri
+		"uri": uri,
+		"rdfsLabel": rdfsLabel
 	};
 	result.push(node);
 	//	if(clazz.children) {
@@ -590,6 +592,7 @@ function getRecommendedProperties(worksheetId, linkId) {
 function parsePropertyJSON(prop, result) {
 	var node = {
 		"label": prop.label,
+		"rdfsLabel": prop.rdfsLabel,
 		"id": prop.id,
 		"uri": prop.uri,
 		"type": prop.type

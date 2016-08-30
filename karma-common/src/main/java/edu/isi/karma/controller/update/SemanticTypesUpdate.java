@@ -59,8 +59,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private Alignment alignment;
 
 	public enum JsonKeys {
-		HNodeId, FullType, ConfidenceLevel, Origin, DisplayLabel, 
-		DisplayDomainLabel, DomainId, DomainUri, SemanticTypesArray, isPrimary, isPartOfKey, 
+		HNodeId, FullType, ConfidenceLevel, Origin, DisplayLabel, DisplayRDFSLabel,
+		DisplayDomainLabel, DomainRDFSLabel, DomainId, DomainUri, SemanticTypesArray, isPrimary, isPartOfKey, 
 		Types, isMetaProperty, rdfLiteralType, language
 	}
 
