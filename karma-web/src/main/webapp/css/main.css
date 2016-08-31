@@ -124,3 +124,7 @@ body {
 .rdfsLabel {
 	color: #2a627e;
 }
+
+.dialog-list-tab {
+	overflow-wrap: break-word;
+}

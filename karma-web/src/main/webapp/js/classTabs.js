@@ -160,7 +160,7 @@ var ClassTabs = (function() {
 				var label = item["label"];
 				var uri = item["uri"];
 
-				var li = $("<li>").addClass("col-xs-4")
+				var li = $("<li>").addClass("col-xs-4").addClass("dialog-list-tab")
 				if(label == "divider") {
 					li.addClass("divider");
 					
