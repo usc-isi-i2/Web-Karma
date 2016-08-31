@@ -36,18 +36,18 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 			$(list1)
 				.on("select_node.jstree", function(e, data) {
 					var selectedNodeData = data.node.original;
-					propertyData.label = selectedNodeData.text;
-					propertyData.rdfsLabel = selectedNodeData.rdfsLabel;
+					propertyData.label = selectedNodeData.metadata.label;
+					propertyData.rdfsLabel = selectedNodeData.metadata.rdfsLabel;
 					propertyData.uri = selectedNodeData.metadata.uri;
 					propertyData.id = selectedNodeData.metadata.id;
 					propertyData.other = selectedNodeData.metadata.other;
 					
-					var treeId = PropertyUI.getNodeID(propertyData.label, propertyData.id, propertyData.uri);
+					var treeId = PropertyUI.getNodeID(propertyData.label, propertyData.rdfsLabel, propertyData.id, propertyData.uri);
 					$(list1).jstree('open_node', treeId); //Open node will scroll to that pos
 
 					$(list2).jstree("deselect_all");
 
-					$("#" + id + "_propertyKeyword").val(propertyData.label);
+					$("#" + id + "_propertyKeyword").val(Settings.getInstance().getDisplayLabel(propertyData.label, propertyData.rdfsLabel, true));
 					if (!selectOnLoad && propertySelectorCallback != null) {
 						propertySelectorCallback(propertyData);
 					}
@@ -56,7 +56,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 				.on("loaded.jstree", function(e, data) {
 					console.log("property jstree Type: " + $(list1).attr("id"));
 					if (propertyData.label.length > 0) {
-						$("#" + id + "_propertyKeyword").val(Settings.getInstance().getDisplayLabel(propertyData.label, propertyData.rdfsLabel));
+						$("#" + id + "_propertyKeyword").val(Settings.getInstance().getDisplayLabel(propertyData.label, propertyData.rdfsLabel, true));
 					}
 					window.setTimeout(function() {
 						if (propertyData.label.length > 0) {
@@ -125,7 +125,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 				.addClass("form-control")
 				.attr("id", id + "_propertyKeyword")
 				.attr("autocomplete", "off")
-				.val(Settings.getInstance().getDisplayLabel(propertyData.label, propertyData.rdfsLabel))
+				.val(Settings.getInstance().getDisplayLabel(propertyData.label, propertyData.rdfsLabel, true))
 				.addClass("propertyInput")
 			);
 
@@ -282,7 +282,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 
 //Static declarations
 PropertyUI.getNodeObject = function(label, rdfsLabel, cId, uri, other) {
-	var treeId = PropertyUI.getNodeID(label, cId, uri);
+	var treeId = PropertyUI.getNodeID(label, rdfsLabel, cId, uri);
 
 	var text = Settings.getInstance().getDisplayLabel(label, rdfsLabel);
 

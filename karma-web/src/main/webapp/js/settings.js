@@ -69,12 +69,16 @@ var Settings = (function() {
 			return showRDFSLabel_idFirst;
 		}
 
-		function getDisplayLabel(label, rdfsLabel) {
+		function getDisplayLabel(label, rdfsLabel, noStyle) {
 			if(rdfsLabel && rdfsLabel != "") {
+				if(noStyle)
+					rdfsLabelShow = rdfsLabel;
+				else
+					rdfsLabelShow = "<span class='rdfsLabel'>" + rdfsLabel + "</span>"
 				if(showRDFSLabel_idFirst)
-					return label + " " + rdfsLabel;
+					return label + " " + rdfsLabelShow;
 				if(showRDFSLabel_labelFirst)
-					return rdfsLabel + " " + label;
+					return rdfsLabelShow + " " + label;
 			}
 			return label;
 		}

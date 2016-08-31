@@ -39,8 +39,8 @@ function ClassUI(id,
 			$(list1)
 				.on("select_node.jstree", function(e, data) {
 					var selectedNodeData = data.node.original;
-					classData.label = selectedNodeData.text;
-					classData.rdfsLabel = selectedNodeData.rdfsLabel;
+					classData.label = selectedNodeData.metadata.label;
+					classData.rdfsLabel = selectedNodeData.metadata.rdfsLabel;
 					classData.uri = selectedNodeData.metadata.uri;
 					classData.id = selectedNodeData.metadata.id;
 
@@ -48,7 +48,7 @@ function ClassUI(id,
 					$(list1).jstree('open_node', treeId); //Open node will scroll to that pos
 
 					$(list2).jstree("deselect_all");
-					$("#" + id + "_classKeyword").val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel));
+					$("#" + id + "_classKeyword").val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel, true));
 
 					if (!selectOnLoad && classSelectorCallback != null) {
 						classSelectorCallback(classData);
@@ -58,7 +58,7 @@ function ClassUI(id,
 				.on("loaded.jstree", function(e, data) {
 					console.log("loaded classlist: " + $(list1).attr("id"));
 					if (classData.label.length > 0 && classData.label != "Class") {
-						$("#" + id + "_classKeyword").val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel));
+						$("#" + id + "_classKeyword").val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel, true));
 					}
 					window.setTimeout(function() {
 						if (classData.label.length > 0 && classData.label != "Class") {
@@ -122,7 +122,7 @@ function ClassUI(id,
 				.addClass("form-control")
 				.attr("id", id + "_classKeyword")
 				.attr("autocomplete", "off")
-				.val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel))
+				.val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel, true))
 				.addClass("classInput")
 			);
 
@@ -283,7 +283,7 @@ function ClassUI(id,
 
 //Static declarations
 ClassUI.getNodeObject = function(label, rdfsLabel, cId, uri) {
-	var treeId = ClassUI.getNodeID(label, cId, uri);
+	var treeId = ClassUI.getNodeID(label, rdfsLabel, cId, uri);
 	var text = Settings.getInstance().getDisplayLabel(label, rdfsLabel);
 	var nodeData = {
 		"id": treeId,

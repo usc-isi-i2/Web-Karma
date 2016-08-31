@@ -390,6 +390,8 @@ var SetSemanticTypeDialog = (function() {
 			fakeSemType["FullType"] = "fakePropertyURI";
 			fakeSemType["DomainUri"] = "fakeDomainURI";
 			fakeSemType["DomainId"] = "fakeDomainID";
+			fakeSemType["DomainRDFSLabel"] = "";
+			fakeSemType["DisplayRDFSLabel"] = "";
 			fakeSemType["DisplayLabel"] = "Property";
 			fakeSemType["DisplayDomainLabel"] = "Class";
 			// Add it to the table
@@ -706,9 +708,10 @@ var SetSemanticTypeDialog = (function() {
 				//defaultProperty = "";
 			} else {
 				defaultClass = $(parentTrTag).data("DisplayDomainLabel");
+				defaultClassRDFS = $(parentTrTag).data("DomainRDFSLabel");
 				var classUri = $(parentTrTag).data("DomainUri");
-				classUI.setDefaultClass(defaultClass, classUri, classUri);
-				propertyUI.setSelectedClass(defaultClass, classUri, classUri);
+				classUI.setDefaultClass(defaultClass, defaultClassRDFS, classUri, classUri);
+				propertyUI.setSelectedClass(defaultClass, defaultClassRDFS, classUri, classUri);
 				var defaultProperty = $(parentTrTag).data("DisplayLabel");
 				var defaultPropertyUri = $(parentTrTag).data("FullType");
 				var defaultPropertyRDFSLabel = $(parentTrTag).data("DisplayRDFSLabel");
@@ -825,11 +828,12 @@ var SetSemanticTypeDialog = (function() {
 					if ($.trim(inputVal) == "" && $(rowToChange).data("DomainId") != "") {
 						var newFullType = $(rowToChange).data("DomainId");
 						var newDisplayLabel = $(rowToChange).data("DisplayDomainLabel");
+						var newDisplayRDFSLabel = $(rowToChange).data("DomainRDFSLabel");
 
-						$(rowToChange).data("ResourceType", "Class").data("FullType", newFullType).data("DisplayLabel", newDisplayLabel).data("DomainId", "").data("DomainUri", "").data("DisplayDomainLabel", "");
+						$(rowToChange).data("ResourceType", "Class").data("FullType", newFullType).data("DisplayLabel", newDisplayLabel).data("DomainId", "").data("DomainUri", "").data("DisplayDomainLabel", "").data("DomainRDFSLabel", newDisplayRDFSLabel);
 						displayLabel = Settings.getInstance().getDisplayLabel($(rowToChange).data("DisplayLabel"),$(rowToChange).data("DisplayRDFSLabel"));
 					} else {
-						$(rowToChange).data("FullType", uri).data("DisplayLabel", properCasedKey);
+						$(rowToChange).data("FullType", uri).data("DisplayLabel", properCasedLabel).data("DisplayRDFSLabel", properCasedRDFSLabel);
 						displayLabel = "<span class='italic'>" + 
 							Settings.getInstance().getDisplayLabel($(rowToChange).data("DisplayLabel"),$(rowToChange).data("DisplayRDFSLabel")) + 
 								"</span> of " + 
@@ -848,13 +852,12 @@ var SetSemanticTypeDialog = (function() {
 			var inputWithAdd = inputVal + " (add)";
 			$.each(classList, function(index, clazz) {
 				//1. Check if label is a match
-				clazzLabel = Settings.getInstance().getDisplayLabel(clazz.label, clazz.rdfsLabel);
-				if (clazzLabel.toLowerCase() == inputVal.toLowerCase()) {
+				if (clazz.label.toLowerCase() == inputVal.toLowerCase()) {
 					found = true;
 					uri = clazz.uri;
 					properCasedLabel = clazz.label;
 					properCasedRDFSLabel = clazz.rdfsLabel;
-				} else if (clazzLabel.toLowerCase() == inputWithAdd.toLowerCase()) {
+				} else if (clazz.label.toLowerCase() == inputWithAdd.toLowerCase()) {
 					found = true;
 					uri = clazz.uri;
 					properCasedLabel = clazz.label;
@@ -914,14 +917,14 @@ var SetSemanticTypeDialog = (function() {
 						displayLabel = Settings.getInstance().getDisplayLabel(properCasedLabel, properCasedRDFSLabel);
 					} else {
 						// If no value has been input in the data property box, change from data property sem type to class sem type
-						var propertyOld = $(rowToChange).data("DisplayLabel");
+						var propertyOld = Settings.getInstance().getDisplayLabel($(rowToChange).data("DisplayLabel"),$(rowToChange).data("DisplayRDFSLabel"));
 						if (propertyOld == "km-dev:classLink") propertyOld = "uri";
 
 						if (propertyOld != "uri" && $.trim($("input.propertyInput", classPropertyUIDiv).val()) == "") {
 							$(rowToChange).data("ResourceType", "Class").data("FullType", uri).data("DisplayLabel", properCasedLabel).data("DisplayRDFSLabel", properCasedRDFSLabel);
 							displayLabel = Settings.getInstance().getDisplayLabel(properCasedLabel, properCasedRDFSLabel);
 						} else {
-							$(rowToChange).data("DomainUri", uri).data("DomainId", classData.id).data("DisplayDomainLabel", properCasedlabel).data("DomainRDFSLabel", properCasedRDFSLabel)
+							$(rowToChange).data("DomainUri", uri).data("DomainId", classData.id).data("DisplayDomainLabel", properCasedLabel).data("DomainRDFSLabel", properCasedRDFSLabel)
 							displayLabel = "<span class='italic'>" + propertyOld + "</span> of " + Settings.getInstance().getDisplayLabel(properCasedLabel, properCasedRDFSLabel);
 						}
 					}
@@ -1057,14 +1060,14 @@ var IncomingOutgoingLinksDialog = (function() {
 
 					var classDiv = $("<div>").addClass("col-sm-6");
 					row.append(classDiv);
-					fromClassUI.setDefaultClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
-					fromClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+					fromClassUI.setDefaultClass(selectedFromClass.label, selectedFromClass.rdfsLabel, selectedFromClass.id, selectedFromClass.uri);
+					fromClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.rdfsLabel, selectedProperty.id, selectedProperty.uri);
 					fromClassUI.generateJS(classDiv, true);
 
 					var propertyDiv = $("<div>").addClass("col-sm-6");
 					row.append(propertyDiv);
-					propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
-					propertyUI.setSelectedClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
+					propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.rdfsLabel, selectedProperty.id, selectedProperty.uri);
+					propertyUI.setSelectedClass(selectedFromClass.label, selectedFromClass.rdfsLabel, selectedFromClass.id, selectedFromClass.uri);
 					propertyUI.generateJS(propertyDiv, true);
 				} else if (linkType == "outgoing" || linkType == "changeOutgoing") {
 					if (linkType == "outgoing")
@@ -1074,14 +1077,14 @@ var IncomingOutgoingLinksDialog = (function() {
 
 					var classDiv = $("<div>").addClass("col-sm-6");
 					row.append(classDiv);
-					toClassUI.setDefaultClass(selectedToClass.label, selectedToClass.id, selectedToClass.uri);
-					toClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
+					toClassUI.setDefaultClass(selectedToClass.label, selectedToClass.rdfsLabel, selectedToClass.id, selectedToClass.uri);
+					toClassUI.setSelectedProperty(selectedProperty.label, selectedProperty.rdfsLabel, selectedProperty.id, selectedProperty.uri);
 					toClassUI.generateJS(classDiv, true);
 
 					var propertyDiv = $("<div>").addClass("col-sm-6");
 					row.append(propertyDiv);
-					propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
-					propertyUI.setSelectedClass(selectedToClass.label, selectedToClass.id, selectedToClass.uri);
+					propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.rdfsLabel, selectedProperty.id, selectedProperty.uri);
+					propertyUI.setSelectedClass(selectedToClass.label, selectedToClass.rdfsLabel, selectedToClass.id, selectedToClass.uri);
 					propertyUI.generateJS(propertyDiv, true);
 				} else if (linkType == "changeLink") {
 					$("#incomingOutgoingLinksDialog_title", dialog).text("Change link");
@@ -1091,8 +1094,8 @@ var IncomingOutgoingLinksDialog = (function() {
 
 					var propertyDiv = $("<div>").addClass("col-sm-12");
 					row.append(propertyDiv);
-					propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.id, selectedProperty.uri);
-					propertyUI.setSelectedClass(selectedFromClass.label, selectedFromClass.id, selectedFromClass.uri);
+					propertyUI.setDefaultProperty(selectedProperty.label, selectedProperty.rdfsLabel, selectedProperty.id, selectedProperty.uri);
+					propertyUI.setSelectedClass(selectedFromClass.label, selectedFromClass.rdfsLabel, selectedFromClass.id, selectedFromClass.uri);
 					propertyUI.generateJS(propertyDiv, true);
 
 				}
@@ -1113,13 +1116,15 @@ var IncomingOutgoingLinksDialog = (function() {
 					var clazz = allClasses[i];
 					var clazzElem = ClassUI.parseNodeObject(clazz);
 					var clazzLbl = clazzElem[0];
-					var clazzId = clazzElem[1];
-					var clazzUri = clazzElem[2];
+					var clazzRdfsLabel = clazzElem[1];
+					var clazzId = clazzElem[2];
+					var clazzUri = clazzElem[3];
 					if (clazzId == id) {
-						fromClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+						fromClassUI.setDefaultClass(clazzLbl, clazzRdfsLabel, clazzId, clazzUri);
 						onSelectFromClassInputValue({
 							"uri": clazzUri,
 							"label": clazzLbl,
+							"rdfsLabel": clazzRdfsLabel,
 							"id": clazzId
 						});
 						return;
@@ -1136,12 +1141,14 @@ var IncomingOutgoingLinksDialog = (function() {
 					var clazz = selectedClasses[i];
 					var clazzElem = ClassUI.parseNodeObject(clazz);
 					var clazzLbl = clazzElem[0];
-					var clazzId = clazzElem[1];
-					var clazzUri = clazzElem[2];
+					var clazzRdfsLabel = clazzElem[1];
+					var clazzId = clazzElem[2];
+					var clazzUri = clazzElem[3];
 					if (clazzId == id) {
-						fromClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+						fromClassUI.setDefaultClass(clazzLbl, clazzRdfsLabel, clazzId, clazzUri);
 						onSelectFromClassInputValue({
 							"uri": clazzUri,
+							"rdfsLabel": clazzRdfsLabel,
 							"label": clazzLbl,
 							"id": clazzId
 						});
@@ -1163,12 +1170,14 @@ var IncomingOutgoingLinksDialog = (function() {
 					var clazz = allClasses[i];
 					var clazzElem = ClassUI.parseNodeObject(clazz);
 					var clazzLbl = clazzElem[0];
-					var clazzId = clazzElem[1];
-					var clazzUri = clazzElem[2];
+					var clazzRdfsLabel = clazzElem[1];
+					var clazzId = clazzElem[2];
+					var clazzUri = clazzElem[3];
 					if (clazzId == id) {
-						toClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+						toClassUI.setDefaultClass(clazzLbl, clazzRdfsLabel, clazzId, clazzUri);
 						onSelectToClassInputValue({
 							"uri": clazzUri,
+							"rdfsLabel": clazzRdfsLabel,
 							"label": clazzLbl,
 							"id": clazzId
 						});
@@ -1186,12 +1195,14 @@ var IncomingOutgoingLinksDialog = (function() {
 					var clazz = selectedClasses[i];
 					var clazzElem = ClassUI.parseNodeObject(clazz);
 					var clazzLbl = clazzElem[0];
-					var clazzId = clazzElem[1];
-					var clazzUri = clazzElem[2];
+					var clazzRdfsLabel = clazzElem[1];
+					var clazzId = clazzElem[2];
+					var clazzUri = clazzElem[3];
 					if (clazzId == id) {
-						toClassUI.setDefaultClass(clazzLbl, clazzId, clazzUri);
+						toClassUI.setDefaultClass(clazzLbl, clazzRdfsLabel, clazzId, clazzUri);
 						onSelectToClassInputValue({
 							"uri": clazzUri,
+							"rdfsLabel": clazzRdfsLabel,
 							"label": clazzLbl,
 							"id": clazzId
 						});
@@ -1213,13 +1224,15 @@ var IncomingOutgoingLinksDialog = (function() {
 					var prop = allProperties[i];
 					var propElem = PropertyUI.parseNodeObject(prop);
 					var propLbl = propElem[0];
-					var propId = propElem[1];
-					var propUri = propElem[2];
+					var propRdfsLabel = propElem[1];
+					var propId = propElem[2];
+					var propUri = propElem[3];
 
 					if (propId == id) {
-						propertyUI.setDefaultProperty(propLbl, propId, propUri);
+						propertyUI.setDefaultProperty(propLbl, propRdfsLabel, propId, propUri);
 						onSelectPropertyInputValue({
 							"uri": propUri,
+							"rdfsLabel": propRdfsLabel,
 							"label": propLbl,
 							"id": propId
 						});
@@ -1237,15 +1250,17 @@ var IncomingOutgoingLinksDialog = (function() {
 					var prop = selectedProperties[i];
 					var propElem = PropertyUI.parseNodeObject(prop);
 					var propLbl = propElem[0];
-					var propId = propElem[1];
-					var propUri = propElem[2];
+					var propRdfsLabel = propElem[1];
+					var propId = propElem[2];
+					var propUri = propElem[3];
 
 					if (propId == id) {
-						propertyUI.setDefaultProperty(propLbl, propId, propUri);
+						propertyUI.setDefaultProperty(propLbl, propRdfsLabel, propId, propUri);
 						if (dialog.hasClass('in')) { //dialog is shown
 							onSelectPropertyInputValue({
 								"uri": propUri,
 								"label": propLbl,
+								"rdfsLabel": propRdfsLabel,
 								"id": propId
 							});
 						}
@@ -1697,12 +1712,12 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			propertyUI.onPropertySelect(validatePropertyInputValue);
 
 			var clazz = (link.type == "incoming") ? link.source : link.target;
-			classUI.setDefaultClass(clazz.label, clazz.id, clazz.uri)
-			classUI.setSelectedProperty(link.property.label, link.property.id, link.property.uri);
+			classUI.setDefaultClass(clazz.label, clazz.rdfsLabel, clazz.id, clazz.uri)
+			classUI.setSelectedProperty(link.property.label, link.property.rdfsLabel, link.property.id, link.property.uri);
 			classUI.generateJS(classDiv, true);
 
-			propertyUI.setDefaultProperty(link.property.label, link.property.id, link.property.uri);
-			propertyUI.setSelectedClass(clazz.label, clazz.id, clazz.uri);
+			propertyUI.setDefaultProperty(link.property.label, link.property.rdfsLabel, link.property.id, link.property.uri);
+			propertyUI.setSelectedClass(clazz.label, clazz.rdfsLabel, clazz.id, clazz.uri);
 			propertyUI.generateJS(propDiv, true);
 
 		}

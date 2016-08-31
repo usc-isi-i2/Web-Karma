@@ -23,7 +23,7 @@ public class UpdateUIConfigurationCommand extends Command {
 	
 	protected UpdateUIConfigurationCommand(String id, String model, boolean show_rdfs_label_first, boolean show_rdfs_id_first) {
 		super(id, model);
-		this.show_rdfs_id_first = show_rdfs_label_first;
+		this.show_rdfs_label_first = show_rdfs_label_first;
 		this.show_rdfs_id_first = show_rdfs_id_first;
 	}
 
