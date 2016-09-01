@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import edu.isi.karma.rep.Row;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,7 +258,46 @@ public class SemanticModel {
 				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 		}
 	}
-	
+	// alse
+	public void uploadUserSemanticTypes() {
+		Map<String, SemanticType> semanticTypes = this.worksheet.getSemanticTypes().getTypes();
+		Map<String, List<String>> columns = new HashMap<>();
+		for(Row row: this.worksheet.getDataTable().getRows(0, 1000, new SuperSelection("DEFAULT") )){
+			for(Entry<String, edu.isi.karma.rep.Node> node: row.getNodesMap().entrySet()){
+				if (columns.containsKey(node.getKey())) {
+					columns.get(node.getKey()).add(node.getValue().getValue().asString());
+				} else {
+					List<String> values = new ArrayList<>();
+					values.add(node.getValue().getValue().asString());
+					columns.put(node.getKey(), values);
+				}
+			}
+		}
+		for(Map.Entry<String, List<String>> column: columns.entrySet()){
+			String domain = semanticTypes.get(column.getKey()).getDomain().getUri();
+			String type = semanticTypes.get(column.getKey()).getType().getUri();
+			// create semantic type on the server
+			try {
+				String query = "class=" + URLEncoder.encode(domain , "UTF-8") + "&property=" + URLEncoder.encode(type, "UTF-8");
+				new SemanticLabelingService().post(query);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			String data = "";
+			for(String value : column.getValue()){
+				data += value+"\n";
+			}
+			// add column data to the server
+			try {
+				String id = SemanticLabelingService.getSemanticTypeId(domain, type);
+				String query = "name=" + URLEncoder.encode(this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName(), "UTF-8") +
+						"&source_name="+ URLEncoder.encode(this.worksheet.getTitle(), "UTF-8");
+				new SemanticLabelingService().post(query, id, data);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	public void print() {
 		logger.info("id: " + this.getId());
 		logger.info("name: " + this.getName());

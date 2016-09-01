@@ -278,6 +278,17 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		// *****************************************************************************************
 		// *****************************************************************************************
 
+
+		// alse: to add semantic types to the server
+		Boolean onlineSemanticTypingEnabled = modelingConfiguration.getOnlineSemanticTypingEnabled();
+		if(onlineSemanticTypingEnabled) {
+			try {
+				semanticModel.uploadUserSemanticTypes();
+			} catch (Exception e) {
+				logger.error("Unable to upload semantic types");
+			}
+		}
+
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
 
