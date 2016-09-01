@@ -59,8 +59,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	private Alignment alignment;
 
 	public enum JsonKeys {
-		HNodeId, FullType, ConfidenceLevel, Origin, DisplayLabel, DisplayRDFSLabel,
-		DisplayDomainLabel, DomainRDFSLabel, DomainId, DomainUri, SemanticTypesArray, isPrimary, isPartOfKey, 
+		HNodeId, FullType, ConfidenceLevel, Origin, DisplayLabel, DisplayRDFSLabel, DisplayRDFSComment,
+		DisplayDomainLabel, DomainRDFSLabel, DomainRDFSComment, DomainId, DomainUri, SemanticTypesArray, isPrimary, isPartOfKey, 
 		Types, isMetaProperty, rdfLiteralType, language
 	}
 
@@ -135,17 +135,26 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 						writer
 							.key(JsonKeys.FullType.name()).value(type.getType().getUri())
 							.key(JsonKeys.DisplayLabel.name()).value(type.getType().getDisplayName())
+							.key(JsonKeys.DisplayRDFSLabel.name()).value(type.getType().getRdfsLabel())
+							.key(JsonKeys.DisplayRDFSComment.name()).value(type.getType().getRdfsComment())
 							.key(JsonKeys.DomainId.name()).value(domainNode.getId())
 							.key(JsonKeys.DomainUri.name()).value(domainNode.getUri())
-							.key(JsonKeys.DisplayDomainLabel.name()).value(domainNode.getDisplayId());
+							.key(JsonKeys.DisplayDomainLabel.name()).value(domainNode.getDisplayId())
+							.key(JsonKeys.DomainRDFSLabel.name()).value(domainNode.getRdfsLabel())
+							.key(JsonKeys.DomainRDFSComment.name()).value(domainNode.getRdfsComment())
+							;
 					} else {
 						writer
 							.key(JsonKeys.FullType.name()).value(domainNode.getId())
 							.key(JsonKeys.DisplayLabel.name()).value(domainNode.getDisplayId())
+							.key(JsonKeys.DisplayRDFSLabel.name()).value(domainNode.getRdfsLabel())
+							.key(JsonKeys.DisplayRDFSComment.name()).value(domainNode.getRdfsComment())
 							.key(JsonKeys.DomainId.name()).value("")
 							.key(JsonKeys.DomainUri.name()).value("")
-							.key(JsonKeys.DisplayDomainLabel.name())
-							.value("");
+							.key(JsonKeys.DisplayDomainLabel.name()).value("")
+							.key(JsonKeys.DomainRDFSLabel.name()).value("")
+							.key(JsonKeys.DomainRDFSComment.name()).value("")
+							;
 					}
 					
 					// Mark the special properties
@@ -163,28 +172,28 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 					if (synTypes != null) {
 						for (SemanticType synType : synTypes.getSynonyms()) {
 							writer.object()
-									.key(JsonKeys.HNodeId.name())
-									.value(synType.getHNodeId())
-									.key(JsonKeys.FullType.name())
-									.value(synType.getType().getUri())
-									.key(JsonKeys.Origin.name())
-									.value(synType.getOrigin().name())
-									.key(JsonKeys.ConfidenceLevel.name())
-									.value(synType.getConfidenceLevel().name())
-									.key(JsonKeys.DisplayLabel.name())
-									.value(synType.getType().getDisplayName())
-									.key(JsonKeys.isPrimary.name())
-									.value(false);
+								.key(JsonKeys.HNodeId.name()).value(synType.getHNodeId())
+								.key(JsonKeys.FullType.name()).value(synType.getType().getUri())
+								.key(JsonKeys.Origin.name()).value(synType.getOrigin().name())
+								.key(JsonKeys.ConfidenceLevel.name()).value(synType.getConfidenceLevel().name())
+								.key(JsonKeys.DisplayLabel.name()).value(synType.getType().getDisplayName())
+								.key(JsonKeys.DisplayRDFSLabel.name()).value(synType.getType().getRdfsLabel())
+								.key(JsonKeys.DisplayRDFSComment.name()).value(synType.getType().getRdfsComment())
+								.key(JsonKeys.isPrimary.name()).value(false);
 							if (!synType.isClass()) {
 								writer.key(JsonKeys.DomainUri.name()).value(synType.getDomain().getUri())
 									.key(JsonKeys.DomainId.name()).value("")
-									.key(JsonKeys.DisplayDomainLabel.name())
-									.value(synType.getDomain().getDisplayName());
+									.key(JsonKeys.DisplayDomainLabel.name()).value(synType.getDomain().getDisplayName())
+									.key(JsonKeys.DomainRDFSLabel.name()).value(synType.getDomain().getRdfsLabel())
+									.key(JsonKeys.DomainRDFSComment.name()).value(synType.getDomain().getRdfsComment())
+									;
 							} else {
 								writer.key(JsonKeys.DomainId.name()).value("")
 									.key(JsonKeys.DomainUri.name()).value("")
-									.key(JsonKeys.DisplayDomainLabel.name())
-									.value("");
+									.key(JsonKeys.DisplayDomainLabel.name()).value("")
+									.key(JsonKeys.DomainRDFSLabel.name()).value("")
+									.key(JsonKeys.DomainRDFSComment.name()).value("")
+									;
 							}
 							writer.endObject();
 						}
@@ -240,11 +249,17 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 							id = ((DataPropertyOfColumnLink)incomingLink).getSpecializedLinkId();
 						else 
 							id = ((ObjectPropertySpecializationLink)incomingLink).getSpecializedLinkId();
-						hNodeIdToDomainNodeMap.put(hNodeId, new SemanticTypeNode(id, id, id));
+						hNodeIdToDomainNodeMap.put(hNodeId, new SemanticTypeNode(id, id, id, 
+								incomingLink.getLabel().getRdfsLabel(), incomingLink.getLabel().getRdfsComment()));
 					} else {
 						InternalNode source = (InternalNode)incomingLink.getSource();
-						hNodeIdToDomainNodeMap.put(hNodeId, new SemanticTypeNode(source.getId(), 
-								source.getUri(), source.getDisplayId()));
+						hNodeIdToDomainNodeMap.put(hNodeId, new SemanticTypeNode(
+								source.getId(), 
+								source.getUri(), 
+								source.getDisplayId(),
+								source.getLabel().getRdfsLabel(),
+								source.getLabel().getRdfsComment()
+								));
 					}
 				}
 			}
@@ -278,11 +293,15 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		private String id;
 		private String uri;
 		private String displayId;
+		private String rdfsLabel;
+		private String rdfsComment;
 		
-		SemanticTypeNode(String id, String uri, String displayId) {
+		SemanticTypeNode(String id, String uri, String displayId, String rdfsLabel, String rdfsComment) {
 			this.id = id;
 			this.uri = uri;
 			this.displayId = displayId;
+			this.rdfsLabel = rdfsLabel;
+			this.rdfsComment = rdfsComment;
 		}
 
 		public String getId() {
@@ -295,6 +314,14 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 
 		public String getDisplayId() {
 			return displayId;
+		}
+		
+		public String getRdfsLabel() {
+			return rdfsLabel;
+		}
+		
+		public String getRdfsComment() {
+			return rdfsComment;
 		}
 		
 	}
