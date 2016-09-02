@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+var path = require("path");
+var proc = require("child_process");
+
+var modulePath = path.join(".", "node_modules");
+var compilerPath = path.join(modulePath, ".bin", "electron-compile");
+var pathToCompile = path.join(".", "src");
+var compileCachepath = path.join(".", "compile-cache");
+
+console.log("Compiling...");
+
+if (process.platform === 'win32') {
+  compilerPath += '.cmd';
+}
+
+var args = [
+  "--target", compileCachepath,
+  pathToCompile
+];
+proc.spawn(compilerPath, args, {stdio: "inherit"});

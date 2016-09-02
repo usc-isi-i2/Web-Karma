@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var path = require("path");
+var proc = require('child_process');
+var argv = require('yargs')
+  .default('arch', process.arch)
+  .default('platform', process.platform)
+  .argv;
+
+function jsonValue(path, value) { return JSON.parse(fs.readFileSync(path).toString())[value]; };
+
+var modulePath = path.join(".", "node_modules");
+var packagerCmd = path.join(modulePath, "electron-packager", "cli.js");
+var prebuiltPath = path.join(modulePath, "electron-prebuilt");
+var prebuiltPackageJSONPath = path.join(prebuiltPath, "package.json");
+var buildOutputPath = path.join(".", "release");
+var compileCmd = path.join(".", "script", "compile");
+
+var ignorePaths='node_modules/electron-compile/node_modules/electron-compilers|node_modules/\\.bin|node_modules/electron-rebuild|node_modules/electron-jasmine|(/release$)|(/script$)|(/spec$)';
+
+var electronVersion = jsonValue(prebuiltPackageJSONPath, 'version');
+var appName = jsonValue('package.json', 'appName');
+
+if (process.platform === 'win32') {
+  compileCmd += '.cmd';
+}
+
+var iconPath;
+if (argv.platform === 'win32') {
+  iconPath = path.join(".", "resources", "win", "app.ico")
+}
+else if (argv.platform === 'darwin') {
+  iconPath = path.join(".", "resources", "mac", "app.icns")
+}
+else if (argv.platform === 'linux') {
+  iconPath = path.join(".", "resources", "linux")
+}
+
+var compile = proc.spawn(compileCmd, [], {stdio: 'inherit'});
+compile.on('close', function() {
+  console.log('Building ', appName);
+
+  var args = [
+    packagerCmd,
+    './',
+    appName,
+    '--overwrite',
+    '--platform', argv.platform,
+    '--arch', argv.arch,
+    '--version', electronVersion,
+    '--icon', iconPath,
+    '--ignore', ignorePaths,
+    '--out', buildOutputPath
+  ];
+
+  var ignoreArgs = ['overwrite', 'platform', 'arch', 'version', 'ignore', 'out', '_', '$0']
+  for(var arg in argv) {
+    if (ignoreArgs.indexOf(arg) > -1) continue;
+
+    if (argv[arg] === true)
+      args.push('--' + arg)
+    else
+      args.push('--' + arg, argv[arg])
+  }
+
+  args = args.concat(argv._);
+  proc.spawn(process.execPath, args, {stdio: 'inherit'});
+});

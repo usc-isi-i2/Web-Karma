@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+var path = require("path");
+var proc = require("child_process");
+var argv = require('yargs')
+  .default('environment', 'development')
+  .argv;
+
+var modulePath = path.join(".", "node_modules");
+var electronPath = path.join(modulePath, ".bin", "electron");
+
+if (process.platform === 'win32') {
+  electronPath += '.cmd';
+}
+
+var args = [
+  ".",
+  "--environment", argv.environment
+];
+
+var ignoreArgs = ['environment', '_', '$0']
+for(var arg in argv) {
+  if (ignoreArgs.indexOf(arg) > -1) continue;
+
+  if (argv[arg] === true)
+    args.push('--' + arg)
+  else
+    args.push('--' + arg, argv[arg])
+}
+args = args.concat(argv._);
+
+proc.spawn(electronPath, args, {stdio: "inherit"});

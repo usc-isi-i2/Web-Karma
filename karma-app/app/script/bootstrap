@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+
+var fs = require("fs");
+var path = require("path");
+var proc = require("child_process");
+
+var modulePath = path.join(".", "node_modules");
+var rebuildPath = path.join(modulePath, ".bin", "electron-rebuild");
+var prebuiltPath = path.join(modulePath, "electron-prebuilt");
+var prebuiltPackageJSONPath = path.join(prebuiltPath, "package.json");
+var npmCmd = "npm";
+
+function jsonValue(path, value) { return JSON.parse(fs.readFileSync(path).toString())[value]; };
+
+if (process.platform === 'win32') {
+  npmCmd += '.cmd';
+  rebuildPath += '.cmd';
+}
+
+var install = proc.spawn(npmCmd, ["install"], {stdio: "inherit"});
+install.on('close', function() {
+  var electronVersion = jsonValue(prebuiltPackageJSONPath, "version");
+  var args = [
+    "--version", electronVersion,
+    "--electron-prebuilt-dir", prebuiltPath,
+    "--module-dir", modulePath
+  ];
+  proc.spawn(rebuildPath, args, {stdio: "inherit"});
+});

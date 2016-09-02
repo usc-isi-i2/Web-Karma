@@ -8,15 +8,23 @@ cd ../karma-web/
 mvn package -Pshaded
 ls target/karma-web*.war
 cp target/karma-web*.war $CURRENT/target/karma.war
+cp external_webapps/* $CURRENT/target/
+
+mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
 
 cd $CURRENT/target
 
 # download tomcat binary
 wget http://mirrors.koehn.com/apache/tomcat/tomcat-9/v9.0.0.M9/bin/apache-tomcat-9.0.0.M9.zip -O tomcat.zip
 unzip tomcat.zip
+rm tomcat.zip
 
 mv apache-tomcat* tomcat
-mv karma.war tomcat/webapps
+mv *.war tomcat/webapps
+chmod +x tomcat/bin/*.sh
+
+cp $CURRENT/conf/* tomcat/conf/
+
 
 mkdir karma
 mv tomcat karma/

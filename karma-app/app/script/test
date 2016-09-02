@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+var path = require("path");
+var proc = require("child_process");
+
+var runPath = path.join("script", "run");
+var args = [
+  "--test"
+].concat(process.argv.slice(2));
+
+if (process.platform === 'win32') {
+  runPath += '.cmd';
+}
+
+proc.spawn(runPath, args, {stdio: "inherit"});
