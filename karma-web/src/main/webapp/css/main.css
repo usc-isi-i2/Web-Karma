@@ -128,3 +128,7 @@ body {
 .dialog-list-tab {
 	overflow-wrap: break-word;
 }
+
+.heading {
+	font-weight: bold;
+}

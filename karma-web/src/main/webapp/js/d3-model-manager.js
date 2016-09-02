@@ -75,7 +75,12 @@ var D3ModelManager = (function() {
 		};
 
 		function getNodeRep(node) {
-			return {"id": node.nodeId, "uri":node.nodeDomain, "label":node.label, "type":node.nodeType};
+			return {"id": node.nodeId, 
+					"uri": node.nodeDomain, 
+					"label": node.label, 
+					"rdfsLabel": node.rdfsLabel,
+					"rdfsComment": node.rdfsComment,
+					"type": node.nodeType};
 		}
 
 		function displayModel(json) {
@@ -197,7 +202,9 @@ var D3ModelManager = (function() {
 						id = d.nodeId;
 					else
 						id = d.id;
-					ClassDialog.getInstance().show(worksheetId, id, d.label, d.nodeDomain, d.nodeDomain, nodeCategory, 
+					ClassDialog.getInstance().show(worksheetId, id, 
+						d.label, d.rdfsLabel, d.rdfsComment,
+						d.nodeDomain, d.nodeDomain, nodeCategory, 
 						alignmentId, d.nodeType, d.isUri, event);
 
 				}
@@ -223,16 +230,22 @@ var D3ModelManager = (function() {
 						d.id,
 						d.linkUri,
 						d.label,
+						d.rdfsLabel,
+						d.rdfsComment,
 						d.linkStatus,
 						d.sourceNodeId,
 						sourceObj.nodeType,
 						sourceObj.label,
+						sourceObj.rdfsLabel,
+						sourceObj.rdfsComment,
 						sourceObj.nodeDomain,
 						d.sourceNodeId,
 						d.source.isUri,
 						d.targetNodeId,
 						targetObj.nodeType,
 						targetObj.label,
+						targetObj.rdfsLabel,
+						targetObj.rdfsComment,
 						targetObj.nodeDomain,
 						d.targetNodeId,
 						d.target.isUri,
@@ -240,7 +253,9 @@ var D3ModelManager = (function() {
 			});
 			
 			layout.setAnchorMouseListener(function(d, event) {
-				AnchorDropdownMenu.getInstance().show(worksheetId, d.nodeId, d.label, d.nodeDomain, d.nodeDomain, "", 
+				AnchorDropdownMenu.getInstance().show(worksheetId, d.nodeId, 
+						d.label, d.rdfsLabel, d.rdfComment, 
+						d.nodeDomain, d.nodeDomain, "", 
 						alignmentId, d.nodeType, d.isUri, event);
 			});
 
@@ -333,6 +348,8 @@ var D3ModelManager = (function() {
 				"id": link.id,
 				"uri": link.linkUri,
 				"label":link.label,
+				"rdfsLabel": link.rdfsLabel,
+				"rdfsComment": link.rdfsComment,
 				"type":link.linkType,
 				"source": getNodeRep(sourceNodeOrg),
 				"target": getNodeRep(targetNodeOrg)
@@ -358,13 +375,15 @@ var D3ModelManager = (function() {
 			return result;
 		}
 
-		function changeTemporaryLink(worksheetId, linkId, newPropertyUri, newPropertyLabel) {
+		function changeTemporaryLink(worksheetId, linkId, newPropertyUri, newPropertyLabel, newPropertyRdfsLabel, newPropertyRdfsComment) {
 			worksheetJson = modelJsons[worksheetId];
 
 			$.each(worksheetJson.links, function(index, link) {
 				if(link.id == linkId) {
 					link.linkUri = newPropertyUri;
 					link.label = newPropertyLabel;
+					link.rdfsLabel = newPropertyRdfsLabel;
+					link.rdfsComment = newPropertyRdfsComment;
 					link.id = link.sourceNodeId + "--" + newPropertyUri + "--" +
 							link.targetNodeId
 				}
@@ -404,6 +423,8 @@ var D3ModelManager = (function() {
 						"nodeDomain": node.uri,
 						"isUri": false,
 						"label": node.label,
+						"rdfsLabel": node.rdfsLabel,
+						"rdfsComment": node.rdfsComment,
 						"nodeType": "InternalNode"
 					}
 					worksheetNodes[node.id] = wsNode;
@@ -426,6 +447,8 @@ var D3ModelManager = (function() {
 					    "linkType": link.type,
 					    "linkStatus": "TemporaryLink",
 					    "label": link.label,
+					    "rdfsLabel": link.rdfsLabel,
+					    "rdfsComment": link.rdfsComment,
 					    "targetNodeId": link.target
 
 					}

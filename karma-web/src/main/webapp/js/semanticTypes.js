@@ -984,7 +984,7 @@ var IncomingOutgoingLinksDialog = (function() {
 	function PrivateConstructor() {
 		var dialog = $("#incomingOutgoingLinksDialog");
 		var worksheetId, columnId, alignmentId, linkType;
-		var columnLabel, columnUri, columnDomain, columnType, isColumnUri;
+		var columnLabel, columnRdfsLabel, columnRdfsComment, columnUri, columnDomain, columnType, isColumnUri;
 
 		var selectedFromClass, selectedProperty, selectedToClass;
 		var allClasses = null,
@@ -1000,16 +1000,19 @@ var IncomingOutgoingLinksDialog = (function() {
 		function init() {
 			selectedFromClass = {
 				label: "",
+				rdfsLabel: "",
 				id: "",
 				uri: ""
 			};
 			selectedToClass = {
 				label: "",
+				rdfsLabel: "",
 				id: "",
 				uri: ""
 			};
 			selectedProperty = {
 				label: "",
+				rdfsLabel: "",
 				id: "",
 				uri: ""
 			};
@@ -1510,13 +1513,15 @@ var IncomingOutgoingLinksDialog = (function() {
 		}
 
 		function show(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType, isColUri,
+			colLabel, colRdfsLabel, colRdfsComment, colUri, colDomain, colType, isColUri,
 			type, changeFrom, changeTo, changeLinkUri) {
 			worksheetId = wsId;
 			columnId = colId;
 			alignmentId = alignId;
 
 			columnLabel = colLabel;
+			columnRdfsLabel = colRdfsLabel;
+			columnRdfsComment = colRdfsComment;
 			columnUri = colUri;
 			columnDomain = colDomain;
 			columnType = colType;
@@ -1538,24 +1543,27 @@ var IncomingOutgoingLinksDialog = (function() {
 
 
 		function showBlank(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType, isColUri, type) {
+			colLabel, colRdfsLabel, colRdfsComment, colUri, colDomain, colType, isColUri, type) {
 			selectedFromClass = {
 				label: "",
+				rdfsLabel: "",
 				id: "",
 				uri: ""
 			};
 			selectedToClass = {
 				label: "",
+				rdfsLabel: "",
 				id: "",
 				uri: ""
 			};
 			selectedProperty = {
 				label: "",
+				rdfsLabel: "",
 				id: "",
 				uri: ""
 			};
 			show(wsId, colId, alignId,
-				colLabel, colUri, colDomain, colType, isColUri, type);
+				colLabel, colRdfsLabel, colRdfsComment, colUri, colDomain, colType, isColUri, type);
 		};
 
 
@@ -1597,7 +1605,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 	function PrivateConstructor() {
 		var dialog = $("#manageIncomingOutgoingLinksDialog");
 		var worksheetId, columnId, alignmentId, linkType;
-		var columnLabel, columnUri, columnDomain, columnType, isColumnUri;
+		var columnLabel, columnRdfsLabel, columnRdfsComment, columnUri, columnDomain, columnType, isColumnUri;
 		var initialLinks;
 
 		var classUI, propertyUI, editLink, classPropertyUIDiv;
@@ -1649,13 +1657,16 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			var trTag = $("<tr>");
 			table.append(trTag);
 			var direction = (link.type == "incoming") ? "from" : "to";
-			var classLabel = (link.type == "incoming") ? link.source.label : link.target.label;
+			var classLabel = (link.type == "incoming") ? 
+								Settings.getInstance().getDisplayLabel(link.source.label, link.source.rdfsLabel) : 
+								Settings.getInstance().getDisplayLabel(link.target.label, link.target.rdfsLabel);
+			var propertyLabel = Settings.getInstance().getDisplayLabel(link.property.label, link.property.rdfsLabel);
 
 			trTag.data("link", $.extend(true, {}, link)) // deep copy)
 			.append($("<td>").append(direction).css("width", "5%"))
 				.append($("<td>").addClass("bold").append(classLabel).css("width", "40%"))
 				.append($("<td>").append("via").css("width", "5%"))
-				.append($("<td>").addClass("bold").append(link.property.label).css("width", "40%"))
+				.append($("<td>").addClass("bold").append(propertyLabel).css("width", "40%"))
 				.append($("<td>").css("width", "5%")
 					.append($("<button>").attr("type", "button").addClass("btn").addClass("deleteButton").addClass("btn-default").text("Delete").click(deleteLink))
 			)
@@ -1667,9 +1678,12 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 		}
 
 		function setRowData(row, link) {
-			var classLabel = (link.type == "incoming") ? link.source.label : link.target.label;
+			var classLabel = (link.type == "incoming") ? 
+								Settings.getInstance().getDisplayLabel(link.source.label, link.source.rdfsLabel) : 
+								Settings.getInstance().getDisplayLabel(link.target.label, link.target.rdfsLabel);
+			var propertyLabel = Settings.getInstance().getDisplayLabel(link.property.label, link.property.rdfsLabel);
 			$("td:nth-child(2)", row).text(classLabel);
-			$("td:nth-child(4)", row).text(link.property.label);
+			$("td:nth-child(4)", row).text(propertyLabel);
 		}
 
 		function deleteLink() {
@@ -1943,16 +1957,19 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			var source = {
 				"id": "FakeId",
 				"label": "Class",
+				"rdfsLabel": "",
 				"uri": "FakeURI"
 			};
 			var target = {
 				"id": columnId,
 				"label": columnLabel,
+				"rdfsLabel": columnRdfsLabel,
 				"uri": columnUri
 			};
 			var prop = {
 				"id": "FakeId",
-				"label": "Property"
+				"label": "Property",
+				"rdfsLabel": "",
 			};
 			var link = {
 				"type": "incoming",
@@ -1967,16 +1984,19 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 			var source = {
 				"id": columnId,
 				"label": columnLabel,
+				"rdfsLabel": columnRdfsLabel,
 				"uri": columnUri
 			};
 			var target = {
 				"id": "FakeId",
 				"label": "Class",
+				"rdfsLabel": "",
 				"uri": "FakeURI"
 			};
 			var prop = {
 				"id": "FakeId",
-				"label": "Property"
+				"label": "Property",
+				"rdfsLabel": ""
 			};
 			var link = {
 				"type": "outgoing",
@@ -1993,12 +2013,14 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 
 
 		function show(wsId, colId, alignId,
-			colLabel, colUri, colDomain, colType, isColUri) {
+			colLabel, colRdfsLabel, colRdfsComment, colUri, colDomain, colType, isColUri) {
 			worksheetId = wsId;
 			columnId = colId;
 			alignmentId = alignId;
 
 			columnLabel = colLabel;
+			columnRdfsLabel = colRdfsLabel;
+			columnRdfsComment = colRdfsComment;
 			columnUri = colUri;
 			columnDomain = colDomain;
 			columnType = colType;

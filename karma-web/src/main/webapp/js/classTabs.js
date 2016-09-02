@@ -7,7 +7,7 @@ var ClassTabs = (function() {
 		var dialog = $("#classTabs");
 
 		var worksheetId, columnId;
-		var columnUri, columnLabel, alignmentId;
+		var columnUri, columnLabel, columnRdfsLabel, columnRdfsComment, alignmentId;
 		var nodeType; //LiteralNode or InternalNode
 		var allClassCache;
 		var onSelectCallback;
@@ -189,11 +189,15 @@ var ClassTabs = (function() {
 		}
 
 
-		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, 
+		function show(p_worksheetId, p_columnId, 
+				p_columnLabel, p_columnRdfsLabel, p_columnRdfsComment,
+				p_columnUri, 
 				p_alignmentId, p_nodeType, div, callback,
 				event) {
 			worksheetId = p_worksheetId;
 			columnLabel = p_columnLabel;
+			columnRdfsLabel = p_columnRdfsComment;
+			columnRdfsComment = p_columnRdfsComment;
 			columnId = p_columnId;
 			columnUri = p_columnUri;
 			alignmentId = p_alignmentId;

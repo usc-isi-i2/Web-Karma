@@ -847,6 +847,44 @@ function isValidUrl(url) {
     return re.test(url);
 }
 
+function showNodeHelp(worksheetId, node) {
+	if(node.nodeId)
+		uri = node.nodeId;
+	else
+		uri = node.linkUri;
+	var html = "<div class='rdfsUriHelp'><span class='heading'>URI&nbsp;</span>" + uri + "</div>";
+	if(node.rdfsLabel)
+		html += "<div class='rdfsLabelHelp'><span class='heading'>rdfs:label&nbsp;</span>" + node.rdfsLabel + "</div>";
+	if(node.rdfsComment)
+		html += "<div class='rdfsCommentHelp'><span class='heading'>rdfs:comment&nbsp;</span>" + node.rdfsComment + "</div>";
+	showHelp(worksheetId, html);
+}
+
+function showHelp(worksheetId, html) {
+	var helpDiv = $("#helpDiv");
+	helpDiv.html(html);
+	var worksheetTop = $("#svgDiv_" + worksheetId);
+	var top = worksheetTop.offset().top;
+	var left = worksheetTop.offset().left;
+
+	var windowBoxLeft = $(window).scrollLeft();
+	var windowBoxRight = windowBoxLeft + $(window).width();
+	var windowBoxTop = $(window).scrollTop();
+	var windowBoxBottom = windowBoxTop + $(window).height();
+
+	if(left < windowBoxLeft || left > windowBoxRight)
+		left = windowBoxLeft + 2;
+	if(top < windowBoxTop || top > windowBoxBottom)
+		top = windowBoxTop + 2;
+
+	helpDiv.css({ "top": top+2, "left": left+2 });
+	helpDiv.show();
+}
+
+function hideHelp() {
+	$("#helpDiv").hide();
+}
+
 //Make All Modal Dialogs Resizeable
 $(".modal-dialog").resizable({
 	handles: "e, w"

@@ -6,7 +6,7 @@ var AnchorDropdownMenu = (function() {
 	function PrivateConstructor() {
 		var menuId = "anchorDropdownMenu";
 		var worksheetId, columnId;
-		var columnUri, columnLabel, columnDomain, columnCategory, columnType, alignmentId;
+		var columnUri, columnLabel, columnRdfsLabel, columnRdfsComment, columnDomain, columnCategory, columnType, alignmentId;
 		var options = [
 			["Suggest", suggest]
 		];
@@ -41,9 +41,10 @@ var AnchorDropdownMenu = (function() {
 					}
 
 					links.push(
-						{"uri": type["FullType"], "label": type["DisplayLabel"], 
-						"source": {"uri": type["DomainUri"], "id": type["DomainId"], "label":type["DisplayDomainLabel"]},
-						"target": {"uri": columnDomain, "id": columnId, "label": columnLabel}
+						{"uri": type["FullType"], 
+						"label": type["DisplayLabel"], "rdfsLabel": type["DisplayRDFSLabel"],
+						"source": {"uri": type["DomainUri"], "id": type["DomainId"], "label":type["DisplayDomainLabel"], "rdfsLabel":type["DomainRDFSLabel"]},
+						"target": {"uri": columnDomain, "id": columnId, "label": columnLabel, "rdfsLabel": columnRdfsLabel}
 						});
 				});
 			}
@@ -111,7 +112,10 @@ var AnchorDropdownMenu = (function() {
 						if(idx != -1)
 							linkLabel = linkLabel.substring(idx+1);
 						links.push({"id":linkId, "source":link.source.id, "target":link.target.id, 
-								"uri":link.uri, "label":linkLabel, "type":"DataPropertyLink"});
+									"uri":link.uri, 
+									"label":linkLabel, 
+									"rdfsLabel": link.rdfsLabel,
+									"type":"DataPropertyLink"});
 						seenLinks.push(linkTypeId);
 					}
 				});
@@ -128,6 +132,7 @@ var AnchorDropdownMenu = (function() {
 						"target": columnId, 
 						"uri": defaultProperty.uri, 
 						"label": getLabelWithoutPrefix(defaultProperty.label), 
+						"rdfsLabel": defaultProperty.rdfsLabel,
 						"type": "DataPropertyLink"});
 
 			if(columnType != "ColumnNode") {
@@ -140,6 +145,7 @@ var AnchorDropdownMenu = (function() {
 							"target": blankNode2.id, 
 							"uri": defaultProperty.uri, 
 							"label": getLabelWithoutPrefix(defaultProperty.label), 
+							"rdfsLabel": defaultProperty.rdfsLabel,
 							"type": "ObjectPropertyLink"});
 			}
 
@@ -156,6 +162,7 @@ var AnchorDropdownMenu = (function() {
 					var type = {
 						"uri": link.uri,
 						"label": link.label,
+						"rdfsLabel": link.rdfsLabel,
 						"source": link.source
 					}
 					setSemanticType(worksheetId, link.target.id, type);
@@ -164,6 +171,7 @@ var AnchorDropdownMenu = (function() {
 					var edge = {
 						"uri": link.uri,
 						"label": link.label,
+						"rdfsLabel": link.rdfsLabel,
 						"source": link.source,
 						"target": link.target
 					}
@@ -186,6 +194,7 @@ var AnchorDropdownMenu = (function() {
 							var type = {
 								"uri": thisLink.uri,
 								"label": thisLink.label,
+								"rdfsLabel": thisLink.rdfsLabel,
 								"source": target
 							}
 							setSemanticType(worksheetId, columnId, type);
@@ -199,8 +208,9 @@ var AnchorDropdownMenu = (function() {
 							var edge = {
 								"uri": thisLink.uri,
 								"label": thisLink.label,
+								"rdfsLabel": thisLink.rdfsLabel,
 								"source": target,
-								"target": {"id":columnId, "uri":columnUri, "label":columnLabel, "type":columnType}
+								"target": {"id":columnId, "uri":columnUri, "label":columnLabel, "rdfsLabel": columnRdfsLabel, "type":columnType}
 							}
 							newEdges.push(edge);
 							changeLinks(worksheetId, alignmentId, [], newEdges);
@@ -209,7 +219,8 @@ var AnchorDropdownMenu = (function() {
 							var edge = {
 								"uri": thisLink.uri,
 								"label": thisLink.label,
-								"source": {"id":columnId, "uri":columnUri, "label":columnLabel, "type":columnType},
+								"rdfsLabel": thisLink.rdfsLabel,
+								"source": {"id":columnId, "uri":columnUri, "label":columnLabel, "rdfsLabel": columnRdfsLabel, "type":columnType},
 								"target": target
 							}
 							newEdges.push(edge);
@@ -276,11 +287,14 @@ var AnchorDropdownMenu = (function() {
 		}
 
 		
-		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, 
+		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnRdfsLabel, p_columnRdfsComment,
+				p_columnUri, p_columnDomain, p_columnCategory, 
 				p_alignmentId, p_nodeType, p_isUri,
 				event) {
 			worksheetId = p_worksheetId;
 			columnLabel = p_columnLabel;
+			columnRdfsLabel = p_columnRdfsLabel;
+			columnRdfsComment = p_columnRdfsComment;
 			columnId = p_columnId;
 			columnUri = p_columnUri;
 			columnDomain = p_columnDomain;

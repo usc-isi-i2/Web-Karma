@@ -10,8 +10,8 @@ var PropertyTabs = (function() {
 		var alignmentId;
 		var propertyId;
 		var propertyUri;
-		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
-		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
+		var sourceNodeId, sourceLabel, sourceRdfsLabel, sourceRdfsComment, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
+		var targetNodeId, targetLabel, targetRdfsLabel, targetRdfsComment, targetDomain, targetId, targetNodeType, targetIsUri;
 		var allPropertiesCache;
 		var defaultProperty;
 		var onSelectCallback;
@@ -82,7 +82,7 @@ var PropertyTabs = (function() {
 			target = $(e.target);
 			if(!target.is("a"))
 				target = target.parent();
-			
+
 			label = target.data('label');
 			uri = target.data('uri');
 			id = target.data('id');
@@ -248,8 +248,8 @@ var PropertyTabs = (function() {
 
 
 		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, 
-			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
-			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri, div,
+			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceRdfsLabel, p_sourceRdfsComment, p_sourceDomain, p_sourceId, p_sourceIsUri,
+			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetRdfsLabel, p_targetRdfsComment, p_targetDomain, p_targetId, p_targetIsUri, div,
 			callback, event) {
 			worksheetId = p_worksheetId;
 			alignmentId = p_alignmentId;
@@ -257,11 +257,15 @@ var PropertyTabs = (function() {
 			propertyUri = p_propertyUri;
 			sourceNodeId = p_sourceNodeId;
 			sourceLabel = p_sourceLabel;
+			sourceRdfsLabel = p_sourceRdfsLabel;
+			sourceRdfsComment = p_sourceRdfsComment;
 			sourceDomain = p_sourceDomain;
 			sourceId = p_sourceId;
 			sourceIsUri = p_sourceIsUri;
 			targetNodeId = p_targetNodeId;
 			targetLabel = p_targetLabel;
+			targetRdfsLabel = p_targetRdfsLabel;
+			targetRdfsComment = p_targetRdfsComment;
 			targetDomain = p_targetDomain;
 			targetId = p_targetId;
 			targetIsUri = p_targetIsUri;

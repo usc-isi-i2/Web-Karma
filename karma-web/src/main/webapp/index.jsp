@@ -311,6 +311,9 @@ and related projects, please see: http://www.isi.edu/integration
             </table>
         </div>
 
+        <div id="helpDiv" style="display:none; position:absolute;left:0px; top:0px; width:100%">
+        </div>
+
 		<div id="WaitingDiv" style="display:none; position:absolute;left:0px; top:0px;width:100%; height:100%" class="waitingDiv">
 			<div style="width:10px;height:50px">&nbsp;</div>
 			<div>Loading Workspace..</div>
