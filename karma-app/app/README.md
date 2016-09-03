@@ -1,16 +1,10 @@
-# Karma App
-
-
-```bash
-./script/bootstrap
-```
+Karma app
+=========
 
 ```
-./script/run
-```
-
-And when you're ready to build for release run:
-
-```
-./script/build
+npm install
+npm start
+npm test
+npm run e2e
+npm release
 ```

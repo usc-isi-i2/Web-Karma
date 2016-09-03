@@ -6,7 +6,6 @@ mkdir target
 
 cd ../karma-web/
 mvn package -Pshaded
-ls target/karma-web*.war
 cp target/karma-web*.war $CURRENT/target/karma.war
 cp external_webapps/* $CURRENT/target/
 
@@ -25,6 +24,9 @@ chmod +x tomcat/bin/*.sh
 
 cp $CURRENT/conf/* tomcat/conf/
 
-
 mkdir karma
 mv tomcat karma/
+
+cd $CURRENT/app
+./script/bootstrap
+./script/build
