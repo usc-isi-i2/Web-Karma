@@ -8,10 +8,13 @@ Thumbs.db
 /app/stylesheets
 /app/app.js
 /app/background.js
+/app/karma.js
 /app/env.json
 /app/**/*.map
+/app/tomcat
 
 /dist
 *.swp
 *.swo
 *~
+!package.json

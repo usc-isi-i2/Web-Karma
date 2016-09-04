@@ -1,12 +1,23 @@
 #!/bin/bash
 
+########################################
+# This build script:
+# 1. Navigates to karma-web directory and creates a shaded .war file.
+# 2. Copies the .war snapshot and other .war files in external_webapps to the target folder.
+# 3. Downloads apache tomcat.
+# 4. Copies the war files to webapps folder.
+# 5. Copies conf files to tomcat folder.
+# 6. Navigates to the electron app folder and copies the tomcat folder to app/app directory.
+# 7. Runs the release script there to build karma app for linux, windows and mac.
+########################################
+
 CURRENT=`pwd`
 rm -rf target
 mkdir target
 
 cd ../karma-web/
 mvn package -Pshaded
-cp target/karma-web*.war $CURRENT/target/karma.war
+cp target/karma-web*.war $CURRENT/target/ROOT.war
 cp external_webapps/* $CURRENT/target/
 
 mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
@@ -19,14 +30,13 @@ unzip tomcat.zip
 rm tomcat.zip
 
 mv apache-tomcat* tomcat
+rm -rf tomcat/webapps/ROOT
 mv *.war tomcat/webapps
 chmod +x tomcat/bin/*.sh
 
 cp $CURRENT/conf/* tomcat/conf/
 
-mkdir karma
-mv tomcat karma/
+rm -rf $CURRENT/desktop/app/tomcat
+mv tomcat $CURRENT/desktop/app/
 
-cd $CURRENT/app
-./script/bootstrap
-./script/build
+# TODO build app
