@@ -9,6 +9,7 @@
   "main": "background.js",
   "dependencies": {
     "fs-jetpack": "^0.9.0",
-    "open": "latest"
+    "open": "latest",
+    "tail": "latest"
   }
 }

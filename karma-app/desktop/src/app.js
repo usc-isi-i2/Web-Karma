@@ -4,6 +4,7 @@ import { remote } from 'electron'; // native electron module
 import jetpack from 'fs-jetpack'; // module loaded from npm
 import env from './env';
 var karma = require('electron').remote.require('./karma');
+var Tail = require('tail').Tail;
 
 console.log('Loaded environment variables:', env);
 
@@ -14,23 +15,27 @@ var appName = appDir.read('package.json', 'json').name;
 var appVersion= appDir.read('package.json', 'json').version;
 
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('greet').innerHTML = appName + " " + appVersion;
-    document.getElementById("start").onclick = function(){
-      log("Starting Karma...");
-      karma.start();
-    };
-    document.getElementById("launch").onclick = function(){
-      karma.launch();
-      alert("Launching Karma. Go to http://localhost:8080 if it doesn't launch.");
-    };
-    document.getElementById("stop").onclick = function(){
-      log("Stopping Karma...");
-      karma.stop();
-    };
+  document.getElementById('greet').innerHTML = appName + " " + appVersion;
+  let tail = new Tail(karma.tomcat.logFile);
+  tail.on("line", function(data) {
+    let log = document.getElementById("log");
+    log.innerHTML += data + "<br>";
+    log.scrollTop = log.scrollHeight;
+  });
+  document.getElementById("start").onclick = function(){
+    log("Starting Karma...");
+    karma.start();
+  };
+  document.getElementById("launch").onclick = function(){
+    karma.launch();
+    alert("Launching Karma. Go to http://localhost:8080 if it doesn't launch.");
+  };
+  document.getElementById("stop").onclick = function(){
+    log("Stopping Karma...");
+    karma.stop();
+  };
 });
 
 function log(string){
-  var d_log = document.getElementById("log");
-  d_log.innerHTML += string  + "<br>";
-  d_log.scrollTop = d_log.scrollHeight;
+  // TODO write to catalina.out
 }
