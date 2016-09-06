@@ -135,7 +135,7 @@ var ClassDialog = (function() {
 				event) {
 			worksheetId = p_worksheetId;
 			columnLabel = p_columnLabel;
-			columnRdfsLabel = p_columnLabel;
+			columnRdfsLabel = p_columnRdfsLabel;
 			columnRdfsComment = p_columnRdfsComment;
 			columnId = p_columnId;
 			columnUri = p_columnUri;

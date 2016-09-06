@@ -1157,7 +1157,7 @@ var IncomingOutgoingLinksDialog = (function() {
 						});
 						return;
 					}
-				}
+				}	
 			} else {
 				window.setTimeout(function() {
 					setSelectedFromClass(id);
@@ -1348,7 +1348,7 @@ var IncomingOutgoingLinksDialog = (function() {
 				var classes = getClassesInModel(worksheetId);
 				var result = [];
 				$.each(classes, function(index, clazz) {
-					result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+					result.push(ClassUI.getNodeObject(clazz.label, clazz.rdfsLabel, clazz.id, clazz.uri));
 				});
 				selectedClasses = result;
 			}
@@ -1365,7 +1365,7 @@ var IncomingOutgoingLinksDialog = (function() {
 
 				var result = [];
 				$.each(classes, function(index, clazz) {
-					result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+					result.push(ClassUI.getNodeObject(clazz.label, clazz.rdfsLabel, clazz.id, clazz.uri));
 				});
 				allClasses = result;
 			}
@@ -1381,7 +1381,7 @@ var IncomingOutgoingLinksDialog = (function() {
 					props = getAllObjectProperties(worksheetId);
 				var result = [];
 				$.each(props, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
 				});
 				allProperties = result;
 
@@ -1409,7 +1409,7 @@ var IncomingOutgoingLinksDialog = (function() {
 
 				var props = getAllPropertiesForDomainRange(worksheetId, domain, range);
 				$.each(props, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
 				});
 				selectedProperties = result;
 			}
@@ -1752,7 +1752,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 				var classes = getClassesInModel(worksheetId);
 				var result = [];
 				$.each(classes, function(index, clazz) {
-					result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+					result.push(ClassUI.getNodeObject(clazz.label, clazz.rdfsLabel, clazz.id, clazz.uri));
 				});
 				existingClasses = result;
 			}
@@ -1768,7 +1768,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 						classes.length <= $.workspaceGlobalInformation.UISettings.maxLoadedClasses) ? true : false;
 				var result = [];
 				$.each(classes, function(index, clazz) {
-					result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+					result.push(ClassUI.getNodeObject(clazz.label, clazz.rdfsLabel, clazz.id, clazz.uri));
 				});
 				allClasses = result;
 			}
@@ -1784,7 +1784,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 					props = getAllObjectProperties(worksheetId);
 				var result = [];
 				$.each(props, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
 				});
 				allProperties = result;
 				if (loadTree)
@@ -1811,7 +1811,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 				var props = getAllPropertiesForDomainRange(worksheetId, domain, range);
 				var result = [];
 				$.each(props, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
 				});
 				selectedProperties = result;
 				return result;
@@ -2519,7 +2519,7 @@ var AddNodeDialog = (function() {
 						if (!clazz.label.match(/ \(add\)$/))
 							return;
 					}
-					result.push(ClassUI.getNodeObject(clazz.label, clazz.id, clazz.uri));
+					result.push(ClassUI.getNodeObject(clazz.label, clazz.rdfsLabel, clazz.id, clazz.uri));
 
 				});
 				allClasses = result;
@@ -2675,7 +2675,7 @@ var AddLiteralNodeDialog = (function() {
 
 				var result = [];
 				$.each(propertyList, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.id, prop.uri, prop.type));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.type));
 				});
 				
 				return result;
