@@ -37,7 +37,7 @@ public class GetClassesCommand extends WorksheetCommand {
 	}
 
 	private enum JsonKeys {
-		updateType, nodeLabel, nodeId, nodes, nodeUri
+		updateType, nodeLabel, nodeId, nodes, nodeUri, nodeRDFSLabel
 	}
 
 	private String propertyURI;
@@ -96,6 +96,7 @@ public class GetClassesCommand extends WorksheetCommand {
 						nodeObj.put(JsonKeys.nodeLabel.name(), label.getDisplayName());
 						nodeObj.put(JsonKeys.nodeId.name(), label.getUri());
 						nodeObj.put(JsonKeys.nodeUri.name(), label.getUri());
+						nodeObj.put(JsonKeys.nodeRDFSLabel.name(), label.getRdfsLabel());
 						nodesArray.put(nodeObj);
 					}
 					obj.put(JsonKeys.nodes.name(), nodesArray);
@@ -129,7 +130,7 @@ public class GetClassesCommand extends WorksheetCommand {
 						String nodeLabelStr = node.getDisplayId();
 
 						Label nodeLabel = node.getLabel();
-						if (nodeLabel.getUri() !=null && nodeLabel.getNs() != null 
+						if (nodeLabel.getUri() != null && nodeLabel.getNs() != null 
 								&& nodeLabel.getUri().equalsIgnoreCase(nodeLabel.getNs())) {
 							nodeLabelStr = node.getId();
 						} else if(nodeLabel.getPrefix() == null && nodeLabel.getUri() != null) {
@@ -140,6 +141,7 @@ public class GetClassesCommand extends WorksheetCommand {
 						nodeObj.put(JsonKeys.nodeLabel.name(), nodeLabelStr);
 						nodeObj.put(JsonKeys.nodeId.name(), node.getId());
 						nodeObj.put(JsonKeys.nodeUri.name(), nodeLabel.getUri());
+						nodeObj.put(JsonKeys.nodeRDFSLabel.name(), nodeLabel.getRdfsLabel());
 						nodesArray.put(nodeObj);
 					}
 

@@ -329,11 +329,13 @@ function parseClassJSON(clazz, result, allLabels) {
 	var uri = clazz.nodeUri;
 	var id = clazz.nodeId;
 	var label = clazz.nodeLabel;
+	var rdfsLabel = clazz.nodeRDFSLabel;
 
 	var node = {
 		"label": label,
 		"id": id,
-		"uri": uri
+		"uri": uri,
+		"rdfsLabel": rdfsLabel
 	};
 	result.push(node);
 	//	if(clazz.children) {
@@ -590,6 +592,7 @@ function getRecommendedProperties(worksheetId, linkId) {
 function parsePropertyJSON(prop, result) {
 	var node = {
 		"label": prop.label,
+		"rdfsLabel": prop.rdfsLabel,
 		"id": prop.id,
 		"uri": prop.uri,
 		"type": prop.type
@@ -842,6 +845,44 @@ function getLabelWithoutPrefix(label) {
 function isValidUrl(url) {
 	var re = /^(ht|f)tps?:\/\/(([a-z0-9-\.]+\.[a-z]{2,4})|(localhost))\/?([^\s<>\#%"\,\{\}\\|\\\^\[\]`]+)?$/;
     return re.test(url);
+}
+
+function showNodeHelp(worksheetId, node) {
+	if(node.nodeId)
+		uri = node.nodeId;
+	else
+		uri = node.linkUri;
+	var html = "<div class='rdfsUriHelp'><span class='heading'>URI&nbsp;</span>" + uri + "</div>";
+	if(node.rdfsLabel)
+		html += "<div class='rdfsLabelHelp'><span class='heading'>rdfs:label&nbsp;</span>" + node.rdfsLabel + "</div>";
+	if(node.rdfsComment)
+		html += "<div class='rdfsCommentHelp'><span class='heading'>rdfs:comment&nbsp;</span>" + node.rdfsComment + "</div>";
+	showHelp(worksheetId, html);
+}
+
+function showHelp(worksheetId, html) {
+	var helpDiv = $("#helpDiv");
+	helpDiv.html(html);
+	var worksheetTop = $("#svgDiv_" + worksheetId);
+	var top = worksheetTop.offset().top;
+	var left = worksheetTop.offset().left;
+
+	var windowBoxLeft = $(window).scrollLeft();
+	var windowBoxRight = windowBoxLeft + $(window).width();
+	var windowBoxTop = $(window).scrollTop();
+	var windowBoxBottom = windowBoxTop + $(window).height();
+
+	if(left < windowBoxLeft || left > windowBoxRight)
+		left = windowBoxLeft + 2;
+	if(top < windowBoxTop || top > windowBoxBottom)
+		top = windowBoxTop + 2;
+
+	helpDiv.css({ "top": top+2, "left": left+2 });
+	helpDiv.show();
+}
+
+function hideHelp() {
+	$("#helpDiv").hide();
 }
 
 //Make All Modal Dialogs Resizeable

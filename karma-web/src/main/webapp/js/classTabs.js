@@ -7,7 +7,7 @@ var ClassTabs = (function() {
 		var dialog = $("#classTabs");
 
 		var worksheetId, columnId;
-		var columnUri, columnLabel, alignmentId;
+		var columnUri, columnLabel, columnRdfsLabel, columnRdfsComment, alignmentId;
 		var nodeType; //LiteralNode or InternalNode
 		var allClassCache;
 		var onSelectCallback;
@@ -57,12 +57,15 @@ var ClassTabs = (function() {
 
 		function selectFromMenu(e) {
 			target = $(e.target);
-			label = target.text();
+			if(!target.is("a"))
+				target = target.parent();
+
+			label = target.data('label');
 			uri = target.data('uri');
 			id = target.data('id');
-
+			rdfsLabel = target.data('rdfsLabel');
 			console.log("Selected property:" + label);
-			onSelectCallback({"label":label, "uri":uri, "id": id});
+			onSelectCallback({"label":label, "rdfsLabel":rdfsLabel, "uri":uri, "id": id});
 		}
 
 		function populateAll() {
@@ -78,7 +81,7 @@ var ClassTabs = (function() {
 			var allTypes = [];
 			
 			$.each(allClassCache[worksheetId], function(index, type) {
-				allTypes.push({"label": type["label"], "uri": type["uri"], "id": type["id"]});
+				allTypes.push({"label": type["label"], "rdfsLabel":type["rdfsLabel"], "uri": type["uri"], "id": type["id"]});
 			});
 
 			renderMenu($("#class_all", dialog), allTypes);
@@ -90,7 +93,7 @@ var ClassTabs = (function() {
 			var items = [];
 			if(inTypes != null) {
 				$.each(inTypes, function(index, type) {
-					items.push({"label": type["label"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
+					items.push({"label": type["label"], "rdfsLabel":type["rdfsLabel"], "uri": type["uri"], "id": type["id"], "class": "propertyDropdown_compatible"});
 				});	
 			}
 			renderMenu($("#class_recommended", dialog), items);
@@ -131,7 +134,7 @@ var ClassTabs = (function() {
 		        default:
 		          	items = allClassCache[worksheetId];
 		          	items = $.grep(items, function (item) {
-			        	return (item["label"].toLowerCase().indexOf(query.toLowerCase()) != -1);
+			        	return (Settings.getInstance().getDisplayLabel(item["label"], item["rdfsLabel"], true).toLowerCase().indexOf(query.toLowerCase()) != -1);
 			      	});
 			      	renderMenu($("#class_all", dialog), items);
 		      }
@@ -159,8 +162,9 @@ var ClassTabs = (function() {
 			$.each(menuItems, function(index, item) {
 				var label = item["label"];
 				var uri = item["uri"];
+				var rdfsLabel = item["rdfsLabel"];
 
-				var li = $("<li>").addClass("col-xs-4")
+				var li = $("<li>").addClass("col-xs-4").addClass("dialog-list-tab")
 				if(label == "divider") {
 					li.addClass("divider");
 					
@@ -169,9 +173,11 @@ var ClassTabs = (function() {
 					var a = $("<a>")
 						.attr("href", "#")
 						.attr("tabindex", "-1")
-						.text(label)
+						.html(Settings.getInstance().getDisplayLabel(label, rdfsLabel))
 						.data('uri', uri)
 						.data("id", item["id"])
+						.data("rdfsLabel", rdfsLabel)
+						.data("label", label)
 						.click(selectFromMenu);
 					li.append(a);
 				}
@@ -183,11 +189,15 @@ var ClassTabs = (function() {
 		}
 
 
-		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, 
+		function show(p_worksheetId, p_columnId, 
+				p_columnLabel, p_columnRdfsLabel, p_columnRdfsComment,
+				p_columnUri, 
 				p_alignmentId, p_nodeType, div, callback,
 				event) {
 			worksheetId = p_worksheetId;
 			columnLabel = p_columnLabel;
+			columnRdfsLabel = p_columnRdfsComment;
+			columnRdfsComment = p_columnRdfsComment;
 			columnId = p_columnId;
 			columnUri = p_columnUri;
 			alignmentId = p_alignmentId;
