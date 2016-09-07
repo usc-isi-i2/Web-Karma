@@ -39,4 +39,10 @@ cp $CURRENT/conf/* tomcat/conf/
 rm -rf $CURRENT/desktop/app/tomcat
 mv tomcat $CURRENT/desktop/app/
 
-# TODO build app
+cd $CURRENT/desktop
+npm install
+npm run prerelease
+cd app
+electron-packager . --all --overwrite
+
+# TODO zip all of them and release it

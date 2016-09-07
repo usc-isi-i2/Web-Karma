@@ -5,6 +5,8 @@ import jetpack from 'fs-jetpack'; // module loaded from npm
 import env from './env';
 var karma = require('electron').remote.require('./karma');
 var Tail = require('tail').Tail;
+var path = require("path");
+var fs = require("fs");
 
 console.log('Loaded environment variables:', env);
 
@@ -16,6 +18,7 @@ var appVersion= appDir.read('package.json', 'json').version;
 
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('greet').innerHTML = appName + " " + appVersion;
+  fs.openSync(karma.tomcat.logFile, 'w');
   let tail = new Tail(karma.tomcat.logFile);
   tail.on("line", function(data) {
     let log = document.getElementById("log");
