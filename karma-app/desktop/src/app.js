@@ -16,14 +16,19 @@ var appDir = jetpack.cwd(app.getAppPath());
 var appName = appDir.read('package.json', 'json').name;
 var appVersion= appDir.read('package.json', 'json').version;
 
+var colors = {
+  INFO: "#eee",
+  ERROR: "red",
+  WARNING: "orange",
+  DEFAULT: "yellow"
+};
+
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('greet').innerHTML = appName + " " + appVersion;
   fs.openSync(karma.tomcat.logFile, 'w');
   let tail = new Tail(karma.tomcat.logFile);
   tail.on("line", function(data) {
-    let log = document.getElementById("log");
-    log.innerHTML += data + "<br>";
-    log.scrollTop = log.scrollHeight;
+    log(data);
   });
   document.getElementById("start").onclick = function(){
     log("Starting Karma...");
@@ -31,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
   document.getElementById("launch").onclick = function(){
     karma.launch();
-    alert("Launching Karma. Go to http://localhost:8080 if it doesn't launch.");
+    log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
   };
   document.getElementById("stop").onclick = function(){
     log("Stopping Karma...");
@@ -39,6 +44,13 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 });
 
-function log(string){
-  // TODO write to catalina.out
+function log(data){
+  var color = colors.DEFAULT;
+  if (data.split(" ").length > 3){
+    color = (colors[data.split(" ")[2]]) ? colors[data.split(" ")[2]] : colors.DEFAULT;
+  }
+  data = "<span style='color: "+ color +"'>" + data + "</span>";
+  let log = document.getElementById("log");
+  log.innerHTML += data + "<br>";
+  log.scrollTop = log.scrollHeight;
 }
