@@ -25,7 +25,7 @@ mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
 cd $CURRENT/target
 
 # download tomcat binary
-wget http://mirrors.koehn.com/apache/tomcat/tomcat-9/v9.0.0.M9/bin/apache-tomcat-9.0.0.M9.zip -O tomcat.zip
+wget http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.zip -O tomcat.zip
 unzip tomcat.zip
 rm tomcat.zip
 
@@ -45,4 +45,14 @@ npm run prerelease
 cd app
 electron-packager . --all --overwrite
 
-# TODO zip all of them and release it
+mv Karma-* $CURRENT/target
+
+cd $CURRENT/target
+
+if [ "$1" == "--archive" ]
+then
+  for i in `ls |grep 'Karma-*'`
+  do
+    zip -r $i $i
+  done
+fi

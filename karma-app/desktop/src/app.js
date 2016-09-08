@@ -25,22 +25,25 @@ var colors = {
 
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('greet').innerHTML = appName + " " + appVersion;
+
   fs.openSync(karma.tomcat.logFile, 'w');
   let tail = new Tail(karma.tomcat.logFile);
   tail.on("line", function(data) {
     log(data);
   });
-  document.getElementById("start").onclick = function(){
-    log("Starting Karma...");
-    karma.start();
-  };
-  document.getElementById("launch").onclick = function(){
+
+  log("Starting Karma...");
+  karma.start();
+
+  // Launches Karma in browser after 5 seconds.
+  setTimeout(function(){
     karma.launch();
     log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
-  };
-  document.getElementById("stop").onclick = function(){
-    log("Stopping Karma...");
-    karma.stop();
+  }, 5000);
+
+  document.getElementById("launch").onclick = function(){
+    log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
+    karma.launch();
   };
 });
 

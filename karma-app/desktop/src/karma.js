@@ -3,6 +3,14 @@ var open = require('open');
 var path = require("path");
 import env from './env';
 
+exports.links = {
+  license: "https://github.com/usc-isi-i2/Web-Karma/blob/master/LICENSE.txt",
+  documentation: "https://github.com/usc-isi-i2/Web-Karma/wiki",
+  issues: "https://github.com/usc-isi-i2/Web-Karma/issues",
+  about_karma: "https://github.com/usc-isi-i2/Web-Karma/blob/master/README.md",
+  about_isi: "http://www.isi.edu/about/"
+};
+
 exports.tomcat = {
   // path : __dirname + path.sep + ((env.name == 'production') ? "Resources" + path.sep + "app" + path.sep + "tomcat" : "tomcat"),
   path : __dirname + path.sep + "tomcat",
@@ -22,16 +30,14 @@ exports.start = function(){
     console.log(stdout);
     console.log(stderr);
   });
-  console.log("start karma");
 };
 
 exports.launch = function(){
   var spawn = require('child_process').spawn;
   open(exports.tomcat.launchURL);
-  console.log("launch karma");
 };
 
-exports.stop = function(){
+export function stop(){
   var exec = require('child_process').exec;
   exec(exports.tomcat.stopcmd, function(error, stdout, stderr) {
     // TODO log if there is some problem
@@ -39,5 +45,5 @@ exports.stop = function(){
     console.log(stdout);
     console.log(stderr);
   });
-  console.log("Stop Karma");
-};
+}
+exports.stop = stop;
