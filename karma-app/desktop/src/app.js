@@ -24,7 +24,7 @@ var colors = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('greet').innerHTML = appName + " " + appVersion;
+  document.getElementById('greet').innerHTML = appName + " v" + appVersion;
 
   fs.openSync(karma.tomcat.logFile, 'w');
   let tail = new Tail(karma.tomcat.logFile);

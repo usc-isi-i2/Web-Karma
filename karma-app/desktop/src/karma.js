@@ -17,9 +17,10 @@ exports.tomcat = {
   launchURL : "http://localhost:8080"
 };
 
-exports.tomcat.catalina = exports.tomcat.path + path.sep + "bin" + path.sep + "catalina" + ((/^win/.test(process.platform)) ? ".bat" : ".sh");
-exports.tomcat.startcmd = exports.tomcat.catalina + " jpda start";
-exports.tomcat.stopcmd = exports.tomcat.catalina + " stop";
+exports.tomcat.catalina_home = exports.tomcat.path + path.sep + "bin";
+exports.tomcat.catalina = exports.tomcat.catalina_home + path.sep + "catalina" + ((/^win/.test(process.platform)) ? ".bat" : ".sh");
+exports.tomcat.startcmd = ((/^win/.test(process.platform)) ? "cd /d " + exports.tomcat.catalina_home + " && " : "") + exports.tomcat.catalina + " jpda start";
+exports.tomcat.stopcmd = ((/^win/.test(process.platform)) ? "cd /d " + exports.tomcat.catalina_home + " && " : "") + exports.tomcat.catalina + " stop";
 exports.tomcat.logFile= exports.tomcat.path + path.sep + "logs" + path.sep + "catalina.out";
 
 exports.start = function(){
