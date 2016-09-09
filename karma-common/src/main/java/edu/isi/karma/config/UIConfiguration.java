@@ -32,7 +32,7 @@ public class UIConfiguration {
 	private boolean d3ChartsEnabled = true;
 	private boolean forceModelLayoutEnabled = true;
 	private boolean showRDFSLabelWithIDFirst = false;
-	private boolean showRDFSLabelWithLabelFirst = false;
+	private boolean showRDFSLabelWithLabelFirst = true;
 	
 	private static Logger logger = LoggerFactory.getLogger(UIConfiguration.class);
 	
@@ -43,7 +43,7 @@ public class UIConfiguration {
 	private static String propMaxLoadedProperties = "max.loaded.properties=-1";
 	private static String propD3ChartsEnabled = "d3.display.charts=true";
 	private static String propModelForceLayout = "model.layout.force=true";
-	private static String propShowRDFSLabelWithLabelFirst = "show.rdfs.label.label=false";
+	private static String propShowRDFSLabelWithLabelFirst = "show.rdfs.label.label=true";
 	private static String propShowRDFSLabelWithIDFirst = "show.rdfs.label.id=false";
 	
 	private static String defaultUIProperties = propGoogleEarthEnabled + newLine
