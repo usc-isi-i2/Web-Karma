@@ -143,6 +143,10 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		{
 			object = normalizeURI(((JSONObject)object).get(atId).toString());
 		}			
+		
+		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type") && subject.has(atType)) 
+			array = subject.getJSONArray(atType);
+				
 		array.put(object);
 		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type")) {
 			int size = array.length();
@@ -150,7 +154,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			for (int i = 0; i < size; i++) {
 				newTypeArray.put(generateShortHandURIFromContext(array.get(i).toString()));
 			}
-			subject.put(atType, array);
+			subject.put(atType, newTypeArray);
 		}
 		else {
 			subject.put(shortHandPredicateURI, array);
@@ -272,7 +276,8 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 						types.put(o.toString(), o);
 					}
 				}
-				if (types.size() > 1 || Objects.equals(contextInverseAtContainerMapping.get(key), true)) {
+				//Let atType always be arrays
+				if (types.size() > 1 || key.equals(atType) || Objects.equals(contextInverseAtContainerMapping.get(key), true)) {
 					for (Entry<String, Object> type : types.entrySet()) {
 						newArray.put(type.getValue());
 					}
