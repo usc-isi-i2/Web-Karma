@@ -7,6 +7,9 @@ var karma = require('electron').remote.require('./karma');
 var Tail = require('tail').Tail;
 var path = require("path");
 var fs = require("fs");
+var D = require('dialogs');
+let dialogs = D();
+const {ipcRenderer} = require('electron');
 
 console.log('Loaded environment variables:', env);
 
@@ -45,7 +48,28 @@ document.addEventListener('DOMContentLoaded', function () {
     log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
     karma.launch();
   };
+
+  ipcRenderer.on('SET_MIN_HEAP', (event) => {
+    karma.getMinHeap((value) => {
+      dialogs.prompt('Set Min Heap Size (MB)', value, function(value) {
+        if (/^\d+$/.test(value)){
+          karma.setMinHeap(value);
+        }
+      });
+    });
+  });
+
+  ipcRenderer.on('SET_MAX_HEAP', (event) => {
+    karma.getMaxHeap((value) => {
+      dialogs.prompt('Set Max Heap Size (MB)', value, function(value) {
+        if (/^\d+$/.test(value)){
+          karma.setMaxHeap(value);
+        }
+      });
+    });
+  });
 });
+
 
 function log(data){
   var color = colors.DEFAULT;

@@ -23,7 +23,7 @@
     "buildResources": "resources"
   },
   "scripts": {
-    "postinstall": "install-app-deps",
+    "postinstall": "node_modules/.bin/install-app-deps",
     "build": "gulp build",
     "prerelease": "gulp build --env=production",
     "start": "gulp start"

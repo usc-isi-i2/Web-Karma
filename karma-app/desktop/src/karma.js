@@ -2,6 +2,7 @@
 var open = require('open');
 var path = require("path");
 import env from './env';
+import jetpack from 'fs-jetpack';
 
 exports.links = {
   license: "https://github.com/usc-isi-i2/Web-Karma/blob/master/LICENSE.txt",
@@ -21,21 +22,38 @@ exports.tomcat.catalina_home = exports.tomcat.path + path.sep + "bin";
 exports.tomcat.catalina = exports.tomcat.catalina_home + path.sep + "catalina" + ((/^win/.test(process.platform)) ? ".bat" : ".sh");
 exports.tomcat.startcmd = ((/^win/.test(process.platform)) ? "cd /d " + exports.tomcat.catalina_home + " && " : "") + exports.tomcat.catalina + " jpda start";
 exports.tomcat.stopcmd = ((/^win/.test(process.platform)) ? "cd /d " + exports.tomcat.catalina_home + " && " : "") + exports.tomcat.catalina + " stop";
-exports.tomcat.logFile= exports.tomcat.path + path.sep + "logs" + path.sep + "catalina.out";
+exports.tomcat.logFile = exports.tomcat.path + path.sep + "logs" + path.sep + "catalina.out";
+
+// export CATALINA_OPTS="-Xms128M -Xmx512MB"
 
 exports.start = function(){
-  var exec = require('child_process').exec;
-  exec(exports.tomcat.startcmd, function(error, stdout, stderr) {
-    // TODO log if there is some problem
-    console.log(error);
-    console.log(stdout);
-    console.log(stderr);
+  let command = (/^win/.test(process.platform) ? "set" : "export") + " CATALINA_OPTS=";
+  exports.getMinHeap((_min) => {
+    command += "-Xms" + _min + "M";
+    exports.getMaxHeap((_max) => {
+      command += " -Xmx" + _max +"M";
+      command += (/^win/.test(process.platform) ? " && " : ";");
+      command += exports.tomcat.startcmd;
+      console.log(command);
+      var exec = require('child_process').exec;
+      exec(exports.tomcat.startcmd, function(error, stdout, stderr) {
+        console.log(error);
+        console.log(stdout);
+        console.log(stderr);
+      });
+    });
   });
 };
 
 exports.launch = function(){
   var spawn = require('child_process').spawn;
   open(exports.tomcat.launchURL);
+};
+
+exports.restart = function(){
+  stop();
+  // wait for 5 seconds and try to start
+  setTimeout(exports.start, 5000);
 };
 
 export function stop(){
@@ -48,3 +66,25 @@ export function stop(){
   });
 }
 exports.stop = stop;
+
+exports.setMinHeap = function(value){
+    var env = jetpack.cwd(__dirname).read('env.json', 'json');
+    env.args["-Xms"] = value;
+    jetpack.cwd(__dirname).write('env.json', env);
+};
+
+exports.getMinHeap = function(callback){
+    var env = jetpack.cwd(__dirname).read('env.json', 'json');
+    callback(env.args["-Xms"]);
+};
+
+exports.setMaxHeap = function(value){
+    var env = jetpack.cwd(__dirname).read('env.json', 'json');
+    env.args["-Xmx"] = value;
+    jetpack.cwd(__dirname).write('env.json', env);
+};
+
+exports.getMaxHeap = function(callback){
+    var env = jetpack.cwd(__dirname).read('env.json', 'json');
+    callback(env.args["-Xmx"]);
+};
