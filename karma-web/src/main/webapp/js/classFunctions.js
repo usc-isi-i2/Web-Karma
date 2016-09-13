@@ -33,9 +33,9 @@ var ClassFunctions = (function() {
 			}, {
 				name: "Manage Links",
 				func: manageLinks
-			}, {
-				name: "Augment Data",
-				func: searchData
+		//}, {
+		//		name: "Augment Data",
+		//		func: searchData
 			}, {
 				name: "Edit",
 				func: editNode,
@@ -55,9 +55,9 @@ var ClassFunctions = (function() {
 			}, {
 				name: "Export Avro",
 				func: exportAvro
-			}, {
-				name: "Invoke Table Service",
-				func: invokeMLService
+		//	}, {
+		//		name: "Invoke Table Service",
+		//		func: invokeMLService
 			},
 
 

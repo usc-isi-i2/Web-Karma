@@ -26,10 +26,10 @@ function WorksheetOptions(wsId, wsTitle) {
 			}, ]
 		},
 
-		{
-			name: "Set Properties",
-			func: setProperties
-		},
+//		{
+//			name: "Set Properties",
+//			func: setProperties
+//		},
 
 		{
 			name: "Apply R2RML Model",
@@ -67,9 +67,9 @@ function WorksheetOptions(wsId, wsTitle) {
 			}, {
 				name: "R2RML Model",
 				func: publishModel
-			}, {
-				name: "Service Model",
-				func: publishServiceModel
+	//		}, {
+	//			name: "Service Model",
+	//			func: publishServiceModel
 			}, {
 				name: "Report",
 				func: publishReport
