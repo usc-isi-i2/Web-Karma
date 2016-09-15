@@ -27,7 +27,7 @@ exports.tomcat.logFile = exports.tomcat.path + path.sep + "logs" + path.sep + "c
 // export CATALINA_OPTS="-Xms128M -Xmx512MB"
 
 exports.start = function(){
-  let command = (/^win/.test(process.platform) ? "set" : "export") + " CATALINA_OPTS=";
+  let command = (/^win/.test(process.platform) ? "set" : "export") + " JAVA_OPTS=";
   exports.getMinHeap((_min) => {
     command += "-Xms" + _min + "M";
     exports.getMaxHeap((_max) => {

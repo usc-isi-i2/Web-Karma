@@ -20,11 +20,11 @@ export var fileMenuTemplate = {
   submenu: [
     { label: "Open New Window", click(){ karma.launch();} },
     { label: "Restart Karma", click(){ karma.restart();} },
-    { label: "Set Min Heap", click(item, focusedWindow){
-      if(focusedWindow){
-        focusedWindow.send('SET_MIN_HEAP');
-      }
-    } },
+    // { label: "Set Min Heap", click(item, focusedWindow){
+      // if(focusedWindow){
+        // focusedWindow.send('SET_MIN_HEAP');
+      // }
+    // } },
     { label: "Set Max Heap", click(item, focusedWindow){
       if(focusedWindow){
         focusedWindow.send('SET_MAX_HEAP');

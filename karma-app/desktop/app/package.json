@@ -11,6 +11,6 @@
     "fs-jetpack": "^0.9.0",
     "open": "latest",
     "tail": "latest",
-    "dialogs": "latest"
+    "dialog-polyfill": "latest"
   }
 }

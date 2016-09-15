@@ -7,8 +7,7 @@ var karma = require('electron').remote.require('./karma');
 var Tail = require('tail').Tail;
 var path = require("path");
 var fs = require("fs");
-var D = require('dialogs');
-let dialogs = D();
+var dialogPolyfill = require("dialog-polyfill");
 const {ipcRenderer} = require('electron');
 
 console.log('Loaded environment variables:', env);
@@ -49,23 +48,21 @@ document.addEventListener('DOMContentLoaded', function () {
     karma.launch();
   };
 
-  ipcRenderer.on('SET_MIN_HEAP', (event) => {
-    karma.getMinHeap((value) => {
-      dialogs.prompt('Set Min Heap Size (MB)', value, function(value) {
-        if (/^\d+$/.test(value)){
-          karma.setMinHeap(value);
-        }
-      });
-    });
-  });
-
+  // set max heap dialog
+  var dialog = document.querySelector('dialog');
+  dialogPolyfill.registerDialog(dialog);
+  var selector = document.getElementById("max_heap_size");
+  for(let i=1; i<=16; i++){
+    selector.innerHTML += "<option value='" + (i*1024) + "'>" + i + "GB</option>";
+  }
+  document.getElementById("set_max_heap_size").onclick = function(){
+    let value = document.getElementById("max_heap_size").value;
+    karma.setMaxHeap(value);
+  };
   ipcRenderer.on('SET_MAX_HEAP', (event) => {
     karma.getMaxHeap((value) => {
-      dialogs.prompt('Set Max Heap Size (MB)', value, function(value) {
-        if (/^\d+$/.test(value)){
-          karma.setMaxHeap(value);
-        }
-      });
+      document.getElementById("max_heap_size").value = value;
+      dialog.showModal();
     });
   });
 });

@@ -12,7 +12,14 @@
   <script src="app.js"></script>
 </head>
 <body>
-
+  <dialog>
+    <h3>Set Heap Size</h3>
+    <form method="dialog">
+      <select id="max_heap_size"></select>
+      <input type="submit" id="set_max_heap_size" value="Ok" class="btn btn-large btn-default"/>
+      <input type="submit" value="Cancel" class="btn btn-large btn-default"/>
+    </form>
+  </dialog>
   <div class="container">
     <h1 id="greet"></h1>
     <p>A Data Integration Tool</p>
