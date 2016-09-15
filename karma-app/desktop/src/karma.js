@@ -13,30 +13,25 @@ exports.links = {
 };
 
 exports.tomcat = {
-  // path : __dirname + path.sep + ((env.name == 'production') ? "Resources" + path.sep + "app" + path.sep + "tomcat" : "tomcat"),
   path : __dirname + path.sep + "tomcat",
   launchURL : "http://localhost:8080"
 };
 
 exports.tomcat.catalina_home = exports.tomcat.path + path.sep + "bin";
 exports.tomcat.catalina = exports.tomcat.catalina_home + path.sep + "catalina" + ((/^win/.test(process.platform)) ? ".bat" : ".sh");
-exports.tomcat.startcmd = ((/^win/.test(process.platform)) ? "cd /d " + exports.tomcat.catalina_home + " && " : "") + exports.tomcat.catalina + " jpda start";
-exports.tomcat.stopcmd = ((/^win/.test(process.platform)) ? "cd /d " + exports.tomcat.catalina_home + " && " : "") + exports.tomcat.catalina + " stop";
+exports.tomcat.startcmd = exports.tomcat.catalina + " jpda start";
+exports.tomcat.stopcmd = exports.tomcat.catalina + " stop";
 exports.tomcat.logFile = exports.tomcat.path + path.sep + "logs" + path.sep + "catalina.out";
 
-// export CATALINA_OPTS="-Xms128M -Xmx512MB"
-
 exports.start = function(){
-  let command = (/^win/.test(process.platform) ? "set" : "export") + " JAVA_OPTS=";
   exports.getMinHeap((_min) => {
-    command += "-Xms" + _min + "M";
     exports.getMaxHeap((_max) => {
-      command += " -Xmx" + _max +"M";
-      command += (/^win/.test(process.platform) ? " && " : ";");
-      command += exports.tomcat.startcmd;
-      console.log(command);
       var exec = require('child_process').exec;
-      exec(exports.tomcat.startcmd, function(error, stdout, stderr) {
+      let options = {
+        cwd: exports.tomcat.catalina_home
+      };
+      process.env.CATALINA_OPTS = "-Xms" + _min + "M -Xmx" + _max +"M";
+      exec(exports.tomcat.startcmd, options, function(error, stdout, stderr) {
         console.log(error);
         console.log(stdout);
         console.log(stderr);
@@ -58,7 +53,10 @@ exports.restart = function(){
 
 export function stop(){
   var exec = require('child_process').exec;
-  exec(exports.tomcat.stopcmd, function(error, stdout, stderr) {
+  let options = {
+    cwd: exports.tomcat.catalina_home
+  };
+  exec(exports.tomcat.stopcmd, options, function(error, stdout, stderr) {
     // TODO log if there is some problem
     console.log(error);
     console.log(stdout);
