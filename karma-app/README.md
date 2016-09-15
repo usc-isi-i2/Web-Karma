@@ -2,6 +2,8 @@ Karma-app
 =========
 Karma app for linux, windows and mac. 
 
+![](http://i.imgur.com/9164N4s.jpg)
+
 ##Installation
 Download [karma](https://github.com/alseambusher/Web-Karma/releases). Then, install [java](https://www.java.com/en/download/help/download_options.xml) if you don't already have it.
 ###Linux
@@ -10,6 +12,11 @@ Run `./Karma` on terminal.
 Navigate to the folder and open `Karma.app`
 ###Windows
 First [set JAVA_HOME](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) environmment variable. Then, navigate to the folder and open `Karma.exe`
+
+##Heap Size
+You can set maximum heap size for karma by going to `File->Set Max Heap` on Windows and linux or `Karma->Set Max Heap` on Mac. Once you change it, you need to restart karma.
+
+![](http://i.imgur.com/ath9ka1.jpg)
 
 
 ##Building the app from code.
