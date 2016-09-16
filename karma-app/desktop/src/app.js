@@ -28,7 +28,9 @@ var colors = {
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('greet').innerHTML = appName + " v" + appVersion;
 
-  fs.openSync(karma.tomcat.logFile, 'w');
+  // create log file if it doesnt already exist and close the file descriptor rightaway
+  fs.closeSync(fs.openSync(karma.tomcat.logFile, 'w'));
+
   let tail = new Tail(karma.tomcat.logFile);
   tail.on("line", function(data) {
     log(data);

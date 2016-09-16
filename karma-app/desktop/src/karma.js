@@ -17,11 +17,12 @@ exports.tomcat = {
   launchURL : "http://localhost:8080"
 };
 
+exports.tomcat.logFile = exports.tomcat.path + path.sep + "logs" + path.sep + "karma.out";
 exports.tomcat.catalina_home = exports.tomcat.path + path.sep + "bin";
 exports.tomcat.catalina = exports.tomcat.catalina_home + path.sep + "catalina" + ((/^win/.test(process.platform)) ? ".bat" : ".sh");
-exports.tomcat.startcmd = exports.tomcat.catalina + " jpda start";
+// For windows run jpda start and for others run "run". This makes windows a bit slower but we can't help it as we need the log output
+exports.tomcat.startcmd = exports.tomcat.catalina + ((/^win/.test(process.platform)) ? " jpda start" : " run 1> " + exports.tomcat.logFile + " 2<&1");
 exports.tomcat.stopcmd = exports.tomcat.catalina + " stop";
-exports.tomcat.logFile = exports.tomcat.path + path.sep + "logs" + path.sep + "catalina.out";
 
 exports.start = function(){
   exports.getMinHeap((_min) => {

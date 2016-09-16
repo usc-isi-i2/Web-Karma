@@ -30,7 +30,7 @@ unzip tomcat.zip
 rm tomcat.zip
 
 mv apache-tomcat* tomcat
-rm -rf tomcat/webapps/ROOT
+rm -rf tomcat/webapps/*
 mv *.war tomcat/webapps
 chmod +x tomcat/bin/*.sh
 
