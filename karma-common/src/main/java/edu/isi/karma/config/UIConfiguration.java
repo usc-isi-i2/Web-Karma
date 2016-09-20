@@ -3,11 +3,13 @@ package edu.isi.karma.config;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -29,6 +31,8 @@ public class UIConfiguration {
 	private int maxLoadedProperties=-1;
 	private boolean d3ChartsEnabled = true;
 	private boolean forceModelLayoutEnabled = true;
+	private boolean showRDFSLabelWithIDFirst = false;
+	private boolean showRDFSLabelWithLabelFirst = true;
 	
 	private static Logger logger = LoggerFactory.getLogger(UIConfiguration.class);
 	
@@ -39,37 +43,43 @@ public class UIConfiguration {
 	private static String propMaxLoadedProperties = "max.loaded.properties=-1";
 	private static String propD3ChartsEnabled = "d3.display.charts=true";
 	private static String propModelForceLayout = "model.layout.force=true";
+	private static String propShowRDFSLabelWithLabelFirst = "show.rdfs.label.label=true";
+	private static String propShowRDFSLabelWithIDFirst = "show.rdfs.label.id=false";
 	
 	private static String defaultUIProperties = propGoogleEarthEnabled + newLine
 											  + propMaxLoadedClasses + newLine
 											  + propMaxLoadedProperties + newLine
 											  + propD3ChartsEnabled + newLine
 											  + propModelForceLayout + newLine
+											  + propShowRDFSLabelWithIDFirst + newLine
+											  + propShowRDFSLabelWithLabelFirst + newLine
 			;
 	
 	private String contextId;
+	private ServletContextParameterMap contextParameters;
+	private Properties uiProperties;
+	
 	public UIConfiguration(String contextId) {
 		this.contextId = contextId;
 		this.loadConfig();
 	}
 	
 	public void loadConfig() {
-		Properties uiProperties = new Properties();
 		
         try {
-        	
-        	final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+        	contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
+        	this.uiProperties = new Properties();
         	String userConfigDir = contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) ;
         	logger.info("UICOnfiguration:" + userConfigDir);
         	if(userConfigDir == null || userConfigDir.length() == 0) {
-				try {
-					
-					//TODO this should never be necessary. why did this happen?
-					KarmaMetadataManager mgr = new KarmaMetadataManager(contextParameters);
-					mgr.register(new UserConfigMetadata(contextParameters), new UpdateContainer());
-				} catch (KarmaException e) {
-					logger.error("Could not register with KarmaMetadataManager", e);
-				}
+    			try {
+    				
+    				//TODO this should never be necessary. why did this happen?
+    				KarmaMetadataManager mgr = new KarmaMetadataManager(contextParameters);
+    				mgr.register(new UserConfigMetadata(contextParameters), new UpdateContainer());
+    			} catch (KarmaException e) {
+    				logger.error("Could not register with KarmaMetadataManager", e);
+    			}
         		
         	}
         	logger.info("Load File:" + contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/ui.properties");
@@ -95,38 +105,42 @@ public class UIConfiguration {
 			if(sMax != null)
 				maxLoadedClasses = Integer.parseInt(sMax);
 			else {
-				//need to add this property to the end
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-				out.println(propMaxLoadedClasses);
-				out.close();
+				addProperty(propMaxLoadedClasses);
 			}
 			
 			sMax = uiProperties.getProperty("max.loaded.properties");
 			if(sMax != null)
 				maxLoadedProperties = Integer.parseInt(sMax);
 			else {
-				//need to add this property to the end
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-				out.println(propMaxLoadedProperties);
-				out.close();
+				addProperty(propMaxLoadedProperties);
 			}
 			
 			String sD3 = uiProperties.getProperty("d3.display.charts");
 			if(sD3 != null)
 				d3ChartsEnabled = Boolean.parseBoolean(sD3);
 			else {
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-				out.println(propD3ChartsEnabled);
-				out.close();
+				addProperty(propD3ChartsEnabled);
 			}
 			
 			String modelLayout = uiProperties.getProperty("model.layout.force");
 			if(modelLayout != null)
 				forceModelLayoutEnabled = Boolean.parseBoolean(modelLayout);
 			else {
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-				out.println(propModelForceLayout);
-				out.close();
+				addProperty(propModelForceLayout);
+			}
+			
+			String showRDFSLabelWithIDFirst = uiProperties.getProperty("show.rdfs.label.id");
+			if(showRDFSLabelWithIDFirst != null)
+				this.showRDFSLabelWithIDFirst = Boolean.parseBoolean(showRDFSLabelWithIDFirst);
+			else {
+				addProperty(propShowRDFSLabelWithIDFirst);
+			}
+			
+			String showRDFSLabelWithLabelFirst = uiProperties.getProperty("show.rdfs.label.label");
+			if(showRDFSLabelWithLabelFirst != null)
+				this.showRDFSLabelWithLabelFirst = Boolean.parseBoolean(showRDFSLabelWithLabelFirst);
+			else {
+				addProperty(propShowRDFSLabelWithLabelFirst);
 			}
 		} catch (IOException e) {
 			logger.error("Could not load ui.properties, using defaults", e);
@@ -151,5 +165,41 @@ public class UIConfiguration {
 	
 	public boolean isForceModelLayoutEnabled() {
 		return forceModelLayoutEnabled;
+	}
+	
+	public boolean showRDFSLabelWithIDFirst() {
+		return this.showRDFSLabelWithIDFirst;
+	}
+	
+	public boolean showRDFSLabelWithLabelFirst() {
+		return this.showRDFSLabelWithLabelFirst;
+	}
+	
+	public void updateShowRDFSLabelWithLabelFirst(boolean value) throws IOException {
+		this.showRDFSLabelWithLabelFirst = value;
+		this.updateProperty("show.rdfs.label.label", Boolean.toString(value));
+	}
+	
+	public void updateShowRDFSLabelWithIDFirst(boolean value) throws IOException {
+		this.showRDFSLabelWithIDFirst = value;
+		this.updateProperty("show.rdfs.label.id", Boolean.toString(value));
+	}
+	
+	private void addProperty(String propLine) throws IOException {
+		File file = new File(contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/ui.properties");
+		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+		out.println(propLine);
+		out.close();
+		String[] keyValue = propLine.split("=");
+		this.uiProperties.put(keyValue[0], keyValue[1]);
+	}
+	
+	private void updateProperty(String key, String value) throws IOException {
+		this.uiProperties.put(key, value);
+		File file = new File(contextParameters.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/ui.properties");
+		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+		logger.info("Write Properties:" + this.uiProperties.toString());
+		this.uiProperties.store(out, null);
+		out.close();
 	}
 }

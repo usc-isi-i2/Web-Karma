@@ -120,3 +120,15 @@ body {
 #propertyDialogRight {
 	height: 500px;
 }
+
+.rdfsLabel {
+	color: #2a627e;
+}
+
+.dialog-list-tab {
+	overflow-wrap: break-word;
+}
+
+.heading {
+	font-weight: bold;
+}

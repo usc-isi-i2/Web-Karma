@@ -188,21 +188,27 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 			String sourceUri = newEdge.has(JsonKeys.edgeSourceUri.name()) ? newEdge.getString(JsonKeys.edgeSourceUri.name()) : null;
 			String sourceId = newEdge.has(JsonKeys.edgeSourceId.name()) ? newEdge.getString(JsonKeys.edgeSourceId.name()) : null;
 			Node sourceNode = null;
+			Label sourceLabel = null;
+			if(sourceUri != null)
+				sourceLabel = ontMgr.getUriLabel(sourceUri);
 			if(sourceId != null) {
 				if(sourceId.endsWith(" (add)"))
 					sourceId = sourceId.substring(0, sourceId.length()-5).trim();
 				sourceNode = alignment.getNodeById(sourceId);
 				
 				if(sourceNode == null) {
-					sourceNode = alignment.addInternalNode(new InternalNode(sourceId, new Label(sourceUri)));
+					sourceNode = alignment.addInternalNode(new InternalNode(sourceId, sourceLabel));
 				}
 			} else if(sourceUri != null){
-				sourceNode = alignment.addInternalNode(new Label(sourceUri));
+				sourceNode = alignment.addInternalNode(sourceLabel);
 				sourceId = sourceNode.getId();
 			}
 			
 			String targetUri = newEdge.has(JsonKeys.edgeTargetUri.name()) ? newEdge.getString(JsonKeys.edgeTargetUri.name()) : null;
 			String targetId = newEdge.has(JsonKeys.edgeTargetId.name()) ? newEdge.getString(JsonKeys.edgeTargetId.name()) : null;
+			Label targetLabel = null;
+			if(targetUri != null)
+				targetLabel = ontMgr.getUriLabel(targetUri);
 			Node targetNode = null;
 			if(targetId != null) {
 				if(targetId.endsWith(" (add)"))
@@ -210,10 +216,10 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 				targetNode = alignment.getNodeById(targetId);
 				
 				if(targetNode == null) {
-					targetNode = alignment.addInternalNode(new InternalNode(targetId, new Label(targetUri)));
+					targetNode = alignment.addInternalNode(new InternalNode(targetId, targetLabel));
 				}
 			} else if(targetUri != null) {
-				targetNode = alignment.addInternalNode(new Label(targetUri));
+				targetNode = alignment.addInternalNode(targetLabel);
 				targetId = targetNode.getId();
 			}
 			

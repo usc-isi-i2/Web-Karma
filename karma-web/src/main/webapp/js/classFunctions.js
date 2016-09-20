@@ -9,7 +9,7 @@ var ClassFunctions = (function() {
 		var hideFunction;
 
 		var worksheetId, columnId;
-		var columnUri, columnLabel, columnDomain, columnCategory, alignmentId;
+		var columnUri, columnLabel, columnRdfsLabel, columnRdfsComment, columnDomain, columnCategory, alignmentId;
 		var nodeType, isUri; //LiteralNode or InternalNode
 		
 		var options = [
@@ -33,9 +33,9 @@ var ClassFunctions = (function() {
 			}, {
 				name: "Manage Links",
 				func: manageLinks
-			}, {
-				name: "Augment Data",
-				func: searchData
+		//}, {
+		//		name: "Augment Data",
+		//		func: searchData
 			}, {
 				name: "Edit",
 				func: editNode,
@@ -55,9 +55,9 @@ var ClassFunctions = (function() {
 			}, {
 				name: "Export Avro",
 				func: exportAvro
-			}, {
-				name: "Invoke Table Service",
-				func: invokeMLService
+		//	}, {
+		//		name: "Invoke Table Service",
+		//		func: invokeMLService
 			},
 
 
@@ -77,7 +77,8 @@ var ClassFunctions = (function() {
 			console.log("showIncomingOutgoingLinks");
 			ManageIncomingOutgoingLinksDialog.getInstance().show(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, nodeType, isUri);
+				columnLabel, columnRdfsLabel, columnRdfsComment,
+				columnUri, columnDomain, nodeType, isUri);
 			e.preventDefault();
 		}
 
@@ -86,7 +87,8 @@ var ClassFunctions = (function() {
 			console.log("addIncomingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, nodeType, isUri,
+				columnLabel, columnRdfsLabel, columnRdfsComment, 
+				columnUri, columnDomain, nodeType, isUri,
 				"incoming");
 			e.preventDefault();
 		};
@@ -103,7 +105,7 @@ var ClassFunctions = (function() {
 			console.log("addOutgoingLink");
 			IncomingOutgoingLinksDialog.getInstance().showBlank(worksheetId,
 				columnId, alignmentId,
-				columnLabel, columnUri, columnDomain, nodeType, isUri,
+				columnLabel, columnRdfsLabel, columnRdfsComment, columnUri, columnDomain, nodeType, isUri,
 				"outgoing");
 			e.preventDefault();
 		}
@@ -237,11 +239,15 @@ var ClassFunctions = (function() {
 		// 	}
 		// }
 
-		function show(p_worksheetId, p_columnId, p_columnLabel, p_columnUri, p_columnDomain, p_columnCategory, 
+		function show(p_worksheetId, p_columnId, 
+				p_columnLabel, p_columnRdfsLabel, p_columnRdfsComment,
+				p_columnUri, p_columnDomain, p_columnCategory, 
 				p_alignmentId, p_nodeType, p_isUri, hideFunc,
 				event) {
 			worksheetId = p_worksheetId;
 			columnLabel = p_columnLabel;
+			columnRdfsLabel = p_columnRdfsLabel;
+			columnRdfsComment = p_columnRdfsComment;
 			columnId = p_columnId;
 			columnUri = p_columnUri;
 			columnDomain = p_columnDomain;

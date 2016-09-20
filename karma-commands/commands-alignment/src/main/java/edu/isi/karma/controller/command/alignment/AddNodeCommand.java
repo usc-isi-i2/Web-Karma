@@ -12,6 +12,7 @@ import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
@@ -80,12 +81,13 @@ public class AddNodeCommand extends WorksheetCommand {
 		oldAlignment = alignment.getAlignmentClone();
 		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>) alignment
 				.getGraph().clone();
-
+		OntologyManager ontMgr = workspace.getOntologyManager();
+		
 		try {
 			if(nodeId.equals("")) {
 				nodeId = nodeUri + (alignment.getLastIndexOfNodeUri(nodeUri) + 1);
 			}
-			InternalNode node = new InternalNode(nodeId, new Label(nodeUri));
+			InternalNode node = new InternalNode(nodeId, ontMgr.getUriLabel(nodeUri));
 			Node addedNode = alignment.addInternalNode(node);
 			if (addedNode != null)
 				alignment.addToForcedNodes(addedNode);
