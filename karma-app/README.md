@@ -2,7 +2,7 @@ Karma-app
 =========
 Karma desktop app for linux, windows and mac using which you can easily launch Karma.
 
-![](http://i.imgur.com/9164N4s.jpg)
+![](http://i.imgur.com/2mqPrTO.png)
 
 ##Installation
 Download [karma app](https://github.com/alseambusher/Web-Karma/releases) for your operating system. Then, install [java](https://www.java.com/en/download/help/download_options.xml) if you don't already have it. Installation of the right version of java is important. For instance, if you are running a 64bit windows, you have to download 64bit java for windows.
@@ -19,7 +19,7 @@ Once Karma app is opened, it automatically starts the server and launches on a w
 ##Configuration
 You can set maximum heap size for karma by going to menu `File->Set Max Heap` on Windows and linux or `Karma->Set Max Heap` on Mac. Once you change it, you need to __restart karma__.
 
-![](http://i.imgur.com/ath9ka1.jpg)
+![](http://i.imgur.com/IYtECwo.png)
 
 
 ##Building the app from code.
