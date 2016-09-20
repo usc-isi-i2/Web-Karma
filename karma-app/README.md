@@ -19,7 +19,7 @@ Once Karma app is opened, it automatically starts the server and launches on a w
 ##Configuration
 You can set maximum heap size for karma on the main window. Once you change it, you need to __restart karma__.
 
-![](http://i.imgur.com/LtQcfmi.png)
+![](http://i.imgur.com/zMUotto.png)
 
 
 ##Building the app from code.
