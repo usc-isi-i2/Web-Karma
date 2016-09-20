@@ -15,7 +15,9 @@ CURRENT=`pwd`
 rm -rf target
 mkdir target
 
-cd ../karma-web/
+cd ..
+mvn clean install
+cd karma-web/
 mvn package -Pshaded
 cp target/karma-web*.war $CURRENT/target/ROOT.war
 cp external_webapps/* $CURRENT/target/
@@ -26,6 +28,7 @@ cd $CURRENT/target
 
 # download tomcat binary
 wget http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.zip -O tomcat.zip
+# TODO if this fails, exit
 unzip tomcat.zip
 rm tomcat.zip
 
