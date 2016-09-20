@@ -61,12 +61,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let value = document.getElementById("max_heap_size").value;
     karma.setMaxHeap(value);
   };
-  ipcRenderer.on('SET_MAX_HEAP', (event) => {
+  function m_set_max_heap(){
     karma.getMaxHeap((value) => {
       document.getElementById("max_heap_size").value = value;
       dialog.showModal();
     });
-  });
+  }
+  document.getElementById("main_window_set_max_heap_size").onclick = m_set_max_heap;
+  ipcRenderer.on('SET_MAX_HEAP', m_set_max_heap);
 });
 
 
