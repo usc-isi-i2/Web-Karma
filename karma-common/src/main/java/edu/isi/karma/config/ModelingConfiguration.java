@@ -92,7 +92,8 @@ public class ModelingConfiguration {
 			"##########################################################################################" + newLine + 
 			"" + newLine + 
 			"train.on.apply.history=false" + newLine + 
-			"predict.on.apply.history=false" + newLine + 
+			"predict.on.apply.history=false" + newLine +
+			"online.semantic.typing=false" + newLine +
 			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
@@ -166,6 +167,7 @@ public class ModelingConfiguration {
 			"history.store.old=false"
 			;
 
+	private Boolean onlineSemanticTypingEnabled;
 
 	public void load() {
 		try {
@@ -290,6 +292,8 @@ public class ModelingConfiguration {
 				out.println("default.property=http://schema.org/name");
 				out.close();
 			}
+
+			onlineSemanticTypingEnabled = Boolean.parseBoolean(modelingProperties.getProperty("online.semantic.typing", "false"));
 		} catch (IOException e) {
 			logger.error("Error occured while reading config file ...", e);
 			System.exit(1);
@@ -542,6 +546,12 @@ public class ModelingConfiguration {
 		if(defaultProperty == null)
 			load();
 		return defaultProperty;
+	}
+
+	public Boolean getOnlineSemanticTypingEnabled(){
+		if(onlineSemanticTypingEnabled == null)
+			load();
+		return onlineSemanticTypingEnabled;
 	}
 	
 	public void setManualAlignment()
