@@ -1,20 +1,23 @@
 Karma-app
 =========
-Karma app for linux, windows and mac. 
+Karma desktop app for linux, windows and mac using which you can easily launch Karma.
 
 ![](http://i.imgur.com/9164N4s.jpg)
 
 ##Installation
-Download [karma](https://github.com/alseambusher/Web-Karma/releases). Then, install [java](https://www.java.com/en/download/help/download_options.xml) if you don't already have it.
+Download [karma app](https://github.com/alseambusher/Web-Karma/releases) for your operating system. Then, install [java](https://www.java.com/en/download/help/download_options.xml) if you don't already have it. Installation of the right version of java is important. For instance, if you are running a 64bit windows, you have to download 64bit java for windows.
 ###Linux
 Run `./Karma` on terminal.
 ###Mac
 Navigate to the folder and open `Karma.app`
 ###Windows
-First [set JAVA_HOME](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) environmment variable. Then, navigate to the folder and open `Karma.exe`
+First [set JRE_HOME](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) environmment variable. Then, navigate to the folder and open `Karma.exe`
 
-##Heap Size
-You can set maximum heap size for karma by going to `File->Set Max Heap` on Windows and linux or `Karma->Set Max Heap` on Mac. Once you change it, you need to restart karma.
+##Usage
+Once Karma app is opened, it automatically starts the server and launches on a web browser (It can take sometime the first time). In order to open a new instance on the browser, you can either click on "Open New Window" on the app or open `localhost:8080` on a new window in the browser.
+
+##Configuration
+You can set maximum heap size for karma by going to menu `File->Set Max Heap` on Windows and linux or `Karma->Set Max Heap` on Mac. Once you change it, you need to __restart karma__.
 
 ![](http://i.imgur.com/ath9ka1.jpg)
 
