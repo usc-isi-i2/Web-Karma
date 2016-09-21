@@ -1,0 +1,61 @@
+#!/bin/bash
+
+########################################
+# This build script:
+# 1. Navigates to karma-web directory and creates a shaded .war file.
+# 2. Copies the .war snapshot and other .war files in external_webapps to the target folder.
+# 3. Downloads apache tomcat.
+# 4. Copies the war files to webapps folder.
+# 5. Copies conf files to tomcat folder.
+# 6. Navigates to the electron app folder and copies the tomcat folder to app/app directory.
+# 7. Runs the release script there to build karma app for linux, windows and mac.
+########################################
+
+CURRENT=`pwd`
+rm -rf target
+mkdir target
+
+cd ..
+mvn clean install
+cd karma-web/
+mvn package -Pshaded
+cp target/karma-web*.war $CURRENT/target/ROOT.war
+cp external_webapps/* $CURRENT/target/
+
+mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
+
+cd $CURRENT/target
+
+# download tomcat binary
+wget http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.zip -O tomcat.zip
+# TODO if this fails, exit
+unzip tomcat.zip
+rm tomcat.zip
+
+mv apache-tomcat* tomcat
+rm -rf tomcat/webapps/*
+mv *.war tomcat/webapps
+chmod +x tomcat/bin/*.sh
+
+cp $CURRENT/conf/* tomcat/conf/
+
+rm -rf $CURRENT/desktop/app/tomcat
+mv tomcat $CURRENT/desktop/app/
+
+cd $CURRENT/desktop
+npm install
+npm run prerelease
+cd app
+electron-packager . --all --overwrite
+
+mv Karma-* $CURRENT/target
+
+cd $CURRENT/target
+
+if [ "$1" == "--archive" ]
+then
+  for i in `ls |grep 'Karma-*'`
+  do
+    zip -r $i $i
+  done
+fi
