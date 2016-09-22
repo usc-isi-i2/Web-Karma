@@ -24,7 +24,7 @@ You can set maximum heap size for karma on the main window. Once you change it, 
 
 ##Building the app from code.
 
-1. Install npm, node and electron-packager.
+1. Install latest [node](https://nodejs.org/en/) and electron-packager - `sudo npm install -g electron-packager`.
 2. Clone this repository and navigate to `karma-app` folder.
 3. Run `./build` or `./build --archive`
 4. The builds for all operating systems will be found in the target folder in `karma-app` folder.
