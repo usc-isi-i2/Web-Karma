@@ -16,7 +16,7 @@ rm -rf target
 mkdir target
 
 cd ..
-mvn clean install
+mvn clean install -Dmaven.test.skip=true
 cd karma-web/
 mvn package -Pshaded
 cp target/karma-web*.war $CURRENT/target/ROOT.war
@@ -27,7 +27,9 @@ mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
 cd $CURRENT/target
 
 # download tomcat binary
-wget http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.zip -O tomcat.zip
+# wget http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.zip -O tomcat.zip
+wget http://apache.cs.utah.edu/tomcat/tomcat-7/v7.0.72/bin/apache-tomcat-7.0.72.zip -O tomcat.zip
+
 # TODO if this fails, exit
 unzip tomcat.zip
 rm tomcat.zip
@@ -48,7 +50,8 @@ npm run prerelease
 cd app
 electron-packager . --all --overwrite
 
-mv Karma-* $CURRENT/target
+cp -rf Karma-* $CURRENT/target
+rm -rf Karma-*
 
 cd $CURRENT/target
 
