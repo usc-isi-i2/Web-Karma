@@ -24,10 +24,27 @@ You can set maximum heap size for karma on the main window. Once you change it, 
 
 ##Building the app from code.
 
-1. Install latest [node](https://nodejs.org/en/) and electron-packager - `sudo npm install -g electron-packager`.
+1. Install:
+
+  1. latest [node](https://nodejs.org/en/) 
+  2. electron-packager - `sudo npm install -g electron-packager`
+  3. wget - `brew install wget`
+  4. wine -
+      * if building on Mac[](https://www.davidbaumgold.com/tutorials/wine-mac/)
+      
+        ```
+        brew doctor
+        brew update
+        brew tap caskroom/cask
+        brew cask install xquartz
+        brew install wine     
+        ```
+      * if building on Linux: `sudo apt-get install wine`
+      
 2. Clone this repository and navigate to `karma-app` folder.
-3. Run `./build` or `./build --archive`
-4. The builds for all operating systems will be found in the target folder in `karma-app` folder.
+3. Make sure the npm python points to 2.7 version `npm config set python python2.7`
+4. Run `./build --archive` to build and generate the zip files for all OS
+5. The builds for all operating systems will be found in the target folder in `karma-app` folder.
 
 Karma app is built for linux, windows and mac for both ia32 and x64 versions as follows when `./build` is run:
 
