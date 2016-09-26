@@ -24,6 +24,10 @@ exports.tomcat.catalina = exports.tomcat.catalina_home + path.sep + "catalina" +
 exports.tomcat.startcmd = exports.tomcat.catalina + ((/^win/.test(process.platform)) ? " jpda start" : " run 1> " + exports.tomcat.logFile + " 2<&1");
 exports.tomcat.stopcmd = exports.tomcat.catalina + " stop";
 
+process.env.CATALINA_HOME = exports.tomcat.path;
+process.env.CATALINA_BASE = exports.tomcat.path;
+process.env.CLASSPATH = exports.tomcat.catalina_home + path.sep + "bootstrap.jar;" + exports.tomcat.catalina_home + path.sep + "tomcat-juli.jar";
+
 exports.start = function(){
   exports.getMinHeap((_min) => {
     exports.getMaxHeap((_max) => {

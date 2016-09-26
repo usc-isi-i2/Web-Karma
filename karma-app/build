@@ -27,7 +27,6 @@ mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
 cd $CURRENT/target
 
 # download tomcat binary
-# wget http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.zip -O tomcat.zip
 wget http://apache.cs.utah.edu/tomcat/tomcat-7/v7.0.72/bin/apache-tomcat-7.0.72.zip -O tomcat.zip
 
 # TODO if this fails, exit
@@ -48,7 +47,10 @@ cd $CURRENT/desktop
 npm install
 npm run prerelease
 cd app
-electron-packager . --all --overwrite
+#electron-packager . --all --overwrite
+electron-packager . --platform=win32 --arch=x64 --icon=../resources/icons/karma.ico --overwrite
+electron-packager . --platform=linux --arch=x64 --icon=../resources/icons/karma.png --overwrite
+electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite
 
 cp -rf Karma-* $CURRENT/target
 rm -rf Karma-*

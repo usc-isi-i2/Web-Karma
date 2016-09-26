@@ -94,10 +94,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function log(data){
-  var color = colors.DEFAULT;
-  if (data.split(" ").length > 3){
-    color = (colors[data.split(" ")[2]]) ? colors[data.split(" ")[2]] : colors.DEFAULT;
-  }
+  data = data.trim();
+  let cue = data.split(" ")[0].replace(":", "");
+  var color = (colors[cue]) ? colors[cue] : colors.DEFAULT;
   data = "<span style='color: "+ color +"'>" + data + "</span>";
   let log = document.getElementById("log");
   log.innerHTML += data + "<br>";
