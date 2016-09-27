@@ -47,15 +47,22 @@ cd $CURRENT/desktop
 npm install
 npm run prerelease
 cd app
-#electron-packager . --all --overwrite
 electron-packager . --platform=win32 --arch=x64 --icon=../resources/icons/karma.ico --overwrite
 electron-packager . --platform=linux --arch=x64 --icon=../resources/icons/karma.png --overwrite
 electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite
 
-cp -rf Karma-* $CURRENT/target
-rm -rf Karma-*
+mv -T Karma-darwin* $CURRENT/target/Karma-Mac
+mv -T Karma-linux* $CURRENT/target/Karma-Linux
+mv -T Karma-win* $CURRENT/target/Karma-Windows
 
 cd $CURRENT/target
+
+#put our license
+for build_folder in `ls |grep Karma`
+do
+	mv $build_folder/LICENSE $build_folder/LICENSE.electron.packager
+	cp $CURRENT/../LICENSE.txt $build_folder/
+done
 
 if [ "$1" == "--archive" ]
 then
