@@ -189,6 +189,12 @@ and related projects, please see: http://www.isi.edu/integration
 								<li><a href="#" id="displayRDFSLabel_idFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Name or ID First</a></li>
 		                  	</ul>
 		                  </li>
+		                  <li class="dropdown-submenu"><a href="#" id="settingSemanticLabeling">Semantic Labeling</a>
+		                  	<ul class="dropdown-menu">
+		                  		<li><a href="#" id="displaySemanticLabeling_Online"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Use Online</a></li>
+								<li><a href="#" id="displaySemanticLabeling_Offline"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Use Offline</a></li>
+		                  	</ul>
+		                  </li>
 		                  
 		              </ul>
 		            </li>
@@ -409,6 +415,7 @@ and related projects, please see: http://www.isi.edu/integration
         	var DEFAULT_PROPERTY_URI = "<%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getDefaultProperty()%>";
         	var showRDFSLabel_LabelFirst = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).showRDFSLabelWithLabelFirst()%>;
 			var showRDFSLabel_IDFirst = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).showRDFSLabelWithIDFirst()%>;
+        	var isSemanticLabelingOnline = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getOnlineSemanticTypingEnabled()%>;
 
 
             $(function() {
@@ -507,6 +514,7 @@ and related projects, please see: http://www.isi.edu/integration
 
             	loadPropertiesForCache();
             	Settings.getInstance().setDisplayRDFSLabel(showRDFSLabel_LabelFirst, showRDFSLabel_IDFirst);
+            	Settings.getInstance().setIsSemanticLabelingOnline(isSemanticLabelingOnline);
 			});
             
             var footerPositionTimer = null;

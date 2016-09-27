@@ -6,7 +6,9 @@ var Settings = (function() {
 		var showRDFSLabel = false;
 		var showRDFSLabel_labelFirst = false;
 		var showRDFSLabel_idFirst = false;
-		
+
+		var isSemanticLabeling_online = false;
+
 		function init() {
 			$("#displayRDFSLabel_labelFirst").on("click", function(e) {
 				label_first = !$("#displayRDFSLabel_labelFirst span").is(":visible");
@@ -24,6 +26,29 @@ var Settings = (function() {
 					label_first = showRDFSLabel_labelFirst;
 				setDisplayRDFSLabel(label_first, id_first, true);
 			});
+
+			$("#displaySemanticLabeling_Online").on("click", function(e) {
+			    isSemanticLabeling_online = !$("#displaySemanticLabeling_Online span").is(":visible");
+			    setSemanticLabeling(isSemanticLabeling_online);
+			});
+			$("#displaySemanticLabeling_Offline").on("click", function(e) {
+			    isSemanticLabeling_online = $("#displaySemanticLabeling_Offline span").is(":visible");
+			    setSemanticLabeling(isSemanticLabeling_online);
+			});
+		}
+
+		function setSemanticLabeling(isOnline){
+		    if (isOnline){
+		        $("#displaySemanticLabeling_Online span").show();
+		        $("#displaySemanticLabeling_Offline span").hide();
+		    } else {
+		        $("#displaySemanticLabeling_Online span").hide();
+		        $("#displaySemanticLabeling_Offline span").show();
+		    }
+		}
+		function setIsSemanticLabelingOnline(isOnline){
+		    isSemanticLabeling_online = isOnline;
+		    setSemanticLabeling(isOnline);
 		}
 
 		function setDisplayRDFSLabel(showLabelFirst, showIDFirst, update) {
@@ -89,7 +114,8 @@ var Settings = (function() {
 			showRDFSLabel: showRDFSLabel,
 			showRDFSLabelWithIdFirst: showRDFSLabelWithIdFirst,
 			showRDFSLabelWithLabelFirst: showRDFSLabelWithLabelFirst,
-			getDisplayLabel: getDisplayLabel
+			getDisplayLabel: getDisplayLabel,
+			setIsSemanticLabelingOnline: setIsSemanticLabelingOnline
 		};
 	};
 
