@@ -12,6 +12,7 @@ public class SemanticLabelingService {
     private static String SEMANTIC_TYPE_PART = "/semantic_types";
     private static String COLUMN_PART = "/columns";
     private static String BASE_URL = "http://52.38.65.60:80";
+    private static String ID_DIVIDER = "-";  // The divider that is used to separate the different parts of ID's, like domain and type
 
     public SemanticLabelingService() {
 
@@ -38,10 +39,9 @@ public class SemanticLabelingService {
         connection.setRequestMethod("POST");
         connection.setDoInput(true);
         connection.setDoOutput(true);
+        connection.setRequestProperty("Content-Type","application/json");
         OutputStream os = connection.getOutputStream();
-        Writer w = new OutputStreamWriter(os, "UTF-8");
-        w.write(body);
-        w.close();
+        os.write(body.getBytes("UTF-8"));
         os.close();
         InputStream response = new BufferedInputStream(connection.getInputStream());
         BufferedReader reader = new BufferedReader(new InputStreamReader(response));
@@ -68,15 +68,12 @@ public class SemanticLabelingService {
     public String post(String query, String id, String body) throws IOException{
         if (!query.equals(""))
             query = "?" + query;
-        return POST(SEMANTIC_TYPE_PART + "/" + id + COLUMN_PART + query, body);
+        return POST(SEMANTIC_TYPE_PART + "/" + id + query, body);
     }
     public String get(String query, String id, String column_id){
         return "";
     }
     public static String getSemanticTypeId(String domain, String type) throws MalformedURLException {
-        URL url = new URL(domain);
-        String namespace = Base64.encodeBase64String((url.getProtocol() + "://" + url.getHost()).getBytes()).replace("/","-");
-        String part = Base64.encodeBase64String((domain + "\n" + type).getBytes()).replace("/", "-");
-        return Base64.encodeBase64String((namespace + "\n" + part).getBytes()).replace("/", "-");
+        return Base64.encodeBase64String(domain.getBytes()) + ID_DIVIDER + Base64.encodeBase64String(type.getBytes());
     }
 }

@@ -279,7 +279,7 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		// *****************************************************************************************
 
 
-		// alse: to add semantic types to the server
+		// @alse: to add semantic types to the server
 		Boolean onlineSemanticTypingEnabled = modelingConfiguration.getOnlineSemanticTypingEnabled();
 		if(onlineSemanticTypingEnabled) {
 			try {
