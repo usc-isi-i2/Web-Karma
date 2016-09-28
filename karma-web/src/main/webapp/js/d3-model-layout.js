@@ -1,6 +1,8 @@
-D3ModelLayout = function(p_htmlElement, p_cssClass) {
+D3ModelLayout = function(p_htmlElement, p_cssClass, p_width, p_worksheetId) {
 	var htmlElement = p_htmlElement;
 	var cssClass = p_cssClass;
+	var htmlWidth = p_width;
+	var worksheetId = p_worksheetId;
 
 	//var padding = 35;
 	var rightPanelWidth = parseInt($("." + cssClass).css("width"));
@@ -520,6 +522,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			})
 			.on("mouseover", function(d){				
 				var frameId = "";
+				showNodeHelp(worksheetId, d.node.original);
+
 				//console.log(d.content);
 				if (d.type == "nodeLabel"){
 					frameId = "#nodeLabelG" + d.node.id;
@@ -556,6 +560,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 					.moveToFront();
 			})
 			.on("mouseout", function(d, i){
+				hideHelp();
+
 				var frameId = "";
 				if (d.type == "nodeLabel"){
 					frameId = "#nodeLabelG" + d.node.id;
@@ -1197,6 +1203,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 		tmpN.forEach(function(d, i){
 			var node = {};
 			node.label = d.id;
+			node.rdfsLabel = d.rdfsLabel;
+			node.rdfsComment = d.rdfsComment;
 			node.id = i;
 			node.nodeId = d.nodeId;
 			node.degree = 0;
@@ -1255,6 +1263,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass) {
 			edge.edgeId = d.id;
 			edge.linkType = d.linkType;
 			edge.linkStatus = d.linkStatus;
+			edge.rdfsLabel = d.rdfsLabel;
+			edge.rdfsComment = d.rdfsComment;
 			if (d.id){
 				edgeIdMap[d.id] = i;
 			}

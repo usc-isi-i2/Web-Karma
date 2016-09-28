@@ -10,9 +10,9 @@ var PropertyDialog = (function() {
 
 		var worksheetId;
 		var alignmentId;
-		var propertyId, propertyUri, propertyLabel;
-		var sourceNodeId, sourceLabel, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
-		var targetNodeId, targetLabel, targetDomain, targetId, targetNodeType, targetIsUri;
+		var propertyId, propertyUri, propertyLabel, propertyRdfsLabel, propertyRdfsComment;
+		var sourceNodeId, sourceLabel, sourceRdfsLabel, sourceRdfsComment, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
+		var targetNodeId, targetLabel, targetRdfsLabel, targetRdfsComment, targetDomain, targetId, targetNodeType, targetIsUri;
 		var propertyTabs;
 		var propertyLiteralType, propertyIsSubClass, propertyLanguage;
 
@@ -61,8 +61,8 @@ var PropertyDialog = (function() {
 		function changeLinkUI(event) {
 			initRightDiv("Change Link");
 			propertyTabs.show(worksheetId, alignmentId, propertyId, propertyUri, 
-													sourceNodeId, sourceNodeType, sourceLabel, sourceDomain, sourceId, sourceIsUri,
-													targetNodeId, targetNodeType, targetLabel, targetDomain, targetId, targetIsUri,
+													sourceNodeId, sourceNodeType, sourceLabel, sourceRdfsLabel, sourceRdfsComment, sourceDomain, sourceId, sourceIsUri,
+													targetNodeId, targetNodeType, targetLabel, targetRdfsLabel, targetRdfsComment, targetDomain, targetId, targetIsUri,
 													rightDiv, selectPropertyFromMenu,
 													event);
 		}
@@ -140,7 +140,7 @@ var PropertyDialog = (function() {
 		function changeFromUI(event) {
 			initRightDiv("Change From", "Change From Class for Link");
 
-			ClassTabs.getInstance().show(worksheetId, sourceNodeId, sourceLabel, sourceDomain, 
+			ClassTabs.getInstance().show(worksheetId, sourceNodeId, sourceLabel, sourceRdfsLabel, sourceRdfsComment, sourceDomain, 
 				alignmentId, sourceNodeType, rightDiv, function(clazz) {
 					if(targetNodeType == "ColumnNode") {
 						var type = {};
@@ -177,7 +177,7 @@ var PropertyDialog = (function() {
 		function changeToUI(event) {
 			initRightDiv("Change To", "Change To Class for Link");
 
-			ClassTabs.getInstance().show(worksheetId, targetNodeId, targetLabel, targetDomain, 
+			ClassTabs.getInstance().show(worksheetId, targetNodeId, targetLabel, targetRdfsLabel, targetRdfsComment, targetDomain, 
 				alignmentId, targetNodeType, rightDiv, function(clazz) {
 					//Change Links command
 					oldEdges = [];
@@ -202,9 +202,10 @@ var PropertyDialog = (function() {
 		}
 
 		function selectPropertyFromMenu(property, event) {
-			console.log("Selected property:" + label);
+			console.log("Selected property:" + property.label);
 			if(sourceDomain == "BlankNode" || targetDomain == "BlankNode") {
-				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, property.uri, property.label);
+				D3ModelManager.getInstance().changeTemporaryLink(worksheetId, propertyId, property.uri, 
+					property.label, property.rdfsLabel, property.rdfsComment);
 				event.stopPropagation();
 				hide();
 			} else {
@@ -239,7 +240,7 @@ var PropertyDialog = (function() {
 
 
 		function setTitle(title) {
-			$("#propertyDialog_title", dialog).html(title + ": " + propertyLabel);
+			$("#propertyDialog_title", dialog).html(title + ": " + Settings.getInstance().getDisplayLabel(propertyLabel, propertyRdfsLabel));
 		}
 
 
@@ -337,9 +338,9 @@ var PropertyDialog = (function() {
 			rightDiv.removeClass("col-sm-10").addClass("col-sm-12");
 		}
 
-		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, p_propertyLabel, p_propertyStatus,
-			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceDomain, p_sourceId, p_sourceIsUri,
-			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetDomain, p_targetId, p_targetIsUri,
+		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, p_propertyLabel, p_propertyRdfsLabel, p_propertyRdfsComment, p_propertyStatus,
+			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceRdfsLabel, p_sourceRdfsComment, p_sourceDomain, p_sourceId, p_sourceIsUri,
+			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetRdfsLabel, p_targetRdfsComment, p_targetDomain, p_targetId, p_targetIsUri,
 			event) {
 			worksheetId = p_worksheetId;
 			alignmentId = p_alignmentId;
@@ -347,14 +348,20 @@ var PropertyDialog = (function() {
 			linkStatus = p_propertyStatus;
 			propertyUri = p_propertyUri;
 			propertyLabel = p_propertyLabel;
+			propertyRdfsLabel = p_propertyRdfsLabel;
+			propertyRdfsComment = p_propertyRdfsComment;
 
 			sourceNodeId = p_sourceNodeId;
 			sourceLabel = p_sourceLabel;
+			sourceRdfsLabel = p_sourceRdfsLabel;
+			sourceRdfsComment = p_sourceRdfsComment;
 			sourceDomain = p_sourceDomain;
 			sourceId = p_sourceId;
 			sourceIsUri = p_sourceIsUri;
 			targetNodeId = p_targetNodeId;
 			targetLabel = p_targetLabel;
+			targetRdfsLabel = p_targetRdfsLabel;
+			targetRdfsComment = p_targetRdfsComment;
 			targetDomain = p_targetDomain;
 			targetId = p_targetId;
 			targetIsUri = p_targetIsUri;
@@ -390,7 +397,7 @@ var PropertyDialog = (function() {
 				});
 			}
 
-			$("#propertyDialog_title", dialog).html("Link: " + propertyLabel);
+			$("#propertyDialog_title", dialog).html("Link: " + Settings.getInstance().getDisplayLabel(propertyLabel, propertyRdfsLabel));
 			if(sourceNodeType == "Link") {
 				showFunctionsMenu();
 				rightDiv.hide();

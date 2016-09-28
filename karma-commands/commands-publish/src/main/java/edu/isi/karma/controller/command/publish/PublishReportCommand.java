@@ -175,7 +175,7 @@ public class PublishReportCommand extends WorksheetCommand {
 					}
 					pyTransform.append("From column: _" + invocationColumnName + "_").append(linebreak);
 					
-					pyTransform.append(">``` python").append(linebreak);
+					pyTransform.append("``` python").append(linebreak);
 					pyTransform.append(code).append(linebreak);
 					pyTransform.append("```").append(linebreak);
 					pyTransform.append(linebreak);

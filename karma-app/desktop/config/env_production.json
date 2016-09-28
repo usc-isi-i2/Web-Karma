@@ -1,0 +1,5 @@
+{
+  "name": "production",
+  "description": "Production build",
+  "args": {"-Xms": "128", "-Xmx": "2048" }
+}

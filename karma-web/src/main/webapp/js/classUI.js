@@ -9,11 +9,13 @@ function ClassUI(id,
 	var classData = {
 		"uri": "",
 		"label": "",
+		"rdfsLabel": "",
 		"id": ""
 	};
 	var selectedPropertyData = {
 		"uri": "",
 		"label": "",
+		"rdfsLabel": "",
 		"id": ""
 	};
 
@@ -37,15 +39,16 @@ function ClassUI(id,
 			$(list1)
 				.on("select_node.jstree", function(e, data) {
 					var selectedNodeData = data.node.original;
-					classData.label = selectedNodeData.text;
+					classData.label = selectedNodeData.metadata.label;
+					classData.rdfsLabel = selectedNodeData.metadata.rdfsLabel;
 					classData.uri = selectedNodeData.metadata.uri;
 					classData.id = selectedNodeData.metadata.id;
 
-					var treeId = ClassUI.getNodeID(classData.label, classData.id, classData.uri);
+					var treeId = ClassUI.getNodeID(classData.label, classData.rdfsLabel, classData.id, classData.uri);
 					$(list1).jstree('open_node', treeId); //Open node will scroll to that pos
 
 					$(list2).jstree("deselect_all");
-					$("#" + id + "_classKeyword").val(classData.label);
+					$("#" + id + "_classKeyword").val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel, true));
 
 					if (!selectOnLoad && classSelectorCallback != null) {
 						classSelectorCallback(classData);
@@ -55,11 +58,11 @@ function ClassUI(id,
 				.on("loaded.jstree", function(e, data) {
 					console.log("loaded classlist: " + $(list1).attr("id"));
 					if (classData.label.length > 0 && classData.label != "Class") {
-						$("#" + id + "_classKeyword").val(classData.label);
+						$("#" + id + "_classKeyword").val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel, true));
 					}
 					window.setTimeout(function() {
 						if (classData.label.length > 0 && classData.label != "Class") {
-							var treeId = ClassUI.getNodeID(classData.label, classData.id, classData.uri);
+							var treeId = ClassUI.getNodeID(classData.label, classData.rdfsLabel, classData.id, classData.uri);
 							console.log("Now select node:" + treeId + " in classList " + $(list1).attr("id"));
 							selectOnLoad = true;
 
@@ -119,7 +122,7 @@ function ClassUI(id,
 				.addClass("form-control")
 				.attr("id", id + "_classKeyword")
 				.attr("autocomplete", "off")
-				.val(classData.label)
+				.val(Settings.getInstance().getDisplayLabel(classData.label, classData.rdfsLabel, true))
 				.addClass("classInput")
 			);
 
@@ -236,14 +239,14 @@ function ClassUI(id,
 			populateClassList(classFuncBottom(selectedPropertyData), classList2, classList1);
 	};
 
-	this.refreshClassDataTop = function(label, classId, uri) {
+	this.refreshClassDataTop = function(label, rdfsLabel, classId, uri) {
 		console.log("classsUI.refreshClassDataTop:" + label + "," + classId + "," + uri);
-		this.setSelectedProperty(label, classId, uri);
+		this.setSelectedProperty(label, rdfsLabel, classId, uri);
 		populateClassList(classFuncTop(selectedPropertyData), classList1, classList2);
 	};
 
-	this.refreshClassDataBottom = function(label, classId, uri) {
-		this.setSelectedProperty(label, classId, uri);
+	this.refreshClassDataBottom = function(label, rdfsLabel, classId, uri) {
+		this.setSelectedProperty(label, rdfsLabel, classId, uri);
 		populateClassList(classFuncBottom(selectedPropertyData), classList2, classList1);
 	};
 
@@ -256,16 +259,18 @@ function ClassUI(id,
 	};
 
 
-	this.setDefaultClass = function(label, classId, uri) {
+	this.setDefaultClass = function(label, rdfsLabel, classId, uri) {
 		console.log("classUI:setDefaultClass:" + label + "," + classId + "," + uri);
 		classData.label = label;
+		classData.rdfsLabel = rdfsLabel;
 		classData.id = classId;
 		classData.uri = uri;
 	};
 
-	this.setSelectedProperty = function(label, propId, uri) {
+	this.setSelectedProperty = function(label, rdfsLabel, propId, uri) {
 		console.log("classUI:setSelectedProperty:" + label + "," + propId + "," + uri);
 		selectedPropertyData.label = label;
+		selectedPropertyData.rdfsLabel = rdfsLabel;
 		selectedPropertyData.id = propId;
 		selectedPropertyData.uri = uri;
 	};
@@ -277,16 +282,18 @@ function ClassUI(id,
 };
 
 //Static declarations
-ClassUI.getNodeObject = function(label, cId, uri) {
-	var treeId = ClassUI.getNodeID(label, cId, uri);
+ClassUI.getNodeObject = function(label, rdfsLabel, cId, uri) {
+	var treeId = ClassUI.getNodeID(label, rdfsLabel, cId, uri);
+	var text = Settings.getInstance().getDisplayLabel(label, rdfsLabel);
 	var nodeData = {
 		"id": treeId,
 		"parent": "#",
-		"text": label,
+		"text": text,
 		metadata: {
 			"uri": uri,
 			id: cId,
-			"label": label
+			"label": label,
+			"rdfsLabel": rdfsLabel
 		}
 	};
 	//var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
@@ -295,10 +302,10 @@ ClassUI.getNodeObject = function(label, cId, uri) {
 
 ClassUI.parseNodeObject = function(nodeData) {
 	//return [nodeData.data.title, nodeData.metadata.id, nodeData.metadata.uri];
-	return [nodeData.metadata.label, nodeData.metadata.id, nodeData.metadata.uri];
+	return [nodeData.metadata.label, nodeData.metadata.rdfsLabel, nodeData.metadata.id, nodeData.metadata.uri];
 };
 
-ClassUI.getNodeID = function(label, id, uri) {
+ClassUI.getNodeID = function(label, rdfsLabel, id, uri) {
 	//var str = label.replace(/:/g, "_").replace(/ /g, '_').replace(/\//g, "_").replace(/#/g, "_");
 	var str = label.replace(/(:|-| |#|\/|\.|\[|\]|\)|\()/g, "_");
 	return str;

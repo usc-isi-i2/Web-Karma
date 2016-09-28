@@ -1,0 +1,74 @@
+#!/bin/bash
+
+########################################
+# This build script:
+# 1. Navigates to karma-web directory and creates a shaded .war file.
+# 2. Copies the .war snapshot and other .war files in external_webapps to the target folder.
+# 3. Downloads apache tomcat.
+# 4. Copies the war files to webapps folder.
+# 5. Copies conf files to tomcat folder.
+# 6. Navigates to the electron app folder and copies the tomcat folder to app/app directory.
+# 7. Runs the release script there to build karma app for linux, windows and mac.
+########################################
+
+CURRENT=`pwd`
+rm -rf target
+mkdir target
+
+cd ..
+mvn clean install -Dmaven.test.skip=true
+cd karma-web/
+mvn package -Pshaded
+cp target/karma-web*.war $CURRENT/target/ROOT.war
+cp external_webapps/* $CURRENT/target/
+
+mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
+
+cd $CURRENT/target
+
+# download tomcat binary
+wget http://apache.cs.utah.edu/tomcat/tomcat-7/v7.0.72/bin/apache-tomcat-7.0.72.zip -O tomcat.zip
+
+# TODO if this fails, exit
+unzip tomcat.zip
+rm tomcat.zip
+
+mv apache-tomcat* tomcat
+rm -rf tomcat/webapps/*
+mv *.war tomcat/webapps
+chmod +x tomcat/bin/*.sh
+
+cp $CURRENT/conf/* tomcat/conf/
+
+rm -rf $CURRENT/desktop/app/tomcat
+mv tomcat $CURRENT/desktop/app/
+
+cd $CURRENT/desktop
+npm install
+npm run prerelease
+cd app
+electron-packager . --platform=win32 --arch=x64 --icon=../resources/icons/karma.ico --overwrite
+electron-packager . --platform=linux --arch=x64 --icon=../resources/icons/karma.png --overwrite
+electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite
+
+cp -rf Karma-darwin* $CURRENT/target/Karma-Mac
+cp -rf Karma-linux* $CURRENT/target/Karma-Linux
+cp -rf Karma-win* $CURRENT/target/Karma-Windows
+rm -rf Karma-*
+
+cd $CURRENT/target
+
+#put our license
+for build_folder in `ls |grep Karma`
+do
+	mv $build_folder/LICENSE $build_folder/LICENSE.electron.packager
+	cp $CURRENT/../LICENSE.txt $build_folder/
+done
+
+if [ "$1" == "--archive" ]
+then
+  for i in `ls |grep 'Karma-*'`
+  do
+    zip -r $i $i
+  done
+fi
