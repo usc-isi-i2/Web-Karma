@@ -189,10 +189,10 @@ and related projects, please see: http://www.isi.edu/integration
 								<li><a href="#" id="displayRDFSLabel_idFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Name or ID First</a></li>
 		                  	</ul>
 		                  </li>
-		                  <li class="dropdown-submenu"><a href="#" id="settingSemanticLabeling">Semantic Labeling</a>
+		                  <li class="dropdown-submenu"><a href="#" id="settingSemanticLabeling">Semantic Labeling Service</a>
 		                  	<ul class="dropdown-menu">
-		                  		<li><a href="#" id="displaySemanticLabeling_Online"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Use Online</a></li>
-								<li><a href="#" id="displaySemanticLabeling_Offline"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Use Offline</a></li>
+		                  		<li><a href="#" id="displaySemanticLabeling_Online"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Remote</a></li>
+								<li><a href="#" id="displaySemanticLabeling_Offline"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Local</a></li>
 		                  	</ul>
 		                  </li>
 		                  

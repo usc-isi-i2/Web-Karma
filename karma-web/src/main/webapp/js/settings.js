@@ -28,16 +28,15 @@ var Settings = (function() {
 			});
 
 			$("#displaySemanticLabeling_Online").on("click", function(e) {
-			    isSemanticLabeling_online = !$("#displaySemanticLabeling_Online span").is(":visible");
-			    setSemanticLabeling(isSemanticLabeling_online);
+			    setIsSemanticLabelingOnline(!$("#displaySemanticLabeling_Online span").is(":visible"));
 			});
 			$("#displaySemanticLabeling_Offline").on("click", function(e) {
-			    isSemanticLabeling_online = $("#displaySemanticLabeling_Offline span").is(":visible");
-			    setSemanticLabeling(isSemanticLabeling_online);
+			    setIsSemanticLabelingOnline($("#displaySemanticLabeling_Offline span").is(":visible"));
 			});
 		}
 
-		function setSemanticLabeling(isOnline){
+		function setIsSemanticLabelingOnline(isOnline){
+		    isSemanticLabeling_online = isOnline;
 		    if (isOnline){
 		        $("#displaySemanticLabeling_Online span").show();
 		        $("#displaySemanticLabeling_Offline span").hide();
@@ -45,10 +44,11 @@ var Settings = (function() {
 		        $("#displaySemanticLabeling_Online span").hide();
 		        $("#displaySemanticLabeling_Offline span").show();
 		    }
-		}
-		function setIsSemanticLabelingOnline(isOnline){
-		    isSemanticLabeling_online = isOnline;
-		    setSemanticLabeling(isOnline);
+
+			var info = generateInfoObject("", "", "UpdateOnlineSemanticTypingConfigurationCommand");
+			info["isSemanticLabelingOnline"] = isOnline;
+			showWaitingSignOnScreen();
+			var returned = sendRequest(info);
 		}
 
 		function setDisplayRDFSLabel(showLabelFirst, showIDFirst, update) {
