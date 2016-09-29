@@ -134,24 +134,70 @@
     </build>
     <profiles>
     
-<profile>
+		<profile>
   			<id>cloudera</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
+				<property>
+		          <name>env</name>
+		          <value>cloudera</value>
+		        </property>
 			</activation>
 			<properties>
         		<spark.version>1.5.0-cdh5.5.0</spark.version>
         		<spark.scala.version>_2.10</spark.scala.version>
     		</properties>
     		<dependencies>
-    		
-        <dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core${spark.scala.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
-        </dependencies>
-    		</profile>
+		        <dependency>
+		            <groupId>org.apache.spark</groupId>
+		            <artifactId>spark-core${spark.scala.version}</artifactId>
+		            <version>${spark.version}</version>
+		        </dependency>
+	        </dependencies>
+    	</profile>
+    	
+    	<profile>
+    		<id>vanilla</id>
+    		<activation>
+		    	<property>
+		          <name>env</name>
+		          <value>vanilla</value>
+		        </property>
+    		</activation>
+    		<properties>
+        		<spark.version>1.5.0</spark.version>
+        		<spark.scala.version>_2.10</spark.scala.version>
+    		</properties>
+    		<dependencies>
+		        <dependency>
+		            <groupId>org.apache.spark</groupId>
+		            <artifactId>spark-core${spark.scala.version}</artifactId>
+		            <version>${spark.version}</version>
+		        </dependency>
+	        </dependencies>
+    	</profile>
+    	
+    	<profile>
+    		<id>withhive</id>
+    		<activation>
+		    	<property>
+		          <name>env</name>
+		          <value>hive</value>
+		        </property>
+    		</activation>
+    		<properties>
+        		<spark.version>1.5.0</spark.version>
+        		<spark.scala.version>_2.10</spark.scala.version>
+    		</properties>
+    		<dependencies>
+		        <dependency>
+		            <groupId>org.apache.spark</groupId>
+		            <artifactId>spark-hive${spark.scala.version}</artifactId>
+		            <version>${spark.version}</version>
+		        </dependency>
+	        </dependencies>
+    	</profile>
+        
         <profile>
             <id>shaded</id>
             <activation>
@@ -163,6 +209,12 @@
                     <!--
                         to generate the jar, run:
                         mvn package -P shaded
+                        
+                        To generate jar for vanilla spark 1.5, run
+                        mvn package -P shaded -Denv=vanilla
+                        
+                        To generate jar for spark 1.5 with hive, run
+                        mvn package -P shaded -Denv=hive
                     -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -182,6 +234,10 @@
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>org/apache/hadoop/**</exclude>
+                                        <exclude>org/apache/hive/**</exclude>
+                                        <exclude>org/apache/spark/**</exclude>
+                                        <exclude>com/fasterxml/jackson/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
@@ -190,10 +246,25 @@
                                     <exclude>org.apache.spark:*</exclude>
                                     <exclude>org.spark-project.akka:*</exclude>
                                     <exclude>org.spark-project.spark:*</exclude>
+                                    <exclude>org.spark-project.protobuf:*</exclude>
+                                    <exclude>org.apache.hadoop:*</exclude>
+                                    <exclude>org.apache.hive:*</exclude>
+                                    <exclude>*:hive-exec</exclude>
+                                    <exclude>*:hive-common</exclude>
+                                    <exclude>*:hadoop-common</exclude>
+                                    <exclude>org.apache.hive.common:*</exclude>
+                                    <exclude>org.apache.hadoop.hive:*</exclude>
+                                    <exclude>org.apache.hadoop.hive.ql:*</exclude>
+                                    <exclude>org.apache.hadoop.fs:*</exclude>
+                                    <exclude>org.apache.hadoop.mapred:*</exclude>
+                                    <exclude>org.apache.hadoop.security:*</exclude>
                                     <exclude>org.scala-lang:*</exclude>
                                     <exclude>org.scala-lang.modules:*</exclude>
-                                    <exclude>org.apache.hadoop:*</exclude>
                                     <exclude>org.tachyonproject:*</exclude>
+                                    <exclude>com.fasterxml.jackson.core:*</exclude>
+                                    <exclude>com.fasterxml.jackson.annotation:*</exclude>
+                                    <exclude>com.fasterxml.jackson.databind:*</exclude>
+                                    <exclude>com.fasterxml.jackson.module:*</exclude>
                                 </excludes>
                             </artifactSet>
                         </configuration>

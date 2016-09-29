@@ -16,7 +16,6 @@ var app = remote.app;
 var appDir = jetpack.cwd(app.getAppPath());
 
 var appName = appDir.read('package.json', 'json').name;
-var appVersion= appDir.read('package.json', 'json').version;
 
 var colors = {
   INFO: "#eee",
@@ -26,7 +25,7 @@ var colors = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('greet').innerHTML = appName + " v" + appVersion;
+  document.getElementById('greet').innerHTML = appName;
 
   // create log file if it doesnt already exist and close the file descriptor rightaway
   fs.closeSync(fs.openSync(karma.tomcat.logFile, 'w'));
@@ -39,44 +38,64 @@ document.addEventListener('DOMContentLoaded', function () {
   log("Starting Karma...");
   karma.start();
 
+  function m_launch(){
+    karma.launch();
+    log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
+  }
   // Launches Karma in browser after 5 seconds.
-  setTimeout(function(){
-    karma.launch();
-    log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
-  }, 5000);
-
-  document.getElementById("launch").onclick = function(){
-    log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
-    karma.launch();
+  setTimeout(m_launch, 5000);
+  document.getElementById("launch").onclick = m_launch;
+  document.getElementById("restart").onclick = function(){
+    karma.restart();
   };
 
-  // set max heap dialog
+  // constructing the select boxes
   var dialog = document.querySelector('dialog');
   dialogPolyfill.registerDialog(dialog);
   var selector = document.getElementById("max_heap_size");
+  var main_selector = document.getElementById("main_window_set_max_heap_size");
   for(let i=1; i<=16; i++){
     selector.innerHTML += "<option value='" + (i*1024) + "'>" + i + "GB</option>";
+    main_selector.innerHTML += "<option value='" + (i*1024) + "'>" + i + "GB</option>";
   }
+
+  // handle from dialog box
   document.getElementById("set_max_heap_size").onclick = function(){
     let value = document.getElementById("max_heap_size").value;
     karma.setMaxHeap(value);
+    log("Max Heap changed to " + (value/1024) + "GB. Restart Karma to see changes.");
   };
-  function m_set_max_heap(){
+
+  // handle from main window
+  main_selector.onchange = function(){
+    let memory = this.value;
+    karma.setMaxHeap(memory);
+    log("Max Heap changed to " + (this.value/1024) + "GB. Restart Karma to see changes.");
+    main_selector.innerHTML = "";
+    for(let i=1; i<=16; i++){
+      main_selector.innerHTML += "<option value='" + (i*1024) + "'>" + i + "GB</option>";
+    }
+    main_selector.value = memory;
+    main_selector.options[main_selector.selectedIndex].text = "Max Heap: " + main_selector.options[main_selector.selectedIndex].text;
+  };
+  karma.getMaxHeap((value) => {
+    main_selector.value = value;
+    main_selector.options[main_selector.selectedIndex].text = "Max Heap: " + main_selector.options[main_selector.selectedIndex].text;
+  });
+
+  ipcRenderer.on('SET_MAX_HEAP', (event) => {
     karma.getMaxHeap((value) => {
       document.getElementById("max_heap_size").value = value;
       dialog.showModal();
     });
-  }
-  document.getElementById("main_window_set_max_heap_size").onclick = m_set_max_heap;
-  ipcRenderer.on('SET_MAX_HEAP', m_set_max_heap);
+  });
 });
 
 
 function log(data){
-  var color = colors.DEFAULT;
-  if (data.split(" ").length > 3){
-    color = (colors[data.split(" ")[2]]) ? colors[data.split(" ")[2]] : colors.DEFAULT;
-  }
+  data = data.trim();
+  let cue = data.split(" ")[0].replace(":", "");
+  var color = (colors[cue]) ? colors[cue] : colors.DEFAULT;
   data = "<span style='color: "+ color +"'>" + data + "</span>";
   let log = document.getElementById("log");
   log.innerHTML += data + "<br>";

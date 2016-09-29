@@ -2,10 +2,10 @@ Karma-app
 =========
 Karma desktop app for linux, windows and mac using which you can easily launch Karma.
 
-![](http://i.imgur.com/2mqPrTO.png)
+![](http://i.imgur.com/LtQcfmi.png)
 
 ##Installation
-Download [karma app](https://github.com/alseambusher/Web-Karma/releases) for your operating system. Then, install [java](https://www.java.com/en/download/help/download_options.xml) if you don't already have it. Installation of the right version of java is important. For instance, if you are running a 64bit windows, you have to download 64bit java for windows.
+Download [karma app](https://github.com/usc-isi-i2/Web-Karma/releases) for your operating system. Then, install [java](https://www.java.com/en/download/help/download_options.xml) if you don't already have it. Installation of the right version of java is important. For instance, if you are running a 64bit windows, you have to download 64bit java for windows.
 ###Linux
 Run `./Karma` on terminal.
 ###Mac
@@ -17,17 +17,34 @@ First [set JRE_HOME](https://confluence.atlassian.com/doc/setting-the-java_home-
 Once Karma app is opened, it automatically starts the server and launches on a web browser (It can take sometime the first time). In order to open a new instance on the browser, you can either click on "Open New Window" on the app or open `localhost:8080` on a new window in the browser.
 
 ##Configuration
-You can set maximum heap size for karma by going to menu `File->Set Max Heap` on Windows and linux or `Karma->Set Max Heap` on Mac. Once you change it, you need to __restart karma__.
+You can set maximum heap size for karma on the main window. Once you change it, you need to __restart karma__.
 
-![](http://i.imgur.com/IYtECwo.png)
+![](http://i.imgur.com/zMUotto.png)
 
 
 ##Building the app from code.
 
-1. Install npm, node and electron-packager.
+1. Install:
+
+  1. latest [node](https://nodejs.org/en/) 
+  2. electron-packager - `sudo npm install -g electron-packager`
+  3. wget - `brew install wget`
+  4. wine -
+      * if building on Mac[](https://www.davidbaumgold.com/tutorials/wine-mac/)
+      
+        ```
+        brew doctor
+        brew update
+        brew tap caskroom/cask
+        brew cask install xquartz
+        brew install wine     
+        ```
+      * if building on Linux: `sudo apt-get install wine`
+      
 2. Clone this repository and navigate to `karma-app` folder.
-3. Run `./build` or `./build --archive`
-4. The builds for all operating systems will be found in the target folder in `karma-app` folder.
+3. Make sure the npm python points to 2.7 version `npm config set python python2.7`
+4. Run `./build --archive` to build and generate the zip files for all OS
+5. The builds for all operating systems will be found in the target folder in `karma-app` folder.
 
 Karma app is built for linux, windows and mac for both ia32 and x64 versions as follows when `./build` is run:
 
