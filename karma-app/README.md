@@ -2,16 +2,23 @@ Karma-app
 =========
 Karma desktop app for linux, windows and mac using which you can easily launch Karma.
 
-![](http://i.imgur.com/LtQcfmi.png)
+![](https://github.com/usc-isi-i2/Web-Karma/wiki/images/karma-app.png)
 
 ##Installation
-Download [karma app](https://github.com/usc-isi-i2/Web-Karma/releases) for your operating system. Then, install [java](https://www.java.com/en/download/help/download_options.xml) if you don't already have it. Installation of the right version of java is important. For instance, if you are running a 64bit windows, you have to download 64bit java for windows.
-###Linux
-Run `./Karma` on terminal.
-###Mac
-Navigate to the folder and open `Karma.app`
-###Windows
-First [set JRE_HOME](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) environmment variable. Then, navigate to the folder and open `Karma.exe`
+*  Install [java](https://www.java.com/en/download/help/download_options.xml) if not already installed: Java version 1.7 or higher. Installation of the right version of java is important. For instance, if you are running a 64bit windows, you have to download 64bit java for windows.
+
+* Download [karma app](https://github.com/usc-isi-i2/Web-Karma/releases) for your operating system. Unzip into a local folder
+
+* Depending on the OS, do the following:
+  ###Linux
+  Navigate to the folder and run `./Karma` on terminal.
+  
+  ###Mac
+  Navigate to the folder, copy `Karma.app` to your Applications Folder and then open `Karma.app` from your Applications folder
+
+  ###Windows
+  * [Set JRE_HOME](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) environmment variable. 
+  * Navigate to the folder and open `Karma.exe`
 
 ##Usage
 Once Karma app is opened, it automatically starts the server and launches on a web browser (It can take sometime the first time). In order to open a new instance on the browser, you can either click on "Open New Window" on the app or open `localhost:8080` on a new window in the browser.
