@@ -18,17 +18,20 @@ import java.io.*;
 
 /**
  * Created by alse on 9/29/16.
+ * String property: is the name of property in modeling.properties eg. online.semantic.typing, train.on.apply.history
+ * String value: is the value of the property to be set. This has to be string. If the value is Boolean or Integer, send it as String.
  */
-public class UpdateOnlineSemanticTypingConfigurationCommand extends Command {
+public class UpdateModelingConfigurationCommand extends Command {
 
-    private Boolean isSemanticLabelingOnline ;
-    private String propertyName = "online.semantic.typing";
+    private String property;
+    private String value;
 
     private static Logger logger = LoggerFactory.getLogger(UpdateUIConfigurationCommand.class);
 
-    protected UpdateOnlineSemanticTypingConfigurationCommand(String id, String model, Boolean property) {
+    protected UpdateModelingConfigurationCommand(String id, String model, String property, String value) {
         super(id, model);
-        this.isSemanticLabelingOnline = property;
+        this.property = property;
+        this.value = value;
     }
 
     @Override
@@ -60,6 +63,7 @@ public class UpdateOnlineSemanticTypingConfigurationCommand extends Command {
                 @Override
                 public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
                     try {
+                        // read modeling.properties file
                         String fileName = ContextParametersRegistry.getInstance().getContextParameters(ContextParametersRegistry.getInstance().getDefault().getId()).getParameterValue(ServletContextParameterMap.ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties";
                         BufferedReader file = new BufferedReader(new FileReader(fileName));
                         String line;
@@ -67,18 +71,20 @@ public class UpdateOnlineSemanticTypingConfigurationCommand extends Command {
                         while ((line = file.readLine()) != null) modelingPropertiesContent += line + '\n';
                         file.close();
 
-                        modelingPropertiesContent = modelingPropertiesContent.replaceFirst(propertyName + "=" + Boolean.toString(!isSemanticLabelingOnline), propertyName + "=" + Boolean.toString(isSemanticLabelingOnline));
+                        modelingPropertiesContent = modelingPropertiesContent.replaceAll(
+                                property + "=.*(\n|$)", property + "=" + value + "\n"
+                        );
 
                         FileOutputStream fileOut = new FileOutputStream(fileName);
                         fileOut.write(modelingPropertiesContent.getBytes());
                         fileOut.close();
 
-                        ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).setOnlineSemanticTypingEnabled(isSemanticLabelingOnline);
+                        ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).load();
                         JSONStringer jsonStr = new JSONStringer();
 
                         JSONWriter writer = jsonStr.object();
-                        writer.key("updateType").value("UpdateOnlineSemanticType");
-                        writer.key("isSemanticLabelingOnline").value(Boolean.toString(isSemanticLabelingOnline));
+                        writer.key("updateType").value(this.getClass().getName());
+                        writer.key(property).value(value);
                         writer.endObject();
                         pw.print(writer.toString());
                     } catch (Exception e) {

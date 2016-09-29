@@ -554,10 +554,6 @@ public class ModelingConfiguration {
 		return onlineSemanticTypingEnabled;
 	}
 
-	public void setOnlineSemanticTypingEnabled(Boolean value){
-		this.onlineSemanticTypingEnabled = value;
-	}
-	
 	public void setManualAlignment()
 	{
 		ontologyAlignment = false;
