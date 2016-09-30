@@ -12,7 +12,7 @@
 ########################################
 
 CURRENT=`pwd`
-rm -rf target
+rm -rf ./target
 mkdir target
 
 cd ..

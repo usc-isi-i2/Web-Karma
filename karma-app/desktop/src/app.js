@@ -16,7 +16,6 @@ var app = remote.app;
 var appDir = jetpack.cwd(app.getAppPath());
 
 var appName = appDir.read('package.json', 'json').name;
-var appVersion= appDir.read('package.json', 'json').version;
 
 var colors = {
   INFO: "#eee",
@@ -26,7 +25,7 @@ var colors = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-  document.getElementById('greet').innerHTML = appName + " v" + appVersion;
+  document.getElementById('greet').innerHTML = appName;
 
   // create log file if it doesnt already exist and close the file descriptor rightaway
   fs.closeSync(fs.openSync(karma.tomcat.logFile, 'w'));

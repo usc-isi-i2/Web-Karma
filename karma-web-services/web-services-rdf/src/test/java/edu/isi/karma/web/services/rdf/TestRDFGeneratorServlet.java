@@ -89,7 +89,7 @@ public class TestRDFGeneratorServlet extends JerseyTest {
 		assert(idx != -1);
 		
 		String[] lines = response.split("(\r\n|\n)");
-		assertEquals(438, lines.length);
+		assertEquals(564, lines.length);
 	}
 	
 	@Test
