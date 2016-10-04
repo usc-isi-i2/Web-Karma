@@ -195,7 +195,7 @@ and related projects, please see: http://www.isi.edu/integration
 								<li><a href="#" id="displaySemanticLabeling_Offline"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Local</a></li>
 		                  	</ul>
 		                  </li>
-		                  
+		                  <li><a href="#" id="settingSetKarmaClientName" data-toggle="modal" data-target="#modal_setKarmaClientName">Karma Client Name</a></li>
 		              </ul>
 		            </li>
 
@@ -416,6 +416,7 @@ and related projects, please see: http://www.isi.edu/integration
         	var showRDFSLabel_LabelFirst = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).showRDFSLabelWithLabelFirst()%>;
 			var showRDFSLabel_IDFirst = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).showRDFSLabelWithIDFirst()%>;
         	var isSemanticLabelingOnline = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getOnlineSemanticTypingEnabled()%>;
+        	var karmaClientName = "<%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getKarmaClientName()%>";
 
 
             $(function() {
@@ -513,6 +514,7 @@ and related projects, please see: http://www.isi.edu/integration
             		showModeHeader("Automatic Mode");
 
             	loadPropertiesForCache();
+			    $("#modal_setKarmaClientName input[type=text]").val(karmaClientName);
             	Settings.getInstance().setDisplayRDFSLabel(showRDFSLabel_LabelFirst, showRDFSLabel_IDFirst);
             	Settings.getInstance().setIsSemanticLabelingOnline(isSemanticLabelingOnline);
 			});

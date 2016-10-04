@@ -10,10 +10,6 @@ import javax.servlet.http.HttpServletRequest;
  * Request @param value: is the value of the property to be set.
  */
 public class ToggleOnlineSemanticTypingCommandFactory extends CommandFactory{
-    enum Arguments {
-        property,
-        value
-    }
     @Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
 		return new ToggleOnlineSemanticTypingCommand(getNewId(workspace), Command.NEW_MODEL);

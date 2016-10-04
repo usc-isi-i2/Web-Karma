@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -166,7 +167,11 @@ public class ModelingConfiguration {
 			"##########################################################################################" + newLine + 
 			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
-			"history.store.old=false"
+			"history.store.old=false" +
+			"#" + newLine +
+			"##########################################################################################" + newLine +
+			"" + newLine +
+			"karma.client.name=" + UUID.randomUUID().toString()
 			;
 
 	public void load() {
@@ -294,6 +299,7 @@ public class ModelingConfiguration {
 			}
 
 			onlineSemanticTypingEnabled = Boolean.parseBoolean(modelingProperties.getProperty("online.semantic.typing", "false"));
+			karmaClientName = modelingProperties.getProperty("karma.client.name", UUID.randomUUID().toString());
 		} catch (IOException e) {
 			logger.error("Error occured while reading config file ...", e);
 			System.exit(1);
@@ -552,6 +558,12 @@ public class ModelingConfiguration {
 		if(onlineSemanticTypingEnabled == null)
 			load();
 		return onlineSemanticTypingEnabled;
+	}
+
+	public String getKarmaClientName(){
+		if(karmaClientName == null)
+			load();
+		return karmaClientName;
 	}
 
 	public void setManualAlignment()

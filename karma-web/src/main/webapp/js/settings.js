@@ -33,6 +33,12 @@ var Settings = (function() {
 			$("#displaySemanticLabeling_Offline").on("click", function(e) {
 			    setIsSemanticLabelingOnline($("#displaySemanticLabeling_Offline span").is(":visible"));
 			});
+
+			$('#modal_setKarmaClientName').on('shown.bs.modal', function () {
+			    $("#modal_setKarmaClientName input[type=text]").select();
+            })
+
+            $("#modal_setKarmaClientName button[type=submit]").click(setKarmaClientName);
 		}
 
 		function setIsSemanticLabelingOnline(isOnline){
@@ -47,7 +53,15 @@ var Settings = (function() {
 
 			var info = generateInfoObject("", "", "ToggleOnlineSemanticTypingCommand");
 			showWaitingSignOnScreen();
-			var returned = sendRequest(info);
+			sendRequest(info);
+		}
+
+		function setKarmaClientName(){
+		    var name = $("#modal_setKarmaClientName input[type=text]").val();
+			var info = generateInfoObject("", "", "SetKarmaClientNameCommand");
+			info.value = name;
+			showWaitingSignOnScreen();
+			sendRequest(info);
 		}
 
 		function setDisplayRDFSLabel(showLabelFirst, showIDFirst, update) {
