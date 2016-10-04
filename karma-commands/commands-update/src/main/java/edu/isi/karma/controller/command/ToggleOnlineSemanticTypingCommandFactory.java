@@ -9,19 +9,18 @@ import javax.servlet.http.HttpServletRequest;
  * Request @param property: is the name of property in modeling.properties eg. online.semantic.typing, train.on.apply.history
  * Request @param value: is the value of the property to be set.
  */
-public class UpdateModelingConfigurationCommandFactory extends CommandFactory{
+public class ToggleOnlineSemanticTypingCommandFactory extends CommandFactory{
     enum Arguments {
         property,
         value
     }
     @Override
 	public Command createCommand(HttpServletRequest request, Workspace workspace) {
-		return new UpdateModelingConfigurationCommand(getNewId(workspace),
-				Command.NEW_MODEL, request.getParameter(Arguments.property.name()), request.getParameter(Arguments.value.name()));
+		return new ToggleOnlineSemanticTypingCommand(getNewId(workspace), Command.NEW_MODEL);
     }
 
     @Override
     public Class<? extends Command> getCorrespondingCommand() {
-        return UpdateModelingConfigurationCommand.class;
+        return ToggleOnlineSemanticTypingCommand.class;
     }
 }

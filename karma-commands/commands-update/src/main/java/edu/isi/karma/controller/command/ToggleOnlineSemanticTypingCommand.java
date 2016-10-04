@@ -15,23 +15,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.Properties;
 
 /**
  * Created by alse on 9/29/16.
  * String property: is the name of property in modeling.properties eg. online.semantic.typing, train.on.apply.history
  * String value: is the value of the property to be set. This has to be string. If the value is Boolean or Integer, send it as String.
  */
-public class UpdateModelingConfigurationCommand extends Command {
+public class ToggleOnlineSemanticTypingCommand extends Command {
 
-    private String property;
-    private String value;
+    private String property = "online.semantic.typing";
 
     private static Logger logger = LoggerFactory.getLogger(UpdateUIConfigurationCommand.class);
 
-    protected UpdateModelingConfigurationCommand(String id, String model, String property, String value) {
+    protected ToggleOnlineSemanticTypingCommand(String id, String model) {
         super(id, model);
-        this.property = property;
-        this.value = value;
     }
 
     @Override
@@ -64,17 +62,26 @@ public class UpdateModelingConfigurationCommand extends Command {
                 public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
                     try {
                         // read modeling.properties file
-                        String fileName = ContextParametersRegistry.getInstance().getContextParameters(ContextParametersRegistry.getInstance().getDefault().getId()).getParameterValue(ServletContextParameterMap.ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties";
+                        String fileName = ContextParametersRegistry.getInstance()
+                                .getContextParameters(ContextParametersRegistry.getInstance().getDefault().getId())
+                                .getParameterValue(ServletContextParameterMap.ContextParameter.USER_CONFIG_DIRECTORY)
+                                + "/modeling.properties";
+
+                        Properties prop = new Properties();
+                        prop.load(new FileInputStream(fileName));
+
                         BufferedReader file = new BufferedReader(new FileReader(fileName));
                         String line;
                         String modelingPropertiesContent = "";
-                        while ((line = file.readLine()) != null) modelingPropertiesContent += line + '\n';
+                        while ((line = file.readLine()) != null) {
+                            if (line.startsWith(property)) {
+                                String value = Boolean.toString(!Boolean.valueOf(prop.getProperty(property)));
+                                modelingPropertiesContent += property + "=" + value + '\n';
+                            } else {
+                                modelingPropertiesContent += line + '\n';
+                            }
+                        }
                         file.close();
-
-                        modelingPropertiesContent = modelingPropertiesContent.replaceAll(
-                                property + "=.*(\n|$)", property + "=" + value + "\n"
-                        );
-
                         FileOutputStream fileOut = new FileOutputStream(fileName);
                         fileOut.write(modelingPropertiesContent.getBytes());
                         fileOut.close();
@@ -84,7 +91,6 @@ public class UpdateModelingConfigurationCommand extends Command {
 
                         JSONWriter writer = jsonStr.object();
                         writer.key("updateType").value(this.getClass().getName());
-                        writer.key(property).value(value);
                         writer.endObject();
                         pw.print(writer.toString());
                     } catch (Exception e) {

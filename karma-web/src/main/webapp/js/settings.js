@@ -45,9 +45,7 @@ var Settings = (function() {
 		        $("#displaySemanticLabeling_Offline span").show();
 		    }
 
-			var info = generateInfoObject("", "", "UpdateModelingConfigurationCommand");
-			info["value"] = isOnline;
-			info["property"] = "online.semantic.typing";
+			var info = generateInfoObject("", "", "ToggleOnlineSemanticTypingCommand");
 			showWaitingSignOnScreen();
 			var returned = sendRequest(info);
 		}

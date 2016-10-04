@@ -81,7 +81,9 @@ public class ModelingConfiguration {
 
 	private Boolean showModelsWithoutMatching;
 	private String defaultProperty = null;
-	
+	private Boolean onlineSemanticTypingEnabled;
+	private String karmaClientName;
+
 	private final String newLine = System.getProperty("line.separator");
 	
 	private String defaultModelingProperties = 
@@ -166,8 +168,6 @@ public class ModelingConfiguration {
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false"
 			;
-
-	private Boolean onlineSemanticTypingEnabled;
 
 	public void load() {
 		try {
