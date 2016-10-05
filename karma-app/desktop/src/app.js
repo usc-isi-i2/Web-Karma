@@ -42,16 +42,35 @@ document.addEventListener('DOMContentLoaded', function () {
     karma.launch();
     log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
   }
-  // Launches Karma in browser after 5 seconds.
-  setTimeout(m_launch, 5000);
+  // Launches Karma in browser after 10 seconds.
+  setTimeout(m_launch, 10000);
   document.getElementById("launch").onclick = m_launch;
   document.getElementById("restart").onclick = function(){
     karma.restart();
   };
+  document.querySelector(".help").onclick = function(){
+    karma.setJavaHomeHelp();
+  };
 
-  // constructing the select boxes
-  var dialog = document.querySelector('dialog');
-  dialogPolyfill.registerDialog(dialog);
+  // register dialogs with dialogPolyfill
+  var dialog_setMaxHeap = document.getElementById("dialog_setMaxHeap");
+  dialogPolyfill.registerDialog(dialog_setMaxHeap);
+  var dialog_setJavaHome = document.getElementById("dialog_setJavaHome");
+  dialogPolyfill.registerDialog(dialog_setJavaHome);
+
+  // set java home button handle
+  document.getElementById("submit_setJavaHome").onclick = function(){
+    let value = document.getElementById("input_setJavaHome").value;
+    if (!fs.existsSync(path.join(value, "bin", "java" + (/^win/.test(process.platform) ? ".exe" : "")))) {
+    // if (!fs.existsSync(value + path.sep + "bin" + path.sep + "java" + (/^win/.test(process.platform) ? ".exe" : ""))) {
+      document.querySelector("#dialog_setJavaHome .warning").innerHTML = "Invalid path for Java";
+      setTimeout(() => {dialog_setJavaHome.showModal();}, 1000);
+    } else {
+      karma.setJavaHome(value);
+    }
+  };
+
+  // construct the values for selector for set max heap
   var selector = document.getElementById("max_heap_size");
   var main_selector = document.getElementById("main_window_set_max_heap_size");
   for(let i=1; i<=16; i++){
@@ -59,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
     main_selector.innerHTML += "<option value='" + (i*1024) + "'>" + i + "GB</option>";
   }
 
-  // handle from dialog box
+  // handle for max heap dialog box
   document.getElementById("set_max_heap_size").onclick = function(){
     let value = document.getElementById("max_heap_size").value;
     karma.setMaxHeap(value);
@@ -83,10 +102,19 @@ document.addEventListener('DOMContentLoaded', function () {
     main_selector.options[main_selector.selectedIndex].text = "Max Heap: " + main_selector.options[main_selector.selectedIndex].text;
   });
 
+  // Handle all the IPCs
   ipcRenderer.on('SET_MAX_HEAP', (event) => {
     karma.getMaxHeap((value) => {
       document.getElementById("max_heap_size").value = value;
-      dialog.showModal();
+      dialog_setMaxHeap.showModal();
+    });
+  });
+
+  ipcRenderer.on('SET_JAVA_HOME', (event) => {
+    karma.getJavaHome((value) => {
+      document.getElementById("input_setJavaHome").value = value ? value : "";
+      document.querySelector("#dialog_setJavaHome .warning").innerHTML = "";
+      dialog_setJavaHome.showModal();
     });
   });
 });
