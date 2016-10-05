@@ -21,13 +21,18 @@ export var fileMenuTemplate = {
     { label: "Open New Window", click(){ karma.launch();} },
     { label: "Restart Karma", click(){ karma.restart();} },
     // { label: "Set Min Heap", click(item, focusedWindow){
-      // if(focusedWindow){
-        // focusedWindow.send('SET_MIN_HEAP');
-      // }
+    // if(focusedWindow){
+    // focusedWindow.send('SET_MIN_HEAP');
+    // }
     // } },
     { label: "Set Max Heap", click(item, focusedWindow){
       if(focusedWindow){
         focusedWindow.send('SET_MAX_HEAP');
+      }
+    } },
+    { label: "Set Java Home", accelerator: 'CmdOrCtrl+J',click(item, focusedWindow){
+      if(focusedWindow){
+        focusedWindow.send('SET_JAVA_HOME');
       }
     } },
     { label: "Exit", accelerator: 'CmdOrCtrl+Q', click(){ app.quit(); } },
