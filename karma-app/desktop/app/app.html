@@ -12,11 +12,19 @@
   <script src="app.js"></script>
 </head>
 <body>
-  <dialog>
+  <dialog id="dialog_setMaxHeap">
     <h3>Set Heap Size</h3>
     <form method="dialog">
       <select id="max_heap_size"></select>
       <input type="submit" id="set_max_heap_size" value="Ok" class="btn btn-large btn-default"/>
+      <input type="submit" value="Cancel" class="btn btn-large btn-default"/>
+    </form>
+  </dialog>
+  <dialog id="dialog_setJavaHome">
+    <h3>Set java home</h3>
+    <form method="dialog">
+      <input type="text" id="input_setJavaHome" />
+      <input type="submit" id="submit_setJavaHome" value="Ok" class="btn btn-large btn-default"/>
       <input type="submit" value="Cancel" class="btn btn-large btn-default"/>
     </form>
   </dialog>

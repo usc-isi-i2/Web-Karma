@@ -31,15 +31,21 @@ process.env.CLASSPATH = exports.tomcat.catalina_home + path.sep + "bootstrap.jar
 exports.start = function(){
   exports.getMinHeap((_min) => {
     exports.getMaxHeap((_max) => {
-      var exec = require('child_process').exec;
-      let options = {
-        cwd: exports.tomcat.catalina_home
-      };
-      process.env.CATALINA_OPTS = "-Xms" + _min + "M -Xmx" + _max +"M";
-      exec(exports.tomcat.startcmd, options, function(error, stdout, stderr) {
-        console.log(error);
-        console.log(stdout);
-        console.log(stderr);
+      exports.getJavaHome((_java_home) => {
+        var exec = require('child_process').exec;
+        let options = {
+          cwd: exports.tomcat.catalina_home
+        };
+        process.env.CATALINA_OPTS = "-Xms" + _min + "M -Xmx" + _max +"M";
+        if (_java_home) {
+          process.env.JAVA_HOME = _java_home;
+          process.env.JRE_HOME = _java_home;
+        }
+        exec(exports.tomcat.startcmd, options, function(error, stdout, stderr) {
+          console.log(error);
+          console.log(stdout);
+          console.log(stderr);
+        });
       });
     });
   });
@@ -90,4 +96,15 @@ exports.setMaxHeap = function(value){
 exports.getMaxHeap = function(callback){
     var env = jetpack.cwd(__dirname).read('env.json', 'json');
     callback(env.args["-Xmx"]);
+};
+
+exports.setJavaHome = function(value){
+    var env = jetpack.cwd(__dirname).read('env.json', 'json');
+    env.java_home = value;
+    jetpack.cwd(__dirname).write('env.json', env);
+};
+
+exports.getJavaHome = function(callback){
+    var env = jetpack.cwd(__dirname).read('env.json', 'json');
+    callback(env.java_home);
 };
