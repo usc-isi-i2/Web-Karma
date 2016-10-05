@@ -110,7 +110,12 @@ exports.setJavaHome = function(value){
 
 exports.getJavaHome = function(callback){
     var env = jetpack.cwd(__dirname).read('env.json', 'json');
-    callback(env.java_home);
+    let java_home = env.java_home;
+    // if it is not set in the app, get it from global environment vars
+    if (!java_home) {
+      java_home = process.env.JAVA_HOME ? process.env.JAVA_HOME : process.env.JRE_HOME;
+    }
+    callback(java_home);
 };
 
 exports.setJavaHomeHelp = function() {

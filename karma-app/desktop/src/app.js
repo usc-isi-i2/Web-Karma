@@ -42,8 +42,16 @@ document.addEventListener('DOMContentLoaded', function () {
     karma.launch();
     log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
   }
-  // Launches Karma in browser after 10 seconds.
-  setTimeout(m_launch, 10000);
+
+  // on windows don't start the browser if java path is not set and ask user to set it.
+  karma.getJavaHome((_java_home) => {
+    if (/^win/.test(process.platform) && !_java_home){
+      setTimeout(() => {ipcRenderer.emit("SET_JAVA_HOME");}, 2000);
+    } else {
+      // Launches Karma in browser after 10 seconds.
+      setTimeout(m_launch, 10000);
+    }
+  });
   document.getElementById("launch").onclick = m_launch;
   document.getElementById("restart").onclick = function(){
     karma.restart();
@@ -62,11 +70,11 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById("submit_setJavaHome").onclick = function(){
     let value = document.getElementById("input_setJavaHome").value;
     if (!fs.existsSync(path.join(value, "bin", "java" + (/^win/.test(process.platform) ? ".exe" : "")))) {
-    // if (!fs.existsSync(value + path.sep + "bin" + path.sep + "java" + (/^win/.test(process.platform) ? ".exe" : ""))) {
       document.querySelector("#dialog_setJavaHome .warning").innerHTML = "Invalid path for Java";
       setTimeout(() => {dialog_setJavaHome.showModal();}, 1000);
     } else {
       karma.setJavaHome(value);
+      log("Your JAVA_HOME is set. Restart karma.");
     }
   };
 
@@ -117,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
       dialog_setJavaHome.showModal();
     });
   });
+
 });
 
 
