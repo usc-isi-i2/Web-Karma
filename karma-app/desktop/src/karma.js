@@ -14,7 +14,8 @@ exports.links = {
 
 exports.tomcat = {
   path : __dirname + path.sep + "tomcat",
-  launchURL : "http://localhost:8080"
+  launchURL : "http://localhost:8080",
+  setJavaHomeHelpURL : "https://github.com/usc-isi-i2/Web-Karma/wiki/Installation%3A-One-Click-Install"
 };
 
 exports.tomcat.logFile = exports.tomcat.path + path.sep + "logs" + path.sep + "karma.out";
@@ -107,4 +108,9 @@ exports.setJavaHome = function(value){
 exports.getJavaHome = function(callback){
     var env = jetpack.cwd(__dirname).read('env.json', 'json');
     callback(env.java_home);
+};
+
+exports.setJavaHomeHelp = function() {
+  var spawn = require('child_process').spawn;
+  open(exports.tomcat.setJavaHomeHelpURL);
 };

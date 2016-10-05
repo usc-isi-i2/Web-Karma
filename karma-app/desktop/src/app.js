@@ -48,6 +48,9 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById("restart").onclick = function(){
     karma.restart();
   };
+  document.querySelector(".help").onclick = function(){
+    karma.setJavaHomeHelp();
+  };
 
   // register dialogs with dialogPolyfill
   var dialog_setMaxHeap = document.getElementById("dialog_setMaxHeap");
