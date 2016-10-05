@@ -43,7 +43,9 @@ exports.start = function(){
           process.env.JAVA_HOME = _java_home;
           process.env.JRE_HOME = _java_home;
         }
-        exec(exports.tomcat.startcmd, options, function(error, stdout, stderr) {
+        // cd to catalina_home in windows and it doesnt work in some machines
+        let cmd = (/^win/.test(process.platform) ? 'cd /D ' + options.cwd + ' & ' : '') + exports.tomcat.startcmd;
+        exec(cmd, options, function(error, stdout, stderr) {
           console.log(error);
           console.log(stdout);
           console.log(stderr);
