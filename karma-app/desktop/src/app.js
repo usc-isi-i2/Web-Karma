@@ -61,7 +61,13 @@ document.addEventListener('DOMContentLoaded', function () {
   // set java home button handle
   document.getElementById("submit_setJavaHome").onclick = function(){
     let value = document.getElementById("input_setJavaHome").value;
-    karma.setJavaHome(value);
+    if (!fs.existsSync(path.join(value, "bin", "java" + (/^win/.test(process.platform) ? ".exe" : "")))) {
+    // if (!fs.existsSync(value + path.sep + "bin" + path.sep + "java" + (/^win/.test(process.platform) ? ".exe" : ""))) {
+      document.querySelector("#dialog_setJavaHome .warning").innerHTML = "Invalid path for Java";
+      setTimeout(() => {dialog_setJavaHome.showModal();}, 1000);
+    } else {
+      karma.setJavaHome(value);
+    }
   };
 
   // construct the values for selector for set max heap
@@ -107,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
   ipcRenderer.on('SET_JAVA_HOME', (event) => {
     karma.getJavaHome((value) => {
       document.getElementById("input_setJavaHome").value = value ? value : "";
+      document.querySelector("#dialog_setJavaHome .warning").innerHTML = "";
       dialog_setJavaHome.showModal();
     });
   });

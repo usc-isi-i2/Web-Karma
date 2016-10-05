@@ -1,5 +1,6 @@
 /*jshint esversion: 6 */
 var open = require('open');
+var fs = require('fs');
 var path = require("path");
 import env from './env';
 import jetpack from 'fs-jetpack';
