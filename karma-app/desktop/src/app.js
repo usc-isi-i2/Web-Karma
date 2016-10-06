@@ -36,9 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
     log(data);
   });
 
-  log("Starting Karma...");
-  karma.start();
-
   function m_launch(){
     karma.launch();
     log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
@@ -56,6 +53,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
   });
+  setTimeout(() => {
+    log("Starting Karma...");
+    karma.start();
+  }, 1000);
   setTimeout(m_launch, 10000);
   document.getElementById("launch").onclick = m_launch;
   document.getElementById("restart").onclick = function(){
