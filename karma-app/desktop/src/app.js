@@ -9,6 +9,7 @@ var path = require("path");
 var fs = require("fs");
 var dialogPolyfill = require("dialog-polyfill");
 const {ipcRenderer} = require('electron');
+var glob = require("glob");
 
 console.log('Loaded environment variables:', env);
 
@@ -43,15 +44,19 @@ document.addEventListener('DOMContentLoaded', function () {
     log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
   }
 
-  // on windows don't start the browser if java path is not set and ask user to set it.
+  // set java home to java shipped with app if JAVA_HOME is not set
   karma.getJavaHome((_java_home) => {
-    if (/^win/.test(process.platform) && !_java_home){
-      setTimeout(() => {ipcRenderer.emit("SET_JAVA_HOME");}, 2000);
-    } else {
-      // Launches Karma in browser after 10 seconds.
-      setTimeout(m_launch, 10000);
+    if (!_java_home){
+        glob(path.join(__dirname, "jre*"), (err, files) => {
+          if (files[0]){
+            if (fs.existsSync(path.join(files[0], "bin", "java" + (/^win/.test(process.platform) ? ".exe" : "")))) {
+              karma.setJavaHome(files[0]);
+            }
+          }
+        });
     }
   });
+  setTimeout(m_launch, 10000);
   document.getElementById("launch").onclick = m_launch;
   document.getElementById("restart").onclick = function(){
     karma.restart();
