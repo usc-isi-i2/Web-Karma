@@ -283,19 +283,38 @@ public class SemanticModel {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			String data = "";
-			for(String value : column.getValue()){
-				data += value+"\n";
-			}
 			// add column data to the server
+			uploadUserColumn(domain, type, column);
+		}
+	}
+	// @alse
+	// TODO add no. tries. We don't want to get stuck in a loop for any reason.
+	private void uploadUserColumn(String domain, String type, Map.Entry<String, List<String>> column){
+		String data = "";
+		for(String value : column.getValue()){
+			data += value+"\n";
+		}
+		try {
+			String id = SemanticLabelingService.getSemanticTypeId(domain, type);
+			String query = "columnName=" + URLEncoder.encode(this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName(), "UTF-8") +
+					"&sourceName="+ URLEncoder.encode(this.worksheet.getTitle(), "UTF-8");
+			 new SemanticLabelingService().post(query, id, data);
+		} catch (IllegalStateException e) {
+			logger.info(e.getMessage());
+			String column_id = SemanticLabelingService.getColumnId(
+					SemanticLabelingService.getSemanticTypeId(domain, type),
+					this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName(),
+					this.worksheet.getTitle()
+			);
 			try {
-				String id = SemanticLabelingService.getSemanticTypeId(domain, type);
-				String query = "columnName=" + URLEncoder.encode(this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName(), "UTF-8") +
-						"&sourceName="+ URLEncoder.encode(this.worksheet.getTitle(), "UTF-8");
-				new SemanticLabelingService().post(query, id, data);
-			} catch (Exception e) {
-				e.printStackTrace();
+				new SemanticLabelingService().delete(column_id);
+				uploadUserColumn(domain, type, column);
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
+			// delete existing column and try again
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	public void print() {
