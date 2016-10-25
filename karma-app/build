@@ -12,7 +12,7 @@
 ########################################
 
 CURRENT=`pwd`
-rm -rf target
+rm -rf ./target
 mkdir target
 
 cd ..
@@ -27,9 +27,11 @@ mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
 cd $CURRENT/target
 
 # download tomcat binary
-wget http://apache.cs.utah.edu/tomcat/tomcat-7/v7.0.72/bin/apache-tomcat-7.0.72.zip -O tomcat.zip
+wget https://github.com/alseambusher/karma-app-deps/archive/master.zip
+unzip master.zip
+mv karma-app-deps-master/*.tar.gz karma-app-deps-master/*.zip .
+rm -rf karma-app-deps-master master.zip
 
-# TODO if this fails, exit
 unzip tomcat.zip
 rm tomcat.zip
 
@@ -47,9 +49,16 @@ cd $CURRENT/desktop
 npm install
 npm run prerelease
 cd app
+
+tar -xzvf $CURRENT/target/jre*windows*.tar.gz
 electron-packager . --platform=win32 --arch=x64 --icon=../resources/icons/karma.ico --overwrite
-electron-packager . --platform=linux --arch=x64 --icon=../resources/icons/karma.png --overwrite
+rm -rf jre*
+tar -xzvf $CURRENT/target/jre*macosx*.tar.gz
 electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite
+rm -rf jre*
+tar -xzvf $CURRENT/target/jre*linux*.tar.gz
+electron-packager . --platform=linux --arch=x64 --icon=../resources/icons/karma.png --overwrite
+rm -rf jre*
 
 cp -rf Karma-darwin* $CURRENT/target/Karma-Mac
 cp -rf Karma-linux* $CURRENT/target/Karma-Linux
@@ -57,6 +66,7 @@ cp -rf Karma-win* $CURRENT/target/Karma-Windows
 rm -rf Karma-*
 
 cd $CURRENT/target
+rm *.tar.gz
 
 #put our license
 for build_folder in `ls |grep Karma`

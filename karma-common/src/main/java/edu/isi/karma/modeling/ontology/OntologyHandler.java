@@ -84,8 +84,14 @@ class OntologyHandler {
 		if (ontR == null)
 			return new Label(r.getURI(), ns, prefix);
 		
-		String rdfsLabel = ontR.getLabel(null);
-		String rdfsComment = ontR.getComment(null);
+		//Get the rdfs:label and comment in English
+		//If one is not available in English, then try and get one in any other language
+		String rdfsLabel = ontR.getLabel("EN");
+		if(rdfsLabel == null)
+			rdfsLabel = ontR.getLabel(null);
+		String rdfsComment = ontR.getComment("EN");
+		if(rdfsComment == null)
+			rdfsComment = ontR.getComment(null);
 		
 		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
 	}

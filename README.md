@@ -1,16 +1,8 @@
 Karma: A Data Integration Tool
 ================================
 
-The Karma tutorial at https://github.com/szeke/karma-tcdl-tutorial
+The Karma tutorial at https://github.com/szeke/karma-tcdl-tutorial, also check out our [DIG web site](http://usc-isi-i2.github.io/dig/), where we use Karma extensively to process > 90M web pages.
 
-Check out our [DIG web site](http://usc-isi-i2.github.io/dig/), where we use Karma extensively to process > 90M web pages.
-
-More details in the [wiki](https://github.com/InformationIntegrationGroup/Web-Karma/wiki)
-
-> **Important note: on 15 March 2014 we had a mishap in the repository, so if you have a clone from a previous version you cannot update it to the new version. You need to delete your existing clone and get a fresh clone from the repo.** 
-
-## Important Dependencies
-Karma needs **Java 1.7, Maven 3.0 or later**. Download Java SE from [http://www.oracle.com/technetwork/java/javase/downloads/index.html](http://www.oracle.com/technetwork/java/javase/downloads/index.html)
 
 ## What is Karma?
 

@@ -20,9 +20,10 @@
 	    </dependency>
 
 	    <dependency>
-		    <groupId>commons-httpclient</groupId>
-		    <artifactId>commons-httpclient</artifactId>
-	    </dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5.2</version>
+		</dependency>
 
 	    <dependency>
 		    <groupId>javax.servlet</groupId>
