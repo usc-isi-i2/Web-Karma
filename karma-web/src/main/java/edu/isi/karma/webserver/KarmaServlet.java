@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import edu.isi.karma.semantictypes.typinghandler.RemoteSTModelHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,7 +214,15 @@ public class KarmaServlet extends HttpServlet {
 				UIConfiguration uiConfiguration = UIConfigurationRegistry.getInstance().getUIConfiguration(vWorkspace.getWorkspace().getContextId());
 				uiConfiguration.loadConfig();
 				ModelingConfigurationRegistry.getInstance().register(vWorkspace.getWorkspace().getContextId());
-				
+
+				// If online semantic typer is enabled, then set model handler to remote
+				Boolean isRemote = ModelingConfigurationRegistry.getInstance()
+						.getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId())
+						.getOnlineSemanticTypingEnabled();
+				if (isRemote) {
+					vWorkspace.getWorkspace().setSemanticTypeModelHandler(new RemoteSTModelHandler(vWorkspace.getWorkspace().getContextId()));
+				}
+
 				//2 Return all settings related updates
 				pw.println("{");
 				pw.println("\"updateType\": \"UISettings\", ");

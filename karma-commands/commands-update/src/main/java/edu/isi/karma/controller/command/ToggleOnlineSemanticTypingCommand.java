@@ -6,6 +6,8 @@ import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.semantictypes.typinghandler.HybridSTModelHandler;
+import edu.isi.karma.semantictypes.typinghandler.RemoteSTModelHandler;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -85,6 +87,13 @@ public class ToggleOnlineSemanticTypingCommand extends Command {
                         FileOutputStream fileOut = new FileOutputStream(fileName);
                         fileOut.write(modelingPropertiesContent.getBytes());
                         fileOut.close();
+
+                        String contextId = vWorkspace.getWorkspace().getContextId();
+                        if (!Boolean.valueOf(prop.getProperty(property))){
+                            vWorkspace.getWorkspace().setSemanticTypeModelHandler(new RemoteSTModelHandler(contextId));
+                        } else {
+                            vWorkspace.getWorkspace().setSemanticTypeModelHandler(new HybridSTModelHandler(contextId));
+                        }
 
                         ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).load();
                         JSONStringer jsonStr = new JSONStringer();

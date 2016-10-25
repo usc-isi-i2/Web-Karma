@@ -25,6 +25,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
+import edu.isi.karma.semantictypes.typinghandler.RemoteSTModelHandler;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +79,7 @@ public class Workspace extends Entity {
 	/**
 	 * The CRF Model for the workspace
 	 */
-	private final ISemanticTypeModelHandler semTypeModelHandler;
+	private ISemanticTypeModelHandler semTypeModelHandler;
 	
 	private final CommandPreferences commandPreferences;
 
@@ -149,6 +153,10 @@ public class Workspace extends Entity {
 
 	public ISemanticTypeModelHandler getSemanticTypeModelHandler() {
 		return semTypeModelHandler;
+	}
+
+	public void setSemanticTypeModelHandler(ISemanticTypeModelHandler semanticTypeModelHandler) {
+		this.semTypeModelHandler = semanticTypeModelHandler;
 	}
 
 	public CommandPreferences getCommandPreferences() {
