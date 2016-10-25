@@ -89,11 +89,13 @@ public class ToggleOnlineSemanticTypingCommand extends Command {
                         fileOut.close();
 
                         String contextId = vWorkspace.getWorkspace().getContextId();
+                        Boolean isModelEnabled = vWorkspace.getWorkspace().getSemanticTypeModelHandler().getModelHandlerEnabled();
                         if (!Boolean.valueOf(prop.getProperty(property))){
                             vWorkspace.getWorkspace().setSemanticTypeModelHandler(new RemoteSTModelHandler(contextId));
                         } else {
                             vWorkspace.getWorkspace().setSemanticTypeModelHandler(new HybridSTModelHandler(contextId));
                         }
+                        vWorkspace.getWorkspace().getSemanticTypeModelHandler().setModelHandlerEnabled(isModelEnabled);
 
                         ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).load();
                         JSONStringer jsonStr = new JSONStringer();

@@ -535,6 +535,11 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 	}
 
 	@Override
+	public boolean getModelHandlerEnabled() {
+		return this.modelEnabled;
+	}
+
+	@Override
 	public boolean readModelFromFile(String filepath) {
 		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(contextId);
 		contextParameters

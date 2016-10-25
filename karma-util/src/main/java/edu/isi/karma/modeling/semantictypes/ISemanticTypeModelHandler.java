@@ -9,5 +9,6 @@ public interface ISemanticTypeModelHandler {
 	public boolean removeAllLabels();
 	public boolean readModelFromFile(String filepath);
 	public void setModelHandlerEnabled(boolean enabled);
+	public boolean getModelHandlerEnabled();
 	boolean readModelFromFile(String filepath, boolean isNumeric);
 }

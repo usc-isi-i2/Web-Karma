@@ -39,6 +39,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.isi.karma.rep.Row;
+import edu.isi.karma.semantictypes.remote.SemanticLabelingService;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

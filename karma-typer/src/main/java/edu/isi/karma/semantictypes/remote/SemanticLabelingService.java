@@ -1,6 +1,11 @@
-package edu.isi.karma.modeling.alignment;
+package edu.isi.karma.semantictypes.remote;
 
+import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeLabelComparator;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import sun.misc.BASE64Encoder;
 import sun.net.www.protocol.http.HttpURLConnection;
 
@@ -8,10 +13,14 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class SemanticLabelingService {
     private static String SEMANTIC_TYPE_PART = "/semantic_types";
     private static String COLUMN_PART = "/type";
+    private static String PREDICT = "/predict";
     private static String BASE_URL = "http://52.38.65.60:80";
     private static String ID_DIVIDER = "-";  // The divider that is used to separate the different parts of ID's, like domain and type
     private static String DEFAULT_MODEL = "default";
@@ -103,6 +112,25 @@ public class SemanticLabelingService {
     }
     public String get(String query, String id, String column_id){
         return "";
+    }
+    public List<SemanticTypeLabel> predict(String values, int numPredictions){
+        List<SemanticTypeLabel> predictions = new ArrayList<>();
+        try {
+            JSONArray response = new JSONArray(POST(PREDICT, values));
+            for (int i = 0; i < (response.length() < numPredictions ? response.length() : numPredictions); i++)
+            {
+                String [] label = response.getJSONObject(i).getString("type_id").split(ID_DIVIDER);
+                float score = (float) response.getJSONObject(i).getDouble("score");
+                label[0] = StringUtils.newStringUtf8(Base64.decodeBase64(label[0]));
+                label[1] = StringUtils.newStringUtf8(Base64.decodeBase64(label[1]));
+                predictions.add(new SemanticTypeLabel(label[0] + "|" + label[1], score));
+            }
+            Collections.sort(predictions, new SemanticTypeLabelComparator());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return predictions;
     }
     public static String getSemanticTypeId(String domain, String type) {
         return Base64.encodeBase64String(domain.getBytes()) + ID_DIVIDER + Base64.encodeBase64String(type.getBytes());

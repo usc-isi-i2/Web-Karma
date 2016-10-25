@@ -2,18 +2,27 @@ package edu.isi.karma.semantictypes.typinghandler;
 
 import edu.isi.karma.modeling.semantictypes.ISemanticTypeModelHandler;
 import edu.isi.karma.modeling.semantictypes.SemanticTypeLabel;
+import edu.isi.karma.modeling.semantictypes.SemanticTypeLabelComparator;
+import edu.isi.karma.semantictypes.remote.SemanticLabelingService;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by alse on 10/23/16.
  */
 public class RemoteSTModelHandler implements ISemanticTypeModelHandler {
+	static Logger logger = LoggerFactory
+			.getLogger(HybridSTModelHandler.class.getSimpleName());
 
     private String contextId;
-    private boolean modelEnabled = false;
+    private boolean modelEnabled = true;
 
     public RemoteSTModelHandler(String contextId) {
         this.contextId = contextId;
@@ -26,7 +35,27 @@ public class RemoteSTModelHandler implements ISemanticTypeModelHandler {
 
     @Override
     public List<SemanticTypeLabel> predictType(List<String> examples, int numPredictions) {
-        return null;
+		if (!this.modelEnabled) {
+			logger.warn("Semantic Type Modeling is not enabled");
+			return null;
+		}
+		// Sanity checks for arguments
+		if (examples == null || examples.isEmpty() || numPredictions <= 0) {
+			logger.warn("Invalid arguments. Possible problems: examples list size is zero, numPredictions is non-positive");
+			return null;
+		}
+
+		logger.debug("Predict Type for " + examples.toArray().toString());
+
+		logger.warn("-----------------------------------------------------------------------------");
+
+		StringBuilder sb = new StringBuilder();
+		String sep = "\n";
+		for(String s: examples) {
+			sb.append(sep).append(s);
+		}
+
+		return new SemanticLabelingService().predict(sb.toString(), numPredictions);
     }
 
     @Override
@@ -52,6 +81,11 @@ public class RemoteSTModelHandler implements ISemanticTypeModelHandler {
 	public void setModelHandlerEnabled(boolean enabled) {
 		this.modelEnabled = enabled;
 
+	}
+
+	@Override
+	public boolean getModelHandlerEnabled() {
+		return this.modelEnabled;
 	}
 
 	@Override
