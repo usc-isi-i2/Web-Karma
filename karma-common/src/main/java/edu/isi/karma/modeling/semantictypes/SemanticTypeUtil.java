@@ -20,17 +20,11 @@
  ******************************************************************************/
 package edu.isi.karma.modeling.semantictypes;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.Condition;
-import java.util.Random;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -222,7 +216,13 @@ public class SemanticTypeUtil {
 
 		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
 		OntologyManager ontologyManager = workspace.getOntologyManager();
-		
+
+		Set<String> namespaces = new HashSet<>();
+		for (Label label : ontologyManager.getClasses().values()) {
+			namespaces.add(label.getNs());
+		}
+		modelHandler.setNamespaces(new ArrayList<>(namespaces));
+
 		List<SemanticTypeLabel> result = modelHandler.predictType(trainingExamples, numSuggestions);
 		if (result == null) {
 			logger.debug("Error occured while predicting semantic type.");
@@ -391,6 +391,7 @@ public class SemanticTypeUtil {
 					logger.error("Error while predicting type for " + nodeVal);
 					continue;
 				}
+
 				// Check here if it is an outlier
 //				System.out.println("Example: " + examples.get(0) + " Label: " + predictedLabels + " Score: " + confidenceScores);
 				String predictedLabel = result.get(0).getLabel();

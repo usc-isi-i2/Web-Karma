@@ -5,17 +5,15 @@ import edu.isi.karma.modeling.semantictypes.SemanticTypeLabelComparator;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.json.JSONArray;
-import org.json.JSONObject;
-import sun.misc.BASE64Encoder;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.FileAlreadyExistsException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringJoiner;
 
 public class SemanticLabelingService {
     private static String SEMANTIC_TYPE_PART = "/semantic_types";
@@ -102,6 +100,16 @@ public class SemanticLabelingService {
         return DELETE(SEMANTIC_TYPE_PART + COLUMN_PART + id);
 
     }
+    // This deletes all columns for a given modelName
+    public void deleteModel(String modelName) throws IOException {
+        JSONArray semanticTypes = new JSONArray(get("models=" + modelName + "&returnColumns=true"));
+        for(int i = 0; i<semanticTypes.length(); i++){
+           JSONArray columns = semanticTypes.getJSONObject(i).getJSONArray("columns");
+            for (int j=0; j<columns.length(); j++){
+                delete(columns.getJSONObject(j).getString("column_id"));
+            }
+        }
+    }
     public String get(String query, String id){
         return "";
     }
@@ -113,10 +121,20 @@ public class SemanticLabelingService {
     public String get(String query, String id, String column_id){
         return "";
     }
-    public List<SemanticTypeLabel> predict(String values, int numPredictions){
+    public List<SemanticTypeLabel> predict(String values, int numPredictions, List<String> namespaces){
         List<SemanticTypeLabel> predictions = new ArrayList<>();
         try {
-            JSONArray response = new JSONArray(POST(PREDICT, values));
+            String query = "";
+            if (namespaces != null && namespaces.size() > 0) {
+                StringJoiner sj = new StringJoiner(",");
+		        for(String s: namespaces) {
+                    if (!s.isEmpty() && (s.charAt(s.length()-1) == '#' || s.charAt(s.length()-1) == '/'))
+                        s = s.substring(0,s.length()-1);
+                    sj.add(s);
+		        }
+                query = "?namespaces=" + URLEncoder.encode(sj.toString(), "UTF-8");
+            }
+            JSONArray response = new JSONArray(POST(PREDICT + query, values));
             for (int i = 0; i < (response.length() < numPredictions ? response.length() : numPredictions); i++)
             {
                 String [] label = response.getJSONObject(i).getString("type_id").split(ID_DIVIDER);
@@ -135,6 +153,13 @@ public class SemanticLabelingService {
     public static String getSemanticTypeId(String domain, String type) {
         return Base64.encodeBase64String(domain.getBytes()) + ID_DIVIDER + Base64.encodeBase64String(type.getBytes());
     }
+    public static String getModelName(String modelName, String uuid) {
+        return uuid + ID_DIVIDER + modelName;
+    }
+    public static String getColumnName(String columnName, String uuid) {
+        return uuid + ID_DIVIDER + columnName;
+    }
+    // Note: column_name here should come from getColumnName
     public static String getColumnId(String type_id, String column_name, String source_name) {
         return type_id + ID_DIVIDER + Base64.encodeBase64String(column_name.getBytes()) + ID_DIVIDER + Base64.encodeBase64String(source_name.getBytes())+ ID_DIVIDER + Base64.encodeBase64String(DEFAULT_MODEL.getBytes());
     }

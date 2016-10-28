@@ -376,4 +376,9 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		return false;
 	}
 
+	@Override
+	public void setNamespaces(List<String> namespaces) {
+
+	}
+
 }

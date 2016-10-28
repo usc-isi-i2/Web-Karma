@@ -11,4 +11,5 @@ public interface ISemanticTypeModelHandler {
 	public void setModelHandlerEnabled(boolean enabled);
 	public boolean getModelHandlerEnabled();
 	boolean readModelFromFile(String filepath, boolean isNumeric);
+	public void setNamespaces(List<String> namespaces);
 }

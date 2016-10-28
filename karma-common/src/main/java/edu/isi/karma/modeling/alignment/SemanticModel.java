@@ -38,8 +38,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.rep.Row;
 import edu.isi.karma.semantictypes.remote.SemanticLabelingService;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -274,6 +277,17 @@ public class SemanticModel {
 				}
 			}
 		}
+
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
+		String modelName = SemanticLabelingService.getModelName(this.worksheet.getMetadataContainer().getWorksheetProperties().getJSONRepresentation().get("graphLabel").toString(), modelingConfiguration.getKarmaClientName());
+
+		// Try deleting all the existing columns based on the model name
+		try {
+			new SemanticLabelingService().deleteModel(URLEncoder.encode(modelName, "UTF-8"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		for(Map.Entry<String, List<String>> column: columns.entrySet()){
 			String domain = semanticTypes.get(column.getKey()).getDomain().getUri();
 			String type = semanticTypes.get(column.getKey()).getType().getUri();
@@ -289,31 +303,25 @@ public class SemanticModel {
 		}
 	}
 	// @alse
-	// TODO add no. tries. We don't want to get stuck in a loop for any reason.
 	private void uploadUserColumn(String domain, String type, Map.Entry<String, List<String>> column){
 		String data = "";
 		for(String value : column.getValue()){
 			data += value+"\n";
 		}
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
+		String modelName = SemanticLabelingService.getModelName(this.worksheet.getMetadataContainer().getWorksheetProperties().getJSONRepresentation().get("graphLabel").toString(), modelingConfiguration.getKarmaClientName());
+
+		// add all the columns
+		// uuid is prepended to columnName
+		// uuid is prepended to modelName
 		try {
 			String id = SemanticLabelingService.getSemanticTypeId(domain, type);
-			String query = "columnName=" + URLEncoder.encode(this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName(), "UTF-8") +
-					"&sourceName="+ URLEncoder.encode(this.worksheet.getTitle(), "UTF-8");
+			String query = "columnName=" + URLEncoder.encode(
+						SemanticLabelingService.getColumnName(this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName(), modelingConfiguration.getKarmaClientName()),
+						"UTF-8") +
+					"&sourceName="+ URLEncoder.encode(this.worksheet.getTitle(), "UTF-8") +
+					"&model="+URLEncoder.encode(modelName, "UTF-8");
 			 new SemanticLabelingService().post(query, id, data);
-		} catch (IllegalStateException e) {
-			logger.info(e.getMessage());
-			String column_id = SemanticLabelingService.getColumnId(
-					SemanticLabelingService.getSemanticTypeId(domain, type),
-					this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName(),
-					this.worksheet.getTitle()
-			);
-			try {
-				new SemanticLabelingService().delete(column_id);
-				uploadUserColumn(domain, type, column);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			// delete existing column and try again
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

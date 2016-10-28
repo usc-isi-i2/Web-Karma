@@ -215,7 +215,7 @@ public class KarmaServlet extends HttpServlet {
 				uiConfiguration.loadConfig();
 				ModelingConfigurationRegistry.getInstance().register(vWorkspace.getWorkspace().getContextId());
 
-				// If online semantic typer is enabled, then set model handler to remote
+				// If online semantic typer is enabled, then set model handler to edu.isi.karma.semantictypes.remote
 				Boolean isRemote = ModelingConfigurationRegistry.getInstance()
 						.getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId())
 						.getOnlineSemanticTypingEnabled();
