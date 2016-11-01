@@ -65,14 +65,11 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "RDF",
 				func: publishRDF
 			}, {
-				name: "R2RML Model",
+				name: "Model",
 				func: publishModel
 	//		}, {
 	//			name: "Service Model",
 	//			func: publishServiceModel
-			}, {
-				name: "Report",
-				func: publishReport
 			}, {
 				name: "Raw JSON",
 				func: saveAsJson
@@ -388,6 +385,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		info['tripleStoreUrl'] = $('#txtModel_URL').text();
 		showLoading(info["worksheetId"]);
 		var returned = sendRequest(info, worksheetId);
+		publishReport();
 		return false;
 	}
 
