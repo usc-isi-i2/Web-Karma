@@ -100,7 +100,7 @@ function parse(data) {
 					});
 
 					var headerDiv = $("<div>").addClass("propertiesHeader");
-					var label1 = $("<label>").html("Name:&nbsp;");
+					var label1 = $("<label>").html("Model Name:&nbsp;");
 					var graphLabel = $("<span>")
 						.text(fetchExistingModelLabel(worksheetId))
 						.addClass("edit")
