@@ -21,12 +21,7 @@
 
 package edu.isi.karma.modeling.alignment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -296,6 +291,7 @@ public class SemanticModel {
 				String query = "class=" + URLEncoder.encode(domain , "UTF-8") + "&property=" + URLEncoder.encode(type, "UTF-8");
 				new SemanticLabelingService().post(query);
 			} catch (Exception e) {
+				logger.warn("Semantic type domain:"+ domain +" type:"+ type +" can't be created.");
 				e.printStackTrace();
 			}
 			// add column data to the server
@@ -323,6 +319,7 @@ public class SemanticModel {
 					"&model="+URLEncoder.encode(modelName, "UTF-8");
 			 new SemanticLabelingService().post(query, id, data);
 		} catch (Exception e) {
+			logger.warn("Can't upload column:"+ this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName() +" domain:"+ domain +" type:"+ type +" can't be created.");
 			e.printStackTrace();
 		}
 	}

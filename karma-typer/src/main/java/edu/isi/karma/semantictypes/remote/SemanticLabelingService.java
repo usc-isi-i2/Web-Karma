@@ -103,12 +103,16 @@ public class SemanticLabelingService {
     // This deletes all columns for a given modelName
     public void deleteModel(String modelName) throws IOException {
         JSONArray semanticTypes = new JSONArray(get("models=" + modelName + "&returnColumns=true"));
-        for(int i = 0; i<semanticTypes.length(); i++){
-           JSONArray columns = semanticTypes.getJSONObject(i).getJSONArray("columns");
-            for (int j=0; j<columns.length(); j++){
-                delete(columns.getJSONObject(j).getString("column_id"));
+            for (int i = 0; i < semanticTypes.length(); i++) {
+                JSONArray columns = semanticTypes.getJSONObject(i).getJSONArray("columns");
+                for (int j = 0; j < columns.length(); j++) {
+                    try {
+                        delete(columns.getJSONObject(j).getString("column_id"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }
     }
     public String get(String query, String id){
         return "";
