@@ -9,17 +9,23 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by alse on 11/1/16.
  */
-public class GithubPublishCommandFactory extends CommandFactory {
+public class SetGithubCommandFactory extends CommandFactory {
     enum Arguments {
-        modelName
+        worksheetID,
+        repo,
+        branch
     }
     @Override
     public Command createCommand(HttpServletRequest request, Workspace workspace) {
-        return new GithubPublishCommand(getNewId(workspace), Command.NEW_MODEL, request.getParameter(Arguments.modelName.name()));
+        return new SetGithubCommand(getNewId(workspace),
+                Command.NEW_MODEL,
+                request.getParameter(Arguments.worksheetID.name()),
+                request.getParameter(Arguments.repo.name()),
+                request.getParameter(Arguments.branch.name()));
     }
 
     @Override
     public Class<? extends Command> getCorrespondingCommand() {
-        return GithubPublishCommand.class;
+        return SetGithubCommand.class;
     }
 }

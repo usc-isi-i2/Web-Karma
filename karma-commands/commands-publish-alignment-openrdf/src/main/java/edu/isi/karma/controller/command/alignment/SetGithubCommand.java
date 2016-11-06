@@ -6,6 +6,8 @@ import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.rep.Github;
+import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ContextParametersRegistry;
@@ -20,13 +22,17 @@ import java.io.PrintWriter;
 /**
  * Created by alse on 11/1/16.
  */
-public class GithubPublishCommand extends Command {
-    private static Logger logger = LoggerFactory.getLogger(GithubPublishCommand.class);
-    private String modelName;
+public class SetGithubCommand extends Command {
+    private static Logger logger = LoggerFactory.getLogger(SetGithubCommand.class);
+    private String worksheetID;
+    private String repo;
+    private String branch;
 
-    protected GithubPublishCommand(String id, String model, String modelName) {
+    protected SetGithubCommand(String id, String model, String worksheetID, String repo, String branch) {
         super(id, model);
-        this.modelName = modelName;
+        this.worksheetID = worksheetID;
+        this.repo = repo;
+        this.branch = branch;
     }
 
     @Override
@@ -36,7 +42,7 @@ public class GithubPublishCommand extends Command {
 
     @Override
     public String getTitle() {
-        return "Github Publish Command";
+        return "Set Github Command";
     }
 
     @Override
@@ -54,33 +60,24 @@ public class GithubPublishCommand extends Command {
         UpdateContainer uc = new UpdateContainer();
         try{
 
+            Worksheet worksheet = workspace.getWorksheet(this.worksheetID);
+            worksheet.setGithub(new Github(this.repo, this.branch));
             uc.add(new AbstractUpdate() {
                 @Override
                 public void generateJson(String prefix, PrintWriter pw, VWorkspace vWorkspace) {
                     try {
-                        // read modeling.properties file
-                        String dotFile = ContextParametersRegistry.getInstance()
-                                .getContextParameters(ContextParametersRegistry.getInstance().getDefault().getId())
-                                .getParameterValue(ServletContextParameterMap.ContextParameter.GRAPHVIZ_MODELS_DIR)
-                                + modelName + ".model.dot";
-
-                        String modelJson = ContextParametersRegistry.getInstance()
-                                .getContextParameters(ContextParametersRegistry.getInstance().getDefault().getId())
-                                .getParameterValue(ServletContextParameterMap.ContextParameter.JSON_PUBLISH_DIR) // or JSON_MODELS_DIR ?
-                                + modelName + ".model.json";
-
                         JSONWriter writer = new JSONStringer().object();
                         writer.key("updateType").value(this.getClass().getName());
                         writer.endObject();
                         pw.print(writer.toString());
                     } catch (Exception e) {
-                        logger.error("Error pushing to github", e);
+                        logger.error("Error unable to set Github", e);
                     }
                 }
             });
         }  catch (Exception e) {
-            logger.error("Error pushing to github" , e);
-            uc.add(new ErrorUpdate("Error pushing to github"));
+            logger.error("Error unable to set Github" , e);
+            uc.add(new ErrorUpdate("Error unable to set Github"));
         }
         return uc;
     }
