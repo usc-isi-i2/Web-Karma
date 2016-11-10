@@ -82,7 +82,7 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 	}
 
 	private enum JsonKeys {
-		updateType, worksheetId, baseURI, prefix, graphLabel
+		updateType, worksheetId, baseURI, prefix, graphLabel, GithubURL, GithubBranch
 	}
 
 	@Override
@@ -193,6 +193,10 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 						outputObject.put(JsonKeys.prefix.name(), props.getPropertyValue(Property.prefix));
 					if (props.getPropertyValue(Property.graphLabel) != null && !props.getPropertyValue(Property.graphLabel).trim().isEmpty()) 
 						outputObject.put(JsonKeys.graphLabel.name(), props.getPropertyValue(Property.graphLabel));
+					if (props.getPropertyValue(Property.GithubURL) != null && !props.getPropertyValue(Property.GithubURL).trim().isEmpty())
+						outputObject.put(JsonKeys.GithubURL.name(), props.getPropertyValue(Property.GithubURL));
+					if (props.getPropertyValue(Property.GithubBranch) != null && !props.getPropertyValue(Property.GithubBranch).trim().isEmpty())
+						outputObject.put(JsonKeys.GithubBranch.name(), props.getPropertyValue(Property.GithubBranch));
 					pw.println(outputObject.toString());
 				} catch (JSONException e) {
 					e.printStackTrace();

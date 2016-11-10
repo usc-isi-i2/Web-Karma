@@ -78,6 +78,9 @@ function WorksheetOptions(wsId, wsTitle) {
 			name: "Print Model",
 			func: printModel
 		}, {
+			name: "Github",
+			func: githubSettings
+		}, {
 			name: "divider"
 		},
 /*
@@ -456,6 +459,10 @@ function WorksheetOptions(wsId, wsTitle) {
 	
 	function printModel() {
 		D3ModelManager.getInstance().printModel(worksheetId);
+	}
+
+	function githubSettings() {
+	// TOD
 	}
 	
 	this.generateJS = function() {

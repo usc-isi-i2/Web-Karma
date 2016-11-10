@@ -212,6 +212,42 @@ function parse(data) {
 					headerDiv.append(label1);
 					headerDiv.append(baseURILabel);
 
+					var sep = $("<span>").html("&nbsp;|&nbsp;");
+					var label1 = $("<label>").html("Github:&nbsp;");
+					var githubLabel = $("<span>").text("disabled")
+						.addClass("edit")
+						.attr("id", "txtGithubURL_" + worksheetId)
+						.editable({
+							type: 'text',
+							pk: 1,
+							savenochange: true,
+							success: function(response, newValue) {
+								console.log("Set new value:" + newValue);
+								githubLabel.text(newValue);
+								var worksheetProps = new Object();
+								worksheetProps["hasPrefix"] = false;
+								worksheetProps["hasBaseURI"] = false;
+								worksheetProps["graphLabel"] = "";
+								worksheetProps["hasServiceProperties"] = false;
+								worksheetProps["GithubURL"] = newValue;
+								var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
+
+								var newInfo = info['newInfo']; // for input parameters
+								newInfo.push(getParamObject("properties", worksheetProps, "other"));
+								info["newInfo"] = JSON.stringify(newInfo);
+								showWaitingSignOnScreen();
+								var returned = sendRequest(info);
+							},
+							title: 'Enter URL'
+						})
+						.on('shown', function(e, editable) {
+							console.log(editable);
+							editable.input.$input.val(githubLabel.html());
+						});
+					headerDiv.append(sep);
+					headerDiv.append(label1);
+					headerDiv.append(githubLabel);
+
 					var mapDiv = $("<div>").addClass("toggleMapView");
 					if (googleEarthEnabled) {
 						mapDiv
@@ -497,6 +533,9 @@ function parse(data) {
 
 			if (element["graphLabel"]) {
 				$("#txtGraphLabel_" + element["worksheetId"]).text(element["graphLabel"]);
+			}
+			if (element["GithubURL"]) {
+				$("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"]);
 			}
 
 		} else if (element["updateType"] == "WorksheetSuperSelectionListUpdate") {
