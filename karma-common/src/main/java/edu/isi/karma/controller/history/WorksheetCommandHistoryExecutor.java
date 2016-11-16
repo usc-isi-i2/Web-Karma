@@ -120,7 +120,7 @@ public class WorksheetCommandHistoryExecutor {
 							uc.append(workspace.getCommandHistory().doCommand(comm, workspace, saveToHistory));
 							comm.setExecutedInBatch(false);
 						} catch(Exception e) {
-							logger.error("Error executing command: "+ commandName + ". Please notify this error", e);
+							logger.error("Error executing command: "+ commandName + ". Please notify this error. \nInputs:" + inputParamArr, e);
 							//make these InfoUpdates so that the UI can still process the rest of the model
 							return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 						}

@@ -20,6 +20,7 @@ public class FormParameters {
 	public static final String CONTENT_TYPE_JSON = InputType.JSON.toString();
 	public static final String CONTENT_TYPE_XML = InputType.XML.toString();
 	public static final String CONTENT_TYPE_EXCEL = InputType.EXCEL.toString();
+	public static final String CONTENT_TYPE_JL = InputType.JL.toString();
 	public static final String CONTEXT_URL="ContextURL";
 	public static final String RDF_GENERATION_ROOT="RDFGenerationRoot";
 	public static final String RDF_GENERATION_SELECTION="RDFGenerationSelection";
