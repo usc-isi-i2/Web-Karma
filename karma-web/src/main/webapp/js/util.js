@@ -34,6 +34,10 @@ function sendRequest(info, worksheetId) {
 				hideLoading(worksheetId);
 		}
 	});
+
+	// call PublishGithubCommand if the command is one of the following commands
+	// TODO
+	var commands = ["GenerateR2RMLModelCommand"];
 }
 
 function getColumnHeadings(worksheetId) {

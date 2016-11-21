@@ -222,21 +222,7 @@ function parse(data) {
 							pk: 1,
 							savenochange: true,
 							success: function(response, newValue) {
-								console.log("Set new value:" + newValue);
-								githubLabel.text(newValue);
-								var worksheetProps = new Object();
-								worksheetProps["hasPrefix"] = false;
-								worksheetProps["hasBaseURI"] = false;
-								worksheetProps["graphLabel"] = "";
-								worksheetProps["hasServiceProperties"] = false;
-								worksheetProps["GithubURL"] = newValue;
-								var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
-
-								var newInfo = info['newInfo']; // for input parameters
-								newInfo.push(getParamObject("properties", worksheetProps, "other"));
-								info["newInfo"] = JSON.stringify(newInfo);
-								showWaitingSignOnScreen();
-								var returned = sendRequest(info);
+							    setGithubURLProperties(this, newValue)
 							},
 							title: 'Enter URL'
 						})
@@ -247,6 +233,7 @@ function parse(data) {
 					headerDiv.append(sep);
 					headerDiv.append(label1);
 					headerDiv.append(githubLabel);
+					githubLabel.editable('toggleDisabled');
 
 					var mapDiv = $("<div>").addClass("toggleMapView");
 					if (googleEarthEnabled) {
@@ -536,6 +523,10 @@ function parse(data) {
 			}
 			if (element["GithubURL"]) {
 				$("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"]);
+                $.cookie("github-url-" + element["worksheetId"], element["GithubURL"]);
+			}
+			if (element["GithubBranch"]) {
+                $.cookie("github-branch-" + element["worksheetId"], element["GithubBranch"]);
 			}
 
 		} else if (element["updateType"] == "WorksheetSuperSelectionListUpdate") {
@@ -1069,4 +1060,41 @@ function submitSelectedModelNameToBeLoaded() {
 
 	showLoading(worksheetId);
 	var returned = sendRequest(info, worksheetId);
+}
+
+function setGithubURLProperties(githubLabel, worksheetId, newValue) {
+    console.log("Set new value:" + newValue);
+	console.log(newValue);
+	githubLabel.text(newValue);
+	var worksheetProps = new Object();
+	worksheetProps["hasPrefix"] = false;
+	worksheetProps["hasBaseURI"] = false;
+	worksheetProps["graphLabel"] = "";
+	worksheetProps["hasServiceProperties"] = false;
+	worksheetProps["GithubURL"] = newValue;
+	var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
+
+	var newInfo = info['newInfo']; // for input parameters
+	newInfo.push(getParamObject("properties", worksheetProps, "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	showWaitingSignOnScreen();
+	var returned = sendRequest(info);
+}
+
+function setGithubBranchProperties(worksheetId, newValue) {
+    console.log("Set new value:" + newValue);
+	console.log(newValue);
+	var worksheetProps = new Object();
+	worksheetProps["hasPrefix"] = false;
+	worksheetProps["hasBaseURI"] = false;
+	worksheetProps["graphLabel"] = "";
+	worksheetProps["hasServiceProperties"] = false;
+	worksheetProps["GithubBranch"] = newValue;
+	var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
+
+	var newInfo = info['newInfo']; // for input parameters
+	newInfo.push(getParamObject("properties", worksheetProps, "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	showWaitingSignOnScreen();
+	var returned = sendRequest(info);
 }

@@ -146,5 +146,40 @@ a.icon-remove:hover {
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="setGithubSettingsDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Github Settings</h4>
+				  </div>
+				  <div class="modal-body">
+
+		              <div class="form-group">
+						<label for="txtGithubURL">Github URL</label>
+						<input class="form-control" type="url" id="txtGithubURL" required><br>
+						<label for="txtGithubBranch">Github branch</label>
+						<input class="form-control" type="text" id="txtGithubBranch" value="master" required><br>
+						<label for="txtGithubUsername">Github Username</label>
+						<input class="form-control" type="text" id="txtGithubUsername" required><br>
+						<label for="txtGithubPassword">Github Password</label>
+						<input class="form-control" type="password" id="txtGithubPassword" required><br>
+						<span class="error"  style="display: none">Error. Please enter valid values</span>
+					 </div>
+
+              		</form>
+
+		  		  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <input type="button" class="btn btn-danger" value="Disable"/>
+				        <input type="submit" class="btn btn-primary" value="Submit"/>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 </body>
 </html>

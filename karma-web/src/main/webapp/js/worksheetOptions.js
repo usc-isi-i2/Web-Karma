@@ -462,7 +462,60 @@ function WorksheetOptions(wsId, wsTitle) {
 	}
 
 	function githubSettings() {
-	// TOD
+        $("#setGithubSettingsDialog .error").css("display", "none");
+        $("#setGithubSettingsDialog").modal("show");
+
+        var url = $("#setGithubSettingsDialog #txtGithubURL");
+        var branch = $("#setGithubSettingsDialog #txtGithubBranch");
+        var username = $("#setGithubSettingsDialog #txtGithubUsername");
+        var password = $("#setGithubSettingsDialog #txtGithubPassword");
+
+        if ($.cookie("github-url-" + worksheetId))
+            url.val($.cookie("github-url-" + worksheetId))
+        if ($.cookie("github-branch-" + worksheetId))
+            branch.val($.cookie("github-branch-" + worksheetId))
+        if ($.cookie("github-username-" + worksheetId))
+            username.val($.cookie("github-username-" + worksheetId))
+
+        $("#setGithubSettingsDialog input[type=submit]")
+        .unbind( "click" )
+        .click(function(){
+            var repo_username = url.val().split("github.com")[1].split("/")[1];
+            var repo_name = url.val().split("github.com")[1].split("/")[2];
+            if (url[0].checkValidity() && branch[0].checkValidity() && username[0].checkValidity() && password[0].checkValidity()){
+                $.ajax
+                ({
+                  type: "GET",
+                  url: "https://api.github.com/repos/" + repo_username + "/" + repo_name,
+                  dataType: 'json',
+                  async: false,
+                  beforeSend: function (xhr) {
+                    xhr.setRequestHeader ("Authorization", "Basic " + btoa(username.val() + ":" + password.val()));
+                  },
+                  success: function (data){
+                    console.log(data);
+                    if (data.permissions && data.permissions.push == true){
+                        console.log("access granted");
+				        setGithubURLProperties($("#txtGithubURL_" + worksheetId), worksheetId, url.val());
+				        setGithubBranchProperties(worksheetId, branch.val());
+                        $("#setGithubSettingsDialog .error").css("display", "none");
+                        $.cookie("github-" + worksheetId, btoa(username.val() + ":" + password.val()));
+                        $.cookie("github-username-" + worksheetId, username.val());
+                        $.cookie("github-url-" + worksheetId, url.val());
+                        $.cookie("github-branch-" + worksheetId, branch.val());
+                        $("#setGithubSettingsDialog").modal("hide");
+                    } else {
+                        $("#setGithubSettingsDialog .error").css("display", "inline");
+                    }
+                  },
+                  error: function() {
+                    $("#setGithubSettingsDialog .error").css("display", "inline");
+                  },
+                });
+            } else {
+                $("#setGithubSettingsDialog .error").css("display", "inline");
+            }
+        });
 	}
 	
 	this.generateJS = function() {
