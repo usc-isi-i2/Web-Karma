@@ -50,7 +50,6 @@ public class Worksheet extends RepEntity {
     private Object msger = null;//used for holding session cleaning data
 	private Object dpp = null; // data preprocessing for cleaning
     private Import importMethod;
-    private Github github = null;
     @Override
     public void prettyPrint(String prefix, PrintWriter pw, RepFactory factory) {
         pw.print(prefix);
@@ -246,13 +245,5 @@ public class Worksheet extends RepEntity {
 
     public Import getImportMethod() {
         return this.importMethod;
-    }
-
-    public Github getGithub() {
-        return github;
-    }
-
-    public void setGithub(Github github) {
-        this.github = github;
     }
 }
