@@ -522,8 +522,11 @@ function parse(data) {
 				$("#txtGraphLabel_" + element["worksheetId"]).text(element["graphLabel"]);
 			}
 			if (element["GithubURL"]) {
-				$("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"]);
                 $.cookie("github-url-" + element["worksheetId"], element["GithubURL"]);
+                if ($.cookie("github-" + element["worksheetId"]))
+                    $("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"]);
+                else
+                    $("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"] + "(disabled)");
 			}
 			if (element["GithubBranch"]) {
                 $.cookie("github-branch-" + element["worksheetId"], element["GithubBranch"]);
