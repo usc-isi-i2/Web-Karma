@@ -521,13 +521,19 @@ function parse(data) {
 			if (element["graphLabel"]) {
 				$("#txtGraphLabel_" + element["worksheetId"]).text(element["graphLabel"]);
 			}
+
+			// If we find GithubURL, we will save it in the cookie and set the label appropriately
 			if (element["GithubURL"]) {
                 $.cookie("github-url-" + element["worksheetId"], element["GithubURL"]);
+                // if we don't have the github auth credentials for the repo, then add a "(disabled)" to the url
+                // to indicate that the user has to set it in github settings.
                 if ($.cookie("github-" + element["worksheetId"]))
                     $("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"]);
                 else
                     $("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"] + "(disabled)");
 			}
+
+			// If we find GithubBranch, store it in the cookie
 			if (element["GithubBranch"]) {
                 $.cookie("github-branch-" + element["worksheetId"], element["GithubBranch"]);
 			}
@@ -1065,6 +1071,7 @@ function submitSelectedModelNameToBeLoaded() {
 	var returned = sendRequest(info, worksheetId);
 }
 
+// this function sets the GithubURL in the properties for the current worksheet by calling SetWorksheetPropertiesCommand
 function setGithubURLProperties(githubLabel, worksheetId, newValue) {
     console.log("Set new value:" + newValue);
 	console.log(newValue);
@@ -1084,6 +1091,7 @@ function setGithubURLProperties(githubLabel, worksheetId, newValue) {
 	var returned = sendRequest(info);
 }
 
+// this function sets the GithubBranch in the properties for the current worksheet by calling SetWorksheetPropertiesCommand
 function setGithubBranchProperties(worksheetId, newValue) {
     console.log("Set new value:" + newValue);
 	console.log(newValue);

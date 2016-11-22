@@ -461,7 +461,9 @@ function WorksheetOptions(wsId, wsTitle) {
 		D3ModelManager.getInstance().printModel(worksheetId);
 	}
 
+    // This function shows and handles github settings modal window
 	function githubSettings() {
+	    // hide the error before showing
         $("#setGithubSettingsDialog .error").css("display", "none");
         $("#setGithubSettingsDialog").modal("show");
 
@@ -470,6 +472,8 @@ function WorksheetOptions(wsId, wsTitle) {
         var username = $("#setGithubSettingsDialog #txtGithubUsername");
         var password = $("#setGithubSettingsDialog #txtGithubPassword");
 
+
+        // store url, branch and username in the cookie
         if ($.cookie("github-url-" + worksheetId))
             url.val($.cookie("github-url-" + worksheetId))
         if ($.cookie("github-branch-" + worksheetId))
@@ -482,6 +486,7 @@ function WorksheetOptions(wsId, wsTitle) {
         .click(function(){
             var repo_username = url.val().split("github.com")[1].split("/")[1];
             var repo_name = url.val().split("github.com")[1].split("/")[2];
+            // check if all of the values entered are correct from the frontend and call github api to check if credentials are right
             if (url[0].checkValidity() && branch[0].checkValidity() && username[0].checkValidity() && password[0].checkValidity()){
                 $.ajax
                 ({
@@ -493,12 +498,16 @@ function WorksheetOptions(wsId, wsTitle) {
                     xhr.setRequestHeader ("Authorization", "Basic " + btoa(username.val() + ":" + password.val()));
                   },
                   success: function (data){
-                    console.log(data);
+                    // If we have push permission, then move forward else show error statement
                     if (data.permissions && data.permissions.push == true){
-                        console.log("access granted");
+
 				        setGithubURLProperties($("#txtGithubURL_" + worksheetId), worksheetId, url.val());
 				        setGithubBranchProperties(worksheetId, branch.val());
+
+				        // hide error
                         $("#setGithubSettingsDialog .error").css("display", "none");
+
+                        // store base64 encoded auth, username, github url and branch to cookie and set it to default expiry
                         $.cookie("github-" + worksheetId, btoa(username.val() + ":" + password.val()));
                         $.cookie("github-username-" + worksheetId, username.val());
                         $.cookie("github-url-" + worksheetId, url.val());

@@ -28,6 +28,9 @@ import java.nio.file.Paths;
 
 /**
  * Created by alse on 11/21/16.
+ * This command publishes dot, model, model json and report to github
+ * This is called when a command in the array "commands" in the function sendRequest(info, worksheetId) in karma-web/src/main/webapp/js/util.js is called.
+ * For instance, if "GenerateR2RMLModelCommand" is found in that array, whenever that command is called, PublishGithubCommand is called
  */
 public class PublishGithubCommand extends Command {
     private static Logger logger = LoggerFactory.getLogger(PublishGithubCommand.class);
@@ -36,6 +39,12 @@ public class PublishGithubCommand extends Command {
     private String branch;
     private String auth;
 
+    /*
+    worksheetId - is the id of the worksheet that has to be published
+    repo - is the github url of the repo where the files have to be published
+    branch - is the branch of the repo where the files have to be published
+    auth - is the base64 encoded string of username:password required for authentication
+     */
     public PublishGithubCommand(String id, String model, String worksheetId, String repo, String branch, String auth) {
         super(id, model);
         this.worksheetId = worksheetId;
@@ -100,6 +109,7 @@ public class PublishGithubCommand extends Command {
                 String contents = getFileContents(modelFile);
                 String modelFilename = workspace.getCommandPreferencesId() + worksheetId + "-" +
                         worksheet.getTitle() +  "-auto-model.ttl";
+                // if you cant create a file then update it
                 if (push(modelFilename, contents, true) != 201) {
                     push(modelFilename, contents, false);
                 }
@@ -146,6 +156,10 @@ public class PublishGithubCommand extends Command {
         return null;
     }
 
+    /*
+    This function does the push operation to github
+    isCreate - true if the file has to be created and it doesnt exist already. false if we have to update the given file
+     */
     public Integer push(String fileName, String fileContents, Boolean isCreate) throws IOException{
         String repoUser = this.repo.split("github\\.com")[1].split("/")[1];
         String repoName = this.repo.split("github\\.com")[1].split("/")[2];
@@ -180,6 +194,10 @@ public class PublishGithubCommand extends Command {
         return new String(encoded, "UTF-8");
     }
 
+    /*
+    Whenever we are doing an update instead of create, we need the blob sha of the file which exists on github.
+    To get it, we query the tree of the repo and then we take the sha of the file we want to update.
+     */
     public String getBlobSHA(String fileName) throws IOException{
         String repoUser = this.repo.split("github\\.com")[1].split("/")[1];
         String repoName = this.repo.split("github\\.com")[1].split("/")[2];
@@ -208,6 +226,7 @@ public class PublishGithubCommand extends Command {
         return "";
     }
 
+    // this returns the model file name from models-autosave directory
     public String getHistoryFilepath(Workspace workspace) {
 		final ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
