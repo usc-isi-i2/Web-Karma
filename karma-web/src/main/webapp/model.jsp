@@ -173,8 +173,9 @@ a.icon-remove:hover {
 		  		  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">
 				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-				        <input type="button" class="btn btn-danger" value="Disable"/>
-				        <input type="submit" class="btn btn-primary" value="Submit"/>
+				        <input type="button" class="btn btn-warning" value="Disable"/>
+				        <input type="button" class="btn btn-danger" value="Delete"/>
+				        <input type="button" class="btn btn-primary" value="Submit"/>
 				  </div> <!-- /.modal-footer -->
 			</div><!-- /.modal-content -->
 		</form>

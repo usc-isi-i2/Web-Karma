@@ -481,7 +481,26 @@ function WorksheetOptions(wsId, wsTitle) {
         if ($.cookie("github-username-" + worksheetId))
             username.val($.cookie("github-username-" + worksheetId))
 
-        $("#setGithubSettingsDialog input[type=submit]")
+        $("#setGithubSettingsDialog input[type=button][value=Disable]")
+        .unbind()
+        .click(function(){
+            $("#txtGithubURL_" + worksheetId).text($.cookie("github-url-" + worksheetId) + "(disabled)");
+            $.removeCookie("github-" + worksheetId);
+        });
+
+        $("#setGithubSettingsDialog input[type=button][value=Delete]")
+        .unbind()
+        .click(function(){
+            $("#txtGithubURL_" + worksheetId).text("disabled");
+            $.removeCookie("github-" + worksheetId);
+            $.removeCookie("github-url-" + worksheetId);
+            $.removeCookie("github-branch-" + worksheetId);
+            $.removeCookie("github-username-" + worksheetId);
+		    setGithubURLProperties($("#txtGithubURL_" + worksheetId), worksheetId, "");
+		    setGithubBranchProperties(worksheetId, "");
+        });
+
+        $("#setGithubSettingsDialog input[type=button][value=Submit]")
         .unbind()
         .click(function(){
             var repo_username = url.val().split("github.com")[1].split("/")[1];
