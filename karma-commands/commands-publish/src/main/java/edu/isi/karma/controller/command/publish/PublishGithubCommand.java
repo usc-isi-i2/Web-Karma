@@ -23,19 +23,17 @@ import java.io.PrintWriter;
  */
 public class PublishGithubCommand extends Command {
     private static Logger logger = LoggerFactory.getLogger(PublishGithubCommand.class);
-    private String worksheetID;
+    private String worksheetId;
     private String repo;
     private String branch;
-    private String username;
-    private String password;
+    private String auth;
 
-    public PublishGithubCommand(String id, String model, String worksheetID, String repo, String branch, String username, String password) {
+    public PublishGithubCommand(String id, String model, String worksheetId, String repo, String branch, String auth) {
         super(id, model);
-        this.worksheetID = worksheetID;
+        this.worksheetId = worksheetId;
         this.repo = repo;
         this.branch = branch;
-        this.username = username;
-        this.password = password;
+        this.auth = auth;
     }
     @Override
     public String getCommandName() {
@@ -54,14 +52,14 @@ public class PublishGithubCommand extends Command {
 
     @Override
     public CommandType getCommandType() {
-        return null;
+        return CommandType.notInHistory;
     }
     @Override
     public UpdateContainer doIt(Workspace workspace) throws CommandException {
         UpdateContainer uc = new UpdateContainer();
         try{
 
-            Worksheet worksheet = workspace.getWorksheet(this.worksheetID);
+            Worksheet worksheet = workspace.getWorksheet(this.worksheetId);
 
             String modelName = worksheet.getTitle();
 
@@ -77,6 +75,18 @@ public class PublishGithubCommand extends Command {
 
 
             System.out.println("TODO " + dotFile + " " + modelFile);
+            System.out.println(this.auth);
+            System.out.println(this.branch);
+            System.out.println(this.repo);
+            System.out.println(this.worksheetId);
+
+//
+//            URL url = new URL(“location address”);
+//            URLConnection uc = url.openConnection();
+//            String userpass = username + ":" + password;
+//            String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
+//            uc.setRequestProperty ("Authorization", basicAuth);
+//            InputStream in = uc.getInputStream();
 
             uc.add(new AbstractUpdate() {
                 @Override
@@ -84,8 +94,8 @@ public class PublishGithubCommand extends Command {
                     try {
                         JSONWriter writer = new JSONStringer().object();
                         writer.key("updateType").value(this.getClass().getName());
-                        writer.endObject();
                         pw.print(writer.toString());
+                        writer.endObject();
                     } catch (Exception e) {
                         logger.error("Error unable to set Github", e);
                     }

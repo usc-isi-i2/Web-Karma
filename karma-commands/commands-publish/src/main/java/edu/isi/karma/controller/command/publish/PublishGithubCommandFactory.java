@@ -12,21 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 
 public class PublishGithubCommandFactory  extends CommandFactory {
     enum Arguments {
-        worksheetID,
+        worksheetId,
         repo,
         branch,
-        username,
-        password
+        auth
     }
     @Override
     public Command createCommand(HttpServletRequest request, Workspace workspace) {
         return new PublishGithubCommand(getNewId(workspace),
                 Command.NEW_MODEL,
-                request.getParameter(Arguments.worksheetID.name()),
+                request.getParameter(Arguments.worksheetId.name()),
                 request.getParameter(Arguments.repo.name()),
                 request.getParameter(Arguments.branch.name()),
-                request.getParameter(Arguments.username.name()),
-                request.getParameter(Arguments.password.name()));
+                request.getParameter(Arguments.auth.name()));
     }
 
     @Override

@@ -36,8 +36,19 @@ function sendRequest(info, worksheetId) {
 	});
 
 	// call PublishGithubCommand if the command is one of the following commands
-	// TODO
 	var commands = ["GenerateR2RMLModelCommand"];
+
+	if ($.inArray(info["command"], commands) != -1){
+	    console.log("asdfasdfasdf")
+	    if ($.cookie("github-" + worksheetId) && $.cookie("github-url-" + worksheetId) && $.cookie("github-branch-" + worksheetId)) {
+	        var githubInfo = generateInfoObject(worksheetId, "", "PublishGithubCommand");
+	        githubInfo["worksheetId"] = worksheetId;
+	        githubInfo["auth"] = $.cookie("github-" + worksheetId);
+	        githubInfo["repo"] = $.cookie("github-url-" + worksheetId);
+	        githubInfo["branch"] = $.cookie("github-branch-" + worksheetId);
+	        var returned = sendRequest(githubInfo, worksheetId);
+	    }
+	}
 }
 
 function getColumnHeadings(worksheetId) {

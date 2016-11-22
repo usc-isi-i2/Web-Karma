@@ -478,7 +478,7 @@ function WorksheetOptions(wsId, wsTitle) {
             username.val($.cookie("github-username-" + worksheetId))
 
         $("#setGithubSettingsDialog input[type=submit]")
-        .unbind( "click" )
+        .unbind()
         .click(function(){
             var repo_username = url.val().split("github.com")[1].split("/")[1];
             var repo_name = url.val().split("github.com")[1].split("/")[2];
