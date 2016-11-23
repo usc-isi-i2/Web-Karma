@@ -257,10 +257,11 @@ public class SemanticModel {
 				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 		}
 	}
-	// @alse
+	// This function uploads the semantic types to the server and then uploads the columns by calling uploadUserColumn
 	public void uploadUserSemanticTypes() {
 		Map<String, SemanticType> semanticTypes = this.worksheet.getSemanticTypes().getTypes();
 		Map<String, List<String>> columns = new HashMap<>();
+		// get all the columns (max 1000 rows)
 		for(Row row: this.worksheet.getDataTable().getRows(0, 1000, new SuperSelection("DEFAULT") )){
 			for(Entry<String, edu.isi.karma.rep.Node> node: row.getNodesMap().entrySet()){
 				if (columns.containsKey(node.getKey())) {
@@ -274,9 +275,11 @@ public class SemanticModel {
 		}
 
 		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
+		// This is the name of the model (not title of the worksheet)
 		String modelName = SemanticLabelingService.getModelName(this.worksheet.getMetadataContainer().getWorksheetProperties().getJSONRepresentation().get("graphLabel").toString(), modelingConfiguration.getKarmaClientName());
 
 		// Try deleting all the existing columns based on the model name
+		// If it returns 404 it means that it is not there to begin with. So we can simply ignore it. Print the stacktrace anyways
 		try {
 			new SemanticLabelingService().deleteModel(URLEncoder.encode(modelName, "UTF-8"));
 		} catch (IOException e) {
@@ -298,7 +301,7 @@ public class SemanticModel {
 			uploadUserColumn(domain, type, column);
 		}
 	}
-	// @alse
+	// This function uploads the columns to the semantic typer service
 	private void uploadUserColumn(String domain, String type, Map.Entry<String, List<String>> column){
 		String data = "";
 		for(String value : column.getValue()){
@@ -308,8 +311,8 @@ public class SemanticModel {
 		String modelName = SemanticLabelingService.getModelName(this.worksheet.getMetadataContainer().getWorksheetProperties().getJSONRepresentation().get("graphLabel").toString(), modelingConfiguration.getKarmaClientName());
 
 		// add all the columns
-		// uuid is prepended to columnName
-		// uuid is prepended to modelName
+		// note that karma client name is prepended to all the column names.
+		// We don't send plain column names to the server -  we need this to differentiate it from rest of the users
 		try {
 			String id = SemanticLabelingService.getSemanticTypeId(domain, type);
 			String query = "columnName=" + URLEncoder.encode(

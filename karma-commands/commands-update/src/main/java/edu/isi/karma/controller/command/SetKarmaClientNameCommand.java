@@ -19,6 +19,8 @@ import java.util.Properties;
 
 /**
  * Created by alse on 10/4/16.
+ * Every karma client is going to be assigned a random string as an id.
+ * This id - karma client name - can be changed to a given value by calling this command
  */
 public class SetKarmaClientNameCommand extends Command {
     private String karmaClientName;
@@ -81,6 +83,7 @@ public class SetKarmaClientNameCommand extends Command {
                         fileOut.write(modelingPropertiesContent.getBytes());
                         fileOut.close();
 
+                        // reload modeling configuration
                         ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).load();
                         JSONStringer jsonStr = new JSONStringer();
 

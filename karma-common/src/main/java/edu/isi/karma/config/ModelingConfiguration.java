@@ -82,8 +82,8 @@ public class ModelingConfiguration {
 
 	private Boolean showModelsWithoutMatching;
 	private String defaultProperty = null;
-	private Boolean onlineSemanticTypingEnabled;
-	private String karmaClientName;
+	private Boolean onlineSemanticTypingEnabled; // decides whether we should use remote semantic typing or local
+	private String karmaClientName; // name of the instance of karma set to a random uuid string by default
 
 	private final String newLine = System.getProperty("line.separator");
 	
@@ -298,7 +298,9 @@ public class ModelingConfiguration {
 				out.close();
 			}
 
+			// set it to false by default
 			onlineSemanticTypingEnabled = Boolean.parseBoolean(modelingProperties.getProperty("online.semantic.typing", "false"));
+			// random uuid is set by default
 			karmaClientName = modelingProperties.getProperty("karma.client.name", UUID.randomUUID().toString());
 		} catch (IOException e) {
 			logger.error("Error occured while reading config file ...", e);

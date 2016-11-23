@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Created by alse on 10/23/16.
+ * This class handles semantic typing using the service
  */
 public class RemoteSTModelHandler implements ISemanticTypeModelHandler {
 	static Logger logger = LoggerFactory
@@ -21,7 +22,7 @@ public class RemoteSTModelHandler implements ISemanticTypeModelHandler {
 
     private String contextId;
     private boolean modelEnabled = true;
-	private List<String> namespaces;
+	private List<String> namespaces; // list or URIs which limit the predictions to the ones loaded in this
 
     public RemoteSTModelHandler(String contextId) {
         this.contextId = contextId;

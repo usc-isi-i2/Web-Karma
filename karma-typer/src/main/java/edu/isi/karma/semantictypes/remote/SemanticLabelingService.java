@@ -15,10 +15,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
+/**
+ * Created by alse on 10/4/16.
+ * This is the class interacting with the semantic typer service
+ * Components need to call functions in this to interact with the service and not directly
+ */
 public class SemanticLabelingService {
     private static String SEMANTIC_TYPE_PART = "/semantic_types";
     private static String COLUMN_PART = "/type";
     private static String PREDICT = "/predict";
+    // This is the place where the service is hosted
+    // Should we map this to some domain so that we dont have to keep making changes in the code to move the service to a different machine?
     private static String BASE_URL = "http://52.38.65.60:80";
     private static String ID_DIVIDER = "-";  // The divider that is used to separate the different parts of ID's, like domain and type
     private static String DEFAULT_MODEL = "default";

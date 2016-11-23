@@ -221,6 +221,8 @@ public class SemanticTypeUtil {
 		for (Label label : ontologyManager.getClasses().values()) {
 			namespaces.add(label.getNs());
 		}
+		// set namespaces in model handler
+		// this is mostly needed in remote semantic typer where we filter predictions based on preloaded ontologies
 		modelHandler.setNamespaces(new ArrayList<>(namespaces));
 
 		List<SemanticTypeLabel> result = modelHandler.predictType(trainingExamples, numSuggestions);

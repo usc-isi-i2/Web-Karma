@@ -59,6 +59,7 @@ var Settings = (function() {
 			sendRequest(info);
 		}
 
+        // This function calls SetKarmaClientName command to set the client name
 		function setKarmaClientName(){
 		    var name = $("#modal_setKarmaClientName input[type=text]").val();
 			var info = generateInfoObject("", "", "SetKarmaClientNameCommand");

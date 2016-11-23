@@ -21,8 +21,8 @@ import java.util.Properties;
 
 /**
  * Created by alse on 9/29/16.
- * String property: is the name of property in modeling.properties eg. online.semantic.typing, train.on.apply.history
- * String value: is the value of the property to be set. This has to be string. If the value is Boolean or Integer, send it as String.
+ * This function toggles the setting in modeling.properties file responsible for setting the semantictyper to local or remote
+ * Based on the current value of the property, this just toggles the value
  */
 public class ToggleOnlineSemanticTypingCommand extends Command {
 
@@ -90,6 +90,8 @@ public class ToggleOnlineSemanticTypingCommand extends Command {
 
                         String contextId = vWorkspace.getWorkspace().getContextId();
                         Boolean isModelEnabled = vWorkspace.getWorkspace().getSemanticTypeModelHandler().getModelHandlerEnabled();
+
+                        // If online is enabled then use RemoteSTModelHandler for semantic typing else use HybridSTModelHandler
                         if (!Boolean.valueOf(prop.getProperty(property))){
                             vWorkspace.getWorkspace().setSemanticTypeModelHandler(new RemoteSTModelHandler(contextId));
                         } else {
