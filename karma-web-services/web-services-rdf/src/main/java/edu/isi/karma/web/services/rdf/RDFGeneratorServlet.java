@@ -242,8 +242,13 @@ public class RDFGeneratorServlet implements ServletContextListener{
 			PrintWriter pw = new PrintWriter(sw);
 
 			URIFormatter uriFormatter = new URIFormatter();
-			KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
+			N3KR2RMLRDFWriter outWriter = new N3KR2RMLRDFWriter(uriFormatter, pw);
 
+			if (formParams.containsKey(FormParameters.BASE_URI) && formParams.getFirst(FormParameters.BASE_URI).trim() != ""){
+				String baseUri = formParams.getFirst(FormParameters.BASE_URI).trim();
+				outWriter.setBaseURI(baseUri);
+			}
+			
 			String sourceName = r2rmlURI;
 			RDFGeneratorRequest request = generateRDFRequest(rmlID.getName(), sourceName, is, formParams, outWriter);
 			gRDFGen.generateRDF(request);
