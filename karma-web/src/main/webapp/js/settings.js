@@ -41,7 +41,10 @@ var Settings = (function() {
             $("#modal_setKarmaClientName button[type=submit]").click(setKarmaClientName);
 		}
 
+        // this function handles visual and backend of toggling semantic typing
 		function setIsSemanticLabelingOnline(isOnline){
+		    if (isOnline == null)
+		        return
 		    isSemanticLabeling_online = isOnline;
 		    if (isOnline){
 		        $("#displaySemanticLabeling_Online span").show();
