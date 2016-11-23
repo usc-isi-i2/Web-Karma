@@ -327,7 +327,8 @@ public class DataSourceLoader extends SourceLoader {
 
 		// source name
 		nodeIterator = model.listObjectsOfProperty(source_resource, has_name_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isLiteral()) {
 			source_name = node.asLiteral().getString();
 			logger.debug("source name: " + source_name);
 		} else
@@ -409,7 +410,8 @@ public class DataSourceLoader extends SourceLoader {
 		
 		// attribute name
 		nodeIterator = model.listObjectsOfProperty(att_resource, has_name_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isLiteral()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isLiteral()) {
 			att_name = node.asLiteral().getString();
 			logger.debug("attribute name: " + att_name);
 		} else
@@ -432,7 +434,8 @@ public class DataSourceLoader extends SourceLoader {
 
 		// hasModel
 		nodeIterator = model.listObjectsOfProperty(source_resource, has_model_property);
-		if (!nodeIterator.hasNext() || !(modelNode = nodeIterator.next()).isResource()) {
+		modelNode = nodeIterator.next();
+		if (!nodeIterator.hasNext() || !modelNode.isResource()) {
 			logger.info("There is no model resource.");
 			return null;
 		}
@@ -472,7 +475,8 @@ public class DataSourceLoader extends SourceLoader {
 		
 		// atom type
 		nodeIterator = model.listObjectsOfProperty(atom_resource, rdf_type);
-		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (!nodeIterator.hasNext() || !node.isResource()) {
 			logger.info("The atom type is not specified.");
 			return null;
 		}
@@ -511,7 +515,8 @@ public class DataSourceLoader extends SourceLoader {
 
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, class_predicate_property);
-		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (!nodeIterator.hasNext() || !node.isResource()) {
 			logger.info("The class predicate resource is not specified.");
 			return null;
 		}
@@ -523,7 +528,8 @@ public class DataSourceLoader extends SourceLoader {
 		
 		// atom argument1 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument1_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isResource()) {
 			argument1Id = node.asResource().getLocalName();
 			logger.debug("The atom argument1 is: " + argument1Id);
 			
@@ -570,7 +576,8 @@ public class DataSourceLoader extends SourceLoader {
 
 		// atom class predicate
 		nodeIterator = model.listObjectsOfProperty(atom_resource, property_predicate_property);
-		if (!nodeIterator.hasNext() || !(node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (!nodeIterator.hasNext() || !node.isResource()) {
 			logger.info("The property predicate resource is not specified.");
 			return null;
 		}
@@ -582,7 +589,8 @@ public class DataSourceLoader extends SourceLoader {
 		
 		// atom argument1 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument1_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isResource()) {
 			argument1Id = node.asResource().getLocalName();
 			logger.debug("The atom argument1 is: " + argument1Id);
 			
@@ -598,7 +606,8 @@ public class DataSourceLoader extends SourceLoader {
 
 		// atom argument2 
 		nodeIterator = model.listObjectsOfProperty(atom_resource, argument2_property);
-		if (nodeIterator.hasNext() && (node = nodeIterator.next()).isResource()) {
+		node = nodeIterator.next();
+		if (nodeIterator.hasNext() && node.isResource()) {
 			argument2Id = node.asResource().getLocalName();
 			logger.debug("The atom argument2 is: " + argument2Id);
 			
