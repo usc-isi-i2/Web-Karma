@@ -78,7 +78,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			name: "Print Model",
 			func: printModel
 		}, {
-			name: "Github",
+			name: "Github Settings",
 			func: githubSettings
 		}, {
 			name: "divider"
@@ -485,19 +485,22 @@ function WorksheetOptions(wsId, wsTitle) {
         .unbind()
         .click(function(){
             $("#txtGithubURL_" + worksheetId).text($.cookie("github-url-" + worksheetId) + "(disabled)");
-            $.removeCookie("github-" + worksheetId);
+            $.cookie("github-" + worksheetId, null);
+            $("#setGithubSettingsDialog").modal("hide");
         });
 
         $("#setGithubSettingsDialog input[type=button][value=Delete]")
         .unbind()
         .click(function(){
             $("#txtGithubURL_" + worksheetId).text("disabled");
-            $.removeCookie("github-" + worksheetId);
-            $.removeCookie("github-url-" + worksheetId);
-            $.removeCookie("github-branch-" + worksheetId);
-            $.removeCookie("github-username-" + worksheetId);
+            $.cookie("github-" + worksheetId, null);
+            $.cookie("github-url-" + worksheetId, null);
+            $.cookie("github-branch-" + worksheetId, null);
+            $.cookie("github-username-" + worksheetId, null);
 		    setGithubURLProperties($("#txtGithubURL_" + worksheetId), worksheetId, "");
+		    $("#txtGithubURL_" + worksheetId).text("disabled");
 		    setGithubBranchProperties(worksheetId, "");
+            $("#setGithubSettingsDialog").modal("hide");
         });
 
         $("#setGithubSettingsDialog input[type=button][value=Submit]")
