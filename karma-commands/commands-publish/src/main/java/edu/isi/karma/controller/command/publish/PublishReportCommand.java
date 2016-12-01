@@ -3,6 +3,7 @@ package edu.isi.karma.controller.command.publish;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,7 +34,7 @@ import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
-import edu.isi.karma.rep.alignment.NodeType;
+import edu.isi.karma.view.VWorksheet;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
@@ -106,7 +107,8 @@ public class PublishReportCommand extends WorksheetCommand {
 					
 					fileWriter.println();
 					fileWriter.println("### Semantic Types");
-					writeSemanticTypes(finalWorkspace, worksheet, fileWriter);
+					VWorksheet viewWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
+					writeSemanticTypes(vWorkspace, viewWorksheet, fileWriter);
 					
 					fileWriter.println();
 					fileWriter.println("### Links");
@@ -195,22 +197,31 @@ public class PublishReportCommand extends WorksheetCommand {
 	
 	
 	
-	private void writeSemanticTypes(Workspace workspace, Worksheet worksheet, PrintWriter pw) {
+	private void writeSemanticTypes(VWorkspace vWorkspace, VWorksheet vWorksheet, PrintWriter pw) {
 		
 		pw.println("| Column | Property | Class |");
 		pw.println("|  ----- | -------- | ----- |");
 
-		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheet.getId());
+		List<String> hNodeIdList = vWorksheet.getHeaderVisibleLeafNodes();
+
+		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
+				vWorkspace.getWorkspace().getId(), vWorksheet.getWorksheetId());
+		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
+		
 		if(alignment != null) {
-			 List<Node> columnNodes = Arrays.asList(alignment.getNodesByType(NodeType.ColumnNode).toArray(new Node[0]));
-			 Collections.sort(columnNodes, new Comparator<Node>() {
-					@Override
-					public int compare(Node n1, Node n2) {
-						String l1name = getClassName(n1);
-						String l2name = getClassName(n2);
-						return l1name.compareTo(l2name);
-					}
-				});
+			List<Node> columnNodes = new ArrayList<>();
+			for(String hNodeId: hNodeIdList) {
+				Node columnNode = alignment.getNodeById(hNodeId);
+				columnNodes.add(columnNode);
+			}
+			Collections.sort(columnNodes, new Comparator<Node>() {
+				@Override
+				public int compare(Node n1, Node n2) {
+					String l1name = getClassName(n1);
+					String l2name = getClassName(n2);
+					return l1name.compareTo(l2name);
+				}
+			});
 			 
 			 if(columnNodes != null) {
 				 for(Node node : columnNodes) {
