@@ -1,6 +1,6 @@
 package edu.isi.karma.imp.csv;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.*;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -81,22 +81,23 @@ public class CSVImport extends Import {
         }
 
         // Populate the worksheet model
-        String line = null;
-        while ((line = br.readLine()) != null) {
-        	logger.debug("Read line: '" + line + "'");
+        // String line = null;
+        CSVReader reader = new CSVReader(br, delimiter, quoteCharacter, escapeCharacter);
+        String[] rowValues = null;
+        while ((rowValues = reader.readNext()) != null) {
+        	// logger.debug("Read line: '" + line + "'");
             // Check for the header row
             if (rowCount + 1 == headerRowIndex) {
-                hNodeIdList = addHeaders(getWorksheet(), getFactory(), line, br);
+                hNodeIdList = addHeaders(getWorksheet(), getFactory(), rowValues, br);
                 rowCount++;
                 continue;
             }
 
             // Populate the model with data rows
             if (rowCount + 1 >= dataStartRowIndex) {
-                boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
+                boolean added = addRow(getWorksheet(), getFactory(), rowValues, hNodeIdList, dataTable);
                 if(added) {
 	                rowCount++;
-	               
 	                if(maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines-1) {
 	                	break;
 	                }
@@ -107,6 +108,7 @@ public class CSVImport extends Import {
             rowCount++;
         }
         br.close();
+        reader.close();
         getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.CSV.toString());
         return getWorksheet();
     }
@@ -120,17 +122,11 @@ public class CSVImport extends Import {
 	}
 
     private Map<Integer, String> addHeaders(Worksheet worksheet, RepFactory fac,
-            String line, BufferedReader br) throws IOException {
+            String[] rowValues, BufferedReader br) throws IOException {
         HTable headers = worksheet.getHeaders();
         Map<Integer, String> headersMap = new HashMap<>();
 
-        CSVReader reader = new CSVReader(new StringReader(line), delimiter,
-                quoteCharacter, escapeCharacter);
-        String[] rowValues = null;
-        rowValues = reader.readNext();
-
         if (rowValues == null || rowValues.length == 0) {
-            reader.close();
             return addEmptyHeaders(worksheet, fac, br);
         }
 
@@ -146,18 +142,14 @@ public class CSVImport extends Import {
             if (hNode != null)
             	headersMap.put(i, hNode.getId());
         }
-        reader.close();
+
         return headersMap;
     }
 
-    private boolean addRow(Worksheet worksheet, RepFactory fac, String line,
+    private boolean addRow(Worksheet worksheet, RepFactory fac, String[] rowValues,
     		Map<Integer, String> hNodeIdMap, Table dataTable) throws IOException {
-        CSVReader reader = new CSVReader(new StringReader(line), delimiter,
-                quoteCharacter, escapeCharacter);
-        String[] rowValues = null;
-        rowValues = reader.readNext();
+
         if (rowValues == null || rowValues.length == 0) {
-            reader.close();
             return false;
         }
 
@@ -177,7 +169,6 @@ public class CSVImport extends Import {
                 logger.error("More data elements detected in the row than number of headers!");
             }
         }
-        reader.close();
         return true;
     }
     private Map<Integer, String> addEmptyHeaders(Worksheet worksheet,
