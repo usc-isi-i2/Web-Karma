@@ -78,6 +78,9 @@ function WorksheetOptions(wsId, wsTitle) {
 			name: "Print Model",
 			func: printModel
 		}, {
+			name: "Github Settings",
+			func: githubSettings
+		}, {
 			name: "divider"
 		},
 /*
@@ -456,6 +459,94 @@ function WorksheetOptions(wsId, wsTitle) {
 	
 	function printModel() {
 		D3ModelManager.getInstance().printModel(worksheetId);
+	}
+
+    // This function shows and handles github settings modal window
+	function githubSettings() {
+	    // hide the error before showing
+        $("#setGithubSettingsDialog .error").css("display", "none");
+        $("#setGithubSettingsDialog").modal("show");
+
+        var url = $("#setGithubSettingsDialog #txtGithubURL");
+        var branch = $("#setGithubSettingsDialog #txtGithubBranch");
+        var username = $("#setGithubSettingsDialog #txtGithubUsername");
+        var password = $("#setGithubSettingsDialog #txtGithubPassword");
+
+
+        // store url, branch and username in the cookie
+        if ($.cookie("github-url-" + worksheetId))
+            url.val($.cookie("github-url-" + worksheetId))
+        if ($.cookie("github-branch-" + worksheetId))
+            branch.val($.cookie("github-branch-" + worksheetId))
+        if ($.cookie("github-username-" + worksheetId))
+            username.val($.cookie("github-username-" + worksheetId))
+
+        $("#setGithubSettingsDialog input[type=button][value=Disable]")
+        .unbind()
+        .click(function(){
+            $("#txtGithubURL_" + worksheetId).text($.cookie("github-url-" + worksheetId) + "(disabled)");
+            $.cookie("github-" + worksheetId, null);
+            $("#setGithubSettingsDialog").modal("hide");
+        });
+
+        $("#setGithubSettingsDialog input[type=button][value=Delete]")
+        .unbind()
+        .click(function(){
+            $("#txtGithubURL_" + worksheetId).text("disabled");
+            $.cookie("github-" + worksheetId, null);
+            $.cookie("github-url-" + worksheetId, null);
+            $.cookie("github-branch-" + worksheetId, null);
+            $.cookie("github-username-" + worksheetId, null);
+		    setGithubURLProperties($("#txtGithubURL_" + worksheetId), worksheetId, "");
+		    $("#txtGithubURL_" + worksheetId).text("disabled");
+		    setGithubBranchProperties(worksheetId, "");
+            $("#setGithubSettingsDialog").modal("hide");
+        });
+
+        $("#setGithubSettingsDialog input[type=button][value=Submit]")
+        .unbind()
+        .click(function(){
+            var repo_username = url.val().split("github.com")[1].split("/")[1];
+            var repo_name = url.val().split("github.com")[1].split("/")[2];
+            // check if all of the values entered are correct from the frontend and call github api to check if credentials are right
+            if (url[0].checkValidity() && branch[0].checkValidity() && username[0].checkValidity() && password[0].checkValidity()){
+                $.ajax
+                ({
+                  type: "GET",
+                  url: "https://api.github.com/repos/" + repo_username + "/" + repo_name,
+                  dataType: 'json',
+                  async: false,
+                  beforeSend: function (xhr) {
+                    xhr.setRequestHeader ("Authorization", "Basic " + btoa(username.val() + ":" + password.val()));
+                  },
+                  success: function (data){
+                    // If we have push permission, then move forward else show error statement
+                    if (data.permissions && data.permissions.push == true){
+
+				        setGithubURLProperties($("#txtGithubURL_" + worksheetId), worksheetId, url.val());
+				        setGithubBranchProperties(worksheetId, branch.val());
+
+				        // hide error
+                        $("#setGithubSettingsDialog .error").css("display", "none");
+
+                        // store base64 encoded auth, username, github url and branch to cookie and set it to default expiry
+                        $.cookie("github-" + worksheetId, btoa(username.val() + ":" + password.val()));
+                        $.cookie("github-username-" + worksheetId, username.val());
+                        $.cookie("github-url-" + worksheetId, url.val());
+                        $.cookie("github-branch-" + worksheetId, branch.val());
+                        $("#setGithubSettingsDialog").modal("hide");
+                    } else {
+                        $("#setGithubSettingsDialog .error").css("display", "inline");
+                    }
+                  },
+                  error: function() {
+                    $("#setGithubSettingsDialog .error").css("display", "inline");
+                  },
+                });
+            } else {
+                $("#setGithubSettingsDialog .error").css("display", "inline");
+            }
+        });
 	}
 	
 	this.generateJS = function() {

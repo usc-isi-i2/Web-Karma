@@ -116,6 +116,12 @@ public class SetWorksheetPropertiesCommand extends WorksheetCommand {
 							propertiesJson.getString(Property.serviceDataPostMethod.name()));
 				}
 			}
+
+			if (propertiesJson.has(Property.GithubURL.name()) && !propertiesJson.getString(Property.GithubURL.name()).isEmpty())
+				props.setPropertyValue(Property.GithubURL, propertiesJson.getString(Property.GithubURL.name()));
+			if (propertiesJson.has(Property.GithubBranch.name()) && !propertiesJson.getString(Property.GithubBranch.name()).isEmpty())
+				props.setPropertyValue(Property.GithubBranch, propertiesJson.getString(Property.GithubBranch.name()));
+
 			if (propertiesJson.getBoolean("hasPrefix")) {
 				props.setPropertyValue(Property.prefix, 
 						propertiesJson.getString(Property.prefix.name()));

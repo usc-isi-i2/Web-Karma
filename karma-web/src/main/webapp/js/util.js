@@ -34,6 +34,25 @@ function sendRequest(info, worksheetId) {
 				hideLoading(worksheetId);
 		}
 	});
+
+	/*
+	 call PublishGithubCommand if the command is one of the following commands.
+	 If you want to publish to github add the command that should trigger it to this array.
+     For instance, if "GenerateR2RMLModelCommand" is found in the array, whenever that command is called, PublishGithubCommand is called.
+    */
+	var commands = ["GenerateR2RMLModelCommand", "PublishReportCommand"];
+
+	if ($.inArray(info["command"], commands) != -1){
+	    // call the PublishGithubCommand only if we have all we need. i.e auth, github url and github branch
+	    if ($.cookie("github-" + worksheetId) && $.cookie("github-url-" + worksheetId) && $.cookie("github-branch-" + worksheetId)) {
+	        var githubInfo = generateInfoObject(worksheetId, "", "PublishGithubCommand");
+	        githubInfo["worksheetId"] = worksheetId;
+	        githubInfo["auth"] = $.cookie("github-" + worksheetId);
+	        githubInfo["repo"] = $.cookie("github-url-" + worksheetId);
+	        githubInfo["branch"] = $.cookie("github-branch-" + worksheetId);
+	        var returned = sendRequest(githubInfo, worksheetId);
+	    }
+	}
 }
 
 function getColumnHeadings(worksheetId) {

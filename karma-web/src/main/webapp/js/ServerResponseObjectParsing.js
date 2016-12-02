@@ -212,6 +212,29 @@ function parse(data) {
 					headerDiv.append(label1);
 					headerDiv.append(baseURILabel);
 
+					var sep = $("<span>").html("&nbsp;|&nbsp;");
+					var label1 = $("<label>").html("Github:&nbsp;");
+					var githubLabel = $("<span>").text("disabled")
+						.addClass("edit")
+						.attr("id", "txtGithubURL_" + worksheetId)
+						.editable({
+							type: 'text',
+							pk: 1,
+							savenochange: true,
+							success: function(response, newValue) {
+							    setGithubURLProperties(this, newValue)
+							},
+							title: 'Enter URL'
+						})
+						.on('shown', function(e, editable) {
+							console.log(editable);
+							editable.input.$input.val(githubLabel.html());
+						});
+					headerDiv.append(sep);
+					headerDiv.append(label1);
+					headerDiv.append(githubLabel);
+					githubLabel.editable('toggleDisabled');
+
 					var mapDiv = $("<div>").addClass("toggleMapView");
 					if (googleEarthEnabled) {
 						mapDiv
@@ -497,6 +520,22 @@ function parse(data) {
 
 			if (element["graphLabel"]) {
 				$("#txtGraphLabel_" + element["worksheetId"]).text(element["graphLabel"]);
+			}
+
+			// If we find GithubURL, we will save it in the cookie and set the label appropriately
+			if (element["GithubURL"]) {
+                $.cookie("github-url-" + element["worksheetId"], element["GithubURL"]);
+                // if we don't have the github auth credentials for the repo, then add a "(disabled)" to the url
+                // to indicate that the user has to set it in github settings.
+                if ($.cookie("github-" + element["worksheetId"]))
+                    $("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"]);
+                else
+                    $("#txtGithubURL_" + element["worksheetId"]).text(element["GithubURL"] + "(disabled)");
+			}
+
+			// If we find GithubBranch, store it in the cookie
+			if (element["GithubBranch"]) {
+                $.cookie("github-branch-" + element["worksheetId"], element["GithubBranch"]);
 			}
 
 		} else if (element["updateType"] == "WorksheetSuperSelectionListUpdate") {
@@ -1030,4 +1069,43 @@ function submitSelectedModelNameToBeLoaded() {
 
 	showLoading(worksheetId);
 	var returned = sendRequest(info, worksheetId);
+}
+
+// this function sets the GithubURL in the properties for the current worksheet by calling SetWorksheetPropertiesCommand
+function setGithubURLProperties(githubLabel, worksheetId, newValue) {
+    console.log("Set new value:" + newValue);
+	console.log(newValue);
+	githubLabel.text(newValue);
+	var worksheetProps = new Object();
+	worksheetProps["hasPrefix"] = false;
+	worksheetProps["hasBaseURI"] = false;
+	worksheetProps["graphLabel"] = "";
+	worksheetProps["hasServiceProperties"] = false;
+	worksheetProps["GithubURL"] = newValue;
+	var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
+
+	var newInfo = info['newInfo']; // for input parameters
+	newInfo.push(getParamObject("properties", worksheetProps, "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	showWaitingSignOnScreen();
+	var returned = sendRequest(info);
+}
+
+// this function sets the GithubBranch in the properties for the current worksheet by calling SetWorksheetPropertiesCommand
+function setGithubBranchProperties(worksheetId, newValue) {
+    console.log("Set new value:" + newValue);
+	console.log(newValue);
+	var worksheetProps = new Object();
+	worksheetProps["hasPrefix"] = false;
+	worksheetProps["hasBaseURI"] = false;
+	worksheetProps["graphLabel"] = "";
+	worksheetProps["hasServiceProperties"] = false;
+	worksheetProps["GithubBranch"] = newValue;
+	var info = generateInfoObject(worksheetId, "", "SetWorksheetPropertiesCommand");
+
+	var newInfo = info['newInfo']; // for input parameters
+	newInfo.push(getParamObject("properties", worksheetProps, "other"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	showWaitingSignOnScreen();
+	var returned = sendRequest(info);
 }
