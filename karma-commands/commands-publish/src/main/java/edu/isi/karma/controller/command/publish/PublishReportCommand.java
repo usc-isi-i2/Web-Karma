@@ -99,19 +99,31 @@ public class PublishReportCommand extends WorksheetCommand {
 					parentDir.mkdirs();
 					PrintWriter fileWriter = new PrintWriter(f);
 					
-					fileWriter.println("## " + worksheet.getTitle());
+					fileWriter.println("# " + worksheet.getTitle());
 					
 					fileWriter.println();
-					fileWriter.println("### PyTransforms");
+					fileWriter.println("## Add Column");
+					writeAddColumns(finalWorkspace, worksheet, fileWriter);
+					
+					fileWriter.println();
+					fileWriter.println("## Add Node/Literal");
+					writeAddNodes(finalWorkspace, worksheet, fileWriter);
+					
+					fileWriter.println();
+					fileWriter.println("## PyTransforms");
 					writePyTransforms(finalWorkspace, worksheet, fileWriter);
 					
 					fileWriter.println();
-					fileWriter.println("### Semantic Types");
+					fileWriter.println("## Selections");
+					writeSelections(finalWorkspace, worksheet, fileWriter);
+					
+					fileWriter.println();
+					fileWriter.println("## Semantic Types");
 					VWorksheet viewWorksheet = vWorkspace.getViewFactory().getVWorksheetByWorksheetId(worksheetId);
 					writeSemanticTypes(vWorkspace, viewWorksheet, fileWriter);
 					
 					fileWriter.println();
-					fileWriter.println("### Links");
+					fileWriter.println("## Links");
 					writeLinks(finalWorkspace, worksheet, fileWriter);
 					
 					fileWriter.close();
@@ -147,42 +159,30 @@ public class PublishReportCommand extends WorksheetCommand {
 			JSONArray history = CommandHistory.getHistorySaver(workspace.getId()).loadHistory(historyFile);
 			
 			for(int i=0; i<history.length(); i++) {
-				JSONObject command = history.getJSONObject(i);
-				JSONArray inputParamArr = command.getJSONArray(HistoryArguments.inputParameters.name());
-				String commandName = command.getString(HistoryArguments.commandName.name());
-		
-				if(commandName.equalsIgnoreCase("SubmitPythonTransformationCommand") || commandName.equalsIgnoreCase("SubmitEditPythonTransformationCommand")) {
-					String code = HistoryJsonUtil.getStringValue("transformationCode", inputParamArr);
-					String columnName = HistoryJsonUtil.getStringValue("newColumnName", inputParamArr);
-					if ("".equals(columnName)) {
-						JSONArray columnNames = HistoryJsonUtil.getJSONArrayValue("targetHNodeId", inputParamArr);				
-						for(int j=0; j<columnNames.length(); j++) {
-							JSONObject columnNameObj = columnNames.getJSONObject(j);
-							columnName =columnNameObj.getString("columnName");
-						}
+				try {
+					JSONObject command = history.getJSONObject(i);
+					JSONArray inputParamArr = command.getJSONArray(HistoryArguments.inputParameters.name());
+					String commandName = command.getString(HistoryArguments.commandName.name());
+			
+					if(commandName.equalsIgnoreCase("SubmitPythonTransformationCommand") || commandName.equalsIgnoreCase("SubmitEditPythonTransformationCommand")) {
+						String code = HistoryJsonUtil.getStringValue("transformationCode", inputParamArr);
+						String columnName = getColumnNameFromInputParams(inputParamArr);
+						
+						StringBuffer pyTransform = new StringBuffer("#### _" + columnName + "_");
+						pyTransform.append(linebreak);
+						
+						String invocationColumnName = getFullColumnPath(inputParamArr);
+						pyTransform.append("From column: _" + invocationColumnName + "_").append(linebreak);
+						
+						pyTransform.append("``` python").append(linebreak);
+						pyTransform.append(code).append(linebreak);
+						pyTransform.append("```").append(linebreak);
+						pyTransform.append(linebreak);
+						
+						pyTransformMap.put(columnName, pyTransform.toString());
 					}
-					
-					StringBuffer pyTransform = new StringBuffer("#### _" + columnName + "_");
-					pyTransform.append(linebreak);
-					
-					//Pedro: throw-away code, ought to have a better way to construct column paths.
-					JSONArray hNodeIdArray = HistoryJsonUtil.getJSONArrayValue("hNodeId", inputParamArr);
-					String invocationColumnName = "";
-					String sep = "";
-					for(int j=0; j<hNodeIdArray.length(); j++) {
-						JSONObject columnNameObj = hNodeIdArray.getJSONObject(j);
-						String name =columnNameObj.getString("columnName");
-						invocationColumnName += sep + name;
-						sep = " / ";
-					}
-					pyTransform.append("From column: _" + invocationColumnName + "_").append(linebreak);
-					
-					pyTransform.append("``` python").append(linebreak);
-					pyTransform.append(code).append(linebreak);
-					pyTransform.append("```").append(linebreak);
-					pyTransform.append(linebreak);
-					
-					pyTransformMap.put(columnName, pyTransform.toString());
+				} catch(Exception e) {
+					logger.error("Error writing PyTransforms for Publish Report");
 				}
 			}
 		} catch(Exception e) {
@@ -195,6 +195,178 @@ public class PublishReportCommand extends WorksheetCommand {
 		}
 	}
 	
+	private void writeSelections(Workspace workspace, Worksheet worksheet, PrintWriter pw) throws IOException {
+		
+		//Map for py transforms, so only the latest pyTransform for a column gets written
+		String linebreak = System.getProperty("line.separator");
+		
+		String historyFile = CommandHistory.getHistorySaver(workspace.getId()).getHistoryFilepath(worksheetId);
+		try {
+			JSONArray history = CommandHistory.getHistorySaver(workspace.getId()).loadHistory(historyFile);
+			
+			for(int i=0; i<history.length(); i++) {
+				try {
+					JSONObject command = history.getJSONObject(i);
+					JSONArray inputParamArr = command.getJSONArray(HistoryArguments.inputParameters.name());
+					String commandName = command.getString(HistoryArguments.commandName.name());
+			
+					if(commandName.equalsIgnoreCase("OperateSelectionCommand")) {
+						String code = HistoryJsonUtil.getStringValue("pythonCode", inputParamArr);
+						String selectionName = HistoryJsonUtil.getStringValue("selectionName", inputParamArr);
+						
+						StringBuffer pyTransform = new StringBuffer("#### _" + selectionName + "_");
+						pyTransform.append(linebreak);
+						
+						String invocationColumnName = getFullColumnPath(inputParamArr);
+						
+						String operation = HistoryJsonUtil.getStringValue("operation", inputParamArr);
+						pyTransform.append("From column: _" + invocationColumnName + "_").append(linebreak);
+						pyTransform.append("<br>Operation: `" + operation + "`").append(linebreak);
+						pyTransform.append("``` python").append(linebreak);
+						pyTransform.append(code).append(linebreak);
+						pyTransform.append("```").append(linebreak);
+						pyTransform.append(linebreak);
+						
+						pw.print(pyTransform.toString());
+					}
+				} catch(Exception e) {
+					logger.error("Error writing Selections for Publish Report");
+				}
+			}
+		} catch(Exception e) {
+			logger.error("Error reading history file:" + historyFile);
+		}
+	}
+	
+	private String getColumnNameFromInputParams(JSONArray inputParamArr) {
+		String columnName = HistoryJsonUtil.getStringValue("newColumnName", inputParamArr);
+		if ("".equals(columnName)) {
+			JSONArray columnNames = HistoryJsonUtil.getJSONArrayValue("targetHNodeId", inputParamArr);				
+			for(int j=0; j<columnNames.length(); j++) {
+				JSONObject columnNameObj = columnNames.getJSONObject(j);
+				columnName =columnNameObj.getString("columnName");
+			}
+		}
+		return columnName;
+	}
+	
+	private String getFullColumnPath(JSONArray inputParamArr) {
+		//Pedro: throw-away code, ought to have a better way to construct column paths.
+		JSONArray hNodeIdArray = HistoryJsonUtil.getJSONArrayValue("hNodeId", inputParamArr);
+		String invocationColumnName = "";
+		String sep = "";
+		for(int j=0; j<hNodeIdArray.length(); j++) {
+			JSONObject columnNameObj = hNodeIdArray.getJSONObject(j);
+			String name =columnNameObj.getString("columnName");
+			invocationColumnName += sep + name;
+			sep = " / ";
+		}
+		return invocationColumnName;
+	}
+	
+	private void writeAddColumns(Workspace workspace, Worksheet worksheet, PrintWriter pw) throws IOException {
+		//Map for py transforms, so only the latest pyTransform for a column gets written
+		LinkedHashMap<String, String> pyTransformMap = new LinkedHashMap<>();
+		String linebreak = System.getProperty("line.separator");
+		
+		String historyFile = CommandHistory.getHistorySaver(workspace.getId()).getHistoryFilepath(worksheetId);
+		try {
+			
+		
+			JSONArray history = CommandHistory.getHistorySaver(workspace.getId()).loadHistory(historyFile);
+			
+			for(int i=0; i<history.length(); i++) {
+				try {
+					JSONObject command = history.getJSONObject(i);
+					JSONArray inputParamArr = command.getJSONArray(HistoryArguments.inputParameters.name());
+					String commandName = command.getString(HistoryArguments.commandName.name());
+			
+					if(commandName.equals("AddColumnCommand")) {
+						String columnName = getColumnNameFromInputParams(inputParamArr);
+						
+						String value = HistoryJsonUtil.getStringValue("defaultValue", inputParamArr);
+						StringBuffer pyTransform = new StringBuffer("#### _" + columnName + "_");
+						pyTransform.append(linebreak);
+						
+						String invocationColumnName = getFullColumnPath(inputParamArr);
+						pyTransform.append("From column: _" + invocationColumnName + "_").append(linebreak);
+						pyTransform.append("<br/>Value: `" + value + "`").append(linebreak);
+						
+						pyTransform.append(linebreak);
+						
+						pyTransformMap.put(columnName, pyTransform.toString());
+					}
+				} catch(Exception e) {
+					logger.error("Error writing AddColumns for Publish Report");
+				}
+			}
+		} catch(Exception e) {
+			logger.error("Error reading history file:" + historyFile);
+		}
+		
+		//Now get all transforms from the map and write them to the writer
+		for(Map.Entry<String, String> stringStringEntry : pyTransformMap.entrySet()) {
+			pw.print(stringStringEntry.getValue());
+		}		
+	}
+	
+	private void writeAddNodes(Workspace workspace, Worksheet worksheet, PrintWriter pw) throws IOException {
+		//Map for py transforms, so only the latest pyTransform for a column gets written
+		LinkedHashMap<String, String> pyTransformMap = new LinkedHashMap<>();
+		String linebreak = System.getProperty("line.separator");
+		
+		String historyFile = CommandHistory.getHistorySaver(workspace.getId()).getHistoryFilepath(worksheetId);
+		try {
+			
+		
+			JSONArray history = CommandHistory.getHistorySaver(workspace.getId()).loadHistory(historyFile);
+			
+			for(int i=0; i<history.length(); i++) {
+				try {
+					JSONObject command = history.getJSONObject(i);
+					JSONArray inputParamArr = command.getJSONArray(HistoryArguments.inputParameters.name());
+					String commandName = command.getString(HistoryArguments.commandName.name());
+			
+					if(commandName.equals("AddNodeCommand")) {
+						String nodeLabel = HistoryJsonUtil.getStringValue("label", inputParamArr);
+						
+						String node_uri = HistoryJsonUtil.getStringValue("uri", inputParamArr);
+						String node_id = HistoryJsonUtil.getStringValue("id", inputParamArr);
+						StringBuffer pyTransform = new StringBuffer("#### Node: `" + nodeLabel + "`");
+						pyTransform.append(linebreak);
+						pyTransform.append("Uri: `" + node_uri + "`").append(linebreak);
+						pyTransform.append("<br/>Id: `" + node_id + "`").append(linebreak);
+						pyTransform.append(linebreak);
+						pyTransformMap.put(nodeLabel, pyTransform.toString());
+					} else if(commandName.equals("AddLiteralNodeCommand")) {
+						String value = HistoryJsonUtil.getStringValue("literalValue", inputParamArr);
+						String literalType = HistoryJsonUtil.getStringValue("literalType", inputParamArr);
+						String language = HistoryJsonUtil.getStringValue("language", inputParamArr);
+						boolean isUri = HistoryJsonUtil.getBooleanValue("isUri", inputParamArr);
+						
+						StringBuffer pyTransform = new StringBuffer("#### Literal Node: `" + value + "`");
+						pyTransform.append(linebreak);
+						pyTransform.append("Literal Type: `" + literalType + "`").append(linebreak);
+						pyTransform.append("<br/>Language: `" + language + "`").append(linebreak);
+						pyTransform.append("<br/>isUri: `" + isUri + "`").append(linebreak);
+						
+						pyTransform.append(linebreak);
+						pyTransformMap.put(value, pyTransform.toString());
+					}
+				} catch(Exception e) {
+					logger.error("Error writing AddNodes for Publish Report");
+				}
+			}
+		} catch(Exception e) {
+			logger.error("Error reading history file:" + historyFile);
+		}
+		
+		//Now get all transforms from the map and write them to the writer
+		for(Map.Entry<String, String> stringStringEntry : pyTransformMap.entrySet()) {
+			pw.print(stringStringEntry.getValue());
+		}		
+				
+	}
 	
 	
 	private void writeSemanticTypes(VWorkspace vWorkspace, VWorksheet vWorksheet, PrintWriter pw) {
