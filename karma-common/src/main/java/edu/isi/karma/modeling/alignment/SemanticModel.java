@@ -21,12 +21,8 @@
 
 package edu.isi.karma.modeling.alignment;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +33,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
+import edu.isi.karma.rep.Row;
+import edu.isi.karma.semantictypes.remote.SemanticLabelingService;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,7 +257,75 @@ public class SemanticModel {
 				logger.debug("The column node " + ((ColumnNode)n).getColumnName() + " does not have any domain or it has more than one domain.");
 		}
 	}
-	
+	// This function uploads the semantic types to the server and then uploads the columns by calling uploadUserColumn
+	public void uploadUserSemanticTypes() {
+		Map<String, SemanticType> semanticTypes = this.worksheet.getSemanticTypes().getTypes();
+		Map<String, List<String>> columns = new HashMap<>();
+		// get all the columns (max 1000 rows)
+		for(Row row: this.worksheet.getDataTable().getRows(0, 1000, new SuperSelection("DEFAULT") )){
+			for(Entry<String, edu.isi.karma.rep.Node> node: row.getNodesMap().entrySet()){
+				if (columns.containsKey(node.getKey())) {
+					columns.get(node.getKey()).add(node.getValue().getValue().asString());
+				} else {
+					List<String> values = new ArrayList<>();
+					values.add(node.getValue().getValue().asString());
+					columns.put(node.getKey(), values);
+				}
+			}
+		}
+
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
+		// This is the name of the model (not title of the worksheet)
+		String modelName = SemanticLabelingService.getModelName(this.worksheet.getMetadataContainer().getWorksheetProperties().getJSONRepresentation().get("graphLabel").toString(), modelingConfiguration.getKarmaClientName());
+
+		// Try deleting all the existing columns based on the model name
+		// If it returns 404 it means that it is not there to begin with. So we can simply ignore it. Print the stacktrace anyways
+		try {
+			new SemanticLabelingService().deleteModel(URLEncoder.encode(modelName, "UTF-8"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		for(Map.Entry<String, List<String>> column: columns.entrySet()){
+			String domain = semanticTypes.get(column.getKey()).getDomain().getUri();
+			String type = semanticTypes.get(column.getKey()).getType().getUri();
+			// create semantic type on the server
+			try {
+				String query = "class=" + URLEncoder.encode(domain , "UTF-8") + "&property=" + URLEncoder.encode(type, "UTF-8");
+				new SemanticLabelingService().post(query);
+			} catch (Exception e) {
+				logger.warn("Semantic type domain:"+ domain +" type:"+ type +" can't be created.");
+				e.printStackTrace();
+			}
+			// add column data to the server
+			uploadUserColumn(domain, type, column);
+		}
+	}
+	// This function uploads the columns to the semantic typer service
+	private void uploadUserColumn(String domain, String type, Map.Entry<String, List<String>> column){
+		String data = "";
+		for(String value : column.getValue()){
+			data += value+"\n";
+		}
+		ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
+		String modelName = SemanticLabelingService.getModelName(this.worksheet.getMetadataContainer().getWorksheetProperties().getJSONRepresentation().get("graphLabel").toString(), modelingConfiguration.getKarmaClientName());
+
+		// add all the columns
+		// note that karma client name is prepended to all the column names.
+		// We don't send plain column names to the server -  we need this to differentiate it from rest of the users
+		try {
+			String id = SemanticLabelingService.getSemanticTypeId(domain, type);
+			String query = "columnName=" + URLEncoder.encode(
+						SemanticLabelingService.getColumnName(this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName(), modelingConfiguration.getKarmaClientName()),
+						"UTF-8") +
+					"&sourceName="+ URLEncoder.encode(this.worksheet.getTitle(), "UTF-8") +
+					"&model="+URLEncoder.encode(modelName, "UTF-8");
+			 new SemanticLabelingService().post(query, id, data);
+		} catch (Exception e) {
+			logger.warn("Can't upload column:"+ this.worksheet.getHeaders().getHNode(column.getKey()).getColumnName() +" domain:"+ domain +" type:"+ type +" can't be created.");
+			e.printStackTrace();
+		}
+	}
 	public void print() {
 		logger.info("id: " + this.getId());
 		logger.info("name: " + this.getName());

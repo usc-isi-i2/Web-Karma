@@ -6,7 +6,9 @@ var Settings = (function() {
 		var showRDFSLabel = false;
 		var showRDFSLabel_labelFirst = false;
 		var showRDFSLabel_idFirst = false;
-		
+
+		var isSemanticLabeling_online = false;
+
 		function init() {
 			$("#displayRDFSLabel_labelFirst").on("click", function(e) {
 				label_first = !$("#displayRDFSLabel_labelFirst span").is(":visible");
@@ -24,6 +26,46 @@ var Settings = (function() {
 					label_first = showRDFSLabel_labelFirst;
 				setDisplayRDFSLabel(label_first, id_first, true);
 			});
+
+			$("#displaySemanticLabeling_Online").on("click", function(e) {
+			    setIsSemanticLabelingOnline(!$("#displaySemanticLabeling_Online span").is(":visible"));
+			});
+			$("#displaySemanticLabeling_Offline").on("click", function(e) {
+			    setIsSemanticLabelingOnline($("#displaySemanticLabeling_Offline span").is(":visible"));
+			});
+
+			$('#modal_setKarmaClientName').on('shown.bs.modal', function () {
+			    $("#modal_setKarmaClientName input[type=text]").select();
+            })
+
+            $("#modal_setKarmaClientName button[type=submit]").click(setKarmaClientName);
+		}
+
+        // this function handles visual and backend of toggling semantic typing
+		function setIsSemanticLabelingOnline(isOnline){
+		    if (isOnline == null)
+		        return
+		    isSemanticLabeling_online = isOnline;
+		    if (isOnline){
+		        $("#displaySemanticLabeling_Online span").show();
+		        $("#displaySemanticLabeling_Offline span").hide();
+		    } else {
+		        $("#displaySemanticLabeling_Online span").hide();
+		        $("#displaySemanticLabeling_Offline span").show();
+		    }
+
+			var info = generateInfoObject("", "", "ToggleOnlineSemanticTypingCommand");
+			showWaitingSignOnScreen();
+			sendRequest(info);
+		}
+
+        // This function calls SetKarmaClientName command to set the client name
+		function setKarmaClientName(){
+		    var name = $("#modal_setKarmaClientName input[type=text]").val();
+			var info = generateInfoObject("", "", "SetKarmaClientNameCommand");
+			info.value = name;
+			showWaitingSignOnScreen();
+			sendRequest(info);
 		}
 
 		function setDisplayRDFSLabel(showLabelFirst, showIDFirst, update) {
@@ -89,7 +131,8 @@ var Settings = (function() {
 			showRDFSLabel: showRDFSLabel,
 			showRDFSLabelWithIdFirst: showRDFSLabelWithIdFirst,
 			showRDFSLabelWithLabelFirst: showRDFSLabelWithLabelFirst,
-			getDisplayLabel: getDisplayLabel
+			getDisplayLabel: getDisplayLabel,
+			setIsSemanticLabelingOnline: setIsSemanticLabelingOnline
 		};
 	};
 

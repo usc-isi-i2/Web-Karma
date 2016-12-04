@@ -529,9 +529,19 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 	}
 
 	@Override
+	public void setNamespaces(List<String> namespaces) {
+
+	}
+
+	@Override
 	public void setModelHandlerEnabled(boolean enabled) {
 		this.modelEnabled = enabled;
 
+	}
+
+	@Override
+	public boolean getModelHandlerEnabled() {
+		return this.modelEnabled;
 	}
 
 	@Override

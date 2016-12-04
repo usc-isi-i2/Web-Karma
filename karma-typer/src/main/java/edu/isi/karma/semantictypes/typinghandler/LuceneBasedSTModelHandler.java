@@ -366,9 +366,19 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	}
 
 	@Override
+	public boolean getModelHandlerEnabled() {
+		return this.modelEnabled;
+	}
+
+	@Override
 	public boolean readModelFromFile(String filepath, boolean isNumeric) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void setNamespaces(List<String> namespaces) {
+
 	}
 
 }

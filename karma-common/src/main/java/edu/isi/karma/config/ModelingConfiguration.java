@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,9 @@ public class ModelingConfiguration {
 
 	private Boolean showModelsWithoutMatching;
 	private String defaultProperty = null;
-	
+	private Boolean onlineSemanticTypingEnabled; // decides whether we should use remote semantic typing or local
+	private String karmaClientName; // name of the instance of karma set to a random uuid string by default
+
 	private final String newLine = System.getProperty("line.separator");
 	
 	private String defaultModelingProperties = 
@@ -92,7 +95,8 @@ public class ModelingConfiguration {
 			"##########################################################################################" + newLine + 
 			"" + newLine + 
 			"train.on.apply.history=false" + newLine + 
-			"predict.on.apply.history=false" + newLine + 
+			"predict.on.apply.history=false" + newLine +
+			"online.semantic.typing=false" + newLine +
 			"" + newLine + 
 			"##########################################################################################" + newLine + 
 			"#" + newLine + 
@@ -163,9 +167,12 @@ public class ModelingConfiguration {
 			"##########################################################################################" + newLine + 
 			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
-			"history.store.old=false"
+			"history.store.old=false" +
+			"#" + newLine +
+			"##########################################################################################" + newLine +
+			"" + newLine +
+			"karma.client.name=" + UUID.randomUUID().toString()
 			;
-
 
 	public void load() {
 		try {
@@ -290,6 +297,11 @@ public class ModelingConfiguration {
 				out.println("default.property=http://schema.org/name");
 				out.close();
 			}
+
+			// set it to false by default
+			onlineSemanticTypingEnabled = Boolean.parseBoolean(modelingProperties.getProperty("online.semantic.typing", "false"));
+			// random uuid is set by default
+			karmaClientName = modelingProperties.getProperty("karma.client.name", UUID.randomUUID().toString());
 		} catch (IOException e) {
 			logger.error("Error occured while reading config file ...", e);
 			System.exit(1);
@@ -543,7 +555,19 @@ public class ModelingConfiguration {
 			load();
 		return defaultProperty;
 	}
-	
+
+	public Boolean getOnlineSemanticTypingEnabled(){
+		if(onlineSemanticTypingEnabled == null)
+			load();
+		return onlineSemanticTypingEnabled;
+	}
+
+	public String getKarmaClientName(){
+		if(karmaClientName == null)
+			load();
+		return karmaClientName;
+	}
+
 	public void setManualAlignment()
 	{
 		ontologyAlignment = false;
