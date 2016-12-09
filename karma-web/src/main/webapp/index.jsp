@@ -183,6 +183,7 @@ and related projects, please see: http://www.isi.edu/integration
 		            <li class="dropdown">
 		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
 		              <ul class="dropdown-menu multi-level">
+		              	  <li><a href="#" id="displayGithubSettings">Github</a></li>
 		                  <li class="dropdown-submenu"><a href="#" id="settingDisplayRDFSLabel">Display rdfs:label</a>
 		                  	<ul class="dropdown-menu">
 		                  		<li><a href="#" id="displayRDFSLabel_labelFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;rdfs:label First</a></li>
@@ -238,6 +239,7 @@ and related projects, please see: http://www.isi.edu/integration
 			  <jsp:include page="semanticTypes.jsp"></jsp:include>
 			  <jsp:include page="showModel.jsp"></jsp:include>
 			  <jsp:include page="model.jsp"></jsp:include>
+			  <jsp:include page="settings.jsp"></jsp:include>
 			  
 			  <div class="modal fade" id="karmaErrorWindow" tabindex="-1">
 			  	<div class="modal-dialog">

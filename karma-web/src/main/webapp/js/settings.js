@@ -24,6 +24,77 @@ var Settings = (function() {
 					label_first = showRDFSLabel_labelFirst;
 				setDisplayRDFSLabel(label_first, id_first, true);
 			});
+			$("#displayGithubSettings").on("click", function(e) {
+				GithubSettingsDialog.getInstance().show();
+			});
+		}
+
+		function getGithubUsername() {
+			username = $.cookie("github-username");
+			if(username)
+				return username;
+			return "";
+		}
+
+		function setGithubUsername(username) {
+			$.cookie("github-username", username);
+		}
+
+		function getGithubAuth() {
+			return $.cookie("github-auth");
+		}
+
+		function setGithubAuth(auth) {
+			$.cookie("github-auth", auth);
+		}
+
+		function validateGithubSettings(githubUrl) {
+			var me = this;
+			var auth = this.getGithubAuth();
+			if(auth) {
+				if(githubUrl) {
+					if(githubUrl.indexOf("github.com") == -1)
+						return {"code": false, "msg": "Please enter a valid Github URL"};
+				} else {
+					return {"code": false, "msg": "Please enter a valid Github URL"};
+				}
+				var repo_username = githubUrl.split("github.com")[1].split("/")[1];
+ 				var repo_name = githubUrl.split("github.com")[1].split("/")[2];
+        
+        		var repo = "https://api.github.com/repos/" + repo_username + "/" + repo_name;
+				var returnValue = {"code": false, "msg": ""};
+				$.ajax ({
+	              type: "GET",
+	              url: repo,
+	              dataType: 'json',
+	              async: false,
+	              beforeSend: function (xhr) {
+	                xhr.setRequestHeader("Authorization", "Basic " + auth);
+	              },
+	              success: function (data){
+	                // If we have push permission, then move forward else show error statement
+	                if (data.permissions && data.permissions.push == true){
+	                	returnValue = {"code": true, "msg": ""};
+	                } else {
+	                    returnValue = {"code": false, "msg": "User " + me.getGithubUsername() + " is not authorized to push to this repository" };
+	                }
+	              },
+	              error: function(e) {
+	              	var msg  = "Invalid Github URL";
+	              	if(e.responseJSON) {
+	              		msg  = e.responseJSON["message"];
+	              		if(msg == "Bad credentials") {
+	              			msg = "Invalid Username/Password. \nPlease update in Settings -> Github."
+	              		}
+	              	}
+	                returnValue = {"code": false, "msg": msg};
+	              },
+	            });
+	            return returnValue;
+	        } else {
+	        	var returnValue = {"code": false, "msg": "Please first enter the authentication information in Settings -> Github"};
+	        	return returnValue;
+	        }
 		}
 
 		function setDisplayRDFSLabel(showLabelFirst, showIDFirst, update) {
@@ -89,7 +160,12 @@ var Settings = (function() {
 			showRDFSLabel: showRDFSLabel,
 			showRDFSLabelWithIdFirst: showRDFSLabelWithIdFirst,
 			showRDFSLabelWithLabelFirst: showRDFSLabelWithLabelFirst,
-			getDisplayLabel: getDisplayLabel
+			getDisplayLabel: getDisplayLabel,
+			getGithubUsername: getGithubUsername,
+			setGithubUsername: setGithubUsername,
+			getGithubAuth: getGithubAuth,
+			setGithubAuth: setGithubAuth,
+			validateGithubSettings: validateGithubSettings
 		};
 	};
 
@@ -105,5 +181,125 @@ var Settings = (function() {
 		getInstance: getInstance
 	};
 
+
+})();
+
+
+var GithubSettingsDialog = (function() {
+	var instance = null;
+
+	function PrivateConstructor() {
+		var dialog = $("#githubSettingsDialog");
+		var callback;
+
+		function init() {
+			//Initialize what happens when we show the dialog
+
+			//Initialize handler for Save button
+			//var me = this;
+			$('#btnSave', dialog).on('click', function(e) {
+				e.preventDefault();
+				saveDialog(e);
+			});
+
+			$('#btnCancel', dialog).on('click', function(e) {
+				e.preventDefault();
+				hide();
+			});
+
+			$('#btnDelete', dialog).on('click', function(e) {
+				e.preventDefault();
+				deleteSettings(e);
+			});
+
+			dialog.on('show.bs.modal', function(e) {
+				hideError();
+				$("#txtGithubUsername", dialog).val(Settings.getInstance().getGithubUsername());
+			});
+		}
+
+		function hideError() {
+			$("div.error", dialog).hide();
+		}
+
+		function showError() {
+			$("div.error", dialog).show();
+		}
+
+		function deleteSettings(e) {
+			Settings.getInstance().setGithubAuth(null);
+			Settings.getInstance().setGithubUsername(null);
+
+			$('.githubUrlLabel').each(function(){           
+		       var githubLabel = $(this);
+		       var value = githubLabel.text();
+				if(value != "" && value != "Empty" && value != "disabled") {
+					value = value + " (disabled)";
+					githubLabel.text(value);
+				}
+		   	});
+
+			hide();
+		}
+
+		function saveDialog(e) {
+			var username = $("#txtGithubUsername", dialog);
+        	var password = $("#txtGithubPassword", dialog);
+
+        	if (username[0].checkValidity() && password[0].checkValidity()){
+				var auth = btoa(username.val() + ":" + password.val());
+				Settings.getInstance().setGithubAuth(auth);
+				Settings.getInstance().setGithubUsername(username.val());
+
+				$('.githubUrlLabel').each(function(){           
+			       var githubLabel = $(this);
+			       var value = githubLabel.text();
+			       var idx = value.indexOf(" (disabled)");
+					if(idx != -1) {
+						value = value.substring(0, idx);
+						githubLabel.text(value);
+					}
+			   	});
+
+				if(callback)
+					callback();
+				hide();
+			} else {
+				showError();
+			}
+		};
+
+		function hide() {
+			dialog.modal('hide');
+		}
+
+		function show(callbackFunction) {
+			if(callbackFunction)
+				callback = callbackFunction;
+			dialog.modal({
+				keyboard: true,
+				show: true,
+				backdrop: 'static'
+			});
+		};
+
+
+		return { //Return back the public methods
+			show: show,
+			init: init
+		};
+	};
+
+	function getInstance() {
+		if (!instance) {
+			instance = new PrivateConstructor();
+			instance.init();
+		}
+		return instance;
+	}
+
+	return {
+		getInstance: getInstance
+	};
 
 })();

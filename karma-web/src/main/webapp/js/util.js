@@ -12,7 +12,7 @@ function refreshRows(wsId) {
 		sendRequest(info, wsId);
 	}
 
-function sendRequest(info, worksheetId) {
+function sendRequest(info, worksheetId, callback) {
 	$.ajax({
 		url: "RequestController",
 		type: "POST",
@@ -25,6 +25,8 @@ function sendRequest(info, worksheetId) {
 				hideWaitingSignOnScreen();
 			else
 				hideLoading(worksheetId);
+			if(callback)
+				callback(json);
 		},
 		error: function(xhr, textStatus) {
 			alert("Error occured with " + info['command'] + textStatus);
