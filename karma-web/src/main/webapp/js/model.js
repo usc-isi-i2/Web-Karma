@@ -708,7 +708,3 @@ var ApplyR2RMLModelFromUrlDialog = (function() {
 	};
 
 })();
-
-	
-	
-	

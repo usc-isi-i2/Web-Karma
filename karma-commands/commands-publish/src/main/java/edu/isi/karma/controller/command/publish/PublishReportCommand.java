@@ -71,7 +71,7 @@ public class PublishReportCommand extends WorksheetCommand {
 
 	@Override
 	public CommandType getCommandType() {
-		return CommandType.undoable;
+		return CommandType.notInHistory;
 	}
 
 	@Override
@@ -122,7 +122,7 @@ public class PublishReportCommand extends WorksheetCommand {
 					pw.println(",");
 					new InfoUpdate("Succesfully generated report").generateJson(prefix, pw, vWorkspace);
 				} catch(Exception e) {
-					pw.println("Error generting report");
+					pw.println("Error generating report");
 					logger.error("Error generating report", e);
 				}
 				

@@ -14,7 +14,6 @@ public class PublishGithubCommandFactory  extends CommandFactory {
     enum Arguments {
         worksheetId,
         repo,
-        branch,
         auth
     }
     @Override
@@ -23,7 +22,6 @@ public class PublishGithubCommandFactory  extends CommandFactory {
                 Command.NEW_MODEL,
                 request.getParameter(Arguments.worksheetId.name()),
                 request.getParameter(Arguments.repo.name()),
-                request.getParameter(Arguments.branch.name()),
                 request.getParameter(Arguments.auth.name()));
     }
 

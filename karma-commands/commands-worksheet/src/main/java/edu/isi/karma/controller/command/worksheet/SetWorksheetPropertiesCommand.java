@@ -61,16 +61,25 @@ public class SetWorksheetPropertiesCommand extends WorksheetCommand {
 		JSONObject propertiesJson = new JSONObject(properties);
 		String desc = "";
 		String sep = "";
-		if (propertiesJson.getBoolean(Property.hasServiceProperties.name())) {
+		if (propertiesJson.has(Property.hasServiceProperties.name()) && propertiesJson.getBoolean(Property.hasServiceProperties.name())) {
 			desc = "Service";
 			sep = ", ";
 		}
-		if (propertiesJson.getBoolean("hasPrefix")) {
+		if (propertiesJson.has(Property.graphLabel.name()) && 
+				!propertiesJson.getString(Property.graphLabel.name()).isEmpty()) {
+			desc = desc + sep + "Model Name: " + propertiesJson.getString(Property.graphLabel.name());
+			sep = ", ";
+		}
+		if (propertiesJson.has("hasPrefix") && propertiesJson.getBoolean("hasPrefix")) {
 			desc = desc + sep + "Prefix: " + propertiesJson.getString(Property.prefix.name());
 			sep = ", ";
 		}
-		if (propertiesJson.getBoolean("hasBaseURI")) {
+		if (propertiesJson.has("hasBaseURI") && propertiesJson.getBoolean("hasBaseURI")) {
 			desc = desc + sep + "Base URI: " + propertiesJson.getString(Property.baseURI.name());
+			sep = ", ";
+		}
+		if (propertiesJson.has("hasGithubURL") && propertiesJson.getBoolean("hasGithubURL")) {
+			desc = desc + sep + "Github URL: " + propertiesJson.getString(Property.GithubURL.name());
 			sep = ", ";
 		}
 		return desc;
@@ -119,9 +128,7 @@ public class SetWorksheetPropertiesCommand extends WorksheetCommand {
 
 			if (propertiesJson.has(Property.GithubURL.name()) && !propertiesJson.getString(Property.GithubURL.name()).isEmpty())
 				props.setPropertyValue(Property.GithubURL, propertiesJson.getString(Property.GithubURL.name()));
-			if (propertiesJson.has(Property.GithubBranch.name()) && !propertiesJson.getString(Property.GithubBranch.name()).isEmpty())
-				props.setPropertyValue(Property.GithubBranch, propertiesJson.getString(Property.GithubBranch.name()));
-
+			
 			if (propertiesJson.getBoolean("hasPrefix")) {
 				props.setPropertyValue(Property.prefix, 
 						propertiesJson.getString(Property.prefix.name()));

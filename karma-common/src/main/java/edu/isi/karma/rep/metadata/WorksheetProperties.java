@@ -45,7 +45,7 @@ public class WorksheetProperties {
 		sourceType, modelUrl, modelRepository, modelContext,
 		baseURI, prefix, graphLabel, inputColumns, 
 		outputColumns, oldCommandHistory,
-		GithubURL, GithubBranch
+		GithubURL
 	}
 	
 	public enum SourceTypes {
