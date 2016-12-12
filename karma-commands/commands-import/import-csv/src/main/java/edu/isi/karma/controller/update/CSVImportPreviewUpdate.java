@@ -21,10 +21,13 @@
 package edu.isi.karma.controller.update;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -36,7 +39,7 @@ import org.json.JSONWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.view.VWorkspace;
 
@@ -92,7 +95,7 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 	@Override
 	public void generateJson(String prefix, PrintWriter pw,
 			VWorkspace vWorkspace) {
-		Scanner scanner = null;
+		// Scanner scanner = null;
 		int rowCount = 0;
 		int previewRowCounter = 0;
 
@@ -105,7 +108,7 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 			if (encoding == null) {
 				encoding = EncodingDetector.detect(csvFile);
 			}
-			scanner = new Scanner(csvFile, encoding);
+			// scanner = new Scanner(csvFile, encoding);
 			JSONWriter writer = jsonStr.object().key(JsonKeys.commandId.name())
 					.value(commandId).key(GenericJsonKeys.updateType.name())
 					.value("ImportCSVPreview").key(JsonKeys.fileName.name())
@@ -113,18 +116,17 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 					.key("maxNumLines").value(maxNumLines);
 
 			JSONArray dataRows = new JSONArray();
-			while (scanner.hasNextLine()) {
+			CSVReader reader = new CSVReader(
+				new InputStreamReader(new FileInputStream(csvFile), encoding), 
+				delimiter, quoteCharacter, escapeCharacter);
+			String[] rowValues = null;
+			while ((rowValues = reader.readNext()) != null) {
 				// Check for the header row
 				if (rowCount + 1 == headerRowIndex) {
-					String line = scanner.nextLine();
-					CSVReader reader = new CSVReader(new StringReader(line),
-							delimiter, quoteCharacter, escapeCharacter);
-					String[] rowValues = reader.readNext();
 					List<String> headers = new ArrayList<>();
 					if (rowValues == null || rowValues.length == 0) {
 						logger.error("No data found in the Header row!");
 						rowCount++;
-						scanner.nextLine();
 						continue;
 					}
 					for (int i = 0; i < rowValues.length; i++) {						
@@ -137,7 +139,6 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 					JSONArray arr = new JSONArray(headers);
 					writer.key(JsonKeys.headers.name()).value(arr);
 					rowCount++;
-					reader.close();
 					continue;
 				}
 
@@ -147,10 +148,6 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 					if (previewRowCounter++ > 5) {
 						break;
 					}
-					String line = scanner.nextLine();
-					CSVReader reader = new CSVReader(new StringReader(line),
-							delimiter, quoteCharacter, escapeCharacter);
-					String[] rowValues = reader.readNext();
 					List<String> vals = new ArrayList<>();
 					if (rowValues != null) {
 						for (int i = 0; i < rowValues.length; i++) {
@@ -160,7 +157,6 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 						vals.add("");
 					// Add the row index
 					vals.add(0, Integer.toString(rowCount + 1));
-					reader.close();
 
 					// Add to the data rows JSON
 					dataRows.put(vals);
@@ -169,9 +165,9 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 				}
 
 				rowCount++;
-				scanner.nextLine();
 			}
 
+			reader.close();
 			writer.key(JsonKeys.rows.name()).value(dataRows);
 			writer.endObject();
 			pw.println(jsonStr.toString());
@@ -182,8 +178,8 @@ public class CSVImportPreviewUpdate extends AbstractUpdate {
 		} catch (JSONException e) {
 			logger.error("Error occured while writing to JSON", e);
 		} finally {
-			if(scanner != null)
-				scanner.close();
+			// if(scanner != null)
+			// 	scanner.close();
 		}
 	}
 	
