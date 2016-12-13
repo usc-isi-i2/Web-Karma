@@ -205,12 +205,12 @@ public class PublishGithubCommand extends Command {
         if (fileSHA == null) {
             osw.write("{\"message\": \"Create file " + fileName + 
             		"\", \"branch\":\"" + this.branch + 
-            		"\", \"committer\": {\"name\": \"Karma\", \"email\": \"user@karma.com\"}, \"content\": \"" + 
+            		"\", \"content\": \"" + 
             		b64FileContent + "\"}");
         } else {
             osw.write("{\"message\": \"Update file " + fileName + 
             		"\", \"branch\":\"" + this.branch + 
-            		"\", \"committer\": {\"name\": \"Karma\", \"email\": \"user@karma.com\"}, \"content\": \"" + 
+            		"\", \"content\": \"" + 
             		b64FileContent + "\", \"sha\": \"" + fileSHA + "\"}");
         }
         osw.flush();
