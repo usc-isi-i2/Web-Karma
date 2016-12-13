@@ -1,6 +1,6 @@
 package edu.isi.karma.imp.csv;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.*;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class CSVImport extends Import {
     private static Logger logger = LoggerFactory.getLogger(CSVImport.class);
-	protected final int headerRowIndex;
+    protected final int headerRowIndex;
     protected final int dataStartRowIndex;
     protected final char delimiter;
     protected final char quoteCharacter;
@@ -63,113 +63,96 @@ public class CSVImport extends Import {
     public Worksheet generateWorksheet() throws IOException, KarmaException {
         Table dataTable = getWorksheet().getDataTable();
 
-        BufferedReader br = getLineReader();
-
-
         // Index for row currently being read
         int rowCount = 0;
         Map<Integer, String> hNodeIdList = new HashMap<>();
 
-        // If no row is present for the column headers
-        if (headerRowIndex == 0) {
-            hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory(), br);
-            if (hNodeIdList == null || hNodeIdList.isEmpty()) {
-                br.close();
-                throw new KarmaException("Error occured while counting header "
-                        + "nodes for the worksheet!");
-            }
-        }
+        CSVReader reader = getCSVReader();
 
         // Populate the worksheet model
-        String line = null;
-        while ((line = br.readLine()) != null) {
-        	logger.debug("Read line: '" + line + "'");
+        String[] rowValues = null;
+        while ((rowValues = reader.readNext()) != null) {
+            // logger.debug("Read line: '" + line + "'");
             // Check for the header row
             if (rowCount + 1 == headerRowIndex) {
-                hNodeIdList = addHeaders(getWorksheet(), getFactory(), line, br);
+                hNodeIdList = addHeaders(getWorksheet(), getFactory(), rowValues, reader);
                 rowCount++;
                 continue;
             }
 
             // Populate the model with data rows
             if (rowCount + 1 >= dataStartRowIndex) {
-                boolean added = addRow(getWorksheet(), getFactory(), line, hNodeIdList, dataTable);
+                boolean added = addRow(getWorksheet(), getFactory(), rowValues, hNodeIdList, dataTable);
                 if(added) {
-	                rowCount++;
-	               
-	                if(maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines-1) {
-	                	break;
-	                }
+                    rowCount++;
+                    if(maxNumLines > 0 && (rowCount - dataStartRowIndex) >= maxNumLines-1) {
+                        break;
+                    }
                 }
                 continue;
             }
 
             rowCount++;
         }
-        br.close();
+        reader.close();
         getWorksheet().getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.sourceType, SourceTypes.CSV.toString());
         return getWorksheet();
     }
 
-	protected BufferedReader getLineReader() throws IOException {
-		// Prepare the reader for reading file line by line
-        
+    protected BufferedReader getLineReader() throws IOException {
+        // Prepare the reader for reading file line by line
         InputStreamReader isr = EncodingDetector.getInputStreamReader(is, encoding);
-        
         return new BufferedReader(isr);
-	}
+    }
+
+    protected CSVReader getCSVReader() throws IOException {
+        BufferedReader br = getLineReader();
+        return new CSVReader(br, delimiter, quoteCharacter, escapeCharacter);
+    }
 
     private Map<Integer, String> addHeaders(Worksheet worksheet, RepFactory fac,
-            String line, BufferedReader br) throws IOException {
+            String[] rowValues, CSVReader reader) throws IOException {
         HTable headers = worksheet.getHeaders();
         Map<Integer, String> headersMap = new HashMap<>();
-
-        CSVReader reader = new CSVReader(new StringReader(line), delimiter,
-                quoteCharacter, escapeCharacter);
-        String[] rowValues = null;
-        rowValues = reader.readNext();
-
-        if (rowValues == null || rowValues.length == 0) {
-            reader.close();
-            return addEmptyHeaders(worksheet, fac, br);
-        }
 
         for (int i = 0; i < rowValues.length; i++) {
             HNode hNode = null;
             if (headerRowIndex == 0) {
-            	if (isVisible("Column_" + (i + 1)))
-            		hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, worksheet, fac);
+                if (isVisible("Column_" + (i + 1)))
+                    hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, worksheet, fac);
             } else {
-            	if (isVisible(rowValues[i]))
-            		hNode = headers.addHNode(rowValues[i], HNodeType.Regular, worksheet, fac);
+                if (isVisible(rowValues[i]))
+                    hNode = headers.addHNode(rowValues[i], HNodeType.Regular, worksheet, fac);
             }
             if (hNode != null)
-            	headersMap.put(i, hNode.getId());
+                headersMap.put(i, hNode.getId());
         }
-        reader.close();
+
         return headersMap;
     }
 
-    private boolean addRow(Worksheet worksheet, RepFactory fac, String line,
-    		Map<Integer, String> hNodeIdMap, Table dataTable) throws IOException {
-        CSVReader reader = new CSVReader(new StringReader(line), delimiter,
-                quoteCharacter, escapeCharacter);
-        String[] rowValues = null;
-        rowValues = reader.readNext();
+    private boolean addRow(Worksheet worksheet, RepFactory fac, String[] rowValues,
+            Map<Integer, String> hNodeIdMap, Table dataTable) throws IOException {
+
         if (rowValues == null || rowValues.length == 0) {
-            reader.close();
             return false;
         }
 
         Row row = dataTable.addRow(fac);
         int size = hNodeIdMap.size();
         if (columnsJson != null)
-        	size = columnsJson.length();
+            size = columnsJson.length();
         for (int i = 0; i < rowValues.length; i++) {
+            if(i >= size) {
+                HTable headers = worksheet.getHeaders();
+                HNode hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, worksheet, fac);
+                hNodeIdMap.put(i, hNode.getId());
+                size = hNodeIdMap.size();
+            }
             if (i < size) {
-            	String hNodeId = hNodeIdMap.get(i);
-            	if (hNodeId != null)
-            		row.setValue(hNodeId, rowValues[i], fac);
+                String hNodeId = hNodeIdMap.get(i);
+                if (hNodeId != null)
+                    row.setValue(hNodeId, rowValues[i], fac);
             } else {
                 // TODO Our model does not allow a value to be added to a row
                 // without its associated HNode. In CSVs, there could be case
@@ -177,58 +160,17 @@ public class CSVImport extends Import {
                 logger.error("More data elements detected in the row than number of headers!");
             }
         }
-        reader.close();
         return true;
-    }
-    private Map<Integer, String> addEmptyHeaders(Worksheet worksheet,
-            RepFactory fac, BufferedReader br) throws IOException {
-        HTable headers = worksheet.getHeaders();
-        Map<Integer, String> headersMap = new HashMap<>();
-
-        
-        br.mark(1000000);
-        br.readLine();
-        
-        // Use the first data row to count the number of columns we need to add
-        int rowCount = 0;
-        String line = null;
-        while (null != (line = br.readLine())) {
-            if (rowCount + 1 == dataStartRowIndex) {
-                line = br.readLine();
-                CSVReader reader = new CSVReader(new StringReader(line),
-                        delimiter, quoteCharacter, escapeCharacter);
-                String[] rowValues = null;
-                try {
-                    rowValues = reader.readNext();
-                } catch (IOException e) {
-                    logger.error("Error reading Line:" + line, e);
-                }
-                for (int i = 0; i < rowValues.length; i++) {
-                	
-                    HNode hNode = null;
-                    if (isVisible("Column_" + (i + 1)))
-                    	hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, 
-                            worksheet, fac);
-                    if (hNode != null)
-                    	headersMap.put(i, hNode.getId());
-                }
-                reader.close();
-                break;
-            }
-            rowCount++;
-        }
-        br.reset();
-        return headersMap;
     }
     
     private boolean isVisible(String key) {
-		if (columnsJson == null)
-			return true;
-		for (int i = 0; i < columnsJson.length(); i++) {
-			JSONObject obj = columnsJson.getJSONObject(i);
-			if (obj.has(key))
-				return obj.getBoolean(key);
-		}
-		return false;
-	}
+        if (columnsJson == null)
+            return true;
+        for (int i = 0; i < columnsJson.length(); i++) {
+            JSONObject obj = columnsJson.getJSONObject(i);
+            if (obj.has(key))
+                return obj.getBoolean(key);
+        }
+        return false;
+    }
 }

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.kenai.jffi.Array;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.er.helper.CloneTableUtils;
 import edu.isi.karma.rep.CellValue;
