@@ -68,15 +68,6 @@ public class CSVImport extends Import {
         Map<Integer, String> hNodeIdList = new HashMap<>();
 
         CSVReader reader = getCSVReader();
-        // If no row is present for the column headers
-        // if (headerRowIndex == 0) {
-        //     hNodeIdList = addEmptyHeaders(getWorksheet(), getFactory(), reader);
-        //     if (hNodeIdList == null || hNodeIdList.isEmpty()) {
-        //         reader.close();
-        //         throw new KarmaException("Error occured while counting header "
-        //                 + "nodes for the worksheet!");
-        //     }
-        // }
 
         // Populate the worksheet model
         String[] rowValues = null;
@@ -123,10 +114,6 @@ public class CSVImport extends Import {
             String[] rowValues, CSVReader reader) throws IOException {
         HTable headers = worksheet.getHeaders();
         Map<Integer, String> headersMap = new HashMap<>();
-
-        // if (rowValues == null || rowValues.length == 0) {
-            // return addEmptyHeaders(worksheet, fac, reader);
-        // }
 
         for (int i = 0; i < rowValues.length; i++) {
             HNode hNode = null;
@@ -175,38 +162,6 @@ public class CSVImport extends Import {
         }
         return true;
     }
-
-    // private Map<Integer, String> addEmptyHeaders(Worksheet worksheet,
-    //         RepFactory fac, CSVReader reader) throws IOException {
-        // HTable headers = worksheet.getHeaders();
-        // Map<Integer, String> headersMap = new HashMap<>();
-
-        
-        // // br.mark(1000000);
-        // // br.readLine();
-        // // System.out.println("\n\n!!!!SUPPORT "+is.markSupported()+ "\n\n");
-        // // Use the first data row to count the number of columns we need to add
-        // int rowCount = 0;
-        // String[] rowValues = null;
-        // while ((rowValues = reader.readNext()) != null) {
-        //     if (rowCount + 1 == dataStartRowIndex) {
-        //         for (int i = 0; i < rowValues.length; i++) {
-                    
-        //             HNode hNode = null;
-        //             if (isVisible("Column_" + (i + 1)))
-        //                 hNode = headers.addHNode("Column_" + (i + 1), HNodeType.Regular, 
-        //                     worksheet, fac);
-        //             if (hNode != null)
-        //                 headersMap.put(i, hNode.getId());
-        //         }
-        //         break;
-        //     }
-        //     rowCount++;
-        // }
-        // ((FileInputStream)is).getChannel().position(0);
-        // reader = getCSVReader();
-        // return headersMap;
-    // }
     
     private boolean isVisible(String key) {
         if (columnsJson == null)
