@@ -161,6 +161,8 @@ public class GraphVizUtil {
 				if (source instanceof ColumnNode) {
 					ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)source : mappingToSourceColumns.get(source);
 					sourceLabel = mappedColumn.getColumnName();
+				} else if(source instanceof LiteralNode) {
+					sourceLabel = ((LiteralNode)source).getValue();
 				} else if (nodeLabelType == GraphVizLabelType.Id)
 					sourceLabel = sourceId;
 				else if (nodeLabelType == GraphVizLabelType.LocalId)
@@ -196,6 +198,8 @@ public class GraphVizUtil {
 				if (target instanceof ColumnNode) {
 					ColumnNode mappedColumn = (mappingToSourceColumns == null) ? (ColumnNode)target : mappingToSourceColumns.get(target);
 					targetLabel = mappedColumn.getColumnName();
+				} else if(target instanceof LiteralNode) {
+					targetLabel = ((LiteralNode)target).getValue();
 				} else if (nodeLabelType == GraphVizLabelType.Id)
 					targetLabel = targetId;
 				else if (nodeLabelType == GraphVizLabelType.LocalId)
