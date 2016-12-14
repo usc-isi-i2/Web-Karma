@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -14,11 +15,21 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
@@ -33,6 +44,7 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
+import edu.isi.karma.webserver.WorkspaceKarmaHomeRegistry;
 
 /**
  * Created by alse on 11/21/16.
@@ -45,6 +57,7 @@ public class PublishGithubCommand extends Command {
     private String auth;
     private String branch;
     private HashMap<String, String> fileSHAMap = new HashMap<>();
+    private String graphvizServer;
     
     private enum JsonKeys {
 		updateType, url, worksheetId
@@ -110,6 +123,10 @@ public class PublishGithubCommand extends Command {
         	} catch (FileNotFoundException fe) {
         		logger.warn("Github URL does not exist. Will try to see if it can be created.");
         	}
+        	ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance()
+        			.getModelingConfiguration(WorkspaceKarmaHomeRegistry.getInstance().getKarmaHome(workspace.getId()));
+            this.graphvizServer = modelingConfiguration.getGraphvizServer();
+            		
             Worksheet worksheet = workspace.getWorksheet(this.worksheetId);
 
             WorksheetProperties props = worksheet.getMetadataContainer().getWorksheetProperties();
@@ -139,6 +156,15 @@ public class PublishGithubCommand extends Command {
             if (fileExists(dotFile)) {
                 String contents = getFileContents(dotFile);
                 push(modelName + "-model.dot", contents);
+                try {
+                	//Use hosted graphviz server to convert dot to pdf
+                	//https://github.com/omerio/graphviz-server
+                	contents = contents.replace("digraph n0", "digraph G");
+                	InputStream pdfStream = this.getGraphizPdf(contents);
+                	push(modelName + "-model.pdf", pdfStream);
+                } catch(Exception e) {
+                	logger.error("Error generating png for the dot file", e);
+                }
             }
 
             if (fileExists(modelFile)) {
@@ -191,6 +217,15 @@ public class PublishGithubCommand extends Command {
     This function does the push operation to github
     */
     private Integer push(String fileName, String fileContents) throws IOException{
+    	return push(fileName, fileContents.getBytes());
+    }
+    
+    private Integer push(String fileName, InputStream fileStream) throws IOException {
+    	byte[] bytes = IOUtils.toByteArray(fileStream);
+    	return push(fileName, bytes);
+    }
+    
+    private Integer push(String fileName, byte[] bytes) throws IOException{
     	URL url = new URL(this.repo + fileName);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("PUT");
@@ -200,7 +235,7 @@ public class PublishGithubCommand extends Command {
         connection.setRequestProperty ("Authorization", "Basic " + this.auth);
         OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
 
-        String b64FileContent = new String(Base64.encodeBase64(fileContents.getBytes()));
+        String b64FileContent = new String(Base64.encodeBase64(bytes));
         String fileSHA = getFileSHA(fileName);
         if (fileSHA == null) {
             osw.write("{\"message\": \"Create file " + fileName + 
@@ -228,6 +263,17 @@ public class PublishGithubCommand extends Command {
         return new String(encoded, "UTF-8");
     }
 
+    private InputStream getGraphizPdf(String dotContents) throws ClientProtocolException, IOException {
+    	HttpClient httpClient = new DefaultHttpClient();
+    	HttpPost httpPost = new HttpPost(this.graphvizServer + "pdf");
+		httpPost.setEntity(new StringEntity(dotContents));
+		HttpResponse response = httpClient.execute(httpPost);
+		
+		// Parse the response and store it in a String
+		HttpEntity entity = response.getEntity();
+		return entity.getContent();
+    }
+    
     // Whenever we are doing an update instead of create, we need the blob sha of the file which exists on github.
     private void buildFileSHAMap() throws IOException {
     	this.fileSHAMap.clear();
