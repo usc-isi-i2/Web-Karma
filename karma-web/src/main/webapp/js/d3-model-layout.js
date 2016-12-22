@@ -1395,13 +1395,28 @@ D3ModelLayout = function(p_htmlElement, p_cssClass, p_width, p_worksheetId) {
 		});
 
 		//for (var j = 0; j < 5; j++){
+		var prevChange = -1;
+		var numChances = 0;
 		while (change > 0){
 			//tmpLayerMap is a set of nodes that change their layer in this loop, they will be considered as the base layer for next iteration.
 			//the base layer of first iteration is anchors, their layer is 0.
 			//console.log("baseLayer: ");
 			//baseLayer.print();
 			var nextLayer = new ArrayList();
+
+			if(prevChange == change) {
+				numChances++;
+			} else {
+				numChances = 0;
+			}
+			prevChange = change;
 			change = 0;
+
+			if(numChances > 10) {
+				console.log("In a loop to many time, just breaking out");
+				maxLayer -= 9;
+				break;
+			}
 			//parse all edges
 			tmpLinkData.forEach(function(d){
 				var src = d.source;
@@ -1454,6 +1469,8 @@ D3ModelLayout = function(p_htmlElement, p_cssClass, p_width, p_worksheetId) {
 		nodesData.forEach(function(d){
 			if (d.layer != undefined){
 				if (!d.unAssigned){
+					if(d.layer > maxLayer)
+						d.layer = maxLayer;
 					layerMap[d.layer].push(d.id);
 				}				
 			}		
