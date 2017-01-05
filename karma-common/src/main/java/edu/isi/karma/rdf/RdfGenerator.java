@@ -76,6 +76,7 @@ public abstract class RdfGenerator {
 		try
 		{
 			List<CommandTag> tags = new ArrayList<>();
+			tags.add(CommandTag.Selection);
 			tags.add(CommandTag.Transformation);
 			
 			List<CommandTag> ignoreTags = new ArrayList<>();
