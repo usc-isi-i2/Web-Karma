@@ -79,8 +79,8 @@ public class ClearSelectionCommand extends WorksheetSelectionCommand {
 			}
 		}
 		
+		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 		if(!this.isExecutedInBatch()) {
-			WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 			UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel, workspace.getContextId());
 			return uc;
 		} else {
