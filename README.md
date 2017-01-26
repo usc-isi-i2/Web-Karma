@@ -3,6 +3,8 @@ Karma: A Data Integration Tool
 
 The Karma tutorial at https://github.com/szeke/karma-tcdl-tutorial, also check out our [DIG web site](http://usc-isi-i2.github.io/dig/), where we use Karma extensively to process > 90M web pages.
 
+See our [release stats](http://www.somsubhra.com/github-release-stats/?username=usc-isi-i2&repository=Web-Karma)
+
 
 ## What is Karma?
 
