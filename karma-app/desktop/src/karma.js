@@ -43,7 +43,9 @@ exports.start = function(){
           process.env.JAVA_HOME = _java_home;
           process.env.JRE_HOME = _java_home;
         }
-        exec(exports.tomcat.startcmd, options, function(error, stdout, stderr) {
+        // cd to catalina_home in windows and it doesnt work in some machines
+        let cmd = (/^win/.test(process.platform) ? 'cd /D ' + options.cwd + ' & ' : '') + exports.tomcat.startcmd;
+        exec(cmd, options, function(error, stdout, stderr) {
           console.log(error);
           console.log(stdout);
           console.log(stderr);
@@ -108,7 +110,12 @@ exports.setJavaHome = function(value){
 
 exports.getJavaHome = function(callback){
     var env = jetpack.cwd(__dirname).read('env.json', 'json');
-    callback(env.java_home);
+    let java_home = env.java_home;
+    // if it is not set in the app, get it from global environment vars
+    if (!java_home) {
+      java_home = process.env.JAVA_HOME ? process.env.JAVA_HOME : process.env.JRE_HOME;
+    }
+    callback(java_home);
 };
 
 exports.setJavaHomeHelp = function() {

@@ -10,6 +10,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SelectionManager;
@@ -37,6 +38,7 @@ public class RefreshSelectionCommand extends WorksheetSelectionCommand {
 		super(id, model, worksheetId, selectionId);
 		this.hNodeId = hNodeId;
 		addTag(CommandTag.Selection);
+		addTag(CommandTag.IgnoreInBatch);
 	}
 
 	@Override

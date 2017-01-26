@@ -9,6 +9,7 @@ var path = require("path");
 var fs = require("fs");
 var dialogPolyfill = require("dialog-polyfill");
 const {ipcRenderer} = require('electron');
+var glob = require("glob");
 
 console.log('Loaded environment variables:', env);
 
@@ -35,14 +36,27 @@ document.addEventListener('DOMContentLoaded', function () {
     log(data);
   });
 
-  log("Starting Karma...");
-  karma.start();
-
   function m_launch(){
     karma.launch();
     log("<b>Launching Karma. Go to <a href='http://localhost:8080'>http://localhost:8080</a> if it doesn't launch.</b>");
   }
-  // Launches Karma in browser after 10 seconds.
+
+  // set java home to java shipped with app if JAVA_HOME is not set
+  karma.getJavaHome((_java_home) => {
+    if (!_java_home){
+        glob(path.join(__dirname, "jre*"), (err, files) => {
+          if (files[0]){
+            if (fs.existsSync(path.join(files[0], "bin", "java" + (/^win/.test(process.platform) ? ".exe" : "")))) {
+              karma.setJavaHome(files[0]);
+            }
+          }
+        });
+    }
+  });
+  setTimeout(() => {
+    log("Starting Karma...");
+    karma.start();
+  }, 1000);
   setTimeout(m_launch, 10000);
   document.getElementById("launch").onclick = m_launch;
   document.getElementById("restart").onclick = function(){
@@ -62,11 +76,11 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById("submit_setJavaHome").onclick = function(){
     let value = document.getElementById("input_setJavaHome").value;
     if (!fs.existsSync(path.join(value, "bin", "java" + (/^win/.test(process.platform) ? ".exe" : "")))) {
-    // if (!fs.existsSync(value + path.sep + "bin" + path.sep + "java" + (/^win/.test(process.platform) ? ".exe" : ""))) {
       document.querySelector("#dialog_setJavaHome .warning").innerHTML = "Invalid path for Java";
       setTimeout(() => {dialog_setJavaHome.showModal();}, 1000);
     } else {
       karma.setJavaHome(value);
+      log("Your JAVA_HOME is set. Restart karma.");
     }
   };
 
@@ -117,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
       dialog_setJavaHome.showModal();
     });
   });
+
 });
 
 

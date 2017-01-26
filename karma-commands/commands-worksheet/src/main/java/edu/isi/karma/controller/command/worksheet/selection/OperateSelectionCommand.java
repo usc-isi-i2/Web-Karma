@@ -92,8 +92,12 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 			return getErrorUpdate("The operation is undefined");
 		}
 		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
-		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel, workspace.getContextId());
-		return uc;
+		if(!this.isExecutedInBatch()) {
+			UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel, workspace.getContextId());
+			return uc;
+		} else {
+			return new UpdateContainer();
+		}
 	}
 
 	@Override

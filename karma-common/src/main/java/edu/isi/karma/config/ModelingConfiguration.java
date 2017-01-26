@@ -81,6 +81,7 @@ public class ModelingConfiguration {
 
 	private Boolean showModelsWithoutMatching;
 	private String defaultProperty = null;
+	private String graphvizServer = null;
 	
 	private final String newLine = System.getProperty("line.separator");
 	
@@ -163,7 +164,8 @@ public class ModelingConfiguration {
 			"##########################################################################################" + newLine + 
 			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
-			"history.store.old=false"
+			"history.store.old=false" + newLine + 
+			"graphiz.server=http://52.38.65.60/graphviz/"
 			;
 
 
@@ -287,7 +289,17 @@ public class ModelingConfiguration {
 			if(defaultProperty == null) {
 				//need to add this property to the end
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				out.println();
 				out.println("default.property=http://schema.org/name");
+				out.close();
+			}
+			
+			graphvizServer = modelingProperties.getProperty("graphviz.server");
+			if(graphvizServer == null) {
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				out.println();
+				graphvizServer = "http://52.38.65.60/graphviz/";
+				out.println("graphviz.server=" + graphvizServer);
 				out.close();
 			}
 		} catch (IOException e) {
@@ -550,5 +562,8 @@ public class ModelingConfiguration {
 		knownModelsAlignment = false;
 	}
 
+	public String getGraphvizServer() {
+		return graphvizServer;
+	}
 	
 }

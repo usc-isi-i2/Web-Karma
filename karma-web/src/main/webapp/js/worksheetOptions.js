@@ -65,14 +65,11 @@ function WorksheetOptions(wsId, wsTitle) {
 				name: "RDF",
 				func: publishRDF
 			}, {
-				name: "R2RML Model",
+				name: "Model",
 				func: publishModel
 	//		}, {
 	//			name: "Service Model",
 	//			func: publishServiceModel
-			}, {
-				name: "Report",
-				func: publishReport
 			}, {
 				name: "Raw JSON",
 				func: saveAsJson
@@ -232,14 +229,14 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 
-	function publishReport() {
-		hideDropdown();
-		var info = generateInfoObject(worksheetId, "", "PublishReportCommand");
+	// function publishReport() {
+	// 	hideDropdown();
+	// 	var info = generateInfoObject(worksheetId, "", "PublishReportCommand");
 
-		showLoading(info["worksheetId"]);
-		var returned = sendRequest(info, worksheetId);
-		return false;
-	}
+	// 	showLoading(info["worksheetId"]);
+	// 	var returned = sendRequest(info, worksheetId);
+	// 	return false;
+	// }
 
 	function deleteWorksheet() {
 		if (confirm("Are you sure you wish to delete the worksheet? \nYou cannot undo this operation")) {
@@ -387,8 +384,30 @@ function WorksheetOptions(wsId, wsTitle) {
 		var info = generateInfoObject(worksheetId, "", "GenerateR2RMLModelCommand");
 		info['tripleStoreUrl'] = $('#txtModel_URL').text();
 		showLoading(info["worksheetId"]);
-		var returned = sendRequest(info, worksheetId);
+		var returned = sendRequest(info, worksheetId,
+			function() {
+				var info = generateInfoObject(worksheetId, "", "PublishReportCommand");
+				showLoading(info["worksheetId"]);
+				var returned = sendRequest(info, worksheetId, function() {
+					publishToGithub(event);
+				});
+			});
 		return false;
+	}
+
+	function publishToGithub(event) {
+		var repo = $.cookie("github-url-" + worksheetId);
+		var auth = Settings.getInstance().getGithubAuth();
+		if(repo) {
+			if(auth) {
+				showLoading(worksheetId);
+				var githubInfo = generateInfoObject(worksheetId, "", "PublishGithubCommand");
+		        githubInfo["worksheetId"] = worksheetId;
+		        githubInfo["auth"] = auth;
+		        githubInfo["repo"] = repo;
+		        var returned = sendRequest(githubInfo, worksheetId);
+		    }
+	    }
 	}
 
 	function applyModel(event) {

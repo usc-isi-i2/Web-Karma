@@ -214,6 +214,11 @@ public class JsonImportValues {
 
 	public void addListElement(Object listValue, HTable headers,
 			Table dataTable) throws JSONException {
+			
+		if(JSONObject.NULL.equals(listValue)) {
+			listValue = "";
+		}
+		
 		if (listValue instanceof JSONObject) {
 			if (maxNumLines <= 0 || numObjects < maxNumLines) {
 				Row row = dataTable.addRow(factory);
@@ -265,7 +270,8 @@ public class JsonImportValues {
 				}
 			}
 		} else {
-			logger.error("Cannot handle whatever case is not covered by the if statements. Sorry.");
+			logger.error("Cannot handle whatever case is not covered by the if statements. Sorry");
+			logger.error(listValue.toString());
 		}
 
 	}

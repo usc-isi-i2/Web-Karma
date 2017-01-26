@@ -11,6 +11,7 @@ import edu.isi.karma.controller.command.Command;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.command.selection.Selection;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
@@ -22,6 +23,7 @@ import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.CommandInputJSONUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,7 @@ public class RefreshSuperSelectionCommand extends WorksheetSelectionCommand {
 			String selectionId) {
 		super(id, model, worksheetId, selectionId);
 		addTag(CommandTag.Selection);
+		addTag(CommandTag.IgnoreInBatch);
 	}
 	
 	private class SelectionWithPriority implements Comparable<SelectionWithPriority>{
