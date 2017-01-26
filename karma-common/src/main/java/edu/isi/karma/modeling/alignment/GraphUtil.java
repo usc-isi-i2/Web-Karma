@@ -915,7 +915,7 @@ public class GraphUtil {
 //		String ns = null;
 //		String prefix = null;
 //		String rdfsComment = null;
-		String rdfsLabel = null;
+//		String rdfsLabel = null;
 		
 		reader.beginObject();
 	    while (reader.hasNext()) {
@@ -968,7 +968,7 @@ public class GraphUtil {
 		}
     	reader.endObject();
     	
-    	SemanticType semanticType = new SemanticType(hNodeId, type, domain, origin, confidenceScore);
+    	SemanticType semanticType = new SemanticType(hNodeId, type, domain, null, origin, confidenceScore);
     	return semanticType;	
     }
 	

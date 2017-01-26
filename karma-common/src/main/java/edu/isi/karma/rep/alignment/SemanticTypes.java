@@ -20,6 +20,7 @@
  ******************************************************************************/
 package edu.isi.karma.rep.alignment;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,19 +32,26 @@ import edu.isi.karma.util.Jsonizable;
 
 public class SemanticTypes implements Jsonizable {
 	// Map from the HNodeIds (for each column) to the semantic type
-	private Map<String, SemanticType> types = new HashMap<>();
+	private Map<String, ArrayList<SemanticType>> types = new HashMap<>();
 	private Map<String, SynonymSemanticTypes> synonymTypes = new HashMap<>();
 
-	public Map<String, SemanticType> getTypes() {
+	public Map<String, ArrayList<SemanticType>> getTypes() {
 		return types;
 	}
 	
 	public Collection<SemanticType> getListOfTypes() {
-		return types.values();
+		Collection<ArrayList<SemanticType>> semTypes = types.values();
+		Collection<SemanticType> result = new ArrayList<SemanticType>();
+		for(ArrayList<SemanticType> item : semTypes)
+			result.addAll(item);
+		return result;
 	}
 
-	public SemanticType getSemanticTypeForHNodeId(String hNodeId) {
-		return types.get(hNodeId);
+	public ArrayList<SemanticType> getSemanticTypeForHNodeId(String hNodeId) {
+		ArrayList<SemanticType> type = types.get(hNodeId);
+		if(type == null)
+			type = new ArrayList<>();
+		return type;
 	}
 	
 	public SynonymSemanticTypes getSynonymTypesForHNodeId(String hNodeId) {
@@ -61,8 +69,9 @@ public class SemanticTypes implements Jsonizable {
 
 	public void write(JSONWriter writer) throws JSONException {
 		writer.array();
-		for (SemanticType type : types.values()) {
-			type.write(writer);
+		for (ArrayList<SemanticType> typeArr : types.values()) {
+			for(SemanticType type: typeArr)
+				type.write(writer);
 		}
 		writer.endArray();
 	}
@@ -73,6 +82,20 @@ public class SemanticTypes implements Jsonizable {
 	}
 
 	public void addType(SemanticType type) {
-		types.put(type.getHNodeId(), type);
+		ArrayList<SemanticType> typeArr = getSemanticTypeForHNodeId(type.getHNodeId());
+		typeArr.add(type);
+		types.put(type.getHNodeId(), typeArr);
+	}
+	
+	public void removeType(SemanticType type) {
+		ArrayList<SemanticType> typeArr = getSemanticTypeForHNodeId(type.getHNodeId());
+		typeArr.remove(type);
+		types.put(type.getHNodeId(), typeArr);
+	}
+	
+	public void setType(ArrayList<SemanticType>  type) {
+		if(type.size() > 0) {
+			types.put(type.get(0).getHNodeId(), type);
+		} 
 	}
 }

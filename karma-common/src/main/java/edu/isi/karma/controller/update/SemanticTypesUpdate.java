@@ -21,6 +21,7 @@
 package edu.isi.karma.controller.update;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -41,16 +42,13 @@ import edu.isi.karma.rep.alignment.ClassInstanceLink;
 import edu.isi.karma.rep.alignment.ColumnNode;
 import edu.isi.karma.rep.alignment.ColumnSubClassLink;
 import edu.isi.karma.rep.alignment.DataPropertyOfColumnLink;
-import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkKeyInfo;
 import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.alignment.NodeType;
-import edu.isi.karma.rep.alignment.ObjectPropertySpecializationLink;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticTypes;
-import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
 import edu.isi.karma.view.VWorkspace;
 
 public class SemanticTypesUpdate extends AbstractUpdate {
@@ -79,7 +77,6 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 		SemanticTypes types = worksheet.getSemanticTypes();
 		Map<String, ColumnNode> hNodeIdTocolumnNodeMap = createColumnNodeMap();
-		Map<String, SemanticTypeNode> hNodeIdToDomainNodeMap = createDomainNodeMap();
 		
 		JSONStringer jsonStr = new JSONStringer();
 		try {
@@ -97,113 +94,13 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				writer.object();
 
 				// Check if a semantic type exists for the HNode
-				SemanticType type = types.getSemanticTypeForHNodeId(nodeId);
-				if (type != null && type.getConfidenceLevel() != SemanticType.ConfidenceLevel.Low) {
-					writer.key(JsonKeys.HNodeId.name())
-							.value(type.getHNodeId())
-							.key(JsonKeys.SemanticTypesArray.name()).array();
-					
-					ColumnNode alignmentColumnNode = hNodeIdTocolumnNodeMap.get(type.getHNodeId());
-					SemanticTypeNode domainNode = hNodeIdToDomainNodeMap.get(type.getHNodeId());
-					
-					if (alignmentColumnNode == null || domainNode == null) {
-						logger.error("Column node or domain node not found in alignment." +
-								" (This should not happen conceptually!):" + type);
-						continue;
-					}
-					
-					// Add the primary semantic type
-					writer.object()
-							.key(JsonKeys.Origin.name())
-							.value(type.getOrigin().name())
-							.key(JsonKeys.ConfidenceLevel.name())
-							.value(type.getConfidenceLevel().name())
-							.key(JsonKeys.isPrimary.name())
-							.value(true);
-					
-					// Add the RDF literal type to show in the text box
-					String rdfLiteralType = alignmentColumnNode.getRdfLiteralType() == null? "" : 
-						alignmentColumnNode.getRdfLiteralType().getDisplayName();
-					String language = alignmentColumnNode.getLanguage() == null ? "" :
-									alignmentColumnNode.getLanguage();
-					writer.key(JsonKeys.rdfLiteralType.name()).value(rdfLiteralType);
-					writer.key(JsonKeys.language.name()).value(language);
-					
-//					String domainDisplayLabel = (domainNode.getLabel().getPrefix() != null && (!domainNode.getLabel().getPrefix().equals(""))) ?
-//							(domainNode.getLabel().getPrefix() + ":" + domainNode.getLocalId()) : domainNode.getLocalId();
-					if (!type.isClass()) {
-						writer
-							.key(JsonKeys.FullType.name()).value(type.getType().getUri())
-							.key(JsonKeys.DisplayLabel.name()).value(type.getType().getDisplayName())
-							.key(JsonKeys.DisplayRDFSLabel.name()).value(type.getType().getRdfsLabel())
-							.key(JsonKeys.DisplayRDFSComment.name()).value(type.getType().getRdfsComment())
-							.key(JsonKeys.DomainId.name()).value(domainNode.getId())
-							.key(JsonKeys.DomainUri.name()).value(domainNode.getUri())
-							.key(JsonKeys.DisplayDomainLabel.name()).value(domainNode.getDisplayId())
-							.key(JsonKeys.DomainRDFSLabel.name()).value(domainNode.getRdfsLabel())
-							.key(JsonKeys.DomainRDFSComment.name()).value(domainNode.getRdfsComment())
-							;
-					} else {
-						writer
-							.key(JsonKeys.FullType.name()).value(domainNode.getId())
-							.key(JsonKeys.DisplayLabel.name()).value(domainNode.getDisplayId())
-							.key(JsonKeys.DisplayRDFSLabel.name()).value(domainNode.getRdfsLabel())
-							.key(JsonKeys.DisplayRDFSComment.name()).value(domainNode.getRdfsComment())
-							.key(JsonKeys.DomainId.name()).value("")
-							.key(JsonKeys.DomainUri.name()).value("")
-							.key(JsonKeys.DisplayDomainLabel.name()).value("")
-							.key(JsonKeys.DomainRDFSLabel.name()).value("")
-							.key(JsonKeys.DomainRDFSComment.name()).value("")
-							;
-					}
-					
-					// Mark the special properties
-					writer
-						.key(JsonKeys.isMetaProperty.name())
-						.value(isMetaProperty(type.getType(), alignmentColumnNode));
-					
-					
-					writer.endObject();
-
-					// Iterate through the synonym semantic types
-					SynonymSemanticTypes synTypes = types
-							.getSynonymTypesForHNodeId(nodeId);
-
-					if (synTypes != null) {
-						for (SemanticType synType : synTypes.getSynonyms()) {
-							writer.object()
-								.key(JsonKeys.HNodeId.name()).value(synType.getHNodeId())
-								.key(JsonKeys.FullType.name()).value(synType.getType().getUri())
-								.key(JsonKeys.Origin.name()).value(synType.getOrigin().name())
-								.key(JsonKeys.ConfidenceLevel.name()).value(synType.getConfidenceLevel().name())
-								.key(JsonKeys.DisplayLabel.name()).value(synType.getType().getDisplayName())
-								.key(JsonKeys.DisplayRDFSLabel.name()).value(synType.getType().getRdfsLabel())
-								.key(JsonKeys.DisplayRDFSComment.name()).value(synType.getType().getRdfsComment())
-								.key(JsonKeys.isPrimary.name()).value(false);
-							if (!synType.isClass()) {
-								writer.key(JsonKeys.DomainUri.name()).value(synType.getDomain().getUri())
-									.key(JsonKeys.DomainId.name()).value("")
-									.key(JsonKeys.DisplayDomainLabel.name()).value(synType.getDomain().getDisplayName())
-									.key(JsonKeys.DomainRDFSLabel.name()).value(synType.getDomain().getRdfsLabel())
-									.key(JsonKeys.DomainRDFSComment.name()).value(synType.getDomain().getRdfsComment())
-									;
-							} else {
-								writer.key(JsonKeys.DomainId.name()).value("")
-									.key(JsonKeys.DomainUri.name()).value("")
-									.key(JsonKeys.DisplayDomainLabel.name()).value("")
-									.key(JsonKeys.DomainRDFSLabel.name()).value("")
-									.key(JsonKeys.DomainRDFSComment.name()).value("")
-									;
-							}
-							writer.endObject();
-						}
-					}
-					writer.endArray();
-				} else {
-					writer.key(JsonKeys.HNodeId.name()).value(nodeId);
-					writer.key(JsonKeys.SemanticTypesArray.name()).array()
-							.endArray();
-				}
+				ArrayList<SemanticType> semTypes = types.getSemanticTypeForHNodeId(nodeId);
+				writer.key(JsonKeys.HNodeId.name()).value(nodeId);
+				writer.key(JsonKeys.SemanticTypesArray.name()).array();
+				for(SemanticType type : semTypes)
+					writeType(type, writer, hNodeIdTocolumnNodeMap);
+				writer.endArray();
+				
 				
 				writer.endObject();
 			}
@@ -216,6 +113,72 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		}
 	}
 
+	private void writeType(SemanticType type, JSONWriter writer, Map<String, ColumnNode> hNodeIdTocolumnNodeMap) {
+		if (type != null && type.getConfidenceLevel() != SemanticType.ConfidenceLevel.Low) {
+			
+			ColumnNode alignmentColumnNode = hNodeIdTocolumnNodeMap.get(type.getHNodeId());
+			
+			if (alignmentColumnNode == null) {
+				logger.error("Column node or domain node not found in alignment." +
+						" (This should not happen conceptually!):" + type);
+				return;
+			}
+			
+			// Add the primary semantic type
+			writer.object()
+					.key(JsonKeys.Origin.name())
+					.value(type.getOrigin().name())
+					.key(JsonKeys.ConfidenceLevel.name())
+					.value(type.getConfidenceLevel().name())
+					.key(JsonKeys.isPrimary.name())
+					.value(true);
+			
+			// Add the RDF literal type to show in the text box
+			String rdfLiteralType = alignmentColumnNode.getRdfLiteralType() == null? "" : 
+				alignmentColumnNode.getRdfLiteralType().getDisplayName();
+			String language = alignmentColumnNode.getLanguage() == null ? "" :
+							alignmentColumnNode.getLanguage();
+			writer.key(JsonKeys.rdfLiteralType.name()).value(rdfLiteralType);
+			writer.key(JsonKeys.language.name()).value(language);
+			
+			String index = type.getDomainId().substring(type.getDomain().getUri().length());
+			String domainDisplayLabel = type.getDomain().getDisplayName() + index;
+			if (!type.isClass()) {
+				writer
+					.key(JsonKeys.FullType.name()).value(type.getType().getUri())
+					.key(JsonKeys.DisplayLabel.name()).value(type.getType().getDisplayName())
+					.key(JsonKeys.DisplayRDFSLabel.name()).value(type.getType().getRdfsLabel())
+					.key(JsonKeys.DisplayRDFSComment.name()).value(type.getType().getRdfsComment())
+					.key(JsonKeys.DomainId.name()).value(type.getDomainId())
+					.key(JsonKeys.DomainUri.name()).value(type.getDomain().getUri())
+					.key(JsonKeys.DisplayDomainLabel.name()).value(domainDisplayLabel)
+					.key(JsonKeys.DomainRDFSLabel.name()).value(type.getDomain().getRdfsLabel())
+					.key(JsonKeys.DomainRDFSComment.name()).value(type.getDomain().getRdfsComment())
+					;
+			} else {
+				writer
+					.key(JsonKeys.FullType.name()).value(type.getDomainId())
+					.key(JsonKeys.DisplayLabel.name()).value(domainDisplayLabel)
+					.key(JsonKeys.DisplayRDFSLabel.name()).value(type.getDomain().getRdfsLabel())
+					.key(JsonKeys.DisplayRDFSComment.name()).value(type.getDomain().getRdfsComment())
+					.key(JsonKeys.DomainId.name()).value("")
+					.key(JsonKeys.DomainUri.name()).value("")
+					.key(JsonKeys.DisplayDomainLabel.name()).value("")
+					.key(JsonKeys.DomainRDFSLabel.name()).value("")
+					.key(JsonKeys.DomainRDFSComment.name()).value("")
+					;
+			}
+			
+			// Mark the special properties
+			writer
+				.key(JsonKeys.isMetaProperty.name())
+				.value(isMetaProperty(type.getType(), alignmentColumnNode));
+			
+			
+			writer.endObject();
+		}
+	}
+	
 	private boolean isMetaProperty(Label type, ColumnNode alignmentColumnNode) {
 		// Check for the case of DataPropertyOfColumnLink and ColumnSubClassLink
 		boolean case1 =  (type.getUri().equals(DataPropertyOfColumnLink.getFixedLabel().getUri()) 
@@ -230,42 +193,6 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 				return true;
 		}
 		return false;
-	}
-
-	private Map<String, SemanticTypeNode> createDomainNodeMap() {
-		Map<String, SemanticTypeNode> hNodeIdToDomainNodeMap = new HashMap<>();
-		Set<Node> alignmentColumnNodes = alignment.getNodesByType(NodeType.ColumnNode);
-		if (alignmentColumnNodes == null)
-			return hNodeIdToDomainNodeMap;
-		for (Node cNode : alignmentColumnNodes) {
-			Set<LabeledLink> incomingLinks = alignment.getCurrentIncomingLinksToNode(cNode.getId());
-			if (incomingLinks != null && !incomingLinks.isEmpty()) {
-				LabeledLink incomingLink = alignment.getCurrentIncomingLinksToNode(cNode.getId()).iterator().next();
-				if (incomingLink!= null && incomingLink.getSource() instanceof InternalNode) {
-					String hNodeId = ((ColumnNode)cNode).getHNodeId();
-					if(incomingLink instanceof DataPropertyOfColumnLink || incomingLink instanceof ObjectPropertySpecializationLink) {
-						String id;
-						if(incomingLink instanceof DataPropertyOfColumnLink)
-							id = ((DataPropertyOfColumnLink)incomingLink).getSpecializedLinkId();
-						else 
-							id = ((ObjectPropertySpecializationLink)incomingLink).getSpecializedLinkId();
-						hNodeIdToDomainNodeMap.put(hNodeId, new SemanticTypeNode(id, id, id, 
-								incomingLink.getLabel().getRdfsLabel(), incomingLink.getLabel().getRdfsComment()));
-					} else {
-						InternalNode source = (InternalNode)incomingLink.getSource();
-						hNodeIdToDomainNodeMap.put(hNodeId, new SemanticTypeNode(
-								source.getId(), 
-								source.getUri(), 
-								source.getDisplayId(),
-								source.getLabel().getRdfsLabel(),
-								source.getLabel().getRdfsComment()
-								));
-					}
-				}
-			}
-			
-		}
-		return hNodeIdToDomainNodeMap;
 	}
 
 	private Map<String, ColumnNode> createColumnNodeMap() {
@@ -289,40 +216,5 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 		
 	}
 	
-	private class SemanticTypeNode {
-		private String id;
-		private String uri;
-		private String displayId;
-		private String rdfsLabel;
-		private String rdfsComment;
-		
-		SemanticTypeNode(String id, String uri, String displayId, String rdfsLabel, String rdfsComment) {
-			this.id = id;
-			this.uri = uri;
-			this.displayId = displayId;
-			this.rdfsLabel = rdfsLabel;
-			this.rdfsComment = rdfsComment;
-		}
-
-		public String getId() {
-			return id;
-		}
-
-		public String getUri() {
-			return uri;
-		}
-
-		public String getDisplayId() {
-			return displayId;
-		}
-		
-		public String getRdfsLabel() {
-			return rdfsLabel;
-		}
-		
-		public String getRdfsComment() {
-			return rdfsComment;
-		}
-		
-	}
+	
 }

@@ -110,6 +110,8 @@ public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
 			SemanticType type;
 			String domain = (String) value
 					.get(SemanticType.ClientJsonKeys.DomainUri.name());
+			String domainId = (String) value
+					.get(SemanticType.ClientJsonKeys.DomainId.name());
 			String fullType = (String) value
 					.get(SemanticType.ClientJsonKeys.FullType.name());
 			
@@ -119,7 +121,7 @@ public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
 				domainName = ontMgr.getUriLabel(domain);
 
 			if (typeName != null) {
-				type = new SemanticType(hNodeId, typeName, domainName,
+				type = new SemanticType(hNodeId, typeName, domainName, domainId, 
 						Origin.User, 1.00);
 				worksheet.getSemanticTypes().addType(type);
 			}

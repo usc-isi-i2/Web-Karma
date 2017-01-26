@@ -1092,7 +1092,8 @@ public class Alignment implements OntologyUpdateListener {
 						
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
-						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0);
+						newLink.getLabel(), source.getLabel(), source.getId(),
+						SemanticType.Origin.User, 1.0);
 				semanticTypes.add(st);
 			}
 			

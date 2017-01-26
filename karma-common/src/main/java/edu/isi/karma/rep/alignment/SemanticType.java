@@ -37,6 +37,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	private final String hNodeId;
 	private final Label type;
 	private final Label domain;
+	private final String domainId;
 	private final Origin origin; 
 	private final ConfidenceLevel confidenceLevel;
 	private Double confidenceScore;
@@ -54,11 +55,12 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		isPrimary, DomainUri, DomainId, FullType
 	}
 	
-	public SemanticType(String hNodeId, Label type, Label domain, Origin origin, Double probability) {
+	public SemanticType(String hNodeId, Label type, Label domain, String domainId, Origin origin, Double probability) {
 		this.hNodeId = hNodeId;
 		this.type = type;
 		this.origin = origin;
 		this.domain = domain;
+		this.domainId = domainId;
 		this.confidenceScore = probability;
 		
 		if(probability > 0.8)
@@ -75,6 +77,10 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 
 	public Label getDomain() {
 		return domain;
+	}
+	
+	public String getDomainId() {
+		return domainId;
 	}
 	
 	public Label getType() {
@@ -144,6 +150,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		return this.getDomain().getUri() + "|" + this.getType().getUri();
 	}
 
+	
 	@Override
 	public int compareTo(SemanticType o) {
 		if (this.confidenceScore == null && o.confidenceScore == null)

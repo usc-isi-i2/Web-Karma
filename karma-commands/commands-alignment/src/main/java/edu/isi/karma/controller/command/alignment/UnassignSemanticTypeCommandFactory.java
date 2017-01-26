@@ -33,16 +33,13 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class UnassignSemanticTypeCommandFactory extends JSONInputCommandFactory {
 	private enum Arguments {
-		hNodeId, worksheetId
+		hNodeId, worksheetId, edges
 	}
 
 	@Override
 	public Command createCommand(HttpServletRequest request,
 			Workspace workspace) {
-		String worksheetId = request.getParameter(Arguments.worksheetId.name());
-		String hNodeId = request.getParameter(Arguments.hNodeId.name());
-		return new UnassignSemanticTypeCommand(getNewId(workspace), Command.NEW_MODEL, 
-				hNodeId, worksheetId);
+		return null;
 	}
 
 	@Override
@@ -50,6 +47,7 @@ public class UnassignSemanticTypeCommandFactory extends JSONInputCommandFactory 
 			throws JSONException, KarmaException {
 		String hNodeId = HistoryJsonUtil.getStringValue(Arguments.hNodeId.name(), inputJson);
 		String worksheetId = HistoryJsonUtil.getStringValue(Arguments.worksheetId.name(), inputJson);
+		
 		UnassignSemanticTypeCommand comm = new UnassignSemanticTypeCommand(getNewId(workspace), 
 				model, hNodeId, worksheetId); 
 		comm.setInputParameterJson(inputJson.toString());

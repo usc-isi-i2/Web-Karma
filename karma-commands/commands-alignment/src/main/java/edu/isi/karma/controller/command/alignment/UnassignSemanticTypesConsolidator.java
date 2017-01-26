@@ -6,8 +6,6 @@ import edu.isi.karma.controller.history.CommandConsolidator;
 import edu.isi.karma.rep.Workspace;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.*;
 

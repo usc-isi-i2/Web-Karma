@@ -116,7 +116,7 @@ var SetSemanticTypeDialog = (function() {
 				// Populate the table with existing types and CRF suggested types
 				$.each(existingTypes, function(index, type) {
 					// Take care of the special meta properties that are set through the advanced options
-					addSemTypeOrAdvOption(type, true, true, false);
+					addSemTypeOrAdvOption(type, type["isPrimary"], true, false);
 				});
 				if (suggestedTypes) {
 					$.each(suggestedTypes["Labels"], function(index, type) {

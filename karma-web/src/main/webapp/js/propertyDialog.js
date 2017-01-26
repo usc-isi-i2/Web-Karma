@@ -85,32 +85,43 @@ var PropertyDialog = (function() {
 			if (confirm("Are you sure you wish to delete the link?")) {
 				var info;
 				hide();
-				if(targetNodeType == "ColumnNode") {
-					info = generateInfoObject(worksheetId, targetNodeId, "UnassignSemanticTypeCommand");
-					info["newInfo"] = JSON.stringify(info['newInfo']);
-				} else {
-					info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
+				var link = {"uri": propertyUri, "source": {"id": sourceNodeId}, "target": {"id": targetNodeId}}
+				removeSemanticLink(worksheetId, alignmentId, targetNodeId, targetNodeType, link);
+				// if(targetNodeType == "ColumnNode") {
+				// 	info = generateInfoObject(worksheetId, targetNodeId, "UnassignSemanticTypeCommand");
+				// 	var edges = [];
+				// 	var oldEdgeObj = {};
+				// 	oldEdgeObj["edgeSourceId"] = sourceNodeId;
+				// 	oldEdgeObj["edgeTargetId"] = targetNodeId;
+				// 	oldEdgeObj["edgeId"] = propertyUri;
+				// 	edges.push(oldEdgeObj);
+				// 	newInfo.push(getParamObject("edges", edges, "other"));
+				// 	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+				// 	info["newInfo"] = JSON.stringify(info['newInfo']);
+				// 	info["edges"] = edges;
+				// } else {
+				// 	info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
 	
-					// Prepare the input for command
-					var newInfo = info['newInfo'];
+				// 	// Prepare the input for command
+				// 	var newInfo = info['newInfo'];
 	
-					// Put the old edge information
-					var initialEdges = [];
-					var oldEdgeObj = {};
-					oldEdgeObj["edgeSourceId"] = sourceNodeId;
-					oldEdgeObj["edgeTargetId"] = targetNodeId;
-					oldEdgeObj["edgeId"] = propertyUri;
-					initialEdges.push(oldEdgeObj);
-					newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
-					newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-					var newEdges = [];
-					newInfo.push(getParamObject("newEdges", newEdges, "other"));
-					info["newInfo"] = JSON.stringify(newInfo);
-					info["newEdges"] = newEdges;
-				}
+				// 	// Put the old edge information
+				// 	var initialEdges = [];
+				// 	var oldEdgeObj = {};
+				// 	oldEdgeObj["edgeSourceId"] = sourceNodeId;
+				// 	oldEdgeObj["edgeTargetId"] = targetNodeId;
+				// 	oldEdgeObj["edgeId"] = propertyUri;
+				// 	initialEdges.push(oldEdgeObj);
+				// 	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
+				// 	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
+				// 	var newEdges = [];
+				// 	newInfo.push(getParamObject("newEdges", newEdges, "other"));
+				// 	info["newInfo"] = JSON.stringify(newInfo);
+				// 	info["newEdges"] = newEdges;
+				// }
 
-				showLoading(worksheetId);
-				var returned = sendRequest(info, worksheetId);
+				// showLoading(worksheetId);
+				// var returned = sendRequest(info, worksheetId);
 			}
 			event.preventDefault();
 		}
