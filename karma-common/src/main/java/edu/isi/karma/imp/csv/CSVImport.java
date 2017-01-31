@@ -1,6 +1,7 @@
 package edu.isi.karma.imp.csv;
 
 import com.opencsv.CSVReader;
+
 import edu.isi.karma.imp.Import;
 import edu.isi.karma.rep.*;
 import edu.isi.karma.rep.HNode.HNodeType;
@@ -8,6 +9,7 @@ import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.rep.metadata.WorksheetProperties.SourceTypes;
 import edu.isi.karma.util.EncodingDetector;
 import edu.isi.karma.webserver.KarmaException;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -28,6 +30,8 @@ public class CSVImport extends Import {
     protected final String encoding;
     protected final int maxNumLines;
     protected final JSONArray columnsJson;
+    protected final String sourceName;
+    
     public CSVImport(int headerRowIndex, int dataStartRowIndex,
             char delimiter, char quoteCharacter, String encoding,
             int maxNumLines,
@@ -39,6 +43,7 @@ public class CSVImport extends Import {
         super(sourceName, workspace, encoding);
         this.headerRowIndex = headerRowIndex;
         this.dataStartRowIndex = dataStartRowIndex;
+        this.sourceName = sourceName;
         this.delimiter = delimiter;
         // Trick:
         // Passing quoteCharacter as $ signals that we don't want any quote character
@@ -56,6 +61,10 @@ public class CSVImport extends Import {
         this.is = is;
         this.columnsJson = columnsJson;
         
+    }
+    
+    public CSVImport duplicate() throws IOException {
+    	return new CSVImport(headerRowIndex, dataStartRowIndex, delimiter, quoteCharacter, encoding, maxNumLines, sourceName, is, workspace, columnsJson);
     }
     
     @Override

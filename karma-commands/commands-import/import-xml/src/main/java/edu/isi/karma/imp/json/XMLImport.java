@@ -54,7 +54,10 @@ public class XMLImport extends Import {
         }
     }
 
-
+    public Import duplicate() throws IOException {
+    	return jsonImport.duplicate();
+    }
+    
     @Override
     public Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException {
         jsonImport.generateWorksheet();

@@ -48,6 +48,7 @@ import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -299,39 +300,42 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 			boolean result = true;//utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
 			if (tripleStoreUrl != null && tripleStoreUrl.trim().compareTo("") != 0) {
-				UriBuilder builder = UriBuilder.fromPath(modelFileName);
-				String url = RESTserverAddress + "/R2RMLMapping/local/" + builder.build().toString();
-				SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
-				SaveR2RMLModelCommand cmd = factory.createCommand(model, workspace, url, tripleStoreUrl, graphName, "URL");
-				cmd.doIt(workspace);
-				result &= cmd.getSuccessful();
-				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);
-				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, graphName);
-				workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, tripleStoreUrl);
+				try {
+					UriBuilder builder = UriBuilder.fromPath(modelFileName);
+					String url = RESTserverAddress + "/R2RMLMapping/local/" + builder.build().toString();
+					SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
+					SaveR2RMLModelCommand cmd = factory.createCommand(model, workspace, url, tripleStoreUrl, graphName, "URL");
+					cmd.doIt(workspace);
+					result &= cmd.getSuccessful();
+					workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);
+					workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, graphName);
+					workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, tripleStoreUrl);
+				} catch(Exception e) {
+					logger.error("Error pushing model to triple store", e);
+					result = false;
+				}
 			}
 			final String temp = worksheetId;
-			if (result) {
-				logger.info("Saved model to triple store");
-				uc.add(new AbstractUpdate() {
-					public void generateJson(String prefix, PrintWriter pw,	
-							VWorkspace vWorkspace) {
-						JSONObject outputObject = new JSONObject();
-						try {
-							outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
+			
+			uc.add(new AbstractUpdate() {
+				public void generateJson(String prefix, PrintWriter pw,	
+						VWorkspace vWorkspace) {
+					JSONObject outputObject = new JSONObject();
+					try {
+						outputObject.put(JsonKeys.updateType.name(), "PublishR2RMLUpdate");
 
-							outputObject.put(JsonKeys.fileUrl.name(), contextParameters.getParameterValue(
-									ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
-							outputObject.put(JsonKeys.worksheetId.name(), temp);
-							pw.println(outputObject.toString());
-						} catch (JSONException e) {
-							logger.error("Error occured while generating JSON!");
-						}
+						outputObject.put(JsonKeys.fileUrl.name(), contextParameters.getParameterValue(
+								ContextParameter.R2RML_PUBLISH_RELATIVE_DIR) + modelFileName);
+						outputObject.put(JsonKeys.worksheetId.name(), temp);
+						pw.println(outputObject.toString());
+					} catch (JSONException e) {
+						logger.error("Error occured while generating JSON!");
 					}
-				});
-				return uc;
-			} 
-
-			return new UpdateContainer(new ErrorUpdate("Error occured while generating R2RML model!"));
+				}
+			});
+			if(!result)
+				uc.add(new TrivialErrorUpdate("Error pushing model to Triple Store"));
+			return uc;
 
 		} catch (Exception e) {
 			logger.error("Error occured while generating R2RML Model!", e);
