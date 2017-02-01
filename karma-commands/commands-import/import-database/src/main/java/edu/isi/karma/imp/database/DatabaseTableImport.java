@@ -52,6 +52,7 @@ public class DatabaseTableImport extends Import {
     private String password;
     private String dBorSIDName;
     private String tableName;
+    private String encoding;
 
     //private static Logger logger = LoggerFactory.getLogger(DatabaseTableImport.class);
     public DatabaseTableImport(DBType dbType, String hostname, int portnumber,
@@ -65,8 +66,12 @@ public class DatabaseTableImport extends Import {
         this.password = password;
         this.dBorSIDName = dBorSIDName;
         this.tableName = tableName;
+        this.encoding = encoding;
     }
 
+    public DatabaseTableImport duplicate() {
+    	return new DatabaseTableImport(dbType, hostname, portnumber, username, password, dBorSIDName, tableName, workspace, encoding);
+    }
 
     @Override
     public Worksheet generateWorksheet() throws KarmaException {

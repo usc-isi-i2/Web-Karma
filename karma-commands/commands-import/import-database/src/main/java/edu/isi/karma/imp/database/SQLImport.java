@@ -31,6 +31,7 @@ public class SQLImport extends Import {
     private String dBorSIDName;
     private String query;
     private Workspace workspace;
+    private String encoding;
     
     //private static Logger logger = LoggerFactory.getLogger(DatabaseTableImport.class);
     public SQLImport(DBType dbType, String hostname, int portnumber,
@@ -45,9 +46,13 @@ public class SQLImport extends Import {
         this.dBorSIDName = dBorSIDName;
         this.query = query;
         this.workspace = workspace;
+        this.encoding = encoding;
     }
 
-
+    public SQLImport duplicate() {
+    	return new SQLImport(dbType, hostname, portnumber, username, password, dBorSIDName, query, workspace, encoding);
+    }
+    
     @Override
     public Worksheet generateWorksheet() throws KarmaException {
         /**

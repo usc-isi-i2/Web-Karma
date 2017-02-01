@@ -385,17 +385,26 @@ function WorksheetOptions(wsId, wsTitle) {
 		info['tripleStoreUrl'] = $('#txtModel_URL').text();
 		showLoading(info["worksheetId"]);
 		var returned = sendRequest(info, worksheetId,
-			function() {
-				var info = generateInfoObject(worksheetId, "", "PublishReportCommand");
-				showLoading(info["worksheetId"]);
-				var returned = sendRequest(info, worksheetId, function() {
-					publishToGithub(event);
+			function(data) {
+				var newWorksheetId = worksheetId;
+				$.each(data["elements"], function(i, element) {
+					if(element) {
+						if (element["updateType"] == "PublishR2RMLUpdate") {
+							newWorksheetId = element["worksheetId"];
+						}
+					}
+				});
+
+				var info = generateInfoObject(newWorksheetId, "", "PublishReportCommand");
+				showLoading(newWorksheetId);
+				var returned = sendRequest(info, newWorksheetId, function(json) {
+					publishToGithub(newWorksheetId);
 				});
 			});
 		return false;
 	}
 
-	function publishToGithub(event) {
+	function publishToGithub(worksheetId) {
 		var repo = $.cookie("github-url-" + worksheetId);
 		var auth = Settings.getInstance().getGithubAuth();
 		if(repo) {

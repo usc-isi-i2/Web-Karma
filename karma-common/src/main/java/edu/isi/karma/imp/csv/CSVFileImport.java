@@ -32,6 +32,8 @@ import edu.isi.karma.rep.Workspace;
 
 public class CSVFileImport extends CSVImport {
 
+	private String filename;
+	
     public CSVFileImport(int headerRowIndex, int dataStartRowIndex,
             char delimiter, char quoteCharacter, String encoding,
             int maxNumLines,
@@ -43,7 +45,11 @@ public class CSVFileImport extends CSVImport {
     			quoteCharacter,encoding, maxNumLines, 
     			csvFile.getName(), new FileInputStream(csvFile), 
     			workspace, columnsJson);
-       
+       filename = csvFile.getAbsolutePath();
     }
 
+    public CSVFileImport duplicate() throws IOException {
+    	return new CSVFileImport(headerRowIndex, dataStartRowIndex, delimiter, quoteCharacter, encoding, maxNumLines, 
+    			new File(filename), workspace, columnsJson);
+    }
 }
