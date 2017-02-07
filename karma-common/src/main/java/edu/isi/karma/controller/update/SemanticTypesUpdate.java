@@ -59,7 +59,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 	public enum JsonKeys {
 		HNodeId, FullType, ConfidenceLevel, Origin, DisplayLabel, DisplayRDFSLabel, DisplayRDFSComment,
 		DisplayDomainLabel, DomainRDFSLabel, DomainRDFSComment, DomainId, DomainUri, SemanticTypesArray, isPrimary, isPartOfKey, 
-		Types, isMetaProperty, rdfLiteralType, language
+		Types, isMetaProperty, rdfLiteralType, language, isProvenance
 	}
 
 	private static Logger logger = LoggerFactory
@@ -154,6 +154,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 					.key(JsonKeys.DisplayDomainLabel.name()).value(domainDisplayLabel)
 					.key(JsonKeys.DomainRDFSLabel.name()).value(type.getDomain().getRdfsLabel())
 					.key(JsonKeys.DomainRDFSComment.name()).value(type.getDomain().getRdfsComment())
+					.key(JsonKeys.isProvenance.name()).value(type.isProvenance())
 					;
 			} else {
 				writer
@@ -166,6 +167,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 					.key(JsonKeys.DisplayDomainLabel.name()).value("")
 					.key(JsonKeys.DomainRDFSLabel.name()).value("")
 					.key(JsonKeys.DomainRDFSComment.name()).value("")
+					.key(JsonKeys.isProvenance.name()).value(type.isProvenance())
 					;
 			}
 			

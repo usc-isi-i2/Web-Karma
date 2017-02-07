@@ -34,7 +34,9 @@ import edu.isi.karma.config.ModelingConfigurationRegistry;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
+import edu.isi.karma.controller.command.alignment.SetSemanticTypeCommandFactory.Arguments;
 import edu.isi.karma.controller.command.selection.SuperSelection;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
@@ -51,6 +53,7 @@ import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.rep.alignment.SemanticType;
 import edu.isi.karma.rep.alignment.SemanticType.ClientJsonKeys;
 import edu.isi.karma.rep.alignment.SynonymSemanticTypes;
@@ -69,6 +72,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 	private String labelName = "";
 	private ArrayList<SemanticType> oldType;
+	private boolean hasProvenanceType;
 	
 	protected SetSemanticTypeCommand(String id, String model, String worksheetId, String hNodeId,
 									 JSONArray typesArr, boolean trainAndShowUpdates,
@@ -80,6 +84,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		this.typesArr = typesArr;
 		this.rdfLiteralType = rdfLiteralType;
 		this.language = language;
+		this.hasProvenanceType = false;
 		addTag(CommandTag.SemanticType);
 	}
 
@@ -154,7 +159,63 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		// Save the old SemanticType object and CRF Model for undo
 		oldType = worksheet.getSemanticTypes().getSemanticTypeForHNodeId(hNodeId);
 		oldSynonymTypes = worksheet.getSemanticTypes().getSynonymTypesForHNodeId(hNodeId);
+		
+		//Remove duplicates from typesSet. Keep the last ones
+		HashSet<String> typesSet = new HashSet<>();
+		JSONArray newTypesArr = new JSONArray();
+		for (int j = typesArr.length()-1; j >=0; j--) {
+			JSONObject type = typesArr.getJSONObject(j);
+			String typeKey = type.getString(ClientJsonKeys.FullType.name()) + "-" + type.getString(ClientJsonKeys.DomainId.name());
+			if(!typesSet.contains(typeKey)) {
+				typesSet.add(typeKey);
+				newTypesArr.put(type);
+			}
+		}
+		this.typesArr = newTypesArr;
+		
+		/*** Preprocess provenance types ***/
+		JSONArray provTypes = new JSONArray();
+		for (int i = 0; i < typesArr.length(); i++) {
+			try {
+				JSONObject type = typesArr.getJSONObject(i);
+				boolean isProvenance = false;
+				if(type.has(ClientJsonKeys.isProvenance.name()))
+					isProvenance = type.getBoolean(ClientJsonKeys.isProvenance.name());
 				
+				if(isProvenance) {
+					this.hasProvenanceType = true;
+					Set<Node> internalNodes = alignment.getNodesByType(NodeType.InternalNode);
+					for(Node internalNode : internalNodes) {
+						String nodeId = internalNode.getId();
+						Set<LabeledLink> inLinks = alignment.getIncomingLinksInTree(nodeId);
+						Set<LabeledLink> outLinks = alignment.getOutgoingLinksInTree(nodeId);
+						if((inLinks != null && inLinks.size() > 0) 
+								|| (outLinks != null && outLinks.size() > 0)) {
+							String[] names = (String[]) type.keySet().toArray(new String[0]);
+							JSONObject newType = new JSONObject(type, names);
+							newType.put(ClientJsonKeys.DomainId.name(), internalNode.getId());
+							newType.put(ClientJsonKeys.DomainUri.name(), internalNode.getLabel().getUri());
+							String newTypeStr = newType.getString(ClientJsonKeys.FullType.name()) + "-" + newType.getString(ClientJsonKeys.DomainId.name());
+							if(!typesSet.contains(newTypeStr)) {
+								typesSet.add(newTypeStr);
+								provTypes.put(newType);
+							}
+						}
+					}
+				}
+			} catch (JSONException e) {
+				logger.error("JSON Exception occured", e);
+			}
+		}
+		//Add the new provenance types to the typesArr 
+		for(int i=0; i<provTypes.length(); i++)
+			typesArr.put(provTypes.getJSONObject(i));
+		
+		//Add the new types back into the inputParameters
+		JSONArray inputParams = new JSONArray(this.getInputParameterJson());
+		HistoryJsonUtil.setArgumentValue(Arguments.SemanticTypesArray.name(), typesArr, inputParams);
+		this.setInputParameterJson(inputParams.toString());
+		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		ArrayList<SemanticType> typesList = new ArrayList<>();
 		ArrayList<SemanticType> synonymTypesList = new ArrayList<>();
@@ -193,6 +254,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 							"Error occured while setting semantic type!"));					
 				}
 
+				boolean isProvenance = false;
+				if(type.has(ClientJsonKeys.isProvenance.name()))
+					isProvenance = type.getBoolean(ClientJsonKeys.isProvenance.name());
+				
 				Node source = alignment.getNodeById(sourceId);
 				if (source == null) {
 					
@@ -215,8 +280,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 								"Error occured while setting semantic type!"));						
 					}
 				}
-				newLink = alignment.addDataPropertyLink(source, columnNode, linkLabel);
-				SemanticType newType = new SemanticType(hNodeId, linkLabel, source.getLabel(), source.getId(), SemanticType.Origin.User, 1.0);
+				newLink = alignment.addDataPropertyLink(source, columnNode, linkLabel, isProvenance);
+				SemanticType newType = new SemanticType(hNodeId, linkLabel, source.getLabel(), source.getId(),
+											isProvenance,
+											SemanticType.Origin.User, 1.0);
 				
 				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();
 				boolean duplicateSemanticType = false;
@@ -304,13 +371,6 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		return c;
 	}
 
-	public void updateField(SetSemanticTypeCommand command) {
-		this.typesArr = new JSONArray(command.typesArr.toString());
-		this.trainAndShowUpdates = command.trainAndShowUpdates;
-		this.rdfLiteralType = command.rdfLiteralType;
-
-	}
-
 	@Override
 	public Set<String> getInputColumns() {
 		return new HashSet<>(Arrays.asList(hNodeId));
@@ -321,4 +381,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		return new HashSet<>(Arrays.asList(hNodeId));
 	}
 
+	public boolean hasProvenanceType() {
+		return this.hasProvenanceType;
+	}
 }

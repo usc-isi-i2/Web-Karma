@@ -26,7 +26,7 @@
 				            </div>
 					  		<div id="semanticTypesTableDiv">
 						  		<table id="semanticTypesTable" class="table table-striped table-condensed">
-						  			<tr><th /><th /><th>Primary</th><th/><th/></tr>
+						  			<tr><th /><th width="60%"></th><th>Primary</th><th class="sem-provenance">Provenance</th><th/><th/></tr>
 					  			</table>
 					  		</div>
 				  		</div>
@@ -346,13 +346,22 @@
 			<div class="form-group">
 				<div class="checkbox">
 				  	<label>
-					    <input type="checkbox" id="propertyIsSubclass">
+					    <input type="checkbox" id="propertyIsSubclass" name='subclass'>
 					    specifies class for node
 				  	</label>
 				</div>
 			</div>
 		</div>			  	
-			
+		<div class="row">
+			<div class="form-group">
+				<div class="checkbox">
+				  	<label>
+					    <input type="checkbox" id="propertyIsProvenance" name='provenance'>
+					    specifies provenance
+				  	</label>
+				</div>
+			</div>
+		</div>	
 		<div class="row">
 			<button type="submit" class="btn btn-primary" id="btnSaveAdvanceOptions">Save</button>
 		</div>

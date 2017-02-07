@@ -122,7 +122,7 @@ public class SuggestAutoModelCommandFactory extends JSONInputCommandFactory {
 
 			if (typeName != null) {
 				type = new SemanticType(hNodeId, typeName, domainName, domainId, 
-						Origin.User, 1.00);
+						false, Origin.User, 1.00);
 				worksheet.getSemanticTypes().addType(type);
 			}
 		}

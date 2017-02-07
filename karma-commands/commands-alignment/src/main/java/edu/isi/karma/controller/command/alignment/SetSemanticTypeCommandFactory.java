@@ -37,7 +37,7 @@ import edu.isi.karma.webserver.KarmaException;
 
 public class SetSemanticTypeCommandFactory extends JSONInputCommandFactory {
 
-	private enum Arguments {
+	protected enum Arguments {
 		worksheetId, hNodeId,
 		SemanticTypesArray, trainAndShowUpdates, rdfLiteralType, language,
 		selectionName

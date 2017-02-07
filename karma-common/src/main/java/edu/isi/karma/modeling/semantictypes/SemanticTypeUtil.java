@@ -304,7 +304,7 @@ public class SemanticTypeUtil {
 			Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
 			if (propertyLabel == null) continue;
 
-			SemanticType semanticType = new SemanticType(columnNode.getHNodeId(), propertyLabel, domainLabel, null, Origin.TfIdfModel, confidence);
+			SemanticType semanticType = new SemanticType(columnNode.getHNodeId(), propertyLabel, domainLabel, null, false, Origin.TfIdfModel, confidence);
 			logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
 			suggestedSemanticTypes.add(semanticType);
 		}
@@ -339,7 +339,7 @@ public class SemanticTypeUtil {
 					Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
 					if (propertyLabel == null) continue;
 	
-					SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, null, Origin.TfIdfModel, confidence);
+					SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, null, false, Origin.TfIdfModel, confidence);
 					logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
 					suggestedSemanticTypes.add(semanticType);
 				}

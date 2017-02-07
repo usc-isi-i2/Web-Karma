@@ -10,7 +10,7 @@ var PropertyDialog = (function() {
 
 		var worksheetId;
 		var alignmentId;
-		var propertyId, propertyUri, propertyLabel, propertyRdfsLabel, propertyRdfsComment;
+		var propertyId, propertyUri, propertyLabel, propertyRdfsLabel, propertyRdfsComment, propertyIsProvenance;
 		var sourceNodeId, sourceLabel, sourceRdfsLabel, sourceRdfsComment, sourceDomain, sourceId, sourceNodeType, sourceIsUri;
 		var targetNodeId, targetLabel, targetRdfsLabel, targetRdfsComment, targetDomain, targetId, targetNodeType, targetIsUri;
 		var propertyTabs;
@@ -87,41 +87,6 @@ var PropertyDialog = (function() {
 				hide();
 				var link = {"uri": propertyUri, "source": {"id": sourceNodeId}, "target": {"id": targetNodeId}}
 				removeSemanticLink(worksheetId, alignmentId, targetNodeId, targetNodeType, link);
-				// if(targetNodeType == "ColumnNode") {
-				// 	info = generateInfoObject(worksheetId, targetNodeId, "UnassignSemanticTypeCommand");
-				// 	var edges = [];
-				// 	var oldEdgeObj = {};
-				// 	oldEdgeObj["edgeSourceId"] = sourceNodeId;
-				// 	oldEdgeObj["edgeTargetId"] = targetNodeId;
-				// 	oldEdgeObj["edgeId"] = propertyUri;
-				// 	edges.push(oldEdgeObj);
-				// 	newInfo.push(getParamObject("edges", edges, "other"));
-				// 	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-				// 	info["newInfo"] = JSON.stringify(info['newInfo']);
-				// 	info["edges"] = edges;
-				// } else {
-				// 	info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
-	
-				// 	// Prepare the input for command
-				// 	var newInfo = info['newInfo'];
-	
-				// 	// Put the old edge information
-				// 	var initialEdges = [];
-				// 	var oldEdgeObj = {};
-				// 	oldEdgeObj["edgeSourceId"] = sourceNodeId;
-				// 	oldEdgeObj["edgeTargetId"] = targetNodeId;
-				// 	oldEdgeObj["edgeId"] = propertyUri;
-				// 	initialEdges.push(oldEdgeObj);
-				// 	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
-				// 	newInfo.push(getParamObject("alignmentId", alignmentId, "other"));
-				// 	var newEdges = [];
-				// 	newInfo.push(getParamObject("newEdges", newEdges, "other"));
-				// 	info["newInfo"] = JSON.stringify(newInfo);
-				// 	info["newEdges"] = newEdges;
-				// }
-
-				// showLoading(worksheetId);
-				// var returned = sendRequest(info, worksheetId);
 			}
 			event.preventDefault();
 		}
@@ -129,11 +94,12 @@ var PropertyDialog = (function() {
 		function advanceOptionsUI(event) {
 			initRightDiv("Advanced Options");
 			PropertyAdvanceOptionsDialog.getInstance().show(propertyLiteralType, 
-						propertyLanguage, propertyIsSubClass, 
+						propertyLanguage, propertyIsSubClass, propertyIsProvenance,
 						rightDiv, saveAdvanceOptions);
+			event.preventDefault();
 		}
 
-		function saveAdvanceOptions(literalType, language, isSubclassOfClass) {
+		function saveAdvanceOptions(literalType, language, isSubclassOfClass, isProvenance) {
 			if(isSubclassOfClass) {
 				setSubClassSemanticType(worksheetId, targetId, {"uri": sourceDomain, 
 					"id": sourceId, "label":sourceLabel}, literalType, language);
@@ -141,6 +107,7 @@ var PropertyDialog = (function() {
 				var type = {};
 				type.label = propertyLabel;
 				type.uri = propertyUri;
+				type.isProvenance = isProvenance;
 				type.source = {"uri": sourceDomain, "label": sourceLabel, "id": sourceId};
 				type.target = {"uri": targetDomain, "label": targetLabel, "id": targetId};
 				setSemanticType(worksheetId, targetId, type, literalType, language);
@@ -157,6 +124,7 @@ var PropertyDialog = (function() {
 						var type = {};
 						type.label = propertyLabel;
 						type.uri = propertyUri;
+						type.isProvenance = propertyIsProvenance;
 						type.source = clazz;
 						type.target = {"uri": targetDomain, "label": targetLabel, "id": targetId};
 						setSemanticType(worksheetId, targetId, type, propertyLiteralType, propertyLanguage);
@@ -349,7 +317,7 @@ var PropertyDialog = (function() {
 			rightDiv.removeClass("col-sm-10").addClass("col-sm-12");
 		}
 
-		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, p_propertyLabel, p_propertyRdfsLabel, p_propertyRdfsComment, p_propertyStatus,
+		function show(p_worksheetId, p_alignmentId, p_propertyId, p_propertyUri, p_propertyLabel, p_propertyRdfsLabel, p_propertyRdfsComment, p_propertyIsProvenance, p_propertyStatus,
 			p_sourceNodeId, p_sourceNodeType, p_sourceLabel, p_sourceRdfsLabel, p_sourceRdfsComment, p_sourceDomain, p_sourceId, p_sourceIsUri,
 			p_targetNodeId, p_targetNodeType, p_targetLabel, p_targetRdfsLabel, p_targetRdfsComment, p_targetDomain, p_targetId, p_targetIsUri,
 			event) {
@@ -361,6 +329,7 @@ var PropertyDialog = (function() {
 			propertyLabel = p_propertyLabel;
 			propertyRdfsLabel = p_propertyRdfsLabel;
 			propertyRdfsComment = p_propertyRdfsComment;
+			propertyIsProvenance = p_propertyIsProvenance;
 
 			sourceNodeId = p_sourceNodeId;
 			sourceLabel = p_sourceLabel;
@@ -466,7 +435,10 @@ var PropertyAdvanceOptionsDialog = (function() {
 				var literalType = $("#propertyLiteralType", dialog).val();
 				var language = $("#propertyLanguage", dialog).val();
 				var isSubclassOfClass = $("#propertyIsSubclass", dialog).is(':checked');
-				callback(literalType, language, isSubclassOfClass);	
+				var isProvenance = $("#propertyIsProvenance", dialog).is(':checked');
+				callback(literalType, language, isSubclassOfClass, isProvenance);
+				e.preventDefault();
+				return false;	
 			});	
 			$("#propertyLiteralType").typeahead( 
 				{source:LITERAL_TYPE_ARRAY, minLength:0, items:"all"});
@@ -474,12 +446,13 @@ var PropertyAdvanceOptionsDialog = (function() {
 				{source:LANGUAGE_ARRAY, minLength:0, items:"all"});
 		}
 
-		function show(rdfLiteralType, language, isSubClass, div, p_callback) {
+		function show(rdfLiteralType, language, isSubClass, isProvenance, div, p_callback) {
 			callback = p_callback;
 
 			$("#propertyLiteralType", dialog).val(rdfLiteralType);
 			$("#propertyLanguage", dialog).val(language);
-			$("div#propertyAdvanceOptions input:checkbox").prop('checked', isSubClass);
+			$("#propertyIsSubclass", dialog).prop('checked', isSubClass);
+			$("#propertyIsProvenance", dialog).prop('checked', isProvenance);
 			
 			div.append(dialog);
 			dialog.show();

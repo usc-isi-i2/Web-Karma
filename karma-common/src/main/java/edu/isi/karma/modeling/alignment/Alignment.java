@@ -340,10 +340,10 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// AddLink methods
 
-	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label) {
+	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean isProvenance) {
 		
 		String id = LinkIdFactory.getLinkId(label.getUri(), source.getId(), target.getId());	
-		DataPropertyLink link = new DataPropertyLink(id, label);
+		DataPropertyLink link = new DataPropertyLink(id, label, isProvenance);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}
@@ -1093,6 +1093,7 @@ public class Alignment implements OntologyUpdateListener {
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
 						newLink.getLabel(), source.getLabel(), source.getId(),
+						false,
 						SemanticType.Origin.User, 1.0);
 				semanticTypes.add(st);
 			}

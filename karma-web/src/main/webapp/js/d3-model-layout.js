@@ -286,7 +286,10 @@ D3ModelLayout = function(p_htmlElement, p_cssClass, p_width, p_worksheetId) {
 				return d.source.id + "link" + d.target.id;
 			})
 			.attr("class", function(d) {
-				return "link " + d.linkType + " " + d.linkStatus;
+				var provClass = ""
+				if(d.isProvenance)
+					provClass = " provenanceLink"
+				return "link " + d.linkType + " " + d.linkStatus + provClass;
 			})
 			.attr("fill", "none");
 		links.exit()
@@ -1265,6 +1268,9 @@ D3ModelLayout = function(p_htmlElement, p_cssClass, p_width, p_worksheetId) {
 			edge.linkStatus = d.linkStatus;
 			edge.rdfsLabel = d.rdfsLabel;
 			edge.rdfsComment = d.rdfsComment;
+			edge.isProvenance = false;
+			if(d.isProvenance)
+				edge.isProvenance = d.isProvenance;
 			if (d.id){
 				edgeIdMap[d.id] = i;
 			}

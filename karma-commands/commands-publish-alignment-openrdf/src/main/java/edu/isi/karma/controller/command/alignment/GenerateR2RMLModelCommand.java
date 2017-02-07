@@ -133,7 +133,6 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		//save the preferences 
 		savePreferences(workspace);
 		boolean storeOldHistory = modelingConfiguration.isStoreOldHistoryEnabled();
-		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		CommandHistory history = workspace.getCommandHistory();
@@ -146,13 +145,28 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 					Property.oldCommandHistory, oldCommandsArray.toString());
 		}
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
-		if (history.isStale(worksheetId)) {
+		boolean isHistoryStale = history.isStale(worksheetId);
+		if (isHistoryStale) {
+			System.out.println("**** REPLAY HISTORY ***");
 			uc.append(historyUtil.replayHistory());
 			worksheetId = historyUtil.getWorksheetId();
 			worksheet = workspace.getWorksheet(worksheetId);
 			selection = getSuperSelection(worksheet);
 			historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		}
+		
+		//Execute all Provenance related commands again before publishing
+		List<Command> wkCommands = historyUtil.getCommands();
+		for(Command wkCommand : wkCommands) {
+			if(wkCommand instanceof SetSemanticTypeCommand) {
+				SetSemanticTypeCommand cmd = (SetSemanticTypeCommand)wkCommand;
+				if(cmd.hasProvenanceType()) {
+					//cmd.doIt(workspace);
+					uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, false));
+				}
+			}
+		}
+		
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();
 		JSONArray inputColumnsArray = new JSONArray();

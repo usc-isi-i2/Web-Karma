@@ -968,7 +968,7 @@ public class GraphUtil {
 		}
     	reader.endObject();
     	
-    	SemanticType semanticType = new SemanticType(hNodeId, type, domain, null, origin, confidenceScore);
+    	SemanticType semanticType = new SemanticType(hNodeId, type, domain, null, false, origin, confidenceScore);
     	return semanticType;	
     }
 	

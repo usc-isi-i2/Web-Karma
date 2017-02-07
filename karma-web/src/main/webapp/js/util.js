@@ -785,6 +785,7 @@ function removeSemanticLink(worksheetId, alignmentId, columnId, columnType, link
 				newType["isPrimary"] = type.isPrimary;
 				if(type.isPrimary)
 					isPrimary = false;
+				newType["isProvenance"] = type.isProvenance;
 				language = type.language;
 				rdfLiteralType = type.rdfLiteralType;
 				semTypesArray.push(newType);
@@ -873,6 +874,7 @@ function setSemanticType(worksheetId, columnId, type, rdfLiteralType, language) 
 			newType["isPrimary"] = type.isPrimary;
 			if(type.isPrimary)
 				isPrimary = false;
+			newType["isProvenance"] = type.isProvenance;
 			if(type.FullType == "http://isi.edu/integration/karma/dev#classLink") {
 				isValid = false;
 				errorMsg = "Please delete URI type. Only 1 Semantic Type can be defined for columns that are URIs"
@@ -898,6 +900,7 @@ function setSemanticType(worksheetId, columnId, type, rdfLiteralType, language) 
 		newType["DomainId"] = type.source.id;
 		newType["DomainLabel"] = type.source.label;
 		newType["isPrimary"] = isPrimary;
+		newType["isProvenance"] = type.isProvenance;
 		semTypesArray.push(newType);
 
 		info["SemanticTypesArray"] = JSON.stringify(semTypesArray);
