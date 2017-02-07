@@ -30,6 +30,7 @@ import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
 import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommandFactory.Arguments;
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
@@ -105,10 +106,6 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-//		logCommand(logger, workspace);
-		// String alignmentId =
-		// AlignmentManager.Instance().constructAlignmentId(workspace.getId(),
-		// worksheetId);
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				alignmentId);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
@@ -119,12 +116,13 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>) alignment
 				.getGraph().clone();
 
+		UpdateContainer uc = new UpdateContainer();
 		// First delete the links that are not present in newEdges and present
 		// in intialEdges
 		try {
 			refineInitialEdges(alignment);
 			deleteLinks(worksheet, alignment);
-			addNewLinks(alignment, ontMgr);
+			uc.append(addNewLinks(alignment, ontMgr));
 			
 			if(!this.isExecutedInBatch())
 				alignment.align();
@@ -133,7 +131,8 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 			e.printStackTrace();
 		}
 
-		return this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
+		uc.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return uc;
 	}
 
 	private void refineInitialEdges(Alignment alignment) {
@@ -152,8 +151,9 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 	}
 
-	private void addNewLinks(Alignment alignment, OntologyManager ontMgr)
+	private UpdateContainer addNewLinks(Alignment alignment, OntologyManager ontMgr)
 			throws JSONException {
+		UpdateContainer uc = new UpdateContainer();
 		for (int i = 0; i < newEdges.length(); i++) {
 			JSONObject newEdge = newEdges.getJSONObject(i);
 
@@ -223,6 +223,14 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 				targetId = targetNode.getId();
 			}
 			
+			if(sourceNode == null) {
+				uc.add(new TrivialErrorUpdate("Could not add links from " + sourceId));
+				continue;
+			}
+			if(targetNode == null) {
+				uc.add(new TrivialErrorUpdate("Could not add links to " + targetId));
+				continue;
+			}
 			String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
 			LabeledLink newLink = alignment.getLinkById(linkId);
 			if (newLink != null) {
@@ -244,6 +252,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 				addDescStr.append(newLink.getLabel().getDisplayName() + ",");
 			}
 		}
+		return uc;
 	}
 
 	private void deleteLinks(Worksheet worksheet, Alignment alignment) throws JSONException {
@@ -282,14 +291,13 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 					sep = ", ";
 				}
 				
-//				alignment.changeLinkStatus(linkId, LinkStatus.Normal);
 				alignment.removeLink(linkId);
 				
-				Node node = alignment.getNodeById(targetId);
-				if(node instanceof ColumnNode) {
-					ColumnNode cNode = (ColumnNode)node;
-					worksheet.getSemanticTypes().unassignColumnSemanticType(cNode.getHNodeId());
-				}
+//				Node node = alignment.getNodeById(targetId);
+//				if(node instanceof ColumnNode) {
+//					ColumnNode cNode = (ColumnNode)node;
+//					worksheet.getSemanticTypes().unassignColumnSemanticType(cNode.getHNodeId());
+//				}
 			}
 		}
 	}

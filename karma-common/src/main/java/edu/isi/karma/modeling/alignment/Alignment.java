@@ -320,13 +320,17 @@ public class Alignment implements OntologyUpdateListener {
 	
 	public void updateLiteralNode(String nodeId, String value, String type, String language, boolean isUri) {
 		LiteralNode node = (LiteralNode) getNodeById(nodeId);
-		type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
-		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
-		
-		node.setDatatype(literalType);
-		node.setValue(value);
-		node.setLanguage(language);
-		node.setUri(isUri);
+		if(node != null) {
+			type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
+			Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
+			
+			node.setDatatype(literalType);
+			node.setValue(value);
+			node.setLanguage(language);
+			node.setUri(isUri);
+		} else {
+			addLiteralNode(value, type, language, isUri);
+		}
 	}
 	
 	public void deleteForcedInternalNode(String nodeId) {

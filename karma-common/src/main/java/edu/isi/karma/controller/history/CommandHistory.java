@@ -162,6 +162,14 @@ public class CommandHistory implements Cloneable{
 				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
 				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
 			}
+			if (consolidatorName.equals("DeleteNodeConsolidator")) {
+				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(consolidatedCommand.getLeft()));
+				effects.append(command.doIt(workspace));
+			}
+			if (consolidatorName.equals("AddLiteralNodeConsolidator")) {
+				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
+				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
+			}
 		}
 		else {
 			effects.append(command.doIt(workspace));
