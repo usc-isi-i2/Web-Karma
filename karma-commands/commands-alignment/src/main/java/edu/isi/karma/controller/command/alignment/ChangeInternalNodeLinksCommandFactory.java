@@ -36,7 +36,7 @@ import edu.isi.karma.webserver.KarmaException;
 public class ChangeInternalNodeLinksCommandFactory extends JSONInputCommandFactory {
 
 	enum Arguments {
-		initialEdges, alignmentId, worksheetId, newEdges
+		initialEdges, alignmentId, worksheetId, newEdges, edge
 	}
 
 	@Override

@@ -225,12 +225,12 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		for (LabeledLink link : links) {
 			JSONObject newEdge = new JSONObject();
 			JSONObject initialEdge = new JSONObject();
-			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeSourceId.name(), link.getSource().getId());
-			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeTargetId.name(), link.getTarget().getId());
-			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeId.name(), link.getUri());
-			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeSourceId.name(), link.getSource().getId());
-			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeTargetId.name(), link.getTarget().getId());
-			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeId.name(), link.getUri());
+			newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeSourceId.name(), link.getSource().getId());
+			newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeTargetId.name(), link.getTarget().getId());
+			newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeId.name(), link.getUri());
+			initialEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeSourceId.name(), link.getSource().getId());
+			initialEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeTargetId.name(), link.getTarget().getId());
+			initialEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeId.name(), link.getUri());
 			newEdges.put(newEdge);
 			initialEdges.put(initialEdge);
 		}
