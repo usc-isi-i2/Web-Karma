@@ -328,7 +328,7 @@
 	</div>
 
 	<div id="propertyAdvanceOptions" style="display:none">
-		<div class="row">
+		<div class="row" id="advOptionsLiteralTypeRow">
 			<div class="form-group col-sm-6">
 				<label>
 					Literal Type:
@@ -342,7 +342,7 @@
 				</label>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row" id="advOptionsClassRow">
 			<div class="form-group">
 				<div class="checkbox">
 				  	<label>
@@ -405,7 +405,7 @@
 							<label for="literal">Literal:</label>
 							<input type="text" id="literal" class="form-control">
 						</div>
-						<div class="row">
+						<div class="row" id="literalTypeRow">
 							<div class="form-group col-sm-6">
 							    <label>
 							    	Type:

@@ -42,6 +42,7 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 
 public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
@@ -56,9 +57,8 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 	private StringBuilder addDescStr = new StringBuilder();
 	private StringBuilder delDescStr = new StringBuilder();
-
 	public enum LinkJsonKeys {
-		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri
+		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri, isProvenance
 	}
 
 	private static Logger logger = LoggerFactory.getLogger(ChangeInternalNodeLinksCommand.class);
@@ -69,7 +69,6 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		this.alignmentId = alignmentId;
 		this.initialEdges = initialEdges;
 		this.newEdges = newEdges;
-
 		addTag(CommandTag.Modeling);
 	}
 
@@ -128,8 +127,6 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
-//		uc.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return uc;
 	}
 
@@ -156,6 +153,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 			JSONObject newEdge = newEdges.getJSONObject(i);
 			try {
 				Command cmd = (new AddLinkCommandFactory()).createCommand(worksheetId, alignmentId, newEdge, model, workspace);
+				cmd.setExecutedInBatch(this.isExecutedInBatch());
 				uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, true));
 			} catch(CommandException e) {
 				logger.error("Error adding a new link: " + newEdge.toString(), e);
@@ -169,9 +167,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 		
 		for (int i = 0; i < initialEdges.length(); i++) {
 			JSONObject initialEdge = initialEdges.getJSONObject(i);
-
-			boolean exists = false;
-
+			int newEdgeIdx = -1;
 			for (int j = 0; j < newEdges.length(); j++) {
 				JSONObject newEdge = newEdges.getJSONObject(j);
 				if 	(
@@ -184,21 +180,56 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 						&& initialEdge.has(LinkJsonKeys.edgeTargetId.name()) && (newEdge.has(LinkJsonKeys.edgeTargetId.name()) && 
 						initialEdge.getString(LinkJsonKeys.edgeTargetId.name()).equals(newEdge.getString(LinkJsonKeys.edgeTargetId.name())))
 					)
-					exists = true;
+					newEdgeIdx = j;
 			}
-						
-			if (!exists) {
-				try {
-					Command cmd = (new DeleteLinkCommandFactory()).createCommand(worksheetId, alignmentId, initialEdge, model, workspace);
-					uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, true));
-				} catch(Exception e) {
-					logger.error("Error removing a link: " + initialEdge.toString(), e);
+			
+			
+			if(newEdgeIdx != -1) {
+				JSONObject newEdge = newEdges.getJSONObject(newEdgeIdx);
+				boolean newEdgeProv = (newEdge.has(LinkJsonKeys.isProvenance.name())) ? newEdge.getBoolean(LinkJsonKeys.isProvenance.name()): false;
+				boolean initialEdgeProv = (initialEdge.has(LinkJsonKeys.isProvenance.name())) ? initialEdge.getBoolean(LinkJsonKeys.isProvenance.name()): false;
+				if(initialEdgeProv && !newEdgeProv) {
+					//Are removing the provenance, then remove from the "Main" link instead
+					String linkId = LinkIdFactory.getLinkId(
+							newEdge.getString(LinkJsonKeys.edgeId.name()),
+							newEdge.getString(LinkJsonKeys.edgeSourceId.name()),
+							newEdge.getString(LinkJsonKeys.edgeTargetId.name()));
+					LabeledLink link = alignment.getLinkById(linkId);
+					if(!link.isMainProvenanceLink()) {
+						link = getMainProvenanceLink(alignment, link);
+						if(link != null) {
+							initialEdge.put(LinkJsonKeys.edgeSourceId.name(), link.getSource().getId());
+							initialEdge.put(LinkJsonKeys.edgeSourceUri.name(), link.getSource().getUri());
+							newEdge.put(LinkJsonKeys.edgeSourceId.name(), link.getSource().getId());
+							newEdge.put(LinkJsonKeys.edgeSourceUri.name(), link.getSource().getUri());
+						}
+					}
 				}
 			}
+			
+			
+			try {
+				Command cmd = (new DeleteLinkCommandFactory()).createCommand(worksheetId, alignmentId, initialEdge, model, workspace);
+				cmd.setExecutedInBatch(this.isExecutedInBatch());
+				uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, true));
+				
+			} catch(Exception e) {
+				logger.error("Error removing a link: " + initialEdge.toString(), e);
+			}
+			
 		}
 		return uc;
 	}
 
+	private LabeledLink getMainProvenanceLink(Alignment alignment, LabeledLink link) {
+		String edgeUri = link.getUri();
+		for(LabeledLink otherLink : alignment.getCurrentIncomingLinksToNode(link.getTarget().getId())) {
+			if(otherLink.getUri().equals(edgeUri) && otherLink.isMainProvenanceLink())
+				return otherLink;
+		}
+		return null;
+	}
+	
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
 		// Revert to the old alignment

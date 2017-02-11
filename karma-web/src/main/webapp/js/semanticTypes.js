@@ -2659,6 +2659,13 @@ var AddLiteralNodeDialog = (function() {
 								getAllProperties();
 								propertyUI.generateJS(propDiv, true);
 								
+								var isProvDiv = $("<div>").addClass("checkbox").attr("id", "isProvenanceLiteralRow")
+													.append($("<label>")
+														.append($("<input>").attr("type", "checkbox").attr("id", "isProvenanceLiteral")
+														)
+														.append($("<span>").text("Specifies provenance"))
+													);
+								$("#col-property", dialog).append(isProvDiv);
 								$("#isUriRow", dialog).show();
 							} else {
 								$(".modal-title", dialog).html("Edit Literal Node");
@@ -2723,8 +2730,9 @@ var AddLiteralNodeDialog = (function() {
 				 	e.preventDefault();
 				 	return;
 				 }
-
+				 var isProvenance = false;
 				 if(dialogMode == "addWithProperty") {
+				 	isProvenance = $("#isProvenanceLiteral", dialog).is(":checked");
 				 	var property = propertyUI.getSelectedProperty();
 				 	if(property.uri == "") {
 				 		alert("Please select a property");
@@ -2777,7 +2785,7 @@ var AddLiteralNodeDialog = (function() {
 												 }
 											 });
 											 
-											 addEdge(nodeId, nodeUri, property.id, literalId, literalUri);
+											 addEdge(nodeId, nodeUri, property.id, literalId, literalUri, isProvenance);
 										 } else {
 											 parse(json);
 											 hideLoading(worksheetId);
@@ -2793,7 +2801,7 @@ var AddLiteralNodeDialog = (function() {
 				 });
 			};
 			
-			function addEdge(sourceId, sourceUri, propertyId, targetId, targetUri) {
+			function addEdge(sourceId, sourceUri, propertyId, targetId, targetUri, isProvenance) {
 				
 				var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
 
@@ -2813,6 +2821,7 @@ var AddLiteralNodeDialog = (function() {
 				newEdgeObj["edgeTargetId"] = targetId;
 				newEdgeObj["edgeTargetUri"] = targetUri;
 				newEdgeObj["edgeId"] = propertyId;
+				newEdgeObj["isProvenance"] = isProvenance;
 				newEdges.push(newEdgeObj);
 
 				newInfo.push(getParamObject("newEdges", newEdges, "other"));

@@ -669,7 +669,7 @@ function getAllLinksForNode(worksheetId, alignmentId, nodeId) {
 	return result;
 }
 
-function changeLinks(worksheetId, alignmentId, oldEdges, newEdges) {
+function changeLinks(worksheetId, alignmentId, oldEdges, newEdges, callback) {
 	var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
 	// Prepare the input for command
 	var newInfo = info['newInfo'];
@@ -682,6 +682,7 @@ function changeLinks(worksheetId, alignmentId, oldEdges, newEdges) {
 		oldEdgeObj["edgeSourceId"] = edge.source.id;
 		oldEdgeObj["edgeTargetId"] = edge.target.id;
 		oldEdgeObj["edgeId"] = edge.uri;
+		oldEdgeObj["isProvenance"] = edge.isProvenance;
 		initialEdges.push(oldEdgeObj);
 	});
 	newInfo.push(getParamObject("initialEdges", initialEdges, "other"));
@@ -696,6 +697,7 @@ function changeLinks(worksheetId, alignmentId, oldEdges, newEdges) {
 		newEdgeObj["edgeTargetId"] = edge.target.id;
 		newEdgeObj["edgeTargetUri"] = edge.target.uri;
 		newEdgeObj["edgeId"] = edge.uri;
+		newEdgeObj["isProvenance"] = edge.isProvenance;
 		newEdgesArr.push(newEdgeObj);
 	});
 	newInfo.push(getParamObject("newEdges", newEdgesArr, "other"));
@@ -703,7 +705,7 @@ function changeLinks(worksheetId, alignmentId, oldEdges, newEdges) {
 
 	info["newInfo"] = JSON.stringify(newInfo);
 	showLoading(worksheetId);
-	return sendRequest(info, worksheetId);
+	return sendRequest(info, worksheetId, callback);
 }
 
 function setSpecializedEdgeSemanticType(worksheetId, columnId, edge, rdfLiteralType) {
@@ -950,6 +952,17 @@ function refreshWorksheet(worksheetId, updates) {
 	info["updates"] = JSON.stringify(updates);
 	showLoading(info["worksheetId"]);
 	sendRequest(info, worksheetId);
+}
+
+function refreshHistory(worksheetId, callback) {
+	console.log("Refresh History:" + refreshWorksheet)
+	var info = generateInfoObject(worksheetId, "", "RefreshHistoryCommand");
+	// Prepare the input for command
+	var newInfo = info['newInfo'];
+	newInfo.push(getParamObject("worksheetId", worksheetId, "worksheetId"));
+	info["newInfo"] = JSON.stringify(newInfo);
+	showLoading(worksheetId);
+	return sendRequest(info, worksheetId, callback);
 }
 
 function getLabelWithoutPrefix(label) {

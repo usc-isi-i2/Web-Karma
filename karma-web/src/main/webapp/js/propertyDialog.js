@@ -93,24 +93,45 @@ var PropertyDialog = (function() {
 
 		function advanceOptionsUI(event) {
 			initRightDiv("Advanced Options");
-			PropertyAdvanceOptionsDialog.getInstance().show(propertyLiteralType, 
+			PropertyAdvanceOptionsDialog.getInstance().show(
+						targetNodeType,
+						propertyLiteralType, 
 						propertyLanguage, propertyIsSubClass, propertyIsProvenance,
 						rightDiv, saveAdvanceOptions);
 			event.preventDefault();
 		}
 
-		function saveAdvanceOptions(literalType, language, isSubclassOfClass, isProvenance) {
-			if(isSubclassOfClass) {
-				setSubClassSemanticType(worksheetId, targetId, {"uri": sourceDomain, 
-					"id": sourceId, "label":sourceLabel}, literalType, language);
+		function saveAdvanceOptions(targetNodeType, literalType, language, isSubclassOfClass, isProvenance) {
+			if(targetNodeType == "LiteralNode") {
+				if(isProvenance != propertyIsProvenance) {
+					var oldEdges = [{"uri": propertyUri, 
+									"isProvenance": propertyIsProvenance,
+									"source": {"uri": sourceDomain, "label": sourceLabel, "id": sourceId},
+									"target": {"uri": targetDomain, "label": targetLabel, "id": targetId}
+									}];
+					var newEdges = [{"uri": propertyUri, 
+									"isProvenance": isProvenance,
+									"source": {"uri": sourceDomain, "label": sourceLabel, "id": sourceId},
+									"target": {"uri": targetDomain, "label": targetLabel, "id": targetId}
+									}];
+					changeLinks(worksheetId, alignmentId, oldEdges, newEdges, function() {
+						if(!isProvenance)
+							refreshHistory(worksheetId);
+					});
+				}
 			} else {
-				var type = {};
-				type.label = propertyLabel;
-				type.uri = propertyUri;
-				type.isProvenance = isProvenance;
-				type.source = {"uri": sourceDomain, "label": sourceLabel, "id": sourceId};
-				type.target = {"uri": targetDomain, "label": targetLabel, "id": targetId};
-				setSemanticType(worksheetId, targetId, type, literalType, language);
+				if(isSubclassOfClass) {
+					setSubClassSemanticType(worksheetId, targetId, {"uri": sourceDomain, 
+						"id": sourceId, "label":sourceLabel}, literalType, language);
+				} else {
+					var type = {};
+					type.label = propertyLabel;
+					type.uri = propertyUri;
+					type.isProvenance = isProvenance;
+					type.source = {"uri": sourceDomain, "label": sourceLabel, "id": sourceId};
+					type.target = {"uri": targetDomain, "label": targetLabel, "id": targetId};
+					setSemanticType(worksheetId, targetId, type, literalType, language);
+				}
 			}
 			hide();
 		}
@@ -306,7 +327,7 @@ var PropertyDialog = (function() {
 					disableItem("Change To");
 				}
 
-				if(targetNodeType  != "ColumnNode")
+				if(targetNodeType  != "ColumnNode" && targetNodeType != "LiteralNode")
 					disableItem("Advanced Options");
 			}
 			rightDiv.removeClass("col-sm-12").addClass("col-sm-10");
@@ -428,6 +449,7 @@ var PropertyAdvanceOptionsDialog = (function() {
 
 	function PrivateConstructor() {
 		var callback;
+		var targetNodeType;
 		var dialog = $("#propertyAdvanceOptions");
 
 		function init() {
@@ -436,7 +458,7 @@ var PropertyAdvanceOptionsDialog = (function() {
 				var language = $("#propertyLanguage", dialog).val();
 				var isSubclassOfClass = $("#propertyIsSubclass", dialog).is(':checked');
 				var isProvenance = $("#propertyIsProvenance", dialog).is(':checked');
-				callback(literalType, language, isSubclassOfClass, isProvenance);
+				callback(targetNodeType, literalType, language, isSubclassOfClass, isProvenance);
 				e.preventDefault();
 				return false;	
 			});	
@@ -446,9 +468,16 @@ var PropertyAdvanceOptionsDialog = (function() {
 				{source:LANGUAGE_ARRAY, minLength:0, items:"all"});
 		}
 
-		function show(rdfLiteralType, language, isSubClass, isProvenance, div, p_callback) {
+		function show(p_targetNodeType, rdfLiteralType, language, isSubClass, isProvenance, div, p_callback) {
 			callback = p_callback;
-
+			targetNodeType = p_targetNodeType;
+			if(targetNodeType == "LiteralNode") {
+				$("#advOptionsLiteralTypeRow", dialog).hide();
+				$("#advOptionsClassRow", dialog).hide();
+			} else {
+				$("#advOptionsLiteralTypeRow", dialog).show();
+				$("#advOptionsClassRow", dialog).show();
+			}
 			$("#propertyLiteralType", dialog).val(rdfLiteralType);
 			$("#propertyLanguage", dialog).val(language);
 			$("#propertyIsSubclass", dialog).prop('checked', isSubClass);

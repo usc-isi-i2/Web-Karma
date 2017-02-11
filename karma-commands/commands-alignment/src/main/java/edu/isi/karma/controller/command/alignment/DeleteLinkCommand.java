@@ -1,5 +1,7 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.Set;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,12 +91,12 @@ public class DeleteLinkCommand extends WorksheetCommand {
 		
 		UpdateContainer uc = new UpdateContainer();
 		String targetId = edge.getString(LinkJsonKeys.edgeTargetId.name());
+		String edgeUri = edge.getString(LinkJsonKeys.edgeId.name());
 		String linkId = LinkIdFactory.getLinkId(
-				edge.getString(LinkJsonKeys.edgeId.name()),
+				edgeUri,
 				edge.getString(LinkJsonKeys.edgeSourceId.name()),
 				targetId);
-
-
+		
 		// Add info to description string
 		LabeledLink delLink = alignment.getLinkById(linkId);
 		if(delLink != null) {
@@ -102,7 +104,7 @@ public class DeleteLinkCommand extends WorksheetCommand {
 		}
 			
 		alignment.removeLink(linkId);
-			
+		
 		return uc;
 	}
 

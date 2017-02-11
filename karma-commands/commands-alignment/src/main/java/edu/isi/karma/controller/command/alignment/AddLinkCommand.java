@@ -1,5 +1,7 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.Set;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +21,9 @@ import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
+import edu.isi.karma.rep.alignment.LiteralNode;
 import edu.isi.karma.rep.alignment.Node;
+import edu.isi.karma.rep.alignment.NodeType;
 import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommand.LinkJsonKeys;
 
 public class AddLinkCommand extends WorksheetCommand {
@@ -31,7 +35,8 @@ public class AddLinkCommand extends WorksheetCommand {
 	// Required for undo
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
-		
+	private boolean hasProvenaceType;
+	
 	protected AddLinkCommand(String id, String model, String worksheetId, String alignmentId, JSONObject edge) {
 		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
@@ -71,7 +76,7 @@ public class AddLinkCommand extends WorksheetCommand {
 		oldAlignment = alignment.getAlignmentClone();
 		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>) alignment
 				.getGraph().clone();
-		UpdateContainer uc =  this.addNewLinks(alignment, ontMgr, edge);
+		UpdateContainer uc =  this.addNewLink(alignment, ontMgr, edge);
 		if(!this.isExecutedInBatch())
 			alignment.align();
 		
@@ -89,11 +94,38 @@ public class AddLinkCommand extends WorksheetCommand {
 		return this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
 	}
 
-	private UpdateContainer addNewLinks(Alignment alignment, OntologyManager ontMgr, JSONObject newEdge)
+	private void addProvenaceLinks(Alignment alignment, Label linkLabel, LiteralNode targetNode) {
+		String targetId = targetNode.getId();
+		Set<Node> internalNodes = alignment.getNodesByType(NodeType.InternalNode);
+		String edgeUri = linkLabel.getUri();
+		
+		for(Node internalNode : internalNodes) {
+			String nodeId = internalNode.getId();
+			Set<LabeledLink> inLinks = alignment.getIncomingLinksInTree(nodeId);
+			Set<LabeledLink> outLinks = alignment.getOutgoingLinksInTree(nodeId);
+			if((inLinks != null && inLinks.size() > 0) 
+					|| (outLinks != null && outLinks.size() > 0)) {
+				String linkId = LinkIdFactory.getLinkId(edgeUri, nodeId, targetId);
+				LabeledLink link = alignment.getLinkById(linkId);
+				if(link == null) {
+					link = alignment.addObjectPropertyLink(internalNode,
+							targetNode, linkLabel);
+					alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
+					link.setProvenance(true, false);
+				}
+			}
+		}
+	}
+	
+	private UpdateContainer addNewLink(Alignment alignment, OntologyManager ontMgr, JSONObject newEdge)
 			throws JSONException {
 		
 		UpdateContainer uc = new UpdateContainer();			
 		String edgeUri = newEdge.getString(LinkJsonKeys.edgeId.name());
+		if(edgeUri ==  null) {
+			return uc;
+		}
+		Label edge = ontMgr.getUriLabel(edgeUri);
 		
 		String sourceUri = newEdge.has(LinkJsonKeys.edgeSourceUri.name()) ? newEdge.getString(LinkJsonKeys.edgeSourceUri.name()) : null;
 		String sourceId = newEdge.has(LinkJsonKeys.edgeSourceId.name()) ? newEdge.getString(LinkJsonKeys.edgeSourceId.name()) : null;
@@ -101,12 +133,28 @@ public class AddLinkCommand extends WorksheetCommand {
 		String targetId = newEdge.has(LinkJsonKeys.edgeTargetId.name()) ? newEdge.getString(LinkJsonKeys.edgeTargetId.name()) : null;
 		String targetUri = newEdge.has(LinkJsonKeys.edgeTargetUri.name()) ? newEdge.getString(LinkJsonKeys.edgeTargetUri.name()) : null;
 		
+		boolean isProvenance = newEdge.has(LinkJsonKeys.isProvenance.name()) ? newEdge.getBoolean(LinkJsonKeys.isProvenance.name()) : false;
+		LiteralNode provenanceNode = null;
+		if(isProvenance) {
+			Node node = alignment.getNodeById(targetId);
+			if(node != null && node instanceof LiteralNode) {
+				provenanceNode = (LiteralNode)node;
+			} else {
+				isProvenance = false;
+			}
+		}
+		
+		this.hasProvenaceType = isProvenance;
+		
 		if(edgeUri != null && sourceId != null && targetId != null) {
 			String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
-			
-			if (alignment.getLinkById(linkId) != null) {
+			LabeledLink link = alignment.getLinkById(linkId);
+			if (link != null) {
 				//Link already exists
 				alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
+				link.setProvenance(isProvenance, true);
+				if(isProvenance)
+					addProvenaceLinks(alignment, edge, provenanceNode);
 				return uc;
 			}
 		}	
@@ -160,17 +208,23 @@ public class AddLinkCommand extends WorksheetCommand {
 		if (newLink != null) {
 			alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
 		} else {
-			Label linkLabel = ontMgr.getUriLabel(edgeUri);
 			newLink = alignment.addObjectPropertyLink(sourceNode,
-					targetNode, linkLabel);
+					targetNode, edge);
 			linkId = newLink.getId();
 		}
-			
+		
+		newLink.setProvenance(isProvenance, true);
 		alignment.changeLinkStatus(linkId, LinkStatus.ForcedByUser);
 
 
+		if(isProvenance)
+			addProvenaceLinks(alignment, edge, provenanceNode);
 		this.displayLabel = newLink.getLabel().getDisplayName();
 			
 		return uc;
+	}
+	
+	public boolean hasProvenanceType() {
+		return this.hasProvenaceType;
 	}
 }

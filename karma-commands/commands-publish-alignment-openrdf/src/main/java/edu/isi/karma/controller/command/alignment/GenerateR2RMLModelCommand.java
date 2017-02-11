@@ -161,7 +161,11 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			if(wkCommand instanceof SetSemanticTypeCommand) {
 				SetSemanticTypeCommand cmd = (SetSemanticTypeCommand)wkCommand;
 				if(cmd.hasProvenanceType()) {
-					//cmd.doIt(workspace);
+					uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, false));
+				}
+			} else if(wkCommand instanceof AddLinkCommand) {
+				AddLinkCommand cmd = (AddLinkCommand)wkCommand;
+				if(cmd.hasProvenanceType()) {
 					uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, false));
 				}
 			}
@@ -219,20 +223,20 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 				}
 			}
 		}
+		
+		//Make all links to be forced. Add a change links command for all links those links
 		JSONArray newEdges = new JSONArray();
 		JSONArray initialEdges = new JSONArray();
 		ChangeInternalNodeLinksCommandFactory cinlcf = new ChangeInternalNodeLinksCommandFactory();
 		for (LabeledLink link : links) {
-			JSONObject newEdge = new JSONObject();
-			JSONObject initialEdge = new JSONObject();
-			newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeSourceId.name(), link.getSource().getId());
-			newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeTargetId.name(), link.getTarget().getId());
-			newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeId.name(), link.getUri());
-			initialEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeSourceId.name(), link.getSource().getId());
-			initialEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeTargetId.name(), link.getTarget().getId());
-			initialEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeId.name(), link.getUri());
-			newEdges.put(newEdge);
-			initialEdges.put(initialEdge);
+			if(link.getStatus() != LinkStatus.ForcedByUser) {
+				JSONObject newEdge = new JSONObject();
+				newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeSourceId.name(), link.getSource().getId());
+				newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeTargetId.name(), link.getTarget().getId());
+				newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeId.name(), link.getUri());
+				newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.isProvenance.name(), link.isProvenance());
+				newEdges.put(newEdge);
+			}
 		}
 		JSONArray inputJSON = new JSONArray();
 		JSONObject t = new JSONObject();

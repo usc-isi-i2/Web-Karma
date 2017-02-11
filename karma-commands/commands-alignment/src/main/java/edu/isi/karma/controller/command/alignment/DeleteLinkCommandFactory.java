@@ -24,7 +24,7 @@ public class DeleteLinkCommandFactory extends JSONInputCommandFactory {
 		String alignmentId = AlignmentManager.Instance().constructAlignmentId(
 				workspace.getId(), worksheetId);
 		JSONObject edge = HistoryJsonUtil.getJSONObjectWithName(
-				Arguments.edge.name(), inputJson);
+				Arguments.edge.name(), inputJson).getJSONObject("value");;
 
 		DeleteLinkCommand cmd = new DeleteLinkCommand(
 				getNewId(workspace), model, worksheetId, alignmentId, edge);

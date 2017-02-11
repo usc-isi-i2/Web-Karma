@@ -852,7 +852,7 @@ function processHistoryCommand(command) {
 	} else if(title == "Delete Link") {
 		spanClass = "Delete Link";
 		spanTitle = "Delete: ";
-l	}
+	}
 	
 	if(spanClass != "") {
 		title = "<span class=\"glyphicon command_glyphicon " + spanClass + "\" aria-hidden=\"true\" title=\"" + title + "\"></span>" + spanTitle;
