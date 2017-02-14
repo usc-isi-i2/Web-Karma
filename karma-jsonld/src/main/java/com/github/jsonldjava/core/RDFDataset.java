@@ -688,4 +688,25 @@ public class RDFDataset extends LinkedHashMap<String, Object> {
     public List<Quad> getQuads(String graphName) {
         return (List<Quad>) get(graphName);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || this.getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        RDFDataset that = (RDFDataset) o;
+
+        if (this.context != null ? !this.context.equals(that.context) : that.context != null) return false;
+        return this.api != null ? this.api.equals(that.api) : that.api == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (this.context != null ? this.context.hashCode() : 0);
+        result = 31 * result + (this.api != null ? this.api.hashCode() : 0);
+        return result;
+    }
 }

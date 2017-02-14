@@ -163,4 +163,25 @@ public class ContextGenerator {
 		top.put("@context", obj);
 		return top;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || this.getClass() != o.getClass()) return false;
+
+		ContextGenerator that = (ContextGenerator) o;
+
+		if (this.isGenerateAtIdType != that.isGenerateAtIdType) return false;
+		if (this.model != null ? !this.model.equals(that.model) : that.model != null) return false;
+		return this.contextMapping != null ? this.contextMapping.equals(that.contextMapping) : that.contextMapping == null;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = this.model != null ? this.model.hashCode() : 0;
+		result = 31 * result + (this.isGenerateAtIdType ? 1 : 0);
+		result = 31 * result + (this.contextMapping != null ? this.contextMapping.hashCode() : 0);
+		return result;
+	}
 }
