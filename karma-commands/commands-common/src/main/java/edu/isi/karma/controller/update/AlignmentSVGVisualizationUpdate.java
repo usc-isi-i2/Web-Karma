@@ -69,7 +69,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 		worksheetId, alignmentId, label, rdfsLabel, rdfsComment, id, hNodeId, nodeType, source,
 		target, linkType, sourceNodeId, targetNodeId, height, hNodesCovered,
 		nodes, links, maxTreeHeight, linkStatus, linkUri, nodeDomain, isForcedByUser, 
-		isUri, nodeId, column, anchors, edgeLinks, alignObject, tableLayout, columnName, hasNestedTable, columns
+		isUri, nodeId, column, anchors, edgeLinks, alignObject, tableLayout, columnName, hasNestedTable, columns, isProvenance,
 	}
 
 	private enum JsonValues {
@@ -261,6 +261,7 @@ public class AlignmentSVGVisualizationUpdate extends AbstractUpdate {
 					linkObj.put(JsonKeys.label.name(), link.getLabel().getLocalName());
 					linkObj.put(JsonKeys.rdfsLabel.name(), link.getLabel().getRdfsLabel());
 					linkObj.put(JsonKeys.rdfsComment.name(), link.getLabel().getRdfsComment());
+					linkObj.put(JsonKeys.isProvenance.name(), link.isProvenance());
 					
 					linkObj.put(JsonKeys.id.name(), link.getId() + "");
 					linkObj.put(JsonKeys.linkStatus.name(), link.getStatus()

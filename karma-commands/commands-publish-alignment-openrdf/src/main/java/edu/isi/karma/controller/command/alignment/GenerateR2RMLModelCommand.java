@@ -133,7 +133,6 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		//save the preferences 
 		savePreferences(workspace);
 		boolean storeOldHistory = modelingConfiguration.isStoreOldHistoryEnabled();
-		System.out.println("storeOldHistory: " + storeOldHistory);
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection selection = getSuperSelection(worksheet);
 		CommandHistory history = workspace.getCommandHistory();
@@ -146,13 +145,32 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 					Property.oldCommandHistory, oldCommandsArray.toString());
 		}
 		CommandHistoryUtil historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
-		if (history.isStale(worksheetId)) {
+		boolean isHistoryStale = history.isStale(worksheetId);
+		if (isHistoryStale) {
+			System.out.println("**** REPLAY HISTORY ***");
 			uc.append(historyUtil.replayHistory());
 			worksheetId = historyUtil.getWorksheetId();
 			worksheet = workspace.getWorksheet(worksheetId);
 			selection = getSuperSelection(worksheet);
 			historyUtil = new CommandHistoryUtil(history.getCommandsFromWorksheetId(worksheetId), workspace, worksheetId);
 		}
+		
+		//Execute all Provenance related commands again before publishing
+		List<Command> wkCommands = historyUtil.getCommands();
+		for(Command wkCommand : wkCommands) {
+			if(wkCommand instanceof SetSemanticTypeCommand) {
+				SetSemanticTypeCommand cmd = (SetSemanticTypeCommand)wkCommand;
+				if(cmd.hasProvenanceType()) {
+					uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, false));
+				}
+			} else if(wkCommand instanceof AddLinkCommand) {
+				AddLinkCommand cmd = (AddLinkCommand)wkCommand;
+				if(cmd.hasProvenanceType()) {
+					uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, false));
+				}
+			}
+		}
+		
 		Set<String> inputColumns = historyUtil.generateInputColumns();
 		Set<String> outputColumns = historyUtil.generateOutputColumns();
 		JSONArray inputColumnsArray = new JSONArray();
@@ -205,20 +223,20 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 				}
 			}
 		}
+		
+		//Make all links to be forced. Add a change links command for all links those links
 		JSONArray newEdges = new JSONArray();
 		JSONArray initialEdges = new JSONArray();
 		ChangeInternalNodeLinksCommandFactory cinlcf = new ChangeInternalNodeLinksCommandFactory();
 		for (LabeledLink link : links) {
-			JSONObject newEdge = new JSONObject();
-			JSONObject initialEdge = new JSONObject();
-			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeSourceId.name(), link.getSource().getId());
-			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeTargetId.name(), link.getTarget().getId());
-			newEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeId.name(), link.getUri());
-			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeSourceId.name(), link.getSource().getId());
-			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeTargetId.name(), link.getTarget().getId());
-			initialEdge.put(ChangeInternalNodeLinksCommand.JsonKeys.edgeId.name(), link.getUri());
-			newEdges.put(newEdge);
-			initialEdges.put(initialEdge);
+			if(link.getStatus() != LinkStatus.ForcedByUser) {
+				JSONObject newEdge = new JSONObject();
+				newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeSourceId.name(), link.getSource().getId());
+				newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeTargetId.name(), link.getTarget().getId());
+				newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.edgeId.name(), link.getUri());
+				newEdge.put(ChangeInternalNodeLinksCommand.LinkJsonKeys.isProvenance.name(), link.isProvenance());
+				newEdges.put(newEdge);
+			}
 		}
 		JSONArray inputJSON = new JSONArray();
 		JSONObject t = new JSONObject();

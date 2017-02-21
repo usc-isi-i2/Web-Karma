@@ -36,6 +36,7 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -162,6 +163,22 @@ public class CommandHistory implements Cloneable{
 				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
 				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
 			}
+			if (consolidatorName.equals("DeleteNodeConsolidator")) {
+				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(consolidatedCommand.getLeft()));
+				effects.append(command.doIt(workspace));
+			}
+			if (consolidatorName.equals("AddLiteralNodeConsolidator")) {
+				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
+				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
+			}
+			if (consolidatorName.equals("DeleteLinkConsolidator")) {
+				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(consolidatedCommand.getLeft()));
+				effects.append(command.doIt(workspace));
+			}
+			if (consolidatorName.equals("AddLinkConsolidator")) {
+				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
+				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
+			}
 		}
 		else {
 			effects.append(command.doIt(workspace));
@@ -218,6 +235,9 @@ public class CommandHistory implements Cloneable{
 				if(workspace.getWorksheet(worksheetId) != null)
 				{ 
 					try {
+						if(command.getCommandName().equals("AddLinkCommand") || command.getCommandName().equals("DeleteLinkCommand")) {
+							System.out.println("here");
+						}
 						if(comMap.get(worksheetId) == null)
 							comMap.put(worksheetId, new JSONArray());
 						comMap.get(worksheetId).put(getCommandJSON(workspace, command));

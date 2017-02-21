@@ -33,7 +33,7 @@ public class ObjectPropertySpecializationLink extends LabeledLink {
 			new Label(Uris.OBJECTPROPERTY_SPECIALIZATION_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 
 	public ObjectPropertySpecializationLink(String id, String specializedLinkId) {
-		super(id, label, LinkType.ObjectPropertySpecializationLink);
+		super(id, label, LinkType.ObjectPropertySpecializationLink, false);
 		this.specializedLinkId = specializedLinkId;
 	}
 

@@ -232,6 +232,7 @@ var D3ModelManager = (function() {
 						d.label,
 						d.rdfsLabel,
 						d.rdfsComment,
+						d.isProvenance,
 						d.linkStatus,
 						d.sourceNodeId,
 						sourceObj.nodeType,

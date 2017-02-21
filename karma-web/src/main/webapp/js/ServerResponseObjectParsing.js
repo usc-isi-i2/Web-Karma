@@ -815,6 +815,7 @@ function parse(data) {
 function processHistoryCommand(command) {
 	var title = command.title;
 	var spanClass = "";
+	var spanTitle = "";
 	if(title == "Python Transformation") {
 		spanClass = "glyphicon-wrench";
 	} else if(title == "Set Semantic Type") {
@@ -845,10 +846,16 @@ function processHistoryCommand(command) {
 		spanClass = "glyphicon-compressed";
 	} else if(title == "Change Node") {
 		spanClass = "glyphicon-random";
+	} else if(title == "Add Link") {
+		spanClass = "glyphicon-link";
+		spanTitle = "Add: ";
+	} else if(title == "Delete Link") {
+		spanClass = "Delete Link";
+		spanTitle = "Delete: ";
 	}
 	
 	if(spanClass != "") {
-		title = "<span class=\"glyphicon command_glyphicon " + spanClass + "\" aria-hidden=\"true\" title=\"" + title + "\"></span>";
+		title = "<span class=\"glyphicon command_glyphicon " + spanClass + "\" aria-hidden=\"true\" title=\"" + title + "\"></span>" + spanTitle;
 	}
 	//glyphicon glyphicon-scissors
 	

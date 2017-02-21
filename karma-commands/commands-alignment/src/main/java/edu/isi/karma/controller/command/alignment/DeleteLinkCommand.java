@@ -1,61 +1,56 @@
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.Set;
+
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.json.JSONObject;
 
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetCommand;
+import edu.isi.karma.controller.command.alignment.ChangeInternalNodeLinksCommand.LinkJsonKeys;
 import edu.isi.karma.controller.update.UpdateContainer;
-import edu.isi.karma.controller.update.WorksheetUpdateFactory;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
+import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DefaultLink;
+import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.Node;
 
-/**
- * Delete a Node added by force using the AddNodeCommand
- * These nodes do not get deleted automatically when a link is removed and need to be explicitly deleted
- * using this command
- * @author dipsy
- *
- */
-public class DeleteNodeCommand extends WorksheetCommand {
+public class DeleteLinkCommand extends WorksheetCommand {
+
 	
-	private String nodeId;
-	private String nodeLabel;
+	private String displayLabel;
 	private String alignmentId;
-	
-	private static Logger logger = LoggerFactory.getLogger(AddNodeCommand.class);
+	private JSONObject edge;
 	
 	// Required for undo
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
 		
-	protected DeleteNodeCommand(String id, String model, String worksheetId, String alignmentId, String nodeId, String nodeLabel) {
+	protected DeleteLinkCommand(String id, String model, String worksheetId, String alignmentId, JSONObject edge) {
 		super(id, model, worksheetId);
 		this.alignmentId = alignmentId;
-		this.nodeId = nodeId;
-		this.nodeLabel = nodeLabel;
+		this.edge = edge;
 		addTag(CommandTag.Modeling);
 	}
 
 	@Override
 	public String getCommandName() {
-		return this.getClass().getSimpleName();
+		return DeleteLinkCommand.class.getSimpleName();
 	}
 
 	@Override
 	public String getTitle() {
-		return "Delete Node";
+		return "Delete Link" ;
 	}
 
 	@Override
 	public String getDescription() {
-		return nodeLabel;
+		return this.displayLabel;
 	}
 
 	@Override
@@ -66,25 +61,19 @@ public class DeleteNodeCommand extends WorksheetCommand {
 	@SuppressWarnings("unchecked")
 	@Override
 	public UpdateContainer doIt(Workspace workspace) throws CommandException {
-		logCommand(logger, workspace);
-	
 		Alignment alignment = AlignmentManager.Instance().getAlignment(
 				alignmentId);
+		OntologyManager ontMgr = workspace.getOntologyManager();
 
 		// Save the original alignment for undo
 		oldAlignment = alignment.getAlignmentClone();
 		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>) alignment
 				.getGraph().clone();
-
-		try {
-			alignment.deleteForcedInternalNode(nodeId);
-			if(!this.isExecutedInBatch())
-				alignment.align();
-		} catch (JSONException e) {
-			logger.error("Error adding Internal Node:" , e);
-		}
-
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
+		UpdateContainer uc = this.deleteLink(alignment, ontMgr, edge);
+		if(!this.isExecutedInBatch())
+			alignment.align();
+		uc.append(this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
+		return uc;
 	}
 
 	@Override
@@ -94,11 +83,29 @@ public class DeleteNodeCommand extends WorksheetCommand {
 				.addAlignmentToMap(alignmentId, oldAlignment);
 		oldAlignment.setGraph(oldGraph);
 
-		// Get the alignment update
-		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
+		return this.computeAlignmentAndSemanticTypesAndCreateUpdates(workspace);
 	}
 
-	public String getNodeId() {
-		return nodeId;
+	private UpdateContainer deleteLink(Alignment alignment, OntologyManager ontMgr, JSONObject edge)
+			throws JSONException {
+		
+		UpdateContainer uc = new UpdateContainer();
+		String targetId = edge.getString(LinkJsonKeys.edgeTargetId.name());
+		String edgeUri = edge.getString(LinkJsonKeys.edgeId.name());
+		String linkId = LinkIdFactory.getLinkId(
+				edgeUri,
+				edge.getString(LinkJsonKeys.edgeSourceId.name()),
+				targetId);
+		
+		// Add info to description string
+		LabeledLink delLink = alignment.getLinkById(linkId);
+		if(delLink != null) {
+			this.displayLabel = delLink.getLabel().getDisplayName();
+		}
+			
+		alignment.removeLink(linkId);
+		
+		return uc;
 	}
+
 }

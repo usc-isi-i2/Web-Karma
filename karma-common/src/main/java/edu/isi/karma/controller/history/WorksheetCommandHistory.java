@@ -2,7 +2,6 @@ package edu.isi.karma.controller.history;
 
 import edu.isi.karma.controller.command.ICommand;
 import org.apache.commons.lang3.tuple.Pair;
-import org.json.JSONArray;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -33,7 +33,7 @@ public class SubClassLink extends LabeledLink {
 			new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS);
 
 	public SubClassLink(String id) {
-		super(id, label, LinkType.SubClassLink);
+		super(id, label, LinkType.SubClassLink, false);
 	}
 	
 	public static Label getFixedLabel() {
