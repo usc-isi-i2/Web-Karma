@@ -185,20 +185,22 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				if(isProvenance) {
 					this.hasProvenanceType = true;
 					Set<Node> internalNodes = alignment.getNodesByType(NodeType.InternalNode);
-					for(Node internalNode : internalNodes) {
-						String nodeId = internalNode.getId();
-						Set<LabeledLink> inLinks = alignment.getIncomingLinksInTree(nodeId);
-						Set<LabeledLink> outLinks = alignment.getOutgoingLinksInTree(nodeId);
-						if((inLinks != null && inLinks.size() > 0) 
-								|| (outLinks != null && outLinks.size() > 0)) {
-							String[] names = (String[]) type.keySet().toArray(new String[0]);
-							JSONObject newType = new JSONObject(type, names);
-							newType.put(ClientJsonKeys.DomainId.name(), internalNode.getId());
-							newType.put(ClientJsonKeys.DomainUri.name(), internalNode.getLabel().getUri());
-							String newTypeStr = newType.getString(ClientJsonKeys.FullType.name()) + "-" + newType.getString(ClientJsonKeys.DomainId.name());
-							if(!typesSet.contains(newTypeStr)) {
-								typesSet.add(newTypeStr);
-								provTypes.put(newType);
+					if(internalNodes != null) {
+						for(Node internalNode : internalNodes) {
+							String nodeId = internalNode.getId();
+							Set<LabeledLink> inLinks = alignment.getIncomingLinksInTree(nodeId);
+							Set<LabeledLink> outLinks = alignment.getOutgoingLinksInTree(nodeId);
+							if((inLinks != null && inLinks.size() > 0) 
+									|| (outLinks != null && outLinks.size() > 0)) {
+								String[] names = (String[]) type.keySet().toArray(new String[0]);
+								JSONObject newType = new JSONObject(type, names);
+								newType.put(ClientJsonKeys.DomainId.name(), internalNode.getId());
+								newType.put(ClientJsonKeys.DomainUri.name(), internalNode.getLabel().getUri());
+								String newTypeStr = newType.getString(ClientJsonKeys.FullType.name()) + "-" + newType.getString(ClientJsonKeys.DomainId.name());
+								if(!typesSet.contains(newTypeStr)) {
+									typesSet.add(newTypeStr);
+									provTypes.put(newType);
+								}
 							}
 						}
 					}
