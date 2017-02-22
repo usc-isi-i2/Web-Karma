@@ -82,5 +82,7 @@ public class LiteralNode extends Node {
 		return getValue();
 	}
 	
-	
+	public String getDisplayId() {
+		return this.value;
+	}
 }
