@@ -392,7 +392,8 @@ function WorksheetOptions(wsId, wsTitle) {
 					if(element) {
 						if (element["updateType"] == "PublishR2RMLUpdate") {
 							newWorksheetId = element["worksheetId"];
-							$.cookie("github-url-" + newWorksheetId) = repoUrl;
+							if(worksheetId != newWorksheetId)
+								$.cookie("github-url-" + newWorksheetId, repoUrl);
 						}
 					}
 				});
