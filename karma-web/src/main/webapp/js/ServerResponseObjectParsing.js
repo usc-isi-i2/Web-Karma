@@ -363,6 +363,7 @@ function parse(data) {
 			});
 		} else if (element["updateType"] == "WorksheetDeleteUpdate") {
 			var worksheetPanel = $("div#" + element["worksheetId"] + "_row");
+			D3ModelManager.getInstance().deleteModel(element["worksheetId"]);
 			worksheetPanel.remove();
 			$.sticky("Worksheet deleted");
 		} else if (element["updateType"] == "WorksheetHeadersUpdate") {
