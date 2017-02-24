@@ -123,6 +123,7 @@ public class AddLinkCommand extends WorksheetCommand {
 		UpdateContainer uc = new UpdateContainer();			
 		String edgeUri = newEdge.getString(LinkJsonKeys.edgeId.name());
 		if(edgeUri ==  null) {
+			displayLabel = "Edge " + edgeUri + " not found";
 			return uc;
 		}
 		Label edge = ontMgr.getUriLabel(edgeUri);
@@ -155,6 +156,7 @@ public class AddLinkCommand extends WorksheetCommand {
 				link.setProvenance(isProvenance, true);
 				if(isProvenance)
 					addProvenaceLinks(alignment, edge, provenanceNode);
+				this.displayLabel = link.getLabel().getDisplayName();
 				return uc;
 			}
 		}	
@@ -197,10 +199,12 @@ public class AddLinkCommand extends WorksheetCommand {
 		
 		if(sourceNode == null) {
 			uc.add(new TrivialErrorUpdate("Could not add links from " + sourceId));
+			this.displayLabel = "Source " + sourceId + " not found";
 			return uc;
 		}
 		if(targetNode == null) {
 			uc.add(new TrivialErrorUpdate("Could not add links to " + targetId));
+			this.displayLabel = "Target " + targetId + " not found";
 			return uc;
 		}
 		String linkId = LinkIdFactory.getLinkId(edgeUri, sourceId, targetId);
