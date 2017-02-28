@@ -867,24 +867,27 @@ function setSemanticType(worksheetId, columnId, type, rdfLiteralType, language) 
 		}
 		var isValid = true;
 		var errorMsg = "";
-		$.each(existingTypes, function(index, type) {
+		$.each(existingTypes, function(index, etype) {
 			var newType = new Object();
-			newType["FullType"] = type.FullType;
-			newType["DomainUri"] = type.DomainUri;
-			newType["DomainId"] = type.DomainId;
-			newType["DomainLabel"] = type.DomainLabel;
-			newType["isPrimary"] = type.isPrimary;
-			if(type.isPrimary)
+			if(etype.FullType == type.uri && etype.DomainId == type.source.id)
+				return;
+
+			newType["FullType"] = etype.FullType;
+			newType["DomainUri"] = etype.DomainUri;
+			newType["DomainId"] = etype.DomainId;
+			newType["DomainLabel"] = etype.DomainLabel;
+			newType["isPrimary"] = etype.isPrimary;
+			if(etype.isPrimary)
 				isPrimary = false;
-			newType["isProvenance"] = type.isProvenance;
-			if(type.FullType == "http://isi.edu/integration/karma/dev#classLink") {
+			newType["isProvenance"] = etype.isProvenance;
+			if(etype.FullType == "http://isi.edu/integration/karma/dev#classLink") {
 				isValid = false;
 				errorMsg = "Please delete URI type. Only 1 Semantic Type can be defined for columns that are URIs"
 				return;
-			} else if(type.FullType == "http://isi.edu/integration/karma/dev#dataPropertyOfColumnLink") {
+			} else if(etype.FullType == "http://isi.edu/integration/karma/dev#dataPropertyOfColumnLink") {
 				isValid = false;
 				errorMsg = "Please delete edge specializing link before adding the new type. \nOnly 1 Semantic type can be defined for columns that specify specialization for edge"
-			} else if(type.FullType == "http://isi.edu/integration/karma/dev#columnSubClassOfLink") {
+			} else if(etype.FullType == "http://isi.edu/integration/karma/dev#columnSubClassOfLink") {
 				isValid = false;
 				errorMsg = "Please delete columnSubClassOfLink before adding the new type. \nOnly 1 Semantic Type can be defined for columns that specify subclass for Nodes"
 			}
