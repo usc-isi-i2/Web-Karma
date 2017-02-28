@@ -14,18 +14,18 @@ public class UpdateModelConfigurationUICommandFactory
 			JSONInputCommandFactory {
 
 	enum Arguments {
-		show_super_class
+		r2rml_export_superclass
 	}
 	
 	@Override
 	public Command createCommand(JSONArray inputJson, String model,
 			Workspace workspace) throws JSONException, KarmaException {
 		
-		boolean show_super_class = false;
-		if(HistoryJsonUtil.valueExits(Arguments.show_super_class.name(), inputJson))
-			show_super_class = Boolean.parseBoolean(HistoryJsonUtil.getStringValue(Arguments.show_super_class.name(), inputJson));
+		boolean r2rml_export_superclass = false;
+		if(HistoryJsonUtil.valueExits(Arguments.r2rml_export_superclass.name(), inputJson))
+			r2rml_export_superclass = Boolean.parseBoolean(HistoryJsonUtil.getStringValue(Arguments.r2rml_export_superclass.name(), inputJson));
 
-		UpdateModelConfigurationUICommand cmd = new UpdateModelConfigurationUICommand(getNewId(workspace), model, show_super_class);
+		UpdateModelConfigurationUICommand cmd = new UpdateModelConfigurationUICommand(getNewId(workspace), model, r2rml_export_superclass);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}

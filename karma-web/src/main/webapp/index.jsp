@@ -190,7 +190,7 @@ and related projects, please see: http://www.isi.edu/integration
 								<li><a href="#" id="displayRDFSLabel_idFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Name or ID First</a></li>
 		                  	</ul>
 		                  </li>
-		                  <li><a href="#" id="displaySuperclass"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Display SuperClass</a>
+		                  <li><a href="#" id="r2rmlExportSuperclass"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Display SuperClass</a>
 		                  </li>
 		              </ul>
 		            </li>

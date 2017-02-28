@@ -83,7 +83,7 @@ public class ModelingConfiguration {
 	private String defaultProperty = null;
 	private String graphvizServer = null;
 
-	private Boolean showSuperclass;
+	private Boolean r2rmlExportSuperclass;
 
 	private final String newLine = System.getProperty("line.separator");
 	
@@ -168,7 +168,7 @@ public class ModelingConfiguration {
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false" + newLine + 
 			"graphiz.server=http://52.38.65.60/graphviz/" + newLine +
-			"show.superclass=false"
+			"r2rml.export.superclass=false"
 			;
 
 
@@ -306,17 +306,17 @@ public class ModelingConfiguration {
 				out.close();
 			}
 
-			String showSuperclass = modelingProperties.getProperty("show.superclass");
-			if(showSuperclass!=null)
+			String r2rml_export_superclass = modelingProperties.getProperty("r2rml.export.superclass=false");
+			if(r2rml_export_superclass!=null)
 			{
-				this.showSuperclass = Boolean.parseBoolean(showSuperclass);
+				this.r2rmlExportSuperclass = Boolean.parseBoolean(r2rml_export_superclass);
 			}
 			else
 			{
 				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-				this.showSuperclass = false;
+				this.r2rmlExportSuperclass = false;
 				out.println();
-				out.println("add.ontology.paths=false");
+				out.println("r2rml.export.superclass=false");
 				out.close();
 			}
 
@@ -584,14 +584,14 @@ public class ModelingConfiguration {
 		return graphvizServer;
 	}
 
-	public void setShowSuperclass(boolean show_super_class) {
-		this.showSuperclass = show_super_class;
+	public void setShowSuperclass(boolean r2rml_export_superclass) {
+		this.r2rmlExportSuperclass = r2rml_export_superclass;
 	}
 	
 	public Boolean getShowSuperClass() {
-		if (showSuperclass == null)
+		if (r2rmlExportSuperclass == null)
 			load();
-		return showSuperclass;
+		return r2rmlExportSuperclass;
 	}
 
 }

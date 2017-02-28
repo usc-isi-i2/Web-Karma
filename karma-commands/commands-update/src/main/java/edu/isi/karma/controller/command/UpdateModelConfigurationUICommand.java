@@ -13,16 +13,18 @@ import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.view.VWorkspace;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 public class UpdateModelConfigurationUICommand extends Command {
 
-	private boolean show_super_class;
+	private boolean r2rml_export_superclass;
 	
-	private static Logger logger = LoggerFactory.getLogger(UpdateUIConfigurationCommand.class);
+	private static Logger logger = LoggerFactory.getLogger(UpdateModelConfigurationUICommand.class);
 	
-	protected UpdateUIConfigurationCommand(String id, String model, boolean show_super_class) {
+	protected UpdateModelConfigurationUICommand(String id, String model, boolean r2rml_export_superclass) {
 		super(id, model);
-		this.show_super_class = show_super_class;
+		this.r2rml_export_superclass = r2rml_export_superclass;
 	}
 
 	@Override
@@ -57,14 +59,14 @@ public class UpdateModelConfigurationUICommand extends Command {
 							VWorkspace vWorkspace) {
 						try {
 							ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
-							contextParameters = contextParametersRegistry.registerByKarmaHome(null);
+							ServletContextParameterMap contextParameters = contextParametersRegistry.registerByKarmaHome(null);
 							ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
-							modelingConuiConfiguration.setShowSuperclass(this.show_super_class);
+							modelingConfiguration.setShowSuperclass(r2rml_export_superclass);
 							JSONStringer jsonStr = new JSONStringer();
 							
 							JSONWriter writer = jsonStr.object();
 							writer.key("updateType").value("UpdateModelConfigurationUIUpdate");	
-							writer.key("show_super_class").value(show_super_class);
+							writer.key("r2rml_export_superclass").value(r2rml_export_superclass);
 							writer.endObject();
 							pw.print(writer.toString());
 						} catch (Exception e) {

@@ -27,9 +27,9 @@ var Settings = (function() {
 			$("#displayGithubSettings").on("click", function(e) {
 				GithubSettingsDialog.getInstance().show();
 			});
-			$("#displaySuperclass").on("click", function(e) {
-        		show_super_class = !$("#displaySuperclass span").is(":visible");
-        		setDisplaySuperclass(show_super_class, false);
+			$("#r2rmlExportSuperclass").on("click", function(e) {
+        		r2rml_export_superclass = !$("#r2rmlExportSuperclass span").is(":visible");
+        		setDisplaySuperclass(r2rml_export_superclass, false);
       		});
 		}
 
@@ -135,9 +135,9 @@ var Settings = (function() {
 			}
 		}
 
-	    function setDisplaySuperclass(showSuperclass, update) {
+	    function setDisplaySuperclass(r2rmlExportSuperclass, update) {
 
-	      if(showSuperclass) {
+	      if(r2rmlExportSuperclass) {
 	        $("#displaySuperclass span").show();
 	      } else {
 	        $("#displaySuperclass span").hide();
@@ -147,7 +147,7 @@ var Settings = (function() {
 	        var info = generateInfoObject("", "", "UpdateModelConfigurationUICommand");
 	        var newInfo = info['newInfo'];
 
-	        newInfo.push(getParamObject("show_super_class", showSuperclass, "other"));
+	        newInfo.push(getParamObject("r2rml_export_superclass", r2rmlExportSuperclass, "other"));
 	        info["newInfo"] = JSON.stringify(newInfo);
 	        showWaitingSignOnScreen();
 
