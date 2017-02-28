@@ -82,7 +82,9 @@ public class ModelingConfiguration {
 	private Boolean showModelsWithoutMatching;
 	private String defaultProperty = null;
 	private String graphvizServer = null;
-	
+
+	private Boolean showSuperclass;
+
 	private final String newLine = System.getProperty("line.separator");
 	
 	private String defaultModelingProperties = 
@@ -165,7 +167,8 @@ public class ModelingConfiguration {
 			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false" + newLine + 
-			"graphiz.server=http://52.38.65.60/graphviz/"
+			"graphiz.server=http://52.38.65.60/graphviz/" + newLine +
+			"show.superclass=false"
 			;
 
 
@@ -302,6 +305,21 @@ public class ModelingConfiguration {
 				out.println("graphviz.server=" + graphvizServer);
 				out.close();
 			}
+
+			String showSuperclass = modelingProperties.getProperty("show.superclass");
+			if(showSuperclass!=null)
+			{
+				this.showSuperclass = Boolean.parseBoolean(showSuperclass);
+			}
+			else
+			{
+				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+				this.showSuperclass = false;
+				out.println();
+				out.println("add.ontology.paths=false");
+				out.close();
+			}
+
 		} catch (IOException e) {
 			logger.error("Error occured while reading config file ...", e);
 			System.exit(1);
@@ -565,5 +583,15 @@ public class ModelingConfiguration {
 	public String getGraphvizServer() {
 		return graphvizServer;
 	}
+
+	public void setShowSuperclass(boolean show_super_class) {
+		this.showSuperclass = show_super_class;
+	}
 	
+	public Boolean getShowSuperClass() {
+		if (showSuperclass == null)
+			load();
+		return showSuperclass;
+	}
+
 }

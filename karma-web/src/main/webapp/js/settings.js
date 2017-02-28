@@ -27,6 +27,10 @@ var Settings = (function() {
 			$("#displayGithubSettings").on("click", function(e) {
 				GithubSettingsDialog.getInstance().show();
 			});
+			$("#displaySuperclass").on("click", function(e) {
+        		show_super_class = !$("#displaySuperclass span").is(":visible");
+        		setDisplaySuperclass(show_super_class, false);
+      		});
 		}
 
 		function getGithubUsername() {
@@ -131,6 +135,25 @@ var Settings = (function() {
 			}
 		}
 
+	    function setDisplaySuperclass(showSuperclass, update) {
+
+	      if(showSuperclass) {
+	        $("#displaySuperclass span").show();
+	      } else {
+	        $("#displaySuperclass span").hide();
+	      }
+
+	      if(update) {
+	        var info = generateInfoObject("", "", "UpdateModelConfigurationUICommand");
+	        var newInfo = info['newInfo'];
+
+	        newInfo.push(getParamObject("show_super_class", showSuperclass, "other"));
+	        info["newInfo"] = JSON.stringify(newInfo);
+	        showWaitingSignOnScreen();
+
+	        var returned = sendRequest(info);
+	      }
+	    }
 
 		function showRDFSLabelWithLabelFirst() {
 			return showRDFSLabel_labelFirst;
