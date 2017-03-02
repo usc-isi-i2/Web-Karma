@@ -6,7 +6,8 @@ var Settings = (function() {
 		var showRDFSLabel = false;
 		var showRDFSLabel_labelFirst = false;
 		var showRDFSLabel_idFirst = false;
-		
+		var r2rml_export_superclass = false;
+
 		function init() {
 			$("#displayRDFSLabel_labelFirst").on("click", function(e) {
 				label_first = !$("#displayRDFSLabel_labelFirst span").is(":visible");
@@ -29,7 +30,7 @@ var Settings = (function() {
 			});
 			$("#r2rmlExportSuperclass").on("click", function(e) {
         		r2rml_export_superclass = !$("#r2rmlExportSuperclass span").is(":visible");
-        		setDisplaySuperclass(r2rml_export_superclass, false);
+                setDisplaySuperclass(r2rml_export_superclass, true);
       		});
 		}
 
@@ -136,6 +137,7 @@ var Settings = (function() {
 		}
 
 	    function setDisplaySuperclass(r2rmlExportSuperclass, update) {
+            r2rml_export_superclass = r2rmlExportSuperclass;
 
 	      if(r2rmlExportSuperclass) {
 	        $("#displaySuperclass span").show();
@@ -163,6 +165,10 @@ var Settings = (function() {
 			return showRDFSLabel_idFirst;
 		}
 
+		function showExportSuperclass() {
+			return r2rml_export_superclass;
+		}
+
 		function getDisplayLabel(label, rdfsLabel, noStyle) {
 			if(rdfsLabel && rdfsLabel != "") {
 				if(noStyle)
@@ -184,6 +190,8 @@ var Settings = (function() {
 			showRDFSLabelWithIdFirst: showRDFSLabelWithIdFirst,
 			showRDFSLabelWithLabelFirst: showRDFSLabelWithLabelFirst,
 			getDisplayLabel: getDisplayLabel,
+			setDisplaySuperclass: setDisplaySuperclass,
+			showExportSuperclass: showExportSuperclass,
 			getGithubUsername: getGithubUsername,
 			setGithubUsername: setGithubUsername,
 			getGithubAuth: getGithubAuth,

@@ -43,6 +43,10 @@ import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import edu.isi.karma.config.ModelingConfiguration;
+import edu.isi.karma.config.ModelingConfigurationRegistry;
+import edu.isi.karma.webserver.ContextParametersRegistry;
+import edu.isi.karma.webserver.ServletContextParameterMap;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -254,15 +258,21 @@ public class KR2RMLMappingGenerator {
 				TemplateTermSet typeTermSet = new TemplateTermSet();
 				typeTermSet.addTemplateTermToSet(typeTerm);
 				subj.addRdfsType(typeTermSet);
-				OntologyManager ontMgr = workspace.getOntologyManager();
-				HashMap<String,Label> superClassLabelsMap = ontMgr.getSuperClasses(node.getLabel().getUri(), true);
-				for(String key: superClassLabelsMap.keySet())
+
+				ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
+				ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
+				if(modelingConfiguration.getShowSuperClass())
 				{
-					Label superClassLabel = superClassLabelsMap.get(key);
-					StringTemplateTerm supertypeTerm = new StringTemplateTerm(superClassLabel.getUri(), false);
-					TemplateTermSet supertypeTermSet = new TemplateTermSet();
-					supertypeTermSet.addTemplateTermToSet(supertypeTerm);
-					subj.addRdfsType(supertypeTermSet);
+					OntologyManager ontMgr = workspace.getOntologyManager();
+					HashMap<String,Label> superClassLabelsMap = ontMgr.getSuperClasses(node.getLabel().getUri(), true);
+					for(String key: superClassLabelsMap.keySet())
+					{
+						Label superClassLabel = superClassLabelsMap.get(key);
+						StringTemplateTerm supertypeTerm = new StringTemplateTerm(superClassLabel.getUri(), false);
+						TemplateTermSet supertypeTermSet = new TemplateTermSet();
+						supertypeTermSet.addTemplateTermToSet(supertypeTerm);
+						subj.addRdfsType(supertypeTermSet);
+					}
 				}
 				r2rmlMapping.getSubjectMapIndex().put(node.getId(), subj);
 				

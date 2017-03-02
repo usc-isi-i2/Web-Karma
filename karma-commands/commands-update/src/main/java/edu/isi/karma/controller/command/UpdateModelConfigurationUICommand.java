@@ -58,8 +58,7 @@ public class UpdateModelConfigurationUICommand extends Command {
 					public void generateJson(String prefix, PrintWriter pw,
 							VWorkspace vWorkspace) {
 						try {
-							ContextParametersRegistry contextParametersRegistry = ContextParametersRegistry.getInstance();
-							ServletContextParameterMap contextParameters = contextParametersRegistry.registerByKarmaHome(null);
+                            ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(vWorkspace.getWorkspace().getContextId());
 							ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
 							modelingConfiguration.setShowSuperclass(r2rml_export_superclass);
 							JSONStringer jsonStr = new JSONStringer();
