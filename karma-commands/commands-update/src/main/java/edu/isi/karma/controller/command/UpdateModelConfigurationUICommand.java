@@ -60,7 +60,7 @@ public class UpdateModelConfigurationUICommand extends Command {
 						try {
                             ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(vWorkspace.getWorkspace().getContextId());
 							ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
-							modelingConfiguration.setShowSuperclass(r2rml_export_superclass);
+							modelingConfiguration.setR2rmlExportSuperClass(r2rml_export_superclass);
 							JSONStringer jsonStr = new JSONStringer();
 							
 							JSONWriter writer = jsonStr.object();

@@ -261,7 +261,7 @@ public class KR2RMLMappingGenerator {
 
 				ServletContextParameterMap contextParameters = ContextParametersRegistry.getInstance().getContextParameters(workspace.getContextId());
 				ModelingConfiguration modelingConfiguration = ModelingConfigurationRegistry.getInstance().register(contextParameters.getId());
-				if(modelingConfiguration.getShowSuperClass())
+				if(modelingConfiguration.getR2rmlExportSuperClass())
 				{
 					OntologyManager ontMgr = workspace.getOntologyManager();
 					HashMap<String,Label> superClassLabelsMap = ontMgr.getSuperClasses(node.getLabel().getUri(), true);

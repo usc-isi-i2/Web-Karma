@@ -306,7 +306,7 @@ public class ModelingConfiguration {
 				out.close();
 			}
 
-			String r2rml_export_superclass = modelingProperties.getProperty("r2rml.export.superclass=false");
+			String r2rml_export_superclass = modelingProperties.getProperty("r2rml.export.superclass");
 			if(r2rml_export_superclass!=null)
 			{
 				this.r2rmlExportSuperclass = Boolean.parseBoolean(r2rml_export_superclass);
@@ -584,11 +584,11 @@ public class ModelingConfiguration {
 		return graphvizServer;
 	}
 
-	public void setShowSuperclass(boolean r2rml_export_superclass) {
+	public void setR2rmlExportSuperClass(boolean r2rml_export_superclass) {
 		this.r2rmlExportSuperclass = r2rml_export_superclass;
 	}
 	
-	public Boolean getShowSuperClass() {
+	public Boolean getR2rmlExportSuperClass() {
 		if (r2rmlExportSuperclass == null)
 			load();
 		return r2rmlExportSuperclass;
