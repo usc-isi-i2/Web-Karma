@@ -140,9 +140,9 @@ var Settings = (function() {
             r2rml_export_superclass = r2rmlExportSuperclass;
 
 	      if(r2rmlExportSuperclass) {
-	        $("#displaySuperclass span").show();
+	        $("#r2rmlExportSuperclass span").show();
 	      } else {
-	        $("#displaySuperclass span").hide();
+	        $("#r2rmlExportSuperclass span").hide();
 	      }
 
 	      if(update) {
