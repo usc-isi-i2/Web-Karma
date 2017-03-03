@@ -149,12 +149,13 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 	private UpdateContainer addNewLinks(WorksheetCommandHistoryExecutor histExecutor, Workspace workspace, Alignment alignment, OntologyManager ontMgr)
 			throws JSONException {
 		UpdateContainer uc = new UpdateContainer();
+		boolean saveToHistory = !this.isExecutedInBatch();
 		for (int i = 0; i < newEdges.length(); i++) {
 			JSONObject newEdge = newEdges.getJSONObject(i);
 			try {
 				Command cmd = (new AddLinkCommandFactory()).createCommand(worksheetId, alignmentId, newEdge, model, workspace);
 				cmd.setExecutedInBatch(this.isExecutedInBatch());
-				uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, true));
+				uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, saveToHistory && i==newEdges.length()-1));
 			} catch(CommandException e) {
 				logger.error("Error adding a new link: " + newEdge.toString(), e);
 			}
@@ -164,7 +165,8 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 
 	private UpdateContainer deleteLinks(WorksheetCommandHistoryExecutor histExecutor, Workspace workspace, Worksheet worksheet, Alignment alignment) throws JSONException {
 		UpdateContainer uc = new UpdateContainer();
-		
+
+		boolean saveToHistory = !this.isExecutedInBatch();
 		for (int i = 0; i < initialEdges.length(); i++) {
 			JSONObject initialEdge = initialEdges.getJSONObject(i);
 			int newEdgeIdx = -1;
@@ -211,7 +213,7 @@ public class ChangeInternalNodeLinksCommand extends WorksheetCommand {
 			try {
 				Command cmd = (new DeleteLinkCommandFactory()).createCommand(worksheetId, alignmentId, initialEdge, model, workspace);
 				cmd.setExecutedInBatch(this.isExecutedInBatch());
-				uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, true));
+				uc.append(workspace.getCommandHistory().doCommand(cmd, workspace, saveToHistory && i==initialEdges.length()-1));
 				
 			} catch(Exception e) {
 				logger.error("Error removing a link: " + initialEdge.toString(), e);
