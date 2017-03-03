@@ -583,6 +583,11 @@ function parse(data) {
 			if (element["GithubBranch"]) {
                 $.cookie("github-branch-" + element["worksheetId"], element["GithubBranch"]);
 			}
+		} else if(element["updateType"] == "PublishGithubUpdate") {
+			if (Settings.getInstance().getGithubAuth())
+                $("#txtGithubUrl_" + element["worksheetId"]).text(element["url"]);
+            else
+                $("#txtGithubUrl_" + element["worksheetId"]).text(element["url"] + " (disabled)");
 
 		} else if (element["updateType"] == "WorksheetSuperSelectionListUpdate") {
 			var status;
