@@ -235,9 +235,6 @@ public class CommandHistory implements Cloneable{
 				if(workspace.getWorksheet(worksheetId) != null)
 				{ 
 					try {
-						if(command.getCommandName().equals("AddLinkCommand") || command.getCommandName().equals("DeleteLinkCommand")) {
-							System.out.println("here");
-						}
 						if(comMap.get(worksheetId) == null)
 							comMap.put(worksheetId, new JSONArray());
 						comMap.get(worksheetId).put(getCommandJSON(workspace, command));
