@@ -60,9 +60,11 @@ import edu.isi.karma.modeling.alignment.learner.PatternWeightSystem;
 import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
+import edu.isi.karma.rep.alignment.InternalNode;
 import edu.isi.karma.rep.alignment.LabeledLink;
 import edu.isi.karma.rep.alignment.LinkStatus;
 import edu.isi.karma.rep.alignment.LinkType;
+import edu.isi.karma.rep.alignment.Node;
 import edu.isi.karma.rep.metadata.WorksheetProperties;
 import edu.isi.karma.rep.metadata.WorksheetProperties.Property;
 import edu.isi.karma.view.VWorkspace;
@@ -267,6 +269,41 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 			}
 		}
 
+		//Remove all provenance links that do not have Data properties
+		Set<Node> nodes = alignment.getSteinerTree().vertexSet();
+		boolean linksRemoved = false;
+		for (Node node:nodes) {
+			if (node instanceof InternalNode) {
+				Set<LabeledLink> outLinks = alignment.getOutgoingLinksInTree(node.getId());
+				if(outLinks != null && outLinks.size() > 0) {
+					boolean hasProvLink = false;
+					boolean hasDataProperty = false;
+					Set<String> provLinkIds = new HashSet<>();
+					for(LabeledLink link : outLinks) {
+						if(link.isProvenance()) {
+							hasProvLink = true;
+							provLinkIds.add(link.getId());
+							continue;
+						}
+						if(link.getType() == LinkType.DataPropertyLink)
+							hasDataProperty = true;
+					}
+					if(hasProvLink && !hasDataProperty) {
+						//Remove all provenance links
+						for(String linkId : provLinkIds) {
+							logger.info("**** Remove Provenance Link:" + linkId);
+							alignment.removeLink(linkId);
+							linksRemoved = true;
+						}
+					}
+				}
+			}
+		}
+		if(linksRemoved) {
+			uc.append(WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace));
+		}
+		
+		
 		// mohsen: my code to enable Karma to leran semantic models
 		// *****************************************************************************************
 		// *****************************************************************************************
