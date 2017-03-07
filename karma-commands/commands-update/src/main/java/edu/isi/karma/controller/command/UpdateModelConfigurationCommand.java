@@ -16,13 +16,13 @@ import edu.isi.karma.view.VWorkspace;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 
-public class UpdateModelConfigurationUICommand extends Command {
+public class UpdateModelConfigurationCommand extends Command {
 
 	private boolean r2rml_export_superclass;
 	
-	private static Logger logger = LoggerFactory.getLogger(UpdateModelConfigurationUICommand.class);
+	private static Logger logger = LoggerFactory.getLogger(UpdateModelConfigurationCommand.class);
 	
-	protected UpdateModelConfigurationUICommand(String id, String model, boolean r2rml_export_superclass) {
+	protected UpdateModelConfigurationCommand(String id, String model, boolean r2rml_export_superclass) {
 		super(id, model);
 		this.r2rml_export_superclass = r2rml_export_superclass;
 	}
@@ -64,7 +64,7 @@ public class UpdateModelConfigurationUICommand extends Command {
 							JSONStringer jsonStr = new JSONStringer();
 							
 							JSONWriter writer = jsonStr.object();
-							writer.key("updateType").value("UpdateModelConfigurationUIUpdate");	
+							writer.key("updateType").value("UpdateModelConfigurationUpdate");	
 							writer.key("r2rml_export_superclass").value(r2rml_export_superclass);
 							writer.endObject();
 							pw.print(writer.toString());

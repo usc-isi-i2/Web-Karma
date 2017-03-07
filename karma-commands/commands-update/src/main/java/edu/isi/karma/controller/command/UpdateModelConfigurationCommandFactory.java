@@ -9,7 +9,7 @@ import edu.isi.karma.controller.history.HistoryJsonUtil;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.webserver.KarmaException;
 
-public class UpdateModelConfigurationUICommandFactory
+public class UpdateModelConfigurationCommandFactory
 		extends
 			JSONInputCommandFactory {
 
@@ -25,7 +25,7 @@ public class UpdateModelConfigurationUICommandFactory
 		if(HistoryJsonUtil.valueExits(Arguments.r2rml_export_superclass.name(), inputJson))
 			r2rml_export_superclass = Boolean.parseBoolean(HistoryJsonUtil.getStringValue(Arguments.r2rml_export_superclass.name(), inputJson));
 
-		UpdateModelConfigurationUICommand cmd = new UpdateModelConfigurationUICommand(getNewId(workspace), model, r2rml_export_superclass);
+		UpdateModelConfigurationCommand cmd = new UpdateModelConfigurationCommand(getNewId(workspace), model, r2rml_export_superclass);
 		cmd.setInputParameterJson(inputJson.toString());
 		return cmd;
 	}
@@ -37,7 +37,7 @@ public class UpdateModelConfigurationUICommandFactory
 
 	@Override
 	public Class<? extends Command> getCorrespondingCommand() {
-		return UpdateModelConfigurationUICommand.class;
+		return UpdateModelConfigurationCommand.class;
 	}
 
 }

@@ -146,7 +146,7 @@ var Settings = (function() {
 	      }
 
 	      if(update) {
-	        var info = generateInfoObject("", "", "UpdateModelConfigurationUICommand");
+	        var info = generateInfoObject("", "", "UpdateModelConfigurationCommand");
 	        var newInfo = info['newInfo'];
 
 	        newInfo.push(getParamObject("r2rml_export_superclass", r2rmlExportSuperclass, "other"));

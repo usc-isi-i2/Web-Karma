@@ -585,7 +585,7 @@ public class ModelingConfiguration {
 		return graphvizServer;
 	}
 
-	public void setR2rmlExportSuperClass(boolean r2rml_export_superclass) {
+	public void setR2rmlExportSuperClass(boolean r2rml_export_superclass) throws IOException {
 		this.r2rmlExportSuperclass = r2rml_export_superclass;
 		this.updateProperty("r2rml.export.superclass",Boolean.toString(r2rml_export_superclass));
 	}
