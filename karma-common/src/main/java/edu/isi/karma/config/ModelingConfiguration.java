@@ -171,10 +171,11 @@ public class ModelingConfiguration {
 			"r2rml.export.superclass=false"
 			;
 
+    private Properties modelingProperties;
 
 	public void load() {
 		try {
-			Properties modelingProperties = loadParams();
+			this.modelingProperties = loadParams();
 
 			File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
 
@@ -586,12 +587,21 @@ public class ModelingConfiguration {
 
 	public void setR2rmlExportSuperClass(boolean r2rml_export_superclass) {
 		this.r2rmlExportSuperclass = r2rml_export_superclass;
+		this.updateProperty("r2rml.export.superclass",Boolean.toString(r2rml_export_superclass));
 	}
 	
 	public Boolean getR2rmlExportSuperClass() {
 		if (r2rmlExportSuperclass == null)
 			load();
 		return r2rmlExportSuperclass;
+	}
+
+	private void updateProperty(String key, String value) throws IOException {
+		this.modelingProperties.put(key, value);
+		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+		this.modelingProperties.store(out, null);
+		out.close();
 	}
 
 }
