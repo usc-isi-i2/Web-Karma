@@ -280,7 +280,7 @@ public class KarmaDriver {
 					}
 				});
 
-		JavaPairRDD<String, String> reducedSerializedPairs = JSONReducerDriver.reduceJSON(numPartitions, pairs);
+		JavaPairRDD<String, String> reducedSerializedPairs = JSONReducerDriver.reduceJSON(numPartitions, pairs, karmaSettings);
 		return reducedSerializedPairs
 				.mapToPair(new PairFunction<Tuple2<String, String>, Text, Text>() {
 					private static final long serialVersionUID = 2787821808872176951L;
