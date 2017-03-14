@@ -30,7 +30,7 @@ public class ObjectPropertyLink extends LabeledLink {
 	private ObjectPropertyType objectPropertyType;
 	
 	public ObjectPropertyLink(String id, Label label, ObjectPropertyType objectPropertyType) {
-		super(id, label, LinkType.ObjectPropertyLink);
+		super(id, label, LinkType.ObjectPropertyLink, false);
 		this.inverse = false;
 		this.objectPropertyType = objectPropertyType;
 	}

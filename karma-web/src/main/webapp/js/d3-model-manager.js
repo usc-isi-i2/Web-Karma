@@ -96,6 +96,13 @@ var D3ModelManager = (function() {
 			savedNodesMap[worksheetId] = $.extend(true, {}, worksheetNodes);
 		}
 
+		function deleteModel(worksheetId) {
+			var mainWorksheetDiv = $("div#" + worksheetId);
+			var layoutElement = "div#svgDiv_" + worksheetId;
+			$(layoutElement).remove();
+			models[worksheetId] = null;
+		}
+
 		function displayModelInternal(json) {
 			var worksheetId = json["worksheetId"];
 			var mainWorksheetDiv = $("div#" + worksheetId);
@@ -232,6 +239,7 @@ var D3ModelManager = (function() {
 						d.label,
 						d.rdfsLabel,
 						d.rdfsComment,
+						d.isProvenance,
 						d.linkStatus,
 						d.sourceNodeId,
 						sourceObj.nodeType,
@@ -481,6 +489,7 @@ var D3ModelManager = (function() {
 			getModelManager: getModelManager,
 			displayModel: displayModel,
 			refreshModel: refreshModel,
+			deleteModel: deleteModel,
 			printModel: printModel,
 			addToModel: addToModel,
 			getNodes: getNodes,

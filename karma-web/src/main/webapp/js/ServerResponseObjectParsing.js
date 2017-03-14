@@ -363,6 +363,7 @@ function parse(data) {
 			});
 		} else if (element["updateType"] == "WorksheetDeleteUpdate") {
 			var worksheetPanel = $("div#" + element["worksheetId"] + "_row");
+			D3ModelManager.getInstance().deleteModel(element["worksheetId"]);
 			worksheetPanel.remove();
 			$.sticky("Worksheet deleted");
 		} else if (element["updateType"] == "WorksheetHeadersUpdate") {
@@ -582,6 +583,11 @@ function parse(data) {
 			if (element["GithubBranch"]) {
                 $.cookie("github-branch-" + element["worksheetId"], element["GithubBranch"]);
 			}
+		} else if(element["updateType"] == "PublishGithubUpdate") {
+			if (Settings.getInstance().getGithubAuth())
+                $("#txtGithubUrl_" + element["worksheetId"]).text(element["url"]);
+            else
+                $("#txtGithubUrl_" + element["worksheetId"]).text(element["url"] + " (disabled)");
 
 		} else if (element["updateType"] == "WorksheetSuperSelectionListUpdate") {
 			var status;
@@ -815,6 +821,7 @@ function parse(data) {
 function processHistoryCommand(command) {
 	var title = command.title;
 	var spanClass = "";
+	var spanTitle = "";
 	if(title == "Python Transformation") {
 		spanClass = "glyphicon-wrench";
 	} else if(title == "Set Semantic Type") {
@@ -845,10 +852,16 @@ function processHistoryCommand(command) {
 		spanClass = "glyphicon-compressed";
 	} else if(title == "Change Node") {
 		spanClass = "glyphicon-random";
+	} else if(title == "Add Link") {
+		spanClass = "glyphicon-link";
+		spanTitle = "Add: ";
+	} else if(title == "Delete Link") {
+		spanClass = "Delete Link";
+		spanTitle = "Delete: ";
 	}
 	
 	if(spanClass != "") {
-		title = "<span class=\"glyphicon command_glyphicon " + spanClass + "\" aria-hidden=\"true\" title=\"" + title + "\"></span>";
+		title = "<span class=\"glyphicon command_glyphicon " + spanClass + "\" aria-hidden=\"true\" title=\"" + title + "\"></span>" + spanTitle;
 	}
 	//glyphicon glyphicon-scissors
 	

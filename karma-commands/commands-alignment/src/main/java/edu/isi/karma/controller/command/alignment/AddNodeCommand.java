@@ -16,7 +16,6 @@ import edu.isi.karma.modeling.ontology.OntologyManager;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.rep.alignment.DefaultLink;
 import edu.isi.karma.rep.alignment.InternalNode;
-import edu.isi.karma.rep.alignment.Label;
 import edu.isi.karma.rep.alignment.Node;
 
 /**
@@ -46,7 +45,7 @@ public class AddNodeCommand extends WorksheetCommand {
 		this.nodeLabel = label;
 		this.nodeId = nodeId;
 		
-		addTag(CommandTag.SemanticType);
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override
@@ -116,5 +115,7 @@ public class AddNodeCommand extends WorksheetCommand {
 	}
 
 	
-
+	public String getNodeId() {
+		return nodeId;
+	}
 }

@@ -318,15 +318,32 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
-	public void updateLiteralNode(String nodeId, String value, String type, String language, boolean isUri) {
-		LiteralNode node = (LiteralNode) getNodeById(nodeId);
+public LiteralNode addLiteralNode(String nodeId, String value, String type, String language, boolean isUri) {
+		
 		type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
 		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
 		
-		node.setDatatype(literalType);
-		node.setValue(value);
-		node.setLanguage(language);
-		node.setUri(isUri);
+		String id = nodeId;
+		if(isUri && value.startsWith("\"") && value.endsWith("\""))
+			value = value.substring(1, value.length()-1);
+		LiteralNode node = new LiteralNode(id, value, literalType, language, isUri);
+		if(this.graphBuilder.addNode(node)) return node;
+		return null;
+	}
+	
+	public void updateLiteralNode(String nodeId, String value, String type, String language, boolean isUri) {
+		LiteralNode node = (LiteralNode) getNodeById(nodeId);
+		if(node != null) {
+			type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
+			Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
+			
+			node.setDatatype(literalType);
+			node.setValue(value);
+			node.setLanguage(language);
+			node.setUri(isUri);
+		} else {
+			addLiteralNode(nodeId, value, type, language, isUri);
+		}
 	}
 	
 	public void deleteForcedInternalNode(String nodeId) {
@@ -340,10 +357,10 @@ public class Alignment implements OntologyUpdateListener {
 	
 	// AddLink methods
 
-	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label) {
+	public DataPropertyLink addDataPropertyLink(Node source, Node target, Label label, boolean isProvenance) {
 		
 		String id = LinkIdFactory.getLinkId(label.getUri(), source.getId(), target.getId());	
-		DataPropertyLink link = new DataPropertyLink(id, label);
+		DataPropertyLink link = new DataPropertyLink(id, label, isProvenance);
 		if (this.graphBuilder.addLink(source, target, link)) return link;
 		return null;
 	}
@@ -1092,7 +1109,9 @@ public class Alignment implements OntologyUpdateListener {
 						
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
-						newLink.getLabel(), source.getLabel(), SemanticType.Origin.User, 1.0);
+						newLink.getLabel(), source.getLabel(), source.getId(),
+						false,
+						SemanticType.Origin.User, 1.0);
 				semanticTypes.add(st);
 			}
 			

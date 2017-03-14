@@ -169,8 +169,10 @@ public class ApplyHistoryFromR2RMLModelCommand extends WorksheetCommand {
 				c.append(hc);
 			}
 			alignment = alignMgr.getAlignment(workspace.getId(), worksheetId);
-			if(alignment != null)
+			if(alignment != null) {
+				alignment.align();
 				c.add(new AlignmentSVGVisualizationUpdate(worksheetId));
+			}
 		} catch (Exception e) {
 			String msg = "Error occured while applying history!";
 			logger.error(msg, e);

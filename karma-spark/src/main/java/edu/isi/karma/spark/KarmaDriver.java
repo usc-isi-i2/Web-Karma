@@ -280,19 +280,37 @@ public class KarmaDriver {
 					}
 				});
 
-		JavaPairRDD<String, String> reducedSerializedPairs = JSONReducerDriver.reduceJSON(numPartitions, pairs);
-		return reducedSerializedPairs
-				.mapToPair(new PairFunction<Tuple2<String, String>, Text, Text>() {
-					private static final long serialVersionUID = 2787821808872176951L;
-
-					@Override
-					public Tuple2<Text, Text> call(
-							Tuple2<String, String> stringStringTuple2)
-							throws Exception {
-						return new Tuple2<>(new Text(stringStringTuple2._1),
-								new Text(stringStringTuple2._2));
-					}
-				});
+		boolean runReducer = true;
+		if(karmaSettings.containsKey("karma.reducer.run")) {
+			runReducer = Boolean.parseBoolean(karmaSettings.getProperty("karma.reducer.run"));
+		}
+		
+		if(runReducer) {
+			JavaPairRDD<String, String> reducedSerializedPairs = JSONReducerDriver.reduceJSON(numPartitions, pairs, karmaSettings);
+			return reducedSerializedPairs
+					.mapToPair(new PairFunction<Tuple2<String, String>, Text, Text>() {
+						private static final long serialVersionUID = 2787821808872176951L;
+	
+						@Override
+						public Tuple2<Text, Text> call(
+								Tuple2<String, String> stringStringTuple2)
+								throws Exception {
+							return new Tuple2<>(new Text(stringStringTuple2._1),
+									new Text(stringStringTuple2._2));
+						}
+					});
+		} else {
+			//To return without running the reducer:
+			return pairs.mapToPair(new PairFunction<Tuple2<String,JSONObject>, Text, Text>() {
+	
+				@Override
+				public Tuple2<Text, Text> call(Tuple2<String, JSONObject> arg0)
+						throws Exception {
+					return new Tuple2<>(new Text(arg0._1),
+							new Text(arg0._2.toJSONString()));
+				}
+			});
+		}
 	}
 
     public static JavaPairRDD<Text, Text>applyModelToGetN3(JavaPairRDD<String, String> input, 
