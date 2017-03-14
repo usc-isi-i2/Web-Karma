@@ -168,7 +168,7 @@ public class ModelingConfiguration {
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false" + newLine + 
 			"graphiz.server=http://52.38.65.60/graphviz/" + newLine +
-			"r2rml.export.superclass=false"
+			"r2rml.export.superclass=true"
 			;
 
     private Properties modelingProperties;
@@ -291,8 +291,8 @@ public class ModelingConfiguration {
 			}
 			else
 			{
-				this.r2rmlExportSuperclass = false;
-				addProperty("r2rml.export.superclass=false");
+				this.r2rmlExportSuperclass = true;
+				addProperty("r2rml.export.superclass=true");
 			}
 
 		} catch (IOException e) {
@@ -580,8 +580,10 @@ public class ModelingConfiguration {
 	}
 
 	private void updateProperty(String key, String value) throws IOException {
-		this.modelingProperties.put(key, value);
 		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+		FileInputStream fis = new FileInputStream(file);
+		this.modelingProperties.load(fis);
+		this.modelingProperties.put(key, value);
 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
 		this.modelingProperties.store(out, null);
 		out.close();
