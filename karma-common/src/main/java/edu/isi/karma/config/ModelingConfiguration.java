@@ -188,7 +188,7 @@ public class ModelingConfiguration {
 			else {
 				//need to add this property to the end
 				compatibleProperties = true;
-				addProperty("compatible.properties=true");
+				addProperty("compatible.properties", "true");
 			}
 			
 //			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("ontology.alignment", "false"));
@@ -199,7 +199,7 @@ public class ModelingConfiguration {
 			else {
 				//need to add this property to the end
 				ontologyAlignment = false;
-				addProperty("ontology.alignment=false");
+				addProperty("ontology.alignment", "false");
 			}
 			
 //			knownModelsAlignment = Boolean.parseBoolean(modelingProperties.getProperty("knownmodels.alignment", "false"));
@@ -210,7 +210,7 @@ public class ModelingConfiguration {
 			else {
 				//need to add this property to the end
 				knownModelsAlignment = true;
-				addProperty("knownmodels.alignment=true");
+				addProperty("knownmodels.alignment", "true");
 			}
 			
 //			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
@@ -221,7 +221,7 @@ public class ModelingConfiguration {
 			else {
 				//need to add this property to the end
 				learnerEnabled = true;
-				addProperty("learner.enabled=true");
+				addProperty("learner.enabled", "true");
 			}
 
 //			addOntologyPaths = Boolean.parseBoolean(modelingProperties.getProperty("add.ontology.paths", "true"));
@@ -232,7 +232,7 @@ public class ModelingConfiguration {
 			else {
 				//need to add this property to the end
 				addOntologyPaths = true;
-				addProperty("add.ontology.paths=false");
+				addProperty("add.ontology.paths", "false");
 			}
 			
 			thingNode = Boolean.parseBoolean(modelingProperties.getProperty("thing.node", "false"));
@@ -275,13 +275,13 @@ public class ModelingConfiguration {
 			defaultProperty = modelingProperties.getProperty("default.property");
 			if(defaultProperty == null) {
 				//need to add this property to the end
-				addProperty("default.property=http://schema.org/name");
+				addProperty("default.property", "http://schema.org/name");
 			}
 			
 			graphvizServer = modelingProperties.getProperty("graphviz.server");
 			if(graphvizServer == null) {
 				graphvizServer = "http://52.38.65.60/graphviz/";
-				addProperty("graphviz.server=" + graphvizServer);
+				addProperty("graphviz.server", graphvizServer);
 			}
 
 			String r2rml_export_superclass = modelingProperties.getProperty("r2rml.export.superclass");
@@ -292,7 +292,7 @@ public class ModelingConfiguration {
 			else
 			{
 				this.r2rmlExportSuperclass = false;
-				addProperty("r2rml.export.superclass=false");
+				addProperty("r2rml.export.superclass", "false");
 			}
 
 		} catch (IOException e) {
@@ -570,13 +570,12 @@ public class ModelingConfiguration {
 		return r2rmlExportSuperclass;
 	}
 
-	private void addProperty(String propLine) throws IOException {
+	private void addProperty(String key, String value) throws IOException {
 		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
 		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-		out.println(propLine);
+		out.println(key + "=" + value);
 		out.close();
-		String[] keyValue = propLine.split("=");
-		this.modelingProperties.put(keyValue[0], keyValue[1]);
+		this.modelingProperties.put(key, value);
 	}
 
 	private void updateProperty(String key, String value) throws IOException {
