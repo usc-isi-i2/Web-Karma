@@ -254,6 +254,16 @@ public class KR2RMLMappingGenerator {
 				TemplateTermSet typeTermSet = new TemplateTermSet();
 				typeTermSet.addTemplateTermToSet(typeTerm);
 				subj.addRdfsType(typeTermSet);
+				OntologyManager ontMgr = workspace.getOntologyManager();
+				HashMap<String,Label> superClassLabelsMap = ontMgr.getSuperClasses(node.getLabel().getUri(), true);
+				for(String key: superClassLabelsMap.keySet())
+				{
+					Label superClassLabel = superClassLabelsMap.get(key);
+					StringTemplateTerm supertypeTerm = new StringTemplateTerm(superClassLabel.getUri(), false);
+					TemplateTermSet supertypeTermSet = new TemplateTermSet();
+					supertypeTermSet.addTemplateTermToSet(supertypeTerm);
+					subj.addRdfsType(supertypeTermSet);
+				}
 				r2rmlMapping.getSubjectMapIndex().put(node.getId(), subj);
 				
 
