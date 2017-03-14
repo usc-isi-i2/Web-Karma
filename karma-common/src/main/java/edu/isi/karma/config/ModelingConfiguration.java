@@ -168,7 +168,7 @@ public class ModelingConfiguration {
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false" + newLine + 
 			"graphiz.server=http://52.38.65.60/graphviz/" + newLine +
-			"r2rml.export.superclass=true"
+			"r2rml.export.superclass=false"
 			;
 
     private Properties modelingProperties;
@@ -291,8 +291,8 @@ public class ModelingConfiguration {
 			}
 			else
 			{
-				this.r2rmlExportSuperclass = true;
-				addProperty("r2rml.export.superclass=true");
+				this.r2rmlExportSuperclass = false;
+				addProperty("r2rml.export.superclass=false");
 			}
 
 		} catch (IOException e) {
