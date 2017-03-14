@@ -384,6 +384,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		var info = generateInfoObject(worksheetId, "", "GenerateR2RMLModelCommand");
 		info['tripleStoreUrl'] = $('#txtModel_URL').text();
 		showLoading(info["worksheetId"]);
+		var repoUrl = $.cookie("github-url-" + worksheetId);
 		var returned = sendRequest(info, worksheetId,
 			function(data) {
 				var newWorksheetId = worksheetId;
@@ -391,6 +392,8 @@ function WorksheetOptions(wsId, wsTitle) {
 					if(element) {
 						if (element["updateType"] == "PublishR2RMLUpdate") {
 							newWorksheetId = element["worksheetId"];
+							if(worksheetId != newWorksheetId)
+								$.cookie("github-url-" + newWorksheetId, repoUrl);
 						}
 					}
 				});

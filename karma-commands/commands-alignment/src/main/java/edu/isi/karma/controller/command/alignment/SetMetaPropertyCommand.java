@@ -21,6 +21,7 @@
 
 package edu.isi.karma.controller.command.alignment;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -81,8 +82,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 	private SynonymSemanticTypes oldSynonymTypes;
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
-	private SemanticType oldType;
-	private SemanticType newType;
+	private ArrayList<SemanticType> oldType;
 
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass()
@@ -154,36 +154,26 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>) alignment
 				.getGraph().clone();
 
-		/*** Add the appropriate nodes and links in alignment graph ***/
-		newType = null;
-
 		/** Check if a semantic type already exists for the column **/
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
 		columnNode.setRdfLiteralType(rdfLiteralType);
 		columnNode.setLanguage(language);
-		boolean semanticTypeAlreadyExists = false;
-		LabeledLink oldIncomingLinkToColumnNode = null;
-		Node oldDomainNode = null;
-		List<LabeledLink> columnNodeIncomingLinks = alignment.getGraphBuilder()
-				.getIncomingLinks(columnNode.getId());
-		if (columnNodeIncomingLinks != null
-				&& !columnNodeIncomingLinks.isEmpty()) { // SemanticType already
-			// assigned
-			semanticTypeAlreadyExists = true;
-			oldIncomingLinkToColumnNode = columnNodeIncomingLinks.get(0);
-			oldDomainNode = oldIncomingLinkToColumnNode.getSource();
+		List<LabeledLink> columnNodeIncomingLinks = alignment.getGraphBuilder().getIncomingLinks(columnNode.getId());
+		if (columnNodeIncomingLinks != null) { 
+			for(LabeledLink oldIncomingLinkToColumnNode : columnNodeIncomingLinks) {
+				Node oldDomainNode = oldIncomingLinkToColumnNode.getSource();
+				alignment.removeLink(oldIncomingLinkToColumnNode.getId());
+				if (alignment.isNodeIsolatedInTree(oldDomainNode.getId()))
+					alignment.removeNode(oldDomainNode.getId());
+			}
 		}
 
-
+		SemanticType newType = null;
 		if(metaPropertyId.endsWith(" (add)"))
 			metaPropertyId = metaPropertyId.substring(0, metaPropertyId.length()-5).trim();
 
 		if (metaPropertyName.equals(METAPROPERTY_NAME.isUriOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyId);
-			if (semanticTypeAlreadyExists) {
-				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
-						oldDomainNode, alignment, classNode);
-			}
 
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyUri);
@@ -206,6 +196,8 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
 					ClassInstanceLink.getFixedLabel(), classNode.getLabel(),
+					classNode.getId(),
+					false,
 					SemanticType.Origin.User, 1.0);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
@@ -233,11 +225,6 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				return new UpdateContainer(new ErrorUpdate(errorMessage));
 			}
 
-			if (semanticTypeAlreadyExists) {
-				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
-						oldDomainNode, alignment, classInstanceNode);
-			}
-
 			if (propertyLink instanceof DataPropertyLink) {
 				String targetHNodeId = ((ColumnNode) propertyLink.getTarget())
 						.getHNodeId();
@@ -249,7 +236,10 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						DataPropertyOfColumnLink.getFixedLabel(),
-						classInstanceNode.getLabel(), SemanticType.Origin.User,
+						classInstanceNode.getLabel(), 
+						classInstanceNode.getId(),
+						false,
+						SemanticType.Origin.User,
 						1.0);
 			} else if (propertyLink instanceof ObjectPropertyLink) {
 				LabeledLink newLink = alignment.addObjectPropertySpecializationLink(
@@ -260,16 +250,15 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				// Create the semantic type object
 				newType = new SemanticType(hNodeId,
 						ObjectPropertySpecializationLink.getFixedLabel(),
-						classInstanceNode.getLabel(), SemanticType.Origin.User,
+						classInstanceNode.getLabel(), 
+						classInstanceNode.getId(),
+						false,
+						SemanticType.Origin.User,
 						1.0);
 			}
 
 		} else if (metaPropertyName.equals(METAPROPERTY_NAME.isSubclassOfClass)) {
 			Node classNode = alignment.getNodeById(metaPropertyId);
-			if (semanticTypeAlreadyExists) {
-				clearOldSemanticTypeLink(oldIncomingLinkToColumnNode,
-						oldDomainNode, alignment, classNode);
-			}
 
 			if (classNode == null) {
 				Label classNodeLabel = ontMgr.getUriLabel(metaPropertyUri);
@@ -289,7 +278,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
-					ColumnSubClassLink.getFixedLabel(), classNode.getLabel(),
+					ColumnSubClassLink.getFixedLabel(), classNode.getLabel(), classNode.getId(), false,
 					SemanticType.Origin.User, 1.0);
 		}
 
@@ -303,9 +292,11 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				}
 			}
 		}
-		if (!duplicateSemanticType)
+		if (!duplicateSemanticType) {
+			columnNode.unassignUserTypes();
 			columnNode.assignUserType(newType);
-
+		}
+		
 		// Update the alignment
 		if(!this.isExecutedInBatch())
 			alignment.align();
@@ -332,25 +323,21 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 				.getSynonymTypesForHNodeId(newType.getHNodeId());
 
 		// Update the SemanticTypes data structure for the worksheet
+		worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
 		worksheet.getSemanticTypes().addType(newType);
 
 		// Update the synonym semanticTypes
 		// worksheet.getSemanticTypes().addSynonymTypesForHNodeId(newType.getHNodeId(),
 		// newSynonymTypes);
 
+		ArrayList<SemanticType> newTypes = new ArrayList<>();
+		newTypes.add(newType);
 		if ((!this.isExecutedInBatch() && trainAndShowUpdates) ||
 				(this.isExecutedInBatch() && modelingConfiguration.getTrainOnApplyHistory())) {
-			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newType, selection);
+			new SemanticTypeUtil().trainOnColumn(workspace, worksheet, newTypes, selection);
 		}
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		return c;
-	}
-
-	private void clearOldSemanticTypeLink(LabeledLink oldIncomingLinkToColumnNode,
-			Node oldDomainNode, Alignment alignment, Node newDomainNode) {
-		alignment.removeLink(oldIncomingLinkToColumnNode.getId());
-		if (alignment.isNodeIsolatedInTree(oldDomainNode.getId()))
-			alignment.removeNode(oldDomainNode.getId());
 	}
 
 	@Override
@@ -358,12 +345,11 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 		UpdateContainer c = new UpdateContainer();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		if (oldType == null) {
-			worksheet.getSemanticTypes().unassignColumnSemanticType(
-					newType.getHNodeId());
+			worksheet.getSemanticTypes().unassignColumnSemanticType(hNodeId);
 		} else {
-			worksheet.getSemanticTypes().addType(oldType);
+			worksheet.getSemanticTypes().setType(oldType);
 			worksheet.getSemanticTypes().addSynonymTypesForHNodeId(
-					newType.getHNodeId(), oldSynonymTypes);
+					hNodeId, oldSynonymTypes);
 		}
 
 		// Replace the current alignment with the old alignment

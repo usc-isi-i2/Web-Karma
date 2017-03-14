@@ -125,10 +125,10 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 			List<LabeledLink> columnNodeIncomingLinks = alignment.getGraphBuilder().getIncomingLinks(columnNode.getId());
 			if (columnNodeIncomingLinks == null || columnNodeIncomingLinks.isEmpty()) { // SemanticType not yet assigned
 				Label propertyLabel = new Label(ns + columnName, ns, "karma");
-				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel);
+				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, false);
 				
 				// Create a semantic type object
-				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, SemanticType.Origin.User, 1.0);
+				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, classNode.getId(), false, SemanticType.Origin.User, 1.0);
 				worksheet.getSemanticTypes().addType(type);
 				
 				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();

@@ -1459,8 +1459,8 @@ public class GraphBuilder {
 			ColumnNode c2 = al.addColumnNode("h2", "c2", null, null);
 			InternalNode n1 = al.addInternalNode(new Label("http://example.com/layout/C01_"));
 			InternalNode n2 = al.addInternalNode(new Label("http://example.com/layout/C02_"));
-			al.addDataPropertyLink(n1, c1, new Label("http://example.com/layout/d1"));
-			al.addDataPropertyLink(n2, c2, new Label("http://example.com/layout/d2"));
+			al.addDataPropertyLink(n1, c1, new Label("http://example.com/layout/d1"), false);
+			al.addDataPropertyLink(n2, c2, new Label("http://example.com/layout/d2"), false);
 			al.align();
 			System.out.println(GraphUtil.labeledGraphToString(al.getSteinerTree()));
 		} else {

@@ -133,4 +133,12 @@ public class HistoryJsonUtil {
 		return commandsJSON;
 	}
 	
+	public static JSONObject createParamObject(String name, ParameterType type, Object value) {
+		JSONObject paramObj = new JSONObject();
+		paramObj.put("name", name);
+		paramObj.put("type", type);
+		paramObj.put("value", value);
+		return paramObj;
+	}
+	
 }

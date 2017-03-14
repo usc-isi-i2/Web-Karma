@@ -33,7 +33,7 @@ public class ColumnSubClassLink extends LabeledLink {
 			new Label(Uris.COLUMN_SUBCLASS_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 
 	public ColumnSubClassLink(String id) {
-		super(id, label, LinkType.ColumnSubClassLink);
+		super(id, label, LinkType.ColumnSubClassLink, false);
 	}
 
 	public static Label getFixedLabel() {

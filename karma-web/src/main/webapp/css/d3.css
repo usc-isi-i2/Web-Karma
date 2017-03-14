@@ -53,6 +53,10 @@ text.FakeRootLink {
 	stroke: rgb(133, 188, 216);
 }
 
+.link.provenanceLink {
+	stroke: #3c763d;
+}
+
 g.ColumnNode rect{
 	fill:black;
 }

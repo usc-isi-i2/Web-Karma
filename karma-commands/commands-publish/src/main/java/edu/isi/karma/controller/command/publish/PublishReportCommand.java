@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -380,6 +381,8 @@ public class PublishReportCommand extends WorksheetCommand {
 				vWorkspace.getWorkspace().getId(), vWorksheet.getWorksheetId());
 		Alignment alignment = AlignmentManager.Instance().getAlignment(alignmentId);
 		
+		HashSet<String> provenanceProperties = new HashSet<>();
+		
 		if(alignment != null) {
 			List<Node> columnNodes = new ArrayList<>();
 			for(String hNodeId: hNodeIdList) {
@@ -402,9 +405,16 @@ public class PublishReportCommand extends WorksheetCommand {
 						 String columnName = getClassName(columnNode);
 						 List<LabeledLink> links = alignment.getGraphBuilder().getIncomingLinks(node.getId());
 						 for(LabeledLink link : links) {
-							 String property = getPropertyName(link.getLabel());
+							 String property = "`" + getPropertyName(link.getLabel()) + "`";
 							 String classname = getClassName(link.getSource());
-							 pw.println("| _" + columnName + "_ | `" + property + "` | `" + classname + "`|");
+							 if(link.isProvenance()) {
+								 property = property + "<BR> - _specified provenance_";
+								 String provProperty = columnName + "-" + property;
+								 if(provenanceProperties.contains(provProperty))
+									 continue;
+								 provenanceProperties.add(provProperty);
+							 }
+							 pw.println("| _" + columnName + "_ | " + property + " | `" + classname + "`|");
 						 }
 					 }
 				 }
@@ -419,6 +429,7 @@ public class PublishReportCommand extends WorksheetCommand {
 		pw.println("|  --- | -------- | ---|");
 		
 		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheet.getId());
+		HashSet<String> provenanceProperties = new HashSet<>();
 		if(alignment != null) {
 			DirectedWeightedMultigraph<Node, LabeledLink> alignmentGraph = alignment.getSteinerTree();
 			if(alignmentGraph != null) {
@@ -439,11 +450,17 @@ public class PublishReportCommand extends WorksheetCommand {
 					}
 					
 					Node source = link.getSource();
-					String property = getPropertyName(link.getLabel());
+					String property = "`" + getPropertyName(link.getLabel()) + "`";
 					String to = getClassName(target);
 					String from = getClassName(source);
-					
-					pw.println("| `" + from + "` | `" + property + "` | `" + to + "`|");
+					if(link.isProvenance()) {
+						 property = property + "<BR> - _specified provenance_";
+						 String provProperty = property + "-" + to;
+						 if(provenanceProperties.contains(provProperty))
+							 continue;
+						 provenanceProperties.add(provProperty);
+					}
+					pw.println("| `" + from + "` | " + property + " | `" + to + "`|");
 				}
 			}
 		}
@@ -463,7 +480,6 @@ public class PublishReportCommand extends WorksheetCommand {
 	
 	@Override
 	public UpdateContainer undoIt(Workspace workspace) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

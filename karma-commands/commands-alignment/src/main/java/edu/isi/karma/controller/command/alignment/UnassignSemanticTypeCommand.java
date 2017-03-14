@@ -20,7 +20,13 @@
  ******************************************************************************/
 package edu.isi.karma.controller.command.alignment;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.slf4j.Logger;
@@ -37,6 +43,7 @@ import edu.isi.karma.controller.update.TagsUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
 import edu.isi.karma.modeling.alignment.Alignment;
 import edu.isi.karma.modeling.alignment.AlignmentManager;
+import edu.isi.karma.modeling.alignment.LinkIdFactory;
 import edu.isi.karma.rep.HNodePath;
 import edu.isi.karma.rep.Worksheet;
 import edu.isi.karma.rep.Workspace;
@@ -52,17 +59,19 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 
 	private final String hNodeId;
 	private String columnName;
-	private SemanticType oldSemanticType;
+	private ArrayList<SemanticType> oldSemanticTypes;
 	private Alignment oldAlignment;
 	private DirectedWeightedMultigraph<Node, DefaultLink> oldGraph;
-
+	public enum JsonKeys {
+		edgeSourceId, edgeId, edgeTargetId, edgeSourceUri, edgeTargetUri
+	}
+	
 	private static Logger logger = LoggerFactory
 			.getLogger(UnassignSemanticTypeCommand.class);
 
 	public UnassignSemanticTypeCommand(String id, String model, String hNodeId, String worksheetId) {
 		super(id, model, worksheetId);
 		this.hNodeId = hNodeId;
-
 		addTag(CommandTag.SemanticType);
 	}
 
@@ -92,42 +101,36 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		// Save the old SemanticType object for undo
 		SemanticTypes types = worksheet.getSemanticTypes();
-		oldSemanticType = types.getSemanticTypeForHNodeId(hNodeId);
-		types.unassignColumnSemanticType(hNodeId);
-
-		// Save the original alignment for undo
+		oldSemanticTypes = types.getSemanticTypeForHNodeId(hNodeId);
+		HashMap<String, SemanticType> semanticIdMap = new HashMap<>();
+		for(SemanticType type : oldSemanticTypes) {
+			String semId = LinkIdFactory.getLinkId(type.getType().getUri(), type.getDomainId(), type.getHNodeId());
+			semanticIdMap.put(semId, type);
+		}
+		
 		Alignment alignment = AlignmentManager.Instance().getAlignment(workspace.getId(), worksheetId);
 		oldAlignment = alignment.getAlignmentClone();
 		oldGraph = (DirectedWeightedMultigraph<Node, DefaultLink>)alignment.getGraph().clone();
 		
-		// Remove it from the alignment
 		ColumnNode columnNode = alignment.getColumnNodeByHNodeId(hNodeId);
-		columnNode.unassignUserType(oldSemanticType);
-		columnNode.setForced(false);
-		if (columnNode != null) {
-			Set<LabeledLink> links =  alignment.getCurrentIncomingLinksToNode(columnNode.getId());
-			if(links == null || !links.iterator().hasNext())
-			{
-				logger.error("No semantic type to unassign!");
-				return new UpdateContainer(new ErrorUpdate("No semantic type to unassign!"));
-			}
-			LabeledLink currentLink = links.iterator().next();
-//			String domainNodeId = currentLink.getSource().getId();
-			// Remove the existing link
-			alignment.removeLink(currentLink.getId());
+		Set<LabeledLink> alignmentEdges = alignment.getCurrentIncomingLinksToNode(hNodeId);
+		for(LabeledLink edge: alignmentEdges) {
+			String linkId = edge.getId();
+			SemanticType type = semanticIdMap.get(linkId);
+			types.removeType(type);
+			columnNode.unassignUserType(type);
+			columnNode.setForced(false);
 			
+			LabeledLink currentLink = alignment.getLinkById(linkId);
+			alignment.removeLink(linkId);
 			Node domain = currentLink.getSource();
 			if (domain != null) {
 				String domainId = domain.getId();
 				if (alignment.isNodeIsolatedInTree(domainId))
 					alignment.removeNode(domainId);
 			}
-			// Remove the column node
-//			alignment.removeNode(columnNode.getId());
-			// Remove the source node
-//			alignment.removeNode(domainNodeId);
-			
 		}
+		
 		if(!this.isExecutedInBatch())
 			alignment.align();
 		
@@ -175,9 +178,9 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 
 		// Add the old SemanticType object if it is not null
 		SemanticTypes types = worksheet.getSemanticTypes();
-		if (oldSemanticType != null)
-			types.addType(oldSemanticType);
-
+		if (oldSemanticTypes != null) {
+			types.setType(oldSemanticTypes);
+		}
 		// Update the container
 		UpdateContainer c = new UpdateContainer();
 		
@@ -195,8 +198,8 @@ public class UnassignSemanticTypeCommand extends WorksheetCommand {
 		return c;
 	}
 
-	public SemanticType getOldSemanticType() {
-		return oldSemanticType;
+	public ArrayList<SemanticType> getOldSemanticTypes() {
+		return oldSemanticTypes;
 	}
 
 	@Override

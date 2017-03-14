@@ -36,14 +36,18 @@ public abstract class LabeledLink extends DefaultLink {
 
 	private Label label;
 	private LinkStatus status;
+	private boolean isProvenance;
 	private LinkKeyInfo keyInfo;
 	private Set<String> modelIds;
+	private boolean isMainProvenanceLink;
 	
-	public LabeledLink(String id, Label label, LinkType type) {
+	public LabeledLink(String id, Label label, LinkType type, boolean isProvenance) {
 		super(id, type);
 		
 		init();
 		if (label != null) this.label = label;
+		this.isProvenance = isProvenance;
+		this.isMainProvenanceLink = false;
 	}
 	
 	public LabeledLink(String id, Label label, LinkType type, LinkKeyInfo keyInfo) {
@@ -52,6 +56,8 @@ public abstract class LabeledLink extends DefaultLink {
 		this.init();
 		if (label != null) this.label = label;
 		if (keyInfo != null) this.keyInfo = keyInfo;
+		this.isProvenance = false;
+		this.isMainProvenanceLink = false;
 	}
 	
 	public LabeledLink(LabeledLink e) {
@@ -61,6 +67,8 @@ public abstract class LabeledLink extends DefaultLink {
 			this.label = e.label;
 			this.status = e.status;
 			this.keyInfo = e.keyInfo;
+			this.isProvenance = e.isProvenance;
+			this.isMainProvenanceLink = e.isMainProvenanceLink;
 		}
 	}
 	
@@ -69,6 +77,8 @@ public abstract class LabeledLink extends DefaultLink {
 		this.label = new Label(l);
 		this.status = LinkStatus.Normal;
 		this.keyInfo = LinkKeyInfo.None;
+		this.isProvenance = false;
+		this.isMainProvenanceLink = false;
 		this.modelIds = new HashSet<>();
 	}
 	
@@ -137,7 +147,7 @@ public abstract class LabeledLink extends DefaultLink {
 		LabeledLink newLink = null;
 		Label label = this.getLabel();
 		if (this instanceof DataPropertyLink)
-			newLink = new DataPropertyLink(newId, label);
+			newLink = new DataPropertyLink(newId, label, this.isProvenance);
 		else if (this instanceof ObjectPropertyLink)
 			newLink = new ObjectPropertyLink(newId, label, ((ObjectPropertyLink)this).getObjectPropertyType());
 		else if (this instanceof SubClassLink)
@@ -159,7 +169,20 @@ public abstract class LabeledLink extends DefaultLink {
 		newLink.setStatus(this.getStatus());
 		newLink.setModelIds(new HashSet<>(this.getModelIds()));
 		newLink.setKeyType(this.getKeyType());
-		
+		newLink.setProvenance(this.isProvenance, this.isMainProvenanceLink);
 		return newLink;
+    }
+    
+    public boolean isProvenance() {
+    	return isProvenance;
+    }
+    
+    public boolean isMainProvenanceLink() {
+    	return this.isMainProvenanceLink;
+    }
+    
+    public void setProvenance(boolean isProvenance, boolean isMainProvLink) {
+    	this.isProvenance = isProvenance;
+    	this.isMainProvenanceLink = isMainProvLink;
     }
 }

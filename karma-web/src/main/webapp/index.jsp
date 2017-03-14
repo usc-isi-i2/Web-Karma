@@ -566,15 +566,15 @@ and related projects, please see: http://www.isi.edu/integration
             }
 		</script>
 		<script type="text/javascript">
-			if(googleEarthEnabled) {
-				google.load("earth", "1", {
-					"callback" : earthCallback
-				});
-			}
+			// if(googleEarthEnabled) {
+			// 	google.load("earth", "1", {
+			// 		"callback" : earthCallback
+			// 	});
+			// }
 			
-			function earthCallback() {
-				// alert("Earth namespace loaded!");
-			}
+			// function earthCallback() {
+			// 	// alert("Earth namespace loaded!");
+			// }
 		</script>
 
         <script type="text/javascript">

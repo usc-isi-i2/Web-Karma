@@ -194,8 +194,8 @@ public abstract class Command extends Entity implements ICommand
 
 	protected void logCommand(Logger logger, Workspace workspace) {
 		try {
-			logger.info("Executing command:\n"
-					+ getArgsJSON(workspace).toString(4));
+			logger.info("Executing command:" + getCommandName() + "\n"
+					+ getInputParameterJson());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
