@@ -318,6 +318,19 @@ public class Alignment implements OntologyUpdateListener {
 		return null;
 	}
 	
+public LiteralNode addLiteralNode(String nodeId, String value, String type, String language, boolean isUri) {
+		
+		type = type.replace(Prefixes.XSD + ":", Namespaces.XSD);
+		Label literalType = new Label(type, Namespaces.XSD, Prefixes.XSD);
+		
+		String id = nodeId;
+		if(isUri && value.startsWith("\"") && value.endsWith("\""))
+			value = value.substring(1, value.length()-1);
+		LiteralNode node = new LiteralNode(id, value, literalType, language, isUri);
+		if(this.graphBuilder.addNode(node)) return node;
+		return null;
+	}
+	
 	public void updateLiteralNode(String nodeId, String value, String type, String language, boolean isUri) {
 		LiteralNode node = (LiteralNode) getNodeById(nodeId);
 		if(node != null) {
@@ -329,7 +342,7 @@ public class Alignment implements OntologyUpdateListener {
 			node.setLanguage(language);
 			node.setUri(isUri);
 		} else {
-			addLiteralNode(value, type, language, isUri);
+			addLiteralNode(nodeId, value, type, language, isUri);
 		}
 	}
 	
