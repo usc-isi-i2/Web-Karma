@@ -82,7 +82,9 @@ public class ModelingConfiguration {
 	private Boolean showModelsWithoutMatching;
 	private String defaultProperty = null;
 	private String graphvizServer = null;
-	
+
+	private Boolean r2rmlExportSuperclass;
+
 	private final String newLine = System.getProperty("line.separator");
 	
 	private String defaultModelingProperties = 
@@ -165,15 +167,15 @@ public class ModelingConfiguration {
 			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false" + newLine + 
-			"graphiz.server=http://52.38.65.60/graphviz/"
+			"graphiz.server=http://52.38.65.60/graphviz/" + newLine +
+			"r2rml.export.superclass=false"
 			;
 
+    private Properties modelingProperties;
 
 	public void load() {
 		try {
-			Properties modelingProperties = loadParams();
-
-			File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+			this.modelingProperties = loadParams();
 
 			trainOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("train.on.apply.history", "false"));
 			predictOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("predict.on.apply.history", "false"));
@@ -185,11 +187,8 @@ public class ModelingConfiguration {
 				compatibleProperties = Boolean.parseBoolean(compatiblePropertiesStr);
 			else {
 				//need to add this property to the end
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				compatibleProperties = true;
-				out.println();
-				out.println("compatible.properties=true");
-				out.close();
+				addProperty("compatible.properties=true");
 			}
 			
 //			ontologyAlignment = Boolean.parseBoolean(modelingProperties.getProperty("ontology.alignment", "false"));
@@ -199,11 +198,8 @@ public class ModelingConfiguration {
 				ontologyAlignment = Boolean.parseBoolean(ontologyAlignmentStr);
 			else {
 				//need to add this property to the end
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				ontologyAlignment = false;
-				out.println();
-				out.println("ontology.alignment=false");
-				out.close();
+				addProperty("ontology.alignment=false");
 			}
 			
 //			knownModelsAlignment = Boolean.parseBoolean(modelingProperties.getProperty("knownmodels.alignment", "false"));
@@ -213,11 +209,8 @@ public class ModelingConfiguration {
 				knownModelsAlignment = Boolean.parseBoolean(knownModelsAlignmentStr);
 			else {
 				//need to add this property to the end
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				knownModelsAlignment = true;
-				out.println();
-				out.println("knownmodels.alignment=true");
-				out.close();
+				addProperty("knownmodels.alignment=true");
 			}
 			
 //			learnerEnabled = Boolean.parseBoolean(modelingProperties.getProperty("learner.enabled", "true"));
@@ -227,11 +220,8 @@ public class ModelingConfiguration {
 				learnerEnabled = Boolean.parseBoolean(learnerEnabledStr);
 			else {
 				//need to add this property to the end
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				learnerEnabled = true;
-				out.println();
-				out.println("learner.enabled=true");
-				out.close();
+				addProperty("learner.enabled=true");
 			}
 
 //			addOntologyPaths = Boolean.parseBoolean(modelingProperties.getProperty("add.ontology.paths", "true"));
@@ -241,11 +231,8 @@ public class ModelingConfiguration {
 				addOntologyPaths = Boolean.parseBoolean(addOntologyPathsStr);
 			else {
 				//need to add this property to the end
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
 				addOntologyPaths = true;
-				out.println();
-				out.println("add.ontology.paths=false");
-				out.close();
+				addProperty("add.ontology.paths=false");
 			}
 			
 			thingNode = Boolean.parseBoolean(modelingProperties.getProperty("thing.node", "false"));
@@ -288,20 +275,26 @@ public class ModelingConfiguration {
 			defaultProperty = modelingProperties.getProperty("default.property");
 			if(defaultProperty == null) {
 				//need to add this property to the end
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-				out.println();
-				out.println("default.property=http://schema.org/name");
-				out.close();
+				addProperty("default.property=http://schema.org/name");
 			}
 			
 			graphvizServer = modelingProperties.getProperty("graphviz.server");
 			if(graphvizServer == null) {
-				PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
-				out.println();
 				graphvizServer = "http://52.38.65.60/graphviz/";
-				out.println("graphviz.server=" + graphvizServer);
-				out.close();
+				addProperty("graphviz.server=" + graphvizServer);
 			}
+
+			String r2rml_export_superclass = modelingProperties.getProperty("r2rml.export.superclass");
+			if(r2rml_export_superclass!=null)
+			{
+				this.r2rmlExportSuperclass = Boolean.parseBoolean(r2rml_export_superclass);
+			}
+			else
+			{
+				this.r2rmlExportSuperclass = false;
+				addProperty("r2rml.export.superclass=false");
+			}
+
 		} catch (IOException e) {
 			logger.error("Error occured while reading config file ...", e);
 			System.exit(1);
@@ -565,5 +558,35 @@ public class ModelingConfiguration {
 	public String getGraphvizServer() {
 		return graphvizServer;
 	}
+
+	public void setR2rmlExportSuperClass(boolean r2rml_export_superclass) throws IOException {
+		this.r2rmlExportSuperclass = r2rml_export_superclass;
+		this.updateProperty("r2rml.export.superclass",Boolean.toString(r2rml_export_superclass));
+	}
 	
+	public Boolean getR2rmlExportSuperClass() {
+		if (r2rmlExportSuperclass == null)
+			load();
+		return r2rmlExportSuperclass;
+	}
+
+	private void addProperty(String propLine) throws IOException {
+		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+		out.println(propLine);
+		out.close();
+		String[] keyValue = propLine.split("=");
+		this.modelingProperties.put(keyValue[0], keyValue[1]);
+	}
+
+	private void updateProperty(String key, String value) throws IOException {
+		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+		FileInputStream fis = new FileInputStream(file);
+		this.modelingProperties.load(fis);
+		this.modelingProperties.put(key, value);
+		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+		this.modelingProperties.store(out, null);
+		out.close();
+	}
+
 }

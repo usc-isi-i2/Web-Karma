@@ -6,7 +6,8 @@ var Settings = (function() {
 		var showRDFSLabel = false;
 		var showRDFSLabel_labelFirst = false;
 		var showRDFSLabel_idFirst = false;
-		
+		var r2rml_export_superclass = false;
+
 		function init() {
 			$("#displayRDFSLabel_labelFirst").on("click", function(e) {
 				label_first = !$("#displayRDFSLabel_labelFirst span").is(":visible");
@@ -27,6 +28,10 @@ var Settings = (function() {
 			$("#displayGithubSettings").on("click", function(e) {
 				GithubSettingsDialog.getInstance().show();
 			});
+			$("#r2rmlExportSuperclass").on("click", function(e) {
+        		r2rml_export_superclass = !$("#r2rmlExportSuperclass span").is(":visible");
+                setDisplaySuperclass(r2rml_export_superclass, true);
+      		});
 		}
 
 		function getGithubUsername() {
@@ -131,6 +136,26 @@ var Settings = (function() {
 			}
 		}
 
+	    function setDisplaySuperclass(r2rmlExportSuperclass, update) {
+            r2rml_export_superclass = r2rmlExportSuperclass;
+
+	      if(r2rmlExportSuperclass) {
+	        $("#r2rmlExportSuperclass span").show();
+	      } else {
+	        $("#r2rmlExportSuperclass span").hide();
+	      }
+
+	      if(update) {
+	        var info = generateInfoObject("", "", "UpdateModelConfigurationCommand");
+	        var newInfo = info['newInfo'];
+
+	        newInfo.push(getParamObject("r2rml_export_superclass", r2rmlExportSuperclass, "other"));
+	        info["newInfo"] = JSON.stringify(newInfo);
+	        showWaitingSignOnScreen();
+
+	        var returned = sendRequest(info);
+	      }
+	    }
 
 		function showRDFSLabelWithLabelFirst() {
 			return showRDFSLabel_labelFirst;
@@ -138,6 +163,10 @@ var Settings = (function() {
 
 		function showRDFSLabelWithIdFirst() {
 			return showRDFSLabel_idFirst;
+		}
+
+		function showExportSuperclass() {
+			return r2rml_export_superclass;
 		}
 
 		function getDisplayLabel(label, rdfsLabel, noStyle) {
@@ -161,6 +190,8 @@ var Settings = (function() {
 			showRDFSLabelWithIdFirst: showRDFSLabelWithIdFirst,
 			showRDFSLabelWithLabelFirst: showRDFSLabelWithLabelFirst,
 			getDisplayLabel: getDisplayLabel,
+			setDisplaySuperclass: setDisplaySuperclass,
+			showExportSuperclass: showExportSuperclass,
 			getGithubUsername: getGithubUsername,
 			setGithubUsername: setGithubUsername,
 			getGithubAuth: getGithubAuth,
