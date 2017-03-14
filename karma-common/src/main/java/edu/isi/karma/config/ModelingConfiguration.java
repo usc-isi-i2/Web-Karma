@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Properties;
+import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -579,13 +580,40 @@ public class ModelingConfiguration {
 	}
 
 	private void updateProperty(String key, String value) throws IOException {
+//		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
+//		FileInputStream fis = new FileInputStream(file);
+//		this.modelingProperties.load(fis);
+//		this.modelingProperties.put(key, value);
+//		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+//		this.modelingProperties.store(out, null);
+//		out.close();
+		
 		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
-		FileInputStream fis = new FileInputStream(file);
-		this.modelingProperties.load(fis);
-		this.modelingProperties.put(key, value);
-		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
-		this.modelingProperties.store(out, null);
-		out.close();
+		Scanner scanner = new Scanner(file);
+		StringBuilder out = new StringBuilder();
+		
+		while(scanner.hasNext()) {
+			String line = scanner.next().trim();
+			if(line.startsWith("#")) {
+				out.append(line).append("\n");
+				continue;
+			}
+			String[] keyValue = line.split("=");
+			if(keyValue.length > 1) {
+				String lineKey = keyValue[0];
+				if(lineKey.equals(key)) {
+					out.append(key + "=" + value).append("\n");
+				} else {
+					out.append(line).append("\n");
+				}
+			} else {
+				out.append(line).append("\n");
+			}
+		}
+		scanner.close();
+		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+		writer.print(out.toString());
+		writer.close();
 	}
 
 }
