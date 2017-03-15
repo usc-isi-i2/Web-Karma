@@ -582,33 +582,30 @@ public class ModelingConfiguration {
 
 	private void updateProperty(String key, String value) throws IOException {
 
-		String fileName = ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties";
+		String fileName = ContextParametersRegistry.getInstance()
+									.getContextParameters(contextId)
+									.getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY)
+									+ "/modeling.properties";
 		File file = new File(fileName);
 		BufferedReader reader = new BufferedReader(new FileReader(fileName));
 		String line = null;
 		StringBuffer buf = new StringBuffer();
-		try
-		{
-			while((line = reader.readLine())!=null)
-			{
-				if(line.contains(key))
-				{
-					buf.append(key+"="+value);
-				}
-				else
-				{
+		try {
+			while ((line = reader.readLine()) != null) {
+				if (line.contains(key)) {
+					buf.append(key + "=" + value);
+				} else {
 					buf.append(line);
 				}
 				buf.append(System.getProperty("line.separator"));
 			}
 			reader.close();
-			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+			PrintWriter out = new PrintWriter(new BufferedWriter(
+					new FileWriter(file, false)));
 			out.write(buf.toString());
 			out.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error("Error updating property: " + key, e);
 		}
 	}
 }
