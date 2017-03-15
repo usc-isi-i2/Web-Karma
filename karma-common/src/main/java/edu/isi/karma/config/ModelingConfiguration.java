@@ -22,10 +22,12 @@
 package edu.isi.karma.config;
 
 import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -168,7 +170,7 @@ public class ModelingConfiguration {
 			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false" + newLine + 
-			"graphiz.server=http://52.38.65.60/graphviz/" + newLine +
+			"graphviz.server=http://52.38.65.60/graphviz/" + newLine +
 			"r2rml.export.superclass=false"
 			;
 
@@ -177,7 +179,6 @@ public class ModelingConfiguration {
 	public void load() {
 		try {
 			this.modelingProperties = loadParams();
-
 			trainOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("train.on.apply.history", "false"));
 			predictOnApplyHistory = Boolean.parseBoolean(modelingProperties.getProperty("predict.on.apply.history", "false"));
 
@@ -580,40 +581,34 @@ public class ModelingConfiguration {
 	}
 
 	private void updateProperty(String key, String value) throws IOException {
-//		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
-//		FileInputStream fis = new FileInputStream(file);
-//		this.modelingProperties.load(fis);
-//		this.modelingProperties.put(key, value);
-//		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
-//		this.modelingProperties.store(out, null);
-//		out.close();
-		
-		File file = new File(ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties");
-		Scanner scanner = new Scanner(file);
-		StringBuilder out = new StringBuilder();
-		
-		while(scanner.hasNext()) {
-			String line = scanner.next().trim();
-			if(line.startsWith("#")) {
-				out.append(line).append("\n");
-				continue;
-			}
-			String[] keyValue = line.split("=");
-			if(keyValue.length > 1) {
-				String lineKey = keyValue[0];
-				if(lineKey.equals(key)) {
-					out.append(key + "=" + value).append("\n");
-				} else {
-					out.append(line).append("\n");
-				}
-			} else {
-				out.append(line).append("\n");
-			}
-		}
-		scanner.close();
-		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
-		writer.print(out.toString());
-		writer.close();
-	}
 
+		String fileName = ContextParametersRegistry.getInstance().getContextParameters(contextId).getParameterValue(ContextParameter.USER_CONFIG_DIRECTORY) + "/modeling.properties";
+		File file = new File(fileName);
+		BufferedReader reader = new BufferedReader(new FileReader(fileName));
+		String line = null;
+		StringBuffer buf = new StringBuffer();
+		try
+		{
+			while((line = reader.readLine())!=null)
+			{
+				if(line.contains(key))
+				{
+					buf.append(key+"="+value);
+				}
+				else
+				{
+					buf.append(line);
+				}
+				buf.append(System.getProperty("line.separator"));
+			}
+			reader.close();
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
+			out.write(buf.toString());
+			out.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }
