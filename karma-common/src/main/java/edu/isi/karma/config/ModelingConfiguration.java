@@ -592,7 +592,8 @@ public class ModelingConfiguration {
 		StringBuffer buf = new StringBuffer();
 		try {
 			while ((line = reader.readLine()) != null) {
-				if (line.contains(key)) {
+				line = line.trim();
+				if (!line.startsWith("#") && line.contains(key)) {
 					buf.append(key + "=" + value);
 				} else {
 					buf.append(line);
