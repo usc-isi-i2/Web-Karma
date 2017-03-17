@@ -63,7 +63,7 @@ var DatabaseImportDialog = (function() {
 
 				//if there is text, lets filter
 				else {
-					filter('#DatabaseTablesList tr', $(this).val(), "tableName");
+					filter('#databaseImportDialog #tablesDiv table tr', $(this).val(), "tableName");
 				}
 			});
 
