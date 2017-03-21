@@ -190,7 +190,8 @@ and related projects, please see: http://www.isi.edu/integration
 								<li><a href="#" id="displayRDFSLabel_idFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Name or ID First</a></li>
 		                  	</ul>
 		                  </li>
-		                  
+		                  <li><a href="#" id="r2rmlExportSuperclass"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Export Superclass</a>
+		                  </li>
 		              </ul>
 		            </li>
 
@@ -411,7 +412,7 @@ and related projects, please see: http://www.isi.edu/integration
         	var DEFAULT_PROPERTY_URI = "<%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getDefaultProperty()%>";
         	var showRDFSLabel_LabelFirst = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).showRDFSLabelWithLabelFirst()%>;
 			var showRDFSLabel_IDFirst = <%=UIConfigurationRegistry.getInstance().getUIConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).showRDFSLabelWithIDFirst()%>;
-
+			var r2rml_export_superclass = <%=ModelingConfigurationRegistry.getInstance().getModelingConfiguration(ContextParametersRegistry.getInstance().getDefault().getId()).getR2rmlExportSuperClass()%>;
 
             $(function() {
                 // Clear the workspace when closing the window
@@ -509,6 +510,7 @@ and related projects, please see: http://www.isi.edu/integration
 
             	loadPropertiesForCache();
             	Settings.getInstance().setDisplayRDFSLabel(showRDFSLabel_LabelFirst, showRDFSLabel_IDFirst);
+                Settings.getInstance().setDisplaySuperclass(r2rml_export_superclass);
 			});
             
             var footerPositionTimer = null;
