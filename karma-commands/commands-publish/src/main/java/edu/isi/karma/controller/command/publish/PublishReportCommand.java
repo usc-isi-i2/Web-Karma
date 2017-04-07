@@ -387,7 +387,8 @@ public class PublishReportCommand extends WorksheetCommand {
 			List<Node> columnNodes = new ArrayList<>();
 			for(String hNodeId: hNodeIdList) {
 				Node columnNode = alignment.getNodeById(hNodeId);
-				columnNodes.add(columnNode);
+				if(columnNode != null)
+					columnNodes.add(columnNode);
 			}
 			Collections.sort(columnNodes, new Comparator<Node>() {
 				@Override
