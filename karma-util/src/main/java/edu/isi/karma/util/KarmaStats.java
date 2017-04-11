@@ -74,7 +74,6 @@ public class KarmaStats {
 				{
 					if(tmpString.contains("hasWorksheetHistory"))
 					{
-						//Start appending into buffer which will be JSON String
 						buf.append('[');
 						isJSON = true;
 					}
@@ -92,15 +91,16 @@ public class KarmaStats {
 				
 			    JSONArray commands = new JSONArray(removedSlash);
 			    
-			    //get SubmitPyTransform commands stats
+			    /*
+			     * Compare all commands and classify according to names
+			     * 
+			     * 
+			     * */
 			    for(int i=0;i<commands.length();i++)
 			    {
 			    	JSONObject command = (JSONObject)commands.get(i);
 			    	String commandName = command.getString("commandName");
-			    	System.out.println(command.get("tags"));
-			    	System.out.println(commandName + " Commandname");
-			    	//System.out.println(tag + " tag");
-			    	
+
 			    	if(commandName.equals(pyTransformCommandName))
 			    	{
 			    		pyTransformCount++;
@@ -164,6 +164,9 @@ public class KarmaStats {
 		}
 	}
 	
+	/*
+	 * This method counts number of classes based on rr-class count in TTL file
+	 * */
 	public static int countClass(BufferedReader reader)
 	{
 		int classCount = 0;
