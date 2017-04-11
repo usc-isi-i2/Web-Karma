@@ -14,28 +14,29 @@ import java.io.IOException;
 public class KarmaStats {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String inputFileName = "";//args[0];
 		
-		//System.out.println(args[0]);
+		String inputFileName = args[0];
+		
 		if(inputFileName==null)
 		{
 			System.out.println("Please provide input file.");
 			return;
 		}
-		
 		karmaStats(inputFileName);
 	}
 
 	public static void karmaStats(String inputFile)
 	{
-		String fileName = "input.txt"; 
 		String statsFile = "karmaStats.json";
 		try {
-			FileReader filereader = new FileReader(fileName);
+			FileReader filereader = new FileReader(inputFile);
 			BufferedReader bufferedReader = new BufferedReader(filereader);
 			String tmpString = null;
 			StringBuffer buf = new StringBuffer();
+			String[] fileSplit = inputFile.split("/");
+			String[] fname = fileSplit[fileSplit.length-1].split("\\.");
+			
+			String modelName = fname[0];
 			
 			final String matchDoublequote = "\\\"";
 			final String newDoublequote = "\"";
@@ -49,6 +50,7 @@ public class KarmaStats {
 			final String deleteLinkCommandName = "DeleteLinkCommand";
 			final String changeLinkCommandName = "ChangeInternalNodeLinksCommand";
 			final String unassignSemeticCommandName = "UnassignSemanticTypeCommand";
+			final String selectionCommandName = "OperateSelectionCommand";
 			
 			boolean isJSON = false;
 			int pyTransformCount = 0;
@@ -118,7 +120,11 @@ public class KarmaStats {
 			    	else if(commandName.equals(deleteLinkCommandName))
 			    	{
 			    		linkCount--;
-			    	}		    	
+			    	}
+			    	else if(commandName.equals(selectionCommandName))
+			    	{
+			    		filterCount++;
+			    	}
 			    	else if(commandName.equals(unassignSemeticCommandName))
 			    	{
 			    		SemanticTypeCount--;
@@ -131,39 +137,15 @@ public class KarmaStats {
 		    StringBuffer writeBuffer = new StringBuffer();
 		    JSONObject output = new JSONObject();
 		    JSONObject modelStat = new JSONObject();
-		    modelStat.put("modelName", "inputFile");
+		    modelStat.put("modelName", modelName);
 		    output.put("pyTransformations", pyTransformCount);
 		    output.put("semanticTypes", SemanticTypeCount);
 		    output.put("class", classCount);
 		    output.put("links", linkCount);
 		    output.put("filters", filterCount);
 		    modelStat.put("modelStatistics", output);
-		    writeBuffer.append(modelStat.toString(4));
-		  /* 
-		    writeBuffer.append("#################\n");
-		    writeBuffer.append("Karma Statistics\n");
-		    writeBuffer.append("#################\n\n\n");
-		    
-		    
-				    
-		    writeBuffer.append("Python Transformations - ");
-		    writeBuffer.append(pyTransformCount);
-		    writeBuffer.append("\n");
-		    
-		    writeBuffer.append("SementicType Count - ");
-		    writeBuffer.append(SemanticTypeCount);
-		    writeBuffer.append("\n");
-		    
-		    writeBuffer.append("Class Count - ");
-		    writeBuffer.append(classCount);
-		    writeBuffer.append("\n");
-		    
-		    writeBuffer.append("Links Count - ");
-		    writeBuffer.append(linkCount);
-		    writeBuffer.append("\n");
- 		*/		    
+		    writeBuffer.append(modelStat.toString(4));	    
 		    bufferedWriter.write(writeBuffer.toString());
-		    
 		    
 		    bufferedReader.close();
 		    bufferedWriter.close();
