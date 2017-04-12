@@ -301,8 +301,14 @@ public class HTable extends RepEntity {
 		for (HNodePath p : paths) {
 			if (p.getLeaf().getNestedTable() != null) {
 				HTable nestedHTable = p.getLeaf().getNestedTable();
-				for (HNodePath nestedP : nestedHTable.getAllPaths()) {
-					x.add(HNodePath.concatenate(p, nestedP));
+				List<HNodePath> allPaths =  nestedHTable.getAllPaths();
+				if(allPaths!=null && allPaths.size()>0) {
+					for (HNodePath nestedP : allPaths) {
+						x.add(HNodePath.concatenate(p, nestedP));
+					}
+				}
+				else {
+					x.add(p);
 				}
 			} else {
 				x.add(p);
