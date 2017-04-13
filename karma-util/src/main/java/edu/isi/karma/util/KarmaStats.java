@@ -16,7 +16,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
 public class KarmaStats {
 
 	/* Instance Variables*/
@@ -53,18 +52,20 @@ public class KarmaStats {
 		}
 		
 		String inputFileName = args[0];
+		String outputFileName = "karmaStats.json";
 		
-		if(inputFileName==null)
-		{
+		if (inputFileName == null) {
 			System.out.println("Please provide input file.");
 			return;
 		}
-		karmaStats(inputFileName);
+
+		if (args.length > 1) {
+			outputFileName = args[1];
+		}
+		karmaStats(inputFileName, outputFileName);
 	}
 
-	public static void karmaStats(String inputFile)
-	{
-		String statsFile = "karmaStats.json";
+	public static void karmaStats(String inputFile, String outputFile) {
 		try {
 			FileReader filereader = new FileReader(inputFile);
 			BufferedReader bufferedReader = new BufferedReader(filereader);
@@ -87,6 +88,7 @@ public class KarmaStats {
 			}
 			String modelName = nameBuf.toString();
 
+
 			final String matchDoublequote = "\\\"";
 			final String newDoublequote = "\"";
 			final String matchSlash = "\\\\";
@@ -99,141 +101,110 @@ public class KarmaStats {
 			final String changeLinkCommandName = "ChangeInternalNodeLinksCommand";
 			final String unassignSemeticCommandName = "UnassignSemanticTypeCommand";
 			final String selectionCommandName = "OperateSelectionCommand";
-			
+
 			boolean isJSON = false;
 			int pyTransformCount = 0;
 			int SemanticTypeCount = 0;
 			int classCount = 0;
-			int linkCount = 0; //Except sementic type links
+			int linkCount = 0; // Except sementic type links
 			int filterCount = 0;
-			
-			while((tmpString = bufferedReader.readLine())!=null)
-			{
-				if(isJSON)
-				{
-					if(tmpString.contains("]\"\"\""))
-					{
+
+			while ((tmpString = bufferedReader.readLine()) != null) {
+				if (isJSON) {
+					if (tmpString.contains("]\"\"\"")) {
 						buf.append(']');
 						break;
 					}
 					buf.append(tmpString);
-				}
-				else
-				{
-					if(tmpString.contains("hasWorksheetHistory"))
-					{
+				} else {
+					if (tmpString.contains("hasWorksheetHistory")) {
 						buf.append('[');
 						isJSON = true;
 					}
 				}
-				
+
 			}
 
-			if(isJSON)
-			{
+			if (isJSON) {
 				classCount = countClass(bufferedReader);
-				
-				String bufString = buf.toString();
-				String removedQuote = bufString.replace(matchDoublequote, newDoublequote);
-				String removedSlash = removedQuote.replace(matchSlash,newSlash);
-				
-			    JSONArray commands = new JSONArray(removedSlash);
-			    
-			    /*
-			     * Compare all commands and classify according to names
-			     * 
-			     * 
-			     * */
-			    for(int i=0;i<commands.length();i++)
-			    {
-			    	JSONObject command = (JSONObject)commands.get(i);
-			    	String commandName = command.getString("commandName");
 
-			    	if(commandName.equals(pyTransformCommandName))
-			    	{
-			    		pyTransformCount++;
-			    	}
-			    	else if(commandName.equals(setSemanticCommandName))
-			    	{
-			    		SemanticTypeCount++;
-			    	}
-			    	else if(commandName.equals(setPropertyCommandName))
-			    	{
-			    		SemanticTypeCount++;
-			    	}
-			    	else if(commandName.equals(addLinkCommandName))
-			    	{
-			    		linkCount++;
-			    	}
-			    	else if(commandName.equals(deleteLinkCommandName))
-			    	{
-			    		linkCount--;
-			    	}
-			    	else if(commandName.equals(selectionCommandName))
-			    	{
-			    		filterCount++;
-			    	}
-			    	else if(commandName.equals(unassignSemeticCommandName))
-			    	{
-			    		SemanticTypeCount--;
-			    	}
-			    }
+				String bufString = buf.toString();
+				String removedQuote = bufString.replace(matchDoublequote,
+						newDoublequote);
+				String removedSlash = removedQuote
+						.replace(matchSlash, newSlash);
+
+				JSONArray commands = new JSONArray(removedSlash);
+
+				/*
+				 * Compare all commands and classify according to names
+				 */
+				for (int i = 0; i < commands.length(); i++) {
+					JSONObject command = (JSONObject) commands.get(i);
+					String commandName = command.getString("commandName");
+
+					if (commandName.equals(pyTransformCommandName)) {
+						pyTransformCount++;
+					} else if (commandName.equals(setSemanticCommandName)) {
+						SemanticTypeCount++;
+					} else if (commandName.equals(setPropertyCommandName)) {
+						SemanticTypeCount++;
+					} else if (commandName.equals(addLinkCommandName)) {
+						linkCount++;
+					} else if (commandName.equals(deleteLinkCommandName)) {
+						linkCount--;
+					} else if (commandName.equals(selectionCommandName)) {
+						filterCount++;
+					} else if (commandName.equals(unassignSemeticCommandName)) {
+						SemanticTypeCount--;
+					}
+				}
 			}
-		    FileWriter out = new FileWriter(statsFile); 
-		    BufferedWriter bufferedWriter = new BufferedWriter(out);
-		    
-		    StringBuffer writeBuffer = new StringBuffer();
-		    JSONObject output = new JSONObject();
-		    JSONObject modelStat = new JSONObject();
-		    modelStat.put("modelName", modelName);
-		    output.put("pyTransformations", pyTransformCount);
-		    output.put("semanticTypes", SemanticTypeCount);
-		    output.put("class", classCount);
-		    output.put("links", linkCount);
-		    output.put("filters", filterCount);
-		    modelStat.put("modelStatistics", output);
-		    writeBuffer.append(modelStat.toString(4));	    
-		    bufferedWriter.write(writeBuffer.toString());
-		    
-		    bufferedReader.close();
-		    bufferedWriter.close();
-		}
-		catch(JSONException e) {
+			FileWriter out = new FileWriter(outputFile);
+			BufferedWriter bufferedWriter = new BufferedWriter(out);
+
+			StringBuffer writeBuffer = new StringBuffer();
+			JSONObject output = new JSONObject();
+			JSONObject modelStat = new JSONObject();
+			modelStat.put("modelName", modelName);
+			output.put("pyTransformations", pyTransformCount);
+			output.put("semanticTypes", SemanticTypeCount);
+			output.put("class", classCount);
+			output.put("links", linkCount);
+			output.put("filters", filterCount);
+			modelStat.put("modelStatistics", output);
+			writeBuffer.append(modelStat.toString(4));
+			bufferedWriter.write(writeBuffer.toString());
+
+			bufferedReader.close();
+			bufferedWriter.close();
+		} catch (JSONException e) {
 			e.printStackTrace();
 			System.out.println("Failed to Parse JSON");
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Error in reading/writing File");
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * This method counts number of classes based on rr-class count in TTL file
-	 * */
-	public static int countClass(BufferedReader reader)
-	{
+	 */
+	public static int countClass(BufferedReader reader) {
 		int classCount = 0;
-		try
-		{
+		try {
 			String tmpString = null;
-			while((tmpString = reader.readLine())!=null)
-			{
-				if(tmpString.contains("rr:class"))
-				{
+			while ((tmpString = reader.readLine()) != null) {
+				if (tmpString.contains("rr:class")) {
 					classCount++;
 				}
 			}
-		}
-		catch(IOException e)
-		{
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return classCount;
 	}
 	
@@ -288,4 +259,5 @@ public class KarmaStats {
 		
 		return true;
 	}
+
 }
