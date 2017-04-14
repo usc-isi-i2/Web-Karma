@@ -46,26 +46,15 @@ public class KarmaStats {
 				System.out.println("Parse ERROR");
 				return;
 			}
-
+			karmaStats(stats.inputFile, stats.outputFile,stats.isPretty);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		String inputFileName = args[0];
-		String outputFileName = "karmaStats.json";
 		
-		if (inputFileName == null) {
-			System.out.println("Please provide input file.");
-			return;
-		}
-
-		if (args.length > 1) {
-			outputFileName = args[1];
-		}
-		karmaStats(inputFileName, outputFileName);
 	}
 
-	public static void karmaStats(String inputFile, String outputFile) {
+	public static void karmaStats(String inputFile, String outputFile,boolean isPretty) {
 		try {
 			FileReader filereader = new FileReader(inputFile);
 			BufferedReader bufferedReader = new BufferedReader(filereader);
@@ -87,7 +76,6 @@ public class KarmaStats {
 
 			}
 			String modelName = nameBuf.toString();
-
 
 			final String matchDoublequote = "\\\"";
 			final String newDoublequote = "\"";
@@ -157,6 +145,8 @@ public class KarmaStats {
 						filterCount++;
 					} else if (commandName.equals(unassignSemeticCommandName)) {
 						SemanticTypeCount--;
+					} else if(commandName.equals(changeLinkCommandName)) {
+						linkCount++;
 					}
 				}
 			}
@@ -173,7 +163,12 @@ public class KarmaStats {
 			output.put("links", linkCount);
 			output.put("filters", filterCount);
 			modelStat.put("modelStatistics", output);
-			writeBuffer.append(modelStat.toString(4));
+			if(isPretty) {
+				writeBuffer.append(modelStat.toString(4));
+			}
+			else {
+				writeBuffer.append(modelStat.toString(0));
+			}
 			bufferedWriter.write(writeBuffer.toString());
 
 			bufferedReader.close();
@@ -241,7 +236,7 @@ public class KarmaStats {
 	private boolean parseCommandLineOptions(CommandLine cl)
 	{
 		String isPretty;
-		inputFile = (String) cl.getOptionValue("sourcetype");
+		inputFile = (String) cl.getOptionValue("inputfile");
 		if(inputFile==null)
 		{
 			System.out.println("Please provide input File");
