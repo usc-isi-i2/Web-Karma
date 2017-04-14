@@ -235,7 +235,7 @@ public class KarmaStats {
 	
 	private boolean parseCommandLineOptions(CommandLine cl)
 	{
-		String isPretty;
+
 		inputFile = (String) cl.getOptionValue("inputfile");
 		if(inputFile==null)
 		{
@@ -244,14 +244,12 @@ public class KarmaStats {
 		}
 		
 		outputFile = (String) cl.getOptionValue("outputfile","KarmaStats.json");
-		
-		isPretty = (String) cl.getOptionValue("pretty","false");
-		if(!isPretty.equals("false"))
+
+		if(cl.hasOption("pretty"))
 		{
-			isPretty = "true";
+			this.isPretty = true;
 		}
-		this.isPretty = Boolean.parseBoolean(isPretty); 
-		
+
 		return true;
 	}
 
