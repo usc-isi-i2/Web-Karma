@@ -49,13 +49,15 @@ var D3ModelManager = (function() {
 
 			window.onscroll = function(event){
 				for (var worksheetId in models) {
-					models[worksheetId].onscroll(event);
+					if(models[worksheetId])
+						models[worksheetId].onscroll(event);
 				} 
 			};
 			
 			window.onresize = function(event) {
 				for (var worksheetId in models) {
-					models[worksheetId].onresize(event);
+					if(models[worksheetId])
+						models[worksheetId].onresize(event);
 				} 
 			};
 		}
