@@ -43,7 +43,7 @@ public class KarmaStats {
 			
 			KarmaStats stats = new KarmaStats(cl);
 			if(!stats.parseCommandLineOptions(cl)) {
-				System.out.println("Parse ERROR");
+				System.out.println("Parse ERROR. Please use \"java -cp JAR_NAME --inputfile INPUT_FILE  --outputfile OUTPUT_FILE --pretty(optional)\" ");
 				return;
 			}
 			karmaStats(stats.inputFile, stats.outputFile,stats.isPretty);
