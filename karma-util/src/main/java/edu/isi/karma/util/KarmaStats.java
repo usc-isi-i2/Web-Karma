@@ -2,7 +2,13 @@ package edu.isi.karma.util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import org.json.JSONException;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,31 +18,64 @@ import java.io.IOException;
 
 public class KarmaStats {
 
+	/* Instance Variables*/
+	private String inputFile;
+	private String outputFile;
+	boolean isPretty;
+	
+	public KarmaStats(CommandLine cl)
+	{
+		isPretty = false;
+	}
+	
 	public static void main(String[] args) {
-		String inputFileName = args[0];
-		String outputFileName = "karmaStats.json";
 		
-		if (inputFileName == null) {
-			System.out.println("Please provide input file.");
+		
+		Options options = createCommandLineOptions();
+		CommandLine cl = parseCommandLine(args, options);
+		if(cl==null)
+		{
+			System.out.println("Error Parsing Command Line Arguments");
 			return;
 		}
-
-		if (args.length > 1) {
-			outputFileName = args[1];
+		
+		try {
+			
+			KarmaStats stats = new KarmaStats(cl);
+			if(!stats.parseCommandLineOptions(cl)) {
+				System.out.println("Parse ERROR. Please use \"java -cp JAR_NAME --inputfile INPUT_FILE  --outputfile OUTPUT_FILE --pretty(optional)\" ");
+				return;
+			}
+			karmaStats(stats.inputFile, stats.outputFile,stats.isPretty);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		karmaStats(inputFileName, outputFileName);
+		
+		
 	}
 
-	public static void karmaStats(String inputFile, String outputFile) {
+	public static void karmaStats(String inputFile, String outputFile,boolean isPretty) {
 		try {
 			FileReader filereader = new FileReader(inputFile);
 			BufferedReader bufferedReader = new BufferedReader(filereader);
 			String tmpString = null;
 			StringBuffer buf = new StringBuffer();
 			String[] fileSplit = inputFile.split("/");
-			String[] fname = fileSplit[fileSplit.length - 1].split("\\.");
 
-			String modelName = fname[0];
+			String[] fname = fileSplit[fileSplit.length - 1].split("\\.");
+			StringBuffer nameBuf = new StringBuffer();
+			/*
+			 * If model name has "." in the name.
+			 * */
+			if(fname.length>2)
+			{
+				for(int j=0;j<fname.length-1;j++)
+				{
+					nameBuf.append(fname[j]);
+				}
+
+			}
+			String modelName = nameBuf.toString();
 
 			final String matchDoublequote = "\\\"";
 			final String newDoublequote = "\"";
@@ -45,7 +84,6 @@ public class KarmaStats {
 			final String pyTransformCommandName = "SubmitPythonTransformationCommand";
 			final String setSemanticCommandName = "SetSemanticTypeCommand";
 			final String setPropertyCommandName = "SetMetaPropertyCommand";
-			final String addLiteralCommandName = "AddLiteralNodeCommand";
 			final String addLinkCommandName = "AddLinkCommand";
 			final String deleteLinkCommandName = "DeleteLinkCommand";
 			final String changeLinkCommandName = "ChangeInternalNodeLinksCommand";
@@ -107,6 +145,8 @@ public class KarmaStats {
 						filterCount++;
 					} else if (commandName.equals(unassignSemeticCommandName)) {
 						SemanticTypeCount--;
+					} else if(commandName.equals(changeLinkCommandName)) {
+						linkCount++;
 					}
 				}
 			}
@@ -123,7 +163,12 @@ public class KarmaStats {
 			output.put("links", linkCount);
 			output.put("filters", filterCount);
 			modelStat.put("modelStatistics", output);
-			writeBuffer.append(modelStat.toString(4));
+			if(isPretty) {
+				writeBuffer.append(modelStat.toString(4));
+			}
+			else {
+				writeBuffer.append(modelStat.toString(0));
+			}
 			bufferedWriter.write(writeBuffer.toString());
 
 			bufferedReader.close();
@@ -156,6 +201,56 @@ public class KarmaStats {
 		}
 
 		return classCount;
+	}
+	
+	private static CommandLine parseCommandLine(String args[], Options options)
+	{
+		CommandLineParser parser = new BasicParser();
+		CommandLine cl = null;
+		try {
+			/**
+			 * PARSE THE COMMAND LINE ARGUMENTS *
+			 */
+	        cl = parser.parse(options, args);
+	        if (cl == null || cl.getOptions().length == 0) {
+	            return null;
+	        }
+		
+	} catch (Exception e) {
+		return cl;
+	}
+		return cl;
+	}
+	
+	private static Options createCommandLineOptions() {
+
+		Options options = new Options();
+	
+		options.addOption(new Option("inputfile", "inputfile", true, "Input TTL File"));
+		options.addOption(new Option("outputfile", "outputfile", true, "location of the output file with name"));
+		options.addOption(new Option("pretty", "pretty", false, "JSON or JSONLines selection"));
+		
+		return options;
+	}
+	
+	private boolean parseCommandLineOptions(CommandLine cl)
+	{
+
+		inputFile = (String) cl.getOptionValue("inputfile");
+		if(inputFile==null)
+		{
+			System.out.println("Please provide input File");
+			return false;
+		}
+		
+		outputFile = (String) cl.getOptionValue("outputfile","KarmaStats.json");
+
+		if(cl.hasOption("pretty"))
+		{
+			this.isPretty = true;
+		}
+
+		return true;
 	}
 
 }
