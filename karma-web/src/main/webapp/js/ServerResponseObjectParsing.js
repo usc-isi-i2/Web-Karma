@@ -45,7 +45,7 @@ function parse(data) {
 			}
 		}
 	});
-
+	console.log("Kaushal shaha response method called");
 	if (isError)
 		return false;
 
@@ -130,6 +130,7 @@ function parse(data) {
 						})
 						.on('shown', function(e, editable) {
 							console.log(editable);
+							console.log("Kaushal1");
 							editable.input.$input.val(graphLabel.html());
 						});
 
@@ -168,6 +169,7 @@ function parse(data) {
 						})
 						.on('shown', function(e, editable) {
 							console.log(editable);
+							console.log("Kaushal2");
 							editable.input.$input.val(prefixLabel.html());
 						});
 					headerDiv.append(sep);
@@ -205,6 +207,7 @@ function parse(data) {
 						})
 						.on('shown', function(e, editable) {
 							console.log(editable);
+							console.log("Kaushal3");
 							editable.input.$input.val(baseURILabel.html());
 						});
 
@@ -270,6 +273,7 @@ function parse(data) {
 						})
 						.on('shown', function(e, editable) {
 							console.log(editable);
+							console.log("Kaushal4");
 							var oldValue = githubUrlLabel.html();
 							if(oldValue == "disabled" || oldValue == "Empty")
 								oldValue = "";
@@ -557,6 +561,7 @@ function parse(data) {
 		} else if (element["updateType"] == "SetWorksheetProperties") {
 			// Remove existing link if any
 			console.log(element);
+			console.log("Kaushal5");
 			if (element["prefix"]) {
 				$("#txtPrefix_" + element["worksheetId"]).text(element["prefix"]);
 			}
@@ -1133,6 +1138,7 @@ function submitSelectedModelNameToBeLoaded() {
 function setGithubURLProperties(githubLabel, worksheetId, newValue) {
     console.log("Set new value:" + newValue);
 	console.log(newValue);
+	console.log("Kaushal6");
 	githubLabel.text(newValue);
 	var worksheetProps = new Object();
 	worksheetProps["hasPrefix"] = false;
