@@ -208,6 +208,27 @@
 		        </dependency>
 	        </dependencies>
     	</profile>
+    	
+    	<profile>
+    		<id>withcdhhive</id>
+    		<activation>
+		    	<property>
+		          <name>env</name>
+		          <value>cdhhive</value>
+		        </property>
+    		</activation>
+    		<properties>
+        		<spark.version>1.6.0-cdh5.10.1</spark.version>
+        		<spark.scala.version>_2.10</spark.scala.version>
+    		</properties>
+    		<dependencies>
+		        <dependency>
+		            <groupId>org.apache.spark</groupId>
+		            <artifactId>spark-hive${spark.scala.version}</artifactId>
+		            <version>${spark.version}</version>
+		        </dependency>
+	        </dependencies>
+    	</profile>
         
         <profile>
             <id>shaded</id>
