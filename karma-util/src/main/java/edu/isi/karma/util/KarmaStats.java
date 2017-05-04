@@ -43,7 +43,7 @@ public class KarmaStats {
 			
 			KarmaStats stats = new KarmaStats(cl);
 			if(!stats.parseCommandLineOptions(cl)) {
-				System.out.println("Parse ERROR. Please use \"java -cp JAR_NAME --inputfile INPUT_FILE  --outputfile OUTPUT_FILE --pretty(optional)\" ");
+				System.out.println("Parse ERROR. Please use \"java -cp JAR_NAME edu.isi.karma.util.KarmaStats --inputfile INPUT_FILE  --outputfile OUTPUT_FILE --pretty(optional)\" ");
 				return;
 			}
 			karmaStats(stats.inputFile, stats.outputFile,stats.isPretty);
@@ -67,14 +67,12 @@ public class KarmaStats {
 			/*
 			 * If model name has "." in the name.
 			 * */
-			if(fname.length>2)
-			{
+
 				for(int j=0;j<fname.length-1;j++)
 				{
 					nameBuf.append(fname[j]);
 				}
 
-			}
 			String modelName = nameBuf.toString();
 
 			final String matchDoublequote = "\\\"";
@@ -140,7 +138,7 @@ public class KarmaStats {
 					} else if (commandName.equals(addLinkCommandName)) {
 						linkCount++;
 					} else if (commandName.equals(deleteLinkCommandName)) {
-						linkCount--;
+
 					} else if (commandName.equals(selectionCommandName)) {
 						filterCount++;
 					} else if (commandName.equals(unassignSemeticCommandName)) {
