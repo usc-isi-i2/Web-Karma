@@ -170,7 +170,7 @@ public class ModelingConfiguration {
 			"" + newLine + 
 			"models.display.nomatching=false" + newLine +
 			"history.store.old=false" + newLine + 
-			"graphviz.server=http://52.38.65.60/graphviz/" + newLine +
+			"graphviz.server=http://karma-svc.isi.edu/graphviz/" + newLine +
 			"r2rml.export.superclass=false"
 			;
 
@@ -282,8 +282,11 @@ public class ModelingConfiguration {
 			
 			graphvizServer = modelingProperties.getProperty("graphviz.server");
 			if(graphvizServer == null) {
-				graphvizServer = "http://52.38.65.60/graphviz/";
+				graphvizServer = "http://karma-svc.isi.edu/graphviz/";
 				addProperty("graphviz.server", graphvizServer);
+			} else if(graphvizServer.equals("http://52.38.65.60/graphviz/")) {
+				graphvizServer = "http://karma-svc.isi.edu/graphviz/";
+				updateProperty("graphviz.server", graphvizServer);
 			}
 
 			String r2rml_export_superclass = modelingProperties.getProperty("r2rml.export.superclass");
