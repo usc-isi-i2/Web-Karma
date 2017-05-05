@@ -59,6 +59,9 @@ public class JsonImport extends Import {
 	private int maxNumLines;
 	private Workspace workspace;
 	private JSONArray columnsJson;
+	private String worksheetName;
+	private String encoding;
+	
 	private class FileObject {
 		File file;
 		String encoding;
@@ -75,8 +78,14 @@ public class JsonImport extends Import {
 		this.json = json;
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
+		this.worksheetName = worksheetName;
+		this.encoding = encoding;
 	}
 
+	public JsonImport duplicate() {
+		return new JsonImport(this.json, this.worksheetName, this.workspace, this.encoding, this.maxNumLines);
+	}
+	
 	public JsonImport(File jsonFile, String worksheetName, Workspace workspace,String encoding, int maxNumLines, JSONArray tree,boolean isJSONLines) throws FileNotFoundException, Exception {
 		
 		super(worksheetName, workspace, encoding);
@@ -91,6 +100,8 @@ public class JsonImport extends Import {
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 		this.columnsJson = tree;
+		this.worksheetName = worksheetName;
+		this.encoding = encoding;
 		
 	}
 
@@ -111,6 +122,8 @@ public class JsonImport extends Import {
 		this.json = json;
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
+		this.worksheetName = wk.getTitle();
+		this.encoding = "UTF-8";
 	}
 	
 	public JsonImport(File json, RepFactory repFactory, Worksheet wk, Workspace workspace, 
@@ -121,6 +134,8 @@ public class JsonImport extends Import {
 		this.workspace = workspace;
 		this.maxNumLines = maxNumLines;
 		this.columnsJson = columnsJson;
+		this.worksheetName = wk.getTitle();
+		this.encoding = "UTF-8";
 	}
 	
 

@@ -77,6 +77,8 @@ public class ColumnNode extends Node {
 				SemanticType semType = new SemanticType(st.getHNodeId(), 
 						st.getType(), 
 						st.getDomain(), 
+						st.getDomainId(),
+						st.isProvenance(),
 						st.getOrigin(), 
 						confidence / sum);
 				this.learnedSemanticTypes.add(semType);
@@ -130,6 +132,11 @@ public class ColumnNode extends Node {
 //			this.semanticTypeStatus = ColumnSemanticTypeStatus.Assigned;
 //		this.userSemanticTypes = userSemanticTypes;
 //	}
+	public void unassignUserTypes() {
+		if (userSemanticTypes == null)
+			this.userSemanticTypes = new ArrayList<>();
+		this.userSemanticTypes.clear();
+	}
 	
 	public void assignUserType(SemanticType newType) {
 		
@@ -142,7 +149,7 @@ public class ColumnNode extends Node {
 		//FIXME: when user invokes SetSemanticType, we should unassign the old one, otherwise
 		// we don't know if user wants to add more types or replace the existing one
 		// currently, I assume that we replace the old one when a new type is assigned
-		this.userSemanticTypes.clear();
+		//this.userSemanticTypes.clear();
 		
 		this.userSemanticTypes.add(newType);
 		this.semanticTypeStatus = ColumnSemanticTypeStatus.UserAssigned;

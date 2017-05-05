@@ -29,12 +29,16 @@ public class AvroImport extends Import {
 	private int maxNumLines;
 	//TODO writing to a file each time is a hack, but avro seems to like it.
 	private File file;
-
+	private String encoding;
+	private String worksheetName;
+	
 	public AvroImport (InputStream stream, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) throws IOException
 	{
 		super(worksheetName, workspace, encoding);
 		this.maxNumLines = maxNumLines;
+		this.encoding = encoding;
+		this.worksheetName = worksheetName;
 		this.file = File.createTempFile("karma-avro"+System.currentTimeMillis(), "avro");
 		FileOutputStream fw = new FileOutputStream(file);
 		fw.write(IOUtils.toByteArray(stream));
@@ -42,11 +46,18 @@ public class AvroImport extends Import {
 		fw.close();
 		this.file.deleteOnExit();
 	}
+	
+	public AvroImport duplicate() {
+		return new AvroImport(this.file, this.worksheetName, this.workspace, this.encoding, this.maxNumLines);
+	}
+	
 	public AvroImport (String string, String worksheetName, Workspace workspace,
 			String encoding, int maxNumLines) throws IOException
 	{
 		super(worksheetName, workspace, encoding);
 		this.maxNumLines = maxNumLines;
+		this.worksheetName = worksheetName;
+		this.encoding = encoding;
 		this.file = File.createTempFile("karma-avro"+System.currentTimeMillis(), "avro");
 		FileWriter fw = new FileWriter(file);
 		fw.write(string);
@@ -60,6 +71,8 @@ public class AvroImport extends Import {
 	{
 		super(worksheetName, workspace, encoding);
 		this.maxNumLines = maxNumLines;
+		this.worksheetName = worksheetName;
+		this.encoding = encoding;
 		this.file = file;
 	}
 

@@ -58,7 +58,7 @@ public class PublishGithubCommand extends Command {
     private String branch;
     private HashMap<String, String> fileSHAMap = new HashMap<>();
     private String graphvizServer;
-    
+    private String originalGithubUrl;
     private enum JsonKeys {
 		updateType, url, worksheetId
 	}
@@ -72,6 +72,7 @@ public class PublishGithubCommand extends Command {
     public PublishGithubCommand(String id, String model, String worksheetId, String githubUrl, String auth) {
         super(id, model);
         this.worksheetId = worksheetId;
+        this.originalGithubUrl = githubUrl;
         
         String repoDetails = githubUrl.split("github\\.com")[1];
         int treeIdx = repoDetails.indexOf("/tree/");
@@ -188,7 +189,7 @@ public class PublishGithubCommand extends Command {
                     try {
                     	JSONObject outputObject = new JSONObject();
     					outputObject.put(JsonKeys.updateType.name(), "PublishGithubUpdate");
-    					outputObject.put(JsonKeys.url.name(), repo);
+    					outputObject.put(JsonKeys.url.name(), originalGithubUrl);
     					outputObject.put(JsonKeys.worksheetId.name(), worksheetId);
     					pw.println(outputObject.toString(4));
     					pw.println(",");
@@ -265,7 +266,9 @@ public class PublishGithubCommand extends Command {
 
     private InputStream getGraphizPdf(String dotContents) throws ClientProtocolException, IOException {
     	HttpClient httpClient = new DefaultHttpClient();
-    	HttpPost httpPost = new HttpPost(this.graphvizServer + "pdf");
+    	String url = this.graphvizServer + "pdf";
+    	logger.info("Generating PDF for graphviz:" + url);
+    	HttpPost httpPost = new HttpPost(url);
 		httpPost.setEntity(new StringEntity(dotContents));
 		HttpResponse response = httpClient.execute(httpPost);
 		

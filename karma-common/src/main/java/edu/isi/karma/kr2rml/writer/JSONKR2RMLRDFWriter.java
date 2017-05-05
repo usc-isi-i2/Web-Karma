@@ -104,7 +104,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 			}
 			else if(object instanceof JSONObject && disableNesting)
 			{
-				object = normalizeURI(((JSONObject)object).get(atId).toString());
+				object = getNewObject(null,((JSONObject)object).get(atId).toString());
 			}
 			subject.put(shortHandPredicateURI, object);
 		}
@@ -141,7 +141,7 @@ public class JSONKR2RMLRDFWriter extends SFKR2RMLRDFWriter<JSONObject> {
 		}
 		else if(object instanceof JSONObject && disableNesting)
 		{
-			object = normalizeURI(((JSONObject)object).get(atId).toString());
+			object = getNewObject(null,((JSONObject)object).get(atId).toString());
 		}			
 		
 		if (shortHandPredicateURI.equalsIgnoreCase("rdf:type") && subject.has(atType)) 

@@ -22,12 +22,14 @@ package edu.isi.karma.kr2rml.writer;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,8 +91,8 @@ public class N3KR2RMLRDFWriter extends KR2RMLRDFWriter {
 
 	private String constructTripleWithLiteralObject(String subjUri, String predicateUri, String value, 
 			String literalType, String language) {
-		// Use Apache Commons to escape the value
-		value = StringEscapeUtils.escapeJava(value);
+		
+		value = escapeValue(value);
 		if (subjUri.indexOf("<") != -1 && subjUri.indexOf(">") != -1) {
 			String tmp = subjUri.substring(1, subjUri.length() - 1);
 			subjUri = "<" + normalizeURI(tmp) + ">";
@@ -107,6 +109,13 @@ public class N3KR2RMLRDFWriter extends KR2RMLRDFWriter {
 		return subjUri + " " + uriFormatter.getExpandedAndNormalizedUri(predicateUri) + " \"" + value + "\" .";
 	}
 
+	private String escapeValue(String value) {
+		// Use Apache Commons to escape the value
+		String result = StringEscapeUtils.escapeJava(value);
+		//The above also encodes unicode characters to \u0048\u0065\u006C\u006C etc sequences. To remove that, we do
+		return new UnicodeUnescaper().translate(result);
+	}
+	
 	@Override
 	public void outputQuadWithLiteralObject(String subjUri, String predicateUri, 
 			String value, String literalType, String language, String graph) {

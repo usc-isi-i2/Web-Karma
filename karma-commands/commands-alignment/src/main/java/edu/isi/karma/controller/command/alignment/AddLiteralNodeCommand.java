@@ -57,7 +57,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 		this.isUri = isUri;
 		this.nodeId = nodeId;
 
-		addTag(CommandTag.SemanticType);
+		addTag(CommandTag.Modeling);
 	}
 
 	@Override
@@ -67,9 +67,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 
 	@Override
 	public String getTitle() {
-		if(nodeId == null)
-			return "Add Literal Node";
-		return "Edit Literal Node";
+		return "Add Literal Node";
 	}
 
 	@Override
@@ -99,8 +97,9 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 		try {
 			if(nodeId == null) {
 				final LiteralNode ln = alignment.addLiteralNode(literalValue, literalType, language, isUri);
+				nodeId = ln.getId();
+				
 				uc.add(new AbstractUpdate() {
-
 					@Override
 					public void generateJson(String prefix, PrintWriter pw,
 							VWorkspace vWorkspace) {
@@ -110,7 +109,7 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 							JSONWriter writer = jsonStr.object();
 							writer.key("worksheetId").value(worksheetId);
 							writer.key("updateType").value("AddLiteralNodeUpdate");	
-							writer.key("hNodeId").value(ln.getId());
+							writer.key("hNodeId").value(nodeId);
 							writer.key("uri").value(literalValue);
 							writer.endObject();
 							pw.print(writer.toString());
@@ -150,6 +149,8 @@ public class AddLiteralNodeCommand extends WorksheetCommand {
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
 	}
 
-	
+	public String getNodeId() {
+		return nodeId;
+	}
 
 }

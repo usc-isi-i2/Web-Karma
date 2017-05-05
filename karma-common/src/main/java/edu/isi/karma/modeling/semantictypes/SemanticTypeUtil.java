@@ -156,22 +156,27 @@ public class SemanticTypeUtil {
 					this.lock.unlock();
 					Workspace workspace = trainingJob.workspace;
 					Worksheet worksheet = trainingJob.worksheet;
-					SemanticType newType = trainingJob.newType;
+					ArrayList<SemanticType> newTypes = trainingJob.newTypes;
 					SuperSelection sel = trainingJob.sel;
-
-					HNodePath currentColumnPath = null;
-					List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
-					for (HNodePath path : paths) {
-						if (path.getLeaf().getId().equals(newType.getHNodeId())) {
-							currentColumnPath = path;
-							break;
+					if(newTypes.size() > 0) {
+					
+						HNodePath currentColumnPath = null;
+						List<HNodePath> paths = worksheet.getHeaders().getAllPaths();
+						String hNodeId = newTypes.get(0).getHNodeId();
+						for (HNodePath path : paths) {
+							if (path.getLeaf().getId().equals(hNodeId)) {
+								currentColumnPath = path;
+								break;
+							}
+						}
+	
+						ArrayList<String> examples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet, currentColumnPath, sel);
+						ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
+						for(SemanticType newType : newTypes) {
+							String label = newType.getModelLabelString();
+							modelHandler.addType(label, examples);
 						}
 					}
-
-					ArrayList<String> examples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet, currentColumnPath, sel);
-					ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
-					String label = newType.getModelLabelString();
-					modelHandler.addType(label, examples);
 
 				} catch (InterruptedException ie) {
 					ie.printStackTrace();
@@ -185,19 +190,20 @@ public class SemanticTypeUtil {
 	private class TrainingJob {
 		public Workspace workspace;
 		public Worksheet worksheet;
-		public SemanticType newType;
+		public ArrayList<SemanticType> newTypes;
 		public SuperSelection sel;
-		TrainingJob(Workspace workspace, Worksheet worksheet, SemanticType newType, SuperSelection sel) {
+		TrainingJob(Workspace workspace, Worksheet worksheet, List<SemanticType> newTypes, SuperSelection sel) {
 			this.workspace = workspace;
 			this.worksheet = worksheet;
-			this.newType = newType;
+			this.newTypes = new ArrayList<>();
+			this.newTypes.addAll(newTypes);
 			this.sel = sel;
 		}
 	}
 	
-	public void trainOnColumn(Workspace workspace, Worksheet worksheet, SemanticType newType, SuperSelection sel) {
+	public void trainOnColumn(Workspace workspace, Worksheet worksheet, List<SemanticType> newTypes, SuperSelection sel) {
 		trainingFactory = trainingFactory == null ? new TrainingFactory() : trainingFactory;
-		trainingFactory.addTrainingJob(new TrainingJob(workspace, worksheet, newType, sel));
+		trainingFactory.addTrainingJob(new TrainingJob(workspace, worksheet, newTypes, sel));
 	}
 	
 	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, String hNodeId, int numSuggestions, SuperSelection sel) {
@@ -298,7 +304,7 @@ public class SemanticTypeUtil {
 			Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
 			if (propertyLabel == null) continue;
 
-			SemanticType semanticType = new SemanticType(columnNode.getHNodeId(), propertyLabel, domainLabel, Origin.TfIdfModel, confidence);
+			SemanticType semanticType = new SemanticType(columnNode.getHNodeId(), propertyLabel, domainLabel, null, false, Origin.TfIdfModel, confidence);
 			logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
 			suggestedSemanticTypes.add(semanticType);
 		}
@@ -333,7 +339,7 @@ public class SemanticTypeUtil {
 					Label propertyLabel = ontologyManager.getUriLabel(propertyUri);
 					if (propertyLabel == null) continue;
 	
-					SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, Origin.TfIdfModel, confidence);
+					SemanticType semanticType = new SemanticType(hNodeId, propertyLabel, domainLabel, null, false, Origin.TfIdfModel, confidence);
 					logger.info("\t" + propertyUri + " of " + domainUri + ": " + confidence);
 					suggestedSemanticTypes.add(semanticType);
 				}

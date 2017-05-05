@@ -94,10 +94,10 @@ var SetSemanticTypeDialog = (function() {
 				
 				var suggestedTypes = getSuggestedTypes();
 				
-				var addSemTypeOrAdvOption = function(type, isPrimary, isSelected, isCrfModelSuggested) {
+				var addSemTypeOrAdvOption = function(type, isPrimary, isProvenance, isSelected, isCrfModelSuggested) {
 					if (type["DisplayLabel"] == "km-dev:classLink") {
 						addUriSemanticType(type["DisplayDomainLabel"], type["DomainRDFSLabel"], type["DomainUri"], type["DomainId"], 
-								isPrimary, isSelected, isCrfModelSuggested);
+								isPrimary, isProvenance, isSelected, isCrfModelSuggested);
 					} else if (type["DisplayLabel"] == "km-dev:columnSubClassOfLink") {
 						$("#isSubclassOfClass").prop('checked', true);
 						$("input#isSubclassOfClassTextBox").val(type["DisplayDomainLabel"]);
@@ -116,7 +116,7 @@ var SetSemanticTypeDialog = (function() {
 				// Populate the table with existing types and CRF suggested types
 				$.each(existingTypes, function(index, type) {
 					// Take care of the special meta properties that are set through the advanced options
-					addSemTypeOrAdvOption(type, true, true, false);
+					addSemTypeOrAdvOption(type, type["isPrimary"], type["isProvenance"], true, false);
 				});
 				if (suggestedTypes) {
 					$.each(suggestedTypes["Labels"], function(index, type) {
@@ -125,7 +125,7 @@ var SetSemanticTypeDialog = (function() {
 								type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
 							return;
 						}
-						addSemTypeOrAdvOption(type, false, false, true);
+						addSemTypeOrAdvOption(type, false, false, false, true);
 					});
 				}
 
@@ -170,6 +170,7 @@ var SetSemanticTypeDialog = (function() {
 					$(this).removeClass('selected');
 					$("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", $(this)).prop('checked', false);
 					$("input[name='isPrimaryGroup']:radio", $(this)).prop('checked', false);
+					$("input[name='isProvenanceGroup']:checkbox", $(this)).prop('checked', false);
 				});
 
 				$("div#semanticTypesAdvacedOptionsDiv input:checkbox").not($(this)).prop('checked', false);
@@ -261,6 +262,7 @@ var SetSemanticTypeDialog = (function() {
 
 				// Check if it was chosen primary
 				newType["isPrimary"] = $("input[name='isPrimaryGroup']:radio", $(row)).is(":checked");
+				newType["isProvenance"] = $("input[name='isProvenanceGroup']:checkbox", $(row)).is(":checked");
 				existingTypes.push(newType);
 			});
 			if (notValid)
@@ -398,7 +400,9 @@ var SetSemanticTypeDialog = (function() {
 			addSemTypeObjectToCurrentTable(fakeSemType, false, false);
 		}
 
-		function addUriSemanticType(domainLabel, domainRDFSLabel, domainUri, domainId, isPrimary, isSelected, isCrfModelSuggested) {
+		function addUriSemanticType(domainLabel, domainRDFSLabel, domainUri, domainId, 
+					isPrimary, isProvenance, isSelected, 
+					isCrfModelSuggested) {
 			var type = new Object();
 			type["FullType"] = "http://isi.edu/integration/karma/dev#classLink";
 			type["DomainId"] = domainId;
@@ -408,6 +412,7 @@ var SetSemanticTypeDialog = (function() {
 			type["DisplayDomainLabel"] = domainLabel;
 			type["DomainRDFSLabel"] = domainRDFSLabel;
 			type["isPrimary"] = isPrimary;
+			type["isProvenance"] = isProvenance;
 			// Add it to the table
 			addSemTypeObjectToCurrentTable(type, isSelected, isCrfModelSuggested);
 		}
@@ -453,6 +458,11 @@ var SetSemanticTypeDialog = (function() {
 			else
 				displayLabel = "<span class='italic'>" + property + "</span> of " + clazz;
 
+			var isProvenance = false;
+			if(semTypeObject["isProvenance"]) {
+				isProvenance = semTypeObject["isProvenance"];
+			}
+
 			var trTag = $("<tr>").addClass("semTypeRow")
 				.data("FullType", semTypeObject["FullType"])
 				.data("DomainRDFSLabel", semTypeObject["DomainRDFSLabel"])
@@ -474,6 +484,12 @@ var SetSemanticTypeDialog = (function() {
 					.attr("type", "radio")
 					.attr("name", "isPrimaryGroup")
 					.attr("value", semTypeObject["DisplayLabel"])
+					.val(semTypeObject["DisplayLabel"])))
+				.append($("<td>").append($("<input>")
+					.attr("type", "checkbox")
+					.attr("name", "isProvenanceGroup")
+					.attr("value", semTypeObject["DisplayLabel"])
+					.prop("checked", isProvenance)
 					.val(semTypeObject["DisplayLabel"])))
 				.append($("<td>")
 					.append($("<button>").attr("type", "button").addClass("btn").addClass("editButton").addClass("btn-default").text("Edit").click(showSemanticTypeEditOptions))
@@ -2643,6 +2659,13 @@ var AddLiteralNodeDialog = (function() {
 								getAllProperties();
 								propertyUI.generateJS(propDiv, true);
 								
+								var isProvDiv = $("<div>").addClass("checkbox").attr("id", "isProvenanceLiteralRow")
+													.append($("<label>")
+														.append($("<input>").attr("type", "checkbox").attr("id", "isProvenanceLiteral")
+														)
+														.append($("<span>").text("Specifies provenance"))
+													);
+								$("#col-property", dialog).append(isProvDiv);
 								$("#isUriRow", dialog).show();
 							} else {
 								$(".modal-title", dialog).html("Edit Literal Node");
@@ -2707,8 +2730,9 @@ var AddLiteralNodeDialog = (function() {
 				 	e.preventDefault();
 				 	return;
 				 }
-
+				 var isProvenance = false;
 				 if(dialogMode == "addWithProperty") {
+				 	isProvenance = $("#isProvenanceLiteral", dialog).is(":checked");
 				 	var property = propertyUI.getSelectedProperty();
 				 	if(property.uri == "") {
 				 		alert("Please select a property");
@@ -2761,7 +2785,7 @@ var AddLiteralNodeDialog = (function() {
 												 }
 											 });
 											 
-											 addEdge(nodeId, nodeUri, property.id, literalId, literalUri);
+											 addEdge(nodeId, nodeUri, property.id, literalId, literalUri, isProvenance);
 										 } else {
 											 parse(json);
 											 hideLoading(worksheetId);
@@ -2777,7 +2801,7 @@ var AddLiteralNodeDialog = (function() {
 				 });
 			};
 			
-			function addEdge(sourceId, sourceUri, propertyId, targetId, targetUri) {
+			function addEdge(sourceId, sourceUri, propertyId, targetId, targetUri, isProvenance) {
 				
 				var info = generateInfoObject(worksheetId, "", "ChangeInternalNodeLinksCommand");
 
@@ -2797,6 +2821,7 @@ var AddLiteralNodeDialog = (function() {
 				newEdgeObj["edgeTargetId"] = targetId;
 				newEdgeObj["edgeTargetUri"] = targetUri;
 				newEdgeObj["edgeId"] = propertyId;
+				newEdgeObj["isProvenance"] = isProvenance;
 				newEdges.push(newEdgeObj);
 
 				newInfo.push(getParamObject("newEdges", newEdges, "other"));

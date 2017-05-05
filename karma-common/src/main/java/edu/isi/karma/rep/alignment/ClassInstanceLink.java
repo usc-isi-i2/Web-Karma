@@ -33,7 +33,7 @@ public class ClassInstanceLink extends LabeledLink {
 			new Label(Uris.CLASS_INSTANCE_LINK_URI, Namespaces.KARMA_DEV, Prefixes.KARMA_DEV);
 	
 	public ClassInstanceLink(String id) {
-		super(id, label, LinkType.ClassInstanceLink);
+		super(id, label, LinkType.ClassInstanceLink, false);
 	}
 	
 	public ClassInstanceLink(String id, LinkKeyInfo keyInfo) {

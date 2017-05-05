@@ -98,4 +98,7 @@ public class DeleteNodeCommand extends WorksheetCommand {
 		return WorksheetUpdateFactory.createSemanticTypesAndSVGAlignmentUpdates(worksheetId, workspace);
 	}
 
+	public String getNodeId() {
+		return nodeId;
+	}
 }

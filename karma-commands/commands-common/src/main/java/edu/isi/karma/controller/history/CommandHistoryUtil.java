@@ -128,9 +128,9 @@ public class CommandHistoryUtil {
 	public UpdateContainer replayHistory(JSONArray redoCommandsArray) {
 		UpdateContainer uc = new UpdateContainer();
 		Worksheet oldWorksheet = workspace.getFactory().getWorksheet(worksheetId);
-		oldWorksheet.getImportMethod().createWorksheet(oldWorksheet.getTitle(), workspace, oldWorksheet.getEncoding());
+		logger.info("***** Replay History for worksheet :" + worksheetId + " ****");
 		try {
-			Worksheet newWorksheet = oldWorksheet.getImportMethod().generateWorksheet();
+			Worksheet newWorksheet = oldWorksheet.getImportMethod().duplicate().generateWorksheet();
 			Alignment alignment = AlignmentManager.Instance().createAlignment(workspace.getId(), newWorksheet.getId(), workspace.getOntologyManager());
 			workspace.removeWorksheet(worksheetId);
 			uc.add(new WorksheetDeleteUpdate(worksheetId));

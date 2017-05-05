@@ -108,6 +108,17 @@
 		    <artifactId>jsonld-java</artifactId>
 		    <version>0.7.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.xerial.snappy</groupId>
+		    <artifactId>snappy-java</artifactId>
+		    <version>1.1.4-M3</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.holdenkarau</groupId>
+		    <artifactId>spark-testing-base_2.10</artifactId>
+		    <version>1.5.0_0.3.3</version>
+		    <scope>test</scope>
+		</dependency>
     </dependencies>
 
 <build>
@@ -197,6 +208,27 @@
 		        </dependency>
 	        </dependencies>
     	</profile>
+    	
+    	<profile>
+    		<id>withcdhhive</id>
+    		<activation>
+		    	<property>
+		          <name>env</name>
+		          <value>cdhhive</value>
+		        </property>
+    		</activation>
+    		<properties>
+        		<spark.version>1.6.0-cdh5.10.1</spark.version>
+        		<spark.scala.version>_2.10</spark.scala.version>
+    		</properties>
+    		<dependencies>
+		        <dependency>
+		            <groupId>org.apache.spark</groupId>
+		            <artifactId>spark-hive${spark.scala.version}</artifactId>
+		            <version>${spark.version}</version>
+		        </dependency>
+	        </dependencies>
+    	</profile>
         
         <profile>
             <id>shaded</id>
@@ -208,13 +240,13 @@
                     <!-- Configuration for generating a self contained jar for MR -->
                     <!--
                         to generate the jar, run:
-                        mvn package -P shaded
+                        mvn package -P shaded -Dmaven.test.skip=true
                         
                         To generate jar for vanilla spark 1.5, run
-                        mvn package -P shaded -Denv=vanilla
+                        mvn package -P shaded -Denv=vanilla -Dmaven.test.skip=true
                         
                         To generate jar for spark 1.5 with hive, run
-                        mvn package -P shaded -Denv=hive
+                        mvn package -P shaded -Denv=hive -Dmaven.test.skip=true
                     -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

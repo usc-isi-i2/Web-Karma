@@ -132,3 +132,8 @@ body {
 .heading {
 	font-weight: bold;
 }
+
+.sem-provenance {
+	width: 10%; 
+	word-break: break-all;
+}

@@ -60,4 +60,6 @@ public abstract class Import {
      */
     public abstract Worksheet generateWorksheet() throws JSONException, IOException, KarmaException, ClassNotFoundException;
     
+    public abstract Import duplicate() throws IOException;
+    
 }
