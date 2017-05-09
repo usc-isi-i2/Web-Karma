@@ -83,10 +83,11 @@ public class KarmaStats {
 			final String setSemanticCommandName = "SetSemanticTypeCommand";
 			final String setPropertyCommandName = "SetMetaPropertyCommand";
 			final String addLinkCommandName = "AddLinkCommand";
-			final String deleteLinkCommandName = "DeleteLinkCommand";
 			final String changeLinkCommandName = "ChangeInternalNodeLinksCommand";
 			final String unassignSemeticCommandName = "UnassignSemanticTypeCommand";
 			final String selectionCommandName = "OperateSelectionCommand";
+			final String glueCommandName = "GlueCommand";
+			final String unfoldCommandName = "UnfoldCommand";
 
 			boolean isJSON = false;
 			int pyTransformCount = 0;
@@ -94,6 +95,8 @@ public class KarmaStats {
 			int classCount = 0;
 			int linkCount = 0; // Except sementic type links
 			int filterCount = 0;
+			int glueCount = 0;
+			int unFoldCount = 0;
 
 			while ((tmpString = bufferedReader.readLine()) != null) {
 				if (isJSON) {
@@ -137,14 +140,16 @@ public class KarmaStats {
 						SemanticTypeCount++;
 					} else if (commandName.equals(addLinkCommandName)) {
 						linkCount++;
-					} else if (commandName.equals(deleteLinkCommandName)) {
-
+					} else if (commandName.equals(glueCommandName)) {
+						glueCount++;
 					} else if (commandName.equals(selectionCommandName)) {
 						filterCount++;
 					} else if (commandName.equals(unassignSemeticCommandName)) {
 						SemanticTypeCount--;
 					} else if(commandName.equals(changeLinkCommandName)) {
 						linkCount++;
+					} else if(commandName.equals(unfoldCommandName)) {
+						unFoldCount++;
 					}
 				}
 			}
@@ -160,6 +165,8 @@ public class KarmaStats {
 			output.put("class", classCount);
 			output.put("links", linkCount);
 			output.put("filters", filterCount);
+			output.put("Unfold", unFoldCount);
+			output.put("Glue", glueCount);
 			modelStat.put("modelStatistics", output);
 			if(isPretty) {
 				writeBuffer.append(modelStat.toString(4));
