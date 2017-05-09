@@ -25,6 +25,7 @@
 
 
 	<properties>
+		<skipTests>true</skipTests>
     <jettyVersion>9.0.5.v20130815</jettyVersion>
     <project.build.sourceEncoding>
       UTF-8
@@ -471,6 +472,7 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+					<skipTests>${skipTests}</skipTests>
 				</configuration>
 			</plugin>
 		    <plugin>
