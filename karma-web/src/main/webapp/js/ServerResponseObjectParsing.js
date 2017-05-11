@@ -948,7 +948,9 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 		if (column["columnDerivedFrom"]) {
 			td.data("columnDerivedFrom", column["columnDerivedFrom"]);
 		}
-
+		if(column["status"]) {
+			td.addClass("htable-selected");
+		}
 		if (column["hasNestedTable"]) {
 			var pElem = $("<div>")
 				.addClass("wk-header")
