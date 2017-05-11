@@ -154,12 +154,12 @@
     <profiles>
     
 		<profile>
-  			<id>cloudera</id>
+  			<id>1.5.0-cdh5.5.0</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 				<property>
 		          <name>env</name>
-		          <value>cloudera</value>
+		          <value>1.5.0-cdh5.5.0</value>
 		        </property>
 			</activation>
 			<properties>
@@ -176,11 +176,11 @@
     	</profile>
     	
     	<profile>
-    		<id>vanilla</id>
+    		<id>1.5.0</id>
     		<activation>
 		    	<property>
 		          <name>env</name>
-		          <value>vanilla</value>
+		          <value>1.5.0</value>
 		        </property>
     		</activation>
     		<properties>
@@ -197,11 +197,11 @@
     	</profile>
     	
     	<profile>
-    		<id>withhive</id>
+    		<id>1.5.0-hive</id>
     		<activation>
 		    	<property>
 		          <name>env</name>
-		          <value>hive</value>
+		          <value>1.5.0-hive</value>
 		        </property>
     		</activation>
     		<properties>
@@ -218,11 +218,11 @@
     	</profile>
     	
     	<profile>
-    		<id>withcdhhive</id>
+    		<id>1.6.0-cdh5.10.1-hive</id>
     		<activation>
 		    	<property>
 		          <name>env</name>
-		          <value>cdhhive</value>
+		          <value>1.6.0-cdh5.10.1-hive</value>
 		        </property>
     		</activation>
     		<properties>
@@ -251,10 +251,13 @@
                         mvn package -P shaded
                         
                         To generate jar for vanilla spark 1.5, run
-                        mvn package -P shaded -Denv=vanilla
+                        mvn package -P shaded -Denv=1.5.0
                         
                         To generate jar for spark 1.5 with hive, run
-                        mvn package -P shaded -Denv=hive
+                        mvn package -P shaded -Denv=1.5.0-hive
+                        
+                        To generate jar for cloudera spark 1.6.0 with hive, run
+                        mvn package -P shaded -Denv=1.6.0-cdh5.10.1-hive
                     -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -263,7 +266,7 @@
                         <configuration>
                         	<skipTests>true</skipTests>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>shaded</shadedClassifierName>
+                            <shadedClassifierName>${env}</shadedClassifierName>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"/>
