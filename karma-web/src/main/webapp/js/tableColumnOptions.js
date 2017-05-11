@@ -96,7 +96,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			leafOnly: false,
 			leafExcluded: true
 		}, {
-			name: "Selection",
+			name: "Filters",
 			func: undefined,
 			addLevel: true,
 			leafOnly: false,
@@ -104,15 +104,6 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			levels: [{
 				name: "Add Rows",
 				func: addRows
-			}, {
-				name: "Intersect Rows",
-				func: intersectRows
-			}, {
-				name: "Subtract Rows",
-				func: subtractRows
-			}, {
-				name: "Invert",
-				func: invertRows
 			}, {
 				name: "Clear",
 				func: undefined,
@@ -139,33 +130,9 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
 	}
 
-	function intersectRows() {
-		hideDropdown();
-		$("#pyTransformSelectionDialog").data("operation", "Intersect");
-		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
-	}
-
-	function subtractRows() {
-		hideDropdown();
-		$("#pyTransformSelectionDialog").data("operation", "Subtract");
-		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
-	}
-
 	function aggregation() {
 		hideDropdown();
 		AggregationDialog.getInstance().show(wsId, wsColumnId, wsColumnTitle);
-	}
-
-	function invertRows() {
-		hideDropdown();
-		var headers = getColumnHeadingsForColumn(wsId, wsColumnId, "GroupBy");
-		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "OperateSelectionCommand");
-		var newInfo = info['newInfo'];
-		newInfo.push(getParamObject("pythonCode", "", "other"));
-		newInfo.push(getParamObject("operation", "Invert", "other"));
-		info["newInfo"] = JSON.stringify(newInfo);
-		showLoading(worksheetId);
-		sendRequest(info, worksheetId);
 	}
 
 	function refreshRows() {
