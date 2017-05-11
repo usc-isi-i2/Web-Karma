@@ -266,7 +266,9 @@ public class PublishGithubCommand extends Command {
 
     private InputStream getGraphizPdf(String dotContents) throws ClientProtocolException, IOException {
     	HttpClient httpClient = new DefaultHttpClient();
-    	HttpPost httpPost = new HttpPost(this.graphvizServer + "pdf");
+    	String url = this.graphvizServer + "pdf";
+    	logger.info("Generating PDF for graphviz:" + url);
+    	HttpPost httpPost = new HttpPost(url);
 		httpPost.setEntity(new StringEntity(dotContents));
 		HttpResponse response = httpClient.execute(httpPost);
 		
