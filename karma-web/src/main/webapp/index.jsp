@@ -138,7 +138,11 @@ and related projects, please see: http://www.isi.edu/integration
 			.wk-row-selected {
     		background-color: #EEEEEE;
 			}
-			
+
+			.htable-selected {
+			background-color: #FFA600;
+			}
+
 			.table-no-border td {
 			    border-top: 0 none;
 			}
