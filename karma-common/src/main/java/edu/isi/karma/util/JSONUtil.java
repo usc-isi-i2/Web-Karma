@@ -256,24 +256,28 @@ public class JSONUtil {
 	}
 	
 	public static Object convertJSONLinesToJSONArray(InputStream is,String encoding) throws Exception{
-		if(encoding == null){
+		if (encoding == null) {
 			encoding = "UTF-8";
 		}
 		JSONArray jArray = new JSONArray();
-		try{
-		
-		BufferedReader br = new BufferedReader(new InputStreamReader(is,encoding));
-		String line=null;
-		
-		while((line = br.readLine()) != null){
-			jArray.put(new JSONObject(line.trim()));
+
+		String line = null;
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(is,
+					encoding));
+
+			while ((line = br.readLine()) != null) {
+				jArray.put(new JSONObject(line.trim()));
+			}
+
+			br.close();
+			return jArray;
+		} catch (Exception e) {
+			String message = "Error while reading json lines:" + e.getMessage();
+			if (line != null)
+				message = message + "\n" + line;
+			throw new Exception(message);
 		}
-		
-		br.close();
-		return jArray;
-		}catch(Exception e){
-			throw new Exception("Error while reading json lines."+ e.getMessage());
-		}
-		
+
 	}
 }
