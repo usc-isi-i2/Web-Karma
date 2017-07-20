@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,6 +50,9 @@ public class PythonRepository {
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getVDefStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getTransformStatement());
 		compileAndAddToRepository(interpreter, PythonTransformationHelper.getSelectionStatement());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getModelName());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getModelPrefix());
+		compileAndAddToRepository(interpreter, PythonTransformationHelper.getModelBaseUri());
 		initializeInterpreter(interpreter);
 	}
 
@@ -96,6 +98,10 @@ public class PythonRepository {
 			interpreter.exec(scripts.get(PythonTransformationHelper.getGetValueFromNestedColumnByIndexDefStatement()));
 			interpreter.exec(scripts.get(PythonTransformationHelper.getRowIndexDefStatement()));
 			interpreter.exec(scripts.get(PythonTransformationHelper.getVDefStatement()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getModelName()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getModelPrefix()));
+			interpreter.exec(scripts.get(PythonTransformationHelper.getModelBaseUri()));
+			
 		}
 		if(localsUninitialized ||(!libraryHasBeenLoaded || reloadLibrary))
 		{

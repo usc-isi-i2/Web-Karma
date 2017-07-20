@@ -39,6 +39,10 @@ public class PythonTransformationHelper {
 	private static String importStatement = null;
 	private static String valueFromNestedColumnByIndexDefStatement = null;
 	private static String getRowIndexDefStatement = null;
+	private static String modelNameStatement = null;
+	private static String modelPrefixStatement = null;
+	private static String modelBaseUriStatement = null;
+	
 	public static String getPyObjectValueAsString(PyObject obj) {
 		if (obj == null)
 			return "";
@@ -99,6 +103,7 @@ public class PythonTransformationHelper {
 			importStmt.append("import json\n");
 			importStmt.append("import edu.isi.karma.rep.WorkspaceManager\n");
 			importStmt.append("import edu.isi.karma.rep.Workspace\n");
+			importStmt.append("import edu.isi.karma.rep.Worksheet\n");
 			importStmt.append("import edu.isi.karma.rep.Node\n");
 			importStmt.append("import edu.isi.karma.rep.Table\n");
 			importStmt.append("import edu.isi.karma.rep.HTable\n");
@@ -106,6 +111,9 @@ public class PythonTransformationHelper {
 			importStmt.append("import edu.isi.karma.rep.RepFactory\n");
 			importStmt.append("import edu.isi.karma.er.helper.PythonTransformationHelper\n");
 			importStmt.append("import edu.isi.karma.controller.command.transformation.PythonTransformationCommand\n");
+			importStmt.append("import edu.isi.karma.rep.metadata.WorksheetProperties\n");
+			importStmt.append("import edu.isi.karma.rep.metadata.WorksheetProperties.Property\n");
+			
 			importStatement = importStmt.toString();
 		}
 		return importStatement;
@@ -197,6 +205,50 @@ public class PythonTransformationHelper {
 	}
 	
 	
+	public static String getModelName() {
+		if(modelNameStatement == null) {
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def getModelName():\n");
+			methodStmt.append("	worksheet = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getWorksheet(worksheetId)\n");
+			methodStmt.append("	props = worksheet.getMetadataContainer().getWorksheetProperties()\n");
+			methodStmt.append("	modelName = props.getPropertyValue(edu.isi.karma.rep.metadata.WorksheetProperties.Property.graphLabel)\n");
+			methodStmt.append("	if modelName is not None:\n");
+			methodStmt.append("		return modelName\n");
+			methodStmt.append("	return ''\n");
+			modelNameStatement = methodStmt.toString();
+		}
+		return modelNameStatement;
+	}
+	
+	public static String getModelPrefix() {
+		if(modelPrefixStatement == null) {
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def getModelPrefix():\n");
+			methodStmt.append("	worksheet = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getWorksheet(worksheetId)\n");
+			methodStmt.append("	props = worksheet.getMetadataContainer().getWorksheetProperties()\n");
+			methodStmt.append("	prefix = props.getPropertyValue(edu.isi.karma.rep.metadata.WorksheetProperties.Property.prefix)\n");
+			methodStmt.append("	if prefix is not None:\n");
+			methodStmt.append("		return prefix\n");
+			methodStmt.append("	return ''\n");
+			modelPrefixStatement = methodStmt.toString();
+		}
+		return modelPrefixStatement;
+	}
+	
+	public static String getModelBaseUri() {
+		if(modelBaseUriStatement == null) {
+			StringBuilder methodStmt = new StringBuilder();
+			methodStmt.append("def getModelBaseUri():\n");
+			methodStmt.append("	worksheet = edu.isi.karma.rep.WorkspaceManager.getInstance().getWorkspace(workspaceid).getWorksheet(worksheetId)\n");
+			methodStmt.append("	props = worksheet.getMetadataContainer().getWorksheetProperties()\n");
+			methodStmt.append("	uri = props.getPropertyValue(edu.isi.karma.rep.metadata.WorksheetProperties.Property.baseURI)\n");
+			methodStmt.append("	if uri is not None:\n");
+			methodStmt.append("		return uri\n");
+			methodStmt.append("	return ''\n");
+			modelBaseUriStatement = methodStmt.toString();
+		}
+		return modelBaseUriStatement;
+	}
 	
 	public static String getIsEmptyDefStatement() {
 
