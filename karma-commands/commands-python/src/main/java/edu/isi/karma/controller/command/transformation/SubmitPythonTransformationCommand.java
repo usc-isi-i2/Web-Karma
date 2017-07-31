@@ -70,7 +70,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 		//logger.info("SubmitPythonTranformationCommand:" + id + " newColumnName:" + newColumnName + ", code=" + transformationCode);
 		this.pythonNodeId = hNodeId;
 	}
-
+	
 	@Override
 	public String getCommandName() {
 		return this.getClass().getSimpleName();
@@ -124,6 +124,7 @@ public class SubmitPythonTransformationCommand extends MutatingPythonTransformat
 					Map<String, String> mapping = gatherTransformedResults(workspace, nodeId);
 					handleJSONOutput(workspace, mapping, newColumnNameHNode);
 				}
+				newColumnAbsoluteName = newColumnNameHNode.getAbsoluteColumnName(f);
 				WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 				return c;
 			} else {
