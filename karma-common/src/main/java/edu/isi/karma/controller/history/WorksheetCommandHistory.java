@@ -1,11 +1,15 @@
 package edu.isi.karma.controller.history;
 
 import edu.isi.karma.controller.command.ICommand;
+
 import org.apache.commons.lang3.tuple.Pair;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import edu.isi.karma.controller.command.Command;
 
 /**
  * Created by Frank on 9/14/15.
@@ -53,8 +57,7 @@ public class WorksheetCommandHistory implements Cloneable {
 
     private final Map<String, CommandTagListMap> historyWorksheetMap = new TreeMap<>();
     private static final String IMPORT_COMMANDS = "ImportCommands";
-
-
+    
     public WorksheetCommandHistory() {
         historyWorksheetMap.put(IMPORT_COMMANDS, new CommandTagListMap());
     }
@@ -94,6 +97,22 @@ public class WorksheetCommandHistory implements Cloneable {
         commandTagListMap.addCommandToHistory(command);
     }
 
+    public void insertCommandToHistoryAfterCommand(ICommand newCommand, ICommand afterCommand) {
+        String worksheetId = getWorksheetId(afterCommand);
+        if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+        CommandTagListMap commandTagListMap = historyWorksheetMap.get(worksheetId);
+        if (commandTagListMap != null) {
+            for (Map.Entry<ICommand.CommandTag, List<ICommand>> entry : commandTagListMap.commandTagListHashMap.entrySet()) {
+                int index = entry.getValue().indexOf(afterCommand);
+                if (index != -1) {
+                    entry.getValue().add(index+1, newCommand);
+                }
+            }
+        }
+    }
+    
     public void setLastRedoCommandObject(RedoCommandObject command) {
 
         String worksheetId = getWorksheetId(command.getCommand());
@@ -200,6 +219,29 @@ public class WorksheetCommandHistory implements Cloneable {
         return commands;
     }
 
+    public List<ICommand> getCommandsAfterCommand(ICommand command, ICommand.CommandTag commandTag) {
+    	List<ICommand> commands = new ArrayList<>();
+    	String worksheetId = getWorksheetId(command);
+    	if (worksheetId == null) {
+            worksheetId = IMPORT_COMMANDS;
+        }
+    	CommandTagListMap map = historyWorksheetMap.get(worksheetId);
+        if (map != null) {
+        	List<ICommand> tagCommands = map.getCommands(commandTag);
+        	boolean start = false;
+        	for(ICommand cmd : tagCommands) {
+        		if(cmd.equals(command)) {
+        			start = true;
+        			continue;
+        		}
+        		if(start)
+        			commands.add(cmd);
+        	}
+            commands.addAll(map.getCommands(commandTag));
+        }
+        return commands;
+    }
+    
     public RedoCommandObject getLastRedoCommandObject(String worksheetId) {
         if (worksheetId == null) {
             worksheetId = IMPORT_COMMANDS;

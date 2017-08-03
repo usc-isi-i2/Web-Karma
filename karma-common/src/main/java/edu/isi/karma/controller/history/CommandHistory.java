@@ -30,14 +30,25 @@ import edu.isi.karma.controller.command.ICommand;
 import edu.isi.karma.controller.command.ICommand.CommandTag;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ClientJsonKeys;
 import edu.isi.karma.controller.history.HistoryJsonUtil.ParameterType;
+import edu.isi.karma.controller.update.AbstractUpdate;
 import edu.isi.karma.controller.update.HistoryUpdate;
+import edu.isi.karma.controller.update.TrivialErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
+import edu.isi.karma.modeling.steiner.topk.Graph;
 import edu.isi.karma.rep.HNode;
+import edu.isi.karma.rep.Node;
+import edu.isi.karma.rep.RepFactory;
 import edu.isi.karma.rep.Workspace;
 import edu.isi.karma.util.JSONUtil;
 import edu.isi.karma.view.VWorkspace;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DirectedMultigraph;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.reflections.Reflections;
@@ -137,6 +148,7 @@ public class CommandHistory implements Cloneable{
 		Pair<ICommand, Object> consolidatedCommand = null;
 		String consolidatorName = null;
 		String worksheetId = worksheetCommandHistory.getWorksheetId(command);
+		RepFactory factory = workspace.getFactory();
 		List<ICommand> potentialConsolidateCommands = worksheetCommandHistory.getCommandsFromWorksheetIdAndCommandTag(worksheetId, command.getTagFromPriority());
 		for (CommandConsolidator consolidator : consolidators) {
 			consolidatedCommand = consolidator.consolidateCommand(potentialConsolidateCommands, command, workspace);
@@ -149,7 +161,37 @@ public class CommandHistory implements Cloneable{
 		if (consolidatedCommand != null) {
 			worksheetCommandHistory.setStale(worksheetId, true);
 			if (consolidatorName.equals("PyTransformConsolidator")) {
-				effects.append(consolidatedCommand.getLeft().doIt(workspace));
+				Command runCommand = (Command)consolidatedCommand.getLeft();
+				effects.append(runCommand.doIt(workspace));
+				
+				if(runCommand.getInputColumns().size() > 0 && 
+						!runCommand.getInputColumns().equals(command.getInputColumns())) {
+					Pair<Boolean, Set<String>> cycleDetect = detectTransformCycle(worksheetId);
+					if(cycleDetect.getLeft() == false) {
+						
+						placeTransformCommandByInput(runCommand);
+					} else {
+						StringBuilder columns = new StringBuilder();
+						String sep = "";
+						System.out.println(cycleDetect.getRight());
+						for(String nodeId : cycleDetect.getRight()) {
+							HNode node = factory.getHNode(nodeId);
+							columns.append(sep);
+							if(node != null)
+								columns.append(node.getAbsoluteColumnName(factory));
+							else {
+								Node repNode = factory.getNode(nodeId);
+								if(repNode != null)
+									columns.append(repNode.prettyPrint(factory));
+								else
+									columns.append(nodeId);
+							}
+							sep = ", ";
+						}
+						AbstractUpdate update = new TrivialErrorUpdate("A cycle occurs in the Column Transforms for Columns: " + columns.toString() + ". Please fix the cycle");
+						effects.add(update);
+					}
+				}
 			}
 			if (consolidatorName.equals("UnassignSemanticTypesConsolidator")) {
 				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(consolidatedCommand.getLeft()));
@@ -178,6 +220,12 @@ public class CommandHistory implements Cloneable{
 			if (consolidatorName.equals("AddLinkConsolidator")) {
 				worksheetCommandHistory.replaceCommandFromHistory(consolidatedCommand.getKey(), (ICommand)consolidatedCommand.getRight());
 				effects.append(((ICommand) consolidatedCommand.getRight()).doIt(workspace));
+			}
+			if (consolidatorName.equals("AddColumnConsolidator")) {
+				worksheetCommandHistory.removeCommandFromHistory(Arrays.asList(consolidatedCommand.getLeft()));
+				ICommand runCommand = ((ICommand) consolidatedCommand.getRight());
+				worksheetCommandHistory.insertCommandToHistory(runCommand);
+				effects.append(runCommand.doIt(workspace));
 			}
 		}
 		else {
@@ -219,6 +267,74 @@ public class CommandHistory implements Cloneable{
 		return effects;
 	}
 
+	private void placeTransformCommandByInput(Command command) {
+		ICommand placeAfterCmd = null;
+		Set<String> cmdInputs = command.getInputColumns();
+		Set<String> cmdOutputs = command.getOutputColumns();
+		List<Command> commandsToMove = new ArrayList<>();
+		for (ICommand afterCmd : worksheetCommandHistory.getCommandsAfterCommand(command, CommandTag.Transformation)) {
+			Set<String> afterCmdOutputs = ((Command)afterCmd).getOutputColumns();
+			Set<String> afterCmdInputs = ((Command)afterCmd).getInputColumns();
+			for(String input : cmdInputs) {
+				if(afterCmdOutputs.contains(input)) {
+					placeAfterCmd = afterCmd;
+					break;
+				}
+			}
+			for(String output : cmdOutputs) {
+				if(afterCmdInputs.contains(output)) {
+					commandsToMove.add((Command)afterCmd);
+					break;
+				}
+			}
+		}
+		
+		if (placeAfterCmd != null) {
+			worksheetCommandHistory.removeCommandFromHistory(Arrays.asList((ICommand)command));
+			JSONArray inputJSON = new JSONArray(command.getInputParameterJson());
+			JSONArray placeAfterCmdInputJSON = new JSONArray(command.getInputParameterJson());
+			String placeHNodeId = HistoryJsonUtil.getStringValue("hNodeId", placeAfterCmdInputJSON);
+			HistoryJsonUtil.setArgumentValue("hNodeId", placeHNodeId, inputJSON);
+			command.setInputParameterJson(inputJSON.toString());
+			worksheetCommandHistory.insertCommandToHistoryAfterCommand(command, placeAfterCmd);
+		}
+		
+		for(Command cmd : commandsToMove)
+			placeTransformCommandByInput(cmd);
+	}
+	
+	private Pair<Boolean, Set<String>> detectTransformCycle(String worksheetId) {
+		DirectedGraph<String, DefaultEdge> historyInputOutputGraph = new DefaultDirectedGraph<>(DefaultEdge.class);
+		for (ICommand cmd : worksheetCommandHistory.getCommandsFromWorksheetIdAndCommandTag(worksheetId, CommandTag.Transformation)) {
+			Set<String> outputs = ((Command)cmd).getOutputColumns();
+			Set<String> inputs = ((Command)cmd).getInputColumns();
+			String commandId = "Command-" + cmd.getId();
+			historyInputOutputGraph.addVertex(commandId);
+			for(String input : inputs) {
+				historyInputOutputGraph.addVertex(input);
+				historyInputOutputGraph.addEdge(input, commandId);
+			}
+			for(String output : outputs) {
+				historyInputOutputGraph.addVertex(output);
+				historyInputOutputGraph.addEdge(commandId, output);
+			}
+		}
+		CycleDetector<String, DefaultEdge> cycleDetector = new CycleDetector<>(historyInputOutputGraph);
+		if(cycleDetector.detectCycles()) {
+			Set<String> cycleVertices = cycleDetector.findCycles();
+			Set<String> nodeVertices = new HashSet<>();
+			Iterator<String> iterator = cycleVertices.iterator();
+			while(iterator.hasNext()) {
+				String node = iterator.next();
+				if(!node.startsWith("Command-"))
+					nodeVertices.add(node);
+			}
+			
+			return new ImmutablePair<>(true, nodeVertices);
+		}
+		return new ImmutablePair<Boolean, Set<String>>(false, null);
+	}
+	
 	private void writeHistoryPerWorksheet(Workspace workspace, IHistorySaver historySaver) throws Exception {
 		String workspaceId = workspace.getId();
 		Map<String, JSONArray> comMap = new HashMap<>();

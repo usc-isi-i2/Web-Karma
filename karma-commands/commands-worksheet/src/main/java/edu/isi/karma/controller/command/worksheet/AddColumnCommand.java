@@ -156,7 +156,6 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 			
 			c.append(WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId()));
 			c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
-			inputColumns.add(hNodeId);
 			outputColumns.add(newHNodeId);
 			newColumnAbsoluteName = ndid.getAbsoluteColumnName(workspace.getFactory());
 			return c;
@@ -194,10 +193,7 @@ public class AddColumnCommand extends WorksheetSelectionCommand {
 		return WorksheetUpdateFactory.createRegenerateWorksheetUpdates(worksheetId, getSuperSelection(worksheet), workspace.getContextId());
 	}
 
-
 	public String getNewHNodeId() {
 		return newHNodeId;
 	}
-	
-
 }

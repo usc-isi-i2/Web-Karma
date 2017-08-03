@@ -1,20 +1,17 @@
 package edu.isi.karma.controller.command.transformation;
 
-import edu.isi.karma.controller.command.Command;
-import edu.isi.karma.controller.command.CommandException;
-import edu.isi.karma.controller.command.ICommand;
-import edu.isi.karma.controller.history.CommandConsolidator;
-import edu.isi.karma.controller.history.HistoryJsonUtil;
-import edu.isi.karma.controller.history.WorksheetCommandHistoryExecutor;
-import edu.isi.karma.rep.Workspace;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import edu.isi.karma.controller.command.Command;
+import edu.isi.karma.controller.command.ICommand;
+import edu.isi.karma.controller.history.CommandConsolidator;
+import edu.isi.karma.controller.history.HistoryJsonUtil;
+import edu.isi.karma.rep.Workspace;
 
 public class PyTransformConsolidator extends CommandConsolidator {
 

@@ -35,7 +35,11 @@ public class HistoryJsonUtil {
 	}
 	
 	public static JSONArray getJSONArrayValue(String arg, JSONArray json) throws JSONException {
-		return getJSONObjectWithName(arg, json).getJSONArray(ClientJsonKeys.value.name());
+		JSONObject obj = getJSONObjectWithName(arg, json);
+		if(obj.has(ClientJsonKeys.value.name()))
+			return 	obj.getJSONArray(ClientJsonKeys.value.name());
+		else
+			return new JSONArray();
 	}
 	
 	public static ParameterType getParameterType(JSONObject json) throws JSONException {
