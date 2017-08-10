@@ -384,7 +384,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		var info = generateInfoObject(worksheetId, "", "GenerateR2RMLModelCommand");
 		info['tripleStoreUrl'] = $('#txtModel_URL').text();
 		showLoading(info["worksheetId"]);
-		var repoUrl = $.cookie("github-url-" + worksheetId);
+		var repoUrl = $("#txtGithubUrl_" + worksheetId).text(); 
 		var returned = sendRequest(info, worksheetId,
 			function(data) {
 				var newWorksheetId = worksheetId;
@@ -392,8 +392,6 @@ function WorksheetOptions(wsId, wsTitle) {
 					if(element) {
 						if (element["updateType"] == "PublishR2RMLUpdate") {
 							newWorksheetId = element["worksheetId"];
-							if(worksheetId != newWorksheetId)
-								$.cookie("github-url-" + newWorksheetId, repoUrl);
 						}
 					}
 				});
@@ -401,14 +399,13 @@ function WorksheetOptions(wsId, wsTitle) {
 				var info = generateInfoObject(newWorksheetId, "", "PublishReportCommand");
 				showLoading(newWorksheetId);
 				var returned = sendRequest(info, newWorksheetId, function(json) {
-					publishToGithub(newWorksheetId);
+					publishToGithub(newWorksheetId, repoUrl);
 				});
 			});
 		return false;
 	}
 
-	function publishToGithub(worksheetId) {
-		var repo = $.cookie("github-url-" + worksheetId);
+	function publishToGithub(worksheetId, repo) {
 		var auth = Settings.getInstance().getGithubAuth();
 		if(repo) {
 			if(auth) {

@@ -214,7 +214,6 @@ function parse(data) {
 
 					var sep = $("<span>").html("&nbsp;|&nbsp;");
 					var label1 = $("<label>").html("Github URL:&nbsp;");
-					$.cookie("github-url-" + worksheetId, "");
 					var githubUrlLabel = $("<span>")
 						.text("disabled")
 						.addClass("edit")
@@ -246,7 +245,6 @@ function parse(data) {
 									setNewValue = "";
 								}
 								githubUrlLabel.text(newValue);
-								$.cookie("github-url-" + worksheetId, setNewValue);
 								var worksheetProps = new Object();
 								worksheetProps["hasPrefix"] = false;
 								worksheetProps["hasBaseURI"] = false;
@@ -570,7 +568,6 @@ function parse(data) {
 
 			// If we find GithubURL, we will save it in the cookie and set the label appropriately
 			if (element["GithubURL"]) {
-                $.cookie("github-url-" + element["worksheetId"], element["GithubURL"]);
                 // if we don't have the github auth credentials for the repo, then add a "(disabled)" to the url
                 // to indicate that the user has to set it in github settings.
                 if (Settings.getInstance().getGithubAuth())
