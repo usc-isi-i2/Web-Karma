@@ -407,7 +407,7 @@ function WorksheetOptions(wsId, wsTitle) {
 
 	function publishToGithub(worksheetId, repo) {
 		var auth = Settings.getInstance().getGithubAuth();
-		if(repo) {
+		if(repo != "disabled" && !repo.endsWith("disabled)")) {
 			if(auth) {
 				showLoading(worksheetId);
 				var githubInfo = generateInfoObject(worksheetId, "", "PublishGithubCommand");
