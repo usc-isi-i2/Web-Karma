@@ -45,7 +45,6 @@ function parse(data) {
 			}
 		}
 	});
-
 	if (isError)
 		return false;
 
@@ -389,7 +388,7 @@ function parse(data) {
 				$("tbody", headersTable).empty();
 			}
 
-			var colWidths = addColumnHeadersRecurse(element["worksheetId"], element["columns"], headersTable, true);
+			var colWidths = addColumnHeadersRecurse(element["worksheetId"], element["columns"], headersTable, true,false);
 			var stylesheet = document.styleSheets[0];
 
 			// Remove the previous rows if any
@@ -901,8 +900,9 @@ function processHistoryCommand(command) {
 	}
 }
 
-function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
+function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd,isAncestorSelected) {
 	var row = $("<tr>");
+	var ancestorSelection = isAncestorSelected;
 	if (isOdd) {
 		row.addClass("wk-row-odd");
 	} else {
@@ -940,7 +940,12 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 		if (column["columnDerivedFrom"]) {
 			td.data("columnDerivedFrom", column["columnDerivedFrom"]);
 		}
-
+		if(!ancestorSelection) {
+			if(column["status"]) {
+				td.addClass("htable-selected");
+				ancestorSelection = true;
+			}
+		}
 		if (column["hasNestedTable"]) {
 			var pElem = $("<div>")
 				.addClass("wk-header")
@@ -957,7 +962,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 			} else {
 				nestedTable.addClass("htable-odd");
 			}
-			var nestedColumnWidths = addColumnHeadersRecurse(worksheetId, column["columns"], nestedTable, !isOdd);
+			var nestedColumnWidths = addColumnHeadersRecurse(worksheetId, column["columns"], nestedTable, !isOdd,ancestorSelection);
 
 			var colAdded = 0;
 			$.each(nestedColumnWidths, function(index2, colWidth) {
