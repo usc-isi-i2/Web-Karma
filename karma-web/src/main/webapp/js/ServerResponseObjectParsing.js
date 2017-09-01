@@ -902,7 +902,6 @@ function processHistoryCommand(command) {
 
 function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd,isAncestorSelected) {
 	var row = $("<tr>");
-	var ancestorSelection = isAncestorSelected;
 	if (isOdd) {
 		row.addClass("wk-row-odd");
 	} else {
@@ -911,6 +910,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd,isAnc
 
 	var columnWidths = [];
 	$.each(columns, function(index, column) {
+		var ancestorSelection = isAncestorSelected;
 		var type = column['hNodeType'].toLowerCase();
 		var status = column['status'];
 		var error = column['onError'];
