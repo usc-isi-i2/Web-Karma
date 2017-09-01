@@ -943,11 +943,11 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd,isAnc
 		if (column["columnDerivedFrom"]) {
 			td.data("columnDerivedFrom", column["columnDerivedFrom"]);
 		}
-		if(column["status"]) {
-			td.data("pythonTransformation", column["pythonTransformation"]);
-		}
+
 		if(!ancestorSelection) {
+			console.log("ancestor is not selected ");
 			if(column["status"]) {
+				console.log("It is selected and ancestor is not selected");
 				td.addClass("htable-selected");
 				ancestorSelection = true;
 			}
