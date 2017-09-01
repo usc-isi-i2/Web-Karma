@@ -37,6 +37,8 @@ public class ColumnMetadata {
 	private Map<String, String>			columnDerivedFrom;
 	private Map<String, DataStructure>  columnDataStructure;
 	private Map<String, Boolean>	    columnOnError;
+	private Map<String,String>          columnSelectionPythonCode;
+
 	public ColumnMetadata() {
 		super();
 		this.columnPreferredLengths = new HashMap<>();
@@ -48,6 +50,7 @@ public class ColumnMetadata {
 		this.columnDerivedFrom = new HashMap<>();
 		this.columnDataStructure = new HashMap<>();
 		this.columnOnError = new HashMap<>();
+		this.columnSelectionPythonCode = new HashMap<>();
 	}
 	
 	public enum DataStructure {
@@ -106,6 +109,21 @@ public class ColumnMetadata {
 	public void addColumnPythonTransformation(String hNodeId, String pythonTransform)
 	{
 		columnPythonTransform.put(hNodeId, pythonTransform);
+	}
+
+	public void addSelectionPythonCode(String hNodeId, String pythonTransform)
+	{
+		columnSelectionPythonCode.put(hNodeId, pythonTransform);
+	}
+
+	public void removeSelectionPythonCode(String hNodeId)
+	{
+		columnSelectionPythonCode.remove(hNodeId);
+	}
+
+	public String getSelectionPythonCode(String hNodeId)
+	{
+		return columnSelectionPythonCode.get(hNodeId);
 	}
 
 	public void addPreviousCommandId(String hNodeId, String commandId) {

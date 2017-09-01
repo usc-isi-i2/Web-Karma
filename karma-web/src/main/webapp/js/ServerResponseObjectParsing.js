@@ -934,11 +934,17 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd,isAnc
 			td.data("pythonTransformation", column["pythonTransformation"]);
 			isPyTransform = true;
 		}
+		if(column["selectionPyCode"]) {
+			td.data("selectionPyCode",column["selectionPyCode"]);
+		}
 		if (column["previousCommandId"]) {
 			td.data("previousCommandId", column["previousCommandId"]);
 		}
 		if (column["columnDerivedFrom"]) {
 			td.data("columnDerivedFrom", column["columnDerivedFrom"]);
+		}
+		if(column["status"]) {
+			td.data("pythonTransformation", column["pythonTransformation"]);
 		}
 		if(!ancestorSelection) {
 			if(column["status"]) {

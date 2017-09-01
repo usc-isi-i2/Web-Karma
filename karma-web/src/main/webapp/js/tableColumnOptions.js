@@ -815,7 +815,7 @@ var PyTransformDialog = (function() {
 				var hNode = $("td#" + columnId);
 				
 				if (hNode.data("pythonTransformation"))
-					initPyCode = hNode.data("pythonTransformation"); 
+					initPyCode = hNode.data("pythonTransformation");
 				else
 					initPyCode = "return getValue(\"" + columnName + "\")";
 
@@ -1714,6 +1714,8 @@ var PyTransformSelectionDialog = (function() {
 		function init(wsId, colId) {
 			worksheetId = wsId;
 			columnId = colId;
+			var hNode = $("td#" + columnId);
+
 			headers = getColumnHeadingsForColumn(worksheetId, columnId, "GroupBy");
 			console.log(headers);
 			console.log(headers);
@@ -1728,7 +1730,13 @@ var PyTransformSelectionDialog = (function() {
 				editor.getSession().setMode("ace/mode/python");
 				editor.getSession().setUseWrapMode(true);
 			}
-			editor.getSession().setValue("return getValue(\"" + headers[0]['ColumnName'] + "\")");
+			if (hNode.data("selectionPyCode")) {
+				initPyCode = hNode.data("selectionPyCode");
+			}
+			else {
+				initPyCode = "return getValue(\"" + headers[0]['ColumnName'] + "\")";
+			}
+			editor.getSession().setValue(initPyCode);
 			dialog.on("resize", function(event, ui) {
 				editor.resize();
 			});
