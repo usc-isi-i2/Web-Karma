@@ -106,21 +106,12 @@ function WorksheetOptions(wsId, wsTitle) {
 		}, {
 			name: "divider"
 		}, {
-			name: "Selection",
+			name: "Filters",
 			func: undefined,
 			addLevel: true,
 			levels: [{
 				name: "Add Rows",
 				func: addRows
-			}, {
-				name: "Intersect Rows",
-				func: intersectRows
-			}, {
-				name: "Subtract Rows",
-				func: subtractRows
-			}, {
-				name: "Invert",
-				func: invertRows
 			}, {
 				name: "Clear",
 				func: undefined,
@@ -163,30 +154,6 @@ function WorksheetOptions(wsId, wsTitle) {
 		hideDropdown();
 		$("#pyTransformSelectionDialog").data("operation", "Union");
 		PyTransformSelectionDialog.getInstance(wsId, "").show();
-	}
-
-	function intersectRows() {
-		hideDropdown();
-		$("#pyTransformSelectionDialog").data("operation", "Intersect");
-		PyTransformSelectionDialog.getInstance(wsId, "").show();
-	}
-
-	function subtractRows() {
-		hideDropdown();
-		$("#pyTransformSelectionDialog").data("operation", "Subtract");
-		PyTransformSelectionDialog.getInstance(wsId, "").show();
-	}
-
-	function invertRows() {
-		hideDropdown();
-		var headers = getColumnHeadingsForColumn(wsId, "", "GroupBy");
-		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "OperateSelectionCommand");
-		var newInfo = info['newInfo'];
-		newInfo.push(getParamObject("pythonCode", "", "other"));
-		newInfo.push(getParamObject("operation", "Invert", "other"));
-		info["newInfo"] = JSON.stringify(newInfo);
-		showLoading(worksheetId);
-		sendRequest(info, worksheetId);
 	}
 
 	function clearAll() {

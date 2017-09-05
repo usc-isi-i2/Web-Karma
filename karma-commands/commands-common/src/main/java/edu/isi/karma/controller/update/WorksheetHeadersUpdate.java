@@ -46,7 +46,7 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 	private enum JsonKeys {
 		worksheetId, columns, columnName, characterLength, hasNestedTable, 
 		columnClass, hNodeId, pythonTransformation, previousCommandId, 
-		columnDerivedFrom, hNodeType, status, onError
+		columnDerivedFrom, hNodeType, status, onError, selectionPyCode
 	}
 
 	public WorksheetHeadersUpdate(String worksheetId, SuperSelection selection) {
@@ -101,7 +101,10 @@ public class WorksheetHeadersUpdate extends AbstractUpdate {
 		if (t.hasNestedTable()) {
 			Selection sel = selection.getSelection(t.getNestedTable().getId());
 			if (sel != null)
+			{
 				hNodeObj.put(JsonKeys.status.name(), sel.getStatus().name());
+				hNodeObj.put(JsonKeys.selectionPyCode.name(), colMeta.getSelectionPythonCode(t.getNestedTable().getId()));
+			}
 		}
 		hNodeObj.put(JsonKeys.hNodeType.name(), t.getHNodeType().name());
 		Integer colLength = colMeta.getColumnPreferredLength(hNode.getId());

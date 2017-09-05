@@ -45,7 +45,6 @@ function parse(data) {
 			}
 		}
 	});
-
 	if (isError)
 		return false;
 
@@ -389,7 +388,7 @@ function parse(data) {
 				$("tbody", headersTable).empty();
 			}
 
-			var colWidths = addColumnHeadersRecurse(element["worksheetId"], element["columns"], headersTable, true);
+			var colWidths = addColumnHeadersRecurse(element["worksheetId"], element["columns"], headersTable, true,false);
 			var stylesheet = document.styleSheets[0];
 
 			// Remove the previous rows if any
@@ -901,7 +900,7 @@ function processHistoryCommand(command) {
 	}
 }
 
-function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
+function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd,isAncestorSelected) {
 	var row = $("<tr>");
 	if (isOdd) {
 		row.addClass("wk-row-odd");
@@ -911,6 +910,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 
 	var columnWidths = [];
 	$.each(columns, function(index, column) {
+		var ancestorSelection = isAncestorSelected;
 		var type = column['hNodeType'].toLowerCase();
 		var status = column['status'];
 		var error = column['onError'];
@@ -934,6 +934,9 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 			td.data("pythonTransformation", column["pythonTransformation"]);
 			isPyTransform = true;
 		}
+		if(column["selectionPyCode"]) {
+			td.data("selectionPyCode",column["selectionPyCode"]);
+		}
 		if (column["previousCommandId"]) {
 			td.data("previousCommandId", column["previousCommandId"]);
 		}
@@ -941,6 +944,14 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 			td.data("columnDerivedFrom", column["columnDerivedFrom"]);
 		}
 
+		if(!ancestorSelection) {
+			console.log("ancestor is not selected ");
+			if(column["status"]) {
+				console.log("It is selected and ancestor is not selected");
+				td.addClass("htable-selected");
+				ancestorSelection = true;
+			}
+		}
 		if (column["hasNestedTable"]) {
 			var pElem = $("<div>")
 				.addClass("wk-header")
@@ -957,7 +968,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 			} else {
 				nestedTable.addClass("htable-odd");
 			}
-			var nestedColumnWidths = addColumnHeadersRecurse(worksheetId, column["columns"], nestedTable, !isOdd);
+			var nestedColumnWidths = addColumnHeadersRecurse(worksheetId, column["columns"], nestedTable, !isOdd,ancestorSelection);
 
 			var colAdded = 0;
 			$.each(nestedColumnWidths, function(index2, colWidth) {
