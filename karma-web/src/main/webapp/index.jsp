@@ -140,7 +140,7 @@ and related projects, please see: http://www.isi.edu/integration
 			}
 
 			.htable-selected {
-			background-color: #FFA600;
+			background-color: #FFFF66;
 			}
 
 			.table-no-border td {
