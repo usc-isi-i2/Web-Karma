@@ -110,7 +110,7 @@ function WorksheetOptions(wsId, wsTitle) {
 			func: undefined,
 			addLevel: true,
 			levels: [{
-				name: "Add Rows",
+				name: "Add/Edit",
 				func: addRows
 			}, {
 				name: "Clear",

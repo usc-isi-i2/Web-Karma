@@ -139,10 +139,6 @@ and related projects, please see: http://www.isi.edu/integration
     		background-color: #EEEEEE;
 			}
 
-			.htable-selected {
-			background-color: #FFA600;
-			}
-
 			.table-no-border td {
 			    border-top: 0 none;
 			}

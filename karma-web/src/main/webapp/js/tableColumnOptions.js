@@ -102,7 +102,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 			leafOnly: false,
 			leafExcluded: true,
 			levels: [{
-				name: "Add Rows",
+				name: "Add/Edit",
 				func: addRows
 			}, {
 				name: "Clear",
