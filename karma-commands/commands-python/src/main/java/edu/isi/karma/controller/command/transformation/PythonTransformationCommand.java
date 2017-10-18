@@ -130,7 +130,8 @@ public abstract class PythonTransformationCommand extends WorksheetSelectionComm
 		repo.initializeInterpreter(interpreter);
 		Collection<Node> nodes = new ArrayList<>(Math.max(1000, worksheet
 				.getDataTable().getNumRows()));
-		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, selection);
+		SuperSelection tmpSelection = new SuperSelection("TEMP_SUPER_SELECTION");
+		worksheet.getDataTable().collectNodes(hNode.getHNodePath(f), nodes, tmpSelection);
 
 		Map<String, String> rowToValueMap = new HashMap<>();
 
