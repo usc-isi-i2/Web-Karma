@@ -544,6 +544,8 @@ public class OntologyCache {
 		this.objectProperties.put(Uris.RDF_TYPE_URI, new Label(Uris.RDF_TYPE_URI, Namespaces.RDF, Prefixes.RDF));
 		this.objectProperties.put(Uris.RDF_VALUE_URI, new Label(Uris.RDF_VALUE_URI, Namespaces.RDF, Prefixes.RDF));
 		this.objectProperties.put(Uris.RDFS_SUBCLASS_URI, new Label(Uris.RDFS_SUBCLASS_URI, Namespaces.RDFS, Prefixes.RDFS));
+		
+		this.dataProperties.put(Uris.RDF_VALUE_URI, new Label(Uris.RDF_VALUE_URI, Namespaces.RDF, Prefixes.RDF));
 		this.dataProperties.put(Uris.RDFS_LABEL_URI, new Label(Uris.RDFS_LABEL_URI, Namespaces.RDFS, Prefixes.RDFS));
 		this.dataProperties.put(Uris.RDFS_COMMENT_URI, new Label(Uris.RDFS_COMMENT_URI, Namespaces.RDFS, Prefixes.RDFS));
 
