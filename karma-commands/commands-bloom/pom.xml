@@ -12,7 +12,7 @@
 
     <artifactId>commands-bloom</artifactId>
 	<properties>
-        <hadoop.version>2.4.0.2.1.3.0-563</hadoop.version>
+        <hadoop.version>2.9.0</hadoop.version>
     </properties>
         
 	<repositories>
