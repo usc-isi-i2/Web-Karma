@@ -56,19 +56,19 @@
 						</connector>
 					</connectors>
 					<contextHandlers>
-						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+						<contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
 							<war>${project.basedir}/external_webapps/openrdf-workbench.war</war>
 							<contextPath>/openrdf-workbench</contextPath>
 						</contextHandler>
-						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+						<contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
 							<war>${project.basedir}/external_webapps/openrdf-sesame.war</war>
 							<contextPath>/openrdf-sesame</contextPath>
 						</contextHandler>
-						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+						<contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
 							<war>${project.basedir}/external_webapps/cleaningService.war</war>
 							<contextPath>/cleaningService</contextPath>
 						</contextHandler>
-						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
+						<contextHandler implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
 							<war>${project.basedir}/external_webapps/cluster-1.0.war</war>
 							<contextPath>/clusterService</contextPath>
 						</contextHandler>
