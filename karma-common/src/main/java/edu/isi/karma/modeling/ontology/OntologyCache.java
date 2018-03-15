@@ -22,7 +22,6 @@ package edu.isi.karma.modeling.ontology;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -515,6 +514,7 @@ public class OntologyCache {
 
 		}
 		
+		
 		Property rdfType = this.ontHandler.getOntModel().createProperty(Uris.RDF_TYPE_URI);
 		Resource classNode = this.ontHandler.getOntModel().createResource(Uris.RDFS_CLASS_URI);
 		ResIterator itr = ontHandler.getOntModel().listSubjectsWithProperty(rdfType, classNode);
@@ -526,9 +526,13 @@ public class OntologyCache {
 			if (!r.isURIResource())
 				continue;
 			
-			if (!classes.containsKey(r.getURI()))
-				classes.put(r.getURI(), ontHandler.getResourceLabel(r));
-
+			if (!classes.containsKey(r.getURI())) {
+				OntClass c = this.ontHandler.getOntModel().getOntClass(r.getURI());
+				if(c != null)
+					classes.put(c.getURI(), ontHandler.getResourceLabel(c));
+				else
+					classes.put(r.getURI(), ontHandler.getResourceLabel(r));
+			}
 		}
 
 	}

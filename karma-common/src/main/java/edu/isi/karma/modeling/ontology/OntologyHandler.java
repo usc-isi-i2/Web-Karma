@@ -81,9 +81,10 @@ class OntologyHandler {
 		
 		OntResource ontR = null;
 		try { ontR = (OntResource)r;} catch(Exception e) {}
-		if (ontR == null)
+		if (ontR == null) {
+			logger.error("No rdfs:label and rdfs:comment for resource:" + r.toString());
 			return new Label(r.getURI(), ns, prefix);
-		
+		}
 		//Get the rdfs:label and comment in English
 		//If one is not available in English, then try and get one in any other language
 		String rdfsLabel;
