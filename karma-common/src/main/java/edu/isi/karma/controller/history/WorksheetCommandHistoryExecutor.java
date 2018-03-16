@@ -45,7 +45,6 @@ import edu.isi.karma.rep.HNode;
 import edu.isi.karma.rep.HNode.HNodeType;
 import edu.isi.karma.rep.HTable;
 import edu.isi.karma.rep.Workspace;
-import edu.isi.karma.util.Util;
 import edu.isi.karma.webserver.ExecutionController;
 import edu.isi.karma.webserver.KarmaException;
 import edu.isi.karma.webserver.WorkspaceRegistry;
@@ -181,13 +180,8 @@ public class WorksheetCommandHistoryExecutor {
 					logger.debug("Column being normalized: "+ nameObjColumnName);
 					HNode node = hTable.getHNodeFromColumnName(nameObjColumnName);
 					if(node == null) { //Because add column can happen even if the column after which it is to be added is not present
-						AbstractUpdate update = new TrivialErrorUpdate(nameObjColumnName + " does not exist, using empty values");
-						if (uc == null)
-							uc = new UpdateContainer(update);
-						else
-							uc.add(update);
 						if (addIfNonExist) {
-							node = hTable.addHNode(nameObjColumnName, HNodeType.Regular, workspace.getWorksheet(worksheetId), workspace.getFactory());		
+							node = hTable.addHNode(nameObjColumnName, HNodeType.Transformation, workspace.getWorksheet(worksheetId), workspace.getFactory());		
 						}
 						else {
 							continue;

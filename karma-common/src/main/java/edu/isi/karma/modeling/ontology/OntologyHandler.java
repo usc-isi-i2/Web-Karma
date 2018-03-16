@@ -81,18 +81,30 @@ class OntologyHandler {
 		
 		OntResource ontR = null;
 		try { ontR = (OntResource)r;} catch(Exception e) {}
-		if (ontR == null)
+		if (ontR == null) {
+			logger.error("No rdfs:label and rdfs:comment for resource:" + r.toString());
 			return new Label(r.getURI(), ns, prefix);
-		
+		}
 		//Get the rdfs:label and comment in English
 		//If one is not available in English, then try and get one in any other language
-		String rdfsLabel = ontR.getLabel("EN");
-		if(rdfsLabel == null)
-			rdfsLabel = ontR.getLabel(null);
-		String rdfsComment = ontR.getComment("EN");
-		if(rdfsComment == null)
-			rdfsComment = ontR.getComment(null);
-		
+		String rdfsLabel;
+		try {
+			rdfsLabel = ontR.getLabel("EN");
+			if(rdfsLabel == null)
+				rdfsLabel = ontR.getLabel(null);
+		} catch(Exception e) {
+			logger.error("No rdfs:label for resource:" + r.toString());
+			rdfsLabel = "";
+		}
+		String rdfsComment;
+		try {
+			rdfsComment = ontR.getComment("EN");
+			if(rdfsComment == null)
+				rdfsComment = ontR.getComment(null);
+		} catch(Exception e) {
+			logger.error("No Comment for resource:" + r.toString());
+			rdfsComment = "";
+		}
 		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
 	}
 	

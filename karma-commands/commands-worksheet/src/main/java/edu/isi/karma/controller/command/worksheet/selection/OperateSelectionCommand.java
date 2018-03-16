@@ -3,11 +3,8 @@ package edu.isi.karma.controller.command.worksheet.selection;
 import edu.isi.karma.controller.command.CommandException;
 import edu.isi.karma.controller.command.CommandType;
 import edu.isi.karma.controller.command.WorksheetSelectionCommand;
-import edu.isi.karma.controller.command.selection.LargeSelection;
-import edu.isi.karma.controller.command.selection.LargeSelection.Operation;
 import edu.isi.karma.controller.command.selection.MiniSelection;
 import edu.isi.karma.controller.command.selection.Selection;
-import edu.isi.karma.controller.command.selection.SelectionManager;
 import edu.isi.karma.controller.command.selection.SuperSelection;
 import edu.isi.karma.controller.update.ErrorUpdate;
 import edu.isi.karma.controller.update.UpdateContainer;
@@ -65,28 +62,18 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 		RepFactory factory = workspace.getFactory();
 		SuperSelection superSel = this.getSuperSelection(worksheet);
 		HTable hTable = factory.getHTable(factory.getHNode(hNodeId).getHTableId());
-		Selection currentSel = superSel.getSelection(hTable.getId());
 		Selection anotherSel = null;
-		if (!operation.equalsIgnoreCase(Operation.Invert.name())) {
-			anotherSel = new MiniSelection(workspace, worksheetId, hTable.getId(), factory.getNewId("SEL"), superSel.getName(), pythonCode, onError);
-			worksheet.getSelectionManager().addSelection(anotherSel);
-		}
-		if (currentSel == null && operation.equalsIgnoreCase(Operation.Invert.name()) ) {
-			return getErrorUpdate("No defined Selection");
-		}
-		if (currentSel == null) {
-			currentSel = new MiniSelection(workspace, worksheetId, hTable.getId(), factory.getNewId("SEL"), superSel.getName(), SelectionManager.defaultCode, onError);
-			worksheet.getSelectionManager().addSelection(currentSel);
-		}
+
+		anotherSel = new MiniSelection(workspace, worksheetId, hTable.getId(), factory.getNewId("SEL"), superSel.getName(), pythonCode, onError);
+		worksheet.getSelectionManager().addSelection(anotherSel);
+		worksheet.getMetadataContainer().getColumnMetadata().addSelectionPythonCode(hTable.getId(), this.pythonCode);
+		
 		try {
-			Operation operation = Operation.valueOf(Operation.class, this.operation);
-			Selection t = new LargeSelection(workspace, worksheetId, hTable.getId(), factory.getNewId("SEL"), superSel.getName(), currentSel, anotherSel, operation);
-			worksheet.getSelectionManager().addSelection(t);
-			outputColumns.addAll(t.getInputColumns());
-			previousSelection = superSel.getSelection(t.getHTableId());
+			outputColumns.addAll(anotherSel.getInputColumns());
+			previousSelection = superSel.getSelection(hTable.getId());
 			if (previousSelection != null)
 				superSel.removeSelection(previousSelection);
-			superSel.addSelection(t);
+			superSel.addSelection(anotherSel);
 			
 		}catch (Exception e) {
 			return getErrorUpdate("The operation is undefined");
@@ -104,6 +91,7 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 	public UpdateContainer undoIt(Workspace workspace) {
 		inputColumns.clear();
 		outputColumns.clear();
+		RepFactory factory = workspace.getFactory();
 		Worksheet worksheet = workspace.getWorksheet(worksheetId);
 		SuperSelection superSel = getSuperSelection(worksheet);
 		HNode hNode = workspace.getFactory().getHNode(hNodeId);
@@ -116,6 +104,8 @@ public class OperateSelectionCommand extends WorksheetSelectionCommand {
 			worksheet.getSelectionManager().removeSelection(currentSel);
 			superSel.removeSelection(currentSel);
 		}
+		worksheet.getMetadataContainer().getColumnMetadata().removeSelectionPythonCode(factory.getHTable(factory.getHNode(hNodeId).getHTableId()).getId());
+
 		WorksheetUpdateFactory.detectSelectionStatusChange(worksheetId, workspace, this);
 		UpdateContainer uc = WorksheetUpdateFactory.createWorksheetHierarchicalAndCleaningResultsUpdates(worksheetId, superSel, workspace.getContextId());	
 		uc.add(new WorksheetSuperSelectionListUpdate(worksheetId));

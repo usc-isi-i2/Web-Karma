@@ -138,7 +138,7 @@ and related projects, please see: http://www.isi.edu/integration
 			.wk-row-selected {
     		background-color: #EEEEEE;
 			}
-			
+
 			.table-no-border td {
 			    border-top: 0 none;
 			}

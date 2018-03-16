@@ -101,6 +101,8 @@ public class DeleteLinkCommand extends WorksheetCommand {
 		LabeledLink delLink = alignment.getLinkById(linkId);
 		if(delLink != null) {
 			this.displayLabel = delLink.getLabel().getDisplayName();
+		} else {
+			this.displayLabel = edgeUri;
 		}
 			
 		alignment.removeLink(linkId);

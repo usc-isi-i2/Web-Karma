@@ -106,21 +106,12 @@ function WorksheetOptions(wsId, wsTitle) {
 		}, {
 			name: "divider"
 		}, {
-			name: "Selection",
+			name: "Filters",
 			func: undefined,
 			addLevel: true,
 			levels: [{
-				name: "Add Rows",
+				name: "Add/Edit",
 				func: addRows
-			}, {
-				name: "Intersect Rows",
-				func: intersectRows
-			}, {
-				name: "Subtract Rows",
-				func: subtractRows
-			}, {
-				name: "Invert",
-				func: invertRows
 			}, {
 				name: "Clear",
 				func: undefined,
@@ -163,30 +154,6 @@ function WorksheetOptions(wsId, wsTitle) {
 		hideDropdown();
 		$("#pyTransformSelectionDialog").data("operation", "Union");
 		PyTransformSelectionDialog.getInstance(wsId, "").show();
-	}
-
-	function intersectRows() {
-		hideDropdown();
-		$("#pyTransformSelectionDialog").data("operation", "Intersect");
-		PyTransformSelectionDialog.getInstance(wsId, "").show();
-	}
-
-	function subtractRows() {
-		hideDropdown();
-		$("#pyTransformSelectionDialog").data("operation", "Subtract");
-		PyTransformSelectionDialog.getInstance(wsId, "").show();
-	}
-
-	function invertRows() {
-		hideDropdown();
-		var headers = getColumnHeadingsForColumn(wsId, "", "GroupBy");
-		var info = generateInfoObject(wsId, headers[0]['HNodeId'], "OperateSelectionCommand");
-		var newInfo = info['newInfo'];
-		newInfo.push(getParamObject("pythonCode", "", "other"));
-		newInfo.push(getParamObject("operation", "Invert", "other"));
-		info["newInfo"] = JSON.stringify(newInfo);
-		showLoading(worksheetId);
-		sendRequest(info, worksheetId);
 	}
 
 	function clearAll() {
@@ -384,7 +351,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		var info = generateInfoObject(worksheetId, "", "GenerateR2RMLModelCommand");
 		info['tripleStoreUrl'] = $('#txtModel_URL').text();
 		showLoading(info["worksheetId"]);
-		var repoUrl = $.cookie("github-url-" + worksheetId);
+		var repoUrl = $("#txtGithubUrl_" + worksheetId).text(); 
 		var returned = sendRequest(info, worksheetId,
 			function(data) {
 				var newWorksheetId = worksheetId;
@@ -392,8 +359,6 @@ function WorksheetOptions(wsId, wsTitle) {
 					if(element) {
 						if (element["updateType"] == "PublishR2RMLUpdate") {
 							newWorksheetId = element["worksheetId"];
-							if(worksheetId != newWorksheetId)
-								$.cookie("github-url-" + newWorksheetId, repoUrl);
 						}
 					}
 				});
@@ -401,16 +366,15 @@ function WorksheetOptions(wsId, wsTitle) {
 				var info = generateInfoObject(newWorksheetId, "", "PublishReportCommand");
 				showLoading(newWorksheetId);
 				var returned = sendRequest(info, newWorksheetId, function(json) {
-					publishToGithub(newWorksheetId);
+					publishToGithub(newWorksheetId, repoUrl);
 				});
 			});
 		return false;
 	}
 
-	function publishToGithub(worksheetId) {
-		var repo = $.cookie("github-url-" + worksheetId);
+	function publishToGithub(worksheetId, repo) {
 		var auth = Settings.getInstance().getGithubAuth();
-		if(repo) {
+		if(repo != "disabled" && !repo.endsWith("disabled)")) {
 			if(auth) {
 				showLoading(worksheetId);
 				var githubInfo = generateInfoObject(worksheetId, "", "PublishGithubCommand");

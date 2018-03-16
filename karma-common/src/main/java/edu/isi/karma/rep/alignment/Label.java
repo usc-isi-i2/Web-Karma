@@ -88,6 +88,14 @@ public class Label implements Serializable {
 		this.prefix = prefix;
 	}
 
+	public void setRdfsLabel(String label) {
+		this.rdfsLabel = label;
+	}
+	
+	public void setRdfsComment(String comment) {
+		this.rdfsComment = comment;
+	}
+	
 	public String getUri() {
 		return uri;
 	}

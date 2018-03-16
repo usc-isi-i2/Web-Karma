@@ -45,7 +45,6 @@ function parse(data) {
 			}
 		}
 	});
-
 	if (isError)
 		return false;
 
@@ -214,7 +213,6 @@ function parse(data) {
 
 					var sep = $("<span>").html("&nbsp;|&nbsp;");
 					var label1 = $("<label>").html("Github URL:&nbsp;");
-					$.cookie("github-url-" + worksheetId, "");
 					var githubUrlLabel = $("<span>")
 						.text("disabled")
 						.addClass("edit")
@@ -246,7 +244,6 @@ function parse(data) {
 									setNewValue = "";
 								}
 								githubUrlLabel.text(newValue);
-								$.cookie("github-url-" + worksheetId, setNewValue);
 								var worksheetProps = new Object();
 								worksheetProps["hasPrefix"] = false;
 								worksheetProps["hasBaseURI"] = false;
@@ -570,7 +567,6 @@ function parse(data) {
 
 			// If we find GithubURL, we will save it in the cookie and set the label appropriately
 			if (element["GithubURL"]) {
-                $.cookie("github-url-" + element["worksheetId"], element["GithubURL"]);
                 // if we don't have the github auth credentials for the repo, then add a "(disabled)" to the url
                 // to indicate that the user has to set it in github settings.
                 if (Settings.getInstance().getGithubAuth())
@@ -914,6 +910,7 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 
 	var columnWidths = [];
 	$.each(columns, function(index, column) {
+
 		var type = column['hNodeType'].toLowerCase();
 		var status = column['status'];
 		var error = column['onError'];
@@ -937,11 +934,19 @@ function addColumnHeadersRecurse(worksheetId, columns, headersTable, isOdd) {
 			td.data("pythonTransformation", column["pythonTransformation"]);
 			isPyTransform = true;
 		}
+		if(column["selectionPyCode"]) {
+			td.data("selectionPyCode",column["selectionPyCode"]);
+		}
 		if (column["previousCommandId"]) {
 			td.data("previousCommandId", column["previousCommandId"]);
 		}
 		if (column["columnDerivedFrom"]) {
 			td.data("columnDerivedFrom", column["columnDerivedFrom"]);
+		}
+
+
+		if(column["status"]) {
+			td.addClass("htable-selected");
 		}
 
 		if (column["hasNestedTable"]) {

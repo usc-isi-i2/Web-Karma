@@ -551,3 +551,7 @@ span#applyHistoryButton {
 	width: 300px;
 	max-height: 250px;
 }
+
+.htable-selected {
+	background-color: #895001;
+}

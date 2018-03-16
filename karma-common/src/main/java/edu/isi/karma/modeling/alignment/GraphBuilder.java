@@ -390,6 +390,8 @@ public class GraphBuilder {
 			}
 			node.getLabel().setNs(label.getNs());
 			node.getLabel().setPrefix(label.getPrefix());
+			node.getLabel().setRdfsLabel(label.getRdfsLabel());
+			node.getLabel().setRdfsComment(label.getRdfsComment());
 		}
 		
 		if(node.isForced())
