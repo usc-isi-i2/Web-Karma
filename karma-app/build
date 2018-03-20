@@ -18,6 +18,18 @@ mkdir target
 cd ..
 mvn clean install -Dmaven.test.skip=true
 cd karma-web/
+rm src/main/webapp/publish/CSV/*.csv
+rm src/main/webapp/publish/AVRO/*.avro
+rm src/main/webapp/publish/JSON/*.json
+rm src/main/webapp/publish/KML/*.kml
+rm src/main/webapp/publish/MDB/*.mdb
+rm src/main/webapp/publish/R2RML/*.ttl
+rm src/main/webapp/publish/R2RML/*.txt
+rm src/main/webapp/publish/RDF/*.rdf
+rm src/main/webapp/publish/RDF/*.ttl
+rm src/main/webapp/publish/RDF/*.txt
+rm src/main/webapp/publish/REPORT/*.md
+
 mvn package -Pshaded
 cp target/karma-web*.war $CURRENT/target/ROOT.war
 cp external_webapps/* $CURRENT/target/
@@ -26,14 +38,16 @@ mv $CURRENT/target/cluster*.war $CURRENT/target/clusterService.war
 
 cd $CURRENT/target
 
-# download tomcat binary
+# download jre8
 wget https://github.com/alseambusher/karma-app-deps/archive/master.zip
 unzip master.zip
-mv karma-app-deps-master/*.tar.gz karma-app-deps-master/*.zip .
+mv karma-app-deps-master/*.tar.gz .
 rm -rf karma-app-deps-master master.zip
 
-unzip tomcat.zip
-rm tomcat.zip
+# download tomcat binary
+wget http://apache.cs.utah.edu/tomcat/tomcat-8/v8.5.29/bin/apache-tomcat-8.5.29.zip
+unzip apache-tomcat-8.5.29.zip
+rm apache-tomcat-8.5.29.zip
 
 mv apache-tomcat* tomcat
 rm -rf tomcat/webapps/*
@@ -45,6 +59,13 @@ cp $CURRENT/conf/* tomcat/conf/
 rm -rf $CURRENT/desktop/app/tomcat
 mv tomcat $CURRENT/desktop/app/
 
+
+cd $CURRENT/desktop/app/tomcat/webapps
+mkdir ROOT
+mv ROOT.war ROOT/ROOT.zip
+cd ROOT
+unzip ROOT.zip
+
 cd $CURRENT/desktop
 npm install
 npm run prerelease
@@ -54,7 +75,7 @@ tar -xzvf $CURRENT/target/jre*windows*.tar.gz
 electron-packager . --platform=win32 --arch=x64 --icon=../resources/icons/karma.ico --overwrite
 rm -rf jre*
 tar -xzvf $CURRENT/target/jre*macosx*.tar.gz
-electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite
+electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite 
 rm -rf jre*
 tar -xzvf $CURRENT/target/jre*linux*.tar.gz
 electron-packager . --platform=linux --arch=x64 --icon=../resources/icons/karma.png --overwrite
