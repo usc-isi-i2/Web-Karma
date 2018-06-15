@@ -39,7 +39,7 @@ public class TriplesMapPlanExecutor {
 
 	private static Logger LOG = LoggerFactory.getLogger(TriplesMapPlanExecutor.class);
 	private ExecutorService service;
-	private boolean submitPlansIndividually = false;
+	private boolean submitPlansIndividually = false; // which actually means use thread pool
 	
 	public TriplesMapPlanExecutor(boolean submitPlansIndividually){
 		this.submitPlansIndividually = submitPlansIndividually;
@@ -64,7 +64,7 @@ public class TriplesMapPlanExecutor {
 				List<Future<Boolean>> results = service.invokeAll(plan.workers);
 				for(Future<Boolean> result : results)
 				{
-					result.get(1, TimeUnit.MINUTES);
+					result.get(3, TimeUnit.MINUTES);
 				}
 			}
 			else
