@@ -3,6 +3,7 @@ package edu.isi.karma.spark;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.broadcast.Broadcast;
@@ -35,10 +35,9 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import scala.Tuple2;
 import edu.isi.karma.rdf.JSONImpl;
 import edu.isi.karma.rdf.N3Impl;
-import edu.isi.karma.util.JSONLDUtilSimple;
+import scala.Tuple2;
 
 /**
  * Created by chengyey on 12/6/15.
@@ -101,7 +100,7 @@ public class KarmaDriver {
         else {
             JavaPairRDD<Writable, Text> input = sc.sequenceFile(filePath, Writable.class, Text.class, partitions);
             pairs = input.mapToPair(new PairFunction<Tuple2<Writable, Text>, String, String>() {
-                
+               private static final long serialVersionUID = -9042224661662821670L;
 
 				@Override
                 public Tuple2<String, String> call(Tuple2<Writable, Text> textTextTuple2) throws Exception {
@@ -150,9 +149,9 @@ public class KarmaDriver {
 						private static final long serialVersionUID = 7257511573596956635L;
 
 						@Override
-						public Iterable<Tuple2<String, String>> call(
+						public Iterator<Tuple2<String, String>> call(
 								List<String> t) throws Exception {
-							List<Tuple2<String, String>> results = new LinkedList<>();
+							ArrayList<Tuple2<String, String>> results = new ArrayList<>();
 							String key = "";
 							Iterable<String> values = t;
 							int count = 0;
@@ -179,7 +178,7 @@ public class KarmaDriver {
 							}
 							String last = builder.append("]").toString();
 							results.add(new Tuple2<>(key, last));
-							return results;
+							return results.iterator();
 						}
 					});
 		}
@@ -218,6 +217,7 @@ public class KarmaDriver {
 
 			@Override
 			public String call(Tuple2<Text, Text> arg0) throws Exception {
+				System.out.println("applyModel:map Returning:" + arg0._1().toString() + "\t" + arg0._2().toString());
 				return (arg0._1() + "\t" + arg0._2());
 			}
 		});
@@ -233,7 +233,7 @@ public class KarmaDriver {
 					private static final long serialVersionUID = -3533063264900721773L;
 
 					@Override
-					public Iterable<Tuple2<String, JSONObject>> call(
+					public Iterator<Tuple2<String, JSONObject>> call(
 							Tuple2<String, String> writableIterableTuple2)
 							throws Exception {
 						List<Tuple2<String, JSONObject>> results = new LinkedList<>();
@@ -276,7 +276,7 @@ public class KarmaDriver {
 							}
 						}
 
-						return results;
+						return results.iterator();
 					}
 				});
 
@@ -303,6 +303,8 @@ public class KarmaDriver {
 			//To return without running the reducer:
 			return pairs.mapToPair(new PairFunction<Tuple2<String,JSONObject>, Text, Text>() {
 	
+				private static final long serialVersionUID = 5809542005012422594L;
+
 				@Override
 				public Tuple2<Text, Text> call(Tuple2<String, JSONObject> arg0)
 						throws Exception {
@@ -315,40 +317,39 @@ public class KarmaDriver {
 
     public static JavaPairRDD<Text, Text>applyModelToGetN3(JavaPairRDD<String, String> input, 
     		final Properties karmaSettings,final Broadcast<String> model, final Broadcast<String> context,
-    		final String outputFormat, int numPartitions )
-    {
+    		final String outputFormat, int numPartitions ) {
     	JavaPairRDD<String, String> pairs = input.flatMapToPair(
-				new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
-	private static final long serialVersionUID = -3533063264900721773L;
-	
-	@Override
-    public Iterable<Tuple2<String, String>> call(Tuple2<String, String> writableIterableTuple2) throws Exception {
-        List<Tuple2<String, String>> results = new LinkedList<>();
-        Properties karmaContentSettings = new Properties();
-        for(Map.Entry<Object, Object> objectObjectEntry : karmaSettings.entrySet())
-        	karmaContentSettings.put(objectObjectEntry.getKey(), objectObjectEntry.getValue());
-        karmaContentSettings.put("model.content", model.value());
-        karmaContentSettings.put("context.content", context.getValue());
-        
-        if(outputFormat != null && outputFormat.equals("n3")) {
-        	final N3Impl mapper = new N3Impl(karmaContentSettings);
-        	String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
-        	String[] lines = result.split("(\r\n|\n)");
-    		for(String line : lines)
-    		{
-    			if((line = line.trim()).isEmpty())
-    			{
-    				continue;
-    			}
-    			int splitBetweenSubjectAndPredicate = line.indexOf(' ');
-    			String key = (line.substring(0, splitBetweenSubjectAndPredicate));
-    			String value = line;
-    			results.add(new Tuple2<>(key, value));
-    		}
-        }
-        return results;
-    }
-});
+    			new PairFlatMapFunction<Tuple2<String,String>, String, String>() {
+    				private static final long serialVersionUID = -3533063264900721773L;
+
+    				@Override
+    				public Iterator<Tuple2<String, String>> call(Tuple2<String, String> writableIterableTuple2) throws Exception {
+    					List<Tuple2<String, String>> results = new LinkedList<>();
+    					Properties karmaContentSettings = new Properties();
+    					for(Map.Entry<Object, Object> objectObjectEntry : karmaSettings.entrySet())
+    						karmaContentSettings.put(objectObjectEntry.getKey(), objectObjectEntry.getValue());
+    					karmaContentSettings.put("model.content", model.value());
+    					karmaContentSettings.put("context.content", context.getValue());
+
+    					if(outputFormat != null && outputFormat.equals("n3")) {
+    						final N3Impl mapper = new N3Impl(karmaContentSettings);
+    						String result = mapper.mapResult(writableIterableTuple2._1, writableIterableTuple2._2);
+    						String[] lines = result.split("(\r\n|\n)");
+    						for(String line : lines)
+    						{
+    							if((line = line.trim()).isEmpty())
+    							{
+    								continue;
+    							}
+    							int splitBetweenSubjectAndPredicate = line.indexOf(' ');
+    							String key = (line.substring(0, splitBetweenSubjectAndPredicate));
+    							String value = line;
+    							results.add(new Tuple2<>(key, value));
+    						}
+    					}
+    					return results.iterator();
+    				}
+    			});
 	
 		return pairs.mapToPair(new PairFunction<Tuple2<String,String>, Text, Text>() {
             private static final long serialVersionUID = 2787821808872176951L;
