@@ -1,11 +1,16 @@
 package edu.isi.karma.rdf;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.io.IOUtils;
 
 import edu.isi.karma.kr2rml.planning.RootStrategy;
 import edu.isi.karma.kr2rml.writer.KR2RMLRDFWriter;
@@ -17,9 +22,10 @@ public class RDFGeneratorRequest {
 
 	private RootStrategy strategy;
 	private File inputFile;
+	private List<String> inputHeaders;
+	private List<List<String>> inputValues;
 	private String inputData;
-	protected InputProperties inputProperties
-	;
+	protected InputProperties inputProperties;
 	private InputStream inputStream;
 	private InputType dataType;
 	private boolean addProvenance;
@@ -203,6 +209,54 @@ public class RDFGeneratorRequest {
 	public ServletContextParameterMap getContextParameters()
 	{
 		return this.contextParameters;
+	}
+	
+    public InputStream getInputAsStream() throws IOException {
+		InputStream inputStream = null;
+		if(this.getInputFile() != null)
+		{
+			inputStream = new FileInputStream(this.getInputFile());
+		}
+		else if(this.getInputData() != null)
+		{
+			inputStream = IOUtils.toInputStream(this.getInputData(), Charset.forName("UTF-8"));
+			this.setEncoding("UTF-8");
+		}
+		else if(this.getInputStream() != null)
+		{
+			inputStream = this.getInputStream();
+		}
+		return inputStream;
+    }
+
+	public List<String> getInputHeaders() {
+		return inputHeaders;
+	}
+
+	public void setInputHeaders(List<String> inputHeaders) {
+		this.inputHeaders = inputHeaders;
+	}
+
+	public List<List<String>> getInputValues() {
+		return inputValues;
+	}
+
+	public void setInputValues(List<List<String>> inputValues) {
+		this.inputValues = inputValues;
+	}
+
+	public void setInputData(RDFGeneratorInputWrapper value) {
+		if(value.getData() != null) {
+			this.inputData = value.getData();
+		}
+		else if(value.getIs() != null) {
+			this.inputStream = value.getIs();
+		}
+		else if (value.getHeaders() != null) {
+			this.inputHeaders = value.getHeaders();
+			this.inputValues = value.getValues();
+		}
+		
 	}
 
 }
