@@ -36,7 +36,7 @@ public class JSONImpl extends BaseRDFImpl {
         KR2RMLRDFWriter outWriter = new JSONKR2RMLRDFWriter(pw, karma.getBaseURI(), disableNesting);
         ContextIdentifier contextId = karma.getContextId();
         try {
-            atId = getAtId(karma.getGenerator().loadContext(contextId).getJSONObject("@context"));
+            atId = getAtId(karma.getGenerator().getContext(contextId).getJSONObject("@context"));
         } catch(Exception e)
         {}
         return outWriter;
