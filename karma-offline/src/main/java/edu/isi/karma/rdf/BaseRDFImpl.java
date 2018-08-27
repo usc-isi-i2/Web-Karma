@@ -247,7 +247,7 @@ public abstract class BaseRDFImpl implements Serializable {
 		try {
 			RDFGeneratorRequest request = new RDFGeneratorRequest(modelName, filename);
 			request.setDataType(karma.getInputType());
-			request.setInputData(value);
+			request.setInput(value);
 			request.setAddProvenance(false);
 			request.addWriter(outWriter);
 			request.setMaxNumLines(0);

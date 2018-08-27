@@ -72,7 +72,7 @@ public class GenericRDFGenerator extends RdfGenerator {
     	return this.mappingManager.getModelParser(modelName);
     }
     
-	private void generateRDF(String modelName, String sourceName,String contextName, InputStream data, InputType dataType,  InputProperties inputTypeParameters, 
+	private void generateRDF(String modelName, String sourceName,String contextName, RDFGeneratorInputWrapper input, InputType dataType,  InputProperties inputTypeParameters, 
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy, 
 			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill, ServletContextParameterMap contextParameters)
 					throws KarmaException, IOException {
@@ -83,7 +83,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 		initializeRDFWriters(writers, id, contextId, context);
 		//Check if the parser for this model exists, else create one
 		WorksheetR2RMLJenaModelParser modelParser = mappingManager.getModelParser(modelName);
-		generateRDF(modelParser, sourceName, data, dataType, inputTypeParameters, addProvenance, writers, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill, contextParameters);
+		generateRDF(modelParser, sourceName, input, dataType, inputTypeParameters, addProvenance, writers, rootStrategy, tripleMapToKill, tripleMapToStop, POMToKill, contextParameters);
 	}
 
 	private void initializeRDFWriters(List<KR2RMLRDFWriter> writers, R2RMLMappingIdentifier id,
@@ -98,7 +98,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 	}
 
 	
-	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, InputStream data, InputType dataType,  InputProperties inputTypeParameters,
+	private void generateRDF(WorksheetR2RMLJenaModelParser modelParser, String sourceName, RDFGeneratorInputWrapper input, InputType dataType,  InputProperties inputTypeParameters,
 			boolean addProvenance, List<KR2RMLRDFWriter> writers, RootStrategy rootStrategy, 
 			List<String> tripleMapToKill, List<String> tripleMapToStop, List<String> POMToKill, ServletContextParameterMap contextParameters) throws KarmaException, IOException {
 		logger.debug("Generating rdf for " + sourceName);
@@ -115,8 +115,15 @@ public class GenericRDFGenerator extends RdfGenerator {
 		{
 		
 			logger.debug("Generating worksheet for {}", sourceName);
-			Worksheet worksheet = WorksheetGenerator.generateWorksheet(sourceName, new BufferedInputStream(data), dataType, inputTypeParameters,
+			Worksheet worksheet = null;
+			if(input.getHeaders() != null) {
+				worksheet = WorksheetGenerator.generateWorksheet(sourceName, input.getHeaders(), input.getValues(), workspace);
+			}
+			else {
+				InputStream data = input.getInputAsStream();
+				worksheet = WorksheetGenerator.generateWorksheet(sourceName, new BufferedInputStream(data), dataType, inputTypeParameters,
 					workspace);
+			}
 			logger.debug("Generated worksheet for {}", sourceName);
 			logger.debug("Parsing mapping for {}", sourceName);
 			//Generate mappping data for the worksheet using the model parser
@@ -158,7 +165,7 @@ public class GenericRDFGenerator extends RdfGenerator {
 	public void generateRDF(RDFGeneratorRequest request) throws KarmaException, IOException
 	{
 		generateRDF(request.getModelName(), request.getSourceName(), request.getContextName(), 
-				request.getInputAsStream(), request.getDataType(), request.getInputTypeProperties(), request.isAddProvenance(), 
+				request.getInput(), request.getDataType(), request.getInputTypeProperties(), request.isAddProvenance(), 
 				request.getWriters(), request.getStrategy(), 
 				request.getTripleMapToKill(), request.getTripleMapToStop(), request.getPOMToKill(), request.getContextParameters());
 	}

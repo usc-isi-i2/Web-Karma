@@ -22,6 +22,7 @@ public class RDFGeneratorRequest {
 
 	private RootStrategy strategy;
 	private File inputFile;
+	private RDFGeneratorInputWrapper inputWrapper;
 	private List<String> inputHeaders;
 	private List<List<String>> inputValues;
 	private String inputData;
@@ -154,6 +155,7 @@ public class RDFGeneratorRequest {
 	}
 
 	public void setInputData(String inputData) {
+		this.setEncoding("UTF-8");
 		this.inputData = inputData;
 	}
 
@@ -210,24 +212,6 @@ public class RDFGeneratorRequest {
 	{
 		return this.contextParameters;
 	}
-	
-    public InputStream getInputAsStream() throws IOException {
-		InputStream inputStream = null;
-		if(this.getInputFile() != null)
-		{
-			inputStream = new FileInputStream(this.getInputFile());
-		}
-		else if(this.getInputData() != null)
-		{
-			inputStream = IOUtils.toInputStream(this.getInputData(), Charset.forName("UTF-8"));
-			this.setEncoding("UTF-8");
-		}
-		else if(this.getInputStream() != null)
-		{
-			inputStream = this.getInputStream();
-		}
-		return inputStream;
-    }
 
 	public List<String> getInputHeaders() {
 		return inputHeaders;
@@ -245,7 +229,8 @@ public class RDFGeneratorRequest {
 		this.inputValues = inputValues;
 	}
 
-	public void setInputData(RDFGeneratorInputWrapper value) {
+	public void setInput(RDFGeneratorInputWrapper value) {
+		this.inputWrapper = value;
 		if(value.getData() != null) {
 			this.inputData = value.getData();
 		}
@@ -256,6 +241,22 @@ public class RDFGeneratorRequest {
 			this.inputHeaders = value.getHeaders();
 			this.inputValues = value.getValues();
 		}
+		
+	}
+	
+	public RDFGeneratorInputWrapper getInput() {
+		if(this.inputWrapper != null) {
+			return this.inputWrapper;
+		}
+		else {
+			if(this.getInputData() != null) {
+				return new RDFGeneratorInputWrapper(this.getInputData());
+			}
+			else if (this.getInputStream() != null) {
+				return new RDFGeneratorInputWrapper(this.getInputStream());
+			}
+		}
+		return inputWrapper;
 		
 	}
 
