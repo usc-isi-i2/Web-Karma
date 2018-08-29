@@ -255,6 +255,9 @@ public class RDFGeneratorRequest {
 			else if (this.getInputStream() != null) {
 				return new RDFGeneratorInputWrapper(this.getInputStream());
 			}
+			else if (this.getInputFile() != null) {
+				return new RDFGeneratorInputWrapper(this.getInputFile());
+			}
 		}
 		return inputWrapper;
 		
