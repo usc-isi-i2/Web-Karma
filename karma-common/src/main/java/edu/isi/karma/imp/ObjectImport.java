@@ -55,7 +55,7 @@ public class ObjectImport extends Import {
 
 		Row row = dataTable.addRow(fac);
 		Iterator<String> columnsItr = entity.getColumns().iterator();
-		Iterator<String> literalValuesItr = entity.getColumns().iterator();
+		Iterator<String> literalValuesItr = entity.getLiteralValues().iterator();
 		HTable headers = worksheet.getHeaders();
 
 		while (columnsItr.hasNext() && literalValuesItr.hasNext()) {
