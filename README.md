@@ -16,6 +16,12 @@ You can find useful tutorials on the project Website: [http://www.isi.edu/integr
 
 Look in the Wiki [Installation](https://github.com/InformationIntegrationGroup/Web-Karma/wiki/Installation)
 
+## Docker ##
+### Build
+```docker build -t webkarma .```
+### Run
+```docker run -it --rm -p 8080:8080 webkarma```
+
 ## Frequently Asked Questions ##
 ### How to perform offline RDF generation for a data source using a published model? ###
 1. Model your source and publish it's model (the published models are located at `src/main/webapp/publish/R2RML/` inside the Karma directory).
