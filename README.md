@@ -20,7 +20,7 @@ Look in the Wiki [Installation](https://github.com/InformationIntegrationGroup/W
 ### Build
 ```docker build -t webkarma .```
 ### Run
-```docker run -it --rm -p 8080:8080 webkarma```
+```docker run -it --rm -v <local-path>:/data -p 8080:8080 webkarma```
 
 ## Frequently Asked Questions ##
 ### How to perform offline RDF generation for a data source using a published model? ###
