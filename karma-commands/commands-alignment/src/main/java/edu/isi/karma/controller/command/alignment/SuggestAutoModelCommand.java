@@ -128,7 +128,7 @@ public class SuggestAutoModelCommand extends WorksheetCommand {
 				alignment.addDataPropertyLink(classNode, columnNode, propertyLabel, false);
 				
 				// Create a semantic type object
-				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, classNode.getId(), false, SemanticType.Origin.User, 1.0);
+				SemanticType type = new SemanticType(hNode.getId(), propertyLabel, internalNodeLabel, classNode.getId(), false, false, SemanticType.Origin.User, 1.0);
 				worksheet.getSemanticTypes().addType(type);
 				
 				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();

@@ -42,6 +42,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 	private final ConfidenceLevel confidenceLevel;
 	private Double confidenceScore;
 	private boolean isProvenance;
+	private boolean isPrimary;
 
 	public enum Origin {
 		AutoModel, User, CRFModel, TfIdfModel, RFModel
@@ -55,7 +56,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		isPrimary, DomainUri, DomainId, FullType, isProvenance
 	}
 	
-	public SemanticType(String hNodeId, Label type, Label domain, String domainId, boolean isProvenance,
+	public SemanticType(String hNodeId, Label type, Label domain, String domainId, boolean isProvenance, boolean isPrimary,
 			Origin origin, Double probability) {
 		this.hNodeId = hNodeId;
 		this.type = type;
@@ -63,6 +64,7 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 		this.domain = domain;
 		this.domainId = domainId;
 		this.isProvenance = isProvenance;
+		this.isPrimary = isPrimary;
 		this.confidenceScore = probability;
 		
 		if(probability > 0.8)
@@ -101,6 +103,10 @@ public class SemanticType implements Jsonizable, Serializable, Comparable<Semant
 
 	public boolean isProvenance() {
 		return this.isProvenance;
+	}
+
+	public boolean isPrimary() {
+		return this.isPrimary;
 	}
 	
 	@Override

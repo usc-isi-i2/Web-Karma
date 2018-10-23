@@ -1110,7 +1110,7 @@ public LiteralNode addLiteralNode(String nodeId, String value, String type, Stri
 			if (target instanceof ColumnNode) {
 				SemanticType st = new SemanticType(((ColumnNode)target).getHNodeId(), 
 						newLink.getLabel(), source.getLabel(), source.getId(),
-						false,
+						false, false,
 						SemanticType.Origin.User, 1.0);
 				semanticTypes.add(st);
 			}

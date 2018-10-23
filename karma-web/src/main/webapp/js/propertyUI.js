@@ -6,6 +6,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 		"uri": "",
 		"label": "",
 		"rdfsLabel": "",
+        "literaltype": "",
 		"id": ""
 	};
 
@@ -27,7 +28,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 
 		var selectOnLoad = false;
 		console.log("PopulatePropertyList:" + dataArray.length);
-
+        // console.log("PopulatePropertyList data:" + dataArray[0][0]);
 		if (dataArray.length == 0) {
 			$(list1).jstree("destroy");
 			$(list1).html("<i>none</i>");
@@ -40,14 +41,15 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 					propertyData.rdfsLabel = selectedNodeData.metadata.rdfsLabel;
 					propertyData.uri = selectedNodeData.metadata.uri;
 					propertyData.id = selectedNodeData.metadata.id;
+                    propertyData.literaltype = selectedNodeData.metadata.literaltype;
 					propertyData.other = selectedNodeData.metadata.other;
 					
 					var treeId = PropertyUI.getNodeID(propertyData.label, propertyData.rdfsLabel, propertyData.id, propertyData.uri);
 					$(list1).jstree('open_node', treeId); //Open node will scroll to that pos
 
 					$(list2).jstree("deselect_all");
-
 					$("#" + id + "_propertyKeyword").val(Settings.getInstance().getDisplayLabel(propertyData.label, propertyData.rdfsLabel, true));
+					$("#literalTypeSelect").val(propertyData.literaltype);
 					if (!selectOnLoad && propertySelectorCallback != null) {
 						propertySelectorCallback(propertyData);
 					}
@@ -57,6 +59,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 					console.log("property jstree Type: " + $(list1).attr("id"));
 					if (propertyData.label.length > 0) {
 						$("#" + id + "_propertyKeyword").val(Settings.getInstance().getDisplayLabel(propertyData.label, propertyData.rdfsLabel, true));
+                        $("#literalTypeSelect").val(propertyData.literaltype);
 					}
 					window.setTimeout(function() {
 						if (propertyData.label.length > 0) {
@@ -162,7 +165,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 					window.clearTimeout(searchTimer);
 				searchTimer = window.setTimeout(function() {
 					var keyword = $(textbox).val();
-					//console.log("Property keyup: " + keyword);
+					console.log("Property keyup: " + keyword);
 					$("div#" + id + "_propertyList1").jstree("search", keyword);
 					$("div#" + id + "_propertyList2").jstree("search", keyword);
 				}, 1000); //Wait 1 secs before searching
@@ -281,7 +284,7 @@ function PropertyUI(id,  propertyFuncTop, propertyFuncBottom, maxHeight, loadTre
 };
 
 //Static declarations
-PropertyUI.getNodeObject = function(label, rdfsLabel, cId, uri, other) {
+PropertyUI.getNodeObject = function(label, rdfsLabel, cId, uri, literaltype, other) {
 	var treeId = PropertyUI.getNodeID(label, rdfsLabel, cId, uri);
 
 	var text = Settings.getInstance().getDisplayLabel(label, rdfsLabel);
@@ -295,16 +298,18 @@ PropertyUI.getNodeObject = function(label, rdfsLabel, cId, uri, other) {
 			id: cId,
 			"label": label,
 			"rdfsLabel": rdfsLabel,
+            "literaltype": literaltype,
 			"other": other
 		}
 	};
+
 	//	var nodeData = { attr: { id : treeId }, data: label, metadata:{"uri": uri, id : cId, "label":label} } ;
 	return nodeData;
 };
 
 PropertyUI.parseNodeObject = function(nodeData) {
 	//return [nodeData.data.title, nodeData.metadata.id, nodeData.metadata.uri];
-	return [nodeData.metadata.label, nodeData.metadata.rdfsLabel, nodeData.metadata.id, nodeData.metadata.uri, nodeData.metadata.other];
+	return [nodeData.metadata.label, nodeData.metadata.rdfsLabel, nodeData.metadata.id, nodeData.metadata.uri, nodeData.metadata.literaltype, nodeData.metadata.other];
 };
 
 PropertyUI.getNodeID = function(label, rdfsLabel, id, uri) {

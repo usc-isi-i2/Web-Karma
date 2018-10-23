@@ -153,6 +153,7 @@ function WorksheetOptions(wsId, wsTitle) {
 		console.log("addRows");
 		hideDropdown();
 		$("#pyTransformSelectionDialog").data("operation", "Union");
+        console.log(PyTransformSelectionDialog.getInstance(wsId, ""));
 		PyTransformSelectionDialog.getInstance(wsId, "").show();
 	}
 

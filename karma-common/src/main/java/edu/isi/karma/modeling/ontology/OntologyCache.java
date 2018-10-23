@@ -571,12 +571,20 @@ public class OntologyCache {
 //			if (p.isAnnotationProperty())
 //				continue;
 
+
+
 			if (!properties.containsKey(p.getURI()))
 				properties.put(p.getURI(), ontHandler.getResourceLabel(p));
-			
+			//datatype property put ? in hashmap
 			if (p.isDatatypeProperty() || !p.isObjectProperty())
 			{
 				if (!dataProperties.containsKey(p.getURI()))
+//					if (p.getRange() != null){
+//						logger.error("data type pro " + p);
+//						logger.error("get range " + p.getRange());
+//						logger.error("dp " + ontHandler.getResourceLabel(p));
+//					}
+
 					dataProperties.put(p.getURI(), ontHandler.getResourceLabel(p));
 			}
 

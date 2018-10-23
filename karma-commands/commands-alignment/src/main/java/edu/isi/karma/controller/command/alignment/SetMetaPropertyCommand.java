@@ -197,7 +197,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 			newType = new SemanticType(hNodeId,
 					ClassInstanceLink.getFixedLabel(), classNode.getLabel(),
 					classNode.getId(),
-					false,
+					false, false,
 					SemanticType.Origin.User, 1.0);
 		} else if (metaPropertyName
 				.equals(METAPROPERTY_NAME.isSpecializationForEdge)) {
@@ -238,7 +238,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 						DataPropertyOfColumnLink.getFixedLabel(),
 						classInstanceNode.getLabel(), 
 						classInstanceNode.getId(),
-						false,
+						false, false,
 						SemanticType.Origin.User,
 						1.0);
 			} else if (propertyLink instanceof ObjectPropertyLink) {
@@ -252,7 +252,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 						ObjectPropertySpecializationLink.getFixedLabel(),
 						classInstanceNode.getLabel(), 
 						classInstanceNode.getId(),
-						false,
+						false, false,
 						SemanticType.Origin.User,
 						1.0);
 			}
@@ -278,7 +278,7 @@ public class SetMetaPropertyCommand extends WorksheetSelectionCommand {
 
 			// Create the semantic type object
 			newType = new SemanticType(hNodeId,
-					ColumnSubClassLink.getFixedLabel(), classNode.getLabel(), classNode.getId(), false,
+					ColumnSubClassLink.getFixedLabel(), classNode.getLabel(), classNode.getId(), false, false,
 					SemanticType.Origin.User, 1.0);
 		}
 
