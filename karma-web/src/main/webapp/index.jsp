@@ -44,7 +44,7 @@ and related projects, please see: http://www.isi.edu/integration
 		<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
 		<meta http-equiv="pragma" content="no-cache" />
         
-        <title>Karma Data test Integration</title>
+        <title>Karma Data Integration</title>
        
         <link rel="stylesheet" type="text/css" href="./uiLibs/twitterBootstrap/css/bootstrap.min.css" media="screen">
         <link rel="stylesheet" type="text/css" href="./uiLibs/jquery/css/jquery-ui-themes/smoothness/jquery-ui.min.css" />
@@ -190,7 +190,7 @@ and related projects, please see: http://www.isi.edu/integration
 								<li><a href="#" id="displayRDFSLabel_idFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Name or ID First</a></li>
 		                  	</ul>
 		                  </li>
-		                  <li><a href="#" id="r2rmlExportSuperclass"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Export Superclass</a>
+		                  <li><a href="#" id="r2rmlExportSuperclass"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Export Superclass</a>
 		                  </li>
 						  <%--<li class="dropdown-submenu"><a href="#" id="generateLiteralTypes">Automatically Generate Literal Types</a>--%>
 							  <%--<ul class="dropdown-menu">--%>
