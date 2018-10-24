@@ -22,7 +22,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
@@ -200,6 +199,11 @@ public class JSONReducerDriver {
 			prop.setProperty(propertyName, value);
 		}
     	return reduceJSON(sc, input, numPartitions, prop);
+    }
+    
+    public static JavaRDD<String> reduceJSON(JavaSparkContext sc,
+    		JavaRDD<String> input, double numPartitions, String propertiesStr) throws org.json.simple.parser.ParseException {
+    	return reduceJSON(sc, input, (int)numPartitions, propertiesStr);
     }
     
     public static JavaRDD<String> reduceJSON(JavaSparkContext jsc, 
