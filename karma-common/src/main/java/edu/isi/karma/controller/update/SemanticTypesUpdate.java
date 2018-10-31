@@ -107,7 +107,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 			}
 			writer.endArray();
 			writer.endObject();
-			System.out.println("writer " + writer.toString());
+//			System.out.println("writer " + writer.toString());
 			pw.print(writer.toString());
 		} catch (JSONException e) {
 			logger.error("Error occured while writing to JSON!", e);

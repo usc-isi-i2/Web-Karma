@@ -88,7 +88,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		this.hasProvenanceType = false;
 		addTag(CommandTag.SemanticType);
 
-		System.out.println("types array" + this.typesArr.toString());
+//		System.out.println("types array" + this.typesArr.toString());
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			}
 		}
 		this.typesArr = newTypesArr;
-		System.out.println("types array 2" + this.typesArr.toString());
+//		System.out.println("types array 2" + this.typesArr.toString());
 		
 		/*** Preprocess provenance types ***/
 		JSONArray provTypes = new JSONArray();
@@ -223,7 +223,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		this.setInputParameterJson(inputParams.toString());
 
 
-		System.out.println("input params" + inputParams.toString());
+//		System.out.println("input params" + inputParams.toString());
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		ArrayList<SemanticType> typesList = new ArrayList<>();

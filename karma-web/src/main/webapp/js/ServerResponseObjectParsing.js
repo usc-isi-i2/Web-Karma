@@ -362,7 +362,7 @@ function parse(data) {
 			var worksheetPanel = $("div#" + element["worksheetId"] + "_row");
 			D3ModelManager.getInstance().deleteModel(element["worksheetId"]);
 			worksheetPanel.remove();
-			$.sticky("Worksheet deleted");
+			$.sticky("Worksheet updated");
 		} else if (element["updateType"] == "WorksheetHeadersUpdate") {
 			console.time('header update');
 			var worksheetPanel = $("div.Worksheet#" + element["worksheetId"]);
@@ -791,6 +791,7 @@ function parse(data) {
 		var errExists = [];
 		if (trivialErrors.length == 1) {
 			errorMessage = trivialErrors[0];
+			console.log("error message", errorMessage, trivialErrors);
 			txt.append(errorMessage + "<br>");
 			errExists[errorMessage] = true;
 		} else {
