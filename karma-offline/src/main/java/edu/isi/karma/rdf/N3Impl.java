@@ -13,6 +13,11 @@ import java.util.Properties;
  */
 public class N3Impl extends BaseRDFImpl{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7376603769817652724L;
+
 	public N3Impl(String propertyPath) {
         super(propertyPath);
     }
