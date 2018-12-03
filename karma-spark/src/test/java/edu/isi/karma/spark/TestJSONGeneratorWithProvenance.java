@@ -1,49 +1,23 @@
 package edu.isi.karma.spark;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Properties;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.hadoop.io.Text;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
+import java.io.IOException;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.List;
+
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.PairFunction;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import scala.Tuple2;
-
-import com.holdenkarau.spark.testing.JavaRDDComparisons;
 import com.holdenkarau.spark.testing.SharedJavaSparkContext;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
-import org.junit.Test;
-
-import scala.Option;
-import scala.Tuple2;
-import scala.Tuple3;
-
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
+@Ignore
 public class TestJSONGeneratorWithProvenance  extends SharedJavaSparkContext implements Serializable {
 	/**
 	 * 
@@ -106,6 +80,11 @@ public class TestJSONGeneratorWithProvenance  extends SharedJavaSparkContext imp
 		
 		JavaRDD<String> tabRDD = inputRDD.map(new Function<String, String>() {
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public String call(String arg0) throws Exception {
 				return "karma\t" + arg0;
@@ -114,6 +93,7 @@ public class TestJSONGeneratorWithProvenance  extends SharedJavaSparkContext imp
 		return tabRDD;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private JSONObject getKarmaSettings(boolean provenance) {
 		JSONObject karmaSettings = new JSONObject();
 		karmaSettings.put("karma.input.type", "JSON");
