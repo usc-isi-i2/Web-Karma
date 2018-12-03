@@ -1,30 +1,30 @@
 [ {
-document-type: "Menu",
-webpage: "http://www.mcbronalds.com/menu",
-version: "1.2",
-restaurant: {
-	name: "McBronald's",
-	location: {
-		lat: "37.1",
-		lon: "-115.3"
+"document-type": "Menu",
+"webpage": "http://www.mcbronalds.com/menu",
+"version": "1.2",
+"restaurant": {
+	"name": "McBronald's",
+	"location": {
+		"lat": "37.1",
+		"lon": "-115.3"
 	},
-	url: "http://www.mcbronalds.com"
+	"url": "http://www.mcbronalds.com"
 },
-size-info: {
-	url: "http://ex.com/menu/drinks/size",
-	description: "Size of drinks",
-	sizes: ["small", "medium", "large"]
+"size-info": {
+	"url": "http://ex.com/menu/drinks/size",
+	"description": "Size of drinks",
+	"sizes": ["small", "medium", "large"]
 }
 ,
-drink-info: {
-	url: "http://ex.com/menu/drinks",
-	description: "Drinks",
-	drinks: ["coffee", "tea", "juice", "soda"]
+"drink-info": {
+	"url": "http://ex.com/menu/drinks",
+	"description": "Drinks",
+	"drinks": ["coffee", "tea", "juice", "soda"]
 },
-type-info: {
-	url: "http://ex.com/menu/drinks/type",
-	description: "Types of drinks",
-	types: ["diet", "regular", "caffiene-free"]
+"type-info": {
+	"url": "http://ex.com/menu/drinks/type",
+	"description": "Types of drinks",
+	"types": ["diet", "regular", "caffiene-free"]
 }
 
 }
