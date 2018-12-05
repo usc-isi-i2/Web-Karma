@@ -79,7 +79,7 @@
 		{
 			"id" : "l-glav-advanced" ,
 			"title" : "Logical data integration: (advanced)" ,
-			"description" : "We present the latest research and techniques on how to build a highly scalable approach using logical data integration techniques." ,
+			"description" : "We present the latest research and techniques on how to build a highly scalable approach using logical data integration techniques." 
 		} ,
 
 		{
@@ -313,7 +313,7 @@
 			"id" : "project-demonstration" ,
 			"title" : "Project Online Demonstration" ,
 			"description" : "" 
-		} ,
+		} 
 
 
 	]
