@@ -7,5 +7,5 @@ package edu.isi.karma.util;
 */
 public enum DBType
 {
-	Oracle, MySQL, SQLServer, PostGIS, Sybase
+	Oracle, MySQL, SQLServer, PostGIS, Sybase, Ingres
 }
