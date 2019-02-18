@@ -120,7 +120,7 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 			// If the model is not published, publish it!
 			if(!f.exists() || !f.isFile()) {
 				GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
-				GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(model, workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, selection.getName());
+				GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(model, workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, selection.getName(), graphName);
 				cmd.doIt(workspace);
 			} else {
 				// if the model was published 30 min ago, publish it again, just to be sure
@@ -128,7 +128,7 @@ public class FetchColumnCommand extends WorksheetSelectionCommand {
 				if((diff / 1000L / 60L) > 30) {
 					f.delete();
 					GenerateR2RMLModelCommandFactory factory = new GenerateR2RMLModelCommandFactory();
-					GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(model, workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, selection.getName());
+					GenerateR2RMLModelCommand cmd = (GenerateR2RMLModelCommand)factory.createCommand(model, workspace, worksheetId, TripleStoreUtil.defaultModelsRepoUrl, selection.getName(), graphName);
 					cmd.doIt(workspace);
 				}
 			}
