@@ -542,7 +542,7 @@ public class TripleStoreUtil {
 		injectType(mappingURI, query, Uris.RR_TEMPLATE_URI, Uris.RR_CLASS_URI, Uris.KM_HAS_SUBJECT_MAP_URI);
 		query.append("{\n");
 		query.append("?s ?p ?o .\n");
-		query.append("?s owl:sameAs ");
+		query.append("?s (owl:sameAs|^owl:sameAs)* ");
 		formatURI(mappingURI, query);
 		query.append(" . \n"); 
 
@@ -559,7 +559,7 @@ public class TripleStoreUtil {
 		query.append("?mapping <");
 		query.append(hasType);
 		query.append("> ?s . \n");
-		query.append("?mapping owl:sameAs ");
+		query.append("?mapping (owl:sameAs|^owl:sameAs)* ");
 		formatURI(mappingURI, query);
 		query.append(" .\n");
 		query.append("?s ?p ?o . \n");
@@ -579,7 +579,7 @@ public class TripleStoreUtil {
 		query.append("?mapping <");
 		query.append(hasType2);
 		query.append("> ?mapping2 . \n");
-		query.append("?mapping owl:sameAs ");
+		query.append("?mapping (owl:sameAs|^owl:sameAs)* ");
 		formatURI(mappingURI, query);
 		query.append(" .\n");
 		query.append("?s ?p ?o . \n");
