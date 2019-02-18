@@ -857,7 +857,7 @@ public class TripleStoreUtil {
 
 			StringBuilder query = new StringBuilder();
 			query.append("PREFIX km-dev:<http://isi.edu/integration/karma/dev#>\n");
-			query.append("SELECT ?z ?y ?x ?src ?w ?u\n");
+			query.append("SELECT ?z ?y ?x ?src ?w ?u ?a\n");
 			injectContext(context, query);
 			query.append("WHERE \n { \n");
 			query.append("GRAPH ?src \n { \n");
@@ -888,7 +888,13 @@ public class TripleStoreUtil {
 				while (count < values.length()) {
 					JSONObject o = values.getJSONObject(count++);
 					times.add(o.getJSONObject("x").getString("value"));
-					urls.add(o.getJSONObject("z").getString("value"));
+					if(o.getJSONObject("a").getString("type").equalsIgnoreCase("bnode")){
+						urls.add(o.getJSONObject("z").getString("value"));
+					}
+					else {
+						urls.add(o.getJSONObject("a").getString("value"));
+					}
+						
 					if (o.has("w"))
 							inputColumns.add(o.getJSONObject("w").getString("value"));
 					else
