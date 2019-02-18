@@ -364,6 +364,8 @@ and related projects, please see: http://www.isi.edu/integration
         <script type="text/javascript" src="js/initWS.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/commandHistory.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/publishRDF.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/publishHelper.js?<jsp:include page='version.jsp' />"></script>
+        <script type="text/javascript" src="js/publishModel.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/serviceImport.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/pager.js?<jsp:include page='version.jsp' />"></script>
         <script type="text/javascript" src="js/geospatial.js?<jsp:include page='version.jsp' />"></script>

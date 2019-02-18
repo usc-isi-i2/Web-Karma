@@ -348,27 +348,9 @@ function WorksheetOptions(wsId, wsTitle) {
 	function publishModel(event) {
 		console.log("Publish Model: " + worksheetTitle);
 		hideDropdown();
-		var info = generateInfoObject(worksheetId, "", "GenerateR2RMLModelCommand");
-		info['tripleStoreUrl'] = $('#txtModel_URL').text();
-		showLoading(info["worksheetId"]);
-		var repoUrl = $("#txtGithubUrl_" + worksheetId).text(); 
-		var returned = sendRequest(info, worksheetId,
-			function(data) {
-				var newWorksheetId = worksheetId;
-				$.each(data["elements"], function(i, element) {
-					if(element) {
-						if (element["updateType"] == "PublishR2RMLUpdate") {
-							newWorksheetId = element["worksheetId"];
-						}
-					}
-				});
-
-				var info = generateInfoObject(newWorksheetId, "", "PublishReportCommand");
-				showLoading(newWorksheetId);
-				var returned = sendRequest(info, newWorksheetId, function(json) {
-					publishToGithub(newWorksheetId, repoUrl);
-				});
-			});
+		
+		PublishModelDialog.getInstance().show(worksheetId);
+		
 		return false;
 	}
 

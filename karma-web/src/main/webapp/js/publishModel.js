@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2012 University of Southern California
+ * Copyright 2018 University of Southern California
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,12 @@
  * University of Southern California.  For more information, publications,
  * and related projects, please see: http://www.isi.edu/integration
  ******************************************************************************/
-
-
-
-
-var PublishRDFDialog = (function() {
+ 
+var PublishModelDialog = (function() {
 	var instance = null;
 
 	function PrivateConstructor() {
-		var dialog = $("#publishRDFDialog");
+		var dialog = $("#publishModelDialog");
 		var worksheetId;
 		var helper = PublishHelper.getInstance()
 
@@ -39,56 +36,51 @@ var PublishRDFDialog = (function() {
 				} else {
 					$("div#rdfStoreInfo").hide();
 				}
-				getRDFPreferences();
-				window.rdfSPAQRLEndPoint = $('#txtData_URL').html();
-				helper.getGraphURIForWorksheet('rdf');
-				helper.fetchGraphsFromTripleStore($('#txtData_URL').html(), 'rdf');
+				window.rdfSPAQRLEndPoint = $('#txtModel_URL').html();
+				helper.getGraphURIForWorksheet('model');
+				helper.fetchGraphsFromTripleStore($('#txtModel_URL').html(), 'model');
 			});
 
 			//Initialize handler for Save button
 			//var me = this;
 			$('#btnSave', dialog).on('click', function(e) {
 				e.preventDefault();
-				graphURI = helper.validate($('#txtData_URL').html(), 'rdf');
-				publishRDFFunction(graphURI);
+				graphURI = helper.validate($('#txtModel_URL').html(), 'model');
+				publishModelFunction(graphURI)
 			});
 
 		}
 
-		function publishRDFFunction(graphUri) {
+        function publishModelFunction(graphUri) {
 			hide();
+			var info = generateInfoObject(worksheetId, "", "GenerateR2RMLModelCommand");
+			info['tripleStoreUrl'] = $('#txtModel_URL').text();
+			info['graphUri'] = graphUri
+			info['modelUri'] = $("input#modelURI").val()
+			showLoading(info["worksheetId"]);
+			var repoUrl = $("#txtGithubUrl_" + worksheetId).text(); 
+			var returned = sendRequest(info, worksheetId,
+				function(data) {
+					var newWorksheetId = worksheetId;
+					$.each(data["elements"], function(i, element) {
+						if(element) {
+							if (element["updateType"] == "PublishR2RMLUpdate") {
+								newWorksheetId = element["worksheetId"];
+							}
+						}
+					});
 
-			var info = generateInfoObject(worksheetId, "", "PublishRDFCommand");
-			info["addInverseProperties"] = $("input#addInverseProperties").is(":checked");
-			info["saveToStore"] = $("input#saveToStore").is(":checked");
-			info["hostName"] = $("input#hostName").val();
-			info["dbName"] = $("input#dbName").val();
-			info["userName"] = $("input#userName").val();
-			info["password"] = $("input#password").val();
-			info["modelName"] = $("input#modelName").val();
-			info["tripleStoreUrl"] = $('#txtData_URL').html();
-			info["graphUri"] = graphUri;
-			var replace = false;
-			if ($('input:radio[name=group1]:checked', dialog).val() == "replace")
-				replace = true;
-			info["replaceContext"] = replace;
-			info["generateBloomFilters"] = $("input#generateBloomFilters").is(":checked");
-			if ($("input#saveToRDFStore").is(":checked")) {
-				publishRDFToStore(info);
-			} else {
-				publishRDFToFile(info);
-			}
+				var info = generateInfoObject(newWorksheetId, "", "PublishReportCommand");
+				showLoading(newWorksheetId);
+				var returned = sendRequest(info, newWorksheetId, function(json) {
+					publishToGithub(newWorksheetId, repoUrl);
+				});
+			});
 		}
-
-		function publishRDFToFile(info) {
+	
+		function publishModelToFile(info) {
 
 			showLoadingRDF(info["worksheetId"], "Saving to file...");
-			returnFunc(info);
-		}
-
-		function publishRDFToStore(info) {
-
-			showLoadingRDF(info["worksheetId"], "Saving to RDF store...");
 			returnFunc(info);
 		}
 
@@ -111,10 +103,10 @@ var PublishRDFDialog = (function() {
 				"left": spaceToCoverDiv.position().left
 			}).show());
 		}
-
-		function getRDFPreferences() {
+		
+        function getRDFPreferences() {
 			var info = generateInfoObject("", "", "FetchPreferencesCommand");
-			info["preferenceCommand"] = "PublishRDFCommand";
+			info["preferenceCommand"] = "GenerateR2RMLModelCommandPreferences";
 			var returned = $.ajax({
 				url: "RequestController",
 				type: "POST",
