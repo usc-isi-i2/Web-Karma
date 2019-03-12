@@ -68,18 +68,23 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 	
 	@Override
 	public void saveAlignment(Alignment alignment) throws Exception {
-		saveAlignment(alignment, null, null, false);
+		saveAlignment(alignment, null, null, false, null);
 	}
 	
 	public void saveAlignment(Alignment alignment, JSONArray history)  throws Exception {
-		saveAlignment(alignment, history, null, false);
+		saveAlignment(alignment, history, null, false, null);
 	}
 	
 	public void saveAlignment(Alignment alignment, String modelFilename)  throws Exception {
-		saveAlignment(alignment, null, modelFilename, false);
+		saveAlignment(alignment, null, modelFilename, false, null);
 	}
 	
 	public void saveAlignment(Alignment alignment, JSONArray history, String modelFilename, boolean onlyHistory) throws Exception {
+		saveAlignment(alignment, history, modelFilename, onlyHistory, null);
+		
+	}
+
+	public void saveAlignment(Alignment alignment, JSONArray history, String modelFilename, boolean onlyHistory, String optionalMappingUri) throws Exception {
 		long start = System.currentTimeMillis();
 		
 		String workspaceId = AlignmentManager.Instance().getWorkspaceId(alignment);
@@ -104,8 +109,8 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		
 		// Write the model
 		if (modelFilename != null && !modelFilename.trim().isEmpty())
-			writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFilename);
-		logger.info("Alignment for " + workspaceId + ":" + worksheetId + " saved to file: " + modelFilename);
+			writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFilename, optionalMappingUri);
+		logger.info("Alignment for " + workspaceId + ":" + worksheetId + " saved to file: " + modelFilename + " with optional mapping uri: " + optionalMappingUri);
 		long end3 = System.currentTimeMillis();
 		logger.info("Time to write to file:" + (end3-end2) + "msec");
 	}
@@ -115,7 +120,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 	}
 	
 	private void writeModel(Workspace workspace, OntologyManager ontMgr, 
-			KR2RMLMappingGenerator mappingGen, Worksheet worksheet, String modelFileLocalPath) 
+			KR2RMLMappingGenerator mappingGen, Worksheet worksheet, String modelFileLocalPath, String optionalMappingUri) 
 					throws RepositoryException, FileNotFoundException,
 							UnsupportedEncodingException, JSONException {
 		File f = new File(modelFileLocalPath);
@@ -124,7 +129,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		PrintWriter writer = new PrintWriter(f, "UTF-8");
 
 		KR2RMLMappingWriter mappingWriter = new KR2RMLMappingWriter();
-		mappingWriter.addR2RMLMapping(mappingGen.getKR2RMLMapping(), worksheet, workspace);
+		mappingWriter.addR2RMLMapping(mappingGen.getKR2RMLMapping(), worksheet, workspace, optionalMappingUri);
 		mappingWriter.writeR2RMLMapping(writer);
 		mappingWriter.close();
 		writer.flush();
