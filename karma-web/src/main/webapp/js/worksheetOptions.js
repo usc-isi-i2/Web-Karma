@@ -354,20 +354,6 @@ function WorksheetOptions(wsId, wsTitle) {
 		return false;
 	}
 
-	function publishToGithub(worksheetId, repo) {
-		var auth = Settings.getInstance().getGithubAuth();
-		if(repo != "disabled" && !repo.endsWith("disabled)")) {
-			if(auth) {
-				showLoading(worksheetId);
-				var githubInfo = generateInfoObject(worksheetId, "", "PublishGithubCommand");
-		        githubInfo["worksheetId"] = worksheetId;
-		        githubInfo["auth"] = auth;
-		        githubInfo["repo"] = repo;
-		        var returned = sendRequest(githubInfo, worksheetId);
-		    }
-	    }
-	}
-
 	function applyModel(event) {
 		console.log("Apply Model: " + worksheetTitle);
 		hideDropdown();
