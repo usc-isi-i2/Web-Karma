@@ -92,7 +92,7 @@ var PublishHelper = (function() {
 			return graphUri
 		}
 
-		function getGraphURIForWorksheet(rdfForGraph) {
+		function getGraphURIForWorksheet(rdfOrModel) {
 			// get the graph uri for the worksheet
 			var info = generateInfoObject(worksheetId, "", "FetchExistingWorksheetPropertiesCommand");
 
@@ -107,22 +107,22 @@ var PublishHelper = (function() {
 
 					// Set graph name
 					if (props["graphName"] != null) {
-						$("#"+rdfForGraph+"SPAQRLGraph").val(props["graphName"]);
+						$("#"+rdfOrModel+"SPAQRLGraph").val(props["graphName"]);
 					} else {
-						$("#"+rdfForGraph+"SPAQRLGraph").val("");
+						$("#"+rdfOrModel+"SPAQRLGraph").val("");
 					}
 				}
 			});
-			return $("#"+rdfForGraph+"SPAQRLGraph").val();
+			return $("#"+rdfOrModel+"SPAQRLGraph").val();
 		}
 
-		function getUniqueGraphUri(graphUriTobeValidated, tripleStoreURL, rdfForGraph) {
+		function getUniqueGraphUri(graphUriTobeValidated, tripleStoreURL, rdfOrModel) {
 			var info = generateInfoObject(worksheetId, "", "GetUniqueGraphUrlCommand");
 			info["tripleStoreUrl"] = tripleStoreURL;
 			if (graphUriTobeValidated && graphUriTobeValidated != null) {
 				info["graphUri"] = graphUriTobeValidated;
 			}
-			$('#'+rdfForGraph+'SPAQRLGraph').attr('rel', '');
+			$('#'+rdfOrModel+'SPAQRLGraph').attr('rel', '');
 			var returned = $.ajax({
 				url: "RequestController",
 				type: "POST",
@@ -131,13 +131,13 @@ var PublishHelper = (function() {
 				async: false,
 				complete: function(xhr, textStatus) {
 					var json = $.parseJSON(xhr.responseText);
-					$('#rdfSPAQRLGraph').attr('rel', json.elements[0].graphUri);
+					$('#'+rdfOrModel+'SPAQRLGraph').attr('rel', json.elements[0].graphUri);
 				},
 				error: function(xhr, textStatus) {
 					alert("Error occurred with fetching graphs! " + textStatus);
 				}
 			});
-			return String($('#rdfSPAQRLGraph').attr('rel'));
+			return String($('#'+rdfOrModel+'SPAQRLGraph').attr('rel'));
 		}
 
 		return { //Return back the public methods
