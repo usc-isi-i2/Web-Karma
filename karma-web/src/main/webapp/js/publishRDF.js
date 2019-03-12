@@ -42,14 +42,17 @@ var PublishRDFDialog = (function() {
 				getRDFPreferences();
 				window.rdfSPAQRLEndPoint = $('#txtData_URL').html();
 				helper.getGraphURIForWorksheet('rdf');
-				helper.fetchGraphsFromTripleStore($('#txtData_URL').html(), 'rdf');
+				helper.fetchGraphsFromTripleStore($('#txtData_URL').html(), 'rdf', dialog);
 			});
 
 			//Initialize handler for Save button
 			//var me = this;
 			$('#btnSave', dialog).on('click', function(e) {
 				e.preventDefault();
-				graphURI = helper.validate($('#txtData_URL').html(), 'rdf');
+				graphURI = helper.validate($('#txtData_URL').html(), 'rdf', dialog);
+				if (! graphURI) {
+					return
+				}
 				publishRDFFunction(graphURI);
 			});
 
@@ -147,20 +150,13 @@ var PublishRDFDialog = (function() {
 			$("div.error", dialog).hide();
 		}
 
-		function showError(err) {
-			$("div.error", dialog).show();
-			if (err) {
-				$("div.error", dialog).text(err);
-			}
-		}
-
-
 		function hide() {
 			dialog.modal('hide');
 		}
 
 		function show(wsId) {
 			worksheetId = wsId;
+			helper.show(worksheetId)
 			dialog.modal({
 				keyboard: true,
 				show: true,

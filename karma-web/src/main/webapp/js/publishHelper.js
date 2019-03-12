@@ -2,10 +2,12 @@ var PublishHelper = (function() {
 	var instance = null;
 
 	function PrivateConstructor() {
+		var worksheetId; 
+		
 		function init() {
 			
 		}
-		function fetchGraphsFromTripleStore(url, rdfOrModel) {
+		function fetchGraphsFromTripleStore(url, rdfOrModel, dialog) {
 
 			var info = generateInfoObject("", "", "FetchGraphsFromTripleStoreCommand");
 			info["tripleStoreUrl"] = url;
@@ -38,6 +40,7 @@ var PublishHelper = (function() {
 
 					graphList.unbind('change');
 					graphList.change(function(event) {
+						hideError(dialog);
 						if ($('#'+rdfOrModel+'GraphList').val() == "create_new_context") {
 							$('#'+rdfOrModel+'SPAQRLGraph').val(getUniqueGraphUri(null, url, rdfOrModel));
 							$('#labelFor_'+rdfOrModel+'SPAQRLGraph').show();
@@ -55,7 +58,18 @@ var PublishHelper = (function() {
 			});
 		}
 
-		function validate(url, rdfOrModel) {
+		function hideError(dialog) {
+			$("div.error", dialog).hide();
+		}
+		
+		function showError(dialog, err) {
+			$("div.error", dialog).show();
+			if (err) {
+				$("div.error", dialog).text(err);
+			}
+		}
+		
+		function validate(url, rdfOrModel, dialog) {
 			var expression = /(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/gi;
 			// /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 			var regex = new RegExp(expression);
@@ -85,8 +99,9 @@ var PublishHelper = (function() {
 				}
 				var newUri = getUniqueGraphUri(graphUri, url, rdfOrModel);
 				if (graphUri != newUri) {
-					showError("The context you provided already exists. Please either enter a different context name, " +
+					showError(dialog, "The context you provided already exists. Please either enter a different context name, " +
 						"or select the context from the 'Use existing context' dropdown");
+					return;
 				}
 			}
 			return graphUri
@@ -140,14 +155,20 @@ var PublishHelper = (function() {
 			return String($('#'+rdfOrModel+'SPAQRLGraph').attr('rel'));
 		}
 
+		function show(wsId) {
+			worksheetId = wsId;
+		};
+
 		return { //Return back the public methods
 			fetchGraphsFromTripleStore: fetchGraphsFromTripleStore,
 			init: init,
+			show: show,
 			validate: validate,
 			getGraphURIForWorksheet: getGraphURIForWorksheet
 		};
 	};
 
+	
 	function getInstance() {
 		if (!instance) {
 			instance = new PrivateConstructor();
