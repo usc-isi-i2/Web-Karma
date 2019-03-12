@@ -83,7 +83,7 @@ public class KR2RMLMappingWriter {
 			throws RepositoryException {
 		/** Create resource for the mapping as a blank node **/
 		Resource mappingRes;
-		if(optionalMappingUri != null) {
+		if(optionalMappingUri != null && !optionalMappingUri.trim().isEmpty()) {
 			mappingRes = f.createURI(optionalMappingUri);
 		}
 		else {

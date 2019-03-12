@@ -110,7 +110,7 @@ public class R2RMLAlignmentFileSaver implements IAlignmentSaver, IHistorySaver {
 		// Write the model
 		if (modelFilename != null && !modelFilename.trim().isEmpty())
 			writeModel(workspace, workspace.getOntologyManager(), alignmentMappingGenerator, worksheet, modelFilename, optionalMappingUri);
-		logger.info("Alignment for " + workspaceId + ":" + worksheetId + " saved to file: " + modelFilename + " with optional mapping uir: " + optionalMappingUri);
+		logger.info("Alignment for " + workspaceId + ":" + worksheetId + " saved to file: " + modelFilename + " with optional mapping uri: " + optionalMappingUri);
 		long end3 = System.currentTimeMillis();
 		logger.info("Time to write to file:" + (end3-end2) + "msec");
 	}
