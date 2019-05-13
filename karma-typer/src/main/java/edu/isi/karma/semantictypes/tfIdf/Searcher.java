@@ -38,16 +38,14 @@ public class Searcher {
 	private QueryParser parser = null;
 
 	public Searcher(String filepath, String fieldName) throws IOException {
-		IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(
-				filepath)));
+		File path = new File(filepath);
+		IndexReader reader = DirectoryReader.open(FSDirectory.open(path.toPath()));
 		indexSearcher = new IndexSearcher(reader);
-		analyzer = new StandardAnalyzer(Version.LUCENE_48);
+		analyzer = new StandardAnalyzer();
 		if (fieldName.equalsIgnoreCase(Indexer.LABEL_FIELD_NAME)) {
-			parser = new QueryParser(Version.LUCENE_48,
-					Indexer.LABEL_FIELD_NAME, analyzer);
+			parser = new QueryParser(Indexer.LABEL_FIELD_NAME, analyzer);
 		} else {
-			parser = new QueryParser(Version.LUCENE_48,
-					Indexer.CONTENT_FIELD_NAME, analyzer);
+			parser = new QueryParser(Indexer.CONTENT_FIELD_NAME, analyzer);
 		}
 
 	}

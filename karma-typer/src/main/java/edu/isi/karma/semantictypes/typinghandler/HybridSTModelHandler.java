@@ -290,8 +290,8 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 				// extract distributions for each trained semantic label
 				Map<String, List<Double>> trainingLabelToExamplesMap = new HashMap<>();
 				try {
-					IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(
-							getIndexDirectory(isNumeric))));
+					File path = new File(getIndexDirectory(isNumeric));
+					IndexReader reader = DirectoryReader.open(FSDirectory.open(path.toPath()));
 					try {
 						for (int i=0; i<reader.maxDoc(); i++) {
 						    Document doc = reader.document(i);

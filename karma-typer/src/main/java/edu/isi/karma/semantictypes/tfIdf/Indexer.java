@@ -12,6 +12,8 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
@@ -34,14 +36,14 @@ public class Indexer {
 	private Directory indexDirectory;
 
 	public Indexer(String filepath) throws IOException {
-		indexDirectory = FSDirectory.open(new File(filepath));
+		File path = new File(filepath);
+		indexDirectory = FSDirectory.open(path.toPath());
 	}
 
 	public void open() throws IOException {
 
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_48);
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_48,
-				analyzer);
+		Analyzer analyzer = new StandardAnalyzer();
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
 		// Creates a new index if one does not exist,
 		// otherwise opens the index and documents will be appended
@@ -55,13 +57,7 @@ public class Indexer {
 	}
 	
 	public void close() throws IOException {
-		try {
-			indexWriter.close(false);
-		} finally {
-			if (IndexWriter.isLocked(indexDirectory)) {
-				IndexWriter.unlock(indexDirectory);
-			}
-		}
+		indexWriter.close(); 
 	}
 
 	public void addDocument(String content, String label) throws IOException {
@@ -94,7 +90,7 @@ public class Indexer {
 	}
 
 	public int getNumberOfDocuments() {
-		return indexWriter.numDocs();
+		return indexWriter.getDocStats().numDocs;
 	}
 
 	

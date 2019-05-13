@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="org.apache.tika" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="org.apache.tika"/>
+			<item value="spring-core"/>
+			<item value="spring-core&#x09;"/>
+			<item value="org.springframework"/>
+			<item value="org.apache.spark"/>
+			<item value="2.6"/>
+			<item value="2.6.7.1"/>
+			<item value="fasterxml.jackson"/>
+			<item value="fasterxml.jackson.core"/>
+			<item value="fasterxml"/>
+			<item value="com.fasterxml.jackson.core"/>
+			<item value="solr"/>
+			<item value="lucene"/>
+			<item value="org.apache.lucene"/>
+		</list>
+		<list key="replacehistory">
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="294" key="DIALOG_WIDTH"/>
+		<item value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont" key="DIALOG_FONT_NAME"/>
+		<item value="408" key="DIALOG_HEIGHT"/>
+		<item value="573" key="DIALOG_X_ORIGIN"/>
+		<item value="178" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>
