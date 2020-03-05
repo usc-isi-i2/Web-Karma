@@ -25,7 +25,7 @@
 
 	<properties>
 		<skipTests>true</skipTests>
-    <jettyVersion>9.4.8.v20171121</jettyVersion>
+    <jettyVersion>9.4.27.v20200227</jettyVersion>
     <project.build.sourceEncoding>
       UTF-8
     </project.build.sourceEncoding>
@@ -61,7 +61,7 @@
 	  <apache.oro.version>2.0.8</apache.oro.version>
 	  <apache.opennlp.version>1.5.3</apache.opennlp.version>
 
-	  <log4j.version>1.2.13</log4j.version>
+	  <log4j.version>1.2.17</log4j.version>
 	  <slf4j.version>1.6.0</slf4j.version>
 	  <junit.version>4.11</junit.version>
 
@@ -71,7 +71,7 @@
 	  <gson.version>2.2.2</gson.version>
 	  <httpcomponents.version>4.5.2</httpcomponents.version>
 	  <guava.version>13.0.1</guava.version>
-	  <spring.version>3.2.4.RELEASE</spring.version>
+	  <spring.version>5.2.4.RELEASE</spring.version>
 
   </properties>
 
@@ -87,7 +87,7 @@
 	  <repository>
 		  <id>central</id>
 		  <name>Central Maven Repository</name>
-		  <url>http://repo1.maven.org/maven2/</url>
+		  <url>https://repo1.maven.org/maven2/</url>
 	  </repository>
 
 	  <repository>
@@ -105,7 +105,7 @@
 	  </repository>
       <repository>
         <id>maven2.maven.org</id>
-        <url>http://repo1.maven.org/maven2/</url>
+        <url>https://repo1.maven.org/maven2/</url>
       </repository>
       <repository>
             <id>osgeo</id>
@@ -243,7 +243,7 @@
     <dependency>
     	<groupId>commons-fileupload</groupId>
     	<artifactId>commons-fileupload</artifactId>
-    	<version>1.3.2</version>
+    	<version>1.4</version>
     </dependency>
     <dependency>
     	<groupId>commons-io</groupId>
