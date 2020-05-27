@@ -81,7 +81,7 @@ public class TriplesMapPlanExecutor {
 						}
 						
 					}); 
-				result.get(1, TimeUnit.MINUTES);
+				result.get(10, TimeUnit.MINUTES);
 			}
 			
 		} catch (Exception e) {
