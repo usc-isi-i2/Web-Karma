@@ -69,51 +69,34 @@ public class JSONLDUtilSimple {
 		for(Object rawName : names)
 		{
 			String name = (String) rawName;
+			boolean is_prov_property = provenanceProperties.containsKey(name);
 			if(!left.containsKey(name))
 			{
 				Object rightObj = right.get(name);
 				left.put(name, rightObj);
-				if(rightObj instanceof String)
+				if(rightObj instanceof String && !is_prov_property)
 					rightAdded = true;
 			}
 			else
 			{
 				Object leftObject = left.get(name);
 				Object rightObject = right.get(name);
-				if(leftObject instanceof JSONArray)
-				{
-					if(rightObject instanceof JSONArray)
-					{
-						rightAdded = rightAdded | mergeArrays(left, name, rightAdded, (JSONArray) leftObject, (JSONArray) rightObject, provenanceProperties);
-					}
-					else
-					{
-						JSONArray newRightArray = new JSONArray();
-						newRightArray.add(rightObject);
-						rightAdded = rightAdded | mergeArrays(left, name, rightAdded, (JSONArray) leftObject, newRightArray, provenanceProperties);
-					}
-
-				}
-				else
-				{
-					if(rightObject instanceof JSONArray)
-					{
-						JSONArray newLeftArray = new JSONArray();
-						newLeftArray.add(leftObject);
-						rightAdded = rightAdded | mergeArrays(left, name, rightAdded, newLeftArray, (JSONArray)rightObject, provenanceProperties);
-					}
-					else
-					{
-						JSONArray newLeftArray = new JSONArray();
-						JSONArray newRightArray = new JSONArray();
-						newLeftArray.add(leftObject);
-						newRightArray.add(rightObject);
-						rightAdded = rightAdded | mergeArrays(left, name, rightAdded, newLeftArray, newRightArray, provenanceProperties);
-					}
-				}
+				JSONArray newLeftArray = getJSONArray(leftObject);
+				JSONArray newRightArray = getJSONArray(rightObject);
+				boolean newAdded = mergeArrays(left, name, rightAdded, newLeftArray, newRightArray, provenanceProperties);
+				if(!is_prov_property)
+					rightAdded = rightAdded | newAdded;
 			}
 		}
 		return rightAdded;
+	}
+	
+	protected static JSONArray getJSONArray(Object obj) {
+		if(obj instanceof JSONArray)
+			return (JSONArray)obj;
+		JSONArray arr = new JSONArray();
+		arr.add(obj);
+		return arr;
 	}
 	
 	protected static boolean mergeArrays(JSONObject left, String name, boolean newAdded,

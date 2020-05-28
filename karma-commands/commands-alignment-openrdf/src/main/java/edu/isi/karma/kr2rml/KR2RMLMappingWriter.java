@@ -79,10 +79,16 @@ public class KR2RMLMappingWriter {
 		initializeURIs();
 	}
 
-	private Resource addKR2RMLMappingResource(Worksheet worksheet, KR2RMLMapping mapping)
+	private Resource addKR2RMLMappingResource(Worksheet worksheet, KR2RMLMapping mapping, String optionalMappingUri)
 			throws RepositoryException {
 		/** Create resource for the mapping as a blank node **/
-		Resource mappingRes = f.createBNode();
+		Resource mappingRes;
+		if(optionalMappingUri != null && !optionalMappingUri.trim().isEmpty()) {
+			mappingRes = f.createURI(optionalMappingUri);
+		}
+		else {
+			mappingRes = f.createBNode();
+		}
 		con.add(mappingRes, RDF.TYPE, repoURIs.get(Uris.KM_R2RML_MAPPING_URI));
 		Value srcNameVal = f.createLiteral(worksheet.getTitle());
 		con.add(mappingRes, repoURIs.get(Uris.KM_SOURCE_NAME_URI), srcNameVal);
@@ -135,10 +141,15 @@ public class KR2RMLMappingWriter {
 
 	public boolean addR2RMLMapping(KR2RMLMapping mapping, Worksheet worksheet, Workspace workspace)
 			throws RepositoryException, JSONException {
+		return addR2RMLMapping(mapping, worksheet, workspace, null);
+	}
+	
+	public boolean addR2RMLMapping(KR2RMLMapping mapping, Worksheet worksheet, Workspace workspace, String optionalMappingUri)
+			throws RepositoryException, JSONException {
 
 		try {
 
-			Resource mappingRes = addKR2RMLMappingResource(worksheet, mapping);
+			Resource mappingRes = addKR2RMLMappingResource(worksheet, mapping, optionalMappingUri);
 			addTripleMaps(mapping, mappingRes, worksheet, workspace);
 			addPrefixes(mapping);
 			

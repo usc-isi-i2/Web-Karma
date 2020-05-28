@@ -28,6 +28,7 @@
 		                                <option>Oracle</option>
 		                                <option>PostGIS</option>
 		                                <option>Sybase</option>
+		                                <option>Ingres</option>
 		                            </select>
 								</div>
 							</div>
@@ -123,6 +124,7 @@
 		                                <option>Oracle</option>
 		                                <option>PostGIS</option>
 		                                <option>Sybase</option>
+		                                <option>Ingres</option>
 		                            </select>
 								</div>
 							</div>

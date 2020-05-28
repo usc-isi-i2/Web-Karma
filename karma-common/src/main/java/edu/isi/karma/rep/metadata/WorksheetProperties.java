@@ -49,7 +49,7 @@ public class WorksheetProperties {
 	}
 	
 	public enum SourceTypes {
-		CSV, DB, JSON, XML
+		CSV, DB, JSON, XML, OBJECT
 	}
 	
 	public WorksheetProperties() {

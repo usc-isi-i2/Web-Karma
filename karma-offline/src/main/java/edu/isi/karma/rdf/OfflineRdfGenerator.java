@@ -461,7 +461,7 @@ public class OfflineRdfGenerator {
 		dbType = DBType.valueOf(dbtypeStr);
 		if (dbType == null) {
 			logger.error("Unidentified database type. Valid values: "
-					+ "Oracle, MySQL, SQLServer, PostGIS");
+					+ "Oracle, MySQL, SQLServer, PostGIS, Ingres");
 			return false;
 		}
 		return true;
@@ -629,7 +629,7 @@ public class OfflineRdfGenerator {
 		options.addOption(new Option("modelurl", "modelurl", true, "location of the model"));
 		options.addOption(new Option("sourcename", "sourcename", true, "name of the source in the model to use"));
 		options.addOption(new Option("outputfile", "outputfile", true, "location of the output file"));
-		options.addOption(new Option("dbtype", "dbtype", true, "database type. Valid values: Oracle, MySQL, SQLServer, PostGIS"));
+		options.addOption(new Option("dbtype", "dbtype", true, "database type. Valid values: Oracle, MySQL, SQLServer, PostGIS, Ingres"));
 		options.addOption(new Option("hostname", "hostname", true, "hostname for database connection"));
 		options.addOption(new Option("username", "username", true, "username for database connection"));
 		options.addOption(new Option("password", "password", true, "password for database connection"));

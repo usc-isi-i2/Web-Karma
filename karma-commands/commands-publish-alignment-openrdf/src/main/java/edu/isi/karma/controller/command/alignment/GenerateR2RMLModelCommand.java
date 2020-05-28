@@ -77,6 +77,8 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 
 	private String worksheetName;
 	private String tripleStoreUrl;
+	private String graphUri;
+	private String modelUri;
 	private String RESTserverAddress;
 	private static Logger logger = LoggerFactory.getLogger(GenerateR2RMLModelCommand.class);
 
@@ -88,9 +90,11 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		rdfPrefix, rdfNamespace, modelSparqlEndPoint
 	}
 
-	protected GenerateR2RMLModelCommand(String id, String model, String worksheetId, String url, String selectionId) {
+	protected GenerateR2RMLModelCommand(String id, String model, String worksheetId, String url, String selectionId, String graphUri, String modelUri) {
 		super(id, model, worksheetId, selectionId);
 		this.tripleStoreUrl = url;
+		this.graphUri = graphUri;
+		this.modelUri = modelUri;
 	}
 
 	public String getTripleStoreUrl() {
@@ -337,21 +341,21 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 		try {
 			R2RMLAlignmentFileSaver fileSaver = new R2RMLAlignmentFileSaver(workspace);
 
-			fileSaver.saveAlignment(alignment, modelFileLocalPath);
+			fileSaver.saveAlignment(alignment, null, modelFileLocalPath, false, modelUri);
 
 			// Write the model to the triple store
 
-			// Get the graph name from properties
-			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
-					.getPropertyValue(Property.graphName);
-			if (graphName == null || graphName.isEmpty()) {
-				// Set to default
-				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
-				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
-						Property.graphLabel, worksheet.getTitle());
-				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
-			}
+//			// Get the graph name from properties
+//			String graphName = worksheet.getMetadataContainer().getWorksheetProperties()
+//					.getPropertyValue(Property.graphName);
+//			if (graphName == null || graphName.isEmpty()) {
+//				// Set to default
+//				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+//						Property.graphName, WorksheetProperties.createDefaultGraphName(worksheet.getTitle()));
+//				worksheet.getMetadataContainer().getWorksheetProperties().setPropertyValue(
+//						Property.graphLabel, worksheet.getTitle());
+//				graphName = WorksheetProperties.createDefaultGraphName(worksheet.getTitle());
+//			}
 
 			boolean result = true;//utilObj.saveToStore(modelFileLocalPath, tripleStoreUrl, graphName, true, null);
 			if (tripleStoreUrl != null && tripleStoreUrl.trim().compareTo("") != 0) {
@@ -359,11 +363,11 @@ public class GenerateR2RMLModelCommand extends WorksheetSelectionCommand {
 					UriBuilder builder = UriBuilder.fromPath(modelFileName);
 					String url = RESTserverAddress + "/R2RMLMapping/local/" + builder.build().toString();
 					SaveR2RMLModelCommandFactory factory = new SaveR2RMLModelCommandFactory();
-					SaveR2RMLModelCommand cmd = factory.createCommand(model, workspace, url, tripleStoreUrl, graphName, "URL");
+					SaveR2RMLModelCommand cmd = factory.createCommand(model, workspace, url, tripleStoreUrl, graphUri, "URL");
 					cmd.doIt(workspace);
 					result &= cmd.getSuccessful();
 					workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelUrl, url);
-					workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, graphName);
+					workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelContext, graphUri);
 					workspace.getWorksheet(worksheetId).getMetadataContainer().getWorksheetProperties().setPropertyValue(Property.modelRepository, tripleStoreUrl);
 				} catch(Exception e) {
 					logger.error("Error pushing model to triple store", e);

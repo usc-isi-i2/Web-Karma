@@ -134,8 +134,8 @@ a.icon-remove:hover {
 				  </div>
 				  <div class="modal-body">
 					<div class="form-group">
-							<label for="modelGraphList">RDF Graphs</label>
-							<select id="modelGraphList">
+							<label for="rdfGraphList">RDF Graphs</label>
+							<select id="rdfGraphList">
 		                	</select>
 					</div>
 					<div class="form-group">
@@ -144,13 +144,13 @@ a.icon-remove:hover {
 					</div>	
 					<div class="radio">
 						<label>
-				    		<input type="radio" id="graphReplace_1" name="group1"  value="replace">
+				    		<input type="radio" id="rdfGraphReplace_1" name="group1"  value="replace">
 				    		Replace Existing Data
 			  			</label>
 			  		</div>
 			  		<div class="radio">
 			  			<label>
-				    		<input type="radio" id="graphReplace_2" name="group1" checked value="append">
+				    		<input type="radio" id="rdfGraphReplace_2" name="group1" checked value="append">
 				    		Append
 			  			</label>
 					</div>	
@@ -210,6 +210,53 @@ a.icon-remove:hover {
 						</div>
         			</div>
         			
+					<div class="error" style="display: none">Please enter all values</div>
+				  </div> <!-- /.modal-body -->
+				  <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-primary" id="btnSave">Publish</button>
+				  </div> <!-- /.modal-footer -->
+			</div><!-- /.modal-content -->
+		</form>
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="publishModelDialog" tabindex="-1">
+  <div class="modal-dialog">
+  		<form class="bs-example bs-example-form" role="form">
+			<div class="modal-content">
+			     <div class="modal-header">
+				      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				       <h4 class="modal-title">Publish Model</h4>
+				  </div>
+				  <div class="modal-body">
+					<div class="form-group">
+							<label for="modelGraphList">RDF Graphs</label>
+							<select id="modelGraphList">
+		                	</select>
+					</div>
+					<div class="form-group">
+						<label id="labelFor_modelSPAQRLGraph" for="modelSPAQRLGraph">Create New Graph</label>
+						<input class="form-control" type="text" id="modelSPAQRLGraph" required value="" maxlength="100">
+					</div>	
+					<div class="radio">
+						<label>
+				    		<input type="radio" id="modelGraphReplace_1" name="group1"  value="replace">
+				    		Replace Existing Data
+			  			</label>
+			  		</div>
+			  		<div class="radio">
+			  			<label>
+				    		<input type="radio" id="modelGraphReplace_2" name="group1" checked value="append">
+				    		Append
+			  			</label>
+					</div>	
+					
+					<div class="form-group">
+						<label id="labelFor_modelURI" for="modelURI">Model URI (Optional)</label>
+						<input class="form-control" type="text" id="modelURI" required value="" maxlength="100">
+					</div>	
+
 					<div class="error" style="display: none">Please enter all values</div>
 				  </div> <!-- /.modal-body -->
 				  <div class="modal-footer">

@@ -1,97 +1,129 @@
-[ 
-	{
-		menus: [
-			{
-				document-type: "Menu",
-				language: "English",
-				webpage: "http://www.mcbronalds.com/menu",
-				version: "1.2",
-				restaurant: {
-					name: "McBronald's",
-					location: {
-						lat: "37.1",
-						lon: "-115.3"
-					},
-					url: "http://www.mcbronalds.com",
-					employee: {
-						class : "http://ex.com/employee",
-						title : "mister",
-						id : "22",
-						prefixes : ["http://ex.com/", "http://ex.biz/"],
-						aliases : [
-							{
-							first : "John",
-							last : "Smith"
-							},
-							{
-							first : "Bob",
-							last : "Brown"
-							}
-						]
-					}
-				},
-				size-info: {
-					url: "http://ex.com/menu/drinks/size",
-					description: "Size of drinks",
-					sizes: ["small", "medium", "large"]
-				},
-				drink-info: {
-					url: "http://ex.com/menu/drinks",
-					description: "Drinks",
-					drinks: ["shake", "tea", "juice", "soda"]
-				},
-				type-info: {
-					url: "http://ex.com/menu/drinks/type",
-					description: "Types of drinks",
-					types: ["diet", "regular", "caffiene-free"]
-				}
-			},
-			{
-				document-type: "Menu",
-				language: "Italian",
-				webpage: "http://www.caffe.it/menu",
-				version: "1.1",
-				restaurant: {
-					name: "caffe ristorante",
-					location: {
-						lat: "38.1",
-						lon: "-116.3"
-					},
-					url: "http://www.caffe.it",
-					employee: {
-						class : "http://ex.it/proprietario",
-						title : "signora",
-						id : "1",
-						prefixes : ["http://ex.it/", "http://ex.fr/"],
-						aliases : [{
-							first : "Ada",
-							last : "Berlusconi"
-						},
-						{
-							first : "Maria",
-							last : "Marietta"
-						}
-						]
-					}
-				},
-				size-info: {
-					url: "http://ex.com/menu/drinks/size",
-					description: "Size of drinks",
-					sizes: ["venti", "grande", "trenti"]
-				}
-				,
-				drink-info: {
-					url: "http://ex.com/menu/drinks",
-					description: "Drinks",
-					drinks: ["caffe", "te", "latte", "espresso"]
-				},
-				type-info: {
-					url: "http://ex.com/menu/drinks/type",
-					description: "Types of drinks",
-					types: ["soia", "forte", "con ghiaccio"]
-				}
-			}
-		],
-		webpage: "http://www.onlinefoodmenus.com"
-	}
+[
+  {
+    "menus": [
+      {
+        "document-type": "Menu",
+        "language": "English",
+        "webpage": "http://www.mcbronalds.com/menu",
+        "version": "1.2",
+        "restaurant": {
+          "name": "McBronald's",
+          "location": {
+            "lat": "37.1",
+            "lon": "-115.3"
+          },
+          "url": "http://www.mcbronalds.com",
+          "employee": {
+            "class": "http://ex.com/employee",
+            "title": "mister",
+            "id": "22",
+            "prefixes": [
+              "http://ex.com/",
+              "http://ex.biz/"
+            ],
+            "aliases": [
+              {
+                "first": "John",
+                "last": "Smith"
+              },
+              {
+                "first": "Bob",
+                "last": "Brown"
+              }
+            ]
+          }
+        },
+        "size-info": {
+          "url": "http://ex.com/menu/drinks/size",
+          "description": "Size of drinks",
+          "sizes": [
+            "small",
+            "medium",
+            "large"
+          ]
+        },
+        "drink-info": {
+          "url": "http://ex.com/menu/drinks",
+          "description": "Drinks",
+          "drinks": [
+            "shake",
+            "tea",
+            "juice",
+            "soda"
+          ]
+        },
+        "type-info": {
+          "url": "http://ex.com/menu/drinks/type",
+          "description": "Types of drinks",
+          "types": [
+            "diet",
+            "regular",
+            "caffiene-free"
+          ]
+        }
+      },
+      {
+        "document-type": "Menu",
+        "language": "Italian",
+        "webpage": "http://www.caffe.it/menu",
+        "version": "1.1",
+        "restaurant": {
+          "name": "caffe ristorante",
+          "location": {
+            "lat": "38.1",
+            "lon": "-116.3"
+          },
+          "url": "http://www.caffe.it",
+          "employee": {
+            "class": "http://ex.it/proprietario",
+            "title": "signora",
+            "id": "1",
+            "prefixes": [
+              "http://ex.it/",
+              "http://ex.fr/"
+            ],
+            "aliases": [
+              {
+                "first": "Ada",
+                "last": "Berlusconi"
+              },
+              {
+                "first": "Maria",
+                "last": "Marietta"
+              }
+            ]
+          }
+        },
+        "size-info": {
+          "url": "http://ex.com/menu/drinks/size",
+          "description": "Size of drinks",
+          "sizes": [
+            "venti",
+            "grande",
+            "trenti"
+          ]
+        },
+        "drink-info": {
+          "url": "http://ex.com/menu/drinks",
+          "description": "Drinks",
+          "drinks": [
+            "caffe",
+            "te",
+            "latte",
+            "espresso"
+          ]
+        },
+        "type-info": {
+          "url": "http://ex.com/menu/drinks/type",
+          "description": "Types of drinks",
+          "types": [
+            "soia",
+            "forte",
+            "con ghiaccio"
+          ]
+        }
+      }
+    ],
+    "webpage": "http://www.onlinefoodmenus.com"
+  }
 ]

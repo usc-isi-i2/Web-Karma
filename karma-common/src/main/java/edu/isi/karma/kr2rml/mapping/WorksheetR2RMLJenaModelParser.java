@@ -321,6 +321,7 @@ public class WorksheetR2RMLJenaModelParser {
 		Property rdfTypeProp = model.getProperty(Uris.RDF_TYPE_URI);
 		Property templateProp = model.getProperty(Uris.RR_TEMPLATE_URI);
 		Property constantProp = model.getProperty(Uris.RR_CONSTANT);
+		Property languageProp = model.getProperty(Uris.RR_LANGUAGE_URI);
 		KR2RMLColumnNameFormatter formatter = kr2rmlMapping.getColumnNameFormatter();
 		TriplesMap trMap = kr2rmlMapping.getTriplesMapIndex().get(trMapRes.getURI());
 		if (trMap == null) {
@@ -376,7 +377,7 @@ public class WorksheetR2RMLJenaModelParser {
 						kr2rmlMapping.getAuxInfo().getTriplesMapGraph().addLink(link);
 					}
 				} else {
-					NodeIterator objMapColStmts = model.listObjectsOfProperty(objNode, columnProp);
+					
 					// RDF Literal Type
 					Statement objMapRdfLiteralTypeStmt = model.getProperty(objNode, rdfLiteralTypeProp);
 					TemplateTermSet rdfLiteralTypeTermSet = null;
@@ -386,11 +387,22 @@ public class WorksheetR2RMLJenaModelParser {
 						rdfLiteralTypeTermSet = new TemplateTermSet();
 						rdfLiteralTypeTermSet.addTemplateTermToSet(rdfLiteralTypeTerm);
 					}
+					NodeIterator objMapColLanguageStmts = model.listObjectsOfProperty(objNode, languageProp);
+					TemplateTermSet objMapLangTermSet = null;
+					while (objMapColLanguageStmts.hasNext()) {
+						RDFNode languageNode = objMapColLanguageStmts.next();
+						StringTemplateTerm languageTerm = 
+								new StringTemplateTerm(languageNode.toString());
+						objMapLangTermSet = new TemplateTermSet();
+						objMapLangTermSet.addTemplateTermToSet(languageTerm);
+						
+					}					
+					NodeIterator objMapColStmts = model.listObjectsOfProperty(objNode, columnProp);
 					while (objMapColStmts.hasNext()) {
 						RDFNode colNode = objMapColStmts.next(); 
 						objMap = new ObjectMap(getNewObjectMapId(objectMapCounter++), 
 								TemplateTermSetBuilder.constructTemplateTermSetFromR2rmlColumnString(
-										colNode.toString(), formatter), rdfLiteralTypeTermSet);
+										colNode.toString(), formatter), rdfLiteralTypeTermSet, objMapLangTermSet);
 					}
 					if(objMap == null)
 					{
@@ -409,7 +421,7 @@ public class WorksheetR2RMLJenaModelParser {
 						
 						}
 						objMap = new ObjectMap(getNewObjectMapId(objectMapCounter++), 
-								objTemplTermSet, rdfLiteralTypeTermSet);
+								objTemplTermSet, rdfLiteralTypeTermSet, objMapLangTermSet);
 					}
 					// Check if anything needs to be added to the columnNameToPredicateObjectMap Map
 					if(objMap != null)
