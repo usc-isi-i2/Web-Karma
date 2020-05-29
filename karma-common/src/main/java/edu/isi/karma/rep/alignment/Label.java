@@ -31,6 +31,7 @@ public class Label implements Serializable {
 	private String uri;
 	private String ns;
 	private String prefix;
+	private String rdfsType;
 	private String rdfsLabel;
 	private String rdfsComment;
 	
@@ -42,6 +43,17 @@ public class Label implements Serializable {
 		this.rdfsComment = rdfsComment;
 	}
 	
+	public Label(String uri, String ns, String prefix, String rdfsLabel, String rdfsComment, String rdfsType){
+
+		this.uri = uri;
+		this.ns = ns;
+		this.rdfsType = rdfsType;
+		this.prefix = prefix;
+		this.rdfsLabel = rdfsLabel;
+		this.rdfsComment = rdfsComment;
+
+	}
+
 	public Label(String uri, String ns, String prefix) {
 		this.init();
 		this.uri = uri;
@@ -61,6 +73,7 @@ public class Label implements Serializable {
 			this.uri = uri.getUri();
 			this.ns = uri.getNs();
 			this.prefix = uri.getPrefix();
+			this.rdfsType = uri.getRdfsType();
 			this.rdfsLabel = uri.getRdfsLabel();
 			this.rdfsComment = uri.getRdfsComment();
 		}
@@ -72,6 +85,7 @@ public class Label implements Serializable {
 		this.prefix = null;
 		this.rdfsLabel = null;
 		this.rdfsComment = null;
+		this.rdfsType = null;
 	}
 	
 	public void setUri(String uri) {
@@ -99,7 +113,15 @@ public class Label implements Serializable {
 	public String getUri() {
 		return uri;
 	}
+	
+	public void setRdfsType(String rdfsType){
+		this.rdfsType = rdfsType;
+	}
 
+	public void getRdfsType(){
+		return rdfsType;
+
+	}
 	public String getNs() {
 		if (ns == null || ns.trim().length() == 0)
 			return null;		
