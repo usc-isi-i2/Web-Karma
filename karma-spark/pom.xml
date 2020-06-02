@@ -116,8 +116,8 @@
 		</dependency>
 		<dependency>
 		    <groupId>com.holdenkarau</groupId>
-		    <artifactId>spark-testing-base_2.10</artifactId>
-		    <version>1.5.0_0.3.3</version>
+		    <artifactId>spark-testing-base_2.11</artifactId>
+		    <version>2.4.5_0.14.0</version>
 		    <scope>test</scope>
 		</dependency>
     </dependencies>
@@ -162,8 +162,8 @@
 		        </property>
 			</activation>
 			<properties>
-        		<spark.version>1.5.0-cdh5.5.0</spark.version>
-        		<spark.scala.version>_2.10</spark.scala.version>
+        		<spark.version>2.4.5</spark.version>
+        		<spark.scala.version>_2.11</spark.scala.version>
     		</properties>
     		<dependencies>
 		        <dependency>
@@ -183,8 +183,8 @@
 		        </property>
     		</activation>
     		<properties>
-        		<spark.version>1.5.0</spark.version>
-        		<spark.scala.version>_2.10</spark.scala.version>
+        		<spark.version>2.4.5</spark.version>
+        		<spark.scala.version>_2.11</spark.scala.version>
     		</properties>
     		<dependencies>
 		        <dependency>
@@ -204,8 +204,8 @@
 		        </property>
     		</activation>
     		<properties>
-        		<spark.version>1.5.0</spark.version>
-        		<spark.scala.version>_2.10</spark.scala.version>
+        		<spark.version>2.4.5</spark.version>
+        		<spark.scala.version>_2.11</spark.scala.version>
     		</properties>
     		<dependencies>
 		        <dependency>
@@ -225,8 +225,8 @@
 		        </property>
     		</activation>
     		<properties>
-        		<spark.version>1.6.0-cdh5.10.1</spark.version>
-        		<spark.scala.version>_2.10</spark.scala.version>
+        		<spark.version>2.4.5</spark.version>
+        		<spark.scala.version>_2.11</spark.scala.version>
     		</properties>
     		<dependencies>
 		        <dependency>
@@ -247,7 +247,7 @@
 		        </property>
     		</activation>
     		<properties>
-        		<spark.version>2.3.0.cloudera3</spark.version>
+        		<spark.version>2.4.5</spark.version>
         		<spark.scala.version>_2.11</spark.scala.version>
     		</properties>
     		<dependencies>
