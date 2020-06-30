@@ -10,6 +10,7 @@
 # 6. Navigates to the electron app folder and copies the tomcat folder to app/app directory.
 # 7. Runs the release script there to build karma app for linux, windows and mac.
 ########################################
+set -e
 
 CURRENT=`pwd`
 rm -rf ./target
@@ -18,6 +19,8 @@ mkdir target
 cd ..
 mvn clean install -Dmaven.test.skip=true
 cd karma-web/
+
+set +e
 rm src/main/webapp/publish/CSV/*.csv
 rm src/main/webapp/publish/AVRO/*.avro
 rm src/main/webapp/publish/JSON/*.json
@@ -29,6 +32,7 @@ rm src/main/webapp/publish/RDF/*.rdf
 rm src/main/webapp/publish/RDF/*.ttl
 rm src/main/webapp/publish/RDF/*.txt
 rm src/main/webapp/publish/REPORT/*.md
+set -e
 
 mvn package -Pshaded
 cp target/karma-web*.war $CURRENT/target/ROOT.war
@@ -45,9 +49,9 @@ mv karma-app-deps-master/*.tar.gz .
 rm -rf karma-app-deps-master master.zip
 
 # download tomcat binary
-wget http://apache.cs.utah.edu/tomcat/tomcat-8/v8.5.29/bin/apache-tomcat-8.5.29.zip
-unzip apache-tomcat-8.5.29.zip
-rm apache-tomcat-8.5.29.zip
+wget http://mirror.cc.columbia.edu/pub/software/apache/tomcat/tomcat-8/v8.5.30/bin/apache-tomcat-8.5.30.zip
+unzip apache-tomcat-*.zip
+rm apache-tomcat-*.zip
 
 mv apache-tomcat* tomcat
 rm -rf tomcat/webapps/*
@@ -84,11 +88,14 @@ rm -rf jre*
 cp -rf Karma-darwin* $CURRENT/target/Karma-Mac
 cp -rf Karma-linux* $CURRENT/target/Karma-Linux
 cp -rf Karma-win* $CURRENT/target/Karma-Windows
+
+set +e
 rm -rf Karma-*
 
 cd $CURRENT/target
 rm *.tar.gz
 
+set -e
 #put our license
 for build_folder in `ls |grep Karma`
 do
