@@ -10,8 +10,10 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import edu.isi.karma.mapreduce.inputformat.CSVBatchTextInputFormat;
 
@@ -41,7 +43,8 @@ public class JSONCSVProcessor extends KarmaProcessor {
 	}
 
 	public static void main(String[] args) throws Exception {
-		Logger.getRootLogger().setLevel(Level.INFO);
+		LogManager.getRootLogger();
+        Configurator.setRootLevel(Level.INFO);
 		long start = System.currentTimeMillis();
 		int status = ToolRunner.run(new Configuration(), new JSONCSVProcessor(), args);
 		System.out.println((System.currentTimeMillis() - start) + " msec");

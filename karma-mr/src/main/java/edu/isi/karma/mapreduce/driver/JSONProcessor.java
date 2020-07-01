@@ -11,8 +11,11 @@ import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.ToolRunner;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.config.Configurator;
+
 
 public class JSONProcessor extends KarmaProcessor {
 
@@ -41,7 +44,8 @@ public class JSONProcessor extends KarmaProcessor {
 
 
 	public static void main(String[] args) throws Exception {
-		Logger.getRootLogger().setLevel(Level.ERROR);
+		LogManager.getRootLogger();
+        Configurator.setRootLevel(Level.ERROR);
 		long start = System.currentTimeMillis();
 		int status = ToolRunner.run(new Configuration(), new JSONProcessor(), args);
 		System.out.println((System.currentTimeMillis() - start) + " msec");
