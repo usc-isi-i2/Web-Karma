@@ -5,7 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,7 +19,7 @@ public class HistoryJSONEditor {
 	private JSONArray historyJSON;
 	private Workspace workspace;
 	private String worksheetId;
-	static Logger logger = Logger.getLogger(HistoryJSONEditor.class);
+	static Logger logger = LogManager.getLogger(HistoryJSONEditor.class.getName());
 	public HistoryJSONEditor(JSONArray historyJSON, Workspace workspace, String worksheetId) {
 		this.worksheetId = worksheetId;
 		this.workspace = workspace;
