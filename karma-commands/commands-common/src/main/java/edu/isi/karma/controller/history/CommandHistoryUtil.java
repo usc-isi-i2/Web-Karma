@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.json.JSONArray;
 
 import edu.isi.karma.controller.command.Command;
@@ -36,7 +37,7 @@ public class CommandHistoryUtil {
 	private Workspace workspace;
 	private String worksheetId;
 	Map<String, CommandFactory> commandFactoryMap;
-	static Logger logger = Logger.getLogger(CommandHistoryUtil.class);
+	static Logger logger = LogManager.getLogger(CommandHistoryUtil.class.getName());
 
 	public CommandHistoryUtil(List<Command> commands, Workspace workspace, String worksheetId) {
 		this.worksheetId = worksheetId;
