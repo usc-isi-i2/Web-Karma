@@ -190,8 +190,14 @@ and related projects, please see: http://www.isi.edu/integration
 								<li><a href="#" id="displayRDFSLabel_idFirst"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Name or ID First</a></li>
 		                  	</ul>
 		                  </li>
-		                  <li><a href="#" id="r2rmlExportSuperclass"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;Export Superclass</a>
+		                  <li><a href="#" id="r2rmlExportSuperclass"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>Export Superclass</a>
 		                  </li>
+						  <%--<li class="dropdown-submenu"><a href="#" id="generateLiteralTypes">Automatically Generate Literal Types</a>--%>
+							  <%--<ul class="dropdown-menu">--%>
+								  <%--<li><a href="#" id="generateLiteralTypes_true"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;on</a></li>--%>
+								  <%--<li><a href="#" id="generateLiteralTypes_false"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span>&nbsp;off</a></li>--%>
+							  <%--</ul>--%>
+						  <%--</li>--%>
 		              </ul>
 		            </li>
 

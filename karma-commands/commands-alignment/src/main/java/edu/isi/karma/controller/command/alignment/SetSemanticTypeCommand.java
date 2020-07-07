@@ -21,6 +21,7 @@
 package edu.isi.karma.controller.command.alignment;
 
 import java.util.*;
+import java.lang.System;
 
 import org.jgrapht.graph.DirectedWeightedMultigraph;
 import org.json.JSONArray;
@@ -86,6 +87,8 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		this.language = language;
 		this.hasProvenanceType = false;
 		addTag(CommandTag.SemanticType);
+
+//		System.out.println("types array" + this.typesArr.toString());
 	}
 
 	@Override
@@ -172,6 +175,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 			}
 		}
 		this.typesArr = newTypesArr;
+//		System.out.println("types array 2" + this.typesArr.toString());
 		
 		/*** Preprocess provenance types ***/
 		JSONArray provTypes = new JSONArray();
@@ -217,6 +221,9 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 		JSONArray inputParams = new JSONArray(this.getInputParameterJson());
 		HistoryJsonUtil.setArgumentValue(Arguments.SemanticTypesArray.name(), typesArr, inputParams);
 		this.setInputParameterJson(inputParams.toString());
+
+
+//		System.out.println("input params" + inputParams.toString());
 		
 		/*** Add the appropriate nodes and links in alignment graph ***/
 		ArrayList<SemanticType> typesList = new ArrayList<>();
@@ -259,6 +266,10 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				boolean isProvenance = false;
 				if(type.has(ClientJsonKeys.isProvenance.name()))
 					isProvenance = type.getBoolean(ClientJsonKeys.isProvenance.name());
+
+				boolean isPrimary = false;
+				if(type.has(ClientJsonKeys.isPrimary.name()))
+					isPrimary = type.getBoolean(ClientJsonKeys.isPrimary.name());
 				
 				Node source = alignment.getNodeById(sourceId);
 				if (source == null) {
@@ -284,7 +295,7 @@ public class SetSemanticTypeCommand extends WorksheetSelectionCommand {
 				}
 				newLink = alignment.addDataPropertyLink(source, columnNode, linkLabel, isProvenance);
 				SemanticType newType = new SemanticType(hNodeId, linkLabel, source.getLabel(), source.getId(),
-											isProvenance,
+											isProvenance, isPrimary,
 											SemanticType.Origin.User, 1.0);
 				
 				List<SemanticType> userSemanticTypes = columnNode.getUserSemanticTypes();

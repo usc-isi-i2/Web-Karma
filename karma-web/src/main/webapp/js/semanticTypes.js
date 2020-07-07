@@ -63,13 +63,14 @@ var SetSemanticTypeDialog = (function() {
 				propertyList = null;
 				loadTree = true;
 
+
 				hideError();
 
 				$("#semanticType_columnName", dialog).text(columnTitle);
 
 				$("table#semanticTypesTable tr.semTypeRow", dialog).remove();
 				$("table#semanticTypesTable tr.editRow", dialog).remove();
-				$("#literalTypeSelect").val("");
+				// $("#literalTypeSelect").val("");
 				$("#languageSelect").val("");
 
 				dialog.removeData("selectedPrimaryRow");
@@ -84,6 +85,7 @@ var SetSemanticTypeDialog = (function() {
 				var typeJsonObject = $(tdTag).data("typesJsonObject");
 				if (typeJsonObject) {
 					existingTypes = typeJsonObject["SemanticTypesArray"];
+					console.log("existingTypes", existingTypes);
 				} else {
 					existingTypes = [];
 				}
@@ -95,6 +97,8 @@ var SetSemanticTypeDialog = (function() {
 				var suggestedTypes = getSuggestedTypes();
 				
 				var addSemTypeOrAdvOption = function(type, isPrimary, isProvenance, isSelected, isCrfModelSuggested) {
+					// console.log("addSemTypeOrAdvOption", type);
+
 					if (type["DisplayLabel"] == "km-dev:classLink") {
 						addUriSemanticType(type["DisplayDomainLabel"], type["DomainRDFSLabel"], type["DomainUri"], type["DomainId"], 
 								isPrimary, isProvenance, isSelected, isCrfModelSuggested);
@@ -115,11 +119,13 @@ var SetSemanticTypeDialog = (function() {
 				
 				// Populate the table with existing types and CRF suggested types
 				$.each(existingTypes, function(index, type) {
+					// console.log("type in existingTypes", type);
 					// Take care of the special meta properties that are set through the advanced options
 					addSemTypeOrAdvOption(type, type["isPrimary"], type["isProvenance"], true, false);
 				});
 				if (suggestedTypes) {
 					$.each(suggestedTypes["Labels"], function(index, type) {
+                        // console.log("type in suggestedTypes", type);
 						if(type["DisplayLabel"] == "km-dev:columnSubClassOfLink" ||
 								type["DisplayLabel"] == "km-dev:dataPropertyOfColumnLink" ||
 								type["DisplayLabel"] == "km-dev:objectPropertySpecialization") {
@@ -234,6 +240,8 @@ var SetSemanticTypeDialog = (function() {
 				var fullType = $(row).data("FullType");
 				var domainUri = $(row).data("DomainUri");
 				var domainId = $(row).data("DomainId");
+				console.log("literalType of this row", $(row).data("literalType"));
+
 
 				// Check if the user selected a fake semantic type object
 				if (domainUri == "fakeDomainURI" || fullType == "fakePropertyURI") {
@@ -259,9 +267,11 @@ var SetSemanticTypeDialog = (function() {
 				newType["DomainUri"] = domainUri;
 				newType["DomainId"] = domainId;
 				newType["DomainLabel"] = $(row).data("DisplayDomainLabel");
+                // newType["literaltype"] = "test";
 
 				// Check if it was chosen primary
-				newType["isPrimary"] = $("input[name='isPrimaryGroup']:radio", $(row)).is(":checked");
+                console.log("isPrimary",$("input[name='isPrimaryGroup']:radio", row).prop("checked"));
+				newType["isPrimary"] = $("input[name='isPrimaryGroup']:radio", row).prop("checked");
 				newType["isProvenance"] = $("input[name='isProvenanceGroup']:checkbox", $(row)).is(":checked");
 				existingTypes.push(newType);
 			});
@@ -288,6 +298,7 @@ var SetSemanticTypeDialog = (function() {
 
 			// Check if any meta property (advanced options) was selected
 			var semTypesArray = getCurrentSelectedTypes();
+			console.log("semTypesArray", semTypesArray);
 			if ($("#isSubclassOfClass").prop("checked") || $("#isSpecializationForEdge").prop("checked") ||
 				(semTypesArray != null && semTypesArray.length == 1 && semTypesArray[0]["FullType"] == "http://isi.edu/integration/karma/dev#classLink")) {
 				info["command"] = "SetMetaPropertyCommand";
@@ -361,7 +372,7 @@ var SetSemanticTypeDialog = (function() {
 			newInfo.push(getParamObject("language", $("#languageSelect").val(), "other"));
 			info["newInfo"] = JSON.stringify(newInfo);
 
-			console.log(info);
+			console.log("info", info);
 			showLoading(info["worksheetId"]);
 			var returned = $.ajax({
 				url: "RequestController",
@@ -462,6 +473,16 @@ var SetSemanticTypeDialog = (function() {
 			if(semTypeObject["isProvenance"]) {
 				isProvenance = semTypeObject["isProvenance"];
 			}
+            var dataPropertyList = getAllDataProperties(worksheetId);
+			var literalType = "";
+			// //add literal type to each row
+            $.each(dataPropertyList, function(index, prop) {
+            	if(prop.label == semTypeObject["DisplayLabel"]){
+            		// console.log("prop.label", prop.label);
+                    literalType = prop.literaltype;
+                    return;
+                }
+            });
 
 			var trTag = $("<tr>").addClass("semTypeRow")
 				.data("FullType", semTypeObject["FullType"])
@@ -471,6 +492,7 @@ var SetSemanticTypeDialog = (function() {
 				.data("DisplayDomainLabel", semTypeObject["DisplayDomainLabel"])
 				.data("DisplayLabel", semTypeObject["DisplayLabel"])
 				.data("DisplayRDFSLabel",semTypeObject["DisplayRDFSLabel"])
+                .data("literalType",literalType)
 				.append($("<td>").append($("<input>")
 					.attr("type", "checkbox")
 					.attr("name", "currentSemanticTypeCheckBoxGroup")
@@ -484,6 +506,7 @@ var SetSemanticTypeDialog = (function() {
 					.attr("type", "radio")
 					.attr("name", "isPrimaryGroup")
 					.attr("value", semTypeObject["DisplayLabel"])
+                    .change(semanticTypesTableRadioHandler)
 					.val(semTypeObject["DisplayLabel"])))
 				.append($("<td>").append($("<input>")
 					.attr("type", "checkbox")
@@ -505,9 +528,10 @@ var SetSemanticTypeDialog = (function() {
 				trTag.addClass("selected");
 
 			if (semTypeObject["isPrimary"]) {
+				console.log("is P and the literalType is", trTag.data("literalType"));
 				$("input[name='isPrimaryGroup']:radio", trTag).prop('checked', true);
 				selectedPrimaryRow = trTag;
-				$("#literalTypeSelect").val(semTypeObject["rdfLiteralType"]);
+				$("#literalTypeSelect").val(trTag.data("literalType"));
 				$("#languageSelect").val(semTypeObject["language"]);
 			}
 
@@ -527,17 +551,22 @@ var SetSemanticTypeDialog = (function() {
 
 			// Deselect any meta property checkbox
 			$("div#semanticTypesAdvacedOptionsDiv input:checkbox").prop('checked', false);
-
 			// If it was checked
 			if ($(this).is(':checked')) {
+                console.log("checked", parentTr);
 				//if(parentTr.data("DisplayLabel") == "km-dev:classLink"){
 				var rows = $("tr.selected", table);
+
 				for (var i = 0; i < rows.length; i++) {
 					var row = rows[i];
+                    console.log("row", row);
 					if ($(row).data("DisplayLabel") == "km-dev:classLink" || parentTr.data("DisplayLabel") == "km-dev:classLink") {
 						$("input[name='currentSemanticTypeCheckBoxGroup']:checkbox", row).prop('checked', false);
-						$("input[name='isPrimaryGroup']:radio", row).prop('checked', false);
-						$(row).removeClass("selected");
+                        if ($("input[name='isPrimaryGroup']:radio", row).is(':checked')) {
+                            $("input[name='isPrimaryGroup']:radio", row).prop('checked', false);
+                            $(row).removeClass("selected");
+                        }
+
 					}
 
 				}
@@ -545,29 +574,40 @@ var SetSemanticTypeDialog = (function() {
 				//}
 				parentTr.addClass("selected");
 				var numRows = $("tr.selected", table).length;
-				if (numRows == 1)
-					$("input[name='isPrimaryGroup']:radio", parentTr).prop('checked', true);
+				if (numRows == 1){
+                    $("input[name='isPrimaryGroup']:radio", parentTr).prop('checked', true);
+                    $("#literalTypeSelect").val(parentTr.data("literalType"));
+				}
+
 			}
 			// If it was unchecked
 			else {
 				parentTr.removeClass("selected");
-				// If the row was marked as primary, make some other selected row as primary
+				console.log("unchecked", parentTr);
+				// If the row was marked as primary,
 				if ($("input[name='isPrimaryGroup']:radio", parentTr).is(':checked')) {
-					if ($("tr.selected", table).length == 0)
-						$("input[name='isPrimaryGroup']:radio", parentTr).prop('checked', false);
-					else {
-						$.each($("tr.selected", table), function(index, row) {
-							if (index == 0) {
-								$("input[name='isPrimaryGroup']:radio", row).prop('checked', true);
-								return false;
-							}
-						});
-					}
+					$("input[name='isPrimaryGroup']:radio", parentTr).prop('checked', false);
+					$("#literalTypeSelect").val("");
 				}
 			}
 		}
 
-		function getClasses() {
+        function semanticTypesTableRadioHandler(){
+            console.log("semanticTypesTableRadioHandler");
+
+            var parentTr = $(this).parents("tr");
+
+            // If it was checked
+            if ($(this).is(':checked')) {
+                $("#literalTypeSelect").val(parentTr.data("literalType"));
+                $("input[name='isPrimaryGroup']:radio", parentTr).prop('checked', true);
+            }else{
+                $("input[name='isPrimaryGroup']:radio", parentTr).prop('checked', false);
+			}
+
+		}
+
+        function getClasses() {
 			if (classList == null) {
 				classList = getAllClasses(worksheetId);
 
@@ -603,7 +643,7 @@ var SetSemanticTypeDialog = (function() {
 
 			var result = [];
 			$.each(propertyList, function(index, prop) {
-				result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
+				result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.literaltype));
 			});
 			return result;
 		}
@@ -618,7 +658,7 @@ var SetSemanticTypeDialog = (function() {
 			var props = getAllPropertiesForClass(worksheetId, thisClass.uri);
 			var result = [];
 			$.each(props, function(index, prop) {
-				result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
+				result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.literaltype));
 			});
 			return result;
 		}
@@ -1241,6 +1281,7 @@ var IncomingOutgoingLinksDialog = (function() {
 			if (allProperties != null) {
 				for (var i = 0; i < allProperties.length; i++) {
 					var prop = allProperties[i];
+					console.log(prop);
 					var propElem = PropertyUI.parseNodeObject(prop);
 					var propLbl = propElem[0];
 					var propRdfsLabel = propElem[1];
@@ -1397,7 +1438,7 @@ var IncomingOutgoingLinksDialog = (function() {
 					props = getAllObjectProperties(worksheetId);
 				var result = [];
 				$.each(props, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.literaltype));
 				});
 				allProperties = result;
 
@@ -1425,7 +1466,7 @@ var IncomingOutgoingLinksDialog = (function() {
 
 				var props = getAllPropertiesForDomainRange(worksheetId, domain, range);
 				$.each(props, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.literaltype));
 				});
 				selectedProperties = result;
 			}
@@ -1800,7 +1841,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 					props = getAllObjectProperties(worksheetId);
 				var result = [];
 				$.each(props, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.literaltype));
 				});
 				allProperties = result;
 				if (loadTree)
@@ -1827,7 +1868,7 @@ var ManageIncomingOutgoingLinksDialog = (function() {
 				var props = getAllPropertiesForDomainRange(worksheetId, domain, range);
 				var result = [];
 				$.each(props, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.literaltype));
 				});
 				selectedProperties = result;
 				return result;
@@ -2698,7 +2739,7 @@ var AddLiteralNodeDialog = (function() {
 
 				var result = [];
 				$.each(propertyList, function(index, prop) {
-					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.type));
+					result.push(PropertyUI.getNodeObject(prop.label, prop.rdfsLabel, prop.id, prop.uri, prop.literaltypee));
 				});
 				
 				return result;

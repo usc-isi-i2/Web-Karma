@@ -104,7 +104,7 @@ public class OntologyManager  {
 			return false;
 		}
 		
-		logger.debug("Importing " + sourceFile.getName() + " OWL Ontology ...");
+//		logger.error("Importing " + sourceFile.getName() + " OWL Ontology ...");
 
 		if(!sourceFile.exists()){
 			logger.error("file does not exist  " + sourceFile.getAbsolutePath());
@@ -115,8 +115,9 @@ public class OntologyManager  {
 		InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
 		if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
 			ontHandler.getOntModel().read(s, null, "N3");
-		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
+		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL")){
 			ontHandler.getOntModel().read(s, null, "TURTLE");
+		}
 		else
 			ontHandler.getOntModel().read(s, null); // default lang = "RDF/XML"
 		
@@ -138,8 +139,6 @@ public class OntologyManager  {
 			logger.debug("input file is null.");
 			return false;
 		}
-		
-		logger.debug("Importing " + sourceFile.getName() + " OWL Ontology ...");
 
 		if(!sourceFile.exists()){
 			logger.error("file does not exist  " + sourceFile.getAbsolutePath());
@@ -159,8 +158,9 @@ public class OntologyManager  {
 		InputStreamReader s = EncodingDetector.getInputStreamReader(sourceFile, encoding);
 		if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("N3"))
 			ontHandler.getOntModel().read(s, null, "N3");
-		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL"))
+		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("TTL")) {
 			ontHandler.getOntModel().read(s, null, "TURTLE");
+		}
 		else if (Files.getFileExtension(sourceFile.getName()).equalsIgnoreCase("NT"))
 			ontHandler.getOntModel().read(s, null, "N-TRIPLE");
 		else

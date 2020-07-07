@@ -64,7 +64,8 @@ public class TriplesMapPlanExecutor {
 				List<Future<Boolean>> results = service.invokeAll(plan.workers);
 				for(Future<Boolean> result : results)
 				{
-					result.get(3, TimeUnit.MINUTES);
+
+					result.get(10, TimeUnit.MINUTES);
 				}
 			}
 			else

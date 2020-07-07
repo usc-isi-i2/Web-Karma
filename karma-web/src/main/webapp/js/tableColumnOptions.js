@@ -4,7 +4,8 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 	var columnTitle = wsColumnTitle;
 	var columnId = wsColumnId;
 
-	var options = [{
+	var options = [
+		{
 			name: "Set Semantic Type",
 			func: setSemanticType,
 			leafOnly: true,
@@ -127,6 +128,7 @@ function TableColumnOptions(wsId, wsColumnId, wsColumnTitle, isLeafNode, isOutof
 		console.log("addRows");
 		hideDropdown();
 		$("#pyTransformSelectionDialog").data("operation", "Union");
+        console.log("tco", wsColumnId);
 		PyTransformSelectionDialog.getInstance(wsId, wsColumnId).show();
 	}
 

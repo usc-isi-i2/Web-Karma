@@ -121,6 +121,10 @@ public class WorksheetCommandHistoryExecutor {
 						} catch(Exception e) {
 							logger.error("Error executing command: "+ commandName + ". Please notify this error. \nInputs:" + inputParamArr, e);
 							//make these InfoUpdates so that the UI can still process the rest of the model
+							if(commandName.equals("SetSemanticTypeCommand")) {
+								System.out.println("commandName equal to SetSemanticTypeCommand");
+								return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history, since you may have deleted the related column."));
+							}
 							return new UpdateContainer(new TrivialErrorUpdate("Error executing command " + commandName + " from history"));
 						}
 					}

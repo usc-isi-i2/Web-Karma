@@ -44,7 +44,7 @@ public class GetPropertiesCommand extends WorksheetCommand {
 	}
 	
 	private enum JsonKeys {
-		updateType, label, id, properties, uri, type, rdfsLabel
+		updateType, label, id, properties, uri, type, rdfsLabel, literaltype,
 	}
 	
 	private String classURI, domainURI, rangeURI, linkId;
@@ -86,7 +86,7 @@ public class GetPropertiesCommand extends WorksheetCommand {
 		final OntologyManager ontMgr = workspace.getOntologyManager();
 		Set<LabeledLink> properties = new HashSet<>();
 		
-		logger.debug("GetPropertiesCommand:" + propertiesRange + ":" + classURI + "," + domainURI + ", " +  rangeURI);
+//		logger.z("GetPropertiesCommand:" + propertiesRange + ":" + classURI + "," + domainURI + ", " +  rangeURI);
 		
 		if (propertiesRange == INTERNAL_PROP_RANGE.allObjectProperties) {
 			HashMap<String, Label> linkList = ontMgr.getObjectProperties();
@@ -164,14 +164,15 @@ public class GetPropertiesCommand extends WorksheetCommand {
 						Label linkLabel = link.getLabel();
 						String edgeLabelStr = linkLabel.getDisplayName();
 						JSONObject edgeObj = new JSONObject();
-						if (linkLabel.getUri() !=null && linkLabel.getNs() != null 
+						if (linkLabel.getUri() !=null && linkLabel.getNs() != null
 								&& linkLabel.getUri().equalsIgnoreCase(linkLabel.getNs())) {
 							edgeLabelStr = linkLabel.getUri();
 						}
-						
+
+
 						edgeObj.put(JsonKeys.label.name(), edgeLabelStr);
 						edgeObj.put(JsonKeys.rdfsLabel.name(), linkLabel.getRdfsLabel());
-							
+						edgeObj.put(JsonKeys.literaltype.name(), linkLabel.getRdfsRange());
 						edgeObj.put(JsonKeys.uri.name(), linkLabel.getUri());
 						edgeObj.put(JsonKeys.id.name(), link.getId());
 						

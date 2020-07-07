@@ -250,7 +250,7 @@ public class SemanticModel {
 				for (LabeledLink link : incomingLinks) {
 					Node domain = link.getSource();
 					SemanticType st = new SemanticType(cn.getHNodeId(), link.getLabel(), 
-							domain.getLabel(), domain.getId(), false, 
+							domain.getLabel(), domain.getId(), false, false,
 							Origin.User, 1.0);
 					cn.assignUserType(st);
 				}

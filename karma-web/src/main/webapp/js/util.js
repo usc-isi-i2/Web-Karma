@@ -349,6 +349,7 @@ function parseClassJSON(clazz, result, allLabels) {
 
 function getSuggestedSemanticTypes(worksheetId, columnId, classUri) {
 	var info = generateInfoObject(worksheetId, columnId, "GetSemanticSuggestionsCommand");
+
 	var newInfo = info['newInfo']; // Used for commands that take JSONArray as input and are saved in the history
 	if(classUri) {
 		info["classUri"] = classUri;
@@ -366,6 +367,7 @@ function getSuggestedSemanticTypes(worksheetId, columnId, classUri) {
 		complete: function(xhr, textStatus) {
 			var json = $.parseJSON(xhr.responseText);
 			hideLoading(info["worksheetId"]);
+
 			result = json.elements[0];
 		},
 		error: function(xhr, textStatus) {
@@ -597,6 +599,7 @@ function parsePropertyJSON(prop, result) {
 		"rdfsLabel": prop.rdfsLabel,
 		"id": prop.id,
 		"uri": prop.uri,
+		"literaltype": prop.literaltype,
 		"type": prop.type
 	};
 	result.push(node);

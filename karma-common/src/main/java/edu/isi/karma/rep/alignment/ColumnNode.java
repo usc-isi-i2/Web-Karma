@@ -79,6 +79,7 @@ public class ColumnNode extends Node {
 						st.getDomain(), 
 						st.getDomainId(),
 						st.isProvenance(),
+						st.isPrimary(),
 						st.getOrigin(), 
 						confidence / sum);
 				this.learnedSemanticTypes.add(semType);

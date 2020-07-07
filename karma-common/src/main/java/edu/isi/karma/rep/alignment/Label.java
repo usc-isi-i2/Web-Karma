@@ -32,13 +32,15 @@ public class Label implements Serializable {
 	private String ns;
 	private String prefix;
 	private String rdfsLabel;
+	private String rdfsRange;
 	private String rdfsComment;
 	
-	public Label(String uri, String ns, String prefix, String rdfsLabel, String rdfsComment) {
+	public Label(String uri, String ns, String prefix, String rdfsLabel, String rdfsRange, String rdfsComment) {
 		this.uri = uri;
 		this.ns = ns;
 		this.prefix = prefix;
 		this.rdfsLabel = rdfsLabel;
+		this.rdfsRange = rdfsRange;
 		this.rdfsComment = rdfsComment;
 	}
 	
@@ -62,6 +64,7 @@ public class Label implements Serializable {
 			this.ns = uri.getNs();
 			this.prefix = uri.getPrefix();
 			this.rdfsLabel = uri.getRdfsLabel();
+			this.rdfsRange = uri.getRdfsRange();
 			this.rdfsComment = uri.getRdfsComment();
 		}
 	}
@@ -71,6 +74,7 @@ public class Label implements Serializable {
 		this.ns = null;
 		this.prefix = null;
 		this.rdfsLabel = null;
+		this.rdfsRange = null;
 		this.rdfsComment = null;
 	}
 	
@@ -78,11 +82,9 @@ public class Label implements Serializable {
 		this.uri = uri;
 	}
 
-
 	public void setNs(String ns) {
 		this.ns = ns;
 	}
-
 
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
@@ -90,6 +92,10 @@ public class Label implements Serializable {
 
 	public void setRdfsLabel(String label) {
 		this.rdfsLabel = label;
+	}
+
+	public void setRdfsRange(String range) {
+		this.rdfsRange = range;
 	}
 	
 	public void setRdfsComment(String comment) {
@@ -136,9 +142,12 @@ public class Label implements Serializable {
 			name = uri;
 		return name;
 	}
-
 	public String getRdfsLabel() {
 		return rdfsLabel;
+	}
+
+	public String getRdfsRange() {
+		return rdfsRange;
 	}
 
 	public String getRdfsComment() {

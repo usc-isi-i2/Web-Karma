@@ -23,9 +23,11 @@ package edu.isi.karma.modeling.ontology;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.regex.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import com.hp.hpl.jena.ontology.ConversionException;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
@@ -40,10 +42,12 @@ import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.ontology.UnionClass;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import edu.isi.karma.rep.alignment.Label;
+import edu.isi.karma.modeling.Uris;
 
 class OntologyHandler {
 	
@@ -71,7 +75,7 @@ class OntologyHandler {
 	
 	public Label getResourceLabel(Resource r) {
 		if (r == null || !ontModel.containsResource(r)) {
-			logger.debug("Could not find the resource in the ontology model.");
+			logger.error("Could not find the resource in the ontology model.");
 			return null;
 		}
 		String ns = r.getNameSpace();
@@ -96,6 +100,7 @@ class OntologyHandler {
 			logger.error("No rdfs:label for resource:" + r.toString());
 			rdfsLabel = "";
 		}
+
 		String rdfsComment;
 		try {
 			rdfsComment = ontR.getComment("EN");
@@ -105,7 +110,31 @@ class OntologyHandler {
 			logger.error("No Comment for resource:" + r.toString());
 			rdfsComment = "";
 		}
-		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
+
+		String rdfsRange;
+		try {
+			rdfsRange = null;
+			String temp = "";
+			if(ontR.isDatatypeProperty())  {
+				OntProperty ontP = null;
+				ontP = ontR.asProperty();
+				if (ontP != null) {
+					temp = ontP.getRange().toString();
+					temp = StringUtils.substringAfterLast(temp, "http://www.w3.org/2001/XMLSchema#");
+					if (temp.length() > 0){
+						rdfsRange = "xsd:";
+						rdfsRange = rdfsRange.concat(temp);
+
+					}
+				}
+			}
+
+		} catch(Exception e) {
+//			logger.error("No rdfs:range for resource: " + r.toString() + " " + e.toString());
+			rdfsRange = "";
+		}
+
+		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsRange, rdfsComment);
 	}
 	
 	

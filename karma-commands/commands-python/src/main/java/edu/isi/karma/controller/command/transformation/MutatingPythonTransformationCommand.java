@@ -112,7 +112,7 @@ public abstract class MutatingPythonTransformationCommand extends
 		/** Add the alignment update **/
 		c.append(computeAlignmentAndSemanticTypesAndCreateUpdates(workspace));
 		
-		c.add(new InfoUpdate("Transformation complete"));
+		c.add(new InfoUpdate("Transformation updated"));
 		return c;
 	}
 

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.lang.System;
 
 import org.json.JSONException;
 import org.json.JSONStringer;
@@ -106,7 +107,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 			}
 			writer.endArray();
 			writer.endObject();
-
+//			System.out.println("writer " + writer.toString());
 			pw.print(writer.toString());
 		} catch (JSONException e) {
 			logger.error("Error occured while writing to JSON!", e);
@@ -131,7 +132,8 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 					.key(JsonKeys.ConfidenceLevel.name())
 					.value(type.getConfidenceLevel().name())
 					.key(JsonKeys.isPrimary.name())
-					.value(true);
+					.value(type.isPrimary());
+
 			
 			// Add the RDF literal type to show in the text box
 			String rdfLiteralType = alignmentColumnNode.getRdfLiteralType() == null? "" : 
@@ -178,6 +180,7 @@ public class SemanticTypesUpdate extends AbstractUpdate {
 			
 			
 			writer.endObject();
+
 		}
 	}
 	
