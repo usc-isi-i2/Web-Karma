@@ -60,6 +60,7 @@ public class FileUtil {
         // Download the file to the upload file folder
     	
         File destinationDir = new File(destinationDirString);
+        logger.debug("File upload destination directory: " + destinationDir.getAbsolutePath());
 
         DiskFileItemFactory fileItemFactory = new DiskFileItemFactory();
 
@@ -84,20 +85,20 @@ public class FileUtil {
                 // Ignore Form Fields.
                 if (item.isFormField()) {
                     // Do nothing
-                    logger.info("Form Field");
+                    logger.debug("Form Field");
                 } else {
                     //Handle Uploaded files. Write file to the ultimate location.
                     uploadedFile = new File(destinationDir, item.getName());
                     // if (item instanceof DiskFileItem) {
                     DiskFileItem t = (DiskFileItem)item;
                     if (t.getStoreLocation()!=null) {
-                        logger.info("File is on disk");
+                        logger.debug("File is on disk");
                     	if (!t.getStoreLocation().renameTo(uploadedFile)){
                             item.write(uploadedFile);
                         }
                     }
                     else{
-                        logger.info("File is in memory");
+                        logger.debug("File is in memory");
                         item.write(uploadedFile);
                     }
                 }
