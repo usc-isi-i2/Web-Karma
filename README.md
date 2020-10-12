@@ -16,6 +16,12 @@ You can find useful tutorials on the project Website: [http://www.isi.edu/integr
 
 ## Installation and Setup ##
 
+## Docker ##
+### Build
+```docker build -t webkarma .```
+### Run
+```docker run -it --rm -v <local-path>:/data -p 8080:8080 webkarma```
+
 Look in the Wiki [Installation](https://github.com/InformationIntegrationGroup/Web-Karma/wiki/Installation)
 
 ## Frequently Asked Questions ##
