@@ -1,20 +1,17 @@
 FROM maven:3-jdk-8
 
-LABEL MAINTAINER <alexander.malic [at] maastrichtuniversity.nl>
+LABEL MAINTAINER <1655040956 [at] qq.com>
 
 WORKDIR /app
 
-COPY . .
+RUN git clone https://github.com/zhoushaokun/Web-Karma.git && \
+  cd Web-Karma && \
+  mvn clean install
 
-RUN mvn clean install
-
-WORKDIR /app/karma-web
+WORKDIR /app/Web-Karma/karma-web
 
 ENV MAX_MEM="8g"
 ENV MAVEN_OPTS="-Xmx$MAX_MEM"
-
-VOLUME ["/data"]
-ENV KARMA_USER_HOME="/data"
 
 EXPOSE 8080
 
