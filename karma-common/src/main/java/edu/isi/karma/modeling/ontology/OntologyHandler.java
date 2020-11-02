@@ -105,7 +105,15 @@ class OntologyHandler {
 			logger.error("No Comment for resource:" + r.toString());
 			rdfsComment = "";
 		}
-		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsComment);
+
+
+
+		String rdfsType = "";
+
+		AutoGenerateLiteral rdfsTypeGenerate = new AutoGenerateLiteral(r , rdfsType);
+		rdfsType = rdfsTypeGenerate.getLiteralType(); 
+
+		return new Label(r.getURI(), ns, prefix, rdfsLabel, rdfsComment , rdfsType);
 	}
 	
 	
