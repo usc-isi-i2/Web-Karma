@@ -85,16 +85,22 @@ public class FileUtil {
                 // Ignore Form Fields.
                 if (item.isFormField()) {
                     // Do nothing
+                    logger.debug("Form Field");
                 } else {
                     //Handle Uploaded files. Write file to the ultimate location.
                     uploadedFile = new File(destinationDir, item.getName());
-                    if (item instanceof DiskFileItem) {
-                    	DiskFileItem t = (DiskFileItem)item;
-                    	if (!t.getStoreLocation().renameTo(uploadedFile))
-                    		item.write(uploadedFile);
+                    // if (item instanceof DiskFileItem) {
+                    DiskFileItem t = (DiskFileItem)item;
+                    if (t.getStoreLocation()!=null) {
+                        logger.debug("File is on disk");
+                    	if (!t.getStoreLocation().renameTo(uploadedFile)){
+                            item.write(uploadedFile);
+                        }
                     }
-                    else
-                    	item.write(uploadedFile);
+                    else{
+                        logger.debug("File is in memory");
+                        item.write(uploadedFile);
+                    }
                 }
             }
         } catch (FileUploadException ex) {
