@@ -225,7 +225,7 @@ public class SemanticTypeUtil {
 				path, sel);
 		if (trainingExamples.isEmpty())
 			return null;
-
+		logger.debug("examples: "+trainingExamples + " " + numSuggestions);
 		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
 		OntologyManager ontologyManager = workspace.getOntologyManager();
 		

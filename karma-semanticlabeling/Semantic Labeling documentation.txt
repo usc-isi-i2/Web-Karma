@@ -1,0 +1,18 @@
+Entry point for this module: App.java
+Independent handling of this module:
+- mvn clean install
+- mvn exec:java -Dexec.mainClass="com.mycompany.app.App" 
+
+The code starts with cross validation of the data we have. The model is built and MRR is checked. The actual model is to be built of all the data in data/soccer2 folder.
+Changes for integration with karma need to be done in HybridSTModelHandler.java
+The DSL_main.predictSemanticType() function needs to be called from above file. Model needs to be loaded and predictions will be ranked. Once the ranking is done, check for highest probability value. If that probability is above 0.3, recommend that semantic type. If the probability is below 0.3, do not give any recommendations - treat the incoming data as newly seen data and save it. While saving the data, also check whether the data you already have (data/soccer2) surpasses the amount of data you want to hold on the server. If it does, remove certain set % of data rows from each table and then store the new file.
+Minor changes will be required in terms of importing the module into Karma. Test for compatibility with all the running modules. The model will need to be stored in such a way that it can be imported on local on any desktop.
+
+Paper: https://usc-isi-i2.github.io/papers/pham16-iswc.pdf
+
+Train on data/soccer2. Save the model and for prediction purposes use the domain data we have to create the features.
+Test cases to check:
+1. Check on a table inside soccer2 - if the columns are correctly identified based on model created using all other tables in soccer2
+2. Check on a table outside soccer2 - the results might not be so good.
+3. Check on a new domain - take input from user, save the table and take a similar table as second input - results should be fair.
+4. Check on existing data and recommendations.

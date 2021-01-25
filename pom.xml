@@ -20,6 +20,7 @@
 		<module>karma-typer</module>
 		<module>karma-jsonld</module>
 		<module>karma-spark</module>
+		<module>karma-semanticlabeling</module>
 	</modules>
 
 

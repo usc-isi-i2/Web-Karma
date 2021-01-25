@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +28,10 @@ import edu.isi.karma.semantictypes.tfIdf.Searcher;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
+import edu.isi.karma.semanticlabeling.dsl.Column;
+import edu.isi.karma.semanticlabeling.dsl.DSL_main;
+import edu.isi.karma.semanticlabeling.dsl.SemType;
+import edu.isi.karma.semanticlabeling.dsl.SemTypePrediction;
 
 /**
  * LATEST
@@ -224,30 +230,26 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 	}
 
 	/**
-	 * @param examples
-	 *            - list of examples of an unknown type
-	 * @param numPredictions
-	 *            - required number of predictions in descending order
-	 * @param predictedLabels
-	 *            - the argument in which the ordered list of labels is
-	 *            returned. the size of this list could be smaller than
-	 *            numPredictions if there aren't that many labels in the model
-	 *            already
-	 * @param confidenceScores
-	 *            - the probability of the examples belonging to the labels
-	 *            returned.
-	 * @param exampleProbabilities
-	 *            - the size() == examples.size(). It contains, for each
-	 *            example, in the same order, a double array that contains the
-	 *            probability of belonging to the labels returned in
-	 *            predictedLabels.
-	 * @param columnFeatures
-	 *            - this Map supplies ColumnFeatures such as ColumnName, etc.
+	 * @param examples             - list of examples of an unknown type
+	 * @param numPredictions       - required number of predictions in descending
+	 *                             order
+	 * @param predictedLabels      - the argument in which the ordered list of
+	 *                             labels is returned. the size of this list could
+	 *                             be smaller than numPredictions if there aren't
+	 *                             that many labels in the model already
+	 * @param confidenceScores     - the probability of the examples belonging to
+	 *                             the labels returned.
+	 * @param exampleProbabilities - the size() == examples.size(). It contains, for
+	 *                             each example, in the same order, a double array
+	 *                             that contains the probability of belonging to the
+	 *                             labels returned in predictedLabels.
+	 * @param columnFeatures       - this Map supplies ColumnFeatures such as
+	 *                             ColumnName, etc.
 	 * @return True, if successful, else False
+	 * @throws Exception
 	 */
 	@Override
-	public List<SemanticTypeLabel> predictType(List<String> examples,
-			int numPredictions) {
+	public List<SemanticTypeLabel> predictType(List<String> examples, int numPredictions) throws Exception {
 
 		if (!this.modelEnabled) {
 			logger.warn("Semantic Type Modeling is not enabled");
@@ -260,8 +262,27 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 			return null;
 		}
 
-		logger.debug("Predic Type for " + examples.toArray().toString());
-
+		logger.warn("Predic Type for " + examples.toArray().toString());
+		Object[] arr = examples.toArray();
+		// for (int xi=0; xi<examples.toArray().length; xi++) {
+		// 	logger.warn(xi + ": " + arr[xi].toString());
+		// }
+		List<Column> columns = new ArrayList<Column>();
+		List<String> colData = new ArrayList<String>();
+        for(int i=0; i<examples.toArray().length; i++){
+            colData.add(arr[i].toString().trim().replaceAll("\"",""));
+		}
+        Hashtable<String, Float> typeStats = new Hashtable<String, Float>();
+        Column columnObj = new Column("tableName", colData.get(0), null, colData.get(2), examples.toArray().length, typeStats);
+		// Read the written featureExtractorObject here and create DSL object. This will load the already saved rf model.
+		// Predict the semantic type using this DSL object.
+		String modelFile = "model_file_rf";
+		DSL_main dsl_obj1 = new DSL_main("/Users/rutujarane/Desktop/ISI/Semantics/dsl/"+modelFile,null,true,true,false);
+		List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
+		predictions =  dsl_obj1.predictSemanticType(columnObj,100);
+		// Return the prediction.
+		
+		
 		logger.warn("-----------------------------------------------------------------------------");
 		// decide if test column is textual or numeric
 		boolean isNumeric = false;
@@ -340,10 +361,11 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 				// construct single text for test column
 				StringBuilder sb = new StringBuilder();
 				for (String ex : examples) {
+					logger.warn("ex: "+ex);
 					sb.append(ex);
 					sb.append(" ");
 				}
-				
+				logger.warn("SB:" +sb.toString());
 				try {
 					Searcher predictor = new Searcher(getIndexDirectory(isNumeric),
 							Indexer.CONTENT_FIELD_NAME);
