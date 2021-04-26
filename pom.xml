@@ -50,7 +50,7 @@
 
 
 	  <apache.commons.lang.version>2.4</apache.commons.lang.version>
-	  <apache.commons.io.version>2.4</apache.commons.io.version>
+	  <apache.commons.io.version>2.7</apache.commons.io.version>
 	  <apache.commons.compress.version>1.5</apache.commons.compress.version>
 	  <apache.commons.codec.version>1.8</apache.commons.codec.version>
 
