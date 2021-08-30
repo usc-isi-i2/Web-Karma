@@ -15,11 +15,11 @@
 		<module>karma-jdbc</module>
 		<module>karma-util</module>
 		<module>karma-commands</module>
-		<module>karma-mr</module>
+<!--		<module>karma-mr</module>-->
 		<module>karma-web-services</module>
 		<module>karma-typer</module>
 		<module>karma-jsonld</module>
-		<module>karma-spark</module>
+<!--		<module>karma-spark</module>-->
 		<module>karma-semanticlabeling</module>
 	</modules>
 
