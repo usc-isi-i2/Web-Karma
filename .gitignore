@@ -2,6 +2,7 @@
 *.iml
 atlassian-ide-plugin.xml
 java_pid*.hprof
+.factorypath
 
 bin
 target
