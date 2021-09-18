@@ -15,17 +15,17 @@
 		<module>karma-jdbc</module>
 		<module>karma-util</module>
 		<module>karma-commands</module>
-		<module>karma-mr</module>
+<!--		<module>karma-mr</module>-->
 		<module>karma-web-services</module>
 		<module>karma-typer</module>
 		<module>karma-jsonld</module>
-		<module>karma-spark</module>
+<!--		<module>karma-spark</module>-->
 	</modules>
 
 
 	<properties>
 		<skipTests>true</skipTests>
-    <jettyVersion>9.4.27.v20200227</jettyVersion>
+    <jettyVersion>9.4.41.v20210516</jettyVersion>
     <project.build.sourceEncoding>
       UTF-8
     </project.build.sourceEncoding>
@@ -50,7 +50,7 @@
 
 
 	  <apache.commons.lang.version>2.4</apache.commons.lang.version>
-	  <apache.commons.io.version>2.4</apache.commons.io.version>
+	  <apache.commons.io.version>2.7</apache.commons.io.version>
 	  <apache.commons.compress.version>1.5</apache.commons.compress.version>
 	  <apache.commons.codec.version>1.8</apache.commons.codec.version>
 
@@ -69,7 +69,7 @@
 	  <jdom.version>1.1.2</jdom.version>
 
 	  <gson.version>2.2.2</gson.version>
-	  <httpcomponents.version>4.5.2</httpcomponents.version>
+	  <httpcomponents.version>4.5.13</httpcomponents.version>
 	  <guava.version>29.0-jre</guava.version>
 	  <spring.version>5.2.4.RELEASE</spring.version>
 
@@ -295,7 +295,7 @@
         <dependency>
         	<groupId>org.apache.poi</groupId>
         	<artifactId>poi</artifactId>
-        	<version>3.8-beta5</version>
+        	<version>3.17</version>
         </dependency>
         <dependency>
         	<groupId>org.apache.poi</groupId>
