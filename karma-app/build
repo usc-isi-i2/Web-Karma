@@ -47,34 +47,38 @@ wget https://github.com/alseambusher/karma-app-deps/archive/master.zip
 unzip master.zip
 mv karma-app-deps-master/*.tar.gz .
 rm -rf karma-app-deps-master master.zip
-
+echo "I am at point A"
 # download tomcat binary
-wget http://mirror.cc.columbia.edu/pub/software/apache/tomcat/tomcat-8/v8.5.30/bin/apache-tomcat-8.5.30.zip
+# wget http://mirror.cc.columbia.edu/pub/software/apache/tomcat/tomcat-8/v8.5.30/bin/apache-tomcat-8.5.30.zip
+wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.71/bin/apache-tomcat-8.5.71.zip
 unzip apache-tomcat-*.zip
 rm apache-tomcat-*.zip
-
+echo "I am at point B"
 mv apache-tomcat* tomcat
 rm -rf tomcat/webapps/*
 mv *.war tomcat/webapps
 chmod +x tomcat/bin/*.sh
-
+echo "I am at point C"
 cp $CURRENT/conf/* tomcat/conf/
 
 rm -rf $CURRENT/desktop/app/tomcat
 mv tomcat $CURRENT/desktop/app/
-
+echo "I am at point D"
 
 cd $CURRENT/desktop/app/tomcat/webapps
 mkdir ROOT
 mv ROOT.war ROOT/ROOT.zip
 cd ROOT
 unzip ROOT.zip
-
+echo "I am at point E"
 cd $CURRENT/desktop
+echo "I am at point E1"
 npm install
+echo "I am at point E2"
 npm run prerelease
+echo "I am at point E3"
 cd app
-
+echo "I am at point F"
 tar -xzvf $CURRENT/target/jre*windows*.tar.gz
 electron-packager . --platform=win32 --arch=x64 --icon=../resources/icons/karma.ico --overwrite
 rm -rf jre*
@@ -84,17 +88,18 @@ rm -rf jre*
 tar -xzvf $CURRENT/target/jre*linux*.tar.gz
 electron-packager . --platform=linux --arch=x64 --icon=../resources/icons/karma.png --overwrite
 rm -rf jre*
+echo "I am at point G"
 
 cp -rf Karma-darwin* $CURRENT/target/Karma-Mac
 cp -rf Karma-linux* $CURRENT/target/Karma-Linux
 cp -rf Karma-win* $CURRENT/target/Karma-Windows
-
+echo "I am at point H"
 set +e
 rm -rf Karma-*
 
 cd $CURRENT/target
 rm *.tar.gz
-
+echo "I am at point I"
 set -e
 #put our license
 for build_folder in `ls |grep Karma`
@@ -102,7 +107,7 @@ do
 	mv $build_folder/LICENSE $build_folder/LICENSE.electron.packager
 	cp $CURRENT/../LICENSE.txt $build_folder/
 done
-
+echo "I am at point J"
 if [ "$1" == "--archive" ]
 then
   for i in `ls |grep 'Karma-*'`
@@ -110,3 +115,4 @@ then
     zip -r $i $i
   done
 fi
+echo "I am at point K"
