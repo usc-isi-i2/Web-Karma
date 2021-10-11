@@ -917,7 +917,7 @@
 [INFO] Copying webapp webResources [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/src/main/webapp/] to [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/target/karma-web-0.0.1-SNAPSHOT]
 [INFO] Copying webapp resources [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/src/main/webapp]
 [INFO] Building jar: /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/target/karma-web-0.0.1-SNAPSHOT/WEB-INF/lib/karma-web-0.0.1-SNAPSHOT.jar
-[INFO] Webapp assembled in [1435 msecs]
+[INFO] Webapp assembled in [2104 msecs]
 [INFO] Building war: /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/target/karma-web-0.0.1-SNAPSHOT.war
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ karma-web ---
@@ -1030,7 +1030,7 @@
 [INFO] Copying webapp webResources [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-rdf/src/main/webapp/] to [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-rdf/target/web-services-rdf-0.0.1-SNAPSHOT]
 [INFO] Copying webapp resources [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-rdf/src/main/webapp]
 [INFO] Building jar: /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-rdf/target/web-services-rdf-0.0.1-SNAPSHOT/WEB-INF/lib/web-services-rdf-0.0.1-SNAPSHOT.jar
-[INFO] Webapp assembled in [538 msecs]
+[INFO] Webapp assembled in [393 msecs]
 [INFO] Building war: /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-rdf/target/web-services-rdf-0.0.1-SNAPSHOT.war
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ web-services-rdf ---
@@ -1070,7 +1070,7 @@
 [INFO] Copying webapp webResources [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-publish-es/src/main/webapp/] to [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-publish-es/target/web-services-publish-es-0.0.1-SNAPSHOT]
 [INFO] Copying webapp resources [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-publish-es/src/main/webapp]
 [INFO] Building jar: /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-publish-es/target/web-services-publish-es-0.0.1-SNAPSHOT/WEB-INF/lib/web-services-publish-es-0.0.1-SNAPSHOT.jar
-[INFO] Webapp assembled in [329 msecs]
+[INFO] Webapp assembled in [320 msecs]
 [INFO] Building war: /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web-services/web-services-publish-es/target/web-services-publish-es-0.0.1-SNAPSHOT.war
 [INFO] 
 [INFO] --- maven-install-plugin:2.4:install (default-install) @ web-services-publish-es ---
@@ -1114,47 +1114,47 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] Reactor Summary for ISI Karma Maven Webapp 0.0.1-SNAPSHOT:
 [INFO] 
-[INFO] ISI Karma Maven Webapp ............................. SUCCESS [  0.257 s]
-[INFO] karma-util ......................................... SUCCESS [  1.305 s]
-[INFO] karma-typer ........................................ SUCCESS [  0.220 s]
-[INFO] karma-common ....................................... SUCCESS [  1.400 s]
+[INFO] ISI Karma Maven Webapp ............................. SUCCESS [  0.269 s]
+[INFO] karma-util ......................................... SUCCESS [  1.319 s]
+[INFO] karma-typer ........................................ SUCCESS [  0.225 s]
+[INFO] karma-common ....................................... SUCCESS [  1.353 s]
 [INFO] karma-commands ..................................... SUCCESS [  0.008 s]
-[INFO] commands-common .................................... SUCCESS [  0.128 s]
-[INFO] commands-update .................................... SUCCESS [  0.141 s]
-[INFO] commands-worksheet ................................. SUCCESS [  0.233 s]
-[INFO] commands-alignment ................................. SUCCESS [  0.168 s]
-[INFO] commands-python .................................... SUCCESS [  0.134 s]
-[INFO] commands-alignment-openrdf ......................... SUCCESS [  0.235 s]
-[INFO] commands-publish ................................... SUCCESS [  0.177 s]
-[INFO] karma-jdbc ......................................... SUCCESS [  0.119 s]
-[INFO] commands-publish-jdbc .............................. SUCCESS [  0.038 s]
-[INFO] commands-publish-alignment-openrdf ................. SUCCESS [  0.152 s]
-[INFO] commands-update-jdbc ............................... SUCCESS [  0.093 s]
-[INFO] commands-import .................................... SUCCESS [  0.008 s]
-[INFO] import-common ...................................... SUCCESS [  0.108 s]
-[INFO] import-csv ......................................... SUCCESS [  0.099 s]
-[INFO] import-database .................................... SUCCESS [  0.103 s]
-[INFO] import-excel ....................................... SUCCESS [  0.083 s]
-[INFO] import-file ........................................ SUCCESS [  0.046 s]
-[INFO] import-ontology .................................... SUCCESS [  0.096 s]
-[INFO] import-json ........................................ SUCCESS [  0.100 s]
-[INFO] import-service ..................................... SUCCESS [  0.158 s]
-[INFO] import-spatial ..................................... SUCCESS [  0.296 s]
-[INFO] import-xml ......................................... SUCCESS [  0.101 s]
-[INFO] import-avro ........................................ SUCCESS [  0.077 s]
-[INFO] commands-include ................................... SUCCESS [  0.006 s]
-[INFO] karma-web .......................................... SUCCESS [ 10.092 s]
-[INFO] karma-offline ...................................... SUCCESS [  1.204 s]
-[INFO] commands-bloom ..................................... SUCCESS [  1.390 s]
-[INFO] karma-web-services ................................. SUCCESS [  0.079 s]
-[INFO] web-services-rdf ................................... SUCCESS [  8.735 s]
-[INFO] web-services-publish-es ............................ SUCCESS [  7.561 s]
-[INFO] karma-jsonld ....................................... SUCCESS [  1.786 s]
+[INFO] commands-common .................................... SUCCESS [  0.129 s]
+[INFO] commands-update .................................... SUCCESS [  0.138 s]
+[INFO] commands-worksheet ................................. SUCCESS [  0.250 s]
+[INFO] commands-alignment ................................. SUCCESS [  0.211 s]
+[INFO] commands-python .................................... SUCCESS [  0.168 s]
+[INFO] commands-alignment-openrdf ......................... SUCCESS [  0.217 s]
+[INFO] commands-publish ................................... SUCCESS [  0.129 s]
+[INFO] karma-jdbc ......................................... SUCCESS [  0.123 s]
+[INFO] commands-publish-jdbc .............................. SUCCESS [  0.048 s]
+[INFO] commands-publish-alignment-openrdf ................. SUCCESS [  0.231 s]
+[INFO] commands-update-jdbc ............................... SUCCESS [  0.237 s]
+[INFO] commands-import .................................... SUCCESS [  0.012 s]
+[INFO] import-common ...................................... SUCCESS [  0.174 s]
+[INFO] import-csv ......................................... SUCCESS [  0.143 s]
+[INFO] import-database .................................... SUCCESS [  0.282 s]
+[INFO] import-excel ....................................... SUCCESS [  0.106 s]
+[INFO] import-file ........................................ SUCCESS [  0.039 s]
+[INFO] import-ontology .................................... SUCCESS [  0.088 s]
+[INFO] import-json ........................................ SUCCESS [  0.090 s]
+[INFO] import-service ..................................... SUCCESS [  0.092 s]
+[INFO] import-spatial ..................................... SUCCESS [  0.244 s]
+[INFO] import-xml ......................................... SUCCESS [  0.122 s]
+[INFO] import-avro ........................................ SUCCESS [  0.120 s]
+[INFO] commands-include ................................... SUCCESS [  0.009 s]
+[INFO] karma-web .......................................... SUCCESS [  9.325 s]
+[INFO] karma-offline ...................................... SUCCESS [  0.634 s]
+[INFO] commands-bloom ..................................... SUCCESS [  0.558 s]
+[INFO] karma-web-services ................................. SUCCESS [  0.015 s]
+[INFO] web-services-rdf ................................... SUCCESS [  9.105 s]
+[INFO] web-services-publish-es ............................ SUCCESS [  8.331 s]
+[INFO] karma-jsonld ....................................... SUCCESS [  2.170 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  37.283 s
-[INFO] Finished at: 2021-10-04T16:08:53-07:00
+[INFO] Total time:  37.063 s
+[INFO] Finished at: 2021-10-10T16:10:46-07:00
 [INFO] ------------------------------------------------------------------------
 [INFO] Scanning for projects...
 [INFO] 
@@ -1190,13 +1190,13 @@
 [INFO] Copying webapp webResources [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/src/main/webapp/] to [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/target/karma-web-0.0.1-SNAPSHOT]
 [INFO] Copying webapp resources [/Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/src/main/webapp]
 [INFO] Building jar: /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/target/karma-web-0.0.1-SNAPSHOT/WEB-INF/lib/karma-web-0.0.1-SNAPSHOT.jar
-[INFO] Webapp assembled in [777 msecs]
+[INFO] Webapp assembled in [819 msecs]
 [INFO] Building war: /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-web/target/karma-web-0.0.1-SNAPSHOT.war
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  7.670 s
-[INFO] Finished at: 2021-10-04T16:09:02-07:00
+[INFO] Total time:  8.338 s
+[INFO] Finished at: 2021-10-10T16:10:56-07:00
 [INFO] ------------------------------------------------------------------------
 [WARNING] The requested profile "shaded" could not be activated because it does not exist.
 Archive:  master.zip
@@ -1208,744 +1208,744 @@ Archive:  master.zip
   inflating: karma-app-deps-master/jre-8u101-windows-x64.tar.gz  
   inflating: karma-app-deps-master/tomcat.zip  
 I am at point A
-Archive:  apache-tomcat-8.5.71.zip
-   creating: apache-tomcat-8.5.71/
-   creating: apache-tomcat-8.5.71/bin/
-   creating: apache-tomcat-8.5.71/conf/
-   creating: apache-tomcat-8.5.71/lib/
-   creating: apache-tomcat-8.5.71/logs/
-   creating: apache-tomcat-8.5.71/temp/
-   creating: apache-tomcat-8.5.71/webapps/
-   creating: apache-tomcat-8.5.71/webapps/ROOT/
-   creating: apache-tomcat-8.5.71/webapps/ROOT/WEB-INF/
-   creating: apache-tomcat-8.5.71/webapps/docs/
-   creating: apache-tomcat-8.5.71/webapps/docs/WEB-INF/
-   creating: apache-tomcat-8.5.71/webapps/docs/annotationapi/
-   creating: apache-tomcat-8.5.71/webapps/docs/api/
-   creating: apache-tomcat-8.5.71/webapps/docs/appdev/
-   creating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/
-   creating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/docs/
-   creating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/src/
-   creating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/src/mypackage/
-   creating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/web/
-   creating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/web/WEB-INF/
-   creating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/web/images/
-   creating: apache-tomcat-8.5.71/webapps/docs/architecture/
-   creating: apache-tomcat-8.5.71/webapps/docs/architecture/requestProcess/
-   creating: apache-tomcat-8.5.71/webapps/docs/architecture/startup/
-   creating: apache-tomcat-8.5.71/webapps/docs/config/
-   creating: apache-tomcat-8.5.71/webapps/docs/elapi/
-   creating: apache-tomcat-8.5.71/webapps/docs/images/
-   creating: apache-tomcat-8.5.71/webapps/docs/images/fonts/
-   creating: apache-tomcat-8.5.71/webapps/docs/jaspicapi/
-   creating: apache-tomcat-8.5.71/webapps/docs/jspapi/
-   creating: apache-tomcat-8.5.71/webapps/docs/servletapi/
-   creating: apache-tomcat-8.5.71/webapps/docs/tribes/
-   creating: apache-tomcat-8.5.71/webapps/docs/websocketapi/
-   creating: apache-tomcat-8.5.71/webapps/examples/
-   creating: apache-tomcat-8.5.71/webapps/examples/META-INF/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/checkbox/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/colors/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/dates/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/error/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/filters/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/el/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/listeners/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/num/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/sessions/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/util/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/validators/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/chat/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/jsp/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/jsp2/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/jsp/applet/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/lib/
-   creating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/tags/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/async/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/checkbox/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/colors/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/dates/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/error/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/forward/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/images/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/include/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/jsptoserv/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/num/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/plugin/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/plugin/applet/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/security/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/security/protected/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/sessions/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/simpletag/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/snp/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/
-   creating: apache-tomcat-8.5.71/webapps/examples/jsp/xml/
-   creating: apache-tomcat-8.5.71/webapps/examples/servlets/
-   creating: apache-tomcat-8.5.71/webapps/examples/servlets/images/
-   creating: apache-tomcat-8.5.71/webapps/examples/servlets/nonblocking/
-   creating: apache-tomcat-8.5.71/webapps/examples/websocket/
-   creating: apache-tomcat-8.5.71/webapps/host-manager/
-   creating: apache-tomcat-8.5.71/webapps/host-manager/META-INF/
-   creating: apache-tomcat-8.5.71/webapps/host-manager/WEB-INF/
-   creating: apache-tomcat-8.5.71/webapps/host-manager/WEB-INF/jsp/
-   creating: apache-tomcat-8.5.71/webapps/host-manager/css/
-   creating: apache-tomcat-8.5.71/webapps/host-manager/images/
-   creating: apache-tomcat-8.5.71/webapps/manager/
-   creating: apache-tomcat-8.5.71/webapps/manager/META-INF/
-   creating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/
-   creating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/
-   creating: apache-tomcat-8.5.71/webapps/manager/css/
-   creating: apache-tomcat-8.5.71/webapps/manager/images/
-   creating: apache-tomcat-8.5.71/work/
-  inflating: apache-tomcat-8.5.71/BUILDING.txt  
-  inflating: apache-tomcat-8.5.71/CONTRIBUTING.md  
-  inflating: apache-tomcat-8.5.71/LICENSE  
-  inflating: apache-tomcat-8.5.71/NOTICE  
-  inflating: apache-tomcat-8.5.71/README.md  
-  inflating: apache-tomcat-8.5.71/RELEASE-NOTES  
-  inflating: apache-tomcat-8.5.71/RUNNING.txt  
-  inflating: apache-tomcat-8.5.71/bin/bootstrap.jar  
-  inflating: apache-tomcat-8.5.71/bin/catalina-tasks.xml  
-  inflating: apache-tomcat-8.5.71/bin/catalina.bat  
-  inflating: apache-tomcat-8.5.71/bin/catalina.sh  
-  inflating: apache-tomcat-8.5.71/bin/ciphers.bat  
-  inflating: apache-tomcat-8.5.71/bin/ciphers.sh  
-  inflating: apache-tomcat-8.5.71/bin/commons-daemon-native.tar.gz  
-  inflating: apache-tomcat-8.5.71/bin/commons-daemon.jar  
-  inflating: apache-tomcat-8.5.71/bin/configtest.bat  
-  inflating: apache-tomcat-8.5.71/bin/configtest.sh  
-  inflating: apache-tomcat-8.5.71/bin/daemon.sh  
-  inflating: apache-tomcat-8.5.71/bin/digest.bat  
-  inflating: apache-tomcat-8.5.71/bin/digest.sh  
-  inflating: apache-tomcat-8.5.71/bin/setclasspath.bat  
-  inflating: apache-tomcat-8.5.71/bin/setclasspath.sh  
-  inflating: apache-tomcat-8.5.71/bin/shutdown.bat  
-  inflating: apache-tomcat-8.5.71/bin/shutdown.sh  
-  inflating: apache-tomcat-8.5.71/bin/startup.bat  
-  inflating: apache-tomcat-8.5.71/bin/startup.sh  
-  inflating: apache-tomcat-8.5.71/bin/tomcat-juli.jar  
-  inflating: apache-tomcat-8.5.71/bin/tomcat-native.tar.gz  
-  inflating: apache-tomcat-8.5.71/bin/tool-wrapper.bat  
-  inflating: apache-tomcat-8.5.71/bin/tool-wrapper.sh  
-  inflating: apache-tomcat-8.5.71/bin/version.bat  
-  inflating: apache-tomcat-8.5.71/bin/version.sh  
-  inflating: apache-tomcat-8.5.71/conf/catalina.policy  
-  inflating: apache-tomcat-8.5.71/conf/catalina.properties  
-  inflating: apache-tomcat-8.5.71/conf/context.xml  
-  inflating: apache-tomcat-8.5.71/conf/jaspic-providers.xml  
-  inflating: apache-tomcat-8.5.71/conf/jaspic-providers.xsd  
-  inflating: apache-tomcat-8.5.71/conf/logging.properties  
-  inflating: apache-tomcat-8.5.71/conf/server.xml  
-  inflating: apache-tomcat-8.5.71/conf/tomcat-users.xml  
-  inflating: apache-tomcat-8.5.71/conf/tomcat-users.xsd  
-  inflating: apache-tomcat-8.5.71/conf/web.xml  
-  inflating: apache-tomcat-8.5.71/lib/annotations-api.jar  
-  inflating: apache-tomcat-8.5.71/lib/catalina-ant.jar  
-  inflating: apache-tomcat-8.5.71/lib/catalina-ha.jar  
-  inflating: apache-tomcat-8.5.71/lib/catalina-storeconfig.jar  
-  inflating: apache-tomcat-8.5.71/lib/catalina-tribes.jar  
-  inflating: apache-tomcat-8.5.71/lib/catalina.jar  
-  inflating: apache-tomcat-8.5.71/lib/ecj-4.6.3.jar  
-  inflating: apache-tomcat-8.5.71/lib/el-api.jar  
-  inflating: apache-tomcat-8.5.71/lib/jasper-el.jar  
-  inflating: apache-tomcat-8.5.71/lib/jasper.jar  
-  inflating: apache-tomcat-8.5.71/lib/jaspic-api.jar  
-  inflating: apache-tomcat-8.5.71/lib/jsp-api.jar  
-  inflating: apache-tomcat-8.5.71/lib/servlet-api.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-api.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-coyote.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-dbcp.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-i18n-de.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-i18n-es.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-i18n-fr.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-i18n-ja.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-i18n-ko.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-i18n-ru.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-i18n-zh-CN.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-jdbc.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-jni.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-util-scan.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-util.jar  
-  inflating: apache-tomcat-8.5.71/lib/tomcat-websocket.jar  
-  inflating: apache-tomcat-8.5.71/lib/websocket-api.jar  
-  inflating: apache-tomcat-8.5.71/temp/safeToDelete.tmp  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/RELEASE-NOTES.txt  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/WEB-INF/web.xml  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/asf-logo-wide.svg  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/bg-button.png  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/bg-middle.png  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/bg-nav.png  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/bg-upper.png  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/favicon.ico  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/index.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/tomcat.css  
-  inflating: apache-tomcat-8.5.71/webapps/ROOT/tomcat.svg  
-  inflating: apache-tomcat-8.5.71/webapps/docs/BUILDING.txt  
-  inflating: apache-tomcat-8.5.71/webapps/docs/RELEASE-NOTES.txt  
-  inflating: apache-tomcat-8.5.71/webapps/docs/RUNNING.txt  
-  inflating: apache-tomcat-8.5.71/webapps/docs/WEB-INF/web.xml  
-  inflating: apache-tomcat-8.5.71/webapps/docs/aio.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/annotationapi/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/api/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/build.xml.txt  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/deployment.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/installation.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/introduction.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/processes.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/build.xml  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/docs/README.txt  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/sample.war  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/src/mypackage/Hello.java  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/web/WEB-INF/web.xml  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/web/hello.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/web/images/tomcat.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/sample/web/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/source.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/appdev/web.xml.txt  
-  inflating: apache-tomcat-8.5.71/webapps/docs/apr.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/architecture/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/architecture/overview.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/architecture/requestProcess.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/architecture/requestProcess/authentication-process.png  
-  inflating: apache-tomcat-8.5.71/webapps/docs/architecture/requestProcess/request-process.png  
-  inflating: apache-tomcat-8.5.71/webapps/docs/architecture/startup.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/architecture/startup/serverStartup.pdf  
-  inflating: apache-tomcat-8.5.71/webapps/docs/architecture/startup/serverStartup.txt  
-  inflating: apache-tomcat-8.5.71/webapps/docs/balancer-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/building.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/cgi-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/changelog.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/class-loader-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/cluster-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/comments.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/ajp.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/automatic-deployment.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-channel.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-deployer.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-interceptor.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-listener.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-manager.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-membership.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-receiver.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-sender.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster-valve.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cluster.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/context.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/cookie-processor.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/credentialhandler.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/engine.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/executor.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/filter.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/globalresources.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/host.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/http.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/http2.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/jar-scan-filter.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/jar-scanner.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/jaspic.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/listeners.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/loader.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/manager.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/realm.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/resources.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/server.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/service.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/sessionidgenerator.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/systemprops.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/config/valve.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/connectors.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/default-servlet.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/deployer-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/developers.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/elapi/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/extras.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/host-manager-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/html-host-manager-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/html-manager-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/add.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/asf-logo.svg  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/code.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/cors-flowchart.png  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/design.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/docs-stylesheet.css  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/docs.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/fix.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/fonts/OpenSans400.woff  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/fonts/OpenSans400italic.woff  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/fonts/OpenSans600.woff  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/fonts/OpenSans600italic.woff  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/fonts/OpenSans700.woff  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/fonts/OpenSans700italic.woff  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/fonts/fonts.css  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/tomcat.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/tomcat.png  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/update.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/images/void.gif  
-  inflating: apache-tomcat-8.5.71/webapps/docs/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/introduction.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/jasper-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/jaspicapi/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/jdbc-pool.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/jndi-datasource-examples-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/jndi-resources-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/jspapi/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/logging.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/manager-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/maven-jars.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/mbeans-descriptors-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/mbeans-descriptors.dtd  
-  inflating: apache-tomcat-8.5.71/webapps/docs/monitoring.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/proxy-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/realm-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/rewrite.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/security-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/security-manager-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/servletapi/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/setup.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/ssi-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/ssl-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/tribes/developers.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/tribes/faq.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/tribes/interceptors.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/tribes/introduction.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/tribes/membership.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/tribes/setup.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/tribes/status.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/tribes/transport.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/virtual-hosting-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/web-socket-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/websocketapi/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/windows-auth-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/docs/windows-service-howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/META-INF/context.xml  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/CookieExample.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/CookieExample.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/HelloWorldExample.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/HelloWorldExample.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings_de.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings_es.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings_fr.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings_ja.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings_ko.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings_pt.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings_ru.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/LocalStrings_zh_CN.properties  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/RequestHeaderExample.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/RequestHeaderExample.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/RequestInfoExample.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/RequestInfoExample.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/RequestParamExample.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/RequestParamExample.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/ServletToJsp.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/ServletToJsp.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/SessionExample.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/SessionExample.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async0$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async0.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async0.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async1$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async1.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async2$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async2.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async2.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async3.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Async3.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/AsyncStockContextListener.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/AsyncStockContextListener.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/AsyncStockServlet.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/AsyncStockServlet.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Stockticker$Stock.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Stockticker$TickListener.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Stockticker.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/async/Stockticker.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/Entries.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/Entries.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/Entry.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/Entry.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/JspCalendar.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/JspCalendar.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/TableBean.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/cal/TableBean.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/checkbox/CheckTest.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/checkbox/CheckTest.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/colors/ColorGameBean.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/colors/ColorGameBean.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/CompressionFilter.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/CompressionFilter.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/CompressionFilterTestServlet.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/CompressionFilterTestServlet.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/CompressionResponseStream.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/CompressionResponseStream.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/CompressionServletResponseWrapper.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/compressionFilters/CompressionServletResponseWrapper.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/dates/JspCalendar.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/dates/JspCalendar.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/error/Smart.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/error/Smart.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/ExampleTagBase.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/ExampleTagBase.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/FooTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/FooTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/FooTagExtraInfo.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/FooTagExtraInfo.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/LogTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/LogTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/ValuesTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/examples/ValuesTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/filters/ExampleFilter.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/filters/ExampleFilter.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/BookBean.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/BookBean.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/FooBean.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/FooBean.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/ValuesBean.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/ValuesBean.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/el/Functions.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/el/Functions.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/EchoAttributesTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/EchoAttributesTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/FindBookSimpleTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/FindBookSimpleTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/HelloWorldSimpleTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/HelloWorldSimpleTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/RepeatSimpleTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/RepeatSimpleTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/ShuffleSimpleTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/ShuffleSimpleTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/TileSimpleTag.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/TileSimpleTag.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/listeners/ContextListener.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/listeners/ContextListener.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/listeners/SessionListener.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/listeners/SessionListener.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/ByteCounter$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/ByteCounter$CounterListener.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/ByteCounter.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/ByteCounter.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/NumberWriter$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/NumberWriter$NumberWriterListener.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/NumberWriter.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/nonblocking/NumberWriter.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/num/NumberGuessBean.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/num/NumberGuessBean.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/sessions/DummyCart.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/sessions/DummyCart.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/util/CookieFilter.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/util/CookieFilter.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/util/HTMLFilter.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/util/HTMLFilter.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/validators/DebugValidator.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/validators/DebugValidator.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/ExamplesConfig.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/ExamplesConfig.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/chat/ChatAnnotation.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/chat/ChatAnnotation.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Client$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Client.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Client.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawMessage$ParseException.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawMessage.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawMessage.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardContextListener.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardContextListener.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint$2.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint$3$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint$3.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$1$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$2.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$MessageType.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$Player.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Room.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/Room.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/AbstractWebsocketMessage.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/AbstractWebsocketMessage.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/BinaryWebsocketMessage.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/BinaryWebsocketMessage.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/CloseWebsocketMessage.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/CloseWebsocketMessage.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/StringWebsocketMessage.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/StringWebsocketMessage.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoAnnotation.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoAnnotation.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoAsyncAnnotation$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoAsyncAnnotation$CompletedFuture.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoAsyncAnnotation.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoAsyncAnnotation.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint$EchoMessageHandlerBinary.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint$EchoMessageHandlerText.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoStreamAnnotation.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/EchoStreamAnnotation.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/echo/servers.json  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/Direction.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/Direction.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/Location$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/Location.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/Location.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/Snake.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/Snake.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/SnakeAnnotation.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/SnakeAnnotation.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/SnakeTimer$1.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/SnakeTimer.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/classes/websocket/snake/SnakeTimer.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/jsp2/jsp2-example-taglib.tld  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/jsp/applet/Clock2.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/jsp/debug-taglib.tld  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/jsp/example-taglib.tld  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/lib/taglibs-standard-impl-1.2.5.jar  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/lib/taglibs-standard-spec-1.2.5.jar  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/tags/displayProducts.tag  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/tags/helloWorld.tag  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/tags/panel.tag  
-  inflating: apache-tomcat-8.5.71/webapps/examples/WEB-INF/web.xml  
-  inflating: apache-tomcat-8.5.71/webapps/examples/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/async/async1.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/async/async1.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/async/async3.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/async/async3.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/async/index.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/async/index.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/Entries.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/Entry.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/JspCalendar.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/TableBean.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/cal1.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/cal1.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/cal2.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/cal2.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/calendar.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/cal/login.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/checkbox/CheckTest.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/checkbox/check.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/checkbox/checkresult.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/checkbox/checkresult.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/checkbox/cresult.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/colors/ColorGameBean.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/colors/clr.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/colors/colors.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/colors/colrs.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/colors/colrs.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/dates/date.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/dates/date.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/dates/date.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/error/er.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/error/err.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/error/err.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/error/error.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/error/errorpge.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/error/errorpge.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/forward/forward.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/forward/forward.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/forward/fwd.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/forward/one.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/forward/one.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/forward/two.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/images/code.gif  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/images/execute.gif  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/images/return.gif  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/include/foo.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/include/foo.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/include/foo.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/include/inc.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/include/include.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/include/include.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/Functions.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/ValuesBean.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/ValuesTag.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/basic-arithmetic.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/basic-arithmetic.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/basic-arithmetic.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/basic-comparisons.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/basic-comparisons.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/basic-comparisons.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/composite.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/composite.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/composite.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/functions.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/functions.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/functions.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/implicit-objects.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/implicit-objects.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/el/implicit-objects.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/FooBean.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/HelloWorldSimpleTag.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/ShuffleSimpleTag.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/TileSimpleTag.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/jspattribute.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/jspattribute.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/jspattribute.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/shuffle.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/shuffle.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspattribute/shuffle.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/basic.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/basic.jspx  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/basic.jspx.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/svgexample.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/textRotate.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/textRotate.jpg  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/textRotate.jspx  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/jspx/textRotate.jspx.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/EchoAttributesTag.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/coda.jspf  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/coda.jspf.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/config.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/config.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/config.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/dynamicattrs.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/dynamicattrs.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/dynamicattrs.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/prelude.jspf  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/misc/prelude.jspf.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/BookBean.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/FindBookSimpleTag.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/Functions.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/HelloWorldSimpleTag.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/RepeatSimpleTag.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/book.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/book.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/book.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/hello.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/hello.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/hello.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/repeat.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/repeat.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/simpletag/repeat.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/displayProducts.tag.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/hello.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/hello.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/hello.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/helloWorld.tag.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/panel.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/panel.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/panel.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/panel.tag.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/products.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/products.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsp2/tagfiles/products.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsptoserv/ServletToJsp.java.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsptoserv/hello.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsptoserv/hello.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsptoserv/jsptoservlet.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsptoserv/jsptoservlet.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/jsptoserv/jts.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/num/numguess.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/num/numguess.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/num/numguess.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/plugin/applet/Clock2.class  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/plugin/applet/Clock2.java  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/plugin/plugin.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/plugin/plugin.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/plugin/plugin.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/security/protected/error.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/security/protected/error.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/security/protected/index.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/security/protected/index.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/security/protected/login.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/security/protected/login.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/sessions/DummyCart.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/sessions/carts.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/sessions/carts.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/sessions/carts.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/sessions/crt.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/simpletag/foo.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/simpletag/foo.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/simpletag/foo.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/snp/snoop.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/snp/snoop.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/snp/snoop.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/choose.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/choose.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/choose.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/foreach.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/foreach.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/foreach.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/howto.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/if.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/if.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/if.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/tagplugin/notes.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/xml/xml.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/xml/xml.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/examples/jsp/xml/xml.jsp.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/cookies.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/helloworld.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/images/code.gif  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/images/execute.gif  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/images/return.gif  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/index.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/nonblocking/bytecounter.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/reqheaders.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/reqinfo.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/reqparams.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/servlets/sessions.html  
-  inflating: apache-tomcat-8.5.71/webapps/examples/websocket/chat.xhtml  
-  inflating: apache-tomcat-8.5.71/webapps/examples/websocket/drawboard.xhtml  
-  inflating: apache-tomcat-8.5.71/webapps/examples/websocket/echo.xhtml  
-  inflating: apache-tomcat-8.5.71/webapps/examples/websocket/index.xhtml  
-  inflating: apache-tomcat-8.5.71/webapps/examples/websocket/snake.xhtml  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/META-INF/context.xml  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/WEB-INF/jsp/401.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/WEB-INF/jsp/403.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/WEB-INF/jsp/404.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/WEB-INF/manager.xml  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/WEB-INF/web.xml  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/css/manager.css  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/images/asf-logo.svg  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/images/tomcat.svg  
-  inflating: apache-tomcat-8.5.71/webapps/host-manager/index.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/META-INF/context.xml  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/401.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/403.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/404.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/connectorCerts.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/connectorCiphers.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/connectorTrustedCerts.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/sessionDetail.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/jsp/sessionsList.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/WEB-INF/web.xml  
-  inflating: apache-tomcat-8.5.71/webapps/manager/css/manager.css  
-  inflating: apache-tomcat-8.5.71/webapps/manager/images/asf-logo.svg  
-  inflating: apache-tomcat-8.5.71/webapps/manager/images/tomcat.svg  
-  inflating: apache-tomcat-8.5.71/webapps/manager/index.jsp  
-  inflating: apache-tomcat-8.5.71/webapps/manager/status.xsd  
-  inflating: apache-tomcat-8.5.71/webapps/manager/xform.xsl  
+Archive:  apache-tomcat-8.5.72.zip
+   creating: apache-tomcat-8.5.72/
+   creating: apache-tomcat-8.5.72/bin/
+   creating: apache-tomcat-8.5.72/conf/
+   creating: apache-tomcat-8.5.72/lib/
+   creating: apache-tomcat-8.5.72/logs/
+   creating: apache-tomcat-8.5.72/temp/
+   creating: apache-tomcat-8.5.72/webapps/
+   creating: apache-tomcat-8.5.72/webapps/ROOT/
+   creating: apache-tomcat-8.5.72/webapps/ROOT/WEB-INF/
+   creating: apache-tomcat-8.5.72/webapps/docs/
+   creating: apache-tomcat-8.5.72/webapps/docs/WEB-INF/
+   creating: apache-tomcat-8.5.72/webapps/docs/annotationapi/
+   creating: apache-tomcat-8.5.72/webapps/docs/api/
+   creating: apache-tomcat-8.5.72/webapps/docs/appdev/
+   creating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/
+   creating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/docs/
+   creating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/src/
+   creating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/src/mypackage/
+   creating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/web/
+   creating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/web/WEB-INF/
+   creating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/web/images/
+   creating: apache-tomcat-8.5.72/webapps/docs/architecture/
+   creating: apache-tomcat-8.5.72/webapps/docs/architecture/requestProcess/
+   creating: apache-tomcat-8.5.72/webapps/docs/architecture/startup/
+   creating: apache-tomcat-8.5.72/webapps/docs/config/
+   creating: apache-tomcat-8.5.72/webapps/docs/elapi/
+   creating: apache-tomcat-8.5.72/webapps/docs/images/
+   creating: apache-tomcat-8.5.72/webapps/docs/images/fonts/
+   creating: apache-tomcat-8.5.72/webapps/docs/jaspicapi/
+   creating: apache-tomcat-8.5.72/webapps/docs/jspapi/
+   creating: apache-tomcat-8.5.72/webapps/docs/servletapi/
+   creating: apache-tomcat-8.5.72/webapps/docs/tribes/
+   creating: apache-tomcat-8.5.72/webapps/docs/websocketapi/
+   creating: apache-tomcat-8.5.72/webapps/examples/
+   creating: apache-tomcat-8.5.72/webapps/examples/META-INF/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/checkbox/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/colors/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/dates/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/error/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/filters/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/el/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/listeners/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/num/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/sessions/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/util/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/validators/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/chat/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/jsp/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/jsp2/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/jsp/applet/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/lib/
+   creating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/tags/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/async/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/checkbox/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/colors/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/dates/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/error/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/forward/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/images/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/include/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/jsptoserv/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/num/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/plugin/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/plugin/applet/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/security/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/security/protected/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/sessions/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/simpletag/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/snp/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/
+   creating: apache-tomcat-8.5.72/webapps/examples/jsp/xml/
+   creating: apache-tomcat-8.5.72/webapps/examples/servlets/
+   creating: apache-tomcat-8.5.72/webapps/examples/servlets/images/
+   creating: apache-tomcat-8.5.72/webapps/examples/servlets/nonblocking/
+   creating: apache-tomcat-8.5.72/webapps/examples/websocket/
+   creating: apache-tomcat-8.5.72/webapps/host-manager/
+   creating: apache-tomcat-8.5.72/webapps/host-manager/META-INF/
+   creating: apache-tomcat-8.5.72/webapps/host-manager/WEB-INF/
+   creating: apache-tomcat-8.5.72/webapps/host-manager/WEB-INF/jsp/
+   creating: apache-tomcat-8.5.72/webapps/host-manager/css/
+   creating: apache-tomcat-8.5.72/webapps/host-manager/images/
+   creating: apache-tomcat-8.5.72/webapps/manager/
+   creating: apache-tomcat-8.5.72/webapps/manager/META-INF/
+   creating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/
+   creating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/
+   creating: apache-tomcat-8.5.72/webapps/manager/css/
+   creating: apache-tomcat-8.5.72/webapps/manager/images/
+   creating: apache-tomcat-8.5.72/work/
+  inflating: apache-tomcat-8.5.72/BUILDING.txt  
+  inflating: apache-tomcat-8.5.72/CONTRIBUTING.md  
+  inflating: apache-tomcat-8.5.72/LICENSE  
+  inflating: apache-tomcat-8.5.72/NOTICE  
+  inflating: apache-tomcat-8.5.72/README.md  
+  inflating: apache-tomcat-8.5.72/RELEASE-NOTES  
+  inflating: apache-tomcat-8.5.72/RUNNING.txt  
+  inflating: apache-tomcat-8.5.72/bin/bootstrap.jar  
+  inflating: apache-tomcat-8.5.72/bin/catalina-tasks.xml  
+  inflating: apache-tomcat-8.5.72/bin/catalina.bat  
+  inflating: apache-tomcat-8.5.72/bin/catalina.sh  
+  inflating: apache-tomcat-8.5.72/bin/ciphers.bat  
+  inflating: apache-tomcat-8.5.72/bin/ciphers.sh  
+  inflating: apache-tomcat-8.5.72/bin/commons-daemon-native.tar.gz  
+  inflating: apache-tomcat-8.5.72/bin/commons-daemon.jar  
+  inflating: apache-tomcat-8.5.72/bin/configtest.bat  
+  inflating: apache-tomcat-8.5.72/bin/configtest.sh  
+  inflating: apache-tomcat-8.5.72/bin/daemon.sh  
+  inflating: apache-tomcat-8.5.72/bin/digest.bat  
+  inflating: apache-tomcat-8.5.72/bin/digest.sh  
+  inflating: apache-tomcat-8.5.72/bin/setclasspath.bat  
+  inflating: apache-tomcat-8.5.72/bin/setclasspath.sh  
+  inflating: apache-tomcat-8.5.72/bin/shutdown.bat  
+  inflating: apache-tomcat-8.5.72/bin/shutdown.sh  
+  inflating: apache-tomcat-8.5.72/bin/startup.bat  
+  inflating: apache-tomcat-8.5.72/bin/startup.sh  
+  inflating: apache-tomcat-8.5.72/bin/tomcat-juli.jar  
+  inflating: apache-tomcat-8.5.72/bin/tomcat-native.tar.gz  
+  inflating: apache-tomcat-8.5.72/bin/tool-wrapper.bat  
+  inflating: apache-tomcat-8.5.72/bin/tool-wrapper.sh  
+  inflating: apache-tomcat-8.5.72/bin/version.bat  
+  inflating: apache-tomcat-8.5.72/bin/version.sh  
+  inflating: apache-tomcat-8.5.72/conf/catalina.policy  
+  inflating: apache-tomcat-8.5.72/conf/catalina.properties  
+  inflating: apache-tomcat-8.5.72/conf/context.xml  
+  inflating: apache-tomcat-8.5.72/conf/jaspic-providers.xml  
+  inflating: apache-tomcat-8.5.72/conf/jaspic-providers.xsd  
+  inflating: apache-tomcat-8.5.72/conf/logging.properties  
+  inflating: apache-tomcat-8.5.72/conf/server.xml  
+  inflating: apache-tomcat-8.5.72/conf/tomcat-users.xml  
+  inflating: apache-tomcat-8.5.72/conf/tomcat-users.xsd  
+  inflating: apache-tomcat-8.5.72/conf/web.xml  
+  inflating: apache-tomcat-8.5.72/lib/annotations-api.jar  
+  inflating: apache-tomcat-8.5.72/lib/catalina-ant.jar  
+  inflating: apache-tomcat-8.5.72/lib/catalina-ha.jar  
+  inflating: apache-tomcat-8.5.72/lib/catalina-storeconfig.jar  
+  inflating: apache-tomcat-8.5.72/lib/catalina-tribes.jar  
+  inflating: apache-tomcat-8.5.72/lib/catalina.jar  
+  inflating: apache-tomcat-8.5.72/lib/ecj-4.6.3.jar  
+  inflating: apache-tomcat-8.5.72/lib/el-api.jar  
+  inflating: apache-tomcat-8.5.72/lib/jasper-el.jar  
+  inflating: apache-tomcat-8.5.72/lib/jasper.jar  
+  inflating: apache-tomcat-8.5.72/lib/jaspic-api.jar  
+  inflating: apache-tomcat-8.5.72/lib/jsp-api.jar  
+  inflating: apache-tomcat-8.5.72/lib/servlet-api.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-api.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-coyote.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-dbcp.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-i18n-de.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-i18n-es.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-i18n-fr.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-i18n-ja.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-i18n-ko.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-i18n-ru.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-i18n-zh-CN.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-jdbc.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-jni.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-util-scan.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-util.jar  
+  inflating: apache-tomcat-8.5.72/lib/tomcat-websocket.jar  
+  inflating: apache-tomcat-8.5.72/lib/websocket-api.jar  
+  inflating: apache-tomcat-8.5.72/temp/safeToDelete.tmp  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/RELEASE-NOTES.txt  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/WEB-INF/web.xml  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/asf-logo-wide.svg  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/bg-button.png  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/bg-middle.png  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/bg-nav.png  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/bg-upper.png  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/favicon.ico  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/index.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/tomcat.css  
+  inflating: apache-tomcat-8.5.72/webapps/ROOT/tomcat.svg  
+  inflating: apache-tomcat-8.5.72/webapps/docs/BUILDING.txt  
+  inflating: apache-tomcat-8.5.72/webapps/docs/RELEASE-NOTES.txt  
+  inflating: apache-tomcat-8.5.72/webapps/docs/RUNNING.txt  
+  inflating: apache-tomcat-8.5.72/webapps/docs/WEB-INF/web.xml  
+  inflating: apache-tomcat-8.5.72/webapps/docs/aio.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/annotationapi/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/api/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/build.xml.txt  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/deployment.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/installation.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/introduction.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/processes.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/build.xml  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/docs/README.txt  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/sample.war  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/src/mypackage/Hello.java  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/web/WEB-INF/web.xml  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/web/hello.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/web/images/tomcat.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/sample/web/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/source.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/appdev/web.xml.txt  
+  inflating: apache-tomcat-8.5.72/webapps/docs/apr.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/architecture/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/architecture/overview.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/architecture/requestProcess.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/architecture/requestProcess/authentication-process.png  
+  inflating: apache-tomcat-8.5.72/webapps/docs/architecture/requestProcess/request-process.png  
+  inflating: apache-tomcat-8.5.72/webapps/docs/architecture/startup.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/architecture/startup/serverStartup.pdf  
+  inflating: apache-tomcat-8.5.72/webapps/docs/architecture/startup/serverStartup.txt  
+  inflating: apache-tomcat-8.5.72/webapps/docs/balancer-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/building.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/cgi-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/changelog.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/class-loader-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/cluster-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/comments.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/ajp.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/automatic-deployment.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-channel.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-deployer.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-interceptor.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-listener.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-manager.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-membership.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-receiver.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-sender.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster-valve.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cluster.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/context.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/cookie-processor.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/credentialhandler.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/engine.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/executor.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/filter.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/globalresources.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/host.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/http.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/http2.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/jar-scan-filter.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/jar-scanner.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/jaspic.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/listeners.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/loader.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/manager.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/realm.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/resources.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/server.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/service.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/sessionidgenerator.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/systemprops.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/config/valve.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/connectors.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/default-servlet.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/deployer-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/developers.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/elapi/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/extras.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/host-manager-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/html-host-manager-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/html-manager-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/add.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/asf-logo.svg  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/code.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/cors-flowchart.png  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/design.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/docs-stylesheet.css  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/docs.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/fix.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/fonts/OpenSans400.woff  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/fonts/OpenSans400italic.woff  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/fonts/OpenSans600.woff  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/fonts/OpenSans600italic.woff  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/fonts/OpenSans700.woff  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/fonts/OpenSans700italic.woff  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/fonts/fonts.css  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/tomcat.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/tomcat.png  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/update.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/images/void.gif  
+  inflating: apache-tomcat-8.5.72/webapps/docs/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/introduction.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/jasper-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/jaspicapi/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/jdbc-pool.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/jndi-datasource-examples-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/jndi-resources-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/jspapi/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/logging.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/manager-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/maven-jars.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/mbeans-descriptors-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/mbeans-descriptors.dtd  
+  inflating: apache-tomcat-8.5.72/webapps/docs/monitoring.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/proxy-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/realm-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/rewrite.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/security-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/security-manager-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/servletapi/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/setup.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/ssi-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/ssl-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/tribes/developers.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/tribes/faq.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/tribes/interceptors.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/tribes/introduction.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/tribes/membership.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/tribes/setup.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/tribes/status.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/tribes/transport.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/virtual-hosting-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/web-socket-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/websocketapi/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/windows-auth-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/docs/windows-service-howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/META-INF/context.xml  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/CookieExample.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/CookieExample.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/HelloWorldExample.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/HelloWorldExample.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings_de.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings_es.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings_fr.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings_ja.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings_ko.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings_pt.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings_ru.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/LocalStrings_zh_CN.properties  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/RequestHeaderExample.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/RequestHeaderExample.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/RequestInfoExample.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/RequestInfoExample.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/RequestParamExample.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/RequestParamExample.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/ServletToJsp.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/ServletToJsp.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/SessionExample.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/SessionExample.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async0$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async0.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async0.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async1$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async1.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async2$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async2.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async2.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async3.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Async3.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/AsyncStockContextListener.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/AsyncStockContextListener.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/AsyncStockServlet.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/AsyncStockServlet.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Stockticker$Stock.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Stockticker$TickListener.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Stockticker.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/async/Stockticker.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/Entries.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/Entries.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/Entry.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/Entry.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/JspCalendar.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/JspCalendar.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/TableBean.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/cal/TableBean.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/checkbox/CheckTest.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/checkbox/CheckTest.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/colors/ColorGameBean.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/colors/ColorGameBean.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/CompressionFilter.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/CompressionFilter.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/CompressionFilterTestServlet.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/CompressionFilterTestServlet.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/CompressionResponseStream.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/CompressionResponseStream.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/CompressionServletResponseWrapper.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/compressionFilters/CompressionServletResponseWrapper.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/dates/JspCalendar.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/dates/JspCalendar.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/error/Smart.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/error/Smart.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/ExampleTagBase.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/ExampleTagBase.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/FooTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/FooTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/FooTagExtraInfo.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/FooTagExtraInfo.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/LogTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/LogTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/ValuesTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/examples/ValuesTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/filters/ExampleFilter.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/filters/ExampleFilter.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/BookBean.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/BookBean.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/FooBean.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/FooBean.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/ValuesBean.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/ValuesBean.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/el/Functions.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/el/Functions.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/EchoAttributesTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/EchoAttributesTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/FindBookSimpleTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/FindBookSimpleTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/HelloWorldSimpleTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/HelloWorldSimpleTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/RepeatSimpleTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/RepeatSimpleTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/ShuffleSimpleTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/ShuffleSimpleTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/TileSimpleTag.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/jsp2/examples/simpletag/TileSimpleTag.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/listeners/ContextListener.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/listeners/ContextListener.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/listeners/SessionListener.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/listeners/SessionListener.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/ByteCounter$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/ByteCounter$CounterListener.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/ByteCounter.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/ByteCounter.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/NumberWriter$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/NumberWriter$NumberWriterListener.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/NumberWriter.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/nonblocking/NumberWriter.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/num/NumberGuessBean.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/num/NumberGuessBean.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/sessions/DummyCart.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/sessions/DummyCart.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/util/CookieFilter.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/util/CookieFilter.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/util/HTMLFilter.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/util/HTMLFilter.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/validators/DebugValidator.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/validators/DebugValidator.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/ExamplesConfig.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/ExamplesConfig.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/chat/ChatAnnotation.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/chat/ChatAnnotation.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Client$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Client.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Client.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawMessage$ParseException.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawMessage.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawMessage.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardContextListener.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardContextListener.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint$2.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint$3$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint$3.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/DrawboardEndpoint.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$1$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$2.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$MessageType.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Room$Player.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Room.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/Room.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/AbstractWebsocketMessage.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/AbstractWebsocketMessage.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/BinaryWebsocketMessage.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/BinaryWebsocketMessage.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/CloseWebsocketMessage.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/CloseWebsocketMessage.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/StringWebsocketMessage.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/drawboard/wsmessages/StringWebsocketMessage.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoAnnotation.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoAnnotation.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoAsyncAnnotation$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoAsyncAnnotation$CompletedFuture.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoAsyncAnnotation.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoAsyncAnnotation.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint$EchoMessageHandlerBinary.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint$EchoMessageHandlerText.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoEndpoint.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoStreamAnnotation.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/EchoStreamAnnotation.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/echo/servers.json  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/Direction.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/Direction.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/Location$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/Location.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/Location.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/Snake.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/Snake.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/SnakeAnnotation.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/SnakeAnnotation.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/SnakeTimer$1.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/SnakeTimer.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/classes/websocket/snake/SnakeTimer.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/jsp2/jsp2-example-taglib.tld  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/jsp/applet/Clock2.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/jsp/debug-taglib.tld  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/jsp/example-taglib.tld  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/lib/taglibs-standard-impl-1.2.5.jar  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/lib/taglibs-standard-spec-1.2.5.jar  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/tags/displayProducts.tag  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/tags/helloWorld.tag  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/tags/panel.tag  
+  inflating: apache-tomcat-8.5.72/webapps/examples/WEB-INF/web.xml  
+  inflating: apache-tomcat-8.5.72/webapps/examples/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/async/async1.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/async/async1.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/async/async3.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/async/async3.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/async/index.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/async/index.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/Entries.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/Entry.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/JspCalendar.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/TableBean.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/cal1.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/cal1.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/cal2.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/cal2.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/calendar.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/cal/login.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/checkbox/CheckTest.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/checkbox/check.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/checkbox/checkresult.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/checkbox/checkresult.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/checkbox/cresult.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/colors/ColorGameBean.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/colors/clr.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/colors/colors.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/colors/colrs.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/colors/colrs.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/dates/date.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/dates/date.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/dates/date.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/error/er.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/error/err.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/error/err.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/error/error.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/error/errorpge.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/error/errorpge.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/forward/forward.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/forward/forward.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/forward/fwd.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/forward/one.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/forward/one.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/forward/two.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/images/code.gif  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/images/execute.gif  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/images/return.gif  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/include/foo.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/include/foo.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/include/foo.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/include/inc.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/include/include.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/include/include.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/Functions.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/ValuesBean.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/ValuesTag.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/basic-arithmetic.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/basic-arithmetic.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/basic-arithmetic.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/basic-comparisons.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/basic-comparisons.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/basic-comparisons.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/composite.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/composite.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/composite.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/functions.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/functions.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/functions.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/implicit-objects.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/implicit-objects.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/el/implicit-objects.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/FooBean.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/HelloWorldSimpleTag.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/ShuffleSimpleTag.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/TileSimpleTag.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/jspattribute.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/jspattribute.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/jspattribute.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/shuffle.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/shuffle.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspattribute/shuffle.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/basic.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/basic.jspx  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/basic.jspx.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/svgexample.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/textRotate.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/textRotate.jpg  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/textRotate.jspx  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/jspx/textRotate.jspx.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/EchoAttributesTag.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/coda.jspf  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/coda.jspf.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/config.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/config.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/config.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/dynamicattrs.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/dynamicattrs.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/dynamicattrs.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/prelude.jspf  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/misc/prelude.jspf.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/BookBean.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/FindBookSimpleTag.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/Functions.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/HelloWorldSimpleTag.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/RepeatSimpleTag.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/book.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/book.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/book.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/hello.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/hello.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/hello.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/repeat.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/repeat.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/simpletag/repeat.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/displayProducts.tag.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/hello.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/hello.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/hello.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/helloWorld.tag.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/panel.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/panel.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/panel.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/panel.tag.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/products.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/products.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsp2/tagfiles/products.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsptoserv/ServletToJsp.java.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsptoserv/hello.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsptoserv/hello.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsptoserv/jsptoservlet.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsptoserv/jsptoservlet.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/jsptoserv/jts.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/num/numguess.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/num/numguess.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/num/numguess.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/plugin/applet/Clock2.class  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/plugin/applet/Clock2.java  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/plugin/plugin.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/plugin/plugin.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/plugin/plugin.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/security/protected/error.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/security/protected/error.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/security/protected/index.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/security/protected/index.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/security/protected/login.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/security/protected/login.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/sessions/DummyCart.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/sessions/carts.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/sessions/carts.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/sessions/carts.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/sessions/crt.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/simpletag/foo.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/simpletag/foo.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/simpletag/foo.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/snp/snoop.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/snp/snoop.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/snp/snoop.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/choose.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/choose.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/choose.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/foreach.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/foreach.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/foreach.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/howto.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/if.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/if.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/if.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/tagplugin/notes.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/xml/xml.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/xml/xml.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/examples/jsp/xml/xml.jsp.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/cookies.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/helloworld.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/images/code.gif  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/images/execute.gif  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/images/return.gif  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/index.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/nonblocking/bytecounter.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/reqheaders.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/reqinfo.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/reqparams.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/servlets/sessions.html  
+  inflating: apache-tomcat-8.5.72/webapps/examples/websocket/chat.xhtml  
+  inflating: apache-tomcat-8.5.72/webapps/examples/websocket/drawboard.xhtml  
+  inflating: apache-tomcat-8.5.72/webapps/examples/websocket/echo.xhtml  
+  inflating: apache-tomcat-8.5.72/webapps/examples/websocket/index.xhtml  
+  inflating: apache-tomcat-8.5.72/webapps/examples/websocket/snake.xhtml  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/META-INF/context.xml  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/WEB-INF/jsp/401.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/WEB-INF/jsp/403.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/WEB-INF/jsp/404.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/WEB-INF/manager.xml  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/WEB-INF/web.xml  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/css/manager.css  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/images/asf-logo.svg  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/images/tomcat.svg  
+  inflating: apache-tomcat-8.5.72/webapps/host-manager/index.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/META-INF/context.xml  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/401.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/403.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/404.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/connectorCerts.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/connectorCiphers.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/connectorTrustedCerts.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/sessionDetail.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/jsp/sessionsList.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/WEB-INF/web.xml  
+  inflating: apache-tomcat-8.5.72/webapps/manager/css/manager.css  
+  inflating: apache-tomcat-8.5.72/webapps/manager/images/asf-logo.svg  
+  inflating: apache-tomcat-8.5.72/webapps/manager/images/tomcat.svg  
+  inflating: apache-tomcat-8.5.72/webapps/manager/index.jsp  
+  inflating: apache-tomcat-8.5.72/webapps/manager/status.xsd  
+  inflating: apache-tomcat-8.5.72/webapps/manager/xform.xsl  
 I am at point B
 I am at point C
 I am at point D
@@ -2986,27 +2986,27 @@ I am at point E1
 
 Installing app dependencies for arch x64 to /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-app/desktop/app
 
-audited 979 packages in 6.305s
+added 1 package from 1 contributor and audited 979 packages in 6.646s
 
 24 packages are looking for funding
   run `npm fund` for details
 
-found 30 vulnerabilities (11 low, 11 moderate, 6 high, 2 critical)
+found 43 vulnerabilities (5 low, 12 moderate, 21 high, 5 critical)
   run `npm audit fix` to fix them, or `npm audit` for details
 I am at point E2
 
 > @ prerelease /Users/bidishadasbaksi/Documents/GitHub/Web-Karma/karma-app/desktop
 > gulp build --env=production
 
-[16:09:26] Using gulpfile ~/Documents/GitHub/Web-Karma/karma-app/desktop/gulpfile.js
-[16:09:26] Starting 'build'...
-[16:09:26] Starting 'bundle'...
-[16:09:26] Finished 'bundle' after 58 ms
-[16:09:26] Starting 'less'...
-[16:09:26] Finished 'less' after 38 ms
-[16:09:26] Starting 'environment'...
-[16:09:26] Finished 'environment' after 1.95 ms
-[16:09:26] Finished 'build' after 100 ms
+[16:11:25] Using gulpfile ~/Documents/GitHub/Web-Karma/karma-app/desktop/gulpfile.js
+[16:11:25] Starting 'build'...
+[16:11:25] Starting 'bundle'...
+[16:11:25] Finished 'bundle' after 60 ms
+[16:11:25] Starting 'less'...
+[16:11:25] Finished 'less' after 36 ms
+[16:11:25] Starting 'environment'...
+[16:11:25] Finished 'environment' after 1.57 ms
+[16:11:25] Finished 'build' after 99 ms
 I am at point E3
 I am at point F
 I am at point G
@@ -3989,7 +3989,7 @@ I am at point J
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/error_prone_annotations-2.3.4.jar (deflated 35%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/hsqldb-1.8.0.7.jar (deflated 5%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commons-compress-1.4.1.jar (deflated 10%)
-  adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-util-0.0.1-SNAPSHOT.jar (deflated 31%)
+  adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-util-0.0.1-SNAPSHOT.jar (deflated 30%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-publish-0.0.1-SNAPSHOT.jar (deflated 42%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-common-0.0.1-SNAPSHOT.jar (deflated 44%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xmlunit-1.2.jar (deflated 10%)
@@ -4019,7 +4019,7 @@ I am at point J
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/paranamer-2.3.jar (deflated 11%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/gt-main-9.0-M0.jar (deflated 8%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xml-apis-1.4.01.jar (deflated 22%)
-  adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-update-0.0.1-SNAPSHOT.jar (deflated 44%)
+  adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-update-0.0.1-SNAPSHOT.jar (deflated 43%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/dom4j-1.6.1.jar (deflated 7%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/cglib-2.2.0-b21.jar (deflated 10%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jena-2.6.4.jar (deflated 10%)
@@ -4050,7 +4050,7 @@ I am at point J
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xercesImpl-2.7.1.jar (deflated 11%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-database-0.0.1-SNAPSHOT.jar (deflated 42%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/httpclient-4.5.13.jar (deflated 9%)
-  adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-json-0.0.1-SNAPSHOT.jar (deflated 44%)
+  adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-json-0.0.1-SNAPSHOT.jar (deflated 43%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-typer-0.0.1-SNAPSHOT.jar (deflated 39%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/gt-shapefile-9.0-M0.jar (deflated 7%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commons-beanutils-1.9.2.jar (deflated 9%)
@@ -4071,7 +4071,7 @@ I am at point J
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/sesame-rio-ntriples-2.7.1.jar (deflated 14%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jts-1.12.jar (deflated 11%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jaxb-impl-2.2.jar (deflated 11%)
-  adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-jdbc-0.0.1-SNAPSHOT.jar (deflated 39%)
+  adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-jdbc-0.0.1-SNAPSHOT.jar (deflated 40%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/web.xml (deflated 80%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/WEB-INF/Web-Karma - Shortcut.lnk (deflated 44%)
   adding: Karma-Linux/resources/app/tomcat/webapps/ROOT/selection.jsp (deflated 64%)
@@ -4154,7 +4154,7 @@ I am at point J
   adding: Karma-Linux/resources/app/tomcat/lib/tomcat-i18n-es.jar (deflated 16%)
   adding: Karma-Linux/resources/app/tomcat/lib/tomcat-websocket.jar (deflated 8%)
   adding: Karma-Linux/resources/app/tomcat/lib/jasper.jar (deflated 6%)
-  adding: Karma-Linux/resources/app/tomcat/lib/jasper-el.jar (deflated 8%)
+  adding: Karma-Linux/resources/app/tomcat/lib/jasper-el.jar (deflated 7%)
   adding: Karma-Linux/resources/app/tomcat/lib/tomcat-util.jar (deflated 9%)
   adding: Karma-Linux/resources/app/tomcat/lib/tomcat-i18n-de.jar (deflated 23%)
   adding: Karma-Linux/resources/app/tomcat/lib/catalina-storeconfig.jar (deflated 8%)
@@ -4680,7 +4680,7 @@ I am at point J
   adding: Karma-Linux/resources/app/node_modules/tail/.github/workflows/codeql-analysis.yml (deflated 52%)
   adding: Karma-Linux/resources/app/node_modules/tail/.github/dependabot.yml (deflated 18%)
   adding: Karma-Linux/resources/app/node_modules/tail/lib/ (stored 0%)
-  adding: Karma-Linux/resources/app/node_modules/tail/lib/tail.js (deflated 73%)
+  adding: Karma-Linux/resources/app/node_modules/tail/lib/tail.js (deflated 74%)
   adding: Karma-Linux/resources/app/node_modules/brace-expansion/ (stored 0%)
   adding: Karma-Linux/resources/app/node_modules/brace-expansion/LICENSE (deflated 41%)
   adding: Karma-Linux/resources/app/node_modules/brace-expansion/index.js (deflated 63%)
@@ -4792,11 +4792,11 @@ I am at point J
   adding: Karma-Linux/resources/app/node_modules/q/CHANGES.md (deflated 63%)
   adding: Karma-Linux/resources/app/node_modules/open/ (stored 0%)
   adding: Karma-Linux/resources/app/node_modules/open/license (deflated 43%)
-  adding: Karma-Linux/resources/app/node_modules/open/index.js (deflated 64%)
-  adding: Karma-Linux/resources/app/node_modules/open/readme.md (deflated 55%)
+  adding: Karma-Linux/resources/app/node_modules/open/index.js (deflated 65%)
+  adding: Karma-Linux/resources/app/node_modules/open/readme.md (deflated 62%)
   adding: Karma-Linux/resources/app/node_modules/open/package.json (deflated 56%)
   adding: Karma-Linux/resources/app/node_modules/open/xdg-open (deflated 72%)
-  adding: Karma-Linux/resources/app/node_modules/open/index.d.ts (deflated 56%)
+  adding: Karma-Linux/resources/app/node_modules/open/index.d.ts (deflated 62%)
   adding: Karma-Linux/resources/app/node_modules/mkdirp/ (stored 0%)
   adding: Karma-Linux/resources/app/node_modules/mkdirp/LICENSE (deflated 41%)
   adding: Karma-Linux/resources/app/node_modules/mkdirp/bin/ (stored 0%)
@@ -5970,7 +5970,7 @@ I am at point J
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/error_prone_annotations-2.3.4.jar (deflated 35%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/hsqldb-1.8.0.7.jar (deflated 5%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commons-compress-1.4.1.jar (deflated 10%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-util-0.0.1-SNAPSHOT.jar (deflated 31%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-util-0.0.1-SNAPSHOT.jar (deflated 30%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-publish-0.0.1-SNAPSHOT.jar (deflated 42%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-common-0.0.1-SNAPSHOT.jar (deflated 44%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xmlunit-1.2.jar (deflated 10%)
@@ -6000,7 +6000,7 @@ I am at point J
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/paranamer-2.3.jar (deflated 11%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/gt-main-9.0-M0.jar (deflated 8%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xml-apis-1.4.01.jar (deflated 22%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-update-0.0.1-SNAPSHOT.jar (deflated 44%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-update-0.0.1-SNAPSHOT.jar (deflated 43%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/dom4j-1.6.1.jar (deflated 7%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/cglib-2.2.0-b21.jar (deflated 10%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jena-2.6.4.jar (deflated 10%)
@@ -6031,7 +6031,7 @@ I am at point J
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xercesImpl-2.7.1.jar (deflated 11%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-database-0.0.1-SNAPSHOT.jar (deflated 42%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/httpclient-4.5.13.jar (deflated 9%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-json-0.0.1-SNAPSHOT.jar (deflated 44%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-json-0.0.1-SNAPSHOT.jar (deflated 43%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-typer-0.0.1-SNAPSHOT.jar (deflated 39%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/gt-shapefile-9.0-M0.jar (deflated 7%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commons-beanutils-1.9.2.jar (deflated 9%)
@@ -6052,7 +6052,7 @@ I am at point J
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/sesame-rio-ntriples-2.7.1.jar (deflated 14%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jts-1.12.jar (deflated 11%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jaxb-impl-2.2.jar (deflated 11%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-jdbc-0.0.1-SNAPSHOT.jar (deflated 39%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-jdbc-0.0.1-SNAPSHOT.jar (deflated 40%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/web.xml (deflated 80%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/WEB-INF/Web-Karma - Shortcut.lnk (deflated 44%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/webapps/ROOT/selection.jsp (deflated 64%)
@@ -6135,7 +6135,7 @@ I am at point J
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/lib/tomcat-i18n-es.jar (deflated 16%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/lib/tomcat-websocket.jar (deflated 8%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/lib/jasper.jar (deflated 6%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/lib/jasper-el.jar (deflated 8%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/lib/jasper-el.jar (deflated 7%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/lib/tomcat-util.jar (deflated 9%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/lib/tomcat-i18n-de.jar (deflated 23%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/tomcat/lib/catalina-storeconfig.jar (deflated 8%)
@@ -6268,7 +6268,7 @@ I am at point J
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/tail/.github/workflows/codeql-analysis.yml (deflated 52%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/tail/.github/dependabot.yml (deflated 18%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/tail/lib/ (stored 0%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/tail/lib/tail.js (deflated 73%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/tail/lib/tail.js (deflated 74%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/brace-expansion/ (stored 0%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/brace-expansion/LICENSE (deflated 41%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/brace-expansion/index.js (deflated 63%)
@@ -6380,11 +6380,11 @@ I am at point J
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/q/CHANGES.md (deflated 63%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/ (stored 0%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/license (deflated 43%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/index.js (deflated 64%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/readme.md (deflated 55%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/index.js (deflated 65%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/readme.md (deflated 62%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/package.json (deflated 56%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/xdg-open (deflated 72%)
-  adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/index.d.ts (deflated 56%)
+  adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/open/index.d.ts (deflated 62%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/mkdirp/ (stored 0%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/mkdirp/LICENSE (deflated 41%)
   adding: Karma-Mac/Karma.app/Contents/Resources/app/node_modules/mkdirp/bin/ (stored 0%)
@@ -8112,7 +8112,7 @@ I am at point J
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/error_prone_annotations-2.3.4.jar (deflated 35%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/hsqldb-1.8.0.7.jar (deflated 5%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commons-compress-1.4.1.jar (deflated 10%)
-  adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-util-0.0.1-SNAPSHOT.jar (deflated 31%)
+  adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-util-0.0.1-SNAPSHOT.jar (deflated 30%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-publish-0.0.1-SNAPSHOT.jar (deflated 42%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-common-0.0.1-SNAPSHOT.jar (deflated 44%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xmlunit-1.2.jar (deflated 10%)
@@ -8142,7 +8142,7 @@ I am at point J
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/paranamer-2.3.jar (deflated 11%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/gt-main-9.0-M0.jar (deflated 8%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xml-apis-1.4.01.jar (deflated 22%)
-  adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-update-0.0.1-SNAPSHOT.jar (deflated 44%)
+  adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commands-update-0.0.1-SNAPSHOT.jar (deflated 43%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/dom4j-1.6.1.jar (deflated 7%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/cglib-2.2.0-b21.jar (deflated 10%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jena-2.6.4.jar (deflated 10%)
@@ -8173,7 +8173,7 @@ I am at point J
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/xercesImpl-2.7.1.jar (deflated 11%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-database-0.0.1-SNAPSHOT.jar (deflated 42%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/httpclient-4.5.13.jar (deflated 9%)
-  adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-json-0.0.1-SNAPSHOT.jar (deflated 44%)
+  adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/import-json-0.0.1-SNAPSHOT.jar (deflated 43%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-typer-0.0.1-SNAPSHOT.jar (deflated 39%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/gt-shapefile-9.0-M0.jar (deflated 7%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/commons-beanutils-1.9.2.jar (deflated 9%)
@@ -8194,7 +8194,7 @@ I am at point J
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/sesame-rio-ntriples-2.7.1.jar (deflated 14%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jts-1.12.jar (deflated 11%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/jaxb-impl-2.2.jar (deflated 11%)
-  adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-jdbc-0.0.1-SNAPSHOT.jar (deflated 39%)
+  adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/lib/karma-jdbc-0.0.1-SNAPSHOT.jar (deflated 40%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/web.xml (deflated 80%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/WEB-INF/Web-Karma - Shortcut.lnk (deflated 44%)
   adding: Karma-Windows/resources/app/tomcat/webapps/ROOT/selection.jsp (deflated 64%)
@@ -8277,7 +8277,7 @@ I am at point J
   adding: Karma-Windows/resources/app/tomcat/lib/tomcat-i18n-es.jar (deflated 16%)
   adding: Karma-Windows/resources/app/tomcat/lib/tomcat-websocket.jar (deflated 8%)
   adding: Karma-Windows/resources/app/tomcat/lib/jasper.jar (deflated 6%)
-  adding: Karma-Windows/resources/app/tomcat/lib/jasper-el.jar (deflated 8%)
+  adding: Karma-Windows/resources/app/tomcat/lib/jasper-el.jar (deflated 7%)
   adding: Karma-Windows/resources/app/tomcat/lib/tomcat-util.jar (deflated 9%)
   adding: Karma-Windows/resources/app/tomcat/lib/tomcat-i18n-de.jar (deflated 23%)
   adding: Karma-Windows/resources/app/tomcat/lib/catalina-storeconfig.jar (deflated 8%)
@@ -8622,7 +8622,7 @@ I am at point J
   adding: Karma-Windows/resources/app/node_modules/tail/.github/workflows/codeql-analysis.yml (deflated 52%)
   adding: Karma-Windows/resources/app/node_modules/tail/.github/dependabot.yml (deflated 18%)
   adding: Karma-Windows/resources/app/node_modules/tail/lib/ (stored 0%)
-  adding: Karma-Windows/resources/app/node_modules/tail/lib/tail.js (deflated 73%)
+  adding: Karma-Windows/resources/app/node_modules/tail/lib/tail.js (deflated 74%)
   adding: Karma-Windows/resources/app/node_modules/brace-expansion/ (stored 0%)
   adding: Karma-Windows/resources/app/node_modules/brace-expansion/LICENSE (deflated 41%)
   adding: Karma-Windows/resources/app/node_modules/brace-expansion/index.js (deflated 63%)
@@ -8734,11 +8734,11 @@ I am at point J
   adding: Karma-Windows/resources/app/node_modules/q/CHANGES.md (deflated 63%)
   adding: Karma-Windows/resources/app/node_modules/open/ (stored 0%)
   adding: Karma-Windows/resources/app/node_modules/open/license (deflated 43%)
-  adding: Karma-Windows/resources/app/node_modules/open/index.js (deflated 64%)
-  adding: Karma-Windows/resources/app/node_modules/open/readme.md (deflated 55%)
+  adding: Karma-Windows/resources/app/node_modules/open/index.js (deflated 65%)
+  adding: Karma-Windows/resources/app/node_modules/open/readme.md (deflated 62%)
   adding: Karma-Windows/resources/app/node_modules/open/package.json (deflated 56%)
   adding: Karma-Windows/resources/app/node_modules/open/xdg-open (deflated 72%)
-  adding: Karma-Windows/resources/app/node_modules/open/index.d.ts (deflated 56%)
+  adding: Karma-Windows/resources/app/node_modules/open/index.d.ts (deflated 62%)
   adding: Karma-Windows/resources/app/node_modules/mkdirp/ (stored 0%)
   adding: Karma-Windows/resources/app/node_modules/mkdirp/LICENSE (deflated 41%)
   adding: Karma-Windows/resources/app/node_modules/mkdirp/bin/ (stored 0%)

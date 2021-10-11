@@ -50,7 +50,8 @@ rm -rf karma-app-deps-master master.zip
 echo "I am at point A"
 # download tomcat binary
 # wget http://mirror.cc.columbia.edu/pub/software/apache/tomcat/tomcat-8/v8.5.30/bin/apache-tomcat-8.5.30.zip
-wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.71/bin/apache-tomcat-8.5.71.zip
+# wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.71/bin/apache-tomcat-8.5.71.zip
+wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.72/bin/apache-tomcat-8.5.72.zip
 unzip apache-tomcat-*.zip
 rm apache-tomcat-*.zip
 echo "I am at point B"
@@ -82,7 +83,8 @@ echo "I am at point F"
 tar -xzvf $CURRENT/target/jre*windows*.tar.gz
 electron-packager . --platform=win32 --arch=x64 --icon=../resources/icons/karma.ico --overwrite
 rm -rf jre*
-tar -xzvf $CURRENT/target/jre*macosx*.tar.gz
+#tar -xzvf $CURRENT/target/jre*macosx*.tar.gz
+tar -xzvf ~/Documents/java_karma/jre-8u101-macosx-x64.tar.gz
 electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite 
 rm -rf jre*
 tar -xzvf $CURRENT/target/jre*linux*.tar.gz
