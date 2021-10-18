@@ -25,7 +25,7 @@
 
 	<properties>
 		<skipTests>true</skipTests>
-    <jettyVersion>9.4.44.v20210927</jettyVersion>
+    <jettyVersion>9.4.43.v20210629</jettyVersion>
     <project.build.sourceEncoding>
       UTF-8
     </project.build.sourceEncoding>
@@ -505,7 +505,7 @@
 				  <execution><goals><goal>java</goal></goals></execution>
 				</executions>
 				<configuration>
-				 <!-- <mainClass>edu.isi.karma.webserver.ServerStart</mainClass> -->
+<!--				  <mainClass>edu.isi.karma.webserver.ServerStart</mainClass>-->
 				</configuration>
 			  </plugin>
 		      

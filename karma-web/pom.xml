@@ -1,36 +1,36 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 	<packaging>war</packaging>
 
-    <parent>
-        <groupId>edu.isi</groupId>
-        <artifactId>karma-common-web</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../karma-common-web</relativePath>
-    </parent>
+	<parent>
+		<groupId>edu.isi</groupId>
+		<artifactId>karma-common-web</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../karma-common-web</relativePath>
+	</parent>
 
-    <artifactId>karma-web</artifactId>
+	<artifactId>karma-web</artifactId>
 
 	<dependencies>
-		
-	
+
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>de.micromata.jak</groupId>
 			<artifactId>JavaAPIforKml</artifactId>
 		</dependency>
-            
+
 	</dependencies>
 
 
 	<build>
-	
+
 		<plugins>
 			<!-- Configuration for Jetty -->
 			<plugin>
@@ -80,104 +80,99 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
- 
 
-  <profile>
-	<id>tomcat-deploy</id>
-	<build>
-  		<plugins>
-	  		<!-- Configuration for Tomcat -->
-	  		<!--
 
-	  		For Tomcat, add the following roles and user to the conf/tomcat-users.xml file as follows
-	  		<role rolename="manager-gui"/>
- 			<role rolename="manager-script"/>
- 			<user username="myusername" password="mypassword" roles="manager-gui,manager-script"/>
+		<profile>
+			<id>tomcat-deploy</id>
+			<build>
+				<plugins>
+					<!-- Configuration for Tomcat -->
+					<!--
+                    For Tomcat, add the following roles and user to the conf/tomcat-users.xml file as follows
+                    <role rolename="manager-gui"/>
+                   <role rolename="manager-script"/>
+                   <user username="myusername" password="mypassword" roles="manager-gui,manager-script"/>
+                  Start (or restart) your Tomcat instance to pick up the user configuration changes
+                  Add a corresponding server block to your $M2_HOME/conf/settings.xml:
+                  <server>
+                      <id>TomcatServer</id>
+                      <username>myusername</username>
+                      <password>mypassword</password>
+                  </server>
+                  Set the tomcat url, port and path settings and then run
 
-			Start (or restart) your Tomcat instance to pick up the user configuration changes
+                  mvn package -Ptomcat-deploy tomcat:deploy
 
-    		Add a corresponding server block to your $M2_HOME/conf/settings.xml:
+                  from the Web-Karma folder
+                  to deploy WAR in the tomcat container
+                    -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>tomcat-maven-plugin</artifactId>
+						<configuration>
+							<argLine>-XX:MaxPermSize=128m</argLine>
+							<server>TomcatServer</server>
+							<path>/</path>
+							<url>http://localhost:8080/manager/text</url>
+							<update>true</update>
+						</configuration>
 
-			<server>
-			    <id>TomcatServer</id>
-			    <username>myusername</username>
-			    <password>mypassword</password>
-			</server>
-
-			Set the tomcat url, port and path settings and then run
-			
-			mvn package -Ptomcat-deploy tomcat:deploy
-			
-			from the Web-Karma folder
-			to deploy WAR in the tomcat container
-	  		-->
-			<plugin>
-		        <groupId>org.codehaus.mojo</groupId>
-		  		<artifactId>tomcat-maven-plugin</artifactId>
-				<configuration>
-				<argLine>-XX:MaxPermSize=128m</argLine>
-						<server>TomcatServer</server>
-						<path>/</path>
-						<url>http://localhost:8080/manager/text</url>
-						<update>true</update>
-					</configuration>
-
-					<executions>
-						<execution>
-		  					<id>cleaningService</id>
-		  					<phase>package</phase>
+						<executions>
+							<execution>
+								<id>cleaningService</id>
+								<phase>package</phase>
 								<goals><goal>deploy</goal></goals>
-		  					<configuration>
-			  					<server>TomcatServer</server>
-			  					<path>/cleaningService</path>
-			  					<url>http://localhost:8080/manager/text</url>
-			  					<warFile>${project.basedir}/external_webapps/cleaningService.war</warFile>
-			  					<update>true</update>
-			  				</configuration>
-		  				</execution>
-		  				<execution>
-		  					<id>clusterService</id>
-		  					<phase>package</phase>
+								<configuration>
+									<server>TomcatServer</server>
+									<path>/cleaningService</path>
+									<url>http://localhost:8080/manager/text</url>
+									<warFile>${project.basedir}/external_webapps/cleaningService.war</warFile>
+									<update>true</update>
+								</configuration>
+							</execution>
+							<execution>
+								<id>clusterService</id>
+								<phase>package</phase>
 								<goals><goal>deploy</goal></goals>
-		  					<configuration>
-			  					<server>TomcatServer</server>
-			  					<path>/clusterService</path>
-			  					<url>http://localhost:8080/manager/text</url>
-			  					<warFile>${project.basedir}/external_webapps/cluster-1.0.war</warFile>
-			  					<update>true</update>
-			  				</configuration>
-		  				</execution>
-		  				<execution>
-		  					<id>openrdfworkbench</id>
-		  					<phase>package</phase>
+								<configuration>
+									<server>TomcatServer</server>
+									<path>/clusterService</path>
+									<url>http://localhost:8080/manager/text</url>
+									<warFile>${project.basedir}/external_webapps/cluster-1.0.war</warFile>
+									<update>true</update>
+								</configuration>
+							</execution>
+							<execution>
+								<id>openrdfworkbench</id>
+								<phase>package</phase>
 								<goals><goal>deploy</goal></goals>
-		  					<configuration>
-			  					<server>TomcatServer</server>
-			  					<path>/openrdf-workbench</path>
-			  					<url>http://localhost:8080/manager/text</url>
-			  					<warFile>${project.basedir}/external_webapps/openrdf-workbench.war</warFile>
-			  					<update>true</update>
-			  				</configuration>
-		  				</execution>
-		  				<execution>
-		  					<id>openrdfsesame</id>
-		  					<phase>package</phase>
+								<configuration>
+									<server>TomcatServer</server>
+									<path>/openrdf-workbench</path>
+									<url>http://localhost:8080/manager/text</url>
+									<warFile>${project.basedir}/external_webapps/openrdf-workbench.war</warFile>
+									<update>true</update>
+								</configuration>
+							</execution>
+							<execution>
+								<id>openrdfsesame</id>
+								<phase>package</phase>
 								<goals><goal>deploy</goal></goals>
-		  					<configuration>
-			  					<server>TomcatServer</server>
-			  					<path>/openrdf-sesame</path>
-			  					<url>http://localhost:8080/manager/text</url>
-			  					<warFile>${project.basedir}/external_webapps/openrdf-sesame.war</warFile>
-			  					<update>true</update>
-			  				</configuration>
-		  				</execution>
-		  		</executions>
-		    </plugin>
-		</plugins>
-	</build>
-  </profile>
-</profiles>
+								<configuration>
+									<server>TomcatServer</server>
+									<path>/openrdf-sesame</path>
+									<url>http://localhost:8080/manager/text</url>
+									<warFile>${project.basedir}/external_webapps/openrdf-sesame.war</warFile>
+									<update>true</update>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
