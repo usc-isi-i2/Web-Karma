@@ -25,7 +25,7 @@
 
 	<properties>
 		<skipTests>true</skipTests>
-    <jettyVersion>9.4.41.v20210516</jettyVersion>
+    <jettyVersion>9.4.43.v20210629</jettyVersion>
     <project.build.sourceEncoding>
       UTF-8
     </project.build.sourceEncoding>
@@ -268,25 +268,25 @@
     	<artifactId>antlr</artifactId>
     	<version>${antlr.version}</version>
     </dependency>
-        <dependency>
-        	<groupId>org.jdom</groupId>
-        	<artifactId>jdom</artifactId>
-        	<version>${jdom.version}</version>
-        	<exclusions>
-        		<exclusion>
-        			<artifactId>maven-cobertura-plugin</artifactId>
-        			<groupId>maven-plugins</groupId>
-        		</exclusion>
-        		<exclusion>
-        			<artifactId>maven-findbugs-plugin</artifactId>
-        			<groupId>maven-plugins</groupId>
-        		</exclusion>
-		        <exclusion>
-			        <artifactId>com.ibm.icu</artifactId>
-			        <groupId>icu4j</groupId>
-		        </exclusion>
-        	</exclusions>
-        </dependency>
+<!--        <dependency>-->
+<!--        	<groupId>org.jdom</groupId>-->
+<!--        	<artifactId>jdom</artifactId>-->
+<!--        	<version>${jdom.version}</version>-->
+<!--        	<exclusions>-->
+<!--        		<exclusion>-->
+<!--        			<artifactId>maven-cobertura-plugin</artifactId>-->
+<!--        			<groupId>maven-plugins</groupId>-->
+<!--        		</exclusion>-->
+<!--        		<exclusion>-->
+<!--        			<artifactId>maven-findbugs-plugin</artifactId>-->
+<!--        			<groupId>maven-plugins</groupId>-->
+<!--        		</exclusion>-->
+<!--		        <exclusion>-->
+<!--			        <artifactId>com.ibm.icu</artifactId>-->
+<!--			        <groupId>icu4j</groupId>-->
+<!--		        </exclusion>-->
+<!--        	</exclusions>-->
+<!--        </dependency>-->
 	  <dependency>
 		  <groupId>com.ibm.icu</groupId>
 		  <artifactId>icu4j</artifactId>
@@ -505,7 +505,7 @@
 				  <execution><goals><goal>java</goal></goals></execution>
 				</executions>
 				<configuration>
-				 <!-- <mainClass>edu.isi.karma.webserver.ServerStart</mainClass> -->
+<!--				  <mainClass>edu.isi.karma.webserver.ServerStart</mainClass>-->
 				</configuration>
 			  </plugin>
 		      
