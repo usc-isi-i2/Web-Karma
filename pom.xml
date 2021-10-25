@@ -268,25 +268,25 @@
     	<artifactId>antlr</artifactId>
     	<version>${antlr.version}</version>
     </dependency>
-<!--        <dependency>-->
-<!--        	<groupId>org.jdom</groupId>-->
-<!--        	<artifactId>jdom</artifactId>-->
-<!--        	<version>${jdom.version}</version>-->
-<!--        	<exclusions>-->
-<!--        		<exclusion>-->
-<!--        			<artifactId>maven-cobertura-plugin</artifactId>-->
-<!--        			<groupId>maven-plugins</groupId>-->
-<!--        		</exclusion>-->
-<!--        		<exclusion>-->
-<!--        			<artifactId>maven-findbugs-plugin</artifactId>-->
-<!--        			<groupId>maven-plugins</groupId>-->
-<!--        		</exclusion>-->
-<!--		        <exclusion>-->
-<!--			        <artifactId>com.ibm.icu</artifactId>-->
-<!--			        <groupId>icu4j</groupId>-->
-<!--		        </exclusion>-->
-<!--        	</exclusions>-->
-<!--        </dependency>-->
+        <dependency>
+        	<groupId>org.jdom</groupId>
+        	<artifactId>jdom</artifactId>
+        	<version>${jdom.version}</version>
+        	<exclusions>
+        		<exclusion>
+        			<artifactId>maven-cobertura-plugin</artifactId>
+        			<groupId>maven-plugins</groupId>
+        		</exclusion>
+        		<exclusion>
+        			<artifactId>maven-findbugs-plugin</artifactId>
+        			<groupId>maven-plugins</groupId>
+        		</exclusion>
+		        <exclusion>
+			        <artifactId>com.ibm.icu</artifactId>
+			        <groupId>icu4j</groupId>
+		        </exclusion>
+        	</exclusions>
+        </dependency>
 	  <dependency>
 		  <groupId>com.ibm.icu</groupId>
 		  <artifactId>icu4j</artifactId>
