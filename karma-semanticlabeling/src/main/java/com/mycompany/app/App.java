@@ -12,24 +12,22 @@ import java.nio.file.Paths;
 
 // import java.lang.module.ModuleDescriptor.Modifier;
 
+import com.mycompany.dsl.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 
-import com.google.gson.Gson; 
-import com.google.gson.GsonBuilder; 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import com.mycompany.app.CreateDSLObjects;
-import com.mycompany.dsl.FeatureExtractor;
-import com.mycompany.dsl.SemTypePrediction;
-import com.mycompany.dsl.DSL_main;
-import com.mycompany.dsl.ColumnBasedTable;
-
+import com.mycompany.dsl.featureextraction.columnbase.Textual;
+import org.json.simple.parser.ParseException;
 
 
 /**
@@ -50,10 +48,60 @@ public class App
         //logger.setLevel(Level.INFO);
         System.out.println( "Starting App!" );
         System.out.println( "Starting App!" );
-        String dirPath = "/Users/rutujarane/Desktop/ISI/Semantics/dsl/data/soccer2";
-        String modelFile = "new_model_Dec";
+//        String dirPath = "/Users/rutujarane/Desktop/ISI/Semantics/dsl/data/soccer2";
+        String dirPath = "/Users/bidishadasbaksi/Docs_no_icloud/GitHub/iswc-2016-semantic-labeling/data/datasets/soccer/data";
+        String modelFile = "/Users/bidishadasbaksi/Docs_no_icloud/GitHub/new_model_Dec";
+        String featureExtractorFile = "/Users/bidishadasbaksi/Docs_no_icloud/GitHub/tfidf_features.txt";
+        String semanticLabelFile = "/Users/bidishadasbaksi/Docs_no_icloud/GitHub/iswc-2016-semantic-labeling/data/datasets/soccer/model";
+        File maindir = new File(semanticLabelFile);
+        HashMap<String, SemType> sem_col = new HashMap<>();
+        if(maindir.exists() && maindir.isDirectory()) {
+            //File listOfFileFolders[] = maindir.listFiles();
+            File listOfFiles[] = maindir.listFiles();
+            for (int i = 0; i < listOfFiles.length; i++) {
+                String filename = listOfFiles[i].getAbsolutePath();
+                JSONParser jsonParser = new JSONParser();
+                try (FileReader reader = new FileReader(filename)) {
+                    //Read JSON file
+                    Object obj = jsonParser.parse(reader);
+                    JSONObject jsonObject = (JSONObject)obj;
+                    JSONObject graph = (JSONObject) jsonObject.get("graph");
+                    JSONArray nodes = (JSONArray) graph.get("nodes");
+                    Iterator<JSONObject> iterator = nodes.iterator();
+                    while (iterator.hasNext()) {
+                        JSONObject node =iterator.next();
+                        String type = (String) node.get("type");
+                        if(type.equals("ColumnNode")){
+                            String columnName = (String) node.get("columnName");
+                            JSONArray userSemanticTypes = (JSONArray) node.get("userSemanticTypes");
+                            JSONObject domainObj = (JSONObject) ((JSONObject) userSemanticTypes.get(0)).get("domain");
+                            String domainName = (String) domainObj.get("uri");
+                            JSONObject typeObj = (JSONObject) ((JSONObject) userSemanticTypes.get(0)).get("type");
+                            String typeName = (String) typeObj.get("uri");
+                            SemType semType = new SemType(domainName,typeName);
+                            sem_col.put(columnName,semType);
 
-        File maindir = new File(dirPath);
+                        }
+                    }
+                    System.out.println(nodes);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+
+
+
+        maindir = new File(dirPath);
+        //Create Semtype Dictionaries
+
+
         // File listOfFiles[];
         if(maindir.exists() && maindir.isDirectory()){
             //File listOfFileFolders[] = maindir.listFiles();
@@ -76,13 +124,16 @@ public class App
 
             int count=0;
             double MRR = 0;
-            for(int fileNum=0; fileNum<fileList.length; fileNum++){
+            CreateDSLObjects.sem_col =sem_col;
+            for(int fileNum=0; fileNum<fileList.length; fileNum++) {
 
                 //Read the csv file: prediction from another folder
                 fileNum++;
-                System.out.println("Reading: "+fileList[fileNum]);
+                System.out.println("Reading: " + fileList[fileNum]);
                 String[][] data = CreateDSLObjects.readFile(fileList[fileNum]);
-
+                break;
+            }
+                int fileNum=1;
                 //Test:
                 //String fileNameDiffFolder = "/Users/rutujarane/Desktop/ISI/Semantics/dsl_copy/dsl/data/city2/s1.csv";
                 //System.out.println("Reading from diff folder: "+fileNameDiffFolder);
@@ -109,10 +160,28 @@ public class App
                 // for(int i=0; i<fileListTrain.length; i++){
                 //     System.out.println(fileListTrain[i]);
                 // }
-                FeatureExtractor featureExtractorObject = CreateDSLObjects.create_feature_extractor(fileListTrain);
-                System.out.println("Created FeatureExtractorObject");
+                File f = new File(featureExtractorFile);
+                FeatureExtractor featureExtractorObject = null;
+                if(!f.exists()) {
+                    featureExtractorObject = CreateDSLObjects.create_feature_extractor(fileListTrain);
+                    System.out.println("Created FeatureExtractorObject");
+                    FileOutputStream fos = new FileOutputStream(featureExtractorFile);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(featureExtractorObject);
+                    oos.flush();
+                    oos.close();
+                }
+                else{
+                    FileInputStream fis = new FileInputStream(featureExtractorFile);
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    featureExtractorObject = (FeatureExtractor) ois.readObject();
+                    Textual textual = new Textual();
+                    featureExtractorObject.tfidfDB.pipeline = textual.get_pipeline();
+                    ois.close();
+                }
 
-                DSL_main dsl_obj = new DSL_main("/Users/rutujarane/Desktop/ISI/Semantics/dsl/"+modelFile,featureExtractorObject,true,true,false);
+
+                DSL_main dsl_obj = new DSL_main(modelFile,featureExtractorObject,true,true,false);
 
                 // System.out.println("Writing object to file");
                 // //Gson gson=new Gson();
@@ -205,6 +274,7 @@ public class App
                 //Test: System.out.println("Test FileName:"+fileNameDiffFolder);
                 System.out.println("\n\n\n\n\n\nTest FileName:"+fileList[fileNum]);
                 count++;
+                String[][] data = CreateDSLObjects.readFile(fileList[fileNum]);
                 ColumnBasedTable column_based_table_obj_pred = CreateDSLObjects.findDatatype(data,fileList[fileNum]); //For test table fileNameDiffFolder
                 double total_inverse_rank = 0; //For each fold
                 System.out.println("Done with object creation of test: "+column_based_table_obj_pred.columns.size());
@@ -212,7 +282,7 @@ public class App
                 myWriterr.write("Start!!!!!!\n");
                 double ranks[] = new double[column_based_table_obj_pred.columns.size()];
                 boolean writeFile = false;
-                DSL_main dsl_obj1 = new DSL_main("/Users/rutujarane/Desktop/ISI/Semantics/dsl/"+modelFile,featureExtractorObject,true,true,false);
+                //DSL_main dsl_obj1 = new DSL_main(modelFile,featureExtractorObject,true,true,false);
                 for(int col=0; col<column_based_table_obj_pred.columns.size(); col++){
                     System.out.println("Predicting!");
                     List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
@@ -256,7 +326,7 @@ public class App
                 System.out.println("Write file = "+writeFile);
                 if(writeFile){
                     System.out.println("Writing file");
-                    BufferedWriter br = new BufferedWriter(new FileWriter("/Users/rutujarane/Desktop/ISI/Semantics/dsl_copy/dsl/data/soccer2/myfile1.csv"));
+                    BufferedWriter br = new BufferedWriter(new FileWriter("/Users/bidishadasbaksi/Docs_no_icloud/GitHub/myfile1.csv"));
                     // System.out.println("line:"+data[0]);
                     for(String line[]: data){
                         StringBuilder sb = new StringBuilder();
@@ -281,8 +351,8 @@ public class App
                 MRR += mean_reciprocal_rank;
                 System.out.println("MRR: "+MRR);
                 TimeUnit.SECONDS.sleep(2);
-                break;
-            }
+              //  break;
+          //  }
 
         System.out.println("END!!!");
         System.out.println(count+"/"+fileList.length+" Folds done");

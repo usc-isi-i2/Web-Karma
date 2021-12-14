@@ -85,6 +85,16 @@ public class DSL_main implements Serializable{
         GenerateTrainingData generateTrainingData = new GenerateTrainingData();
         generateTrainingData.generateTrainingDataForMain(this.featureExtractorObject);
         logger.info("Returned from generate training data:"+generateTrainingData.XTrain+"  "+generateTrainingData.YTrain);
+        //Delete the code below
+        ArrayList<Integer> checklist = new ArrayList<>();
+        for(int i =0;i<generateTrainingData.YTrain.size();i++)
+        {
+            if(generateTrainingData.YTrain.get(i) == 1)
+            {
+                checklist.add(i);
+            }
+        }
+        //Delete till here
         if(!allowOneClass){
             Set<Integer> yTrainSet = new HashSet<Integer>();
             yTrainSet.addAll(generateTrainingData.YTrain);
@@ -126,8 +136,7 @@ public class DSL_main implements Serializable{
 
         logger.info("Starting to fit the model");
         RandomForestAlgorithm_ rfa = new RandomForestAlgorithm_();
-        this.model = rfa.RandomForestAlgorithm_create();
-        System.out.println("Trained the model... Writing to file.");
+        this.model = rfa.RandomForestAlgorithm_create();System.out.println("Trained the model... Writing to file.");
         this.modelFile = new File(modelFile);
         FileOutputStream f = new FileOutputStream(this.modelFile);
         ObjectOutputStream o = new ObjectOutputStream(f);

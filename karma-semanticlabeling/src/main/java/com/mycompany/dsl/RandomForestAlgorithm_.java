@@ -40,8 +40,8 @@ public class RandomForestAlgorithm_ implements Serializable{
 		String testingDatasetName = "libsvm_test.arff";
 		// Load and parse the data file, converting it to a DataFrame.
 		Instances trainDataset = getDataSet(trainingDatasetName);
-		Instances testDataset = getDataSet(testingDatasetName);
-
+//		Instances testDataset = getDataSet(testingDatasetName);
+		Instances testDataset = getDataSet(trainingDatasetName);
 		logger.info("Loaded both the datasets");
 
 		RandomForest forest=new RandomForest();

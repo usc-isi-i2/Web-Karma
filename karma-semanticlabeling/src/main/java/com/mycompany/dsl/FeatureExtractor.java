@@ -28,8 +28,10 @@ public class FeatureExtractor implements Serializable{
     List<ColumnBasedTable> trainTables = new ArrayList<ColumnBasedTable>();
     List<Column> trainColumns = new ArrayList<Column>();
     HashMap<Column, Integer> column2idx = new HashMap<Column, Integer>();
-    TfidfDatabase tfidfDB;
+    public  TfidfDatabase tfidfDB;
     // Demo demo;
+
+
 
     public FeatureExtractor(List<ColumnBasedTable> trainTables) throws IOException{
         this.trainTables = trainTables;

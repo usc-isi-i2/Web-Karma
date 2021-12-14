@@ -1,0 +1,399 @@
+Start!!!!!!
+
+
+Actual:South Africa South Africa
+Prediction:http://schema.org/SportsTeam http://schema.org/name 1.0
+Prediction:http://schema.org/SportsClub http://schema.org/name 0.83
+Prediction:England England 0.1
+Prediction:http://schema.org/Player http://schema.org/playPosition 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/birthDate 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/tag 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/name 0.005875040265948374
+Prediction:Active Active 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/weight 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/height 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/age 0.005875040265948374
+Prediction:http://schema.org/League http://schema.org/name 0.005875040265948374
+Prediction:2610 2610 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.005875040265948374
+Prediction:0 0 0.005875040265948374
+Prediction:6 6 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/familyName 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/givenName 0.005875040265948374
+Prediction:250006566 250006566 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/isCaptain 0.005875040265948374
+Prediction:TRUE TRUE 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/numberOfPlayedGames 0.005875040265948374
+Prediction:336722 336722 0.005875040265948374
+Prediction:106957 106957 0.005875040265948374
+Prediction:ENG ENG 0.005875040265948374
+Prediction:66 66 0.005875040265948374
+Prediction:35 35 0.005875040265948374
+Prediction:74 74 0.005875040265948374
+Prediction:63 63 0.005875040265948374
+Prediction:70 70 0.005875040265948374
+Prediction:  0.005875040265948374
+Prediction:Right Right 0.005875040265948374
+Prediction:69 69 0.005875040265948374
+Prediction:1001 1001 0.005875040265948374
+Prediction:1930 1930 0.005875040265948374
+Prediction:World Cup World Cup 0.005875040265948374
+Prediction:188 188 0.005875040265948374
+Prediction:ALG ALG 0.005875040265948374
+Prediction:28 Sep 1977 28 Sep 1977 0.005875040265948374
+Prediction:GAOUAOUI GAOUAOUI 0.005875040265948374
+Prediction:Lounes Lounes 0.005875040265948374
+Prediction:Lounes GAOUAOUI Lounes GAOUAOUI 0.005875040265948374
+Prediction:1 1 0.005875040265948374
+Prediction:46 46 0.005875040265948374
+Prediction:OUI OUI 0.005875040265948374
+Prediction:325 325 0.005875040265948374
+Prediction:2 juin 0.005875040265948374
+Prediction:Luiz Felipe Scolari Luiz Felipe Scolari 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/ranking 0.005875040265948374
+Prediction:http://bit.ly/1kEE0r14 http://bit.ly/1kEE0r14 0.005875040265948374
+Prediction:A A 0.005875040265948374
+Prediction:Gábor Király Gábor Király 0.0
+Prediction:Bresil Bresil 0.0
+
+
+Actual:1 1
+Prediction:http://schema.org/Player http://schema.org/tag 1.0
+Prediction:1 1 0.42248337773337785
+
+
+Actual:GK GK
+Prediction:http://schema.org/Player http://schema.org/playPosition 1.0
+Prediction:http://schema.org/Player http://schema.org/birthDate 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/tag 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/name 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/name 0.005875040265948374
+Prediction:http://schema.org/SportsClub http://schema.org/name 0.005875040265948374
+Prediction:Active Active 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/weight 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/height 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/age 0.005875040265948374
+Prediction:http://schema.org/League http://schema.org/name 0.005875040265948374
+Prediction:2610 2610 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.005875040265948374
+Prediction:0 0 0.005875040265948374
+Prediction:6 6 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/familyName 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/givenName 0.005875040265948374
+Prediction:250006566 250006566 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/isCaptain 0.005875040265948374
+Prediction:TRUE TRUE 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/numberOfPlayedGames 0.005875040265948374
+Prediction:336722 336722 0.005875040265948374
+Prediction:106957 106957 0.005875040265948374
+Prediction:ENG ENG 0.005875040265948374
+Prediction:England England 0.005875040265948374
+Prediction:66 66 0.005875040265948374
+Prediction:35 35 0.005875040265948374
+Prediction:74 74 0.005875040265948374
+Prediction:63 63 0.005875040265948374
+Prediction:70 70 0.005875040265948374
+Prediction:  0.005875040265948374
+Prediction:Right Right 0.005875040265948374
+Prediction:69 69 0.005875040265948374
+Prediction:Gábor Király Gábor Király 0.005875040265948374
+Prediction:1001 1001 0.005875040265948374
+Prediction:1930 1930 0.005875040265948374
+Prediction:World Cup World Cup 0.005875040265948374
+Prediction:188 188 0.005875040265948374
+Prediction:ALG ALG 0.005875040265948374
+Prediction:28 Sep 1977 28 Sep 1977 0.005875040265948374
+Prediction:GAOUAOUI GAOUAOUI 0.005875040265948374
+Prediction:Lounes Lounes 0.005875040265948374
+Prediction:Lounes GAOUAOUI Lounes GAOUAOUI 0.005875040265948374
+Prediction:1 1 0.005875040265948374
+Prediction:46 46 0.005875040265948374
+Prediction:OUI OUI 0.005875040265948374
+Prediction:325 325 0.005875040265948374
+Prediction:2 juin 0.005875040265948374
+Prediction:Bresil Bresil 0.005875040265948374
+Prediction:Luiz Felipe Scolari Luiz Felipe Scolari 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/ranking 0.005875040265948374
+Prediction:http://bit.ly/1kEE0r14 http://bit.ly/1kEE0r14 0.005875040265948374
+Prediction:A A 0.005875040265948374
+
+
+Actual:Moeneeb Josephs Moeneeb Josephs
+Prediction:http://schema.org/Player http://schema.org/name 1.0
+Prediction:1930 1930 0.09
+Prediction:http://schema.org/Player http://schema.org/givenName 0.02
+Prediction:http://schema.org/Player http://schema.org/familyName 0.015
+Prediction:http://schema.org/Player http://schema.org/playPosition 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/birthDate 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/tag 0.005875040265948374
+Prediction:http://schema.org/SportsClub http://schema.org/name 0.005875040265948374
+Prediction:Active Active 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/weight 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/height 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/age 0.005875040265948374
+Prediction:http://schema.org/League http://schema.org/name 0.005875040265948374
+Prediction:2610 2610 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.005875040265948374
+Prediction:0 0 0.005875040265948374
+Prediction:6 6 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/name 0.005875040265948374
+Prediction:250006566 250006566 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/isCaptain 0.005875040265948374
+Prediction:TRUE TRUE 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/numberOfPlayedGames 0.005875040265948374
+Prediction:336722 336722 0.005875040265948374
+Prediction:106957 106957 0.005875040265948374
+Prediction:ENG ENG 0.005875040265948374
+Prediction:England England 0.005875040265948374
+Prediction:66 66 0.005875040265948374
+Prediction:35 35 0.005875040265948374
+Prediction:74 74 0.005875040265948374
+Prediction:63 63 0.005875040265948374
+Prediction:70 70 0.005875040265948374
+Prediction:  0.005875040265948374
+Prediction:Right Right 0.005875040265948374
+Prediction:69 69 0.005875040265948374
+Prediction:World Cup World Cup 0.005875040265948374
+Prediction:188 188 0.005875040265948374
+Prediction:ALG ALG 0.005875040265948374
+Prediction:GAOUAOUI GAOUAOUI 0.005875040265948374
+Prediction:1 1 0.005875040265948374
+Prediction:46 46 0.005875040265948374
+Prediction:OUI OUI 0.005875040265948374
+Prediction:325 325 0.005875040265948374
+Prediction:2 juin 0.005875040265948374
+Prediction:Bresil Bresil 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/ranking 0.005875040265948374
+Prediction:http://bit.ly/1kEE0r14 http://bit.ly/1kEE0r14 0.005875040265948374
+Prediction:A A 0.005875040265948374
+Prediction:Gábor Király Gábor Király 0.0
+Prediction:1001 1001 0.0
+Prediction:28 Sep 1977 28 Sep 1977 0.0
+Prediction:Lounes Lounes 0.0
+Prediction:Lounes GAOUAOUI Lounes GAOUAOUI 0.0
+Prediction:Luiz Felipe Scolari Luiz Felipe Scolari 0.0
+
+
+Actual:Orlando Pirates FC Orlando Pirates FC
+Prediction:http://schema.org/SportsClub http://schema.org/name 1.0
+Prediction:http://schema.org/League http://schema.org/name 0.865
+Prediction:http://schema.org/SportsTeam http://schema.org/name 0.015
+Prediction:http://schema.org/Player http://schema.org/name 0.015
+Prediction:http://schema.org/Player http://schema.org/playPosition 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/birthDate 0.005875040265948374
+Prediction:Active Active 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/weight 0.005875040265948374
+Prediction:2610 2610 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/height 0.005875040265948374
+Prediction:250006566 250006566 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/isCaptain 0.005875040265948374
+Prediction:TRUE TRUE 0.005875040265948374
+Prediction:336722 336722 0.005875040265948374
+Prediction:106957 106957 0.005875040265948374
+Prediction:ENG ENG 0.005875040265948374
+Prediction:England England 0.005875040265948374
+Prediction:66 66 0.005875040265948374
+Prediction:74 74 0.005875040265948374
+Prediction:70 70 0.005875040265948374
+Prediction:Right Right 0.005875040265948374
+Prediction:69 69 0.005875040265948374
+Prediction:1930 1930 0.005875040265948374
+Prediction:World Cup World Cup 0.005875040265948374
+Prediction:188 188 0.005875040265948374
+Prediction:GAOUAOUI GAOUAOUI 0.005875040265948374
+Prediction:OUI OUI 0.005875040265948374
+Prediction:http://bit.ly/1kEE0r14 http://bit.ly/1kEE0r14 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/tag 0.0
+Prediction:http://schema.org/Player http://schema.org/age 0.0
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.0
+Prediction:0 0 0.0
+Prediction:6 6 0.0
+Prediction:http://schema.org/Player http://schema.org/familyName 0.0
+Prediction:http://schema.org/Player http://schema.org/givenName 0.0
+Prediction:http://schema.org/Player http://schema.org/numberOfPlayedGames 0.0
+Prediction:35 35 0.0
+Prediction:63 63 0.0
+Prediction:  0.0
+Prediction:Gábor Király Gábor Király 0.0
+Prediction:1001 1001 0.0
+Prediction:ALG ALG 0.0
+Prediction:28 Sep 1977 28 Sep 1977 0.0
+Prediction:Lounes Lounes 0.0
+Prediction:Lounes GAOUAOUI Lounes GAOUAOUI 0.0
+Prediction:1 1 0.0
+Prediction:46 46 0.0
+Prediction:325 325 0.0
+Prediction:2 juin 0.0
+Prediction:Bresil Bresil 0.0
+Prediction:Luiz Felipe Scolari Luiz Felipe Scolari 0.0
+Prediction:http://schema.org/SportsTeam http://schema.org/ranking 0.0
+Prediction:A A 0.0
+
+
+Actual:RSA RSA
+Prediction:ALG ALG 1.0
+Prediction:http://schema.org/League http://schema.org/name 0.960202380952381
+Prediction:http://schema.org/SportsTeam http://schema.org/name 0.805
+Prediction:http://schema.org/Player http://schema.org/playPosition 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/birthDate 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/tag 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/name 0.005875040265948374
+Prediction:http://schema.org/SportsClub http://schema.org/name 0.005875040265948374
+Prediction:Active Active 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/weight 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/height 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/age 0.005875040265948374
+Prediction:2610 2610 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.005875040265948374
+Prediction:0 0 0.005875040265948374
+Prediction:6 6 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/familyName 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/givenName 0.005875040265948374
+Prediction:250006566 250006566 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/isCaptain 0.005875040265948374
+Prediction:TRUE TRUE 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/numberOfPlayedGames 0.005875040265948374
+Prediction:336722 336722 0.005875040265948374
+Prediction:106957 106957 0.005875040265948374
+Prediction:England England 0.005875040265948374
+Prediction:66 66 0.005875040265948374
+Prediction:35 35 0.005875040265948374
+Prediction:74 74 0.005875040265948374
+Prediction:63 63 0.005875040265948374
+Prediction:70 70 0.005875040265948374
+Prediction:  0.005875040265948374
+Prediction:Right Right 0.005875040265948374
+Prediction:69 69 0.005875040265948374
+Prediction:Gábor Király Gábor Király 0.005875040265948374
+Prediction:1001 1001 0.005875040265948374
+Prediction:1930 1930 0.005875040265948374
+Prediction:World Cup World Cup 0.005875040265948374
+Prediction:188 188 0.005875040265948374
+Prediction:28 Sep 1977 28 Sep 1977 0.005875040265948374
+Prediction:GAOUAOUI GAOUAOUI 0.005875040265948374
+Prediction:Lounes Lounes 0.005875040265948374
+Prediction:Lounes GAOUAOUI Lounes GAOUAOUI 0.005875040265948374
+Prediction:1 1 0.005875040265948374
+Prediction:46 46 0.005875040265948374
+Prediction:OUI OUI 0.005875040265948374
+Prediction:325 325 0.005875040265948374
+Prediction:2 juin 0.005875040265948374
+Prediction:Bresil Bresil 0.005875040265948374
+Prediction:Luiz Felipe Scolari Luiz Felipe Scolari 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/ranking 0.005875040265948374
+Prediction:http://bit.ly/1kEE0r14 http://bit.ly/1kEE0r14 0.005875040265948374
+Prediction:A A 0.005875040265948374
+Prediction:ENG ENG 0.0
+
+
+Actual:5/19/1980 5/19/1980
+Prediction:http://schema.org/Player http://schema.org/birthDate 1.0
+Prediction:28 Sep 1977 28 Sep 1977 0.8543186570500764
+Prediction:http://schema.org/Player http://schema.org/playPosition 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/tag 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/name 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/name 0.005875040265948374
+Prediction:http://schema.org/SportsClub http://schema.org/name 0.005875040265948374
+Prediction:Active Active 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/weight 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/height 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/age 0.005875040265948374
+Prediction:http://schema.org/League http://schema.org/name 0.005875040265948374
+Prediction:2610 2610 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.005875040265948374
+Prediction:0 0 0.005875040265948374
+Prediction:6 6 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/familyName 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/givenName 0.005875040265948374
+Prediction:250006566 250006566 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/isCaptain 0.005875040265948374
+Prediction:TRUE TRUE 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/numberOfPlayedGames 0.005875040265948374
+Prediction:336722 336722 0.005875040265948374
+Prediction:106957 106957 0.005875040265948374
+Prediction:ENG ENG 0.005875040265948374
+Prediction:England England 0.005875040265948374
+Prediction:66 66 0.005875040265948374
+Prediction:35 35 0.005875040265948374
+Prediction:74 74 0.005875040265948374
+Prediction:63 63 0.005875040265948374
+Prediction:70 70 0.005875040265948374
+Prediction:  0.005875040265948374
+Prediction:Right Right 0.005875040265948374
+Prediction:69 69 0.005875040265948374
+Prediction:Gábor Király Gábor Király 0.005875040265948374
+Prediction:1001 1001 0.005875040265948374
+Prediction:1930 1930 0.005875040265948374
+Prediction:World Cup World Cup 0.005875040265948374
+Prediction:188 188 0.005875040265948374
+Prediction:GAOUAOUI GAOUAOUI 0.005875040265948374
+Prediction:Lounes Lounes 0.005875040265948374
+Prediction:Lounes GAOUAOUI Lounes GAOUAOUI 0.005875040265948374
+Prediction:1 1 0.005875040265948374
+Prediction:46 46 0.005875040265948374
+Prediction:OUI OUI 0.005875040265948374
+Prediction:325 325 0.005875040265948374
+Prediction:2 juin 0.005875040265948374
+Prediction:Bresil Bresil 0.005875040265948374
+Prediction:Luiz Felipe Scolari Luiz Felipe Scolari 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/ranking 0.005875040265948374
+Prediction:http://bit.ly/1kEE0r14 http://bit.ly/1kEE0r14 0.005875040265948374
+Prediction:A A 0.005875040265948374
+Prediction:ALG ALG 0.0
+
+
+Actual:FALSE FALSE
+Prediction:http://schema.org/Player http://schema.org/isCaptain 1.0
+Prediction:TRUE TRUE 0.01
+Prediction:http://schema.org/Player http://schema.org/playPosition 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/birthDate 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/tag 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/name 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/name 0.005875040265948374
+Prediction:http://schema.org/SportsClub http://schema.org/name 0.005875040265948374
+Prediction:Active Active 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/weight 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/height 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/age 0.005875040265948374
+Prediction:http://schema.org/League http://schema.org/name 0.005875040265948374
+Prediction:2610 2610 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.005875040265948374
+Prediction:0 0 0.005875040265948374
+Prediction:6 6 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/familyName 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/givenName 0.005875040265948374
+Prediction:250006566 250006566 0.005875040265948374
+Prediction:http://schema.org/Player http://schema.org/numberOfPlayedGames 0.005875040265948374
+Prediction:336722 336722 0.005875040265948374
+Prediction:106957 106957 0.005875040265948374
+Prediction:ENG ENG 0.005875040265948374
+Prediction:England England 0.005875040265948374
+Prediction:66 66 0.005875040265948374
+Prediction:35 35 0.005875040265948374
+Prediction:74 74 0.005875040265948374
+Prediction:63 63 0.005875040265948374
+Prediction:70 70 0.005875040265948374
+Prediction:  0.005875040265948374
+Prediction:Right Right 0.005875040265948374
+Prediction:69 69 0.005875040265948374
+Prediction:Gábor Király Gábor Király 0.005875040265948374
+Prediction:1001 1001 0.005875040265948374
+Prediction:1930 1930 0.005875040265948374
+Prediction:World Cup World Cup 0.005875040265948374
+Prediction:188 188 0.005875040265948374
+Prediction:ALG ALG 0.005875040265948374
+Prediction:28 Sep 1977 28 Sep 1977 0.005875040265948374
+Prediction:GAOUAOUI GAOUAOUI 0.005875040265948374
+Prediction:Lounes Lounes 0.005875040265948374
+Prediction:Lounes GAOUAOUI Lounes GAOUAOUI 0.005875040265948374
+Prediction:1 1 0.005875040265948374
+Prediction:46 46 0.005875040265948374
+Prediction:OUI OUI 0.005875040265948374
+Prediction:325 325 0.005875040265948374
+Prediction:2 juin 0.005875040265948374
+Prediction:Bresil Bresil 0.005875040265948374
+Prediction:Luiz Felipe Scolari Luiz Felipe Scolari 0.005875040265948374
+Prediction:http://schema.org/SportsTeam http://schema.org/ranking 0.005875040265948374
+Prediction:http://bit.ly/1kEE0r14 http://bit.ly/1kEE0r14 0.005875040265948374
+Prediction:A A 0.005875040265948374
+End

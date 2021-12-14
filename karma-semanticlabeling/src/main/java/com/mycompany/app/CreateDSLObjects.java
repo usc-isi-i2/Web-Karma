@@ -11,7 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import com.mycompany.dsl.FeatureExtractor;
 import com.mycompany.dsl.ColumnBasedTable;
 import com.mycompany.dsl.Column;
-import com.mycompany.dsl.ColumnType;
 import com.mycompany.dsl.ColumnData;
 import com.mycompany.dsl.SemType;
 
@@ -24,6 +23,7 @@ import com.mycompany.dsl.SemType;
 public class CreateDSLObjects {
 
     static Logger logger = LogManager.getLogger(CreateDSLObjects.class.getName());
+    static HashMap<String, SemType> sem_col ;
     public static String[][] readFile(String fileName){
         List<String[]> rowList = new ArrayList<String[]>();
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -52,7 +52,8 @@ public class CreateDSLObjects {
 
     public static void deleteFile(String fileName){
         try
-        { 
+        {
+//            Path p = Paths.get(fileName);
             Files.deleteIfExists(Paths.get(fileName)); 
         } 
         catch(NoSuchFileException e) 
@@ -70,7 +71,7 @@ public class CreateDSLObjects {
         logger.info("Deletion successful."); 
     }
 
-    public static FeatureExtractor create_feature_extractor(String files[]) throws IOException{
+    public static FeatureExtractor create_feature_extractor(String[] files) throws IOException{
         List<ColumnBasedTable> columnBasedTableObj = new ArrayList<ColumnBasedTable>();
 
         int kk=0;
@@ -102,7 +103,11 @@ public class CreateDSLObjects {
         List<Column> columns = new ArrayList<Column>();
         for(int index=0; index<data[0].length; index++){
             List<String> colData = getColumnData(data,index);
-            SemType semTypeObj = findSemType(colData.get(1));
+            SemType semTypeObj;
+            if(sem_col.containsKey(colData.get(0)))
+                semTypeObj =  sem_col.get(colData.get(0));
+            else
+                semTypeObj  = findSemType(colData.get(1));
             Hashtable<String, Float> typeStats = new Hashtable<String, Float>();
             Column columnObj = new Column(tableName, colData.get(0), semTypeObj, colData.get(2), data.length, typeStats);
             List<String> colSubList = new ArrayList<String>(colData.subList(2,colData.size())); //3

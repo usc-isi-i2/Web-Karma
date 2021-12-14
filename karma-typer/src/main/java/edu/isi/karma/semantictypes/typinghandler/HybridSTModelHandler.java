@@ -274,9 +274,9 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
         // Read the written featureExtractorObject here and create DSL object. This will load the already saved rf model.
         // Predict the semantic type using this DSL object.
         String modelFile = "model_file_rf";
-
+        modelFile = "new_model_Dec";
 		try {
-			DSL_main dsl_obj1 = new DSL_main("/Users/rutujarane/Desktop/ISI/Semantics/dsl/" + modelFile, null, true, true, false);
+			DSL_main dsl_obj1 = new DSL_main("/Users/bidishadasbaksi/Documents/GitHub/" + modelFile, null, true, true, false);
 			List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
 			predictions = dsl_obj1.predictSemanticType(columnObj, 100);
 		} catch (Exception e) {

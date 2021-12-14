@@ -35,7 +35,7 @@ public class GenerateTrainingData implements Serializable{
                 Column refCol = featureExtractorObject.trainColumns.get(j);
 
                 this.XTrain.add(sim_ref_cols.get(j));
-                if(col.semantic_type == refCol.semantic_type)
+                if(col.semantic_type.equals(refCol.semantic_type))
                     this.YTrain.add(1);
                 else
                     this.YTrain.add(0);

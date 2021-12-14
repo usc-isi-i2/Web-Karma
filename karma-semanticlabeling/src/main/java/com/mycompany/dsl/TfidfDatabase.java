@@ -28,7 +28,9 @@ public class TfidfDatabase implements Serializable {
     int n_docs;
     HashMap<String, List<Double>> cache_col2tfidf = new HashMap<String, List<Double>>();
     // String pipeline;
-    StanfordCoreNLP pipeline;
+    public transient StanfordCoreNLP pipeline;
+
+
 
     // public TfidfDatabase(String pipeline, HashMap<String, Integer> vocab, HashMap<String, Integer> invert_token_idx, HashMap<String, List<Double>> col2tfidf){
     public TfidfDatabase(StanfordCoreNLP pipeline, HashMap<String, Integer> vocab, HashMap<String, Integer> invert_token_idx, HashMap<String, List<Double>> col2tfidf){    
@@ -235,10 +237,10 @@ public class TfidfDatabase implements Serializable {
                 //         counter.put(nextToken,counter.get(nextToken)+1);
                 // }
             // }
-            logger.info("Done if");
+//            logger.info("Done if");
             number_of_token += i;
-            if(number_of_token%100==0)
-                System.out.println("Number of tokens:"+number_of_token);
+//            if(number_of_token%100==0)
+//                System.out.println("Number of tokens:"+number_of_token);
         }
         // if (col.name.equals("Name")){
         //     myWriter.close();

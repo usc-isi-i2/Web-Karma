@@ -42,7 +42,9 @@ public class DSL_main implements Serializable{
     // Constructor to save the attributes. FeatureExtractorObject will be none when testing.
     public DSL_main(String modelFile, FeatureExtractor featureExtractorObject, boolean loadTheModel, boolean autoTrain, boolean allowOneClass) throws Exception{
         this.featureExtractorObject = featureExtractorObject;
-        this.modelFile = null;
+        this.modelFile = new File(modelFile);
+        //this.modelFile = null;
+        this.model = null;
 
         if(loadTheModel)
             this.loadModel(autoTrain, allowOneClass, modelFile);
