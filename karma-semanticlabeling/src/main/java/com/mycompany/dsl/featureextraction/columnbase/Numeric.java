@@ -85,12 +85,12 @@ public class Numeric {
         temp.addAll(col1data);
         col1data.retainAll(col2data);
         Set<String> intersect = col1data;
-        int intersect_size = intersect.size();
+        double intersect_size = intersect.size();
         col1data.clear();
         col1data.addAll(temp);
         col1data.addAll(col2data);
         Set<String> union = col1data;
-        int union_size = union.size();
+        double union_size = union.size();
         col1data = temp;
 
         // logger.info("Returning numeric jaccard"+(intersect.size()) / (union.size()));

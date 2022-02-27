@@ -59,7 +59,7 @@ public class Textual{
         Set<String> col2data = new HashSet<String>();
         col2data.addAll(col2.get_textual_data());
         
-        System.out.println("col1data, col2data sizes:"+col1data.size()+" "+col2data.size());
+        //System.out.println("col1data, col2data sizes:"+col1data.size()+" "+col2data.size());
         if(col1data.size() == 0 || col2data.size() == 0)
             return 0;
 
@@ -75,7 +75,7 @@ public class Textual{
         temp.addAll(col1data);
         col1data.retainAll(col2data);
         Set<String> intersect = col1data;
-        int intersect_size = intersect.size();
+        double intersect_size = intersect.size();
         // System.out.println("Intersect:"+intersect_size);
         // for (String x: intersect){
         //     System.out.print(" "+x);
@@ -84,7 +84,7 @@ public class Textual{
         col1data.addAll(temp);
         col1data.addAll(col2data);
         Set<String> union = col1data;
-        int union_size = union.size();
+        double union_size = union.size();
         // System.out.println("Union:"+union_size);
         // for (String x: union){
         //     System.out.print(" "+x);
@@ -127,7 +127,7 @@ public class Textual{
         }
         // System.out.println("COS1:"+ product);
         if (product>0)
-            System.out.println("\n\n\nyayy!");
+            //System.out.println("\n\n\nyayy!");
         if (norm1*norm2 == 0)
             return 0.0;
         return product / (norm1 * norm2);

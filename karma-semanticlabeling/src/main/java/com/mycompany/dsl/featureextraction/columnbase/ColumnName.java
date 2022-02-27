@@ -17,11 +17,11 @@ public class ColumnName {
 
     public double jaccard_sim_test(String col1_name, String col2_name, Boolean lower){ //lower=False
 
-        System.out.println("IN columnname jaccard:"+col1_name+" "+col2_name);
+        //System.out.println("IN columnname jaccard:"+col1_name+" "+col2_name);
         StringCol stringCol = new StringCol();
         List<String> tok1 = stringCol.tokenize_label(col1_name);
-        List<String> tok2 = stringCol. tokenize_label(col2_name);
-        System.out.println("tok:"+tok1+" "+tok2);
+        List<String> tok2 = stringCol.tokenize_label(col2_name);
+        //System.out.println("tok:"+tok1+" "+tok2);
 
         Set<String> lbl1 = new HashSet<String>();
         Set<String> lbl2 = new HashSet<String>();
@@ -55,13 +55,13 @@ public class ColumnName {
         lbl1.retainAll(lbl2);
         Set<String> intersect = lbl1;
         // System.out.println("intersect:"+intersect);
-        int intersect_size = intersect.size();
+        double intersect_size = intersect.size();
         lbl1.clear();
         lbl1.addAll(temp);
         lbl1.addAll(lbl2);
         // System.out.println("temp:"+temp+" "+lbl1+" "+lbl1);
         Set<String> union = lbl1;
-        int union_size = union.size();
+        double union_size = union.size();
         // System.out.println("union:"+union);
         lbl1 = temp;
         // System.out.println("intersect union sizes:"+intersect_size+" "+union_size);

@@ -85,6 +85,13 @@ public class DSL_main implements Serializable{
         GenerateTrainingData generateTrainingData = new GenerateTrainingData();
         generateTrainingData.generateTrainingDataForMain(this.featureExtractorObject);
         logger.info("Returned from generate training data:"+generateTrainingData.XTrain+"  "+generateTrainingData.YTrain);
+        //print features
+        FileWriter writer = new FileWriter("/Users/bidishadasbaksi/Docs_no_icloud/GitHub/feature_java.txt");
+        for(int i=0;i<generateTrainingData.XTrain.size();i++)
+        {
+            writer.write(generateTrainingData.XTrain.get(i)+" : "+generateTrainingData.YTrain.get(i)+System.lineSeparator());
+        }
+        writer.close();
         //Delete the code below
         ArrayList<Integer> checklist = new ArrayList<>();
         for(int i =0;i<generateTrainingData.YTrain.size();i++)
@@ -136,7 +143,8 @@ public class DSL_main implements Serializable{
 
         logger.info("Starting to fit the model");
         RandomForestAlgorithm_ rfa = new RandomForestAlgorithm_();
-        this.model = rfa.RandomForestAlgorithm_create();System.out.println("Trained the model... Writing to file.");
+        this.model = rfa.RandomForestAlgorithm_create();
+        System.out.println("Trained the model... Writing to file.");
         this.modelFile = new File(modelFile);
         FileOutputStream f = new FileOutputStream(this.modelFile);
         ObjectOutputStream o = new ObjectOutputStream(f);
@@ -157,6 +165,24 @@ public class DSL_main implements Serializable{
         // logger.info("In predictSemanticType");
         List<List<Double>> X = new ArrayList<List<Double>>();
         X = this.featureExtractorObject.computeFeatureVectors(col);
+        HashMap<Integer,Integer> dict_c = new HashMap<Integer,Integer>();
+        dict_c.put(0,0);
+        dict_c.put(1,0);
+        dict_c.put(2,0);
+        dict_c.put(3,0);
+        dict_c.put(4,0);
+        dict_c.put(5,0);
+        dict_c.put(6,0);
+        for(int i=0;i<X.size();i++)
+        {
+            for(int j=0;j<=6;j++)
+            {
+                if(X.get(i).get(j)>0)
+                {
+                    dict_c.put(j,dict_c.get(j)+1);
+                }
+            }
+        }
         System.out.println("Computed X:"+X.size()+" X: "+X);
         GenerateTrainingData generateTrainingData = new GenerateTrainingData();
         generateTrainingData.generateTrainingDataForTest(this.featureExtractorObject, X);

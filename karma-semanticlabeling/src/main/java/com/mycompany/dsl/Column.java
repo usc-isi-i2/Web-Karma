@@ -35,12 +35,12 @@ public class Column implements Serializable{
     }
 
     public List<String> get_textual_data(){
-        if(this.value.string_data()){
+        if(this.value.string_data()) {
             return this.value.string_array;
         }
-        else
-            return this.value.number_array;
-        
+//        else
+//            return this.value.number_array; // Removing this after comparing with the python implementation
+        return new ArrayList<String>();
     }
 
     public List<String> get_numeric_data(){

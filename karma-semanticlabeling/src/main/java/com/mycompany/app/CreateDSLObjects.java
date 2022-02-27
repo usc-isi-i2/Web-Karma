@@ -24,6 +24,7 @@ public class CreateDSLObjects {
 
     static Logger logger = LogManager.getLogger(CreateDSLObjects.class.getName());
     static HashMap<String, SemType> sem_col ;
+    // Redo this function
     public static String[][] readFile(String fileName){
         List<String[]> rowList = new ArrayList<String[]>();
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -110,7 +111,7 @@ public class CreateDSLObjects {
                 semTypeObj  = findSemType(colData.get(1));
             Hashtable<String, Float> typeStats = new Hashtable<String, Float>();
             Column columnObj = new Column(tableName, colData.get(0), semTypeObj, colData.get(2), data.length, typeStats);
-            List<String> colSubList = new ArrayList<String>(colData.subList(2,colData.size())); //3
+            List<String> colSubList = new ArrayList<String>(colData.subList(1,colData.size())); //3
             columnObj.value = new ColumnData(colSubList);
             columns.add(columnObj);
             logger.info("Column Object created");
@@ -121,8 +122,9 @@ public class CreateDSLObjects {
 
     public static SemType findSemType(String colName){
         String col[] = colName.trim().replaceAll("\"","").split("-");
-        System.out.println("SemType: 1:"+col[0]+" 2: "+col[col.length-1]);
-        SemType semTypeObj = new SemType(col[0],col[col.length-1]);
+        //System.out.println("SemType: 1:"+col[0]+" 2: "+col[col.length-1]);
+        //SemType semTypeObj = new SemType(col[0],col[col.length-1]);
+        SemType semTypeObj = new SemType(col[0],col[0]);
         return semTypeObj;
     }
 

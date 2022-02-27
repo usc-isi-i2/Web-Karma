@@ -1,18 +1,20 @@
 package com.mycompany.app;
 
-import java.io.*;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.mycompany.dsl.*;
+import com.mycompany.dsl.featureextraction.columnbase.Textual;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import com.mycompany.dsl.featureextraction.columnbase.Textual;
 import org.json.simple.parser.ParseException;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -24,9 +26,9 @@ import org.json.simple.parser.ParseException;
  * mvn exec:java -Dexec.mainClass="com.mycompany.app.App"
  */
 
-public class App {
+public class AppCopy {
 
-    static Logger logger = Logger.getLogger(App.class.getName());
+    static Logger logger = Logger.getLogger(AppCopy.class.getName());
 
     public static void main(String[] args) throws Exception {
         logger.setLevel(Level.INFO);
@@ -97,7 +99,6 @@ public class App {
             logger.log(Level.INFO, "Starting Feature Extraction!");
 
             int fileNum = fileList.length - 1;
-            //fileNum=2;
             //int fileNum = ;
             //Delete the modelFile if it exists
             CreateDSLObjects.deleteFile(modelFile); // Remove this line
@@ -115,7 +116,7 @@ public class App {
 
             File f = new File(featureExtractorFile);
             FeatureExtractor featureExtractorObject = null;
-            if (!f.exists() || true) {
+            if (!f.exists()) {
                 featureExtractorObject = CreateDSLObjects.create_feature_extractor(fileListTrain);
                 System.out.println("Created FeatureExtractorObject");
                 FileOutputStream fos = new FileOutputStream(featureExtractorFile);
@@ -135,14 +136,14 @@ public class App {
             logger.log(Level.INFO, "Starting model train !");
             HashMap<String, List<Double>> cache_col2tfidf = featureExtractorObject.tfidfDB.getCache_col2tfidf();
             List<Column> trainCol = featureExtractorObject.getTrainColumns();
-            FileWriter writer = new FileWriter("/Users/bidishadasbaksi/Docs_no_icloud/GitHub/tfidf_list.txt");
-            for(int i=0;i<trainCol.size();i++)
-            {
-                Column c = trainCol.get(i);
-                List<Double> tf_vector = cache_col2tfidf.get(c.id);
-                writer.write(c.name+" : "+ tf_vector+System.lineSeparator());
-            }
-            writer.close();
+//            for(int i=0;i<trainCol.size();i++)
+//            {
+//                Column c = trainCol.get(i);
+//                List<Double> tf_vector = cache_col2tfidf.get(c.id);
+//                System.out.println(tf_vector);
+//
+//            }
+
             DSL_main dsl_obj = new DSL_main(modelFile, featureExtractorObject, true, true, false);
             logger.log(Level.INFO, "Model train done !");
             System.out.println("\n\n\n\n\n\nTest FileName:" + fileList[fileNum]);
@@ -182,7 +183,7 @@ public class App {
                 System.out.println("Rank:" + ranks[kkk]);
             double mean_reciprocal_rank = total_inverse_rank / (double) column_based_table_obj_pred.columns.size();
             System.out.println("DONE with " + (int) fileNum + " FOLD(s)");
-            System.out.println("MEAN RECIPROCAL RANK = " + mean_reciprocal_rank + " total=" + total_inverse_rank + " columnL " + column_based_table_obj_pred.columns.size());
+            System.out.println("MEAN RECIPROCAL RANK = " + mean_reciprocal_rank + " total=" + total_inverse_rank + " columnL" + column_based_table_obj_pred.columns.size());
             MRR += mean_reciprocal_rank;
             System.out.println("MRR: " + MRR);
             TimeUnit.SECONDS.sleep(2);

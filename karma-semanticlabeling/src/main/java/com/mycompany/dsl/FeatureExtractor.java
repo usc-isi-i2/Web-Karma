@@ -21,7 +21,7 @@ import com.mycompany.dsl.featureextraction.columnbase.Textual;
  */
 
 public class FeatureExtractor implements Serializable{
-
+    private static final long serialVersionUID = 1234567L;
     static Logger logger = LogManager.getLogger(FeatureExtractor.class.getName());
     String SIMILARITY_METRICS[] = {"label_jaccard", "stype_jaccard", "num_ks_test", "num_mann_whitney_u_test", "num_jaccard", "text_jaccard", "text_tf-idf"};
 
@@ -32,6 +32,9 @@ public class FeatureExtractor implements Serializable{
     // Demo demo;
 
 
+    public List<Column> getTrainColumns() {
+        return trainColumns;
+    }
 
     public FeatureExtractor(List<ColumnBasedTable> trainTables) throws IOException{
         this.trainTables = trainTables;
@@ -59,7 +62,7 @@ public class FeatureExtractor implements Serializable{
         logger.info("Build tfidf database...");
 
         Textual textual = new Textual();
-        this.tfidfDB = TfidfDatabase.create(textual.get_pipeline(), this.trainColumns);
+        this.tfidfDB = TfidfDatabase.create( this.trainColumns);
         logger.info("Done with FeatureExtractor");
         // this.demo = new Demo();
     }
@@ -78,29 +81,29 @@ public class FeatureExtractor implements Serializable{
         Textual textual = new Textual();
         List<Double> col_tfidf = this.tfidfDB.compute_tfidf(col);
         for(Column refcol: this.trainColumns){
-            System.out.println("REf Column from table:"+refcol.table_name);
-            System.out.println("name:"+refcol.name+" "+col.name);
+//            System.out.println("REf Column from table:"+refcol.table_name);
+//            System.out.println("name:"+refcol.name+" "+col.name);
             List<Double> feature_now = new ArrayList<Double>();
             // features.append([
-            System.out.println("colName 1");
+//            System.out.println("colName 1");
             feature_now.add(columnName.jaccard_sim_test(refcol.name, col.name, true));
            
-            System.out.println("colName 2");
+//            System.out.println("colName 2");
             feature_now.add(columnName.jaccard_sim_test(refcol.semantic_type.predicate, col.name, true));
 
-            System.out.println("numeric 1");
+//            System.out.println("numeric 1");
             feature_now.add(numeric.ks_test(refcol, col));
 
-            System.out.println("numeric 2");
+//            System.out.println("numeric 2");
             feature_now.add(numeric.mann_whitney_u_test(refcol, col));
 
-            System.out.println("numeric 3");
+//            System.out.println("numeric 3");
             feature_now.add(numeric.jaccard_sim_test(refcol, col));
 
-            System.out.println("textual 1");
+//            System.out.println("textual 1");
             feature_now.add(textual.jaccard_sim_test(refcol, col));
 
-            System.out.println("textual 2");
+//            System.out.println("textual 2");
             // System.out.println("here:"+this.tfidfDB.compute_tfidf(refcol) + " " + this.tfidfDB.compute_tfidf(col) + " " + textual.cosine_similarity(this.tfidfDB.compute_tfidf(refcol), col_tfidf));
             feature_now.add(textual.cosine_similarity(this.tfidfDB.compute_tfidf(refcol), col_tfidf));
             
