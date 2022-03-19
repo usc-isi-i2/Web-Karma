@@ -23,7 +23,7 @@ import com.mycompany.dsl.SemType;
 public class CreateDSLObjects {
 
     static Logger logger = LogManager.getLogger(CreateDSLObjects.class.getName());
-    static HashMap<String, SemType> sem_col ;
+    public static HashMap<String, SemType> sem_col ;
     // Redo this function
     public static String[][] readFile(String fileName){
         List<String[]> rowList = new ArrayList<String[]>();
@@ -95,6 +95,17 @@ public class CreateDSLObjects {
         return new FeatureExtractor(columnBasedTableObj);
 
     }
+    public static FeatureExtractor create_feature_extractor(HashMap<String,String[][]> dataMap) throws IOException{
+        List<ColumnBasedTable> columnBasedTableObj = new ArrayList<ColumnBasedTable>();
+        for(Map.Entry<String,String[][]> entry : dataMap.entrySet())
+        {
+            String data[][]  = entry.getValue();
+            columnBasedTableObj.add(findDatatype(data, entry.getKey())); // Assuming tf idf is computed at token level and each cell value is not a whole token
+        }
+        return new FeatureExtractor(columnBasedTableObj);
+
+    }
+
 
     public static ColumnBasedTable findDatatype(String[][] data, String tableName){
         logger.info("TabName:"+tableName);

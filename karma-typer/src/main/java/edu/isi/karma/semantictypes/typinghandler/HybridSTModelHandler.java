@@ -4,14 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.mycompany.app.CreateDSLObjects;
+import com.mycompany.dsl.*;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -28,10 +24,6 @@ import edu.isi.karma.semantictypes.tfIdf.Searcher;
 import edu.isi.karma.webserver.ContextParametersRegistry;
 import edu.isi.karma.webserver.ServletContextParameterMap;
 import edu.isi.karma.webserver.ServletContextParameterMap.ContextParameter;
-import edu.isi.karma.semanticlabeling.dsl.Column;
-import edu.isi.karma.semanticlabeling.dsl.DSL_main;
-import edu.isi.karma.semanticlabeling.dsl.SemType;
-import edu.isi.karma.semanticlabeling.dsl.SemTypePrediction;
 
 /**
  * LATEST
@@ -119,6 +111,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
      * @param label
      * @param selectedExamples
      * @param countNumeric
+     * @param currentColumnName
      * @return
      * @throws IOException
      */
@@ -127,7 +120,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
     private boolean indexTrainingColumn(String label,
                                         List<String> selectedExamples, int countNumeric) throws IOException {
         /**
-         * @patch applied
+         * @patch applied ̰
          * @author pranav and aditi
          * @date 12th June 2015
          *
@@ -157,6 +150,8 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 
         // treat content of column as single document
         StringBuilder sb = new StringBuilder();
+        //sb.append(currentColumnName);
+        //sb.append(" ");
         for (String ex : selectedExamples) {
             sb.append(ex);
             sb.append(" ");
@@ -269,24 +264,6 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
         for (int i = 0; i < examples.toArray().length; i++) {
             colData.add(arr[i].toString().trim().replaceAll("\"", ""));
         }
-        Hashtable<String, Float> typeStats = new Hashtable<String, Float>();
-        Column columnObj = new Column("tableName", colData.get(0), null, colData.get(2), examples.toArray().length, typeStats);
-        // Read the written featureExtractorObject here and create DSL object. This will load the already saved rf model.
-        // Predict the semantic type using this DSL object.
-        String modelFile = "model_file_rf";
-        modelFile = "new_model_Dec";
-		try {
-			DSL_main dsl_obj1 = new DSL_main("/Users/bidishadasbaksi/Documents/GitHub/" + modelFile, null, true, true, false);
-			List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
-			predictions = dsl_obj1.predictSemanticType(columnObj, 100);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		// Return the prediction.
-
-
-        logger.warn("-----------------------------------------------------------------------------");
-        // decide if test column is textual or numeric
         boolean isNumeric = false;
         int countNumeric = 0;
 
@@ -302,6 +279,38 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
         } else {
             logger.warn("Test Label classified as textual - fractionNumeric = " + fractionNumeric);
         }
+        Hashtable<String, Float> typeStats = new Hashtable<String, Float>();
+        Column columnObj = new Column("tableName", colData.get(0), null, colData.get(2), examples.toArray().length, typeStats);
+        List<String> colSubList = new ArrayList<String>(colData.subList(1,colData.size())); //3
+        columnObj.value = new ColumnData(colSubList);
+        // Read the written featureExtractorObject here and create DSL object. This will load the already saved rf model.
+        //FeatureExtractor featureExtractorObject = CreateDSLObjects.create_feature_extractor(fileListTrain);
+        // Predict the semantic type using this DSL object.
+        String modelFile = "model_file_rf";
+        modelFile = "new_model_Dec";
+        List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
+        try {
+            FeatureExtractor featureExtractorObject = getFeatureExtractor(isNumeric);
+            DSL_main dsl_obj1 = new DSL_main("/Users/bidishadasbaksi/Docs_no_icloud/GitHub/" + modelFile, featureExtractorObject, true, true, false);
+			predictions = dsl_obj1.predictSemanticType(columnObj, 100);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// Return the prediction.
+        List<SemanticTypeLabel> sem_result = new ArrayList<SemanticTypeLabel>();
+        for(int i =0;i<numPredictions;i++)
+        {
+            SemType st = predictions.get(i).sem_type;
+            String label = st.toString();
+            sem_result.add(new SemanticTypeLabel(label, (float) predictions.get(i).prob));
+        }
+//        if(true)
+//            return sem_result;
+
+        logger.warn("-----------------------------------------------------------------------------");
+        // decide if test column is textual or numeric
+
+
 
         // get top-k suggestions
         if (isNumeric) { // numeric test column
@@ -384,6 +393,50 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
         logger.warn("-----------------------------------------------------------------------------");
 
         return null;
+    }
+
+    public FeatureExtractor getFeatureExtractor(boolean isNumeric) {
+        FeatureExtractor featurextractorobj = null;
+        HashMap<String, com.mycompany.dsl.SemType> sem_col = new HashMap<>();
+        try {
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(
+                    getIndexDirectory(isNumeric))));
+            HashMap<String,String[][]> data_map = new HashMap<>();
+            try {
+                for (int i = 0; i < reader.maxDoc(); i++) {
+                    Document doc = reader.document(i);
+                    String label = doc.get(Indexer.LABEL_FIELD_NAME);
+                    String content = doc.get(Indexer.CONTENT_FIELD_NAME);
+                    String sents[] = content.split(" ");
+                    String domainName = label.split("[|]")[0];
+                    String typeName = label.split("[|]")[1];
+                    sem_col.put(sents[0],new SemType(domainName,typeName));
+//                    int maxL=0;
+//                    for(String s : sents)
+//                    {
+//                        String subsent[] = s.split("[-:/ ]");
+//                        int subsL = subsent.length;
+//                        if(subsL>maxL)
+//                            maxL=subsL;
+//                    }
+                    String data[][] = new String[sents.length][1];
+                    for(int ind =0; ind<sents.length;ind++)
+                    {
+                        data[ind][0] = sents[ind];
+                    }
+                    data_map.put(sents[0],data);
+                }
+                CreateDSLObjects.sem_col = sem_col;
+                featurextractorobj = CreateDSLObjects.create_feature_extractor(data_map);
+
+
+            } finally {
+                reader.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return featurextractorobj;
     }
 
     /**

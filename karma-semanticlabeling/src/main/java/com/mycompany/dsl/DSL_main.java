@@ -183,7 +183,7 @@ public class DSL_main implements Serializable{
                 }
             }
         }
-        System.out.println("Computed X:"+X.size()+" X: "+X);
+        //System.out.println("Computed X:"+X.size()+" X: "+X);
         GenerateTrainingData generateTrainingData = new GenerateTrainingData();
         generateTrainingData.generateTrainingDataForTest(this.featureExtractorObject, X);
         writeToFilePredict(generateTrainingData);
@@ -195,25 +195,25 @@ public class DSL_main implements Serializable{
         rfa.eval.evaluateModel(this.model, test_data_instance);
 
         ArrayList<Prediction> predictionsf = rfa.eval.predictions();
-        for (int i = 0; i < predictionsf.size(); i++) {
-	        //Determine fraud class probability
-            // double classProbability = predictionsf.get(i).distribution()[(int) predictionsf.get(i).predicted()];
-            double classProbability = predictionsf.get(i).weight();
-            System.out.println("Class prob:"+classProbability);
-        }
+//        for (int i = 0; i < predictionsf.size(); i++) {
+//	        //Determine fraud class probability
+//            // double classProbability = predictionsf.get(i).distribution()[(int) predictionsf.get(i).predicted()];
+//            double classProbability = predictionsf.get(i).weight();
+//            System.out.println("Class prob:"+classProbability);
+//        }
         test_data_instance.setClassIndex(test_data_instance.numAttributes() - 1); 
         // logger.info("Finding result");
         List<List<Double>> res = new ArrayList<List<Double>>();
         Enumeration<Instance> test_instances = test_data_instance.enumerateInstances();
         while(test_instances.hasMoreElements()){
             Instance test_ins = test_instances.nextElement();
-            System.out.println("test_instance:"+test_ins);
+            //System.out.println("test_instance:"+test_ins);
             double result[] = this.model.distributionForInstance(test_ins);
             res.add(Arrays.asList(ArrayUtils.toObject(result)));
         }
         logger.info("Found result");
-        for(int i=0; i<res.size(); i++)
-            System.out.println("r="+res.get(i));
+//        for(int i=0; i<res.size(); i++)
+//            System.out.println("r="+res.get(i));
 
         if(res.get(0).size()==1)
             //have only one class, which mean that it is always false
@@ -222,17 +222,17 @@ public class DSL_main implements Serializable{
         List<Double> result_col = new ArrayList<Double>();
         for(List<Double> result:res)
             result_col.add(result.get(1));
-        System.out.println("Result col:"+result_col);
+        //System.out.println("Result col:"+result_col);
 
         double result_enum[][] = new double[result_col.size()][2];
         for(int i=0; i<result_col.size(); i++){
             result_enum[i][0] = (double)i;
             result_enum[i][1] = result_col.get(i);
         }
-        System.out.println("Result enum:"+result_enum);
-        for(int i=0; i<result_enum.length; i++){
-            System.out.println(result_enum[i][0]+" "+result_enum[i][1]);
-        }
+//        System.out.println("Result enum:"+result_enum);
+//        for(int i=0; i<result_enum.length; i++){
+//            System.out.println(result_enum[i][0]+" "+result_enum[i][1]);
+//        }
         
         // sort the array on item id(first column)
         Arrays.sort(result_enum, new Comparator<double[]>() {
@@ -246,20 +246,20 @@ public class DSL_main implements Serializable{
                 return itemIdOne.compareTo(itemIdTwo);
             }
         });
-        System.out.println("Result sorted:"+result_enum);
-        for(int i=0; i<result_enum.length; i++){
-            System.out.println(result_enum[i][0]+" "+result_enum[i][1]);
-        }
+//        System.out.println("Result sorted:"+result_enum);
+//        for(int i=0; i<result_enum.length; i++){
+//            System.out.println(result_enum[i][0]+" "+result_enum[i][1]);
+//        }
         
 
         List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
-        List<String> existing_stypes = new ArrayList<String>();
+        List<String> existing_stypes = new ArrayList<String>(); // make it dictionary
         int i = result_enum.length-1;
         while(predictions.size() < topN && i > -1){
             int col_i = (int)result_enum[i][0];
             double prob = result_enum[i][1];
             i--;
-            System.out.println("COL,PROB:"+col_i+" "+prob);
+            //System.out.println("COL,PROB:"+col_i+" "+prob);
 
             //this column is in training data, so we have to remove it out
             if(this.featureExtractorObject.column2idx.containsKey(col.id) && this.featureExtractorObject.column2idx.get(col.id) == col_i)
@@ -271,7 +271,7 @@ public class DSL_main implements Serializable{
             
             existing_stypes.add(pred_stype.classID + " " + pred_stype.predicate);
             predictions.add(new SemTypePrediction(pred_stype, prob));
-            System.out.println("My predications:"+pred_stype.classID+" "+pred_stype.predicate+" "+prob);
+            //System.out.println("My predications:"+pred_stype.classID+" "+pred_stype.predicate+" "+prob);
         }
 
         return predictions;

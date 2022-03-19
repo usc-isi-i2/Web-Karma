@@ -40,4 +40,10 @@ public class SemType implements Serializable{
         // Compare the data members and return accordingly
         return this.classID.equals(((SemType) o).classID) && this.predicate.equals(((SemType) o).predicate);
     }
+
+    @Override
+    public String toString() {
+        String conc = this.classID  + "|"+ this.predicate;
+        return conc;
+    }
 }
