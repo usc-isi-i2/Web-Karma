@@ -41,7 +41,19 @@ public class DSL_main implements Serializable{
 
     public DSL_main(String modelFile, FeatureExtractor featureExtractorObject, boolean loadTheModel, boolean autoTrain, boolean allowOneClass) throws Exception{
         this.featureExtractorObject = featureExtractorObject;
-        this.modelFile = null;
+        this.modelFile = new File(modelFile);
+        if(!this.modelFile.exists())
+            this.modelFile = null;
+        else
+        {
+            FileInputStream fi = new FileInputStream(this.modelFile);
+            ObjectInputStream oi = new ObjectInputStream(fi);
+            RandomForest rf_model = (RandomForest) oi.readObject();
+            this.model = rf_model;
+            oi.close();
+            fi.close();
+
+        }
         // this.model = new RandomForest();
 
         if(loadTheModel)

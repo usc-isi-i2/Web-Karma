@@ -228,6 +228,7 @@ public class SemanticTypeUtil {
 	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions, SuperSelection sel) {
 		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet,
 				path, sel);
+		trainingExamples.add(0,path.getFirst().getColumnName());
 		if (trainingExamples.isEmpty())
 			return null;
 		logger.debug("examples: "+trainingExamples + " " + numSuggestions);

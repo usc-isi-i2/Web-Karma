@@ -298,14 +298,16 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 		}
 		// Return the prediction.
         List<SemanticTypeLabel> sem_result = new ArrayList<SemanticTypeLabel>();
-        for(int i =0;i<numPredictions;i++)
+        int predict_max= numPredictions<predictions.size() ? numPredictions:predictions.size();
+        for(int i =0;i<predict_max;i++)
         {
             SemType st = predictions.get(i).sem_type;
             String label = st.toString();
-            sem_result.add(new SemanticTypeLabel(label, (float) predictions.get(i).prob));
+            if (predictions.get(i).prob > 0.5)
+                sem_result.add(new SemanticTypeLabel(label, (float) predictions.get(i).prob));
         }
-//        if(true)
-//            return sem_result;
+        if(true)
+            return sem_result;
 
         logger.warn("-----------------------------------------------------------------------------");
         // decide if test column is textual or numeric

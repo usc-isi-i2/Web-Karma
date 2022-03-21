@@ -81,9 +81,9 @@ public class Indexer {
 		 */
 		
 		Document doc = new Document();
-		for(IndexableField singleContent: existingContent){
-			doc.add(singleContent);
-		}
+//		for(IndexableField singleContent: existingContent){
+//			doc.add(singleContent);
+//		}
 		doc.add(new TextField(CONTENT_FIELD_NAME, newContent, Field.Store.YES));
 		doc.add(new StringField(LABEL_FIELD_NAME, label, Field.Store.YES));
 		indexWriter.updateDocument(new Term(LABEL_FIELD_NAME, label), doc);
