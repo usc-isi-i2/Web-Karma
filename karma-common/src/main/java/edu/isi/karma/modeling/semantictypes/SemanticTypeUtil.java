@@ -175,7 +175,7 @@ public class SemanticTypeUtil {
 							currentColumnName = currentColumnPath.getFirst().getColumnName();
 						}
 						ArrayList<String> examples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet, currentColumnPath, sel);
-						examples.add(0,currentColumnName);
+						examples.add(0,currentColumnName+"|");
 						ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
 						for(SemanticType newType : newTypes) {
 							String label = newType.getModelLabelString();

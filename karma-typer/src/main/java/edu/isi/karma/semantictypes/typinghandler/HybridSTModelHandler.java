@@ -150,7 +150,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 
         // treat content of column as single document
         StringBuilder sb = new StringBuilder();
-        //sb.append(currentColumnName);
+        sb.append(selectedExamples.get(0) +"|");
         //sb.append(" ");
         for (String ex : selectedExamples) {
             sb.append(ex);
@@ -409,10 +409,12 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
                     Document doc = reader.document(i);
                     String label = doc.get(Indexer.LABEL_FIELD_NAME);
                     String content = doc.get(Indexer.CONTENT_FIELD_NAME);
-                    String sents[] = content.split(" ");
+                    String colname_body_split[] = content.split("[|]");
+                    String[] col_name = colname_body_split[0].split("[;]");
+                    String sents[] = colname_body_split[1].split(" ");
                     String domainName = label.split("[|]")[0];
                     String typeName = label.split("[|]")[1];
-                    sem_col.put(sents[0],new SemType(domainName,typeName));
+                    sem_col.put(col_name[0],new SemType(domainName,typeName));
 //                    int maxL=0;
 //                    for(String s : sents)
 //                    {
@@ -422,11 +424,12 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 //                            maxL=subsL;
 //                    }
                     String data[][] = new String[sents.length][1];
-                    for(int ind =0; ind<sents.length;ind++)
+                    data[0][0] = col_name[0];
+                    for(int ind =1; ind<sents.length;ind++)
                     {
                         data[ind][0] = sents[ind];
                     }
-                    data_map.put(sents[0],data);
+                    data_map.put(col_name[0],data);
                 }
                 CreateDSLObjects.sem_col = sem_col;
                 featurextractorobj = CreateDSLObjects.create_feature_extractor(data_map);

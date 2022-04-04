@@ -348,6 +348,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		allowed.add(",");
 		allowed.add(";");
 		allowed.add("?");
+		allowed.add("|"); // adding pipe
 		return allowed;
 	}
 
