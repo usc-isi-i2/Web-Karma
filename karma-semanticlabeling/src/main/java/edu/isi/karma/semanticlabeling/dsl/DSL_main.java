@@ -1,7 +1,10 @@
 package edu.isi.karma.semanticlabeling.dsl;
-// package edu.isi.karma.semanticlabeling.dsl;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.lang.*;
 
@@ -15,7 +18,6 @@ import weka.core.Instances;
 import weka.core.Instance;
 import weka.classifiers.evaluation.Prediction;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,60 +35,58 @@ public class DSL_main implements Serializable{
     static Logger logger = LogManager.getLogger(DSL_main.class.getName());
     File modelFile;
     FeatureExtractor featureExtractorObject;
-    boolean loadModel;
-    boolean autoTrain;
-    boolean allowOneClass;
     RandomForest model;
-    // GenerateTrainingData generateTrainingData;
+    public File getModelFromResource(String fileName)  {
 
-    // Constructor to save the attributes. FeatureExtractorObject will be none when testing.
+        try {
+            String modelFilePath = Paths.get("../karma-semanticlabeling").toAbsolutePath()+"/src/main/resources/train/random_forest_model";
+            return new File(modelFilePath);
+        } catch (Exception e) {
+            return null;
+        }
+
+
+    }
+
     public DSL_main(String modelFile, FeatureExtractor featureExtractorObject, boolean loadTheModel, boolean autoTrain, boolean allowOneClass) throws Exception{
         this.featureExtractorObject = featureExtractorObject;
-        this.modelFile = new File(modelFile);
-        //this.modelFile = null;
-        this.model = null;
+        this.modelFile = getModelFromResource(modelFile);
+        if(this.modelFile!=null && this.modelFile.exists() && loadTheModel)
+        {
+            FileInputStream fi = new FileInputStream(this.modelFile);
+            ObjectInputStream oi = new ObjectInputStream(fi);
+            RandomForest rf_model = (RandomForest) oi.readObject();
+            this.model = rf_model;
+            oi.close();
+            fi.close();
 
-        if(loadTheModel)
+        }
+        else
             this.loadModel(autoTrain, allowOneClass, modelFile);
 
     }
 
-    // Loads the model if already present, it will train the model if the model file does not exist.
     public void loadModel(boolean autoTrain, boolean allowOneClass, String modelFile) throws Exception{
         logger.info("in load Model");
         if(this.model != null)
             return;
 
-        if(this.modelFile!=null){
-            logger.info("Load previous trained model...");
-            FileInputStream fi = new FileInputStream(this.modelFile);
-            ObjectInputStream oi = new ObjectInputStream(fi);
-            RandomForest rf_model = (RandomForest) oi.readObject();
-            oi.close();
-            fi.close();
-        }  
-        else{
-            logger.info("Cannot load model... Training.");
             if(autoTrain){
                 this.trainModel(allowOneClass, modelFile);
             }
             else{
-                logger.info("Exception: Model doesn't exist... ");
+                System.out.println("Exception: Model doesn't exist... ");
             }
-        }
 
     }
 
-    // Trains the rf model.
     public void trainModel(boolean allowOneClass, String modelFile) throws Exception{
-        logger.info("Train model...");
+        System.out.println("Train model...");
 
-        // First generate the training data in format required. (features)
         logger.info("Calling generate training data");
         GenerateTrainingData generateTrainingData = new GenerateTrainingData();
         generateTrainingData.generateTrainingDataForMain(this.featureExtractorObject);
         logger.info("Returned from generate training data:"+generateTrainingData.XTrain+"  "+generateTrainingData.YTrain);
-        // Check if only one class is allowed.
         if(!allowOneClass){
             Set<Integer> yTrainSet = new HashSet<Integer>();
             yTrainSet.addAll(generateTrainingData.YTrain);
@@ -122,56 +122,71 @@ public class DSL_main implements Serializable{
             e.printStackTrace();
         }
 
+        
 
         logger.info("Starting to fit the model");
         RandomForestAlgorithm_ rfa = new RandomForestAlgorithm_();
         this.model = rfa.RandomForestAlgorithm_create();
-        logger.info("Trained the model... Writing to file.");
-        this.modelFile = new File(modelFile);
+        System.out.println("Trained the model... Writing to file.");
+        String modelFilePath = Paths.get("../karma-semanticlabeling/src/main/resources/train/random_forest_model").toAbsolutePath().toString();
+        this.modelFile = new File(modelFilePath);
         FileOutputStream f = new FileOutputStream(this.modelFile);
         ObjectOutputStream o = new ObjectOutputStream(f);
         o.writeObject(this.model);
         o.close();
         f.close();
 
-        logger.info("Saved model...");
+        System.out.println("Saved model...");
         
+        // this.model = rfa;
+        // rfa.testModel("libsvm_test.arff", "randomForestModel");
+        logger.info("Got this.model");
+
     }
 
-    // To predict the semantic type of the column.
     public List<SemTypePrediction> predictSemanticType(Column col, int topN) throws Exception{
 
+        // logger.info("In predictSemanticType");
         List<List<Double>> X = new ArrayList<List<Double>>();
         X = this.featureExtractorObject.computeFeatureVectors(col);
-        // logger.info("Computed X:"+X.size()+" X: "+X);
+        HashMap<Integer,Integer> dict_c = new HashMap<Integer,Integer>();
+        dict_c.put(0,0);
+        dict_c.put(1,0);
+        dict_c.put(2,0);
+        dict_c.put(3,0);
+        dict_c.put(4,0);
+        dict_c.put(5,0);
+        dict_c.put(6,0);
+        for(int i=0;i<X.size();i++)
+        {
+            for(int j=0;j<=6;j++)
+            {
+                if(X.get(i).get(j)>0)
+                {
+                    dict_c.put(j,dict_c.get(j)+1);
+                }
+            }
+        }
+        //System.out.println("Computed X:"+X.size()+" X: "+X);
         GenerateTrainingData generateTrainingData = new GenerateTrainingData();
         generateTrainingData.generateTrainingDataForTest(this.featureExtractorObject, X);
         writeToFilePredict(generateTrainingData);
         // logger.info("Wrote to file");
 
+        
         RandomForestAlgorithm_ rfa = new RandomForestAlgorithm_();
         Instances test_data_instance = rfa.getDataSet("test_data.arff");
         rfa.eval.evaluateModel(this.model, test_data_instance);
 
-        // Finding the predictions and their probabilities. Similar to predict_proba in python.
-        ArrayList<Prediction> predictionsf = rfa.eval.predictions();
-        for (int i = 0; i < predictionsf.size(); i++) {
-            double classProbability = predictionsf.get(i).weight();
-            logger.info("Class prob:"+classProbability);
-        }
         test_data_instance.setClassIndex(test_data_instance.numAttributes() - 1); 
         List<List<Double>> res = new ArrayList<List<Double>>();
         Enumeration<Instance> test_instances = test_data_instance.enumerateInstances();
         while(test_instances.hasMoreElements()){
             Instance test_ins = test_instances.nextElement();
-            logger.info("test_instance:"+test_ins);
             double result[] = this.model.distributionForInstance(test_ins);
             res.add(Arrays.asList(ArrayUtils.toObject(result)));
         }
         logger.info("Found result");
-        for(int i=0; i<res.size(); i++)
-            logger.info("r="+res.get(i));
-
         if(res.get(0).size()==1)
             //have only one class, which mean that it is always false
             return new ArrayList<SemTypePrediction>();
@@ -179,44 +194,36 @@ public class DSL_main implements Serializable{
         List<Double> result_col = new ArrayList<Double>();
         for(List<Double> result:res)
             result_col.add(result.get(1));
-        logger.info("Result col:"+result_col);
 
         double result_enum[][] = new double[result_col.size()][2];
         for(int i=0; i<result_col.size(); i++){
             result_enum[i][0] = (double)i;
             result_enum[i][1] = result_col.get(i);
         }
-        logger.info("Result enum:"+result_enum);
-        for(int i=0; i<result_enum.length; i++){
-            logger.info(result_enum[i][0]+" "+result_enum[i][1]);
-        }
+
         
         // sort the array on item id(first column)
         Arrays.sort(result_enum, new Comparator<double[]>() {
             @Override
-                // arguments to this method represent the arrays to be sorted   
+                //arguments to this method represent the arrays to be sorted   
             public int compare(double[] o1, double[] o2) {
-                    // get the item ids which are at index 0 of the array
+                        //get the item ids which are at index 0 of the array
                     Double itemIdOne = o1[1];
                     Double itemIdTwo = o2[1];
                 // sort on item id
                 return itemIdOne.compareTo(itemIdTwo);
             }
         });
-        logger.info("Result sorted:"+result_enum);
-        for(int i=0; i<result_enum.length; i++){
-            logger.info(result_enum[i][0]+" "+result_enum[i][1]);
-        }
-        
-        // Returning top N predictions.
+
+
         List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
-        List<String> existing_stypes = new ArrayList<String>();
+        List<String> existing_stypes = new ArrayList<String>(); // make it dictionary
         int i = result_enum.length-1;
         while(predictions.size() < topN && i > -1){
             int col_i = (int)result_enum[i][0];
             double prob = result_enum[i][1];
             i--;
-            logger.info("COL,PROB:"+col_i+" "+prob);
+            //System.out.println("COL,PROB:"+col_i+" "+prob);
 
             //this column is in training data, so we have to remove it out
             if(this.featureExtractorObject.column2idx.containsKey(col.id) && this.featureExtractorObject.column2idx.get(col.id) == col_i)
@@ -228,15 +235,13 @@ public class DSL_main implements Serializable{
             
             existing_stypes.add(pred_stype.classID + " " + pred_stype.predicate);
             predictions.add(new SemTypePrediction(pred_stype, prob));
-            logger.info("My predications:"+pred_stype.classID+" "+pred_stype.predicate+" "+prob);
         }
 
         return predictions;
     }
 
-    // Writing arff files for RF model.
     public void writeToFilePredict(GenerateTrainingData generateTrainingData){
-        logger.info("Creating test data file");
+        System.out.println("Creating test data file");
 
         try {
             FileWriter myWriter = new FileWriter("test_data.arff");
@@ -260,9 +265,9 @@ public class DSL_main implements Serializable{
             }
             // myWriter.write("End!");
             myWriter.close();
-            logger.info("Successfully wrote to the test file.");
+            System.out.println("Successfully wrote to the test file.");
         } catch (IOException e) {
-            logger.info("An error occurred.");
+            System.out.println("An error occurred.");
             e.printStackTrace();
         }
         return;

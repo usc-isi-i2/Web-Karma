@@ -7,10 +7,10 @@ import java.util.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
+// import com.mycompany.dsl.DSL;
 import edu.isi.karma.semanticlabeling.dsl.FeatureExtractor;
 import edu.isi.karma.semanticlabeling.dsl.ColumnBasedTable;
 import edu.isi.karma.semanticlabeling.dsl.Column;
-import edu.isi.karma.semanticlabeling.dsl.ColumnType;
 import edu.isi.karma.semanticlabeling.dsl.ColumnData;
 import edu.isi.karma.semanticlabeling.dsl.SemType;
 
@@ -23,7 +23,8 @@ import edu.isi.karma.semanticlabeling.dsl.SemType;
 public class CreateDSLObjects {
 
     static Logger logger = LogManager.getLogger(CreateDSLObjects.class.getName());
-    // Reads the file and creates matrix object.
+    public static HashMap<String, SemType> sem_col ;
+    // Redo this function
     public static String[][] readFile(String fileName){
         List<String[]> rowList = new ArrayList<String[]>();
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -50,11 +51,10 @@ public class CreateDSLObjects {
         return matrix;
     }
 
-    // Deletes the file.
-    public static void deleteFile(String fileName){
+    public static void deleteFile(File file){
         try
-        { 
-            Files.deleteIfExists(Paths.get(fileName)); 
+        {
+            Files.deleteIfExists(Paths.get(file.getAbsolutePath()));
         } 
         catch(NoSuchFileException e) 
         { 
@@ -71,34 +71,57 @@ public class CreateDSLObjects {
         logger.info("Deletion successful."); 
     }
 
-    // Creates the FeatureExtractor Object from data in file.
-    public static FeatureExtractor create_feature_extractor(String files[]) throws IOException{
+    public static FeatureExtractor create_feature_extractor(String[] files) throws IOException{
         List<ColumnBasedTable> columnBasedTableObj = new ArrayList<ColumnBasedTable>();
 
+        int kk=0;
         for(String file: files){
+            // if (!file.contains("bundesliga"))
+            //     continue;
+            // file = "/Users/rutujarane/Desktop/ISI/Semantics/dsl/data/soccer2/2014 WC french.csv"; //test
             String [][] data = readFile(file);
-            logger.info("File gen:"+file);
+            System.out.println("File gen:"+file);
             if(data.length == 0){
                 logger.info("Warning: file not readable "+file);
                 continue;
             }
             logger.info("Read the file"+file);
             columnBasedTableObj.add(findDatatype(data,file));
+            kk++;
+            // if(kk>=1)
+            //     break;
+        }
+        return new FeatureExtractor(columnBasedTableObj);
+
+    }
+    public static FeatureExtractor create_feature_extractor(HashMap<String,String[][]> dataMap) throws IOException{
+        List<ColumnBasedTable> columnBasedTableObj = new ArrayList<ColumnBasedTable>();
+        for(Map.Entry<String,String[][]> entry : dataMap.entrySet())
+        {
+            String data[][]  = entry.getValue();
+            columnBasedTableObj.add(findDatatype(data, entry.getKey())); // Assuming tf idf is computed at token level and each cell value is not a whole token
         }
         return new FeatureExtractor(columnBasedTableObj);
 
     }
 
-    // To find the datatype of the column.
+
     public static ColumnBasedTable findDatatype(String[][] data, String tableName){
-        logger.info("TableName:"+tableName);
+        logger.info("TabName:"+tableName);
+        // for(int i=0; i<data[0].length; i++){
+        //     System.out.print(data[1][i] + " ");
+        // }
         List<Column> columns = new ArrayList<Column>();
         for(int index=0; index<data[0].length; index++){
             List<String> colData = getColumnData(data,index);
-            SemType semTypeObj = findSemType(colData.get(1));
+            SemType semTypeObj;
+            if(sem_col.containsKey(colData.get(0)))
+                semTypeObj =  sem_col.get(colData.get(0));
+            else
+                semTypeObj  = findSemType(colData.get(1));
             Hashtable<String, Float> typeStats = new Hashtable<String, Float>();
             Column columnObj = new Column(tableName, colData.get(0), semTypeObj, colData.get(2), data.length, typeStats);
-            List<String> colSubList = new ArrayList<String>(colData.subList(2,colData.size())); //3
+            List<String> colSubList = new ArrayList<String>(colData.subList(1,colData.size())); //3
             columnObj.value = new ColumnData(colSubList);
             columns.add(columnObj);
             logger.info("Column Object created");
@@ -107,15 +130,12 @@ public class CreateDSLObjects {
         return columnBasedTableObj;
     }
 
-    // Returns the semantic type of the column.
     public static SemType findSemType(String colName){
         String col[] = colName.trim().replaceAll("\"","").split("-");
-        logger.info("SemType: 1:"+col[0]+" 2: "+col[col.length-1]);
-        SemType semTypeObj = new SemType(col[0],col[col.length-1]);
+        SemType semTypeObj = new SemType(col[0],col[0]);
         return semTypeObj;
     }
 
-    // Returns the data in the column in list form.
     public static List<String> getColumnData(String[][] data, int index){
         List<String> column = new ArrayList<String>();
         for(int i=0; i<data.length; i++){

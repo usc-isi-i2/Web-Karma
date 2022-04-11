@@ -1,0 +1,760 @@
+Team,Number,Position,FullName,Club,ClubCountry,DateOfBirth,IsCaptain
+South Africa,1,GK,Moeneeb Josephs,Orlando Pirates FC,RSA,5/19/1980,FALSE
+South Africa,2,DF,Siboniso Gaxa,Mamelodi Sundowns F.C.,RSA,4/6/1984,FALSE
+South Africa,3,DF,Tsepo Masilela,Maccabi Haifa F.C.,ISR,5/5/1985,FALSE
+South Africa,4,DF,Aaron Mokoena,Portsmouth F.C.,ENG,11/25/1980,TRUE
+South Africa,5,DF,Anele Ngcongca,K.R.C. Genk,BEL,10/20/1987,FALSE
+South Africa,6,MF,MacBeth Sibaya,FC Rubin Kazan,RUS,11/25/1977,FALSE
+South Africa,7,MF,Lance Davids,Ajax Cape Town FC,RSA,4/11/1985,FALSE
+South Africa,8,MF,Siphiwe Tshabalala,Kaizer Chiefs FC,RSA,9/25/1984,FALSE
+South Africa,9,FW,Katlego Mphela,Mamelodi Sundowns F.C.,RSA,11/29/1984,FALSE
+South Africa,10,MF,Steven Pienaar,Everton F.C.,ENG,3/17/1982,FALSE
+South Africa,11,MF,Teko Modise,Orlando Pirates FC,RSA,12/22/1982,FALSE
+South Africa,12,MF,Reneilwe Letsholonyane,Kaizer Chiefs FC,RSA,6/9/1982,FALSE
+South Africa,13,MF,Kagisho Dikgacoi,Fulham F.C.,ENG,11/24/1984,FALSE
+South Africa,14,DF,Matthew Booth,Mamelodi Sundowns F.C.,RSA,3/14/1977,FALSE
+South Africa,15,DF,Lucas Thwala,Orlando Pirates FC,RSA,10/19/1981,FALSE
+South Africa,16,GK,Itumeleng Khune,Kaizer Chiefs FC,RSA,6/20/1987,FALSE
+South Africa,17,FW,Bernard Parker,FC Twente,NED,3/16/1986,FALSE
+South Africa,18,FW,Siyabonga Nomvethe,Moroka Swallows F.C.,RSA,12/2/1977,FALSE
+South Africa,19,MF,Surprise Moriri,Mamelodi Sundowns F.C.,RSA,3/20/1980,FALSE
+South Africa,20,DF,Bongani Khumalo,Supersport United F.C.,RSA,1/6/1987,FALSE
+South Africa,21,DF,Siyabonga Sangweni,Golden Arro,RSA,9/29/1981,FALSE
+South Africa,22,GK,Shu-Aib Walters,Maritzburg United F.C.,RSA,12/26/1981,FALSE
+South Africa,23,MF,Thanduyise Khuboni,Golden Arro,RSA,5/23/1986,FALSE
+Mexico,1,GK,,Chiapas F.C.,MEX,2/1/1973,FALSE
+Mexico,2,DF,,PSV Eindhov,NED,10/20/1981,FALSE
+Mexico,3,DF,Carlos Salcido,PSV Eindhov,NED,4/2/1980,FALSE
+Mexico,4,DF,,FC Barcelona,ESP,2/13/1979,TRUE
+Mexico,5,DF,Ricardo Osorio,VfB Stuttga,GER,3/30/1980,FALSE
+Mexico,6,MF,Gerardo Torrado,Cruz Az,MEX,4/30/1979,FALSE
+Mexico,7,MF,Pablo Barrera,Club Universidad Nacional,MEX,6/21/1987,FALSE
+Mexico,8,MF,Israel Castro,Club Universidad Nacional,MEX,12/29/1980,FALSE
+Mexico,9,FW,Guillermo Franco,West Ham United F.C.,ENG,11/3/1976,FALSE
+Mexico,10,FW,,Tiburones Rojos de Veracruz,MEX,1/17/1973,FALSE
+Mexico,11,FW,Carlos Vela,Arsenal F.C.,ENG,3/1/1989,FALSE
+Mexico,12,DF,Paul Aguilar,C.F. Pachuca,MEX,3/6/1986,FALSE
+Mexico,13,GK,Guillermo Ochoa,Club AmÃ©rica,MEX,7/13/1985,FALSE
+Mexico,14,FW,,C.D. Guadalajara,MEX,6/1/1988,FALSE
+Mexico,15,DF,,AZ (football club),NED,1/17/1988,FALSE
+Mexico,16,DF,,Club Universidad Nacional,MEX,2/22/1988,FALSE
+Mexico,17,FW,Giovani dos Santos,Galatasaray S.K. (football team),TUR,5/11/1989,FALSE
+Mexico,18,MF,,Deportivo de La CoruÃ±a,ESP,9/28/1986,FALSE
+Mexico,19,DF,,C.D. Guadalajara,MEX,11/21/1981,FALSE
+Mexico,20,DF,Jorge Torres Nilo,Club Atlas,MEX,1/16/1988,FALSE
+Mexico,21,FW,Adolfo Bautista,C.D. Guadalajara,MEX,5/15/1979,FALSE
+Mexico,22,MF,Alberto Medina,C.D. Guadalajara,MEX,5/29/1983,FALSE
+Mexico,23,GK,Luis Ernesto Michel,C.D. Guadalajara,MEX,7/21/1979,FALSE
+Uruguay,1,GK,Fernando Muslera,S.S. Lazio,ITA,6/16/1986,FALSE
+Uruguay,2,DF,Diego Lugano,FenerbahÃ§e S.K.,TUR,11/2/1980,TRUE
+Uruguay,3,DF,,Villarreal CF,ESP,2/16/1986,FALSE
+Uruguay,4,DF,Jorge Fucile,F.C. Porto,POR,11/19/1984,FALSE
+Uruguay,5,MF,Walter Gargano,S.S.C. Napoli,ITA,7/23/1984,FALSE
+Uruguay,6,DF,Mauricio Victorino,C.F. Universidad de Chile,CHI,10/11/1982,FALSE
+Uruguay,7,FW,Edinson Cavani,U.S. CittÃ  di Palermo,ITA,2/14/1987,FALSE
+Uruguay,8,MF,,AIK Fotboll,SWE,1/8/1981,FALSE
+Uruguay,9,FW,,AFC Ajax,NED,1/24/1987,FALSE
+Uruguay,10,FW,,AtlÃ©tico Madr,ESP,5/19/1979,FALSE
+Uruguay,11,MF,Ãlvaro Pereira,F.C. Porto,POR,11/28/1985,FALSE
+Uruguay,12,GK,Juan Guillermo Castillo,Deportivo Ca,COL,4/17/1978,FALSE
+Uruguay,13,FW,,Botafogo de Futebol e Regatas,BRA,10/17/1976,FALSE
+Uruguay,14,MF,,AFC Ajax,NED,3/21/1989,FALSE
+Uruguay,15,MF,,AS Monaco FC,FRA,5/18/1980,FALSE
+Uruguay,16,DF,Maximiliano Pereira,S.L. Benfica,POR,6/8/1984,FALSE
+Uruguay,17,MF,,C.A. PeÃ±arol,URU,1/1/1982,FALSE
+Uruguay,18,MF,,Valencia CF,ESP,5/14/1982,FALSE
+Uruguay,19,DF,,Colo-Co,CHI,12/14/1974,FALSE
+Uruguay,20,MF,,C.F. Universidad de Chile,CHI,10/11/1985,FALSE
+Uruguay,21,FW,,Club AtlÃ©tico Banfield,ARG,5/23/1985,FALSE
+Uruguay,22,DF,,FC Sevilla,ESP,4/7/1987,FALSE
+Uruguay,23,GK,,Defensor Sporti,URU,3/25/1983,FALSE
+France,1,GK,Hugo Lloris,Olympique Lyonnais,FRA,12/26/1986,FALSE
+France,2,DF,Bacary Sagna,Arsenal F.C.,ENG,2/14/1983,FALSE
+France,3,DF,,FC Barcelona,ESP,9/11/1979,FALSE
+France,4,DF,,Olympique Lyonnais,FRA,11/10/1979,FALSE
+France,5,DF,William Gallas,Arsenal F.C.,ENG,8/17/1977,FALSE
+France,6,DF,Marc Planus,FC Girondins de Bordeaux,FRA,3/7/1982,FALSE
+France,7,MF,,FC Bayern Munich,GER,4/7/1983,FALSE
+France,8,MF,Yoann Gourcuff,Olympique Lyonnais,FRA,7/11/1986,FALSE
+France,9,FW,,Panathinaikos F.C.,GRE,8/12/1981,FALSE
+France,10,FW,Sidney Govou,Olympique Lyonnais,FRA,7/27/1979,FALSE
+France,11,FW,,Olympique de Marseille,FRA,12/5/1985,FALSE
+France,12,FW,Thierry Henry,FC Barcelona,ESP,8/17/1977,FALSE
+France,13,DF,Patrice Evra,Manchester United F.C.,ENG,5/15/1981,TRUE
+France,14,MF,,Olympique Lyonnais,FRA,9/10/1983,FALSE
+France,15,MF,Florent Malouda,Chelsea F.C.,ENG,6/13/1980,FALSE
+France,16,GK,Steve Mandanda,Olympique de Marseille,FRA,3/28/1985,FALSE
+France,17,DF,,Arsenal F.C.,ENG,8/11/1980,FALSE
+France,18,MF,Alou Diarra,FC Girondins de Bordeaux,FRA,7/15/1981,FALSE
+France,19,MF,Abou Diaby,Arsenal F.C.,ENG,5/11/1986,FALSE
+France,20,MF,Mathieu Valbuena,Olympique de Marseille,FRA,9/28/1984,FALSE
+France,21,FW,Nicolas Anelka,Chelsea F.C.,ENG,3/14/1979,FALSE
+France,22,DF,,Arsenal F.C.,ENG,7/26/1985,FALSE
+France,23,GK,,FC Girondins de Bordeaux,FRA,12/30/1981,FALSE
+Argentina,1,GK,Diego Pozo,Club AtlÃ©tico ColÃ³n,ARG,2/16/1978,FALSE
+Argentina,2,DF,,FC Bayern Munich,GER,12/20/1980,FALSE
+Argentina,3,DF,,Estudiantes de La Plata,ARG,7/31/1981,FALSE
+Argentina,4,DF,,A.S. Roma,ITA,4/12/1981,FALSE
+Argentina,5,MF,Mario Bolatti,ACF Fiorentina,ITA,2/17/1985,FALSE
+Argentina,6,DF,Gabriel Heinze,Olympique de Marseille,FRA,4/19/1978,FALSE
+Argentina,7,MF,,S.L. Benfica,POR,2/14/1988,FALSE
+Argentina,8,MF,,Estudiantes de La Plata,ARG,3/9/1975,FALSE
+Argentina,9,FW,,Real Madrid C.F.,ESP,12/10/1987,FALSE
+Argentina,10,FW,Lionel Messi,FC Barcelona,ESP,6/24/1987,FALSE
+Argentina,11,FW,,Manchester City F.C.,ENG,2/5/1984,FALSE
+Argentina,12,DF,,Club AtlÃ©tico ColÃ³n,ARG,7/14/1979,FALSE
+Argentina,13,DF,Walter Samuel,F.C. Internazionale Milano,ITA,3/23/1978,FALSE
+Argentina,14,MF,Javier Mascherano,Liverpool F.C.,ENG,6/8/1984,TRUE
+Argentina,15,DF,,Club AtlÃ©tico VÃ©lez SÃ¡rsfield,ARG,2/12/1988,FALSE
+Argentina,16,FW,,AtlÃ©tico Madr,ESP,6/2/1988,FALSE
+Argentina,17,MF,,Newcastle United F.C.,ENG,7/5/1983,FALSE
+Argentina,18,FW,,Boca Junio,ARG,11/7/1973,FALSE
+Argentina,19,FW,Diego Milito,F.C. Internazionale Milano,ITA,6/12/1979,FALSE
+Argentina,20,MF,,Liverpool F.C.,ENG,1/2/1981,FALSE
+Argentina,21,GK,Mariano AndÃºjar,Calcio Catania,ITA,7/30/1983,FALSE
+Argentina,22,GK,Sergio Romero,AZ (football club),NED,2/22/1987,FALSE
+Argentina,23,MF,Javier Pastore,U.S. CittÃ  di Palermo,ITA,6/20/1989,FALSE
+Nigeria,1,GK,Vincent Enyeama,Hapoel Tel Aviv F.C.,ISR,8/29/1982,FALSE
+Nigeria,2,DF,Joseph Yobo,Everton F.C.,ENG,9/6/1980,TRUE
+Nigeria,3,DF,Taye Taiwo,Olympique de Marseille,FRA,4/16/1985,FALSE
+Nigeria,4,FW,Nwankwo Kanu,Portsmouth F.C.,ENG,8/1/1976,FALSE
+Nigeria,5,DF,Rabiu Afolabi,FC Red Bull Salzburg,AUT,4/18/1980,FALSE
+Nigeria,6,DF,Danny Shittu,Bolton Wanderers F.C.,ENG,9/2/1980,FALSE
+Nigeria,7,FW,John Utaka,Portsmouth F.C.,ENG,1/8/1982,FALSE
+Nigeria,8,FW,Yakubu Aiyegbeni,Everton F.C.,ENG,11/22/1982,FALSE
+Nigeria,9,FW,Obafemi Martins,VfL Wolfsbu,GER,10/28/1984,FALSE
+Nigeria,10,FW,,FC Sochaux-MontbÃ©liard,FRA,10/10/1988,FALSE
+Nigeria,11,FW,Peter Odemwingie,FC Lokomotiv Moscow,RUS,7/15/1981,FALSE
+Nigeria,12,FW,Kalu Uche,UD AlmerÃ­a,ESP,11/15/1982,FALSE
+Nigeria,13,MF,Ayila Yussuf,FC Dynamo Kyiv,UKR,11/4/1984,FALSE
+Nigeria,14,MF,Sani Kaita,FC Alania Vladikavkaz,RUS,5/2/1986,FALSE
+Nigeria,15,MF,Lukman Haruna,AS Monaco FC,FRA,4/12/1990,FALSE
+Nigeria,16,GK,Austin Ejide,Hapoel Petah Tikva F.C.,ISR,4/8/1984,FALSE
+Nigeria,17,DF,Chidi Odiah,PFC CSKA Moscow,RUS,12/17/1983,FALSE
+Nigeria,18,FW,Victor Nsofor Obinna,MÃ¡laga CF,ESP,3/25/1987,FALSE
+Nigeria,19,FW,Chinedu Obasi,TSG 1899 Hoffenheim,GER,6/1/1986,FALSE
+Nigeria,20,MF,Dickson Etuhu,Fulham F.C.,ENG,6/8/1982,FALSE
+Nigeria,21,DF,,Stade Rennais F.C.,FRA,1/20/1988,FALSE
+Nigeria,22,DF,Dele Adeleye,Sparta Rotterd,NED,12/25/1988,FALSE
+Nigeria,23,GK,Dele Aiyenugba,Bnei Yehuda Tel Aviv F.C.,ISR,11/20/1983,FALSE
+Korea Republic,1,GK,Lee Woon-Jae,Suwon Samsung Bluewin,KOR,4/26/1973,FALSE
+Korea Republic,2,DF,Oh Beom-Seok,Ulsan Hyundai FC,KOR,7/29/1984,FALSE
+Korea Republic,3,DF,Kim Hyung-Il,Pohang Steele,KOR,4/27/1984,FALSE
+Korea Republic,4,MF,Cho Yong-Hyung,Jeju United FC,KOR,11/3/1983,FALSE
+Korea Republic,5,MF,Kim Nam-Il,FC Tom Tomsk,RUS,3/14/1977,FALSE
+Korea Republic,6,MF,Kim Bo-Kyung,Oita Trini,JPN,10/6/1989,FALSE
+Korea Republic,7,MF,Park Ji-Sung,Manchester United F.C.,ENG,2/25/1981,TRUE
+Korea Republic,8,FW,Kim Jung-Woo,Sangju Sangmu Phoenix,KOR,5/9/1982,FALSE
+Korea Republic,9,FW,Ahn Jung-Hwan,Dalian Shide F.C.,CHN,1/27/1976,FALSE
+Korea Republic,10,FW,Park Chu-Young,AS Monaco FC,FRA,7/10/1985,FALSE
+Korea Republic,11,FW,Lee Seung-Yeoul,FC Seo,KOR,3/6/1989,FALSE
+Korea Republic,12,DF,Lee Young-Pyo,Al-Hilal Riyadh,KSA,4/23/1977,FALSE
+Korea Republic,13,MF,Kim Jae-Sung,Pohang Steele,KOR,10/3/1983,FALSE
+Korea Republic,14,DF,Lee Jung-Soo,Kashima Antle,JPN,1/8/1980,FALSE
+Korea Republic,15,DF,Kim Dong-Jin,Ulsan Hyundai FC,KOR,1/29/1982,FALSE
+Korea Republic,16,MF,Ki Sung-Yong,Celtic F.C.,SCO,1/24/1989,FALSE
+Korea Republic,17,MF,Lee Chung-Yong,Bolton Wanderers F.C.,ENG,7/2/1988,FALSE
+Korea Republic,18,GK,Jung Sung-Ryong,Seongnam Ilhwa Chun,KOR,1/4/1985,FALSE
+Korea Republic,19,FW,Yeom Ki-Hun,Suwon Samsung Bluewin,KOR,3/30/1983,FALSE
+Korea Republic,20,FW,Lee Dong-Gook,Jeonbuk Hyundai Moto,KOR,4/29/1979,FALSE
+Korea Republic,21,GK,Kim Young-Kwang,Ulsan Hyundai FC,KOR,6/28/1983,FALSE
+Korea Republic,22,DF,Cha Du-Ri,SC Freibu,GER,7/25/1980,FALSE
+Korea Republic,23,DF,Kang Min-Soo,Suwon Samsung Bluewin,KOR,2/14/1986,FALSE
+Greece,1,GK,Kostas Chalkias,PAOK F.C.,GRE,5/30/1974,FALSE
+Greece,2,DF,Giourkas Seitaridis,Panathinaikos F.C.,GRE,6/4/1981,FALSE
+Greece,3,DF,Christos Patsatzoglou,AC Omonia,CYP,3/19/1979,FALSE
+Greece,4,MF,Nikos Spiropoulos,Panathinaikos F.C.,GRE,10/10/1983,FALSE
+Greece,5,DF,Vangelis Moras,Bologna F.C. 1909,ITA,8/18/1981,FALSE
+Greece,6,MF,Alexandros Tziolis,A.C. Siena,ITA,2/13/1985,FALSE
+Greece,7,FW,Georgios Samaras,Celtic F.C.,SCO,2/21/1985,FALSE
+Greece,8,DF,Avraam Papadopoulos,Olympiacos F.C.,GRE,1/3/1984,FALSE
+Greece,9,FW,Angelos Charisteas,1. FC NÃ¼rnbe,GER,2/9/1980,FALSE
+Greece,10,MF,Giorgos Karagounis,Panathinaikos F.C.,GRE,3/6/1977,TRUE
+Greece,11,DF,Loukas Vyntra,Panathinaikos F.C.,GRE,2/5/1981,FALSE
+Greece,12,GK,Alexandros Tzorvas,Panathinaikos F.C.,GRE,8/12/1982,FALSE
+Greece,13,GK,Michalis Sifakis,Aris Thessaloniki F.C.,GRE,9/9/1984,FALSE
+Greece,14,FW,Dimitris Salpingidis,Panathinaikos F.C.,GRE,8/18/1981,FALSE
+Greece,15,DF,Vasilis Torosidis,Olympiacos F.C.,GRE,6/10/1985,FALSE
+Greece,16,DF,Sotirios Kyrgiakos,Liverpool F.C.,ENG,7/23/1979,FALSE
+Greece,17,FW,Theofanis Gekas,Hertha B,GER,5/23/1980,FALSE
+Greece,18,MF,Sotiris Ninis,Panathinaikos F.C.,GRE,4/3/1990,FALSE
+Greece,19,DF,Sokratis Papastathopoulos,Genoa C.F.C.,ITA,6/9/1988,FALSE
+Greece,20,FW,Pantelis Kapetanos,FC Steaua BucureÅŸti,ROM,6/8/1983,FALSE
+Greece,21,MF,Kostas Katsouranis,Panathinaikos F.C.,GRE,6/21/1979,FALSE
+Greece,22,DF,Stelios Malezas,PAOK F.C.,GRE,3/11/1985,FALSE
+Greece,23,MF,Athanassios Prittas,Aris Thessaloniki F.C.,GRE,1/9/1979,FALSE
+England,1,GK,David James (footballer),Portsmouth F.C.,ENG,8/1/1970,FALSE
+England,2,DF,Glen Johnson (English footballer),Liverpool F.C.,ENG,8/23/1984,FALSE
+England,3,DF,Ashley Cole,Chelsea F.C.,ENG,12/20/1980,FALSE
+England,4,MF,Steven Gerrard,Liverpool F.C.,ENG,5/30/1980,TRUE
+England,5,DF,Michael Dawson (footballer),Tottenham Hotspur F.C.,ENG,11/18/1983,FALSE
+England,6,DF,John Terry,Chelsea F.C.,ENG,12/7/1980,FALSE
+England,7,MF,Aaron Lennon,Tottenham Hotspur F.C.,ENG,4/16/1987,FALSE
+England,8,MF,Frank Lampard,Chelsea F.C.,ENG,6/20/1978,FALSE
+England,9,FW,Peter Crouch,Tottenham Hotspur F.C.,ENG,1/30/1981,FALSE
+England,10,FW,Wayne Rooney,Manchester United F.C.,ENG,10/24/1985,FALSE
+England,11,MF,Joe Cole,Chelsea F.C.,ENG,11/8/1981,FALSE
+England,12,GK,Robert Green,West Ham United F.C.,ENG,1/18/1980,FALSE
+England,13,DF,Stephen Warnock,Aston Villa F.C.,ENG,12/12/1981,FALSE
+England,14,MF,Gareth Barry,Manchester City F.C.,ENG,2/23/1981,FALSE
+England,15,DF,Matthew Upson,West Ham United F.C.,ENG,4/18/1979,FALSE
+England,16,MF,James Milner,Aston Villa F.C.,ENG,1/4/1986,FALSE
+England,17,MF,Shaun Wright-Phillips,Manchester City F.C.,ENG,10/25/1981,FALSE
+England,18,DF,Jamie Carragher,Liverpool F.C.,ENG,1/28/1978,FALSE
+England,19,FW,Jermain Defoe,Tottenham Hotspur F.C.,ENG,10/7/1982,FALSE
+England,20,DF,Ledley King,Tottenham Hotspur F.C.,ENG,10/12/1980,FALSE
+England,21,FW,Emile Heskey,Aston Villa F.C.,ENG,1/11/1978,FALSE
+England,22,MF,Michael Carrick,Manchester United F.C.,ENG,7/28/1981,FALSE
+England,23,GK,Joe Hart,Birmingham City F.C.,ENG,4/19/1987,FALSE
+United States,1,GK,Tim Howard,Everton F.C.,ENG,3/6/1979,FALSE
+United States,2,DF,Jonathan Spector,West Ham United F.C.,ENG,3/1/1986,FALSE
+United States,3,DF,Carlos Bocanegra,Stade Rennais F.C.,FRA,5/25/1979,TRUE
+United States,4,MF,Michael Bradley,Borussia MÃ¶nchengladba,GER,7/31/1987,FALSE
+United States,5,DF,Oguchi Onyewu,A.C. Milan,ITA,5/13/1982,FALSE
+United States,6,DF,Steve Cherundolo,Hannover ,GER,2/19/1979,FALSE
+United States,7,MF,DaMarcus Beasley,Rangers F.C.,SCO,5/24/1982,FALSE
+United States,8,MF,Clint Dempsey,Fulham F.C.,ENG,3/9/1983,FALSE
+United States,9,FW,Herculez Gomez,Puebla F.C.,MEX,4/6/1982,FALSE
+United States,10,MF,Landon Donovan,Los Angeles Gala,USA,3/4/1982,FALSE
+United States,11,MF,Stuart Holden,Bolton Wanderers F.C.,ENG,8/1/1985,FALSE
+United States,12,DF,Jonathan Bornstein,C.D. Chivas USA,USA,11/7/1984,FALSE
+United States,13,MF,Ricardo Clark,Eintracht Frankfu,GER,3/10/1983,FALSE
+United States,14,FW,Edson Buddle,Los Angeles Gala,USA,5/21/1981,FALSE
+United States,15,DF,Jay DeMerit,Watford F.C.,ENG,12/4/1979,FALSE
+United States,16,MF,,C.F. Pachuca,MEX,10/29/1987,FALSE
+United States,17,FW,Jozy Altidore,Hull City A.F.C.,ENG,11/6/1989,FALSE
+United States,18,GK,Brad Guzan,Aston Villa F.C.,ENG,9/9/1984,FALSE
+United States,19,MF,Maurice Edu,Rangers F.C.,SCO,4/18/1986,FALSE
+United States,20,FW,Robbie Findley,Real Salt La,USA,8/4/1985,FALSE
+United States,21,DF,Clarence Goodson,IK Start,NOR,5/17/1982,FALSE
+United States,22,MF,Benny Feilhaber,Aarhus Gymnastikforening,DEN,1/19/1985,FALSE
+United States,23,GK,Marcus Hahnemann,Wolverhampton Wanderers F.C.,ENG,6/15/1972,FALSE
+United States,1,GK,,ASO Chl,ALG,9/28/1977,FALSE
+United States,2,DF,Madjid Bougherra,Rangers F.C.,SCO,10/7/1982,FALSE
+United States,3,DF,Nadir Belhadj,Portsmouth F.C.,ENG,6/18/1982,FALSE
+United States,4,DF,Antar Yahia,VfL Boch,GER,3/21/1982,TRUE
+United States,5,DF,Rafik Halliche,C.D. Nacional,POR,9/2/1986,FALSE
+United States,6,MF,Yazid Mansouri,FC Lorient,FRA,2/25/1978,FALSE
+United States,7,MF,Ryad Boudebouz,FC Sochaux-MontbÃ©liard,FRA,2/19/1990,FALSE
+United States,8,MF,Medhi Lacen,Racing de Santander,ESP,1984-15-5,FALSE
+United States,9,FW,Abdelkader Ghezzal,A.C. Siena,ITA,12/5/1984,FALSE
+United States,10,FW,,FC Istres,FRA,2/7/1975,FALSE
+United States,11,FW,Rafik Djebbour,AEK Athens F.C.,GRE,3/8/1984,FALSE
+United States,12,DF,,Eintracht Frankfu,GER,3/28/1986,FALSE
+United States,13,FW,Karim Matmour,Borussia MÃ¶nchengladba,GER,6/25/1984,FALSE
+United States,14,DF,,ES SÃ©t,ALG,7/29/1981,FALSE
+United States,15,MF,Karim Ziani,VfL Wolfsbu,GER,8/17/1982,FALSE
+United States,16,GK,Faouzi Chaouchi,ES SÃ©t,ALG,12/5/1984,FALSE
+United States,17,MF,,Wolverhampton Wanderers F.C.,ENG,11/12/1985,FALSE
+United States,18,DF,Carl Medjani,AC Ajaccio,FRA,5/15/1985,FALSE
+United States,19,MF,Hassan Yebda,Portsmouth F.C.,ENG,4/14/1984,FALSE
+United States,20,DF,Djamel Mesbah,U.S. Lecce,ITA,10/9/1984,FALSE
+United States,21,MF,Foued Kadir,Valenciennes FC,FRA,12/5/1983,FALSE
+United States,22,MF,Djamel Abdoun,FC Nantes,FRA,2/14/1986,FALSE
+United States,23,GK,,PFC Slavia Sofia,BUL,4/25/1986,FALSE
+Algeria,1,GK,,ASO Chl,ALG,9/28/1977,FALSE
+Algeria,2,DF,Madjid Bougherra,Rangers F.C.,SCO,10/7/1982,FALSE
+Algeria,3,DF,Nadir Belhadj,Portsmouth F.C.,ENG,6/18/1982,FALSE
+Algeria,4,DF,Antar Yahia,VfL Boch,GER,3/21/1982,TRUE
+Algeria,5,DF,Rafik Halliche,C.D. Nacional,POR,9/2/1986,FALSE
+Algeria,6,MF,Yazid Mansouri,FC Lorient,FRA,2/25/1978,FALSE
+Algeria,7,MF,Ryad Boudebouz,FC Sochaux-MontbÃ©liard,FRA,2/19/1990,FALSE
+Algeria,8,MF,Medhi Lacen,Racing de Santander,ESP,1984-15-5,FALSE
+Algeria,9,FW,Abdelkader Ghezzal,A.C. Siena,ITA,12/5/1984,FALSE
+Algeria,10,FW,,FC Istres,FRA,2/7/1975,FALSE
+Algeria,11,FW,Rafik Djebbour,AEK Athens F.C.,GRE,3/8/1984,FALSE
+Algeria,12,DF,,Eintracht Frankfu,GER,3/28/1986,FALSE
+Algeria,13,FW,Karim Matmour,Borussia MÃ¶nchengladba,GER,6/25/1984,FALSE
+Algeria,14,DF,,ES SÃ©t,ALG,7/29/1981,FALSE
+Algeria,15,MF,Karim Ziani,VfL Wolfsbu,GER,8/17/1982,FALSE
+Algeria,16,GK,Faouzi Chaouchi,ES SÃ©t,ALG,12/5/1984,FALSE
+Algeria,17,MF,,Wolverhampton Wanderers F.C.,ENG,11/12/1985,FALSE
+Algeria,18,DF,Carl Medjani,AC Ajaccio,FRA,5/15/1985,FALSE
+Algeria,19,MF,Hassan Yebda,Portsmouth F.C.,ENG,4/14/1984,FALSE
+Algeria,20,DF,Djamel Mesbah,U.S. Lecce,ITA,10/9/1984,FALSE
+Algeria,21,MF,Foued Kadir,Valenciennes FC,FRA,12/5/1983,FALSE
+Algeria,22,MF,Djamel Abdoun,FC Nantes,FRA,2/14/1986,FALSE
+Algeria,23,GK,,PFC Slavia Sofia,BUL,4/25/1986,FALSE
+Slovenia,1,GK,,Udinese Calcio,ITA,7/14/1984,FALSE
+Slovenia,2,DF,,1. FC KÃ¶,GER,5/1/1984,FALSE
+Slovenia,3,DF,,NK Maribor,SVN,8/25/1985,FALSE
+Slovenia,4,DF,,K.A.A. Gent,BEL,3/9/1983,FALSE
+Slovenia,5,DF,,Grenoble Foot 38,FRA,7/9/1982,FALSE
+Slovenia,6,DF,Branko IliÄ,FC Lokomotiv Moscow,RUS,2/6/1983,FALSE
+Slovenia,7,FW,Nejc PeÄnik,C.D. Nacional,POR,1/3/1986,FALSE
+Slovenia,8,MF,Robert Koren,West Bromwich Albion F.C.,ENG,9/20/1980,TRUE
+Slovenia,9,FW,Zlatan LjubijankiÄ,K.A.A. Gent,BEL,12/15/1983,FALSE
+Slovenia,10,FW,Valter Birsa,AJ Auxerre,FRA,8/7/1986,FALSE
+Slovenia,11,FW,Milivoje NovakoviÄ,1. FC KÃ¶,GER,5/18/1979,FALSE
+Slovenia,12,GK,Jasmin HandanoviÄ,A.C. Mantova,ITA,1/28/1978,FALSE
+Slovenia,13,DF,,A.C. Chievo Verona,ITA,5/17/1986,FALSE
+Slovenia,14,FW,Zlatko DediÄ,VfL Boch,GER,5/10/1984,FALSE
+Slovenia,15,MF,Rene Krhin,F.C. Internazionale Milano,ITA,5/21/1990,FALSE
+Slovenia,16,GK,,Sparta Rotterd,NED,2/1/1980,FALSE
+Slovenia,17,MF,,WisÅ‚a KrakÃ,POL,9/6/1984,FALSE
+Slovenia,18,MF,,Larissa F.C.,GRE,4/25/1979,FALSE
+Slovenia,19,DF,Suad FilekoviÄ,NK Maribor,SVN,9/16/1978,FALSE
+Slovenia,20,MF,Andrej Komac,Maccabi Tel Aviv F.C.,ISR,12/4/1979,FALSE
+Slovenia,21,MF,Dalibor StevanoviÄ,Vites,NED,9/27/1984,FALSE
+Slovenia,22,DF,Matej MavriÄ,TuS Koble,GER,1/29/1979,FALSE
+Slovenia,23,FW,,FC Groningen,NED,1/13/1989,FALSE
+Germany,1,GK,Manuel Neuer,FC Schalke 04,GER,3/27/1986,FALSE
+Germany,2,DF,Marcell Jansen,Hamburger ,GER,11/4/1985,FALSE
+Germany,3,DF,Arne Friedrich,Hertha B,GER,5/29/1979,FALSE
+Germany,4,DF,Dennis Aogo,Hamburger ,GER,1/14/1987,FALSE
+Germany,5,DF,Serdar Tasci,VfB Stuttga,GER,4/24/1987,FALSE
+Germany,6,MF,Sami Khedira,VfB Stuttga,GER,4/4/1987,FALSE
+Germany,7,MF,Bastian Schweinsteiger,FC Bayern Munich,GER,8/1/1984,FALSE
+Germany,8,MF,,SV Werder Bremen,GER,10/15/1988,FALSE
+Germany,9,FW,Stefan KieÃŸling,Bayer 04 Leverkusen,GER,1/25/1984,FALSE
+Germany,10,MF,Lukas Podolski,1. FC KÃ¶,GER,6/4/1985,FALSE
+Germany,11,FW,Miroslav Klose,FC Bayern Munich,GER,6/9/1978,FALSE
+Germany,12,GK,Tim Wiese,SV Werder Bremen,GER,12/17/1981,FALSE
+Germany,13,MF,,FC Bayern Munich,GER,9/13/1989,FALSE
+Germany,14,DF,Holger Badstuber,FC Bayern Munich,GER,3/13/1989,FALSE
+Germany,15,MF,Piotr Trochowski,Hamburger ,GER,3/22/1984,FALSE
+Germany,16,DF,Philipp Lahm,FC Bayern Munich,GER,11/11/1983,TRUE
+Germany,17,DF,Per Mertesacker,SV Werder Bremen,GER,9/29/1984,FALSE
+Germany,18,MF,Toni Kroos,Bayer 04 Leverkusen,GER,1/4/1990,FALSE
+Germany,19,FW,Cacau,VfB Stuttga,GER,3/27/1981,FALSE
+Germany,20,DF,,Hamburger ,GER,9/3/1988,FALSE
+Germany,21,MF,Marko Marin,SV Werder Bremen,GER,3/13/1989,FALSE
+Germany,22,GK,,FC Bayern Munich,GER,5/28/1974,FALSE
+Germany,23,FW,,FC Bayern Munich,GER,7/10/1985,FALSE
+Australia,1,GK,Mark Schwarzer,Fulham F.C.,ENG,10/6/1972,FALSE
+Australia,2,DF,Lucas Neill,Galatasaray S.K. (football team),TUR,3/9/1978,TRUE
+Australia,3,DF,Craig Moore,Free agent,,12/12/1975,FALSE
+Australia,4,MF,Tim Cahill,Everton F.C.,ENG,12/6/1979,FALSE
+Australia,5,MF,Jason ÄŒulina,Gold Coast United FC,AUS,8/5/1980,FALSE
+Australia,6,DF,Michael Beauchamp,Al-Jazira Club,UAE,3/8/1981,FALSE
+Australia,7,MF,Brett Emerton,Blackburn Rovers F.C.,ENG,2/22/1979,FALSE
+Australia,8,DF,Luke Wilkshire,FC Dynamo Moscow,RUS,10/1/1981,FALSE
+Australia,9,FW,Joshua Kennedy,Nagoya Gramp,JPN,8/20/1982,FALSE
+Australia,10,FW,Harry Kewell,Galatasaray S.K. (football team),TUR,9/22/1978,FALSE
+Australia,11,DF,Scott Chipperfield,FC Basel,SUI,12/30/1975,FALSE
+Australia,12,GK,Adam Federici,Reading F.C.,ENG,1/31/1985,FALSE
+Australia,13,MF,Vince Grella,Blackburn Rovers F.C.,ENG,10/5/1979,FALSE
+Australia,14,FW,Brett Holman,AZ (football club),NED,3/27/1984,FALSE
+Australia,15,MF,Mile Jedinak,Antalyasp,TUR,8/3/1984,FALSE
+Australia,16,MF,Carl Valeri,U.S. Sassuolo Calcio,ITA,8/14/1984,FALSE
+Australia,17,FW,Nikita Rukavytsya,clubK.S.V. Roeselare,BEL,6/22/1987,FALSE
+Australia,18,GK,,Adelaide United FC,AUS,6/12/1981,FALSE
+Australia,19,MF,Richard Garcia,Hull City A.F.C.,ENG,9/4/1981,FALSE
+Australia,20,DF,Mark Milligan,JEF United Ichihara Chiba,JPN,9/4/1985,FALSE
+Australia,21,DF,David Carney,FC Twente,NED,11/3/1983,FALSE
+Australia,22,MF,,MSV Duisbu,GER,4/12/1987,FALSE
+Australia,23,MF,Mark Bresciano,U.S. CittÃ  di Palermo,ITA,2/11/1980,FALSE
+Serbia,1,GK,,Wigan Athletic F.C.,ENG,7/29/1983,FALSE
+Serbia,2,DF,Antonio Rukavina,TSV 1860 MÃ¼nchen,GER,1/26/1984,FALSE
+Serbia,3,DF,Aleksandar Kolarov,S.S. Lazio,ITA,11/10/1985,FALSE
+Serbia,4,MF,Gojko KaÄar,Hertha B,GER,1/26/1987,FALSE
+Serbia,5,DF,,Manchester United F.C.,ENG,10/21/1981,FALSE
+Serbia,6,DF,,Chelsea F.C.,ENG,2/22/1984,FALSE
+Serbia,7,MF,,1. FC KÃ¶,GER,4/28/1987,FALSE
+Serbia,8,FW,,FC Zenit Saint Petersburg,RUS,5/17/1983,FALSE
+Serbia,9,FW,,AFC Ajax,NED,9/15/1978,FALSE
+Serbia,10,MF,,F.C. Internazionale Milano,ITA,9/11/1978,TRUE
+Serbia,11,MF,,Wolverhampton Wanderers F.C.,ENG,4/30/1983,FALSE
+Serbia,12,GK,,ZagÅ‚Ä™bie Lub,POL,3/25/1980,FALSE
+Serbia,13,DF,,Udinese Calcio,ITA,10/23/1982,FALSE
+Serbia,14,MF,,Standard LiÃ¨,BEL,4/18/1981,FALSE
+Serbia,15,FW,,Valencia CF,ESP,9/25/1980,FALSE
+Serbia,16,DF,,Real Zarago,ESP,7/25/1988,FALSE
+Serbia,17,MF,,PFC CSKA Moscow,RUS,11/1/1984,FALSE
+Serbia,18,MF,,FC Dynamo Kyiv,UKR,12/25/1984,FALSE
+Serbia,19,MF,,FK Partizan,SRB,3/8/1989,FALSE
+Serbia,20,DF,,Borussia Dortmu,GER,12/10/1988,FALSE
+Serbia,21,FW,,FK Vojvodina,SRB,1/23/1984,FALSE
+Serbia,22,MF,,VfB Stuttga,GER,9/22/1987,FALSE
+Serbia,23,GK,,U.D. Leiria,POR,11/21/1980,FALSE
+Ghana,1,GK,Daniel Adjei,Liberty Professionals F.C.,GHA,11/10/1989,FALSE
+Ghana,2,DF,Hans Sarpei,Bayer 04 Leverkusen,GER,6/28/1976,FALSE
+Ghana,3,FW,Asamoah Gyan,Stade Rennais F.C.,FRA,11/22/1985,FALSE
+Ghana,4,DF,John Paintsil,Fulham F.C.,ENG,6/15/1981,FALSE
+Ghana,5,DF,John Mensah,Sunderland A.F.C.,ENG,11/29/1982,TRUE
+Ghana,6,MF,Anthony Annan,Rosenborg BK,NOR,7/21/1986,FALSE
+Ghana,7,DF,Samuel Inkoom,FC Basel,SUI,8/22/1989,FALSE
+Ghana,8,DF,Jonathan Mensah,Granada CF,ESP,7/13/1990,FALSE
+Ghana,9,MF,Derek Boateng,Getafe CF,ESP,4/2/1983,FALSE
+Ghana,10,MF,Stephen Appiah,Bologna F.C. 1909,ITA,12/24/1980,FALSE
+Ghana,11,MF,Sulley Muntari,F.C. Internazionale Milano,ITA,8/27/1984,FALSE
+Ghana,12,FW,Prince Tagoe,TSG 1899 Hoffenheim,GER,11/9/1986,FALSE
+Ghana,13,MF,,AC Arles-Avignon,FRA,12/17/1989,FALSE
+Ghana,14,FW,Matthew Amoah,NAC Breda,NED,10/24/1980,FALSE
+Ghana,15,DF,Isaac Vorsah,TSG 1899 Hoffenheim,GER,6/21/1988,FALSE
+Ghana,16,GK,Stephen Ahorlu,Heart of Lio,GHA,5/10/1989,FALSE
+Ghana,17,DF,Abdul Rahim Ayew,Zamalek SC,EGY,4/16/1988,FALSE
+Ghana,18,FW,Dominic Adiyiah,A.C. Milan,ITA,11/29/1989,FALSE
+Ghana,19,DF,Lee Addy,Bechem Chels,GHA,9/26/1985,FALSE
+Ghana,20,MF,Quincy Owusu-Abeyie,Al-Sadd Sports Club,QAT,4/15/1986,FALSE
+Ghana,21,MF,Kwadwo Asamoah,Udinese Calcio,ITA,9/9/1988,FALSE
+Ghana,22,GK,Richard Kingson,Wigan Athletic F.C.,ENG,6/13/1978,FALSE
+Ghana,23,MF,Kevin-Prince Boateng,Portsmouth F.C.,ENG,3/6/1987,FALSE
+Netherlands,1,GK,Maarten Stekelenburg,AFC Ajax,NED,9/22/1982,FALSE
+Netherlands,2,DF,Gregory van der Wiel,AFC Ajax,NED,2/3/1988,FALSE
+Netherlands,3,DF,John Heitinga,Everton F.C.,ENG,11/15/1983,FALSE
+Netherlands,4,DF,Joris Mathijsen,Hamburger ,GER,4/5/1980,FALSE
+Netherlands,5,DF,Giovanni van Bronckhorst,Feyenoo,NED,2/5/1975,TRUE
+Netherlands,6,MF,Mark van Bommel,FC Bayern Munich,GER,4/22/1977,FALSE
+Netherlands,7,FW,Dirk Kuyt,Liverpool F.C.,ENG,7/22/1980,FALSE
+Netherlands,8,MF,Nigel de Jong,Manchester City F.C.,ENG,11/30/1984,FALSE
+Netherlands,9,FW,Robin van Persie,Arsenal F.C.,ENG,8/6/1983,FALSE
+Netherlands,10,MF,Wesley Sneijder,F.C. Internazionale Milano,ITA,6/9/1984,FALSE
+Netherlands,11,FW,Arjen Robben,FC Bayern Munich,GER,1/23/1984,FALSE
+Netherlands,12,DF,Khalid Boulahrouz,VfB Stuttga,GER,12/28/1981,FALSE
+Netherlands,13,DF,,PSV Eindhov,NED,7/11/1974,FALSE
+Netherlands,14,MF,Demy de Zeeuw,AFC Ajax,NED,5/26/1983,FALSE
+Netherlands,15,DF,Edson Braafheid,Celtic F.C.,SCO,4/8/1983,FALSE
+Netherlands,16,GK,Michel Vorm,FC Utrecht,NED,10/20/1983,FALSE
+Netherlands,17,FW,Eljero Elia,Hamburger ,GER,2/13/1987,FALSE
+Netherlands,18,MF,Stijn Schaars,AZ (football club),NED,1/11/1984,FALSE
+Netherlands,19,FW,Ryan Babel,Liverpool F.C.,ENG,12/19/1986,FALSE
+Netherlands,20,MF,Ibrahim Afellay,PSV Eindhov,NED,4/2/1986,FALSE
+Netherlands,21,FW,Klaas-Jan Huntelaar,A.C. Milan,ITA,8/12/1983,FALSE
+Netherlands,22,GK,Sander Boschker,FC Twente,NED,10/20/1970,FALSE
+Netherlands,23,MF,Rafael van der Vaart,Real Madrid C.F.,ESP,2/11/1983,FALSE
+Denmark,1,GK,,Stoke City F.C.,ENG,6/12/1976,FALSE
+Denmark,2,MF,Christian Poulsen,Juventus F.C.,ITA,2/28/1980,FALSE
+Denmark,3,DF,,U.S. CittÃ  di Palermo,ITA,3/26/1989,FALSE
+Denmark,4,DF,Daniel Agger,Liverpool F.C.,ENG,12/12/1984,FALSE
+Denmark,5,DF,William Kvist,F.C. Copenhagen,DEN,2/24/1985,FALSE
+Denmark,6,DF,Lars Jacobsen,Blackburn Rovers F.C.,ENG,9/20/1979,FALSE
+Denmark,7,MF,Daniel Jensen,SV Werder Bremen,GER,6/25/1979,FALSE
+Denmark,8,MF,,F.C. Copenhagen,DEN,8/12/1977,FALSE
+Denmark,9,FW,Jon Dahl Tomasson,Feyenoo,NED,8/29/1976,TRUE
+Denmark,10,MF,,Aarhus Gymnastikforening,DEN,10/6/1975,FALSE
+Denmark,11,FW,Nicklas Bendtner,Arsenal F.C.,ENG,1/16/1988,FALSE
+Denmark,12,MF,Thomas Kahlenberg,VfL Wolfsbu,GER,3/20/1983,FALSE
+Denmark,13,DF,,ACF Fiorentina,ITA,7/31/1979,FALSE
+Denmark,14,MF,Jakob Poulsen,Aarhus Gymnastikforening,DEN,7/7/1983,FALSE
+Denmark,15,DF,Simon Poulsen,AZ (football club),NED,10/7/1984,FALSE
+Denmark,16,GK,Stephan Andersen,BrÃ¸ndby IF,DEN,11/26/1981,FALSE
+Denmark,17,MF,Mikkel Beckmann,Randers FC,DEN,10/24/1983,FALSE
+Denmark,18,FW,,MSV Duisbu,GER,9/6/1981,FALSE
+Denmark,19,MF,Dennis Rommedahl,AFC Ajax,NED,7/22/1978,FALSE
+Denmark,20,MF,Thomas Enevoldsen,FC Groningen,NED,7/27/1987,FALSE
+Denmark,21,MF,Christian Eriksen,AFC Ajax,NED,2/14/1992,FALSE
+Denmark,22,GK,Jesper Christiansen,F.C. Copenhagen,DEN,4/24/1978,FALSE
+Denmark,23,DF,Patrick Mtiliga,MÃ¡laga CF,ESP,1/28/1981,FALSE
+Japan,1,GK,Seigo Narazaki,Nagoya Gramp,JPN,4/15/1976,FALSE
+Japan,2,MF,Yuki Abe,Urawa Red Diamon,JPN,9/6/1981,FALSE
+Japan,3,DF,,JÃºbilo Iwa,JPN,7/25/1981,FALSE
+Japan,4,DF,Marcus Tulio Tanaka,Nagoya Gramp,JPN,4/24/1981,FALSE
+Japan,5,DF,Yuto Nagatomo,FC Tok,JPN,9/12/1986,FALSE
+Japan,6,DF,Atsuto Uchida,Kashima Antle,JPN,3/27/1988,FALSE
+Japan,7,MF,Yasuhito EndÅ,Gamba Osa,JPN,1/28/1980,FALSE
+Japan,8,FW,Daisuke Matsui,Grenoble Foot 38,FRA,5/11/1981,FALSE
+Japan,9,FW,Shinji Okazaki,Shimizu S-Pul,JPN,4/16/1986,FALSE
+Japan,10,MF,Shunsuke Nakamura,Yokohama F. Marin,JPN,6/24/1978,FALSE
+Japan,11,FW,Keiji Tamada,Nagoya Gramp,JPN,4/11/1980,FALSE
+Japan,12,FW,Kisho Yano,Albirex Niiga,JPN,4/5/1984,FALSE
+Japan,13,DF,Daiki Iwamasa,Kashima Antle,JPN,1/30/1982,FALSE
+Japan,14,MF,Kengo Nakamura,Kawasaki Fronta,JPN,10/31/1980,FALSE
+Japan,15,DF,Yasuyuki Konno,FC Tok,JPN,1/25/1983,FALSE
+Japan,16,FW,Yoshito ÅŒkubo,Vissel Ko,JPN,6/9/1982,FALSE
+Japan,17,MF,Makoto Hasebe,VfL Wolfsbu,GER,1/18/1984,FALSE
+Japan,18,MF,Keisuke Honda,PFC CSKA Moscow,RUS,6/13/1986,FALSE
+Japan,19,FW,Takayuki Morimoto,Calcio Catania,ITA,5/7/1988,FALSE
+Japan,20,MF,Junichi Inamoto,Kawasaki Fronta,JPN,9/18/1979,FALSE
+Japan,21,GK,Eiji Kawashima,Kawasaki Fronta,JPN,3/20/1983,FALSE
+Japan,22,DF,Yuji Nakazawa,Yokohama F. Marin,JPN,2/25/1978,FALSE
+Japan,23,GK,Yoshikatsu Kawaguchi,JÃºbilo Iwa,JPN,8/15/1975,TRUE
+Cameroon,1,GK,Idriss Carlos Kameni,RCD Espanyol,ESP,2/18/1984,FALSE
+Cameroon,2,DF,,Tottenham Hotspur F.C.,ENG,3/24/1984,FALSE
+Cameroon,3,DF,Nicolas N'Koulou,AS Monaco FC,FRA,3/27/1990,FALSE
+Cameroon,4,DF,Rigobert Song,Trabzonsp,TUR,7/1/1976,FALSE
+Cameroon,5,DF,,Tottenham Hotspur F.C,ENG,7/9/1986,FALSE
+Cameroon,6,MF,Alex Song,Arsenal F.C.,ENG,9/9/1987,FALSE
+Cameroon,7,MF,,Celtic F.C.,SCO,11/28/1985,FALSE
+Cameroon,8,DF,Geremi Njitap,AnkaragÃ¼c,TUR,12/20/1978,FALSE
+Cameroon,9,FW,Samuel Eto'o,F.C. Internazionale Milano,ITA,3/10/1981,TRUE
+Cameroon,10,MF,Achille Emana,Real Bet,ESP,6/5/1982,FALSE
+Cameroon,11,MF,Jean Makoun,Olympique Lyonnais,FRA,5/29/1983,FALSE
+Cameroon,12,DF,,Valenciennes FC,FRA,4/25/1988,FALSE
+Cameroon,13,FW,Eric Maxim Choupo-Moting,1. FC NÃ¼rnbe,GER,3/23/1989,FALSE
+Cameroon,14,DF,,Lille OSC,FRA,6/20/1985,FALSE
+Cameroon,15,FW,,RCD Mallorca,ESP,1/20/1982,FALSE
+Cameroon,16,GK,Souleymanou Hamidou,Kayserisp,TUR,11/22/1973,FALSE
+Cameroon,17,FW,Mohammadou Idrissou,SC Freibu,GER,3/8/1980,FALSE
+Cameroon,18,MF,Eyong Enoh,AFC Ajax,NED,3/23/1986,FALSE
+Cameroon,19,DF,,Olympique de Marseille,FRA,5/20/1986,FALSE
+Cameroon,20,MF,Georges Mandjeck,1. FC Kaiserslaute,GER,12/9/1988,FALSE
+Cameroon,21,MF,,FC Schalke 04,GER,8/8/1991,FALSE
+Cameroon,22,GK,,Valenciennes FC,FRA,2/28/1986,FALSE
+Cameroon,23,FW,Vincent Aboubakar,Cotonsport Garo,CMR,1/22/1992,FALSE
+Italy,1,GK,Gianluigi Buffon,Juventus F.C.,ITA,1/28/1978,FALSE
+Italy,2,DF,Christian Maggio,S.S.C. Napoli,ITA,2/11/1982,FALSE
+Italy,3,DF,Domenico Criscito,Genoa C.F.C.,ITA,12/30/1986,FALSE
+Italy,4,DF,Giorgio Chiellini,Juventus F.C.,ITA,8/14/1984,FALSE
+Italy,5,DF,Fabio Cannavaro,Juventus F.C.,ITA,9/13/1973,TRUE
+Italy,6,MF,Daniele De Rossi,A.S. Roma,ITA,7/24/1983,FALSE
+Italy,7,MF,Simone Pepe,Udinese Calcio,ITA,8/30/1983,FALSE
+Italy,8,MF,Gennaro Gattuso,A.C. Milan,ITA,1/9/1978,FALSE
+Italy,9,FW,Vincenzo Iaquinta,Juventus F.C.,ITA,11/21/1979,FALSE
+Italy,10,FW,Antonio Di Natale,Udinese Calcio,ITA,10/13/1977,FALSE
+Italy,11,FW,Alberto Gilardino,ACF Fiorentina,ITA,7/5/1982,FALSE
+Italy,12,GK,Federico Marchetti,Cagliari Calcio,ITA,2/7/1983,FALSE
+Italy,13,DF,Salvatore Bocchetti,Genoa C.F.C.,ITA,11/30/1986,FALSE
+Italy,14,GK,Morgan De Sanctis,S.S.C. Napoli,ITA,3/26/1977,FALSE
+Italy,15,MF,Claudio Marchisio,Juventus F.C.,ITA,1/19/1986,FALSE
+Italy,16,MF,Mauro Camoranesi,Juventus F.C.,ITA,10/4/1976,FALSE
+Italy,17,MF,Angelo Palombo,U.C. Sampdoria,ITA,9/25/1981,FALSE
+Italy,18,FW,Fabio Quagliarella,S.S.C. Napoli,ITA,1/31/1983,FALSE
+Italy,19,DF,Gianluca Zambrotta,A.C. Milan,ITA,2/19/1977,FALSE
+Italy,20,FW,Giampaolo Pazzini,U.C. Sampdoria,ITA,8/2/1984,FALSE
+Italy,21,MF,Andrea Pirlo,A.C. Milan,ITA,5/19/1979,FALSE
+Italy,22,MF,Riccardo Montolivo,ACF Fiorentina,ITA,1/18/1985,FALSE
+Italy,23,DF,Leonardo Bonucci,A.S. Bari,ITA,5/1/1987,FALSE
+Paraguay,1,GK,Justo Villar,Real Valladol,ESP,6/30/1977,TRUE
+Paraguay,2,DF,,Club Universidad Nacional,MEX,6/26/1979,FALSE
+Paraguay,3,DF,,Boca Junio,ARG,2/2/1978,FALSE
+Paraguay,4,DF,Denis Caniza,Club LeÃ³n,MEX,8/29/1974,FALSE
+Paraguay,5,DF,,AtlÃ©tico Minei,BRA,10/5/1979,FALSE
+Paraguay,6,DF,Carlos Bonet,Club Olimpia,PAR,10/2/1977,FALSE
+Paraguay,7,FW,,S.L. Benfica,POR,5/20/1983,FALSE
+Paraguay,8,MF,,Atalanta Calcio,ITA,7/15/1984,FALSE
+Paraguay,9,FW,Roque Santa Cruz,Manchester City F.C.,ENG,8/16/1981,FALSE
+Paraguay,10,FW,,C.F. Pachuca,MEX,11/8/1987,FALSE
+Paraguay,11,MF,Jonathan Santana,VfL Wolfsbu,GER,10/19/1981,FALSE
+Paraguay,12,GK,Diego Barreto,Cerro PorteÃ,PAR,7/16/1981,FALSE
+Paraguay,13,MF,Enrique Vera,Liga Deportiva Universitaria de Quito,ECU,3/10/1979,FALSE
+Paraguay,14,DF,Paulo da Silva,Sunderland A.F.C.,ENG,2/1/1980,FALSE
+Paraguay,15,MF,,Club Libertad,PAR,3/25/1985,FALSE
+Paraguay,16,MF,Cristian Riveros,Cruz Az,MEX,10/16/1982,FALSE
+Paraguay,17,DF,Aureliano Torres,San Lorenzo de Almagro,ARG,6/16/1982,FALSE
+Paraguay,18,FW,Nelson Haedo Valdez,Borussia Dortmu,GER,11/28/1983,FALSE
+Paraguay,19,FW,Lucas Barrios,Borussia Dortmu,GER,11/13/1984,FALSE
+Paraguay,20,MF,,Argentinos Junio,ARG,10/7/1984,FALSE
+Paraguay,21,DF,,Club Brugge K.V.,BEL,7/30/1982,FALSE
+Paraguay,22,GK,Aldo Bobadilla,Independiente MedellÃ,COL,4/20/1976,FALSE
+Paraguay,23,FW,Rodolfo Gamarra,Club Libertad,PAR,12/10/1988,FALSE
+New Zealand,1,GK,Mark Paston,Wellington Phoenix FC,NZL,12/13/1976,FALSE
+New Zealand,2,DF,Ben Sigmund,Wellington Phoenix FC,NZL,2/3/1981,FALSE
+New Zealand,3,DF,Tony Lochhead,Wellington Phoenix FC,NZL,1/12/1982,FALSE
+New Zealand,4,DF,Winston Reid (footballer),FC Midtjylland,DEN,7/3/1988,FALSE
+New Zealand,5,DF,Ivan Vicelich,Auckland City FC,NZL,9/3/1976,FALSE
+New Zealand,6,DF,Ryan Nelsen,Blackburn Rovers F.C.,ENG,10/18/1977,TRUE
+New Zealand,7,MF,Simon Elliott,Free agent,,6/10/1974,FALSE
+New Zealand,8,MF,Tim Brown (footballer),Wellington Phoenix FC,NZL,3/6/1981,FALSE
+New Zealand,9,FW,Shane Smeltz,Gold Coast United FC,AUS,9/29/1981,FALSE
+New Zealand,10,FW,Chris Killen,Middlesbrough F.C.,ENG,10/8/1981,FALSE
+New Zealand,11,MF,Leo Bertos,Wellington Phoenix FC,NZL,12/20/1981,FALSE
+New Zealand,12,GK,Glen Moss,Melbourne Victory FC,AUS,1/19/1983,FALSE
+New Zealand,13,MF,Andrew Barron,Team Wellingt,NZL,12/24/1980,FALSE
+New Zealand,14,FW,Rory Fallon,Plymouth Argyle F.C.,ENG,3/20/1982,FALSE
+New Zealand,15,MF,Michael McGlinchey,Motherwell F.C.,SCO,1/7/1987,FALSE
+New Zealand,16,MF,Aaron Clapham,Canterbury Unit,NZL,1/1/1987,FALSE
+New Zealand,17,MF,David Mulligan,Free agent,,3/24/1982,FALSE
+New Zealand,18,DF,Andrew Boyens,New York Red Bul,USA,9/18/1983,FALSE
+New Zealand,19,DF,Tommy Smith (footballer born 1990),Ipswich Town F.C.,ENG,3/31/1990,FALSE
+New Zealand,20,FW,Chris Wood (footballer born 1991),West Bromwich Albion F.C.,ENG,12/7/1991,FALSE
+New Zealand,21,MF,Jeremy Christie,FC Tampa Bay,USA,5/22/1983,FALSE
+New Zealand,22,MF,Jeremy Brockie,Newcastle United Jets FC,AUS,10/7/1987,FALSE
+New Zealand,23,GK,James Bannatyne,Team Wellingt,NZL,6/30/1975,FALSE
+Slovakia,1,GK,,Legia Warsza,POL,12/5/1982,FALSE
+Slovakia,2,DF,,VfL Wolfsbu,GER,10/30/1986,FALSE
+Slovakia,3,DF,,Liverpool F.C.,ENG,12/15/1984,FALSE
+Slovakia,4,DF,Marek ÄŒech (Slovak footballer),West Bromwich Albion F.C.,ENG,1/26/1983,FALSE
+Slovakia,5,DF,,1. FSV Mainz 05,GER,9/16/1980,FALSE
+Slovakia,6,MF,,Skoda Xanthi F.C.,GRE,6/9/1976,FALSE
+Slovakia,7,MF,,Bolton Wanderers F.C.,ENG,11/30/1989,FALSE
+Slovakia,8,MF,,FC TimiÅŸoara,ROU,4/22/1980,FALSE
+Slovakia,9,MF,,VfL Boch,GER,12/16/1982,FALSE
+Slovakia,10,MF,Marek Sapara,AnkaragÃ¼c,TUR,7/31/1982,FALSE
+Slovakia,11,FW,,AnkaragÃ¼c,TUR,4/1/1982,FALSE
+Slovakia,12,GK,,Dundee United F.C.,SCO,11/28/1984,FALSE
+Slovakia,13,FW,,BeÅŸiktaÅŸ J.K.,TUR,1/17/1984,FALSE
+Slovakia,14,FW,Martin Jakubko,FC Saturn Moscow Oblast (1946-2011),RUS,2/26/1980,FALSE
+Slovakia,15,MF,Miroslav Stoch,FC Twente,NED,10/19/1989,FALSE
+Slovakia,16,DF,,Hannover ,GER,12/10/1981,FALSE
+Slovakia,17,MF,,S.S.C. Napoli,ITA,7/27/1987,TRUE
+Slovakia,18,FW,,1. FC Kaiserslaute,GER,10/26/1986,FALSE
+Slovakia,19,MF,Juraj Kucka,Sparta Prag,CZE,2/26/1987,FALSE
+Slovakia,20,MF,Kamil KopÃºnek,FC Spartak Trnava,SVK,5/18/1984,FALSE
+Slovakia,21,DF,,Å K Slovan Bratislava,SVK,1/4/1985,FALSE
+Slovakia,22,DF,,A.C. Cesena,ITA,11/2/1979,FALSE
+Slovakia,23,GK,,FC Vasl,ROU,5/21/1985,FALSE
+Brazil,1,GK,,F.C. Internazionale Milano,ITA,9/3/1979,FALSE
+Brazil,2,DF,Maicon Sisenando,F.C. Internazionale Milano,ITA,7/26/1981,FALSE
+Brazil,3,DF,LÃºcio,F.C. Internazionale Milano,ITA,5/8/1978,TRUE
+Brazil,4,DF,Juan Silveira dos Santos,A.S. Roma,ITA,2/1/1979,FALSE
+Brazil,5,MF,Felipe Melo,Juventus F.C.,ITA,8/26/1983,FALSE
+Brazil,6,DF,Michel Bastos,Olympique Lyonnais,FRA,8/2/1983,FALSE
+Brazil,7,MF,Elano,Galatasaray S.K. (football team),TUR,6/14/1981,FALSE
+Brazil,8,MF,Gilberto Silva,Panathinaikos F.C.,GRE,10/7/1976,FALSE
+Brazil,9,FW,,Sevilla FC,ESP,11/8/1980,FALSE
+Brazil,10,MF,,Real Madrid C.F.,ESP,4/22/1982,FALSE
+Brazil,11,FW,Robinho,Santos FC,BRA,1/25/1984,FALSE
+Brazil,12,GK,Heurelho Gomes,Tottenham Hotspur F.C.,ENG,2/15/1981,FALSE
+Brazil,13,DF,Daniel Alves,FC Barcelona,ESP,5/6/1983,FALSE
+Brazil,14,DF,,S.L. Benfica,POR,2/13/1981,FALSE
+Brazil,15,DF,Thiago Silva (footballer),A.C. Milan,ITA,9/22/1984,FALSE
+Brazil,16,DF,Gilberto da Silva Melo,Cruzeiro Esporte Clube,BRA,4/25/1976,FALSE
+Brazil,17,MF,,VfL Wolfsbu,GER,7/19/1979,FALSE
+Brazil,18,MF,Ramires,S.L. Benfica,POR,3/24/1987,FALSE
+Brazil,19,MF,JÃºlio Baptista,A.S. Roma,ITA,10/1/1981,FALSE
+Brazil,20,MF,,Clube de Regatas do Flamengo,BRA,6/19/1979,FALSE
+Brazil,21,FW,Nilmar,Villarreal CF,ESP,7/14/1984,FALSE
+Brazil,22,GK,,A.S. Roma,ITA,10/22/1979,FALSE
+Brazil,23,FW,Grafite,VfL Wolfsbu,GER,4/2/1979,FALSE
+Korea DPR,1,GK,Ri Myong-Guk,Pyongyang City Sports Club,PRK,9/9/1986,FALSE
+Korea DPR,2,DF,Cha Jong-Hyok,Amrokgang Sports Club,PRK,9/25/1985,FALSE
+Korea DPR,3,DF,Ri Jun-Il,Sobaeksu Sports Club,PRK,8/24/1987,FALSE
+Korea DPR,4,MF,Pak Nam-Chol (footballer born 1985),April 25 Sports Club,PRK,7/2/1985,FALSE
+Korea DPR,5,DF,Ri Kwang-Chon,April 25 Sports Club,PRK,9/4/1985,FALSE
+Korea DPR,6,MF,Kim Kum-Il,April 25 Sports Club,PRK,10/10/1987,FALSE
+Korea DPR,7,FW,An Chol-Hyok,Rimyongsu Sports Club,PRK,6/27/1985,FALSE
+Korea DPR,8,DF,Ji Yun-Nam,April 25 Sports Club,PRK,11/20/1976,FALSE
+Korea DPR,9,FW,Jong Tae-Se,Kawasaki Fronta,JPN,3/2/1984,FALSE
+Korea DPR,10,FW,Hong Yong-Jo,FC Rostov,RUS,5/22/1982,TRUE
+Korea DPR,11,MF,Mun In-Guk,April 25 Sports Club,PRK,9/29/1978,FALSE
+Korea DPR,12,FW,Choe Kum-Chol,April 25 Sports Club,PRK,2/9/1987,FALSE
+Korea DPR,13,DF,Pak Chol-Jin,Amrokgang Sports Club,PRK,9/5/1985,FALSE
+Korea DPR,14,DF,Pak Nam-Chol (footballer born 1988),Amrokgang Sports Club,PRK,10/3/1988,FALSE
+Korea DPR,15,MF,Kim Yong-Jun,Pyongyang City Sports Club,PRK,7/19/1983,FALSE
+Korea DPR,16,DF,Nam Song-Chol,April 25 Sports Club,PRK,5/7/1982,FALSE
+Korea DPR,17,MF,An Yong-Hak,Omiya Ardi,JPN,10/25/1978,FALSE
+Korea DPR,18,GK,Kim Myong-Gil,Amrokgang Sports Club,PRK,10/16/1984,FALSE
+Korea DPR,19,MF,Ri Chol-Myong,Pyongyang City Sports Club,PRK,2/18/1988,FALSE
+Korea DPR,20,GK,"Kim Myong-Won<ref>Kim Myong-Won, a Striker (association football)",Amrokgang Sports Club,PRK,7/15/1983,FALSE
+Korea DPR,21,DF,Ri Kwang-Hyok,Kyonggongop Sports Club,PRK,8/17/1987,FALSE
+Korea DPR,22,MF,Kim Kyong-Il,Rimyongsu Sports Club,PRK,12/11/1988,FALSE
+Korea DPR,23,MF,Pak Sung-Hyok,Sobaeksu Sports Club,PRK,5/30/1990,FALSE
+CÃ´te d'Ivoire,1,GK,Boubacar Barry,K.S.C. Lokeren Oost-Vlaanderen,BEL,12/30/1979,FALSE
+CÃ´te d'Ivoire,2,DF,Benjamin Angoua,Valenciennes FC,FRA,11/28/1986,FALSE
+CÃ´te d'Ivoire,3,DF,Arthur Boka,VfB Stuttga,GER,4/2/1983,FALSE
+CÃ´te d'Ivoire,4,DF,,Manchester City F.C.,ENG,3/19/1981,FALSE
+CÃ´te d'Ivoire,5,MF,Didier Zokora,Sevilla FC,ESP,12/14/1980,FALSE
+CÃ´te d'Ivoire,6,DF,Steve Gohouri,Wigan Athletic F.C.,ENG,2/8/1981,FALSE
+CÃ´te d'Ivoire,7,FW,Seydou Doumbia,BSC Young Boys,SUI,12/31/1987,FALSE
+CÃ´te d'Ivoire,8,FW,Salomon Kalou,Chelsea F.C.,ENG,8/5/1985,FALSE
+CÃ´te d'Ivoire,9,MF,,FC Twente,NED,6/21/1986,FALSE
+CÃ´te d'Ivoire,10,FW,Gervais Yao Kouassi,Lille OSC,FRA,5/27/1987,FALSE
+CÃ´te d'Ivoire,11,FW,Didier Drogba,Chelsea F.C.,ENG,3/11/1978,TRUE
+CÃ´te d'Ivoire,12,MF,Jean-Jacques Gosso,AS Monaco FC,FRA,3/15/1983,FALSE
+CÃ´te d'Ivoire,13,MF,Romaric (footballer),Sevilla FC,ESP,6/4/1983,FALSE
+CÃ´te d'Ivoire,14,MF,,FC InternaÅ£ional Curtea de ArgeÅŸ,ROU,12/31/1986,FALSE
+CÃ´te d'Ivoire,15,FW,Aruna Dindane,Portsmouth F.C.,ENG,11/26/1980,FALSE
+CÃ´te d'Ivoire,16,GK,,Maccabi Netanya F.C.,ISR,12/30/1981,FALSE
+CÃ´te d'Ivoire,17,DF,,Valenciennes FC,FRA,3/22/1982,FALSE
+CÃ´te d'Ivoire,18,MF,,Galatasaray S.K. (football team),TUR,8/6/1981,FALSE
+CÃ´te d'Ivoire,19,MF,,FC Barcelona,ESP,5/13/1983,FALSE
+CÃ´te d'Ivoire,20,DF,Guy Demel,Hamburger ,GER,6/13/1981,FALSE
+CÃ´te d'Ivoire,21,DF,,Arsenal F.C.,ENG,6/4/1983,FALSE
+CÃ´te d'Ivoire,22,DF,Sol Bamba,Hibernian F.C.,SCO,1/13/1985,FALSE
+CÃ´te d'Ivoire,23,GK,Daniel Yeboah,ASEC Mimos,CIV,11/13/1984,FALSE
+Portugal,1,GK,Eduardo dos Reis Carvalho,S.C. Braga,POR,9/19/1982,FALSE
+Portugal,2,DF,Bruno Alves,F.C. Porto,POR,11/27/1981,FALSE
+Portugal,3,DF,Paulo Ferreira,Chelsea F.C.,ENG,1/18/1979,FALSE
+Portugal,4,DF,Rolando (Portuguese footballer),F.C. Porto,POR,8/31/1985,FALSE
+Portugal,5,DF,Duda (Portuguese footballer),MÃ¡laga CF,ESP,6/27/1980,FALSE
+Portugal,6,DF,Ricardo Carvalho,Chelsea F.C.,ENG,5/18/1978,FALSE
+Portugal,7,FW,Cristiano Ronaldo,Real Madrid C.F.,ESP,2/5/1985,TRUE
+Portugal,8,MF,Pedro Miguel da Silva Mendes,Sporting Clube de Portugal,POR,2/26/1979,FALSE
+Portugal,9,FW,,Sporting Clube de Portugal,POR,12/17/1977,FALSE
+Portugal,10,MF,Danny (footballer),FC Zenit Saint Petersburg,RUS,8/7/1983,FALSE
+Portugal,11,MF,,AtlÃ©tico Madr,ESP,10/31/1979,FALSE
+Portugal,12,GK,Beto (Portuguese footballer born 1982),F.C. Porto,POR,5/1/1982,FALSE
+Portugal,13,DF,Miguel Monteiro,Valencia CF,ESP,1/4/1980,FALSE
+Portugal,14,MF,Miguel Veloso,Sporting Clube de Portugal,POR,5/11/1986,FALSE
+Portugal,15,DF,Pepe (footballer born 1983),Real Madrid C.F.,ESP,2/26/1983,FALSE
+Portugal,16,MF,Raul Meireles,F.C. Porto,POR,3/17/1983,FALSE
+Portugal,17,MF,,S.L. Benfica,POR,1/27/1985,FALSE
+Portugal,18,FW,Hugo Almeida,SV Werder Bremen,GER,5/23/1984,FALSE
+Portugal,19,MF,Tiago Mendes,AtlÃ©tico Madr,ESP,5/2/1981,FALSE
+Portugal,20,MF,Deco,Chelsea F.C.,ENG,8/27/1977,FALSE
+Portugal,21,DF,Ricardo Costa (Portuguese footballer),OSC Lille,FRA,5/16/1981,FALSE
+Portugal,22,GK,Daniel Fernandes (footballer),Iraklis Thessaloniki F.C.,GRE,9/25/1983,FALSE
+Portugal,23,DF,,S.L. Benfica,POR,3/11/1988,FALSE
+Spain,1,GK,Iker Casillas,Real Madrid C.F.,ESP,5/20/1981,TRUE
+Spain,2,DF,RaÃºl Albiol,Real Madrid C.F.,ESP,9/4/1985,FALSE
+Spain,3,DF,,FC Barcelona,ESP,2/2/1987,FALSE
+Spain,4,DF,Carlos Marchena,Valencia CF,ESP,7/31/1979,FALSE
+Spain,5,DF,Carles Puyol,FC Barcelona,ESP,4/13/1978,FALSE
+Spain,6,MF,,FC Barcelona,ESP,5/11/1984,FALSE
+Spain,7,FW,David Villa,Valencia CF,ESP,12/3/1981,FALSE
+Spain,8,MF,Xavi,FC Barcelona,ESP,1/25/1980,FALSE
+Spain,9,FW,Fernando Torres,Liverpool F.C.,ENG,3/20/1984,FALSE
+Spain,10,MF,,Arsenal F.C.,ENG,5/4/1987,FALSE
+Spain,11,DF,Joan Capdevila,Villarreal CF,ESP,2/3/1978,FALSE
+Spain,12,GK,,FC Barcelona,ESP,1/14/1982,FALSE
+Spain,13,MF,Juan Manuel Mata,Valencia CF,ESP,4/28/1988,FALSE
+Spain,14,MF,Xabi Alonso,Real Madrid C.F.,ESP,11/25/1981,FALSE
+Spain,15,DF,Sergio Ramos,Real Madrid C.F.,ESP,3/30/1986,FALSE
+Spain,16,MF,Sergio Busquets,FC Barcelona,ESP,7/16/1988,FALSE
+Spain,17,DF,Ãlvaro Arbeloa,Real Madrid C.F.,ESP,1/17/1983,FALSE
+Spain,18,FW,,FC Barcelona,ESP,7/28/1987,FALSE
+Spain,19,FW,Fernando Llorente,Athletic Bilb,ESP,2/26/1985,FALSE
+Spain,20,MF,,Athletic Bilb,ESP,9/2/1988,FALSE
+Spain,21,MF,David Silva,Valencia CF,ESP,1/8/1986,FALSE
+Spain,22,MF,JesÃºs Navas,Sevilla FC,ESP,11/21/1985,FALSE
+Spain,23,GK,,Liverpool F.C.,ENG,8/31/1982,FALSE
+Switzerland,1,GK,Diego Benaglio,VfL Wolfsbu,GER,9/8/1983,FALSE
+Switzerland,2,DF,Stephan Lichtsteiner,S.S. Lazio,ITA,1/16/1984,FALSE
+Switzerland,3,DF,Ludovic Magnin,FC ZÃ¼rich,SUI,4/20/1979,FALSE
+Switzerland,4,DF,Philippe Senderos,Everton F.C.,ENG,2/14/1985,FALSE
+Switzerland,5,DF,Steve von Bergen,Hertha B,GER,6/10/1983,FALSE
+Switzerland,6,MF,Benjamin Huggel,FC Basel,SUI,7/7/1977,FALSE
+Switzerland,7,MF,Tranquillo Barnetta,Bayer 04 Leverkusen,GER,5/22/1985,FALSE
+Switzerland,8,MF,,Udinese Calcio,ITA,6/27/1984,FALSE
+Switzerland,9,FW,Alexander Frei,FC Basel,SUI,7/15/1979,TRUE
+Switzerland,10,FW,Blaise Nkufo,FC Twente,NED,5/25/1975,FALSE
+Switzerland,11,MF,Valon Behrami,West Ham United F.C.,ENG,4/19/1985,FALSE
+Switzerland,12,GK,,BSC Young Boys,SUI,8/22/1982,FALSE
+Switzerland,13,DF,,AJ Auxerre,FRA,3/30/1979,FALSE
+Switzerland,14,MF,Marco Padalino,U.C. Sampdoria,ITA,12/8/1983,FALSE
+Switzerland,15,MF,Hakan Yakin,FC Luzern,SUI,2/22/1977,FALSE
+Switzerland,16,MF,Gelson Fernandes,AS Saint-Ã‰tienne,FRA,9/2/1986,FALSE
+Switzerland,17,DF,Reto Ziegler,U.C. Sampdoria,ITA,1/16/1986,FALSE
+Switzerland,18,FW,Albert Bunjaku (footballer),1. FC NÃ¼rnbe,GER,11/29/1983,FALSE
+Switzerland,19,FW,Eren Derdiyok,Bayer 04 Leverkusen,GER,6/12/1988,FALSE
+Switzerland,20,MF,Pirmin Schwegler,Eintracht Frankfu,GER,3/9/1987,FALSE
+Switzerland,21,GK,Johnny Leoni,FC ZÃ¼rich,SUI,6/30/1984,FALSE
+Switzerland,22,DF,Mario Eggimann,Hannover ,GER,1/24/1981,FALSE
+Switzerland,23,MF,Xherdan Shaqiri,FC Basel,SUI,10/10/1991,FALSE
+Honduras,1,GK,Ricardo Canales,C.D. Motagua,HON,5/30/1982,FALSE
+Honduras,2,DF,,C.D. Platense,HON,7/29/1984,FALSE
+Honduras,3,DF,Maynor Figueroa,Wigan Athletic F.C.,ENG,5/2/1983,FALSE
+Honduras,4,DF,Johnny Palacios,C.D. Olimpia,HON,12/20/1986,FALSE
+Honduras,5,DF,,R.S.C. Anderlecht,BEL,5/24/1982,FALSE
+Honduras,6,MF,Hendry Thomas,Wigan Athletic F.C.,ENG,2/23/1985,FALSE
+Honduras,7,MF,,C.D. Olimpia,HON,11/14/1984,FALSE
+Honduras,8,MF,Wilson Palacios,Tottenham Hotspur F.C.,ENG,7/29/1984,FALSE
+Honduras,9,FW,,Real C.D. EspaÃ±a,HON,10/19/1973,FALSE
+Honduras,10,FW,,Hangzhou Nabel Greentown F.C.,CHN,5/13/1982,FALSE
+Honduras,11,FW,David Suazo,Genoa C.F.C.,ITA,11/5/1979,FALSE
+Honduras,12,FW,Georgie Welcome,C.D. Motagua,HON,3/9/1985,FALSE
+Honduras,13,FW,Roger Espinoza,Kansas City Wizar,USA,10/25/1986,FALSE
+Honduras,14,DF,,C.D. Olimpia,HON,9/4/1984,FALSE
+Honduras,15,FW,,C.D. MarathÃ³n,HON,3/29/1982,FALSE
+Honduras,16,DF,,Hangzhou Nabel Greentown F.C.,CHN,11/11/1978,FALSE
+Honduras,17,MF,Edgar Ãlvarez,A.S. Bari,Italy,1/9/1980,FALSE
+Honduras,18,GK,Noel Valladares,C.D. Olimpia,HON,5/3/1977,FALSE
+Honduras,19,MF,Danilo Turcios,C.D. Olimpia,HON,5/8/1978,FALSE
+Honduras,20,MF,Amado Guevara,C.D. Motagua,HON,5/2/1976,TRUE
+Honduras,21,DF,Emilio Izaguirre,C.D. Motagua,HON,5/10/1986,FALSE
+Honduras,22,GK,Donis Escober,C.D. Olimpia,HON,2/3/1980,FALSE
+Honduras,23,DF,Sergio Mendoza,C.D. Motagua,HON,5/23/1981,FALSE
+Chile,1,GK,Claudio Bravo (footballer),Real Socied,ESP,4/13/1983,TRUE
+Chile,2,DF,Ismael Fuentes,Club Deportivo Universidad CatÃ³lica,CHI,8/4/1981,FALSE
+Chile,3,DF,Waldo Ponce,Club Deportivo Universidad CatÃ³lica,CHI,12/4/1982,FALSE
+Chile,4,MF,Mauricio Isla,Udinese Calcio,ITA,6/12/1988,FALSE
+Chile,5,DF,Pablo Contreras,PAOK F.C.,GRE,9/11/1978,FALSE
+Chile,6,MF,Carlos Carmona,Reggina Calcio,ITA,2/21/1987,FALSE
+Chile,7,FW,,Udinese Calcio,ITA,12/19/1988,FALSE
+Chile,8,DF,Arturo Vidal,Bayer 04 Leverkusen,GER,5/22/1987,FALSE
+Chile,9,FW,Humberto Suazo,Real Zarago,ESP,5/10/1981,FALSE
+Chile,10,MF,Jorge Valdivia,Al Ain FC,UAE,10/19/1983,FALSE
+Chile,11,FW,,PFC CSKA Moscow,RUS,7/10/1984,FALSE
+Chile,12,GK,Miguel Pinto,C.F. Universidad de Chile,CHI,7/4/1983,FALSE
+Chile,13,MF,Marco Estrada (footballer),C.F. Universidad de Chile,CHI,5/28/1983,FALSE
+Chile,14,MF,,Sporting Clube de Portugal,POR,5/15/1986,FALSE
+Chile,15,FW,Jean Beausejour,Club AmÃ©rica,MEX,6/1/1984,FALSE
+Chile,16,FW,,Xerez CD,ESP,1/27/1986,FALSE
+Chile,17,DF,Gary Medel,Boca Junio,ARG,8/3/1987,FALSE
+Chile,18,DF,Gonzalo Jara,West Bromwich Albion F.C.,ENG,8/29/1985,FALSE
+Chile,19,MF,Gonzalo Fierro,Clube de Regatas do Flamengo,BRA,3/21/1983,FALSE
+Chile,20,MF,Rodrigo Millar,Colo-Co,CHI,11/3/1981,FALSE
+Chile,21,MF,Rodrigo Tello,BeÅŸiktaÅŸ J.K.,TUR,10/14/1979,FALSE
+Chile,22,FW,Esteban Paredes,Colo-Co,CHI,8/1/1980,FALSE
+Chile,23,GK,,UniÃ³n EspaÃ±o,CHI,5/18/1983,FALSE

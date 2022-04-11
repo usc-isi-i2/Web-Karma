@@ -96,10 +96,6 @@ public class RequestController extends HttpServlet {
 		else {
 			Command command = ctrl.getCommand(request);
 			try {
-				System.out.println("HIIIIII I AM IN ELSE!!!");
-				logger.debug("ELSEEE");
-				logger.info("ELSSSSEE");
-				logger.error("ELESSSSSEEE");
 				UpdateContainer updateContainer =ctrl.invokeCommand(command);
 				if (command.getCommandType() != CommandType.notInHistory) {
 					updateContainer.add(new HistoryUpdate(vWorkspace.getWorkspace().getCommandHistory()));

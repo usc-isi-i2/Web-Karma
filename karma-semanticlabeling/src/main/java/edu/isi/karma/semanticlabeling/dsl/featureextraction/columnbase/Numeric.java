@@ -1,15 +1,10 @@
 package edu.isi.karma.semanticlabeling.dsl.featureextraction.columnbase;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
-import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 
 import edu.isi.karma.semanticlabeling.dsl.Column;
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
+import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
 
 /**
  * This class is responsible for measuring similarity between column data which is numeric.
@@ -19,6 +14,7 @@ import edu.isi.karma.semanticlabeling.dsl.Column;
 public class Numeric {
 
 
+    //feature_extractor.py (compute_feature_vectors)
     public double ks_test(Column col1, Column col2){
         if(col1.get_numeric_data().size() > 1 && col2.get_numeric_data().size() > 1){
             List<String> column1 = col1.get_numeric_data();
@@ -43,6 +39,7 @@ public class Numeric {
     }
 
         
+    //feature_extractor.py (compute_feature_vectors)
     public double mann_whitney_u_test(Column col1, Column col2){
         if(col1.get_numeric_data().size() > 1 && col2.get_numeric_data().size() > 1){
 
@@ -67,10 +64,12 @@ public class Numeric {
 
 
     public double jaccard_sim_test(Column col1, Column col2){
+        // logger.info("IN numeric jaccard");
     
         Set<String> col1data = new HashSet<String>();
         col1data.addAll(col1.get_numeric_data());
         Set<String> col2data = new HashSet<String>();
+        // for(String s: col2.get_numeric_data())
         col2data.addAll(col2.get_numeric_data());
 
 
@@ -81,14 +80,15 @@ public class Numeric {
         temp.addAll(col1data);
         col1data.retainAll(col2data);
         Set<String> intersect = col1data;
-        int intersect_size = intersect.size();
+        double intersect_size = intersect.size();
         col1data.clear();
         col1data.addAll(temp);
         col1data.addAll(col2data);
         Set<String> union = col1data;
-        int union_size = union.size();
+        double union_size = union.size();
         col1data = temp;
 
+        // logger.info("Returning numeric jaccard"+(intersect.size()) / (union.size()));
         if (union_size == 0)
             return 0.0;
         return (intersect_size) / (union_size);

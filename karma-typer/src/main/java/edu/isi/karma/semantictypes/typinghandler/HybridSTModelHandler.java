@@ -6,8 +6,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
 
-import com.mycompany.app.CreateDSLObjects;
-import com.mycompany.dsl.*;
+import edu.isi.karma.semanticlabeling.app.CreateDSLObjects;
+import edu.isi.karma.semanticlabeling.dsl.*;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -43,6 +43,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
     private ArrayList<String> allowedCharacters;
 
     private boolean modelEnabled = false;
+    private boolean automaticSemanticEnabled = true; // This is to use the model mentioned in https://usc-isi-i2.github.io/papers/pham16-iswc.pdf
     private String contextId;
 
     /*
@@ -219,6 +220,43 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
         return false;
     }
 
+
+    public List<SemanticTypeLabel> predictSemanticLabeler(List<String> examples, int numPredictions, boolean isNumeric){
+        Object[] arr = examples.toArray();
+        List<String> colData = new ArrayList<String>();
+        for (int i = 0; i < examples.toArray().length; i++) {
+            colData.add(arr[i].toString().trim().replaceAll("\"", ""));
+        }
+        Hashtable<String, Float> typeStats = new Hashtable<String, Float>();
+        Column columnObj = new Column("tableName", colData.get(0), null, colData.get(2), examples.toArray().length, typeStats);
+        List<String> colSubList = new ArrayList<String>(colData.subList(1,colData.size()));
+        columnObj.value = new ColumnData(colSubList);
+
+        String modelFile = "train/random_forest_model";
+        List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
+        try {
+            // Create featureExtractorObject here and create DSL object. This will load the already saved rf model.
+            FeatureExtractor featureExtractorObject = getFeatureExtractor(isNumeric);
+            DSL_main dsl_obj = new DSL_main( modelFile, featureExtractorObject, true, true, false);
+            predictions = dsl_obj.predictSemanticType(columnObj, 100);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Predict the semantic type using this DSL object.
+        List<SemanticTypeLabel> sem_result = new ArrayList<SemanticTypeLabel>();
+        int predict_max= numPredictions<predictions.size() ? numPredictions:predictions.size();
+        for(int i =0;i<predict_max;i++)
+        {
+            SemType st = predictions.get(i).sem_type;
+            String label = st.toString();
+            if (predictions.get(i).prob > 0.5) // Random baseline : 0.5
+                sem_result.add(new SemanticTypeLabel(label, (float) predictions.get(i).prob));
+        }
+
+        return sem_result;
+
+
+    }
     /**
      * @param examples             - list of examples of an unknown type
      * @param numPredictions       - required number of predictions in descending
@@ -236,10 +274,8 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
      * @param columnFeatures       - this Map supplies ColumnFeatures such as
      *                             ColumnName, etc.
      * @return True, if successful, else False
-//     * @throws Exception
+    //     * @throws Exception
      */
-//	@Override
-//	public List<SemanticTypeLabel> predictType(List<String> examples, int numPredictions) throws Exception {
     @Override
     public List<SemanticTypeLabel> predictType(List<String> examples, int numPredictions) {
 
@@ -254,16 +290,8 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
             return null;
         }
 
-        logger.warn("Predic Type for " + examples.toArray().toString());
-        Object[] arr = examples.toArray();
-        // for (int xi=0; xi<examples.toArray().length; xi++) {
-        // 	logger.warn(xi + ": " + arr[xi].toString());
-        // }
-        List<Column> columns = new ArrayList<Column>();
-        List<String> colData = new ArrayList<String>();
-        for (int i = 0; i < examples.toArray().length; i++) {
-            colData.add(arr[i].toString().trim().replaceAll("\"", ""));
-        }
+        logger.warn("Predict Type for " + examples.toArray().toString());
+
         boolean isNumeric = false;
         int countNumeric = 0;
 
@@ -279,41 +307,12 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
         } else {
             logger.warn("Test Label classified as textual - fractionNumeric = " + fractionNumeric);
         }
-        Hashtable<String, Float> typeStats = new Hashtable<String, Float>();
-        Column columnObj = new Column("tableName", colData.get(0), null, colData.get(2), examples.toArray().length, typeStats);
-        List<String> colSubList = new ArrayList<String>(colData.subList(1,colData.size())); //3
-        columnObj.value = new ColumnData(colSubList);
-        // Read the written featureExtractorObject here and create DSL object. This will load the already saved rf model.
-        //FeatureExtractor featureExtractorObject = CreateDSLObjects.create_feature_extractor(fileListTrain);
-        // Predict the semantic type using this DSL object.
-        String modelFile = "model_file_rf";
-        modelFile = "new_model_Dec";
-        List<SemTypePrediction> predictions = new ArrayList<SemTypePrediction>();
-        try {
-            FeatureExtractor featureExtractorObject = getFeatureExtractor(isNumeric);
-            DSL_main dsl_obj1 = new DSL_main("/Users/bidishadasbaksi/Docs_no_icloud/GitHub/" + modelFile, featureExtractorObject, true, true, false);
-			predictions = dsl_obj1.predictSemanticType(columnObj, 100);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		// Return the prediction.
-        List<SemanticTypeLabel> sem_result = new ArrayList<SemanticTypeLabel>();
-        int predict_max= numPredictions<predictions.size() ? numPredictions:predictions.size();
-        for(int i =0;i<predict_max;i++)
-        {
-            SemType st = predictions.get(i).sem_type;
-            String label = st.toString();
-            if (predictions.get(i).prob > 0.5)
-                sem_result.add(new SemanticTypeLabel(label, (float) predictions.get(i).prob));
-        }
-        if(true)
-            return sem_result;
 
-        logger.warn("-----------------------------------------------------------------------------");
+        // New model implementation
+        if(automaticSemanticEnabled)
+            return predictSemanticLabeler(examples,numPredictions,isNumeric);
+
         // decide if test column is textual or numeric
-
-
-
         // get top-k suggestions
         if (isNumeric) { // numeric test column
             if (indexDirectoryExists(isNumeric)) {
@@ -399,7 +398,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
 
     public FeatureExtractor getFeatureExtractor(boolean isNumeric) {
         FeatureExtractor featurextractorobj = null;
-        HashMap<String, com.mycompany.dsl.SemType> sem_col = new HashMap<>();
+        HashMap<String, SemType> sem_col = new HashMap<>();
         try {
             IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(
                     getIndexDirectory(isNumeric))));

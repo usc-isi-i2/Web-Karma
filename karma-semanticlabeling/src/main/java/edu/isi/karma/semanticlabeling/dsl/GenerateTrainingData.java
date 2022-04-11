@@ -3,8 +3,6 @@ package edu.isi.karma.semanticlabeling.dsl;
 import java.util.*;
 import java.io.*;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
@@ -22,7 +20,6 @@ public class GenerateTrainingData implements Serializable{
     List<List<Double>> XTest = new ArrayList<List<Double>>();
     List<Integer> YTest = new ArrayList<Integer>();
 
-    // Creates the train data by comparing actual semantic labels.
     public void generateTrainingDataForMain(FeatureExtractor featureExtractorObject) throws IOException{
         logger.info("In generateTrainingData");
         
@@ -36,7 +33,7 @@ public class GenerateTrainingData implements Serializable{
                 Column refCol = featureExtractorObject.trainColumns.get(j);
 
                 this.XTrain.add(sim_ref_cols.get(j));
-                if(col.semantic_type == refCol.semantic_type)
+                if(col.semantic_type.equals(refCol.semantic_type))
                     this.YTrain.add(1);
                 else
                     this.YTrain.add(0);
@@ -46,7 +43,6 @@ public class GenerateTrainingData implements Serializable{
         logger.info("Train:"+this.XTrain+" y: "+this.YTrain);
     }
 
-    // Minor changes for test data.
     public void generateTrainingDataForTest(FeatureExtractor featureExtractorObject, List<List<Double>> sim_ref_cols){
         logger.info("In generateTrainingDataForTest");
         

@@ -15,7 +15,6 @@ public class SemTypePrediction implements Serializable{
     static Logger logger = LogManager.getLogger(SemTypePrediction.class.getName());
     public final SemType sem_type;
     public final double prob;
-    // Probability of the semantic type determines the rank of the prediction.
     public SemTypePrediction(SemType sem_type, double prob){
         this.sem_type = sem_type;
         this.prob = prob;

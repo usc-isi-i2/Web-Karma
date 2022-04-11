@@ -22,11 +22,25 @@ public class ColumnData implements Serializable{
     List<Integer> string_idx_array = new ArrayList<Integer>();
     
     public ColumnData(List<String> array){
-        
+        // for (Object object : array) {
+        //     this.array.add(Objects.toString(object, null));
+        // }
         this.array = array;
+        // for(int i=0; i<array.size(); i++){
+        //     logger.info(" "+array.get(i));
+        // }
+        // this.number_array = {};
+        // this.number_idx_array = {};
+        // this.string_array = {};
+        // this.string_idx_array = {};
+    
+        // for i, val in enumerate(array):
         int i=0;
         for(Object arr: array){
+            // logger.info(" "+arr);
             if(arr != null){
+                // if(isinstance(val, (int, float)){
+                
                 if(!string_data()){
                     this.number_array.add(arr.toString());
                     this.number_idx_array.add(i);

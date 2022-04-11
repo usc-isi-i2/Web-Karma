@@ -5,7 +5,6 @@ import java.io.*;
 
 /**
  * This class is responsible for creating an object for each table.
- * Each ColumnBasedTable object will have multiple Column objects in a list.
  * @author rutujarane
  */
 

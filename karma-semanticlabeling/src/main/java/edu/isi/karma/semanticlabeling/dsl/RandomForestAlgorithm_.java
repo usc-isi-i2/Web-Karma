@@ -5,14 +5,9 @@ import java.io.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
-import weka.core.converters.ArffLoader;
 import weka.core.converters.ConverterUtils.DataSource;
-import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.StringToWordVector;
-import java.io.IOException;
 import weka.classifiers.trees.RandomForest;
 import java.io.Serializable;
 
@@ -32,7 +27,6 @@ public class RandomForestAlgorithm_ implements Serializable{
 
 
 	static Logger logger = LogManager.getLogger(RandomForestAlgorithm_.class.getName());
-	// Builds the model.
 	public RandomForest RandomForestAlgorithm_create() throws Exception{
 		
 		logger.info("Welcome to Algorithm");
@@ -41,8 +35,8 @@ public class RandomForestAlgorithm_ implements Serializable{
 		String testingDatasetName = "libsvm_test.arff";
 		// Load and parse the data file, converting it to a DataFrame.
 		Instances trainDataset = getDataSet(trainingDatasetName);
-		Instances testDataset = getDataSet(testingDatasetName);
-
+//		Instances testDataset = getDataSet(testingDatasetName);
+		Instances testDataset = getDataSet(trainingDatasetName);
 		logger.info("Loaded both the datasets");
 
 		RandomForest forest=new RandomForest();
@@ -64,8 +58,20 @@ public class RandomForestAlgorithm_ implements Serializable{
 
 		logger.info("** Decision Tress Evaluation with Datasets **");
 		logger.info(eval.toSummaryString());
+		System.out.print(" the expression for the input data as per alogorithm is ");
+		// logger.info(forest);
 		logger.info("Storing to file:");
 
+		// FileOutputStream fos = new FileOutputStream("randomForestModel");
+		// ObjectOutputStream oos = new ObjectOutputStream(fos);
+		// oos.writeInt(12345);
+		// oos.writeObject("Today");
+		// oos.writeObject(forest);
+		// oos.close();
+
+		// FileWriter myWriter = new FileWriter("randomForestModel.txt");
+		// myWriter.write(forest.toString());
+		// myWriter.close();
 		logger.info("Successfully wrote to the file.");
 		logger.info("matrix:"+eval.toMatrixString());
 		logger.info(eval.toClassDetailsString());
@@ -86,7 +92,6 @@ public class RandomForestAlgorithm_ implements Serializable{
 
 	}
 
-	// Testing the model on other data. Not required for our purposes. Tested only to see if model was working initially.
 	public RandomForest testModel(String testFile, String modelFile) throws Exception{
 
 		String trainingDatasetName = "libsvm_.arff";

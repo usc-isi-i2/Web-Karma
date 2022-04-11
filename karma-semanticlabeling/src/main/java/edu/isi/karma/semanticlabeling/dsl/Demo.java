@@ -1,20 +1,13 @@
 package edu.isi.karma.semanticlabeling.dsl;
 
-import java.io.*;
 import java.util.Properties;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import edu.stanford.nlp.coref.data.CorefChain;
 import edu.stanford.nlp.ling.*;
-import edu.stanford.nlp.ie.util.*;
 import edu.stanford.nlp.pipeline.*;
-import edu.stanford.nlp.semgraph.*;
-import edu.stanford.nlp.trees.*;
 
-
-// This class was used to check StanfordCoreNLP tokenizer's working.
 public class Demo {
 
     static Logger logger = LogManager.getLogger(Demo.class.getName());
