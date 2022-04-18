@@ -1,0 +1,737 @@
+Player,Country,Position,Number,Age
+Fabrice OLINGA,Cameroon,Forward,19,18
+Luke SHAW,England,Defender,23,18
+Nabil BENTALEB,Algeria,Midfielder,14,19
+Divock ORIGI,Belgium,Forward,17,19
+Adnan JANUZAJ,Belgium,Midfielder,20,19
+Carlos GRUEZO,Ecuador,Midfielder,23,19
+Raheem STERLING,England,Midfielder,19,19
+Jose GIMENEZ,Uruguay,Defender,13,19
+Julian GREEN,USA,Midfielder,16,19
+Sead KOLASINAC,Bosnia & Herzegovina,Defender,5,20
+Ante REBIC,Croatia,Forward,16,20
+Mateo KOVACIC,Croatia,Midfielder,20,20
+Alex OXLADE CHAMBERLAIN,England,Midfielder,15,20
+Ross BARKLEY,England,Midfielder,21,20
+Lucas DIGNE,France,Defender,17,20
+Julian DRAXLER,Germany,Midfielder,14,20
+Matthias GINTER,Germany,Defender,3,20
+Stefanos KAPINO,Greece,Goalkeeper,13,20
+Luis LOPEZ,Honduras,Goalkeeper,1,20
+Alireza JAHAN BAKHSH,Iran,Forward,9,20
+Terence KONGOLO,Netherlands,Defender,14,20
+Memphis DEPAY,Netherlands,Forward,21,20
+Kenneth OMERUO,Nigeria,Defender,22,20
+DeAndre YEDLIN,USA,Defender,2,20
+Adam TAGGART,Australia,Forward,9,21
+Massimo LUONGO,Australia,Midfielder,21,21
+Bailey WRIGHT,Australia,Defender,8,21
+Romelu LUKAKU,Belgium,Forward,9,21
+Muhamed BESIC,Bosnia & Herzegovina,Midfielder,7,21
+BERNARD,Brazil,Forward,20,21
+Cedric DJEUGOUE,Cameroon,Defender,4,21
+Edgar SALLI,Cameroon,Midfielder,20,21
+Eder BALANTA,Colombia,Defender,16,21
+Juan QUINTERO,Colombia,Midfielder,20,21
+Joel CAMPBELL,Costa Rica,Forward,9,21
+Oliver ZELENIKA,Croatia,Goalkeeper,12,21
+Ivan MOCINIC,Croatia,Midfielder,15,21
+Marcelo BROZOVIC,Croatia,Midfielder,14,21
+Paul POGBA,France,Midfielder,19,21
+Raphael VARANE,France,Defender,4,21
+Rashid SUMAILA,Ghana,Defender,15,21
+Andy NAJAR,Honduras,Midfielder,17,21
+Marco VERRATTI,Italy,Midfielder,23,21
+Mattia DE SCIGLIO,Italy,Defender,2,21
+Mattia PERIN,Italy,Goalkeeper,13,21
+Sayouba MANDE,Ivory Coast,Goalkeeper,23,21
+Ismael DIOMANDE,Ivory Coast,Midfielder,14,21
+Jean Daniel AKPA,Ivory Coast,Defender,7,21
+Serge AURIER,Ivory Coast,Defender,17,21
+Diego REYES,Mexico,Defender,5,21
+Ahmed MUSA,Nigeria,Forward,7,21
+Ogenyi ONAZI,Nigeria,Midfielder,17,21
+Ramon AZEEZ,Nigeria,Midfielder,15,21
+Michael BABATUNDE,Nigeria,Forward,18,21
+RAFA,Portugal,Forward,15,21
+SON Heungmin,South Korea,Midfielder,9,21
+Josip DRMIC,Switzerland,Forward,19,21
+Granit XHAKA,Switzerland,Midfielder,10,21
+Ricardo RODRIGUEZ,Switzerland,Defender,13,21
+John BROOKS,USA,Defender,6,21
+Saphir TAIDER,Algeria,Midfielder,19,22
+Aissa MANDI,Algeria,Defender,20,22
+Tommy OAR,Australia,Midfielder,11,22
+Maty RYAN,Australia,Goalkeeper,1,22
+Ben HALLORAN,Australia,Forward,10,22
+Jason DAVIDSON,Australia,Defender,3,22
+Kevin DE BRUYNE,Belgium,Midfielder,7,22
+Thibaut COURTOIS,Belgium,Goalkeeper,1,22
+Izet HAJROVIC,Bosnia & Herzegovina,Midfielder,20,22
+Tino Sven SUSIC,Bosnia & Herzegovina,Midfielder,14,22
+NEYMAR,Brazil,Forward,10,22
+OSCAR,Brazil,Midfielder,11,22
+Vincent ABOUBAKAR,Cameroon,Forward,10,22
+Joel MATIP,Cameroon,Midfielder,21,22
+Loic FEUDJOU,Cameroon,Goalkeeper,1,22
+James RODRIGUEZ,Colombia,Midfielder,10,22
+Santiago ARIAS,Colombia,Defender,4,22
+Yeltsin TEJEDA,Costa Rica,Midfielder,17,22
+Sime VRSALJKO,Croatia,Defender,2,22
+Phil JONES,England,Defender,16,22
+Jack WILSHERE,England,Midfielder,7,22
+Mario GOETZE,Germany,Forward,19,22
+Erik DURM,Germany,Defender,15,22
+Majeed WARIS,Ghana,Forward,18,22
+Acquah AFRIYIE,Ghana,Midfielder,6,22
+Christian ATSU,Ghana,Midfielder,7,22
+Jordan AYEW,Ghana,Forward,13,22
+Bakhtiar RAHMANI,Iran,Midfielder,18,22
+Bruno MARTINS INDI,Netherlands,Defender,4,22
+Stefan DE VRIJ,Netherlands,Defender,3,22
+Joel VELTMAN,Netherlands,Defender,13,22
+Jordy CLASIE,Netherlands,Midfielder,16,22
+Uche NWOFOR,Nigeria,Forward,19,22
+WILLIAM,Portugal,Midfielder,6,22
+Maksim KANUNNIKOV,Russia,Forward,6,22
+KOKE,Spain,Midfielder,17,22
+Fabian SCHAER,Switzerland,Defender,22,22
+Xherdan SHAQIRI,Switzerland,Midfielder,23,22
+Haris SEFEROVIC,Switzerland,Forward,9,22
+Faouzi GHOULAM,Algeria,Defender,3,23
+Riyad MAHREZ,Algeria,Forward,21,23
+Mathew LECKIE,Australia,Forward,7,23
+Eden HAZARD,Belgium,Midfielder,10,23
+Miiko ALBORNOZ,Chile,Defender,3,23
+Felipe GUTIERREZ,Chile,Midfielder,16,23
+Diego CALVO,Costa Rica,Midfielder,20,23
+Waylon FRANCIS,Costa Rica,Defender,12,23
+Alex IBARRA,Ecuador,Midfielder,5,23
+Danny WELBECK,England,Forward,11,23
+Antoine GRIEZMANN,France,Forward,11,23
+Eliaquim MANGALA,France,Defender,13,23
+Clement GRENIER,France,Midfielder,22,23
+Andre SCHUERRLE,Germany,Forward,9,23
+Christoph KRAMER,Germany,Midfielder,23,23
+Mubarak WAKASO,Ghana,Midfielder,22,23
+Emmanuel AGYEMANG BADU,Ghana,Midfielder,8,23
+Jonathan MENSAH,Ghana,Defender,19,23
+Daniel OPARE,Ghana,Defender,4,23
+Ioannis FETFATZIDIS,Greece,Forward,18,23
+Panagiotis TACHTSIDIS,Greece,Midfielder,23,23
+Konstantinos MANOLAS,Greece,Defender,4,23
+Luis GARRIDO,Honduras,Midfielder,19,23
+Mario BALOTELLI,Italy,Forward,9,23
+Lorenzo INSIGNE,Italy,Forward,22,23
+Mathis BOLLY,Ivory Coast,Midfielder,6,23
+Gotoku SAKAI,Japan,Defender,3,23
+Hotaru YAMAGUCHI,Japan,Midfielder,16,23
+Alan PULIDO,Mexico,Forward,11,23
+Raul JIMENEZ,Mexico,Forward,9,23
+Isaac BRIZUELA,Mexico,Midfielder,17,23
+Georginio WIJNALDUM,Netherlands,Midfielder,20,23
+Victor MOSES,Nigeria,Forward,11,23
+Godfrey OBOABONA,Nigeria,Defender,14,23
+Ebenezer ODUNLAMI,Nigeria,Defender,12,23
+Ruben GABRIEL,Nigeria,Midfielder,4,23
+Juwon OSHANIWA,Nigeria,Defender,13,23
+ANDRE ALMEIDA,Portugal,Defender,19,23
+Oleg SHATOV,Russia,Midfielder,17,23
+Alexander KOKORIN,Russia,Forward,9,23
+Georgy SHCHENNIKOV,Russia,Defender,3,23
+JI Dongwon,South Korea,Midfielder,19,23
+KIM Seunggyu,South Korea,Goalkeeper,21,23
+David DE GEA,Spain,Goalkeeper,12,23
+Michael LANG,Switzerland,Defender,6,23
+Admir MEHMEDI,Switzerland,Forward,18,23
+Roman BUERKI,Switzerland,Goalkeeper,21,23
+Abel HERNANDEZ,Uruguay,Forward,8,23
+Sebastian COATES,Uruguay,Defender,19,23
+Gaston RAMIREZ,Uruguay,Midfielder,18,23
+Aron JOHANNSSON,USA,Forward,9,23
+Mix DISKERUD,USA,Midfielder,10,23
+Nabil GHILAS,Algeria,Forward,9,24
+Sofiane FEGHOULI,Algeria,Forward,10,24
+Yacine BRAHIMI,Algeria,Midfielder,11,24
+Marcos ROJO,Argentina,Defender,16,24
+Ryan McGOWAN,Australia,Defender,19,24
+Nacer CHADLI,Belgium,Midfielder,22,24
+Miralem PJANIC,Bosnia & Herzegovina,Midfielder,8,24
+Ermin BICAKCIC,Bosnia & Herzegovina,Defender,3,24
+Ognjen VRANJES,Bosnia & Herzegovina,Defender,6,24
+Anel HADZIC,Bosnia & Herzegovina,Midfielder,21,24
+Edin VISCA,Bosnia & Herzegovina,Forward,19,24
+Nicolas NKOULOU,Cameroon,Defender,3,24
+Sammy NDJOCK,Cameroon,Goalkeeper,23,24
+Eduardo VARGAS,Chile,Forward,11,24
+Victor IBARBO,Colombia,Forward,14,24
+Marcos URENA,Costa Rica,Forward,21,24
+Cristian GAMBOA,Costa Rica,Defender,16,24
+Dejan LOVREN,Croatia,Defender,6,24
+Enner VALENCIA,Ecuador,Forward,13,24
+Fidel MARTINEZ,Ecuador,Midfielder,20,24
+Jefferson MONTERO,Ecuador,Midfielder,7,24
+Daniel STURRIDGE,England,Forward,9,24
+Chris SMALLING,England,Defender,12,24
+Jordan HENDERSON,England,Midfielder,14,24
+Mamadou SAKHO,France,Defender,5,24
+Moussa SISSOKO,France,Midfielder,18,24
+Thomas MUELLER,Germany,Forward,13,24
+Toni KROOS,Germany,Midfielder,18,24
+Andre AYEW,Ghana,Midfielder,10,24
+Mohammed RABIU,Ghana,Midfielder,17,24
+Stephen ADAMS,Ghana,Goalkeeper,1,24
+Mario MARTINEZ,Honduras,Midfielder,23,24
+Karim ANSARI FARD,Iran,Forward,10,24
+Ehsan HAJI SAFI,Iran,Midfielder,3,24
+Ciro IMMOBILE,Italy,Forward,17,24
+Matteo DARMIAN,Italy,Defender,4,24
+Yoichiro KAKITANI,Japan,Forward,11,24
+Yuya OSAKO,Japan,Forward,18,24
+Manabu SAITO,Japan,Forward,20,24
+Hiroshi KIYOTAKE,Japan,Forward,8,24
+Hiroki SAKAI,Japan,Defender,21,24
+Marco FABIAN,Mexico,Midfielder,8,24
+Carlos PENA,Mexico,Midfielder,21,24
+Hector HERRERA,Mexico,Midfielder,6,24
+Javier AQUINO,Mexico,Midfielder,20,24
+Leroy FER,Netherlands,Midfielder,18,24
+Daryl JANMAAT,Netherlands,Defender,7,24
+Daley BLIND,Netherlands,Defender,5,24
+Okechukwu UCHEBO,Nigeria,Forward,20,24
+Azubuike EGWUEKWE,Nigeria,Defender,6,24
+Alan DZAGOEV,Russia,Midfielder,10,24
+Yury LODYGIN,Russia,Goalkeeper,12,24
+KIM Bokyung,South Korea,Midfielder,7,24
+KIM Younggwon,South Korea,Defender,5,24
+HONG Jeongho,South Korea,Defender,20,24
+HAN Kookyoung,South Korea,Midfielder,14,24
+YUN Sukyoung,South Korea,Defender,3,24
+HWANG Seokho,South Korea,Defender,6,24
+Cesar AZPILICUETA,Spain,Midfielder,22,24
+Mario GAVRANOVIC,Switzerland,Forward,17,24
+Jozy ALTIDORE,USA,Forward,17,24
+Timmy CHANDLER,USA,Defender,21,24
+Esseid BELKALEM,Algeria,Defender,4,25
+Federico FERNANDEZ,Argentina,Defender,17,25
+James TROISI,Australia,Midfielder,14,25
+Mitch LANGERAK,Australia,Goalkeeper,12,25
+Matthew SPIRANOVIC,Australia,Defender,6,25
+James HOLLAND,Australia,Midfielder,16,25
+Oliver BOZANIC,Australia,Midfielder,13,25
+Axel WITSEL,Belgium,Midfielder,6,25
+Toby ALDERWEIRELD,Belgium,Defender,2,25
+Toni SUNJIC,Bosnia & Herzegovina,Defender,15,25
+WILLIAN,Brazil,Midfielder,19,25
+PAULINHO,Brazil,Midfielder,8,25
+Eric CHOUPO MOTING,Cameroon,Forward,13,25
+Benjamin MOUKANDJO,Cameroon,Forward,8,25
+Alexis SANCHEZ,Chile,Forward,7,25
+Eugenio MENA,Chile,Defender,2,25
+Charles ARANGUIZ,Chile,Midfielder,20,25
+David OSPINA,Colombia,Goalkeeper,1,25
+Alexander MEJIA,Colombia,Midfielder,15,25
+Camilo VARGAS,Colombia,Goalkeeper,12,25
+Oscar DUARTE,Costa Rica,Defender,6,25
+Ivan PERISIC,Croatia,Midfielder,4,25
+Domagoj VIDA,Croatia,Defender,21,25
+Felipe CAICEDO,Ecuador,Forward,11,25
+Joao ROJAS,Ecuador,Forward,9,25
+Adrian BONE,Ecuador,Goalkeeper,12,25
+Marco REUS,Germany,Forward,21,25
+Mesut OEZIL,Germany,Midfielder,8,25
+Mats HUMMELS,Germany,Defender,5,25
+Jerome BOATENG,Germany,Defender,20,25
+Ron-Robert ZIELER,Germany,Goalkeeper,12,25
+Kevin GROSSKREUTZ,Germany,Defender,2,25
+Kwadwo ASAMOAH,Ghana,Midfielder,20,25
+Samuel INKOOM,Ghana,Defender,2,25
+Andreas SAMARIS,Greece,Midfielder,22,25
+Reza HAGHIGHI,Iran,Midfielder,8,25
+Wilfried BONY,Ivory Coast,Forward,12,25
+Sylvain GBOHOUO,Ivory Coast,Goalkeeper,16,25
+Giovanni SIO,Ivory Coast,Forward,21,25
+Shinji KAGAWA,Japan,Forward,10,25
+Maya YOSHIDA,Japan,Defender,22,25
+Shuichi GONDA,Japan,Goalkeeper,23,25
+Giovani DOS SANTOS,Mexico,Forward,10,25
+Miguel LAYUN,Mexico,Defender,7,25
+Miguel PONCE,Mexico,Defender,16,25
+Jasper CILLESSEN,Netherlands,Goalkeeper,1,25
+Efe AMBROSE,Nigeria,Defender,5,25
+Andrey SEMENOV,Russia,Defender,5,25
+Alexey IONOV,Russia,Forward,21,25
+KOO Jacheol,South Korea,Forward,13,25
+LEE Chungyong,South Korea,Midfielder,17,25
+KI Sungyueng,South Korea,Midfielder,16,25
+PARK Jongwoo,South Korea,Midfielder,15,25
+LEE Bumyoung,South Korea,Goalkeeper,23,25
+Jordi ALBA,Spain,Defender,18,25
+Javi MARTINEZ,Spain,Midfielder,4,25
+Sergio BUSQUETS,Spain,Midfielder,16,25
+Diego COSTA,Spain,Forward,19,25
+Valentin STOCKER,Switzerland,Midfielder,14,25
+Yann SOMMER,Switzerland,Goalkeeper,12,25
+Nicolas LODEIRO,Uruguay,Midfielder,14,25
+Omar GONZALEZ,USA,Defender,3,25
+Islam SLIMANI,Algeria,Forward,13,26
+El Arabi SOUDANI,Algeria,Forward,15,26
+Liassine CADAMURO,Algeria,Defender,17,26
+Gonzalo HIGUAIN,Argentina,Forward,9,26
+Lionel MESSI,Argentina,Forward,10,26
+Sergio AGUERO,Argentina,Forward,20,26
+Angel DI MARIA,Argentina,Midfielder,7,26
+Ricardo ALVAREZ,Argentina,Midfielder,19,26
+Ivan FRANJIC,Australia,Defender,2,26
+Kevin MIRALLAS,Belgium,Forward,11,26
+Marouane FELLAINI,Belgium,Midfielder,8,26
+Moussa DEMBELE,Belgium,Midfielder,19,26
+Steven DEFOUR,Belgium,Midfielder,16,26
+Anthony VANDEN BORRE,Belgium,Defender,21,26
+Simon MIGNOLET,Belgium,Goalkeeper,12,26
+Asmir BEGOVIC,Bosnia & Herzegovina,Goalkeeper,1,26
+MARCELO,Brazil,Defender,6,26
+LUIZ GUSTAVO,Brazil,Midfielder,17,26
+Alexandre SONG,Cameroon,Midfielder,6,26
+Allan NYOM,Cameroon,Defender,22,26
+Gary MEDEL,Chile,Defender,17,26
+Mauricio ISLA,Chile,Defender,4,26
+Cristopher TOSELLI,Chile,Goalkeeper,12,26
+Juan CUADRADO,Colombia,Midfielder,11,26
+Celso BORGES,Costa Rica,Midfielder,5,26
+Giancarlo GONZALEZ,Costa Rica,Defender,3,26
+Ivan RAKITIC,Croatia,Midfielder,7,26
+Jaimen AYOVI,Ecuador,Forward,17,26
+Frickson ERAZO,Ecuador,Defender,3,26
+Juan PAREDES,Ecuador,Defender,4,26
+Fraser FORSTER,England,Goalkeeper,22,26
+Adam LALLANA,England,Midfielder,20,26
+Karim BENZEMA,France,Forward,10,26
+Benedikt HOEWEDES,Germany,Defender,4,26
+Albert ADOMAH,Ghana,Midfielder,14,26
+Adam KWARASEY,Ghana,Goalkeeper,12,26
+Konstantinos MITROGLOU,Greece,Forward,9,26
+Sokratis PAPASTATHOPOULOS,Greece,Defender,19,26
+Panagiotis KONE,Greece,Midfielder,8,26
+Georgios TZAVELAS,Greece,Defender,3,26
+Rony MARTINEZ,Honduras,Forward,16,26
+Juan Carlos GARCIA,Honduras,Defender,6,26
+Reza GHOOCHANNEJAD,Iran,Forward,16,26
+Alireza HAGHIGHI,Iran,Goalkeeper,12,26
+Daniel DAVARI,Iran,Goalkeeper,22,26
+Alessio CERCI,Italy,Forward,11,26
+Max GRADEL,Ivory Coast,Midfielder,15,26
+Atsuto UCHIDA,Japan,Defender,2,26
+Javier HERNANDEZ,Mexico,Forward,14,26
+Hector MORENO,Mexico,Defender,15,26
+Jose VAZQUEZ,Mexico,Midfielder,23,26
+Jeremain LENS,Netherlands,Forward,17,26
+Tim KRUL,Netherlands,Goalkeeper,23,26
+Jonathan DE GUZMAN,Netherlands,Midfielder,8,26
+Uwa ECHIEJILE,Nigeria,Defender,3,26
+FABIO COENTRAO,Portugal,Defender,5,26
+EDER,Portugal,Forward,11,26
+RUI PATRICIO,Portugal,Goalkeeper,12,26
+LUIS NETO,Portugal,Defender,14,26
+KIM Shinwook,South Korea,Forward,18,26
+Pedro RODRIGUEZ,Spain,Forward,11,26
+Juan MATA,Spain,Forward,13,26
+Michael BRADLEY,USA,Midfielder,4,26
+Fabian JOHNSON,USA,Defender,23,26
+Abdelmoumene DJABOU,Algeria,Forward,18,27
+Rafik HALLICHE,Algeria,Defender,5,27
+Sergio ROMERO,Argentina,Goalkeeper,1,27
+Ezequiel GARAY,Argentina,Defender,2,27
+Dario VIDOSIC,Australia,Midfielder,20,27
+Dries MERTENS,Belgium,Midfielder,14,27
+Jan VERTONGHEN,Belgium,Defender,5,27
+JO,Brazil,Forward,21,27
+HULK,Brazil,Forward,7,27
+RAMIRES,Brazil,Midfielder,16,27
+DAVID LUIZ,Brazil,Defender,4,27
+HENRIQUE,Brazil,Defender,15,27
+Arturo VIDAL,Chile,Midfielder,8,27
+Marcelo DIAZ,Chile,Midfielder,21,27
+Carlos CARMONA,Chile,Midfielder,6,27
+Carlos BACCA,Colombia,Forward,17,27
+Jackson MARTINEZ,Colombia,Forward,21,27
+Fredy GUARIN,Colombia,Midfielder,13,27
+Pablo ARMERO,Colombia,Defender,7,27
+Cristian ZAPATA,Colombia,Defender,2,27
+Jose CUBERO,Costa Rica,Midfielder,22,27
+Keylor NAVAS,Costa Rica,Goalkeeper,1,27
+SAMMIR,Croatia,Midfielder,19,27
+Michael ARROYO,Ecuador,Midfielder,15,27
+Alexander DOMINGUEZ,Ecuador,Goalkeeper,22,27
+Joe HART,England,Goalkeeper,1,27
+Olivier GIROUD,France,Forward,9,27
+Loic REMY,France,Forward,20,27
+Blaise MATUIDI,France,Midfielder,14,27
+Stephane RUFFIER,France,Goalkeeper,16,27
+Hugo LLORIS,France,Goalkeeper,1,27
+Sami KHEDIRA,Germany,Midfielder,6,27
+Kevin Prince BOATENG,Ghana,Forward,9,27
+John BOYE,Ghana,Defender,21,27
+Harrison AFFUL,Ghana,Defender,23,27
+Lazaros CHRISTODOULOPOULOS,Greece,Midfielder,16,27
+Panagiotis GLYKOS,Greece,Goalkeeper,12,27
+Ioannis MANIATIS,Greece,Midfielder,2,27
+Jerry BENGTSON,Honduras,Forward,11,27
+Roger ESPINOZA,Honduras,Midfielder,15,27
+Edder DELGADO,Honduras,Midfielder,12,27
+Ashkan DEJAGAH,Iran,Forward,21,27
+Hossein MAHINI,Iran,Defender,13,27
+Mehrdad POOLADI,Iran,Defender,23,27
+Steven BEITASHOUR,Iran,Defender,20,27
+Leonardo BONUCCI,Italy,Defender,19,27
+Ignazio ABATE,Italy,Defender,7,27
+Salvatore SIRIGU,Italy,Goalkeeper,12,27
+Antonio CANDREVA,Italy,Midfielder,6,27
+GERVINHO,Ivory Coast,Forward,10,27
+Ismael TIOTE,Ivory Coast,Midfielder,9,27
+Ousmane DIARRASSOUBA,Ivory Coast,Defender,2,27
+Constant DJAKPA,Ivory Coast,Defender,18,27
+Masato MORISHIGE,Japan,Defender,6,27
+Yuto NAGATOMO,Japan,Defender,5,27
+Andres GUARDADO,Mexico,Defender,18,27
+Emmanuel EMENIKE,Nigeria,Forward,9,27
+John Obi MIKEL,Nigeria,Midfielder,10,27
+NANI,Portugal,Forward,17,27
+JOAO MOUTINHO,Portugal,Midfielder,8,27
+Denis GLUSHAKOV,Russia,Midfielder,8,27
+Dmitry KOMBAROV,Russia,Defender,23,27
+Aleksei KOZLOV,Russia,Defender,2,27
+Vladimir GRANAT,Russia,Defender,13,27
+LEE Yong,South Korea,Defender,12,27
+PARK Jooho,South Korea,Defender,22,27
+Cesc FABREGAS,Spain,Midfielder,10,27
+Gerard PIQUE,Spain,Defender,3,27
+Gelson FERNANDES,Switzerland,Midfielder,16,27
+Johan DJOUROU,Switzerland,Defender,20,27
+Luis SUAREZ,Uruguay,Forward,9,27
+Cristhian STUANI,Uruguay,Forward,11,27
+Edinson CAVANI,Uruguay,Forward,21,27
+Martin CACERES,Uruguay,Defender,22,27
+Graham ZUSI,USA,Midfielder,19,27
+Alejandro BEDOYA,USA,Midfielder,11,27
+Matt BESLER,USA,Defender,5,27
+Rais MBOLHI,Algeria,Goalkeeper,23,28
+Enzo PEREZ,Argentina,Midfielder,8,28
+Augusto FERNANDEZ,Argentina,Midfielder,13,28
+Fernando GAGO,Argentina,Midfielder,5,28
+Lucas BIGLIA,Argentina,Midfielder,6,28
+Mark MILLIGAN,Australia,Midfielder,5,28
+Vincent KOMPANY,Belgium,Defender,4,28
+Thomas VERMAELEN,Belgium,Defender,3,28
+Laurent CIMAN,Belgium,Defender,23,28
+Sammy BOSSUT,Belgium,Goalkeeper,13,28
+Edin DZEKO,Bosnia & Herzegovina,Forward,11,28
+Senijad IBRICIC,Bosnia & Herzegovina,Midfielder,17,28
+Senad LULIC,Bosnia & Herzegovina,Midfielder,16,28
+Avdija VRSAJEVIC,Bosnia & Herzegovina,Midfielder,2,28
+Jasmin FEJZIC,Bosnia & Herzegovina,Goalkeeper,12,28
+Stephane MBIA,Cameroon,Midfielder,17,28
+Enoh EYONG,Cameroon,Midfielder,18,28
+Landry NGUEMO,Cameroon,Midfielder,7,28
+Aurelien CHEDJOU,Cameroon,Defender,14,28
+Dany NOUNKEU,Cameroon,Defender,5,28
+Fabian ORELLANA,Chile,Forward,14,28
+Gonzalo JARA,Chile,Defender,18,28
+Francisco SILVA,Chile,Midfielder,5,28
+Adrian RAMOS,Colombia,Forward,19,28
+Juan ZUNIGA,Colombia,Defender,18,28
+Carlos SANCHEZ,Colombia,Midfielder,6,28
+Bryan RUIZ,Costa Rica,Forward,10,28
+Oscar GRANADOS,Costa Rica,Midfielder,13,28
+Daniel CAMBRONERO,Costa Rica,Goalkeeper,23,28
+Mario MANDZUKIC,Croatia,Forward,17,28
+Nikica JELAVIC,Croatia,Forward,9,28
+Luka MODRIC,Croatia,Midfielder,10,28
+Vedran CORLUKA,Croatia,Defender,5,28
+Antonio VALENCIA,Ecuador,Midfielder,16,28
+Maximo BANGUERA,Ecuador,Goalkeeper,1,28
+Wayne ROONEY,England,Forward,10,28
+Gary CAHILL,England,Defender,5,28
+James MILNER,England,Midfielder,17,28
+Mathieu DEBUCHY,France,Defender,2,28
+Yohan CABAYE,France,Midfielder,6,28
+Laurent KOSCIELNY,France,Defender,21,28
+Manuel NEUER,Germany,Goalkeeper,1,28
+Asamoah GYAN,Ghana,Forward,3,28
+Orestis KARNEZIS,Greece,Goalkeeper,1,28
+Juan MONTES,Honduras,Defender,4,28
+Jorge CLAROS,Honduras,Midfielder,20,28
+Brayan BECKELES,Honduras,Defender,21,28
+Emilio IZAGUIRRE,Honduras,Midfielder,7,28
+Claudio MARCHISIO,Italy,Midfielder,8,28
+Gabriel PALETTA,Italy,Defender,20,28
+Salomon KALOU,Ivory Coast,Forward,8,28
+Shinji OKAZAKI,Japan,Forward,9,28
+Keisuke HONDA,Japan,Forward,4,28
+Masahiko INOHA,Japan,Defender,19,28
+Shusaku NISHIKAWA,Japan,Goalkeeper,12,28
+Toshihiro AOYAMA,Japan,Midfielder,14,28
+Paul AGUILAR,Mexico,Defender,22,28
+Guillermo OCHOA,Mexico,Goalkeeper,13,28
+MIGUEL VELOSO,Portugal,Midfielder,4,28
+VIEIRINHA,Portugal,Forward,10,28
+Victor FAYZULIN,Russia,Midfielder,20,28
+Igor AKINFEEV,Russia,Goalkeeper,1,28
+PARK Chuyoung,South Korea,Forward,10,28
+KIM Changsoo,South Korea,Defender,2,28
+David SILVA,Spain,Midfielder,21,28
+Sergio RAMOS,Spain,Defender,15,28
+Raul ALBIOL,Spain,Defender,2,28
+Blerim DZEMAILI,Switzerland,Midfielder,15,28
+Reto ZIEGLER,Switzerland,Defender,3,28
+Cristian RODRIGUEZ,Uruguay,Midfielder,7,28
+Alvaro PEREIRA,Uruguay,Midfielder,6,28
+Diego GODIN,Uruguay,Defender,3,28
+Fernando MUSLERA,Uruguay,Goalkeeper,1,28
+Geoff CAMERON,USA,Defender,20,28
+Carl MEDJANI,Algeria,Defender,12,29
+Mohamed ZEMMAMOUCHE,Algeria,Goalkeeper,16,29
+Cedric SI MOHAMMED,Algeria,Goalkeeper,1,29
+Djamel MESBAH,Algeria,Defender,6,29
+Ezequiel LAVEZZI,Argentina,Forward,22,29
+Pablo ZABALETA,Argentina,Defender,4,29
+Mile JEDINAK,Australia,Midfielder,15,29
+Alex WILKINSON,Australia,Defender,22,29
+Nicolas LOMBAERTS,Belgium,Defender,18,29
+Vedad IBISEVIC,Bosnia & Herzegovina,Forward,9,29
+Haris MEDUNJANIN,Bosnia & Herzegovina,Midfielder,18,29
+Sejad SALIHOVIC,Bosnia & Herzegovina,Midfielder,23,29
+FERNANDINHO,Brazil,Midfielder,5,29
+HERNANES,Brazil,Midfielder,18,29
+THIAGO SILVA,Brazil,Defender,3,29
+Jose FUENZALIDA,Chile,Midfielder,19,29
+Teofilo GUTIERREZ,Colombia,Forward,9,29
+Carlos VALDES,Colombia,Defender,23,29
+Abel AGUILAR,Colombia,Midfielder,8,29
+Heiner MORA,Costa Rica,Defender,8,29
+Roy MILLER,Costa Rica,Defender,19,29
+Gordon SCHILDENFELD,Croatia,Defender,13,29
+Danijel SUBASIC,Croatia,Goalkeeper,23,29
+Cristhian NOBOA,Ecuador,Midfielder,6,29
+Gabriel ACHILIER,Ecuador,Defender,21,29
+Leighton BAINES,England,Defender,3,29
+Glen JOHNSON,England,Defender,2,29
+Mathieu VALBUENA,France,Midfielder,8,29
+Lukas PODOLSKI,Germany,Forward,10,29
+Bastian SCHWEINSTEIGER,Germany,Midfielder,7,29
+Per MERTESACKER,Germany,Defender,17,29
+Sulley MUNTARI,Ghana,Midfielder,11,29
+Fatawu DAUDA,Ghana,Goalkeeper,16,29
+Georgios SAMARAS,Greece,Forward,7,29
+Vasileios TOROSIDIS,Greece,Defender,15,29
+Jose CHOLEVAS,Greece,Defender,20,29
+Alexandros TZIOLIS,Greece,Midfielder,6,29
+Wilson PALACIOS,Honduras,Midfielder,8,29
+Boniek GARCIA,Honduras,Midfielder,14,29
+Osman CHAVEZ,Honduras,Defender,2,29
+Alberto AQUILANI,Italy,Midfielder,14,29
+Giorgio CHIELLINI,Italy,Defender,3,29
+Marco PAROLO,Italy,Midfielder,18,29
+Souleymane BAMBA,Ivory Coast,Defender,22,29
+Die SEREY,Ivory Coast,Midfielder,20,29
+Ron VLAAR,Netherlands,Defender,2,29
+Nigel DE JONG,Netherlands,Midfielder,6,29
+Chigozie AGBIM,Nigeria,Goalkeeper,21,29
+CRISTIANO RONALDO,Portugal,Forward,7,29
+VARELA,Portugal,Forward,18,29
+RUBEN AMORIM,Portugal,Midfielder,20,29
+Alexander SAMEDOV,Russia,Forward,19,29
+LEE Keunho,South Korea,Forward,11,29
+JUNG Sungryong,South Korea,Goalkeeper,1,29
+HA Daesung,South Korea,Midfielder,8,29
+Santi CAZORLA,Spain,Midfielder,20,29
+JUANFRAN,Spain,Defender,5,29
+Tranquillo BARNETTA,Switzerland,Midfielder,7,29
+Philippe SENDEROS,Switzerland,Defender,4,29
+Gokhan INLER,Switzerland,Midfielder,8,29
+Valon BEHRAMI,Switzerland,Midfielder,11,29
+Alvaro GONZALEZ,Uruguay,Midfielder,20,29
+Walter GARGANO,Uruguay,Midfielder,5,29
+Jorge FUCILE,Uruguay,Defender,4,29
+Brad GUZAN,USA,Goalkeeper,12,29
+Hassan YEBDA,Algeria,Midfielder,7,30
+Mehdi MOSTEFA,Algeria,Midfielder,22,30
+Medhi LACEN,Algeria,Midfielder,8,30
+Javier MASCHERANO,Argentina,Midfielder,14,30
+Mariano ANDUJAR,Argentina,Goalkeeper,21,30
+Jose Maria BASANTA,Argentina,Defender,23,30
+Mensur MUJDZA,Bosnia & Herzegovina,Midfielder,13,30
+FRED,Brazil,Forward,9,30
+DANTE,Brazil,Defender,13,30
+Benoit ASSOU EKOTTO,Cameroon,Defender,2,30
+Henri BEDIMO,Cameroon,Defender,12,30
+Mauricio PINILLA,Chile,Forward,9,30
+Jean BEAUSEJOUR,Chile,Midfielder,15,30
+Jorge VALDIVIA,Chile,Midfielder,10,30
+Jose ROJAS,Chile,Defender,13,30
+Randall BRENES,Costa Rica,Forward,14,30
+Michael BARRANTES,Costa Rica,Midfielder,11,30
+Johnny ACOSTA,Costa Rica,Defender,2,30
+Christian BOLANOS,Costa Rica,Midfielder,7,30
+Junior DIAZ,Costa Rica,Defender,15,30
+Ognjen VUKOJEVIC,Croatia,Midfielder,8,30
+Luis SARITAMA,Ecuador,Midfielder,19,30
+Rio MAVUBA,France,Midfielder,12,30
+Philipp LAHM,Germany,Midfielder,16,30
+Marvin CHAVEZ,Honduras,Midfielder,10,30
+Masoud SHOJAEI,Iran,Forward,7,30
+Hashem BEIKZADEH,Iran,Midfielder,19,30
+Pejman MONTAZERI,Iran,Defender,15,30
+Ghasem HADADIFAR,Iran,Midfielder,11,30
+Khosro HEYDARI,Iran,Forward,2,30
+Daniele DE ROSSI,Italy,Midfielder,16,30
+Konan YA,Ivory Coast,Midfielder,13,30
+Makoto HASEBE,Japan,Midfielder,17,30
+Oribe PERALTA,Mexico,Forward,19,30
+Klaas Jan HUNTELAAR,Netherlands,Forward,19,30
+Robin VAN PERSIE,Netherlands,Forward,9,30
+Arjen ROBBEN,Netherlands,Forward,11,30
+Wesley SNEIJDER,Netherlands,Midfielder,10,30
+Michel VORM,Netherlands,Goalkeeper,22,30
+Paul VERHAEGH,Netherlands,Defender,12,30
+Austine EJIDE,Nigeria,Goalkeeper,16,30
+HUGO ALMEIDA,Portugal,Forward,9,30
+JOAO PEREIRA,Portugal,Defender,21,30
+Yury ZHIRKOV,Russia,Forward,18,30
+Andrey ESHCHENKO,Russia,Defender,22,30
+Igor DENISOV,Russia,Midfielder,7,30
+Fernando TORRES,Spain,Forward,9,30
+Andres INIESTA,Spain,Midfielder,6,30
+Stephan LICHTSTEINER,Switzerland,Defender,2,30
+Diego BENAGLIO,Switzerland,Goalkeeper,1,30
+Maximiliano PEREIRA,Uruguay,Defender,16,30
+Madjid BOUGUERRA,Algeria,Defender,2,31
+Matt McKAY,Australia,Midfielder,17,31
+DANI ALVES,Brazil,Defender,2,31
+VICTOR,Brazil,Goalkeeper,22,31
+JEFFERSON,Brazil,Goalkeeper,1,31
+Jean MAKOUN,Cameroon,Midfielder,11,31
+Charles ITANDJE,Cameroon,Goalkeeper,16,31
+Claudio BRAVO,Chile,Goalkeeper,1,31
+Michael UMANA,Costa Rica,Defender,4,31
+EDUARDO,Croatia,Forward,22,31
+Oscar BAGUI,Ecuador,Defender,18,31
+Phil JAGIELKA,England,Defender,6,31
+Ben FOSTER,England,Goalkeeper,13,31
+Franck RIBERY,France,Forward,7,31
+Bacary SAGNA,France,Defender,15,31
+Michael ESSIEN,Ghana,Midfielder,5,31
+Carlo COSTLY,Honduras,Forward,13,31
+Maynor FIGUEROA,Honduras,Defender,3,31
+Ahmad ALNAMEH,Iran,Defender,17,31
+Andranik TIMOTIAN,Iran,Midfielder,14,31
+Antonio CASSANO,Italy,Forward,10,31
+THIAGO MOTTA,Italy,Midfielder,5,31
+Yaya TOURE,Ivory Coast,Midfielder,19,31
+Arthur BOKA,Ivory Coast,Defender,3,31
+Yasuyuki KONNO,Japan,Defender,15,31
+Eiji KAWASHIMA,Japan,Goalkeeper,1,31
+Alfredo TALAVERA,Mexico,Goalkeeper,12,31
+Vincent ENYEAMA,Nigeria,Goalkeeper,1,31
+HELDER POSTIGA,Portugal,Forward,23,31
+RAUL MEIRELES,Portugal,Midfielder,16,31
+PEPE,Portugal,Defender,3,31
+EDUARDO,Portugal,Goalkeeper,1,31
+Aleksandr KERZHAKOV,Russia,Forward,11,31
+Pepe REINA,Spain,Goalkeeper,23,31
+Steve VON BERGEN,Switzerland,Defender,5,31
+Martin SILVA,Uruguay,Goalkeeper,23,31
+Chris WONDOLOWSKI,USA,Forward,18,31
+Clint DEMPSEY,USA,Forward,8,31
+Rodrigo PALACIO,Argentina,Forward,18,32
+Agustin ORION,Argentina,Goalkeeper,12,32
+Zvjezdan MISIMOVIC,Bosnia & Herzegovina,Midfielder,10,32
+MAICON,Brazil,Defender,23,32
+MAXWELL,Brazil,Defender,14,32
+Pierre WEBO,Cameroon,Forward,15,32
+Patrick PEMBERTON,Costa Rica,Goalkeeper,18,32
+Darijo SRNA,Croatia,Defender,11,32
+Danijel PRANJIC,Croatia,Defender,3,32
+Segundo CASTILLO,Ecuador,Midfielder,14,32
+Jorge GUAGUA,Ecuador,Defender,2,32
+Rickie LAMBERT,England,Forward,18,32
+Dimitrios SALPINGIDIS,Greece,Forward,14,32
+Vangelis MORAS,Greece,Defender,5,32
+Jerry PALACIOS,Honduras,Midfielder,9,32
+Victor BERNARDEZ,Honduras,Defender,5,32
+Jalal HOSSEINI,Iran,Defender,4,32
+Amirhossein SADEGHI,Iran,Defender,5,32
+Yoshito OKUBO,Japan,Forward,13,32
+Francisco RODRIGUEZ,Mexico,Defender,2,32
+Shola AMEOBI,Nigeria,Forward,23,32
+Peter ODEMWINGIE,Nigeria,Forward,8,32
+BRUNO ALVES,Portugal,Defender,2,32
+BETO,Portugal,Goalkeeper,22,32
+Roman SHIROKOV,Russia,Midfielder,15,32
+Vasily BEREZUTSKIY,Russia,Defender,14,32
+KWAK Taehwi,South Korea,Defender,4,32
+David VILLA,Spain,Forward,7,32
+Xabi ALONSO,Spain,Midfielder,14,32
+Egidio AREVALO,Uruguay,Midfielder,17,32
+Rodrigo MUNOZ,Uruguay,Goalkeeper,12,32
+DaMarcus BEASLEY,USA,Defender,7,32
+Jermaine JONES,USA,Midfielder,13,32
+Kyle BECKERMAN,USA,Midfielder,15,32
+Brad DAVIS,USA,Midfielder,14,32
+Maxi RODRIGUEZ,Argentina,Midfielder,11,33
+Martin DEMICHELIS,Argentina,Defender,15,33
+Hugo CAMPAGNARO,Argentina,Defender,3,33
+Eugene GALEKOVIC,Australia,Goalkeeper,18,33
+Emir SPAHIC,Bosnia & Herzegovina,Defender,4,33
+Asmir AVDUKIC,Bosnia & Herzegovina,Goalkeeper,22,33
+Samuel ETOO,Cameroon,Forward,9,33
+Esteban PAREDES,Chile,Forward,22,33
+Johnny HERRERA,Chile,Goalkeeper,23,33
+Aldo RAMIREZ,Colombia,Midfielder,5,33
+Patrice EVRA,France,Defender,3,33
+Roman WEIDENFELLER,Germany,Goalkeeper,22,33
+Loukas VYNTRA,Greece,Defender,11,33
+Donis ESCOBER,Honduras,Goalkeeper,22,33
+Javad NEKOUNAM,Iran,Midfielder,6,33
+Rahman AHMADI,Iran,Goalkeeper,1,33
+Andrea BARZAGLI,Italy,Defender,15,33
+Kolo TOURE,Ivory Coast,Defender,4,33
+Didier ZOKORA,Ivory Coast,Defender,5,33
+Jose CORONA,Mexico,Goalkeeper,1,33
+Dirk KUYT,Netherlands,Forward,15,33
+Joseph YOBO,Nigeria,Defender,2,33
+RICARDO COSTA,Portugal,Defender,13,33
+Sergey RYZHIKOV,Russia,Goalkeeper,16,33
+Iker CASILLAS,Spain,Goalkeeper,1,33
+Diego LUGANO,Uruguay,Defender,2,33
+Tim CAHILL,Australia,Forward,4,34
+Mark BRESCIANO,Australia,Midfielder,23,34
+JULIO CESAR,Brazil,Goalkeeper,12,34
+Ivica OLIC,Croatia,Forward,18,34
+Walter AYOVI,Ecuador,Midfielder,10,34
+Steven GERRARD,England,Midfielder,4,34
+Theofanis GEKAS,Greece,Forward,17,34
+Boubacar BARRY,Ivory Coast,Goalkeeper,1,34
+Yasuhito ENDO,Japan,Midfielder,7,34
+Carlos SALCIDO,Mexico,Defender,3,34
+Sergey IGNASHEVICH,Russia,Defender,4,34
+Xavi HERNANDEZ,Spain,Midfielder,8,34
+Diego PEREZ,Uruguay,Midfielder,15,34
+Stipe PLETIKOSA,Croatia,Goalkeeper,1,35
+Edison MENDEZ,Ecuador,Midfielder,8,35
+Mickael LANDREAU,France,Goalkeeper,23,35
+Konstantinos KATSOURANIS,Greece,Midfielder,21,35
+Andrea PIRLO,Italy,Midfielder,21,35
+Rafael MARQUEZ,Mexico,Defender,4,35
+Diego FORLAN,Uruguay,Forward,10,35
+Tim HOWARD,USA,Goalkeeper,1,35
+Nick RIMANDO,USA,Goalkeeper,22,35
+Daniel VAN BUYTEN,Belgium,Defender,15,36
+Frank LAMPARD,England,Midfielder,8,36
+Miroslav KLOSE,Germany,Forward,11,36
+Gianluigi BUFFON,Italy,Goalkeeper,1,36
+Didier DROGBA,Ivory Coast,Forward,11,36
+Georgios KARAGOUNIS,Greece,Midfielder,10,37
+Noel VALLADARES,Honduras,Goalkeeper,18,37
+Mario YEPES,Colombia,Defender,3,38
+Faryd MONDRAGON,Colombia,Goalkeeper,22,43

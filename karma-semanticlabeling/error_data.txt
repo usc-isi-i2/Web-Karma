@@ -1,0 +1,48 @@
+Start!!!!!!
+
+
+Actual:http://schema.org/SportsClub http://schema.org/name
+Prediction:http://schema.org/SportsClub http://schema.org/name 1.0
+
+
+Actual:http://schema.org/Player http://schema.org/name
+Prediction:http://schema.org/Player http://schema.org/givenName 0.995
+Prediction:G��bor Kir��ly G��bor Kir��ly 0.86
+Prediction:http://schema.org/Player http://schema.org/name 0.855
+
+
+Actual:http://schema.org/SportsTeam http://schema.org/name
+Prediction:http://schema.org/SportsTeam http://schema.org/name 1.0
+
+
+Actual:http://schema.org/Player http://schema.org/tag
+Prediction:46 46 1.0
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.995
+Prediction:http://schema.org/Player http://schema.org/tag 0.995
+
+
+Actual:http://schema.org/Player http://schema.org/birthDate
+Prediction:Active Active 0.006278773371063241
+Prediction:http://schema.org/SportsTeam http://schema.org/name 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/weight 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/height 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/age 0.006278773371063241
+Prediction:http://schema.org/SportsClub http://schema.org/name 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/name 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/playPosition 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/tag 0.006278773371063241
+Prediction:http://schema.org/League http://schema.org/name 0.006278773371063241
+Prediction:2610 2610 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/goalScored 0.006278773371063241
+Prediction:0 0 0.006278773371063241
+Prediction:6 6 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/familyName 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/givenName 0.006278773371063241
+Prediction:250006566 250006566 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/isCaptain 0.006278773371063241
+Prediction:http://schema.org/Player http://schema.org/birthDate 0.006278773371063241
+
+
+Actual:http://schema.org/Player http://schema.org/playPosition
+Prediction:http://schema.org/Player http://schema.org/playPosition 1.0
+End
