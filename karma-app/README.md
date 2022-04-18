@@ -42,9 +42,9 @@ You can set maximum heap size for karma on the main window. Once you change it, 
         ```
         brew doctor
         brew update
-        brew tap caskroom/cask
-        brew cask install xquartz
-        brew install wine     
+        brew tap homebrew/cask
+        brew install --cask xquartz
+        brew install --cask wine-stable    
         ```
       * if building on Linux: `sudo apt-get install wine`
       
