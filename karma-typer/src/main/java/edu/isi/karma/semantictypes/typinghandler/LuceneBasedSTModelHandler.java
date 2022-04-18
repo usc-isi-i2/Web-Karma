@@ -57,7 +57,7 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 	 *            True label for the list of example.
 	 * @param examples
 	 *            List of example strings.
-     * @return True if success, else False
+	 * @return True if success, else False
 	 */
 	@Override
 	public synchronized boolean addType(String label, List<String> examples) {
@@ -348,7 +348,6 @@ public class LuceneBasedSTModelHandler implements ISemanticTypeModelHandler {
 		allowed.add(",");
 		allowed.add(";");
 		allowed.add("?");
-		allowed.add("|"); // adding pipe
 		return allowed;
 	}
 

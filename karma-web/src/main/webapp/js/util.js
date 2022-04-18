@@ -357,7 +357,6 @@ function getSuggestedSemanticTypes(worksheetId, columnId, classUri) {
 	info["newInfo"] = JSON.stringify(newInfo);
 	showLoading(info["worksheetId"]);
 	var result;
-	alert("info="+info["command"]+", "+info["workspaceId"]+", "+info["isUserInteraction"]+", "+info["execute"]+", "+info["classUri"]);
 	var returned = $.ajax({
 		url: "RequestController",
 		type: "POST",
