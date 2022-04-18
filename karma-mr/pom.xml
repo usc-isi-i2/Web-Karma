@@ -518,7 +518,7 @@
 			<groupId>org.apache.hive</groupId>
 			<artifactId>hive-exec</artifactId>
 			<version>${hive.version}</version>
-		</dependency>  
+		</dependency>
 		<dependency>
 		  <groupId>org.elasticsearch</groupId>
 		  <artifactId>elasticsearch-hadoop-hive</artifactId>

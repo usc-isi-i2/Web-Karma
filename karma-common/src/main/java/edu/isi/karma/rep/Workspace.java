@@ -88,6 +88,7 @@ public class Workspace extends Entity {
 	 */
 	protected Workspace(String id, String contextId) {
 		super(id);
+		logger.info("LuceneWorkspace");
 		commandPreferences = new CommandPreferences(this.getId(), contextId);
 		commandPreferencesId=this.getId();
 		this.contextId = contextId;
@@ -96,6 +97,7 @@ public class Workspace extends Entity {
 	
 	protected Workspace(String id, String cachedPreferencesId, String contextId) {
 		super(id);
+		logger.info("HybridWorkspace");
 		this.commandPreferences = new CommandPreferences(cachedPreferencesId, contextId);
 		this.commandPreferencesId = cachedPreferencesId;
 		this.contextId = contextId;

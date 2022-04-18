@@ -2,6 +2,8 @@ package edu.isi.karma.semantictypes.tfIdf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -81,10 +83,27 @@ public class Indexer {
 		 */
 		
 		Document doc = new Document();
-		for(IndexableField singleContent: existingContent){
-			doc.add(singleContent);
+
+//		for(IndexableField singleContent: existingContent){
+//			doc.add(singleContent);
+//		}
+		String existingContentSt = existingContent[0].stringValue();
+		String existingContentBody =  existingContentSt.split("[|]")[1];
+		String columnQueue = existingContentSt.split("[|]")[0];
+		List<String> columnNames = Arrays.asList(columnQueue.split(";"));
+		if(columnNames.size() > 10)
+		{
+			columnNames.remove(columnNames.size()-1);
+			columnQueue ="";
+			for(String name : columnNames)
+			{
+				columnQueue = columnQueue+ ";" + name  ;
+			}
+			columnQueue = columnQueue.substring(1);
 		}
-		doc.add(new TextField(CONTENT_FIELD_NAME, newContent, Field.Store.YES));
+		columnQueue = newContent.split("[|]")[0] + ";"+columnQueue+"|";
+		String mergedContent = columnQueue+newContent.split("[|]")[1]+" "+existingContentBody.substring(0,existingContentBody.length()/2);
+		doc.add(new TextField(CONTENT_FIELD_NAME, mergedContent, Field.Store.YES));
 		doc.add(new StringField(LABEL_FIELD_NAME, label, Field.Store.YES));
 		indexWriter.updateDocument(new Term(LABEL_FIELD_NAME, label), doc);
 	}
