@@ -47,33 +47,39 @@ wget https://github.com/alseambusher/karma-app-deps/archive/master.zip
 unzip master.zip
 mv karma-app-deps-master/*.tar.gz .
 rm -rf karma-app-deps-master master.zip
+
 # download tomcat binary
-wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.72/bin/apache-tomcat-8.5.72.zip
+wget http://mirror.cc.columbia.edu/pub/software/apache/tomcat/tomcat-8/v8.5.30/bin/apache-tomcat-8.5.30.zip
 unzip apache-tomcat-*.zip
 rm apache-tomcat-*.zip
+
 mv apache-tomcat* tomcat
 rm -rf tomcat/webapps/*
 mv *.war tomcat/webapps
 chmod +x tomcat/bin/*.sh
+
 cp $CURRENT/conf/* tomcat/conf/
 
 rm -rf $CURRENT/desktop/app/tomcat
 mv tomcat $CURRENT/desktop/app/
+
 
 cd $CURRENT/desktop/app/tomcat/webapps
 mkdir ROOT
 mv ROOT.war ROOT/ROOT.zip
 cd ROOT
 unzip ROOT.zip
+
 cd $CURRENT/desktop
 npm install
 npm run prerelease
 cd app
+
 tar -xzvf $CURRENT/target/jre*windows*.tar.gz
 electron-packager . --platform=win32 --arch=x64 --icon=../resources/icons/karma.ico --overwrite
 rm -rf jre*
 tar -xzvf $CURRENT/target/jre*macosx*.tar.gz
-electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite
+electron-packager . --platform=darwin --arch=x64 --icon=../resources/icons/karma.icns --overwrite 
 rm -rf jre*
 tar -xzvf $CURRENT/target/jre*linux*.tar.gz
 electron-packager . --platform=linux --arch=x64 --icon=../resources/icons/karma.png --overwrite
@@ -82,11 +88,13 @@ rm -rf jre*
 cp -rf Karma-darwin* $CURRENT/target/Karma-Mac
 cp -rf Karma-linux* $CURRENT/target/Karma-Linux
 cp -rf Karma-win* $CURRENT/target/Karma-Windows
+
 set +e
 rm -rf Karma-*
 
 cd $CURRENT/target
 rm *.tar.gz
+
 set -e
 #put our license
 for build_folder in `ls |grep Karma`
@@ -94,6 +102,7 @@ do
 	mv $build_folder/LICENSE $build_folder/LICENSE.electron.packager
 	cp $CURRENT/../LICENSE.txt $build_folder/
 done
+
 if [ "$1" == "--archive" ]
 then
   for i in `ls |grep 'Karma-*'`
