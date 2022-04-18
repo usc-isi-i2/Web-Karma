@@ -169,13 +169,8 @@ public class SemanticTypeUtil {
 								break;
 							}
 						}
-						String currentColumnName = 	"";
-						if(currentColumnPath!=null)
-						{
-							currentColumnName = currentColumnPath.getFirst().getColumnName();
-						}
+	
 						ArrayList<String> examples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet, currentColumnPath, sel);
-						examples.add(0,currentColumnName+"|");
 						ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
 						for(SemanticType newType : newTypes) {
 							String label = newType.getModelLabelString();
@@ -228,10 +223,9 @@ public class SemanticTypeUtil {
 	public SemanticTypeColumnModel predictColumnSemanticType(Workspace workspace, Worksheet worksheet, HNodePath path, int numSuggestions, SuperSelection sel) {
 		ArrayList<String> trainingExamples = SemanticTypeUtil.getTrainingExamples(workspace, worksheet,
 				path, sel);
-		trainingExamples.add(0,path.getFirst().getColumnName());
 		if (trainingExamples.isEmpty())
 			return null;
-		logger.debug("examples: "+trainingExamples + " " + numSuggestions);
+
 		ISemanticTypeModelHandler modelHandler = workspace.getSemanticTypeModelHandler();
 		OntologyManager ontologyManager = workspace.getOntologyManager();
 		
@@ -285,7 +279,7 @@ public class SemanticTypeUtil {
 		return new SemanticTypeColumnModel(result);
 	}
 
-	public List<SemanticType> getSuggestedTypes(OntologyManager ontologyManager,
+	public List<SemanticType> getSuggestedTypes(OntologyManager ontologyManager, 
 			ColumnNode columnNode, SemanticTypeColumnModel columnModel) {
 		
 		ArrayList<SemanticType> suggestedSemanticTypes = new ArrayList<>();
