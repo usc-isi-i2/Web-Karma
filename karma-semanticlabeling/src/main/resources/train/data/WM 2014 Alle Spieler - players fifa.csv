@@ -1,0 +1,737 @@
+Player id,Player,Position,Number,Club,Club (country),D.O.B,Age,Height (cm),Country,Caps,International goals,Plays in home country?
+336722,Alan PULIDO,Forward,11,Tigres UANL,Mexico,08.03.1991,23,176,Mexico,5,4,TRUE
+368902,Adam TAGGART,Forward,9,Newcastle United Jets FC,Australia,02.06.1993,21,172,Australia,4,3,TRUE
+362641,Reza GHOOCHANNEJAD,Forward,16,Charlton Athletic FC,England,20.09.1987,26,181,Iran,13,9,FALSE
+314197,NEYMAR,Forward,10,FC Barcelona,Spain,05.02.1992,22,175,Brazil,48,31,FALSE
+212306,Didier DROGBA,Forward,11,Galatasaray SK,Turkey,11.03.1978,36,180,Ivory Coast,100,61,FALSE
+229884,David VILLA,Forward,7,Atletico Madrid,Spain,03.12.1981,32,175,Spain,95,56,TRUE
+305372,Abel HERNANDEZ,Forward,8,US Citta di Palermo,Italy,08.08.1990,23,186,Uruguay,12,7,FALSE
+228599,Javier HERNANDEZ,Forward,14,Manchester United FC,England,01.06.1988,26,175,Mexico,61,35,FALSE
+300409,Edin DZEKO,Forward,11,Manchester City FC,England,17.03.1986,28,192,Bosnia & Herzegovina,62,35,FALSE
+184615,Klaas Jan HUNTELAAR,Forward,19,FC Schalke 04,Germany,12.08.1983,30,187,Netherlands,61,34,FALSE
+271550,Gonzalo HIGUAIN,Forward,9,SSC Napoli,Italy,10.12.1987,26,184,Argentina,36,20,FALSE
+227851,Oribe PERALTA,Forward,19,Club Santos Laguna,Mexico,12.01.1984,30,177,Mexico,27,15,TRUE
+354859,Islam SLIMANI,Forward,13,Sporting CP,Portugal,18.06.1988,26,188,Algeria,19,10,FALSE
+182206,Miroslav KLOSE,Forward,11,SS Lazio,Italy,09.06.1978,36,182,Germany,131,68,FALSE
+217315,Robin VAN PERSIE,Forward,9,Manchester United FC,England,06.08.1983,30,186,Netherlands,84,43,FALSE
+286278,Shinji OKAZAKI,Forward,9,FSV Mainz 05,Germany,16.04.1986,28,174,Japan,75,38,FALSE
+270775,Luis SUAREZ,Forward,9,Liverpool FC,England,24.01.1987,27,181,Uruguay,77,39,FALSE
+233952,FRED,Forward,9,Fluminense FC,Brazil,03.10.1983,30,186,Brazil,32,16,TRUE
+312316,Eric CHOUPO MOTING,Forward,13,FSV Mainz 05,Germany,23.03.1989,25,190,Cameroon,26,13,FALSE
+356411,Fabian SCHAER,Defender,22,FC Basel,Switzerland,20.12.1991,22,186,Switzerland,6,3,TRUE
+338673,Uche NWOFOR,Forward,19,SC Heerenveen,Netherlands,17.09.1991,22,177,Nigeria,6,3,FALSE
+373224,Rickie LAMBERT,Forward,18,Southampton FC,England,16.02.1982,32,188,England,4,2,TRUE
+379894,Miiko ALBORNOZ,Defender,3,Malmo FF,Sweden,30.11.1990,23,180,Chile,2,1,FALSE
+208353,Asamoah GYAN,Forward,3,Al Ain FC,United Arab Emirates,22.11.1985,28,186,Ghana,77,38,FALSE
+296994,El Arabi SOUDANI,Forward,15,GNK Dinamo Zagreb,Croatia,25.11.1987,26,177,Algeria,21,10,FALSE
+339508,Chris WONDOLOWSKI,Forward,18,San Jose Earthquakes,USA,28.01.1983,31,182,USA,19,9,TRUE
+213001,Tim CAHILL,Forward,4,New York Red Bulls,USA,06.12.1979,34,180,Australia,68,32,FALSE
+214384,EDUARDO,Forward,22,Shakhtar Donetsk,Ukraine,25.02.1983,31,177,Croatia,62,29,FALSE
+170667,Samuel ETOO,Forward,9,Chelsea FC,England,10.03.1981,33,181,Cameroon,117,54,FALSE
+271414,Carlo COSTLY,Forward,13,Real Espana,Honduras,18.07.1982,31,190,Honduras,68,31,TRUE
+275096,Yoichiro KAKITANI,Forward,11,Cerezo Osaka,Japan,03.01.1990,24,177,Japan,11,5,TRUE
+270301,Eduardo VARGAS,Forward,11,Valencia CF,Spain,20.11.1989,24,175,Chile,29,13,FALSE
+201200,CRISTIANO RONALDO,Forward,7,Real Madrid CF,Spain,05.02.1985,29,185,Portugal,110,49,FALSE
+323623,Jerry BENGTSON,Forward,11,New England Revolution,USA,08.04.1987,27,187,Honduras,43,19,FALSE
+229397,Lionel MESSI,Forward,10,FC Barcelona,Spain,24.06.1987,26,169,Argentina,84,37,FALSE
+235097,Mubarak WAKASO,Midfielder,22,FC Rubin Kazan,Russia,25.07.1990,23,171,Ghana,16,7,FALSE
+356399,Josip DRMIC,Forward,19,1. FC Nuernberg,Germany,08.08.1992,21,182,Switzerland,7,3,FALSE
+196842,Wayne ROONEY,Forward,10,Manchester United FC,England,24.10.1985,28,176,England,90,38,TRUE
+228528,Sergio AGUERO,Forward,20,Manchester City FC,England,02.06.1988,26,172,Argentina,50,21,FALSE
+309716,Teofilo GUTIERREZ,Forward,9,CA River Plate,Argentina,17.05.1985,29,180,Columbia,29,12,FALSE
+301059,Mario BALOTELLI,Forward,9,AC Milan,Italy,12.08.1990,23,189,Italy,29,12,TRUE
+364763,Emmanuel EMENIKE,Forward,9,Fenerbahce SK,Turkey,10.05.1987,27,182,Nigeria,22,9,FALSE
+196789,Lukas PODOLSKI,Forward,10,Arsenal FC,England,04.06.1985,29,180,Germany,113,46,FALSE
+187203,HELDER POSTIGA,Forward,23,SS Lazio,Italy,02.08.1982,31,182,Portugal,67,27,FALSE
+367261,Nabil GHILAS,Forward,9,FC Porto,Portugal,20.04.1990,24,183,Algeria,5,2,FALSE
+207761,PARK Chuyoung,Forward,10,Watford FC,England,10.07.1985,28,183,South Korea,62,24,FALSE
+306548,Andre SCHUERRLE,Forward,9,Chelsea FC,England,06.11.1990,23,184,Germany,32,12,FALSE
+275136,Yuya OSAKO,Forward,18,TSV 1860 Muenchen,Germany,18.05.1990,24,182,Japan,8,3,FALSE
+300411,Vedad IBISEVIC,Forward,9,VfB Stuttgart,Germany,06.08.1984,29,189,Bosnia & Herzegovina,55,20,FALSE
+233500,Keisuke HONDA,Forward,4,AC Milan,Italy,13.06.1986,28,182,Japan,55,20,FALSE
+274034,Danny WELBECK,Forward,11,Manchester United FC,England,26.11.1990,23,184,England,22,8,TRUE
+306532,Daniel STURRIDGE,Forward,9,Liverpool FC,England,01.09.1989,24,179,England,11,4,TRUE
+319470,Mario GAVRANOVIC,Forward,17,FC Zuerich,Switzerland,24.11.1989,24,175,Switzerland,11,4,TRUE
+318601,Pedro RODRIGUEZ,Forward,11,FC Barcelona,Spain,28.07.1987,26,169,Spain,39,14,TRUE
+319311,Marco FABIAN,Midfielder,8,Cruz Azul FC,Mexico,21.07.1989,24,171,Mexico,14,5,TRUE
+321722,Thomas MUELLER,Forward,13,FC Bayern Muenchen,Germany,13.09.1989,24,186,Germany,48,17,TRUE
+214135,Pierre WEBO,Forward,15,Fenerbahce SK,Turkey,20.01.1982,32,180,Cameroon,54,19,FALSE
+352394,Marco REUS,Forward,21,Borussia Dortmund,Germany,31.05.1989,25,180,Germany,20,7,TRUE
+207851,Clint DEMPSEY,Forward,8,Seattle Sounders FC,USA,09.03.1983,31,185,USA,103,36,TRUE
+353118,Wilfried BONY,Forward,12,Swansea City AFC,England,10.12.1988,25,182,Ivory Coast,23,8,FALSE
+230517,Theofanis GEKAS,Forward,17,Konyaspor,Turkey,23.05.1980,34,179,Greece,71,24,FALSE
+183864,Fernando TORRES,Forward,9,Chelsea FC,England,20.03.1984,30,186,Spain,107,36,FALSE
+216970,Salomon KALOU,Forward,8,Lille OSC,France,05.08.1985,28,175,Ivory Coast,66,22,FALSE
+228627,Alexis SANCHEZ,Forward,7,FC Barcelona,Spain,19.12.1988,25,169,Chile,66,22,FALSE
+291393,KOO Jacheol,Forward,13,FSV Mainz 05,Germany,27.02.1989,25,182,South Korea,36,12,FALSE
+298681,Jeremain LENS,Forward,17,FC Dynamo Kyiv,Ukraine,24.11.1987,26,178,Netherlands,21,7,FALSE
+229506,Cristhian STUANI,Forward,11,RCD Espanyol,Spain,12.10.1986,27,186,Uruguay,9,3,FALSE
+373400,Enner VALENCIA,Forward,13,CF Pachuca,Mexico,04.11.1989,24,179,Ecuador,9,3,FALSE
+186455,Shola AMEOBI,Forward,23,Newcastle United FC,England,12.10.1981,32,188,Nigeria,6,2,FALSE
+218306,WILLIAN,Midfielder,19,Chelsea FC,England,09.08.1988,25,176,Brazil,6,2,FALSE
+358891,Oleg SHATOV,Midfielder,17,FC Zenit St. Petersburg,Russia,29.07.1990,23,176,Russia,6,2,TRUE
+306900,Okechukwu UCHEBO,Forward,20,Cercle Brugge,Belgium,03.02.1990,24,194,Nigeria,3,1,FALSE
+336435,Antoine GRIEZMANN,Forward,11,Real Sociedad,Spain,21.03.1991,23,175,France,3,1,FALSE
+189259,Diego FORLAN,Forward,10,Cerezo Osaka,Japan,19.05.1979,35,181,Uruguay,109,36,FALSE
+267834,Edinson CAVANI,Forward,21,Paris Saint-Germain FC,France,14.02.1987,27,188,Uruguay,61,20,FALSE
+268596,Shinji KAGAWA,Forward,10,Manchester United FC,England,17.03.1989,25,172,Japan,56,18,FALSE
+214410,HUGO ALMEIDA,Forward,9,Besiktas JK,Turkey,23.05.1984,30,193,Portugal,54,17,FALSE
+305036,Mesut OEZIL,Midfielder,8,Arsenal FC,England,15.10.1988,25,180,Germany,54,17,FALSE
+186808,Aleksandr KERZHAKOV,Forward,11,FC Zenit St. Petersburg,Russia,27.11.1982,31,175,Russia,80,25,TRUE
+217172,JO,Forward,21,Atletico Mineiro,Brazil,20.03.1987,27,191,Brazil,16,5,TRUE
+358112,Romelu LUKAKU,Forward,9,Everton FC,England,13.05.1993,21,190,Belgium,29,9,FALSE
+216071,Zvjezdan MISIMOVIC,Midfielder,10,Guizhou Renhe FC,China,05.06.1982,32,180,Bosnia & Herzegovina,81,25,FALSE
+196812,Ashkan DEJAGAH,Forward,21,Fulham FC,England,05.07.1986,27,182,Iran,13,4,FALSE
+228715,Felipe CAICEDO,Forward,11,Al Jazira SCC,United Arab Emirates,05.09.1988,25,183,Ecuador,49,15,FALSE
+270144,Marcos URENA,Forward,21,Kuban Krasnodar,Russia,05.03.1990,24,179,Costa Rica,23,7,FALSE
+349572,Jaimen AYOVI,Forward,17,Club Tijuana,Mexico,21.02.1988,26,186,Ecuador,30,9,FALSE
+312868,OSCAR,Midfielder,11,Chelsea FC,England,09.09.1991,22,181,Brazil,30,9,FALSE
+349512,Carlos BACCA,Forward,17,Sevilla FC,Spain,08.09.1986,27,181,Columbia,10,3,FALSE
+366573,Saphir TAIDER,Midfielder,19,FC Internazionale,Italy,29.02.1992,22,179,Algeria,10,3,FALSE
+184616,Arjen ROBBEN,Forward,11,FC Bayern Muenchen,Germany,23.01.1984,30,180,Netherlands,74,22,FALSE
+313832,Jackson MARTINEZ,Forward,21,FC Porto,Portugal,03.10.1986,27,186,Columbia,27,8,FALSE
+330689,JI Dongwon,Midfielder,19,FC Augsburg,Germany,28.05.1991,23,186,South Korea,27,8,FALSE
+238072,Jozy ALTIDORE,Forward,17,Sunderland AFC,England,06.11.1989,24,185,USA,68,20,FALSE
+313874,Esteban PAREDES,Forward,22,CSD Colo-Colo,Chile,01.08.1980,33,179,Chile,34,10,TRUE
+297383,Roman SHIROKOV,Midfielder,15,FC Krasnodar,Russia,06.07.1981,32,183,Russia,41,12,TRUE
+297103,Karim BENZEMA,Forward,10,Real Madrid CF,Spain,19.12.1987,26,185,France,65,19,FALSE
+297839,Konan YA,Midfielder,13,Hannover 96,Germany,22.05.1984,30,174,Ivory Coast,24,7,FALSE
+268149,LEE Keunho,Forward,11,Sangju Sangmu FC,South Korea,11.04.1985,29,177,South Korea,63,18,TRUE
+274090,Victor MOSES,Forward,11,Liverpool FC,England,12.12.1990,23,177,Nigeria,21,6,FALSE
+184291,Maxi RODRIGUEZ,Midfielder,11,CA Newells Old Boys,Argentina,02.01.1981,33,180,Argentina,53,15,TRUE
+185385,Frank LAMPARD,Midfielder,8,Chelsea FC,England,20.06.1978,36,181,England,103,29,TRUE
+307529,Joel CAMPBELL,Forward,9,Olympiacos Piraeus FC,Greece,26.06.1992,21,178,Costa Rica,32,9,FALSE
+177927,Antonio CASSANO,Forward,10,Parma FC,Italy,12.07.1982,31,175,Italy,36,10,TRUE
+319358,Sofiane FEGHOULI,Forward,10,Valencia CF,Spain,26.12.1989,24,177,Algeria,18,5,FALSE
+267811,Juan MATA,Forward,13,Manchester United FC,England,28.04.1988,26,171,Spain,33,9,FALSE
+321653,Xherdan SHAQIRI,Midfielder,23,FC Bayern Muenchen,Germany,10.10.1991,22,169,Switzerland,33,9,FALSE
+185641,Javad NEKOUNAM,Midfielder,6,Kuwait SC,Kuwait,07.09.1980,33,188,Iran,137,37,FALSE
+215002,Wesley SNEIJDER,Midfielder,10,Galatasaray SK,Turkey,09.06.1984,30,171,Netherlands,98,26,FALSE
+375518,Mario MANDZUKIC,Forward,17,FC Bayern Muenchen,Germany,21.05.1986,28,188,Croatia,49,13,FALSE
+318172,HULK,Forward,7,FC Zenit St. Petersburg,Russia,25.07.1986,27,179,Brazil,34,9,FALSE
+183000,Sulley MUNTARI,Midfielder,11,AC Milan,Italy,27.08.1984,29,179,Ghana,80,21,FALSE
+318768,Konstantinos MITROGLOU,Forward,9,Fulham FC,England,12.03.1988,26,188,Greece,31,8,FALSE
+200176,David SILVA,Midfielder,21,Manchester City FC,England,08.01.1986,28,170,Spain,79,20,FALSE
+290186,GERVINHO,Forward,10,AS Roma,Italy,27.05.1987,27,179,Ivory Coast,52,13,FALSE
+302539,Alan DZAGOEV,Midfielder,10,CSKA Moscow,Russia,17.06.1990,24,178,Russia,32,8,TRUE
+309316,Mario GOETZE,Forward,19,FC Bayern Muenchen,Germany,03.06.1992,22,176,Germany,28,7,TRUE
+307849,SON Heungmin,Midfielder,9,Bayer 04 Leverkusen,Germany,08.07.1992,21,183,South Korea,24,6,FALSE
+367393,Majeed WARIS,Forward,18,Valenciennes FC,France,19.09.1991,22,172,Ghana,12,3,FALSE
+375459,Fidel MARTINEZ,Midfielder,20,Club Tijuana,Mexico,15.02.1990,24,176,Ecuador,8,2,FALSE
+367347,Aron JOHANNSSON,Forward,9,AZ Alkmaar,Netherlands,10.11.1990,23,182,USA,8,2,FALSE
+356403,Izet HAJROVIC,Midfielder,20,Galatasaray SK,Turkey,04.08.1991,22,177,Bosnia & Herzegovina,8,2,FALSE
+275112,Manabu SAITO,Forward,20,Yokohama F-Marinos,Japan,04.04.1990,24,169,Japan,4,1,TRUE
+319438,Georginio WIJNALDUM,Midfielder,20,PSV Eindhoven,Netherlands,11.11.1990,23,175,Netherlands,4,1,TRUE
+359235,Lorenzo INSIGNE,Forward,22,SSC Napoli,Italy,04.06.1991,23,163,Italy,4,1,TRUE
+379972,Acquah AFRIYIE,Midfielder,6,Parma FC,Italy,01.05.1992,22,162,Ghana,4,1,FALSE
+369058,Ante REBIC,Forward,16,ACF Fiorentina,Italy,21.09.1993,20,185,Croatia,4,1,FALSE
+217313,Dirk KUYT,Forward,15,Fenerbahce SK,Turkey,22.07.1980,33,184,Netherlands,98,24,FALSE
+358015,Olivier GIROUD,Forward,9,Arsenal FC,England,30.09.1986,27,192,France,29,7,FALSE
+358048,Alexander KOKORIN,Forward,9,FC Dynamo Moscow,Russia,19.03.1991,23,182,Russia,21,5,TRUE
+196752,Bastian SCHWEINSTEIGER,Midfielder,7,FC Bayern Muenchen,Germany,01.08.1984,29,183,Germany,101,23,TRUE
+358120,Kevin DE BRUYNE,Midfielder,7,VfL Wolfsburg,Germany,28.06.1991,22,181,Belgium,22,5,FALSE
+330659,Karim ANSARI FARD,Forward,10,Tractor Sazi Tabriz FC,Iran,03.04.1990,24,185,Iran,40,9,TRUE
+300235,Victor FAYZULIN,Midfielder,20,FC Zenit St. Petersburg,Russia,22.04.1986,28,176,Russia,18,4,TRUE
+213953,Jerry PALACIOS,Midfielder,9,LD Alajuelense,Costa Rica,13.05.1982,32,181,Honduras,23,5,FALSE
+356198,Alex OXLADE CHAMBERLAIN,Midfielder,15,Arsenal FC,England,15.08.1993,20,180,England,14,3,TRUE
+236530,Celso BORGES,Midfielder,5,AIK Solna,Sweden,27.05.1988,26,184,Costa Rica,61,13,FALSE
+214876,Bryan RUIZ,Forward,10,PSV Eindhoven,Netherlands,18.08.1985,28,187,Costa Rica,62,13,FALSE
+299878,Loic REMY,Forward,20,Newcastle United FC,England,02.01.1987,27,185,France,24,5,FALSE
+234551,Giovani DOS SANTOS,Forward,10,Villarreal CF,Spain,11.05.1989,25,179,Mexico,73,15,FALSE
+237058,Randall BRENES,Forward,14,CSD Cartagines,Costa Rica,13.08.1983,30,170,Costa Rica,39,8,TRUE
+290452,Jefferson MONTERO,Midfielder,7,CA Monarcas Morelia,Mexico,01.09.1989,24,170,Ecuador,39,8,FALSE
+290903,Kevin MIRALLAS,Forward,11,Everton FC,England,05.10.1987,26,179,Belgium,44,9,FALSE
+266800,Angel DI MARIA,Midfielder,7,Real Madrid CF,Spain,14.02.1988,26,178,Argentina,45,9,FALSE
+362727,PAULINHO,Midfielder,8,Tottenham Hotspur FC,England,25.07.1988,25,181,Brazil,25,5,FALSE
+306954,Jordi ALBA,Defender,18,FC Barcelona,Spain,21.03.1989,25,170,Spain,25,5,TRUE
+367388,Paul POGBA,Midfielder,19,Juventus FC,Italy,15.03.1993,21,192,France,10,2,FALSE
+359217,Marco VERRATTI,Midfielder,23,Paris Saint-Germain FC,France,05.11.1992,21,168,Italy,5,1,FALSE
+379886,Alireza JAHAN BAKHSH,Forward,9,NEC Nijmegen,Netherlands,11.08.1993,20,181,Iran,5,1,FALSE
+187258,Ivica OLIC,Forward,18,VfL Wolfsburg,Germany,14.09.1979,34,183,Croatia,91,18,FALSE
+248373,Franck RIBERY,Forward,7,FC Bayern Muenchen,Germany,07.04.1983,31,175,France,81,16,FALSE
+198106,Yaya TOURE,Midfielder,19,Manchester City FC,England,13.05.1983,31,189,Ivory Coast,82,16,FALSE
+254167,NANI,Forward,17,Manchester United FC,England,17.11.1986,27,175,Portugal,73,14,FALSE
+214961,Steven GERRARD,Midfielder,4,Liverpool FC,England,30.05.1980,34,185,England,110,21,TRUE
+269058,James RODRIGUEZ,Midfielder,10,AS Monaco,France,12.07.1991,22,180,Columbia,21,4,FALSE
+210704,Darijo SRNA,Defender,11,Shakhtar Donetsk,Ukraine,01.05.1982,32,182,Croatia,111,21,FALSE
+216435,Alexander SAMEDOV,Forward,19,FC Lokomotiv Moscow,Russia,19.07.1984,29,178,Russia,16,3,TRUE
+254166,VARELA,Forward,18,FC Porto,Portugal,02.02.1985,29,180,Portugal,22,4,TRUE
+355997,Christian ATSU,Midfielder,7,Vitesse Arnheim,Netherlands,10.01.1992,22,165,Ghana,22,4,FALSE
+178299,Mark BRESCIANO,Midfielder,23,Al Gharafa SC,Qatar,11.02.1980,34,182,Australia,73,13,FALSE
+297705,Santi CAZORLA,Midfielder,20,Arsenal FC,England,13.12.1984,29,169,Spain,63,11,FALSE
+356731,Raul JIMENEZ,Forward,9,Club America,Mexico,05.05.1991,23,186,Mexico,23,4,TRUE
+215513,Dimitrios SALPINGIDIS,Forward,14,PAOK FC,Greece,18.08.1981,32,171,Greece,75,13,TRUE
+214228,Peter ODEMWINGIE,Forward,8,Stoke City FC,England,15.07.1981,32,181,Nigeria,60,10,FALSE
+299198,Miralem PJANIC,Midfielder,8,AS Roma,Italy,02.04.1990,24,180,Bosnia & Herzegovina,48,8,FALSE
+358024,Ioannis FETFATZIDIS,Forward,18,Genoa CFC,Italy,21.12.1990,23,164,Greece,18,3,FALSE
+367913,DANTE,Defender,13,FC Bayern Muenchen,Germany,18.10.1983,30,189,Brazil,12,2,FALSE
+196897,Kevin Prince BOATENG,Forward,9,FC Schalke 04,Germany,06.03.1987,27,182,Ghana,12,2,FALSE
+371044,Miguel LAYUN,Defender,7,Club America,Mexico,25.06.1988,25,178,Mexico,12,2,TRUE
+353235,Jordan AYEW,Forward,13,FC Sochaux-Montbliard,France,11.09.1991,22,160,Ghana,12,2,FALSE
+208016,FERNANDINHO,Midfielder,5,Manchester City FC,England,04.05.1985,29,179,Brazil,6,1,FALSE
+316997,Enzo PEREZ,Midfielder,8,SL Benfica,Portugal,22.02.1986,28,177,Argentina,6,1,FALSE
+356407,Michael LANG,Defender,6,Grasshopper Club,Switzerland,08.02.1991,23,185,Switzerland,6,1,TRUE
+178842,Edison MENDEZ,Midfielder,8,Independiente Santa Fe,Columbia,16.03.1979,35,175,Ecuador,110,18,FALSE
+290902,Marouane FELLAINI,Midfielder,8,Manchester United FC,England,22.11.1987,26,194,Belgium,50,8,FALSE
+201787,Mauricio PINILLA,Forward,9,Cagliari Calcio,Italy,04.02.1984,30,185,Chile,25,4,FALSE
+209119,Daniele DE ROSSI,Midfielder,16,AS Roma,Italy,24.07.1983,30,182,Italy,94,15,TRUE
+175524,Michael ESSIEN,Midfielder,5,AC Milan,Italy,03.12.1982,31,180,Ghana,57,9,FALSE
+312672,Mix DISKERUD,Midfielder,10,Rosenborg BK,Norway,02.10.1990,23,182,USA,19,3,FALSE
+316117,Nikica JELAVIC,Forward,9,Hull City FC,England,27.08.1985,28,187,Croatia,32,5,FALSE
+311558,Granit XHAKA,Midfielder,10,Borussia Moenchengladbach,Germany,27.09.1992,21,183,Switzerland,26,4,FALSE
+217117,Carlos VALDES,Defender,23,CA San Lorenzo de Almagro,Argentina,22.05.1985,29,189,Columbia,13,2,FALSE
+297106,Mathieu VALBUENA,Midfielder,8,Olympique Marseille,France,28.09.1984,29,167,France,33,5,TRUE
+267543,Arturo VIDAL,Midfielder,8,Juventus FC,Italy,22.05.1987,27,178,Chile,53,8,FALSE
+358108,Nacer CHADLI,Midfielder,22,Tottenham Hotspur FC,England,02.08.1989,24,187,Belgium,20,3,FALSE
+274946,Emmanuel AGYEMANG BADU,Midfielder,8,Udinese Calcio,Italy,02.12.1990,23,173,Ghana,47,7,FALSE
+175498,DaMarcus BEASLEY,Defender,7,Puebla FC,Mexico,24.05.1982,32,170,USA,115,17,FALSE
+200179,Cesc FABREGAS,Midfielder,10,FC Barcelona,Spain,04.05.1987,27,175,Spain,88,13,TRUE
+296633,Ivan RAKITIC,Midfielder,7,Sevilla FC,Spain,10.03.1988,26,184,Croatia,61,9,FALSE
+212410,KWAK Taehwi,Defender,4,Al Hilal FC,Saudi Arabia,08.07.1981,32,185,South Korea,34,5,FALSE
+215623,Alberto AQUILANI,Midfielder,14,ACF Fiorentina,Italy,07.07.1984,29,184,Italy,34,5,TRUE
+233531,Michael BRADLEY,Midfielder,4,Toronto FC,Canada,31.07.1987,26,185,USA,84,12,FALSE
+233167,Haris MEDUNJANIN,Midfielder,18,Gaziantepspor,Turkey,08.03.1985,29,188,Bosnia & Herzegovina,35,5,FALSE
+207906,JUANFRAN,Defender,5,Atletico Madrid,Spain,09.01.1985,29,180,Spain,7,1,TRUE
+298892,Augusto FERNANDEZ,Midfielder,13,Celta Vigo,Spain,10.04.1986,28,177,Argentina,7,1,FALSE
+354875,Abdelmoumene DJABOU,Forward,18,Club Africain,Tunisia,31.01.1987,27,168,Algeria,7,1,FALSE
+372989,Ermin BICAKCIC,Defender,3,Eintracht Braunschweig,Germany,24.01.1990,24,185,Bosnia & Herzegovina,7,1,FALSE
+321697,Mathew LECKIE,Forward,7,FSV Frankfurt,Germany,04.02.1991,23,181,Australia,7,1,FALSE
+367396,Fabrice OLINGA,Forward,19,SV Zulte Waregem,Belgium,12.05.1996,18,177,Cameroon,7,1,FALSE
+251352,Andres GUARDADO,Defender,18,Bayer 04 Leverkusen,Germany,28.09.1986,27,167,Mexico,101,14,FALSE
+229392,Ezequiel LAVEZZI,Forward,22,Paris Saint-Germain FC,France,03.05.1985,29,173,Argentina,29,4,FALSE
+207528,Xabi ALONSO,Midfielder,14,Real Madrid CF,Spain,25.11.1981,32,183,Spain,109,15,TRUE
+210214,RAUL MEIRELES,Midfielder,16,Fenerbahce SK,Turkey,17.03.1983,31,179,Portugal,73,10,FALSE
+360728,Graham ZUSI,Midfielder,19,Sporting Kansas City,USA,18.08.1986,27,177,USA,22,3,TRUE
+209979,Tranquillo BARNETTA,Midfielder,7,Eintracht Frankfurt,Germany,22.05.1985,29,178,Switzerland,74,10,FALSE
+344714,Ahmed MUSA,Forward,7,CSKA Moscow,Russia,14.10.1992,21,176,Nigeria,37,5,FALSE
+273996,Eden HAZARD,Midfielder,10,Chelsea FC,England,07.01.1991,23,172,Belgium,45,6,FALSE
+218284,MARCELO,Defender,6,Real Madrid CF,Spain,12.05.1988,26,174,Brazil,30,4,FALSE
+358736,Bruno MARTINS INDI,Defender,4,Feyenoord Rotterdam,Netherlands,08.02.1992,22,186,Netherlands,15,2,TRUE
+305764,Gary CAHILL,Defender,5,Chelsea FC,England,19.12.1985,28,191,England,23,3,TRUE
+210213,BRUNO ALVES,Defender,2,Fenerbahce SK,Turkey,27.11.1981,32,187,Portugal,71,9,FALSE
+375523,Daniel VAN BUYTEN,Defender,15,FC Bayern Muenchen,Germany,07.02.1978,36,196,Belgium,79,10,FALSE
+178119,Rafael MARQUEZ,Defender,4,Club Leon,Mexico,13.02.1979,35,184,Mexico,119,15,TRUE
+183857,Andres INIESTA,Midfielder,6,FC Barcelona,Spain,11.05.1984,30,170,Spain,96,12,TRUE
+297331,Valentin STOCKER,Midfielder,14,FC Basel,Switzerland,12.04.1989,25,179,Switzerland,24,3,TRUE
+349592,Eugenio MENA,Defender,2,Santos FC,Brazil,18.07.1988,25,174,Chile,24,3,FALSE
+296118,Benjamin MOUKANDJO,Forward,8,AS Nancy,France,12.11.1988,25,178,Cameroon,16,2,FALSE
+349517,Victor IBARBO,Forward,14,Cagliari Calcio,Italy,19.05.1990,24,188,Columbia,8,1,FALSE
+177876,Andrea PIRLO,Midfielder,21,Juventus FC,Italy,19.05.1979,35,177,Italy,108,13,TRUE
+353119,Max GRADEL,Midfielder,15,AS Saint-Etienne,France,30.11.1987,26,177,Ivory Coast,25,3,FALSE
+275162,Toni KROOS,Midfielder,18,FC Bayern Muenchen,Germany,04.01.1990,24,182,Germany,43,5,TRUE
+358049,Denis GLUSHAKOV,Midfielder,8,FC Spartak Moscow,Russia,27.01.1987,27,182,Russia,26,3,TRUE
+305378,Nicolas LODEIRO,Midfielder,14,Botafogo FR,Brazil,21.03.1989,25,173,Uruguay,26,3,FALSE
+202544,Antonio VALENCIA,Midfielder,16,Manchester United FC,England,04.08.1985,28,180,Ecuador,70,8,FALSE
+184545,Segundo CASTILLO,Midfielder,14,Al Hilal FC,Saudi Arabia,15.05.1982,32,180,Ecuador,81,9,FALSE
+216567,Cristian RODRIGUEZ,Midfielder,7,Atletico Madrid,Spain,30.09.1985,28,178,Uruguay,72,8,FALSE
+268414,LEE Chungyong,Midfielder,17,Bolton Wanderers FC,England,02.07.1988,25,180,South Korea,54,6,FALSE
+289195,Paul AGUILAR,Defender,22,Club America,Mexico,06.03.1986,28,178,Mexico,27,3,TRUE
+321745,KIM Shinwook,Forward,18,Ulsan Hyundai FC,South Korea,14.04.1988,26,196,South Korea,27,3,TRUE
+309714,Juan CUADRADO,Midfielder,11,ACF Fiorentina,Italy,26.05.1988,26,178,Columbia,27,3,FALSE
+291389,KIM Bokyung,Midfielder,7,Cardiff City FC,England,06.10.1989,24,178,South Korea,27,3,FALSE
+274135,Mamadou SAKHO,Defender,5,Liverpool FC,England,13.02.1990,24,186,France,18,2,FALSE
+295153,Ahmad ALNAMEH,Defender,17,Naft Tehran FC,Iran,20.10.1982,31,189,Iran,9,1,TRUE
+268594,Masato MORISHIGE,Defender,6,FC Tokyo,Japan,21.05.1987,27,183,Japan,9,1,TRUE
+369990,Rony MARTINEZ,Forward,16,CD Real Sociedad,Honduras,16.10.1987,26,171,Honduras,9,1,TRUE
+336837,Diego CALVO,Midfielder,20,Valerenga IF,Norway,25.03.1991,23,178,Costa Rica,9,1,FALSE
+297112,Georgios SAMARAS,Forward,7,Celtic FC,Scotland,21.02.1985,29,192,Greece,73,8,FALSE
+241559,Luka MODRIC,Midfielder,10,Real Madrid CF,Spain,09.09.1985,28,173,Croatia,74,8,FALSE
+228336,Vasileios TOROSIDIS,Defender,15,AS Roma,Italy,10.06.1985,29,185,Greece,65,7,FALSE
+229502,Alvaro PEREIRA,Midfielder,6,Sao Paulo FC,Brazil,28.11.1985,28,182,Uruguay,56,6,FALSE
+359381,Ivan PERISIC,Midfielder,4,VfL Wolfsburg,Germany,02.02.1989,25,187,Croatia,28,3,FALSE
+349574,Michael ARROYO,Midfielder,15,Atlante FC,Mexico,23.04.1987,27,178,Ecuador,19,2,FALSE
+198243,Abel AGUILAR,Midfielder,8,Toulouse FC,France,06.01.1985,29,187,Columbia,48,5,FALSE
+290821,Axel WITSEL,Midfielder,6,FC Zenit St. Petersburg,Russia,12.01.1989,25,183,Belgium,48,5,FALSE
+237949,Andranik TIMOTIAN,Midfielder,14,Esteghlal Tehran FC,Iran,06.03.1983,31,178,Iran,77,8,TRUE
+298582,John BOYE,Defender,21,Stade Rennais FC,France,23.04.1987,27,160,Ghana,29,3,FALSE
+213170,Masoud SHOJAEI,Forward,7,UD Las Palmas,Spain,09.06.1984,30,185,Iran,49,5,FALSE
+358011,Mathieu DEBUCHY,Defender,2,Newcastle United FC,England,28.07.1985,28,178,France,20,2,FALSE
+318150,Charles ARANGUIZ,Midfielder,20,SC Internacional,Brazil,17.04.1989,25,171,Chile,20,2,FALSE
+290605,James TROISI,Midfielder,14,Melbourne Victory FC,Australia,03.07.1988,25,177,Australia,10,1,TRUE
+356669,BERNARD,Forward,20,Shakhtar Donetsk,Ukraine,08.09.1992,21,166,Brazil,10,1,FALSE
+181406,MAICON,Defender,23,AS Roma,Italy,26.07.1981,32,186,Brazil,71,7,FALSE
+227839,Marvin CHAVEZ,Midfielder,10,CD Chivas USA,USA,03.11.1983,30,156,Honduras,41,4,FALSE
+304934,Roger ESPINOZA,Midfielder,15,Wigan Athletic FC,England,25.10.1986,27,180,Honduras,41,4,FALSE
+239433,Diego LUGANO,Defender,2,West Bromwich Albion FC,England,02.11.1980,33,188,Uruguay,93,9,FALSE
+300407,Sejad SALIHOVIC,Midfielder,23,TSG 1899 Hoffenheim,Germany,08.10.1984,29,182,Bosnia & Herzegovina,42,4,FALSE
+298959,RAMIRES,Midfielder,16,Chelsea FC,England,24.03.1987,27,181,Brazil,42,4,FALSE
+230739,Rodrigo PALACIO,Forward,18,FC Internazionale,Italy,05.02.1982,32,175,Argentina,21,2,FALSE
+209989,Philippe SENDEROS,Defender,4,Valencia CF,Spain,14.02.1985,29,190,Switzerland,53,5,FALSE
+197514,Mile JEDINAK,Midfielder,15,Crystal Palace FC,England,03.08.1984,29,188,Australia,43,4,FALSE
+177855,Xavi HERNANDEZ,Midfielder,8,FC Barcelona,Spain,25.01.1980,34,170,Spain,131,12,TRUE
+300402,Senijad IBRICIC,Midfielder,17,Kayseri Erciyesspor,Turkey,26.09.1985,28,185,Bosnia & Herzegovina,44,4,FALSE
+290800,Dario VIDOSIC,Midfielder,20,FC Sion,Switzerland,08.04.1987,27,185,Australia,22,2,FALSE
+365464,Juan MONTES,Defender,4,CD Motagua,Honduras,26.12.1985,28,196,Honduras,11,1,TRUE
+311554,Haris SEFEROVIC,Forward,9,Real Sociedad,Spain,22.02.1992,22,187,Switzerland,11,1,FALSE
+358692,Julian DRAXLER,Midfielder,14,FC Schalke 04,Germany,20.09.1993,20,185,Germany,11,1,TRUE
+184447,Walter AYOVI,Midfielder,10,CF Pachuca,Mexico,11.08.1979,34,173,Ecuador,89,8,FALSE
+180936,Yoshito OKUBO,Forward,13,Kawasaki Frontale,Japan,09.06.1982,32,170,Japan,56,5,TRUE
+290825,Moussa DEMBELE,Midfielder,19,Tottenham Hotspur FC,England,16.07.1987,26,185,Belgium,56,5,FALSE
+196900,Sami KHEDIRA,Midfielder,6,Real Madrid CF,Spain,04.04.1987,27,189,Germany,45,4,FALSE
+268406,KI Sungyueng,Midfielder,16,Sunderland AFC,England,24.01.1989,25,186,South Korea,58,5,FALSE
+294620,Andre AYEW,Midfielder,10,Olympique Marseille,France,17.12.1989,24,175,Ghana,47,4,FALSE
+177768,Yasuhito ENDO,Midfielder,7,Gamba Osaka,Japan,28.01.1980,34,178,Japan,143,12,TRUE
+218253,Carlos SALCIDO,Defender,3,Tigres UANL,Mexico,02.04.1980,34,176,Mexico,120,10,TRUE
+209502,Jean BEAUSEJOUR,Midfielder,15,Wigan Athletic FC,England,01.06.1984,30,178,Chile,60,5,FALSE
+267527,Gary MEDEL,Defender,17,Cardiff City FC,England,03.08.1987,26,171,Chile,60,5,FALSE
+296297,Mario MARTINEZ,Midfielder,23,Real Espana,Honduras,30.07.1989,24,173,Honduras,36,3,TRUE
+183882,Hassan YEBDA,Midfielder,7,Udinese Calcio,Italy,14.05.1984,30,188,Algeria,24,2,FALSE
+239424,HERNANES,Midfielder,18,FC Internazionale,Italy,29.05.1985,29,180,Brazil,24,2,FALSE
+358114,Dries MERTENS,Midfielder,14,SSC Napoli,Italy,06.05.1987,27,164,Belgium,24,2,FALSE
+318034,Federico FERNANDEZ,Defender,17,SSC Napoli,Italy,21.02.1989,25,190,Argentina,24,2,FALSE
+312432,Dejan LOVREN,Defender,6,Southampton FC,England,05.07.1989,24,188,Croatia,24,2,FALSE
+323698,Vincent ABOUBAKAR,Forward,10,FC Lorient,France,22.01.1992,22,176,Cameroon,24,2,FALSE
+261029,Gokhan INLER,Midfielder,8,SSC Napoli,Italy,27.06.1984,29,181,Switzerland,73,6,FALSE
+214887,Konstantinos KATSOURANIS,Midfielder,21,PAOK FC,Greece,21.06.1979,35,183,Greece,110,9,TRUE
+190962,DANI ALVES,Defender,2,FC Barcelona,Spain,06.05.1983,31,175,Brazil,74,6,FALSE
+271182,Michael BARRANTES,Midfielder,11,Aalesunds FK,Norway,04.10.1983,30,177,Costa Rica,50,4,FALSE
+299960,Phil JAGIELKA,Defender,6,Everton FC,England,17.08.1982,31,183,England,25,2,TRUE
+200847,Adrian RAMOS,Forward,19,Hertha BSC,Germany,22.01.1986,28,184,Columbia,25,2,FALSE
+281252,Fabian ORELLANA,Forward,14,Celta Vigo,Spain,27.01.1986,28,168,Chile,25,2,FALSE
+196605,Stephan LICHTSTEINER,Defender,2,Juventus FC,Italy,16.01.1984,30,180,Switzerland,63,5,FALSE
+216814,Sergio RAMOS,Defender,15,Real Madrid CF,Spain,30.03.1986,28,183,Spain,115,9,TRUE
+216874,Nicolas LOMBAERTS,Defender,18,FC Zenit St. Petersburg,Russia,20.03.1985,29,188,Belgium,26,2,FALSE
+356162,Esseid BELKALEM,Defender,4,Watford FC,England,01.01.1989,25,190,Algeria,13,1,FALSE
+168832,Georgios KARAGOUNIS,Midfielder,10,Fulham FC,England,06.03.1977,37,176,Greece,134,10,FALSE
+199600,Jean MAKOUN,Midfielder,11,Stade Rennais FC,France,29.05.1983,31,170,Cameroon,67,5,FALSE
+178403,Joseph YOBO,Defender,2,Norwich City FC,England,06.09.1980,33,185,Nigeria,96,7,FALSE
+297377,Ognjen VUKOJEVIC,Midfielder,8,FC Dynamo Kyiv,Ukraine,20.12.1983,30,184,Croatia,55,4,FALSE
+278072,Jalal HOSSEINI,Defender,4,Perspolis FC,Iran,03.02.1982,32,185,Iran,83,6,TRUE
+202655,Jorge VALDIVIA,Midfielder,10,Palmeiras,Brazil,19.10.1983,30,173,Chile,56,4,FALSE
+290904,Jan VERTONGHEN,Defender,5,Tottenham Hotspur FC,England,24.04.1987,27,189,Belgium,56,4,FALSE
+197411,Mark MILLIGAN,Midfielder,5,Melbourne Victory FC,Australia,04.08.1985,28,178,Australia,28,2,TRUE
+213124,Amirhossein SADEGHI,Defender,5,Esteghlal Tehran FC,Iran,06.09.1981,32,185,Iran,14,1,TRUE
+364707,Albert ADOMAH,Midfielder,14,Middlesbrough FC,England,13.12.1987,26,162,Ghana,14,1,FALSE
+303394,Carlos PENA,Midfielder,21,Club Leon,Mexico,29.03.1990,24,176,Mexico,14,1,TRUE
+306424,Tommy OAR,Midfielder,11,FC Utrecht,Netherlands,10.12.1991,22,170,Australia,14,1,FALSE
+269784,FABIO COENTRAO,Defender,5,Real Madrid CF,Spain,11.03.1988,26,181,Portugal,43,3,FALSE
+234463,John Obi MIKEL,Midfielder,10,Chelsea FC,England,22.04.1987,27,188,Nigeria,58,4,FALSE
+358013,Yohan CABAYE,Midfielder,6,Paris Saint-Germain FC,France,14.01.1986,28,175,France,29,2,TRUE
+311150,Mats HUMMELS,Defender,5,Borussia Dortmund,Germany,16.12.1988,25,192,Germany,29,2,TRUE
+305972,Joao ROJAS,Forward,9,Cruz Azul FC,Mexico,14.06.1989,25,173,Ecuador,29,2,FALSE
+216004,Vincent KOMPANY,Defender,4,Manchester City FC,England,10.04.1986,28,190,Belgium,59,4,FALSE
+216973,Gerard PIQUE,Defender,3,FC Barcelona,Spain,02.02.1987,27,192,Spain,60,4,TRUE
+215208,Madjid BOUGUERRA,Defender,2,Lekhwiya SC,Qatar,07.10.1982,31,189,Algeria,61,4,FALSE
+294619,Kwadwo ASAMOAH,Midfielder,20,Juventus FC,Italy,09.12.1988,25,168,Ghana,61,4,FALSE
+200219,Fredy GUARIN,Midfielder,13,FC Internazionale,Italy,30.06.1986,27,187,Columbia,48,3,FALSE
+3408,Mario YEPES,Defender,3,Atalanta Bergamo,Italy,13.01.1976,38,186,Columbia,97,6,FALSE
+200935,Stephane MBIA,Midfielder,17,Sevilla FC,Spain,20.05.1986,28,190,Cameroon,49,3,FALSE
+230114,Jorge CLAROS,Midfielder,20,CD Motagua,Honduras,08.01.1986,28,176,Honduras,49,3,TRUE
+215274,Giorgio CHIELLINI,Defender,3,Juventus FC,Italy,14.08.1984,29,192,Italy,67,4,TRUE
+268821,Giancarlo GONZALEZ,Defender,3,Columbus Crew,USA,08.02.1988,26,192,Costa Rica,34,2,FALSE
+295157,Hashem BEIKZADEH,Midfielder,19,Esteghlal Tehran FC,Iran,22.01.1984,30,180,Iran,17,1,TRUE
+349588,Felipe GUTIERREZ,Midfielder,16,FC Twente,Netherlands,08.10.1990,23,175,Chile,17,1,FALSE
+330693,Andy NAJAR,Midfielder,17,RSC Anderlecht,Belgium,16.03.1993,21,170,Honduras,17,1,FALSE
+310048,Enoh EYONG,Midfielder,18,Antalyaspor AS,Turkey,23.03.1986,28,180,Cameroon,35,2,FALSE
+268822,Jose CUBERO,Midfielder,22,CS Herediano,Costa Rica,14.02.1987,27,178,Costa Rica,35,2,TRUE
+178963,Kolo TOURE,Defender,4,Liverpool FC,England,19.03.1981,33,183,Ivory Coast,106,6,FALSE
+297373,Vedran CORLUKA,Defender,5,FC Lokomotiv Moscow,Russia,05.02.1986,28,192,Croatia,72,4,FALSE
+321641,Leonardo BONUCCI,Defender,19,Juventus FC,Italy,01.05.1987,27,190,Italy,36,2,TRUE
+210212,RICARDO COSTA,Defender,13,Valencia CF,Spain,16.05.1981,33,183,Portugal,18,1,FALSE
+245156,Jose ROJAS,Defender,13,Club Universidad de Chile,Chile,23.06.1983,30,174,Chile,18,1,TRUE
+299086,Lazaros CHRISTODOULOPOULOS,Midfielder,16,Bologna FC,Italy,19.12.1986,27,182,Greece,18,1,FALSE
+367918,LUIZ GUSTAVO,Midfielder,17,VfL Wolfsburg,Germany,23.07.1987,26,188,Brazil,18,1,FALSE
+233703,Martin DEMICHELIS,Defender,15,Manchester City FC,England,20.12.1980,33,184,Argentina,37,2,FALSE
+209827,Wilson PALACIOS,Midfielder,8,Stoke City FC,England,29.07.1984,29,181,Honduras,93,5,FALSE
+275931,PEPE,Defender,3,Real Madrid CF,Spain,26.02.1983,31,186,Portugal,57,3,FALSE
+228936,Ignazio ABATE,Defender,7,AC Milan,Italy,12.11.1986,27,180,Italy,19,1,TRUE
+186787,Sergey IGNASHEVICH,Defender,4,CSKA Moscow,Russia,14.07.1979,34,186,Russia,97,5,TRUE
+200262,Landry NGUEMO,Midfielder,7,FC Girondins Bordeaux,France,28.11.1985,28,172,Cameroon,39,2,FALSE
+271253,Maya YOSHIDA,Defender,22,Southampton FC,England,24.08.1988,25,189,Japan,40,2,FALSE
+251481,Pejman MONTAZERI,Defender,15,Umm Salal SC,Qatar,06.09.1983,30,186,Iran,20,1,FALSE
+233530,Marcelo DIAZ,Midfielder,21,FC Basel,Switzerland,30.12.1986,27,168,Chile,20,1,FALSE
+311148,Benedikt HOEWEDES,Defender,4,FC Schalke 04,Germany,29.02.1988,26,187,Germany,20,1,TRUE
+375754,KIM Younggwon,Defender,5,Guangzhou Evergrande FC,China,27.02.1990,24,187,South Korea,20,1,FALSE
+315429,Ogenyi ONAZI,Midfielder,17,SS Lazio,Italy,25.12.1992,21,168,Nigeria,20,1,FALSE
+279417,Cristhian NOBOA,Midfielder,6,FC Dynamo Moscow,Russia,09.04.1985,29,181,Ecuador,41,2,FALSE
+267647,Uwa ECHIEJILE,Defender,3,AS Monaco,France,20.01.1988,26,185,Nigeria,41,2,FALSE
+196748,Philipp LAHM,Midfielder,16,FC Bayern Muenchen,Germany,11.11.1983,30,170,Germany,105,5,TRUE
+207946,Souleymane BAMBA,Defender,22,Trabzonspor,Turkey,13.01.1985,29,190,Ivory Coast,42,2,FALSE
+286259,Alvaro GONZALEZ,Midfielder,20,SS Lazio,Italy,29.10.1984,29,175,Uruguay,42,2,FALSE
+358022,Jose CHOLEVAS,Defender,20,Olympiacos Piraeus FC,Greece,27.06.1984,29,184,Greece,21,1,TRUE
+313805,Heiner MORA,Defender,8,Deportivo Saprissa,Costa Rica,20.06.1984,29,179,Costa Rica,21,1,TRUE
+233497,Masahiko INOHA,Defender,19,Jubilo Iwata,Japan,28.08.1985,28,179,Japan,21,1,TRUE
+311174,Fabian JOHNSON,Defender,23,TSG 1899 Hoffenheim,Germany,11.12.1987,26,182,USA,21,1,FALSE
+356409,Admir MEHMEDI,Forward,18,SC Freiburg,Germany,16.03.1991,23,183,Switzerland,21,1,FALSE
+183893,Jermaine JONES,Midfielder,13,Besiktas JK,Turkey,03.11.1981,32,184,USA,43,2,FALSE
+298664,Claudio MARCHISIO,Midfielder,8,Juventus FC,Italy,19.01.1986,28,179,Italy,43,2,TRUE
+290824,Steven DEFOUR,Midfielder,16,FC Porto,Portugal,15.04.1988,26,173,Belgium,43,2,FALSE
+229439,Gonzalo JARA,Defender,18,Nottingham Forest FC,England,29.08.1985,28,177,Chile,65,3,FALSE
+175689,THIAGO MOTTA,Midfielder,5,Paris Saint-Germain FC,France,28.08.1982,31,187,Italy,22,1,FALSE
+300237,Dmitry KOMBAROV,Defender,23,FC Spartak Moscow,Russia,22.01.1987,27,182,Russia,22,1,TRUE
+358014,Blaise MATUIDI,Midfielder,14,Paris Saint-Germain FC,France,09.04.1987,27,175,France,22,1,TRUE
+299896,Domagoj VIDA,Defender,21,FC Dynamo Kyiv,Ukraine,29.04.1989,25,184,Croatia,22,1,FALSE
+289964,THIAGO SILVA,Defender,3,Paris Saint-Germain FC,France,22.09.1984,29,182,Brazil,45,2,FALSE
+291372,Yuto NAGATOMO,Defender,5,FC Internazionale,Italy,12.09.1986,27,170,Japan,69,3,FALSE
+228617,Mauricio ISLA,Defender,4,Juventus FC,Italy,12.06.1988,26,177,Chile,46,2,FALSE
+216715,Ron VLAAR,Defender,2,Aston Villa FC,England,16.02.1985,29,190,Netherlands,23,1,FALSE
+305768,Leighton BAINES,Defender,3,Everton FC,England,11.12.1984,29,172,England,23,1,TRUE
+229440,Jose FUENZALIDA,Midfielder,19,CSD Colo-Colo,Chile,22.02.1985,29,170,Chile,23,1,TRUE
+339551,Brayan BECKELES,Defender,21,CD Olimpia,Honduras,28.11.1985,28,186,Honduras,23,1,TRUE
+200201,MIGUEL VELOSO,Midfielder,4,FC Dynamo Kyiv,Ukraine,11.05.1986,28,181,Portugal,47,2,FALSE
+216650,Gelson FERNANDES,Midfielder,16,SC Freiburg,Germany,02.09.1986,27,179,Switzerland,47,2,FALSE
+216627,Valon BEHRAMI,Midfielder,11,SSC Napoli,Italy,19.04.1985,29,184,Switzerland,48,2,FALSE
+312679,HONG Jeongho,Defender,20,FC Augsburg,Germany,12.08.1989,24,188,South Korea,24,1,FALSE
+207888,Per MERTESACKER,Defender,17,Arsenal FC,England,29.09.1984,29,198,Germany,97,4,FALSE
+216069,Emir SPAHIC,Defender,4,Bayer 04 Leverkusen,Germany,18.08.1980,33,183,Bosnia & Herzegovina,74,3,FALSE
+239237,Carl MEDJANI,Defender,12,Valenciennes FC,France,15.05.1985,29,180,Algeria,25,1,FALSE
+216006,Anthony VANDEN BORRE,Defender,21,RSC Anderlecht,Belgium,24.10.1987,26,185,Belgium,25,1,TRUE
+307026,Cristian GAMBOA,Defender,16,Rosenborg BK,Norway,24.10.1989,24,175,Costa Rica,25,1,FALSE
+347716,Hiroshi KIYOTAKE,Forward,8,1. FC Nuernberg,Germany,12.11.1989,24,172,Japan,25,1,FALSE
+306634,Jonathan MENSAH,Defender,19,Evian TG FC,France,13.07.1990,23,182,Ghana,25,1,FALSE
+213878,Victor BERNARDEZ,Defender,5,San Jose Earthquakes,USA,24.05.1982,32,187,Honduras,76,3,FALSE
+229499,Diego GODIN,Defender,3,Atletico Madrid,Spain,16.02.1986,28,185,Uruguay,76,3,FALSE
+186793,Vasily BEREZUTSKIY,Defender,14,CSKA Moscow,Russia,20.06.1982,32,188,Russia,77,3,TRUE
+339447,Johnny ACOSTA,Defender,2,LD Alajuelense,Costa Rica,21.07.1983,30,175,Costa Rica,26,1,TRUE
+321971,Geoff CAMERON,Defender,20,Stoke City FC,England,11.07.1985,28,190,USA,26,1,FALSE
+296273,Alejandro BEDOYA,Midfielder,11,FC Nantes,France,29.04.1987,27,178,USA,26,1,FALSE
+183796,Christian BOLANOS,Midfielder,7,FC Kobenhavn,Denmark,17.05.1984,30,178,Costa Rica,54,2,FALSE
+296827,Rafik HALLICHE,Defender,5,Academica Coimbra,Portugal,02.09.1986,27,187,Algeria,28,1,FALSE
+181930,Jorge GUAGUA,Defender,2,CS Emelec,Ecuador,28.09.1981,32,179,Ecuador,58,2,TRUE
+288961,Ehsan HAJI SAFI,Midfielder,3,Sepahan FC,Iran,25.02.1990,24,177,Iran,58,2,TRUE
+181698,Aldo RAMIREZ,Midfielder,5,CA Monarcas Morelia,Mexico,18.04.1981,33,175,Columbia,29,1,FALSE
+278732,Aurelien CHEDJOU,Defender,14,Galatasaray SK,Turkey,20.06.1985,28,185,Cameroon,29,1,FALSE
+286481,Maximiliano PEREIRA,Defender,16,SL Benfica,Portugal,08.06.1984,30,173,Uruguay,89,3,FALSE
+356711,Azubuike EGWUEKWE,Defender,6,Warri Wolves FC,Nigeria,16.07.1989,24,195,Nigeria,31,1,TRUE
+200199,JOAO MOUTINHO,Midfielder,8,AS Monaco,France,08.09.1986,27,170,Portugal,66,2,FALSE
+358099,Senad LULIC,Midfielder,16,SS Lazio,Italy,18.01.1986,28,183,Bosnia & Herzegovina,33,1,FALSE
+213879,Maynor FIGUEROA,Defender,3,Hull City FC,England,02.05.1983,31,184,Honduras,100,3,FALSE
+268474,Atsuto UCHIDA,Defender,2,FC Schalke 04,Germany,27.03.1988,26,176,Japan,67,2,FALSE
+216646,Blerim DZEMAILI,Midfielder,15,SSC Napoli,Italy,12.04.1986,28,179,Switzerland,34,1,FALSE
+290864,Toby ALDERWEIRELD,Defender,2,Atletico Madrid,Spain,02.03.1989,25,186,Belgium,34,1,FALSE
+356459,Godfrey OBOABONA,Defender,14,Caykur Rizespor,Turkey,16.09.1990,23,183,Nigeria,34,1,FALSE
+216642,Reto ZIEGLER,Defender,3,US Sassuolo,Italy,16.01.1986,28,183,Switzerland,35,1,FALSE
+296303,Juan Carlos GARCIA,Defender,6,Wigan Athletic FC,England,08.03.1988,26,175,Honduras,35,1,FALSE
+175512,Kyle BECKERMAN,Midfielder,15,Real Salt Lake,USA,23.04.1982,32,181,USA,36,1,TRUE
+349578,Frickson ERAZO,Defender,3,CR Flamengo,Brazil,05.05.1988,26,189,Ecuador,36,1,FALSE
+273291,Efe AMBROSE,Defender,5,Celtic FC,Scotland,18.10.1988,25,190,Nigeria,36,1,FALSE
+289027,Makoto HASEBE,Midfielder,17,1. FC Nuernberg,Germany,18.01.1984,30,180,Japan,78,2,FALSE
+291329,Ismael TIOTE,Midfielder,9,Newcastle United FC,England,21.06.1986,27,175,Ivory Coast,42,1,FALSE
+216645,Johan DJOUROU,Defender,20,Hamburger SV,Germany,18.01.1987,27,192,Switzerland,44,1,FALSE
+229436,Carlos CARMONA,Midfielder,6,Atalanta Bergamo,Italy,21.02.1987,27,179,Chile,44,1,FALSE
+185359,Diego PEREZ,Midfielder,15,Bologna FC,Italy,18.05.1980,34,176,Uruguay,89,2,FALSE
+237071,Boniek GARCIA,Midfielder,14,Houston Dynamo,USA,04.09.1984,29,176,Honduras,90,2,FALSE
+197409,Matt McKAY,Midfielder,17,Brisbane Roar FC,Australia,11.01.1983,31,174,Australia,46,1,TRUE
+207924,James MILNER,Midfielder,17,Manchester City FC,England,04.01.1986,28,175,England,46,1,TRUE
+238381,Samuel INKOOM,Defender,2,FC Platanias,Greece,01.06.1989,25,179,Ghana,46,1,FALSE
+183798,Roy MILLER,Defender,19,New York Red Bulls,USA,24.11.1984,29,189,Costa Rica,47,1,FALSE
+182372,Javier MASCHERANO,Midfielder,14,FC Barcelona,Spain,08.06.1984,30,171,Argentina,96,2,FALSE
+216880,Thomas VERMAELEN,Defender,3,Arsenal FC,England,14.11.1985,28,178,Belgium,48,1,FALSE
+228351,Alexandros TZIOLIS,Midfielder,6,Kayserispor,Turkey,13.02.1985,29,190,Greece,49,1,FALSE
+229443,Juan ZUNIGA,Defender,18,SSC Napoli,Italy,14.12.1985,28,171,Columbia,49,1,FALSE
+197464,Glen JOHNSON,Defender,2,Liverpool FC,England,23.08.1984,29,180,England,51,1,TRUE
+200213,Pablo ARMERO,Defender,7,West Ham United FC,England,02.11.1986,27,174,Columbia,52,1,FALSE
+238112,Hector MORENO,Defender,15,RCD Espanyol,Spain,17.01.1988,26,182,Mexico,52,1,FALSE
+267829,Martin CACERES,Defender,22,Juventus FC,Italy,07.04.1987,27,178,Uruguay,56,1,FALSE
+209940,Junior DIAZ,Defender,15,FSV Mainz 05,Germany,12.09.1983,30,185,Costa Rica,61,1,FALSE
+276131,Walter GARGANO,Midfielder,5,Parma FC,Italy,23.07.1984,29,168,Uruguay,62,1,FALSE
+230117,Emilio IZAGUIRRE,Midfielder,7,Celtic FC,Scotland,10.05.1986,28,177,Honduras,65,1,FALSE
+216964,Nigel DE JONG,Midfielder,6,AC Milan,Italy,30.11.1984,29,174,Netherlands,70,1,FALSE
+198489,Arthur BOKA,Defender,3,VfB Stuttgart,Germany,02.04.1983,31,166,Ivory Coast,77,1,FALSE
+184373,Yasuyuki KONNO,Defender,15,Gamba Osaka,Japan,25.01.1983,31,178,Japan,80,1,TRUE
+208120,Michael UMANA,Defender,4,Deportivo Saprissa,Costa Rica,16.07.1982,31,180,Costa Rica,81,1,TRUE
+209960,Francisco RODRIGUEZ,Defender,2,Club America,Mexico,20.10.1981,32,191,Mexico,92,1,TRUE
+176971,Didier ZOKORA,Defender,5,Trabzonspor,Turkey,14.12.1980,33,183,Ivory Coast,119,1,FALSE
+94918,Faryd MONDRAGON,Goalkeeper,22,Deportivo Cali,Columbia,21.06.1971,43,191,Columbia,50,0,TRUE
+178185,Noel VALLADARES,Goalkeeper,18,CD Olimpia,Honduras,03.05.1977,37,178,Honduras,120,0,TRUE
+159304,Gianluigi BUFFON,Goalkeeper,1,Juventus FC,Italy,28.01.1978,36,190,Italy,139,0,TRUE
+179048,Stipe PLETIKOSA,Goalkeeper,1,FC Rostov,Russia,08.01.1979,35,193,Croatia,110,0,FALSE
+178420,Tim HOWARD,Goalkeeper,1,Everton FC,England,06.03.1979,35,187,USA,98,0,FALSE
+182021,Mickael LANDREAU,Goalkeeper,23,SC Bastia,France,14.05.1979,35,184,France,11,0,TRUE
+184982,Nick RIMANDO,Goalkeeper,22,Real Salt Lake,USA,17.06.1979,35,182,USA,14,0,TRUE
+178958,Boubacar BARRY,Goalkeeper,1,KSC Lokeren,Belgium,30.12.1979,34,180,Ivory Coast,76,0,FALSE
+179038,JULIO CESAR,Goalkeeper,12,Toronto FC,Canada,03.09.1979,34,179,Brazil,79,0,FALSE
+367333,Sergey RYZHIKOV,Goalkeeper,16,FC Rubin Kazan,Russia,19.09.1980,33,192,Russia,1,0,TRUE
+358097,Asmir AVDUKIC,Goalkeeper,22,FK Borac Banja Luka,Bosnia & Herzegovina,13.05.1981,33,190,Bosnia & Herzegovina,3,0,TRUE
+195223,Roman WEIDENFELLER,Goalkeeper,22,Borussia Dortmund,Germany,06.08.1980,33,188,Germany,2,0,TRUE
+209168,Eugene GALEKOVIC,Goalkeeper,18,Adelaide United FC,Australia,12.06.1981,33,186,Australia,8,0,TRUE
+214377,Andrea BARZAGLI,Defender,15,Juventus FC,Italy,08.05.1981,33,186,Italy,47,0,TRUE
+176644,Iker CASILLAS,Goalkeeper,1,Real Madrid CF,Spain,20.05.1981,33,185,Spain,153,0,TRUE
+215484,Loukas VYNTRA,Defender,11,Levante UD,Spain,05.02.1981,33,184,Greece,49,0,FALSE
+178630,Johnny HERRERA,Goalkeeper,23,Club Universidad de Chile,Chile,09.05.1981,33,183,Chile,7,0,TRUE
+298516,Rahman AHMADI,Goalkeeper,1,Sepahan FC,Iran,30.07.1980,33,182,Iran,11,0,TRUE
+356612,Hugo CAMPAGNARO,Defender,3,FC Internazionale,Italy,27.06.1980,33,181,Argentina,13,0,FALSE
+213871,Donis ESCOBER,Goalkeeper,22,CD Olimpia,Honduras,03.02.1981,33,180,Honduras,20,0,TRUE
+195231,Jose CORONA,Goalkeeper,1,Cruz Azul FC,Mexico,26.01.1981,33,178,Mexico,32,0,TRUE
+212246,Patrice EVRA,Defender,3,Manchester United FC,England,15.05.1981,33,171,France,57,0,FALSE
+215471,Vangelis MORAS,Defender,5,Hellas Verona FC,Italy,26.08.1981,32,193,Greece,18,0,FALSE
+274703,Agustin ORION,Goalkeeper,12,CA Boca Juniors,Argentina,26.07.1981,32,190,Argentina,3,0,TRUE
+214404,BETO,Goalkeeper,22,Sevilla FC,Spain,01.05.1982,32,183,Portugal,7,0,FALSE
+181951,Brad DAVIS,Midfielder,14,Houston Dynamo,USA,08.11.1981,32,180,USA,16,0,TRUE
+214874,Patrick PEMBERTON,Goalkeeper,18,LD Alajuelense,Costa Rica,24.04.1982,32,178,Costa Rica,20,0,TRUE
+207809,MAXWELL,Defender,14,Paris Saint-Germain FC,France,27.08.1981,32,177,Brazil,8,0,FALSE
+210702,Danijel PRANJIC,Defender,3,Panathinaikos FC,Greece,02.12.1981,32,172,Croatia,49,0,FALSE
+286238,Egidio AREVALO,Midfielder,17,CA Monarcas Morelia,Mexico,01.01.1982,32,168,Uruguay,54,0,FALSE
+309426,VICTOR,Goalkeeper,22,Atletico Mineiro,Brazil,21.01.1983,31,195,Brazil,6,0,TRUE
+253999,Ben FOSTER,Goalkeeper,13,West Bromwich Albion FC,England,03.04.1983,31,193,England,6,0,TRUE
+184320,JEFFERSON,Goalkeeper,1,Botafogo FR,Brazil,02.01.1983,31,190,Brazil,9,0,TRUE
+175546,Alfredo TALAVERA,Goalkeeper,12,Deportivo Toluca FC,Mexico,18.09.1982,31,188,Mexico,14,0,TRUE
+175413,Pepe REINA,Goalkeeper,23,SSC Napoli,Italy,31.08.1982,31,187,Spain,32,0,FALSE
+299066,EDUARDO,Goalkeeper,1,Sporting Braga,Portugal,19.09.1982,31,187,Portugal,33,0,TRUE
+175629,Martin SILVA,Goalkeeper,23,CR Vasco da Gama,Brazil,25.03.1983,31,187,Uruguay,4,0,FALSE
+216990,Charles ITANDJE,Goalkeeper,16,Konyaspor,Turkey,02.11.1982,31,185,Cameroon,9,0,FALSE
+202650,Claudio BRAVO,Goalkeeper,1,Real Sociedad,Spain,13.04.1983,31,185,Chile,79,0,FALSE
+198117,Eiji KAWASHIMA,Goalkeeper,1,Standard Liege,Belgium,20.03.1983,31,185,Japan,56,0,FALSE
+189300,Vincent ENYEAMA,Goalkeeper,1,Lille OSC,France,29.08.1982,31,185,Nigeria,90,0,FALSE
+196620,Steve VON BERGEN,Defender,5,BSC Young Boys,Switzerland,10.06.1983,31,183,Switzerland,41,0,TRUE
+254141,Bacary SAGNA,Defender,15,Arsenal FC,England,14.02.1983,31,175,France,40,0,FALSE
+275793,Oscar BAGUI,Defender,18,CS Emelec,Ecuador,10.12.1982,31,170,Ecuador,21,0,TRUE
+196633,Diego BENAGLIO,Goalkeeper,1,VfL Wolfsburg,Germany,08.09.1983,30,195,Switzerland,57,0,FALSE
+306144,Mariano ANDUJAR,Goalkeeper,21,Calcio Catania,Italy,30.07.1983,30,194,Argentina,10,0,FALSE
+349832,Jose Maria BASANTA,Defender,23,CF Monterrey,Mexico,03.04.1984,30,188,Argentina,8,0,FALSE
+184856,Austine EJIDE,Goalkeeper,16,Hapoel Be'er Sheva FC,Israel,08.04.1984,30,186,Nigeria,31,0,FALSE
+299904,Mensur MUJDZA,Midfielder,13,SC Freiburg,Germany,28.03.1984,30,184,Bosnia & Herzegovina,24,0,FALSE
+254089,Michel VORM,Goalkeeper,22,Swansea City AFC,England,20.10.1983,30,183,Netherlands,14,0,FALSE
+354873,Mehdi MOSTEFA,Midfielder,22,AC Ajaccio,France,30.08.1983,30,182,Algeria,22,0,FALSE
+216432,Yury ZHIRKOV,Forward,18,FC Dynamo Moscow,Russia,20.08.1983,30,180,Russia,60,0,TRUE
+306180,Benoit ASSOU EKOTTO,Defender,2,Queens Park Rangers FC,England,24.03.1984,30,178,Cameroon,21,0,FALSE
+329737,Ghasem HADADIFAR,Midfielder,11,Zob Ahan Isfahan FC,Iran,12.07.1983,30,178,Iran,16,0,TRUE
+254091,Paul VERHAEGH,Defender,12,FC Augsburg,Germany,01.09.1983,30,178,Netherlands,2,0,FALSE
+358893,Andrey ESHCHENKO,Defender,22,FC Anzhi Makhachkala,Russia,09.02.1984,30,177,Russia,11,0,TRUE
+216438,Igor DENISOV,Midfielder,7,FC Dynamo Moscow,Russia,17.05.1984,30,176,Russia,43,0,TRUE
+317072,Henri BEDIMO,Defender,12,Olympique Lyonnais,France,04.06.1984,30,176,Cameroon,30,0,FALSE
+321682,Medhi LACEN,Midfielder,8,Getafe CF,Spain,15.03.1984,30,175,Algeria,29,0,FALSE
+202280,Luis SARITAMA,Midfielder,19,Barcelona SC,Ecuador,20.10.1983,30,175,Ecuador,48,0,TRUE
+306206,Khosro HEYDARI,Forward,2,Esteghlal Tehran FC,Iran,14.09.1983,30,175,Iran,47,0,TRUE
+214571,Rio MAVUBA,Midfielder,12,Lille OSC,France,08.03.1984,30,172,France,11,0,TRUE
+214407,JOAO PEREIRA,Defender,21,Valencia CF,Spain,25.02.1984,30,172,Portugal,35,0,FALSE
+276139,Brad GUZAN,Goalkeeper,12,Aston Villa FC,England,09.09.1984,29,193,USA,25,0,FALSE
+357990,Gordon SCHILDENFELD,Defender,13,Panathinaikos FC,Greece,18.03.1985,29,191,Croatia,21,0,FALSE
+299887,Danijel SUBASIC,Goalkeeper,23,AS Monaco,France,27.10.1984,29,191,Croatia,6,0,FALSE
+198546,JUNG Sungryong,Goalkeeper,1,Suwon Bluewings FC,South Korea,04.01.1985,29,190,South Korea,60,0,TRUE
+297230,Osman CHAVEZ,Defender,2,Qingdao Jonoon FC,China,29.07.1984,29,187,Honduras,54,0,FALSE
+182479,Chigozie AGBIM,Goalkeeper,21,Enugu Rangers FC,Nigeria,28.11.1984,29,187,Nigeria,14,0,TRUE
+305708,Mohamed ZEMMAMOUCHE,Goalkeeper,16,USM Alger,Algeria,19.03.1985,29,187,Algeria,7,0,TRUE
+378836,Marco PAROLO,Midfielder,18,Parma FC,Italy,25.01.1985,29,186,Italy,3,0,TRUE
+182620,Alex WILKINSON,Defender,22,Jeonbuk Hyundai Motors FC,South Korea,13.08.1984,29,183,Australia,2,0,FALSE
+229450,Gabriel ACHILIER,Defender,21,CS Emelec,Ecuador,24.03.1985,29,183,Ecuador,22,0,TRUE
+356166,Cedric SI MOHAMMED,Goalkeeper,1,CS Constantine,Algeria,09.01.1985,29,182,Algeria,1,0,TRUE
+298676,HA Daesung,Midfielder,8,Beijing Guoan,China,02.03.1985,29,182,South Korea,13,0,FALSE
+299064,RUBEN AMORIM,Midfielder,20,SL Benfica,Portugal,27.01.1985,29,180,Portugal,11,0,TRUE
+376071,Fatawu DAUDA,Goalkeeper,16,Orlando Pirates,South Africa,06.04.1985,29,180,Ghana,17,0,FALSE
+323339,Djamel MESBAH,Defender,6,AS Livorno,Italy,09.10.1984,29,179,Algeria,26,0,FALSE
+367555,Die SEREY,Midfielder,20,FC Basel,Switzerland,07.11.1984,29,179,Ivory Coast,6,0,FALSE
+276132,Jorge FUCILE,Defender,4,FC Porto,Portugal,19.11.1984,29,177,Uruguay,41,0,FALSE
+182379,Pablo ZABALETA,Defender,4,Manchester City FC,England,16.01.1985,29,174,Argentina,36,0,FALSE
+228912,Manuel NEUER,Goalkeeper,1,FC Bayern Muenchen,Germany,27.03.1986,28,193,Germany,45,0,TRUE
+229498,Fernando MUSLERA,Goalkeeper,1,Galatasaray SK,Turkey,16.06.1986,28,190,Uruguay,57,0,FALSE
+228328,Orestis KARNEZIS,Goalkeeper,1,Granada CF,Spain,11.07.1985,28,189,Greece,18,0,FALSE
+302630,Maximo BANGUERA,Goalkeeper,1,Barcelona SC,Ecuador,16.12.1985,28,187,Ecuador,24,0,TRUE
+233333,Gabriel PALETTA,Defender,20,Parma FC,Italy,15.02.1986,28,187,Italy,2,0,TRUE
+216820,Raul ALBIOL,Defender,2,SSC Napoli,Italy,04.09.1985,28,187,Spain,46,0,FALSE
+323326,Rais MBOLHI,Goalkeeper,23,CSKA Sofia,Bulgaria,25.04.1986,28,186,Algeria,27,0,FALSE
+215017,Igor AKINFEEV,Goalkeeper,1,CSKA Moscow,Russia,08.04.1986,28,185,Russia,68,0,TRUE
+358012,Laurent KOSCIELNY,Defender,21,Arsenal FC,England,10.09.1985,28,185,France,17,0,FALSE
+215285,Guillermo OCHOA,Goalkeeper,13,AC Ajaccio,France,13.07.1985,28,185,Mexico,56,0,FALSE
+214581,Shusaku NISHIKAWA,Goalkeeper,12,Urawa Red Diamonds,Japan,18.06.1986,28,183,Japan,12,0,TRUE
+301165,Oscar GRANADOS,Midfielder,13,CS Herediano,Costa Rica,25.10.1985,28,183,Costa Rica,11,0,TRUE
+200259,Dany NOUNKEU,Defender,5,Besiktas JK,Turkey,11.04.1986,28,183,Cameroon,15,0,FALSE
+280487,Carlos SANCHEZ,Midfielder,6,Elche CF,Spain,06.02.1986,28,182,Columbia,43,0,FALSE
+359997,Avdija VRSAJEVIC,Midfielder,2,HNK Hajduk Split,Croatia,06.03.1986,28,182,Bosnia & Herzegovina,13,0,FALSE
+199160,Daniel CAMBRONERO,Goalkeeper,23,CS Herediano,Costa Rica,08.01.1986,28,181,Costa Rica,2,0,TRUE
+290822,Laurent CIMAN,Defender,23,Standard Liege,Belgium,05.08.1985,28,180,Belgium,8,0,TRUE
+278126,KIM Changsoo,Defender,2,Kashiwa Reysol,Japan,12.09.1985,28,179,South Korea,8,0,FALSE
+349582,Francisco SILVA,Midfielder,5,CA Osasuna,Spain,11.02.1986,28,178,Chile,11,0,FALSE
+201001,Fernando GAGO,Midfielder,5,CA Boca Juniors,Argentina,10.04.1986,28,178,Argentina,47,0,TRUE
+200133,Lucas BIGLIA,Midfielder,6,SS Lazio,Italy,30.01.1986,28,175,Argentina,17,0,FALSE
+268911,Toshihiro AOYAMA,Midfielder,14,Sanfrecce Hiroshima,Japan,22.02.1986,28,174,Japan,5,0,TRUE
+200205,VIEIRINHA,Forward,10,VfL Wolfsburg,Germany,24.01.1986,28,170,Portugal,7,0,FALSE
+303419,Alexander DOMINGUEZ,Goalkeeper,22,LDU Quito,Ecuador,05.06.1987,27,196,Ecuador,18,0,TRUE
+266783,Sergio ROMERO,Goalkeeper,1,AS Monaco,France,22.02.1987,27,192,Argentina,45,0,FALSE
+299956,Joe HART,Goalkeeper,1,Manchester City FC,England,19.04.1987,27,191,England,40,0,TRUE
+360111,Panagiotis GLYKOS,Goalkeeper,12,PAOK FC,Greece,10.10.1986,27,190,Greece,2,0,TRUE
+298655,Salvatore SIRIGU,Goalkeeper,12,Paris Saint-Germain FC,France,12.01.1987,27,190,Italy,8,0,FALSE
+271043,DAVID LUIZ,Defender,4,Chelsea FC,England,22.04.1987,27,189,Brazil,35,0,FALSE
+359448,Stephane RUFFIER,Goalkeeper,16,AS Saint-Etienne,France,27.09.1986,27,188,France,2,0,TRUE
+297105,Hugo LLORIS,Goalkeeper,1,Tottenham Hotspur FC,England,26.12.1986,27,188,France,56,0,FALSE
+200209,Cristian ZAPATA,Defender,2,AC Milan,Italy,30.09.1986,27,187,Columbia,23,0,FALSE
+200130,Ezequiel GARAY,Defender,2,SL Benfica,Portugal,10.10.1986,27,186,Argentina,18,0,FALSE
+291332,Ousmane DIARRASSOUBA,Defender,2,Caykur Rizespor,Turkey,21.12.1986,27,186,Ivory Coast,1,0,FALSE
+298613,HENRIQUE,Defender,15,SSC Napoli,Italy,14.10.1986,27,186,Brazil,5,0,FALSE
+369983,Aleksei KOZLOV,Defender,2,FC Dynamo Moscow,Russia,25.12.1986,27,185,Russia,10,0,TRUE
+358046,Vladimir GRANAT,Defender,13,FC Dynamo Moscow,Russia,22.05.1987,27,184,Russia,4,0,TRUE
+199175,Keylor NAVAS,Goalkeeper,1,Levante UD,Spain,15.12.1986,27,184,Costa Rica,52,0,FALSE
+367433,Matt BESLER,Defender,5,Sporting Kansas City,USA,11.02.1987,27,182,USA,16,0,TRUE
+329745,Hossein MAHINI,Defender,13,Perspolis FC,Iran,16.09.1986,27,182,Iran,21,0,TRUE
+363578,LEE Yong,Defender,12,Ulsan Hyundai FC,South Korea,24.12.1986,27,180,South Korea,11,0,TRUE
+267344,Mehrdad POOLADI,Defender,23,Perspolis FC,Iran,26.02.1987,27,180,Iran,19,0,TRUE
+298662,Antonio CANDREVA,Midfielder,6,SS Lazio,Italy,28.02.1987,27,180,Italy,19,0,TRUE
+296312,Edder DELGADO,Midfielder,12,Real Espana,Honduras,20.11.1986,27,179,Honduras,26,0,TRUE
+321731,Ioannis MANIATIS,Midfielder,2,Olympiacos Piraeus FC,Greece,12.10.1986,27,178,Greece,29,0,TRUE
+359375,SAMMIR,Midfielder,19,Getafe CF,Spain,23.04.1987,27,178,Croatia,5,0,FALSE
+379889,Steven BEITASHOUR,Defender,20,Vancouver Whitecaps FC,Canada,01.02.1987,27,178,Iran,6,0,FALSE
+240718,Constant DJAKPA,Defender,18,Eintracht Frankfurt,Germany,17.10.1986,27,177,Ivory Coast,4,0,FALSE
+268411,PARK Jooho,Defender,22,FSV Mainz 05,Germany,16.01.1987,27,174,South Korea,13,0,FALSE
+294626,Harrison AFFUL,Defender,23,Esperance Sportive de Tunis,Tunisia,24.07.1986,27,168,Ghana,40,0,FALSE
+362881,Fraser FORSTER,Goalkeeper,22,Celtic FC,Scotland,17.03.1988,26,201,England,1,0,FALSE
+230121,Asmir BEGOVIC,Goalkeeper,1,Stoke City FC,England,20.06.1987,26,198,Bosnia & Herzegovina,30,0,FALSE
+346763,Alireza HAGHIGHI,Goalkeeper,12,Sporting Covilha,Portugal,02.05.1988,26,193,Iran,4,0,FALSE
+298738,Simon MIGNOLET,Goalkeeper,12,Liverpool FC,England,06.03.1988,26,193,Belgium,14,0,FALSE
+379888,Daniel DAVARI,Goalkeeper,22,Eintracht Braunschweig,Germany,06.01.1988,26,193,Iran,4,0,FALSE
+232760,Tim KRUL,Goalkeeper,23,Newcastle United FC,England,03.04.1988,26,193,Netherlands,5,0,FALSE
+353237,Adam KWARASEY,Goalkeeper,12,Stromsgodset IF,Norway,12.12.1987,26,190,Ghana,21,0,FALSE
+359436,EDER,Forward,11,Sporting Braga,Portugal,22.12.1987,26,190,Portugal,7,0,TRUE
+269768,RUI PATRICIO,Goalkeeper,12,Sporting CP,Portugal,15.02.1988,26,189,Portugal,29,0,TRUE
+349631,Ricardo ALVAREZ,Midfielder,19,FC Internazionale,Italy,12.04.1988,26,188,Argentina,5,0,FALSE
+354883,Liassine CADAMURO,Defender,17,RCD Mallorca,Spain,05.03.1988,26,187,Algeria,6,0,FALSE
+299090,Sokratis PAPASTATHOPOULOS,Defender,19,Borussia Dortmund,Germany,09.06.1988,26,186,Greece,47,0,FALSE
+359428,LUIS NETO,Defender,14,FC Zenit St. Petersburg,Russia,26.05.1988,26,186,Portugal,7,0,FALSE
+360109,Panagiotis KONE,Midfielder,8,Bologna FC,Italy,26.07.1987,26,184,Greece,15,0,FALSE
+319298,Georgios TZAVELAS,Defender,3,PAOK FC,Greece,26.11.1987,26,183,Greece,13,0,TRUE
+200261,Alexandre SONG,Midfielder,6,FC Barcelona,Spain,09.09.1987,26,183,Cameroon,46,0,FALSE
+228624,Cristopher TOSELLI,Goalkeeper,12,CD Universidad Catolica,Chile,15.06.1988,26,181,Chile,4,0,TRUE
+370062,Ivan FRANJIC,Defender,2,Brisbane Roar FC,Australia,10.09.1987,26,180,Australia,8,0,TRUE
+349576,Juan PAREDES,Defender,4,Barcelona SC,Ecuador,08.07.1987,26,179,Ecuador,37,0,TRUE
+361222,Adam LALLANA,Midfielder,20,Southampton FC,England,10.05.1988,26,179,England,4,0,TRUE
+228942,Alessio CERCI,Forward,11,Torino FC,Italy,23.07.1987,26,177,Italy,11,0,TRUE
+298677,Jonathan DE GUZMAN,Midfielder,8,Swansea City AFC,England,13.09.1987,26,174,Netherlands,10,0,FALSE
+355023,Allan NYOM,Defender,22,Granada CF,Spain,10.05.1988,26,170,Cameroon,9,0,FALSE
+379264,Jose VAZQUEZ,Midfielder,23,Club Leon,Mexico,14.03.1988,26,164,Mexico,4,0,TRUE
+234405,Omar GONZALEZ,Defender,3,Los Angeles Galaxy,USA,11.10.1988,25,195,USA,19,0,TRUE
+299442,Jerome BOATENG,Defender,20,FC Bayern Muenchen,Germany,03.09.1988,25,192,Germany,38,0,TRUE
+359993,Toni SUNJIC,Defender,15,FC Zorya Lugansk,Ukraine,15.12.1988,25,192,Bosnia & Herzegovina,7,0,FALSE
+379985,Andrey SEMENOV,Defender,5,FC Terek Grozny,Russia,24.03.1989,25,191,Russia,1,0,TRUE
+356933,Mitch LANGERAK,Goalkeeper,12,Borussia Dortmund,Germany,22.08.1988,25,191,Australia,3,0,FALSE
+353379,Reza HAGHIGHI,Midfielder,8,Perspolis FC,Iran,01.02.1989,25,190,Iran,7,0,TRUE
+362649,Andreas SAMARIS,Midfielder,22,Olympiacos Piraeus FC,Greece,13.06.1989,25,190,Greece,4,0,TRUE
+270714,Javi MARTINEZ,Midfielder,4,FC Bayern Muenchen,Germany,02.09.1988,25,190,Spain,16,0,FALSE
+367558,Sylvain GBOHOUO,Goalkeeper,16,Sewe Sport,Ivory Coast,29.10.1988,25,190,Ivory Coast,2,0,TRUE
+303034,Sergio BUSQUETS,Midfielder,16,FC Barcelona,Spain,16.07.1988,25,189,Spain,65,0,TRUE
+229051,Matthew SPIRANOVIC,Defender,6,Western Sydney Wanderers FC,Australia,27.06.1988,25,188,Australia,17,0,TRUE
+349568,Adrian BONE,Goalkeeper,12,CD El Nacional,Ecuador,08.09.1988,25,188,Ecuador,3,0,TRUE
+367920,Diego COSTA,Forward,19,Atletico Madrid,Spain,07.10.1988,25,188,Spain,3,0,TRUE
+321734,Shuichi GONDA,Goalkeeper,23,FC Tokyo,Japan,03.03.1989,25,187,Japan,2,0,TRUE
+302381,Ron-Robert ZIELER,Goalkeeper,12,Hannover 96,Germany,12.02.1989,25,187,Germany,3,0,TRUE
+358738,Jasper CILLESSEN,Goalkeeper,1,AFC Ajax,Netherlands,22.04.1989,25,187,Netherlands,7,0,TRUE
+358694,Kevin GROSSKREUTZ,Defender,2,Borussia Dortmund,Germany,19.07.1988,25,186,Germany,4,0,TRUE
+312987,Oscar DUARTE,Defender,6,Club Brugge KV,Belgium,03.06.1989,25,184,Costa Rica,10,0,FALSE
+228686,David OSPINA,Goalkeeper,1,OGC Nice,France,31.08.1988,25,183,Columbia,43,0,FALSE
+319460,Yann SOMMER,Goalkeeper,12,FC Basel,Switzerland,17.12.1988,25,183,Switzerland,6,0,TRUE
+295149,James HOLLAND,Midfielder,16,FK Austria Wien,Austria,15.05.1989,25,180,Australia,13,0,FALSE
+291398,PARK Jongwoo,Midfielder,15,Guangzhou R&F FC,China,10.03.1989,25,180,South Korea,10,0,FALSE
+332293,Giovanni SIO,Forward,21,FC Basel,Switzerland,31.03.1989,25,180,Ivory Coast,7,0,FALSE
+228691,Alexander MEJIA,Midfielder,15,Atletico Nacional,Columbia,11.07.1988,25,179,Columbia,8,0,TRUE
+358881,Alexey IONOV,Forward,21,FC Dynamo Moscow,Russia,18.02.1989,25,178,Russia,5,0,TRUE
+350129,Miguel PONCE,Defender,16,Deportivo Toluca FC,Mexico,12.04.1989,25,175,Mexico,7,0,TRUE
+312234,Oliver BOZANIC,Midfielder,13,FC Luzern,Switzerland,08.01.1989,25,167,Australia,3,0,FALSE
+356748,Chris SMALLING,Defender,12,Manchester United FC,England,22.11.1989,24,194,England,11,0,TRUE
+318688,Marcos ROJO,Defender,16,Sporting CP,Portugal,20.03.1990,24,189,Argentina,20,0,FALSE
+311850,Mohammed RABIU,Midfielder,17,Kuban Krasnodar,Russia,31.12.1989,24,189,Ghana,16,0,FALSE
+319436,Leroy FER,Midfielder,18,Norwich City FC,England,05.01.1990,24,188,Netherlands,5,0,FALSE
+317056,Moussa SISSOKO,Midfielder,18,Newcastle United FC,England,16.08.1989,24,187,France,16,0,FALSE
+356189,Jordan HENDERSON,Midfielder,14,Liverpool FC,England,17.06.1990,24,187,England,9,0,TRUE
+319428,Daryl JANMAAT,Defender,7,Feyenoord Rotterdam,Netherlands,22.07.1989,24,186,Netherlands,15,0,TRUE
+367343,Yury LODYGIN,Goalkeeper,12,FC Zenit St. Petersburg,Russia,26.05.1990,24,186,Russia,2,0,TRUE
+359995,Ognjen VRANJES,Defender,6,Elazigspor,Turkey,24.10.1989,24,186,Bosnia & Herzegovina,13,0,FALSE
+365556,Timmy CHANDLER,Defender,21,1. FC Nuernberg,Germany,29.03.1990,24,186,USA,12,0,FALSE
+306410,Ryan McGOWAN,Defender,19,Shandong Luneng Taishan FC,China,15.08.1989,24,185,Australia,9,0,FALSE
+290931,Nicolas NKOULOU,Defender,3,Olympique Marseille,France,27.03.1990,24,185,Cameroon,47,0,FALSE
+350003,Hiroki SAKAI,Defender,21,Hannover 96,Germany,12.04.1990,24,185,Japan,17,0,FALSE
+306780,Ciro IMMOBILE,Forward,17,Torino FC,Italy,20.02.1990,24,184,Italy,2,0,TRUE
+374529,Anel HADZIC,Midfielder,21,SK Sturm Graz,Austria,16.08.1989,24,184,Bosnia & Herzegovina,2,0,FALSE
+274329,HAN Kookyoung,Midfielder,14,Kashiwa Reysol,Japan,19.04.1990,24,183,South Korea,9,0,FALSE
+274283,YUN Sukyoung,Defender,3,Queens Park Rangers FC,England,13.02.1990,24,182,South Korea,3,0,FALSE
+356518,HWANG Seokho,Defender,6,Sanfrecce Hiroshima,Japan,27.06.1989,24,182,South Korea,3,0,FALSE
+288824,Matteo DARMIAN,Defender,4,Torino FC,Italy,02.12.1989,24,182,Italy,1,0,TRUE
+329092,Hector HERRERA,Midfielder,6,FC Porto,Portugal,19.04.1990,24,180,Mexico,12,0,FALSE
+319432,Daley BLIND,Defender,5,AFC Ajax,Netherlands,09.03.1990,24,180,Netherlands,11,0,TRUE
+370438,Sammy NDJOCK,Goalkeeper,23,Fethiyespor,Turkey,25.02.1990,24,178,Cameroon,2,0,FALSE
+270948,Cesar AZPILICUETA,Midfielder,22,Chelsea FC,England,28.08.1989,24,178,Spain,6,0,FALSE
+323574,Stephen ADAMS,Goalkeeper,1,Aduana Stars,Ghana,28.09.1989,24,177,Ghana,6,0,TRUE
+365747,Edin VISCA,Forward,19,Istanbul BBSK,Turkey,17.02.1990,24,172,Bosnia & Herzegovina,10,0,FALSE
+366309,Yacine BRAHIMI,Midfielder,11,Granada CF,Spain,08.02.1990,24,171,Algeria,5,0,FALSE
+350124,Javier AQUINO,Midfielder,20,Villarreal CF,Spain,11.02.1990,24,166,Mexico,21,0,FALSE
+305382,Sebastian COATES,Defender,19,Club Nacional de Football,Uruguay,07.10.1990,23,196,Uruguay,14,0,TRUE
+319413,Panagiotis TACHTSIDIS,Midfielder,23,Torino FC,Italy,15.02.1991,23,194,Greece,5,0,FALSE
+380069,Christoph KRAMER,Midfielder,23,Borussia Moenchengladbach,Germany,19.02.1991,23,189,Germany,2,0,TRUE
+319340,Eliaquim MANGALA,Defender,13,FC Porto,Portugal,13.02.1991,23,188,France,3,0,FALSE
+274281,KIM Seunggyu,Goalkeeper,21,Ulsan Hyundai FC,South Korea,30.09.1990,23,187,South Korea,5,0,TRUE
+368009,Ebenezer ODUNLAMI,Defender,12,Sunshine Stars FC,Nigeria,30.04.1991,23,187,Nigeria,11,0,TRUE
+336434,Clement GRENIER,Midfielder,22,Olympique Lyonnais,France,07.01.1991,23,186,France,5,0,TRUE
+323556,Konstantinos MANOLAS,Defender,4,Olympiacos Piraeus FC,Greece,14.06.1991,23,186,Greece,8,0,TRUE
+370523,Mathis BOLLY,Midfielder,6,Fortuna Duesseldorf,Germany,14.11.1990,23,185,Ivory Coast,3,0,FALSE
+375453,ANDRE ALMEIDA,Defender,19,SL Benfica,Portugal,10.09.1990,23,185,Portugal,3,0,TRUE
+356710,Ruben GABRIEL,Midfielder,4,KV Waasland-Beveren,Belgium,25.09.1990,23,184,Nigeria,10,0,FALSE
+364088,Faouzi GHOULAM,Defender,3,SSC Napoli,Italy,01.02.1991,23,184,Algeria,5,0,FALSE
+356712,Juwon OSHANIWA,Defender,13,FC Ashdod,Israel,14.09.1990,23,184,Nigeria,9,0,FALSE
+312116,Gaston RAMIREZ,Midfielder,18,Southampton FC,England,02.12.1990,23,183,Uruguay,28,0,FALSE
+358869,Georgy SHCHENNIKOV,Defender,3,CSKA Moscow,Russia,27.04.1991,23,179,Russia,3,0,TRUE
+379942,Riyad MAHREZ,Forward,21,Leicester City FC,England,21.02.1991,23,179,Algeria,1,0,FALSE
+321736,Gotoku SAKAI,Defender,3,VfB Stuttgart,Germany,14.03.1991,23,176,Japan,12,0,FALSE
+379974,Waylon FRANCIS,Defender,12,Columbus Crew,USA,20.09.1990,23,175,Costa Rica,1,0,FALSE
+356466,Hotaru YAMAGUCHI,Midfielder,16,Cerezo Osaka,Japan,06.10.1990,23,173,Japan,11,0,TRUE
+371042,Isaac BRIZUELA,Midfielder,17,Deportivo Toluca FC,Mexico,28.08.1990,23,173,Mexico,7,0,TRUE
+269071,Daniel OPARE,Defender,4,Standard Liege,Belgium,18.10.1990,23,172,Ghana,16,0,FALSE
+336869,Alex IBARRA,Midfielder,5,Vitesse Arnheim,Netherlands,20.01.1991,23,171,Ecuador,17,0,FALSE
+270400,Luis GARRIDO,Midfielder,19,CD Olimpia,Honduras,05.11.1990,23,170,Honduras,19,0,TRUE
+358106,Thibaut COURTOIS,Goalkeeper,1,Atletico Madrid,Spain,11.05.1992,22,198,Belgium,16,0,FALSE
+320375,Joel MATIP,Midfielder,21,FC Schalke 04,Germany,08.08.1991,22,194,Cameroon,22,0,FALSE
+313021,Stefan DE VRIJ,Defender,3,Feyenoord Rotterdam,Netherlands,05.02.1992,22,190,Netherlands,11,0,TRUE
+379808,Tino Sven SUSIC,Midfielder,14,HNK Hajduk Split,Croatia,13.02.1992,22,186,Bosnia & Herzegovina,2,0,FALSE
+376349,WILLIAM,Midfielder,6,Sporting CP,Portugal,07.04.1992,22,185,Portugal,3,0,TRUE
+358009,Phil JONES,Defender,16,Manchester United FC,England,21.02.1992,22,185,England,9,0,TRUE
+376285,Aissa MANDI,Defender,20,Stade de Reims,France,22.10.1991,22,184,Algeria,2,0,FALSE
+358885,Maksim KANUNNIKOV,Forward,6,FK Amkar Perm,Russia,14.07.1991,22,184,Russia,2,0,TRUE
+336485,Sime VRSALJKO,Defender,2,Genoa CFC,Italy,10.01.1992,22,183,Croatia,6,0,FALSE
+379952,Erik DURM,Defender,15,Borussia Dortmund,Germany,12.05.1992,22,183,Germany,1,0,TRUE
+313051,Joel VELTMAN,Defender,13,AFC Ajax,Netherlands,15.01.1992,22,183,Netherlands,2,0,TRUE
+339117,Maty RYAN,Goalkeeper,1,Club Brugge KV,Belgium,08.04.1992,22,181,Australia,6,0,FALSE
+379164,Ben HALLORAN,Forward,10,Fortuna Duesseldorf,Germany,14.06.1992,22,180,Australia,1,0,FALSE
+306364,Jason DAVIDSON,Defender,3,SC Heracles Almelo,Netherlands,29.06.1991,22,179,Australia,6,0,FALSE
+346731,Bakhtiar RAHMANI,Midfielder,18,Foolad Khuzestan FC,Iran,23.09.1991,22,179,Iran,3,0,TRUE
+307541,Yeltsin TEJEDA,Midfielder,17,Deportivo Saprissa,Costa Rica,17.03.1992,22,179,Costa Rica,22,0,TRUE
+355859,Loic FEUDJOU,Goalkeeper,1,Coton Sport FC,Cameroon,14.04.1992,22,178,Cameroon,1,0,TRUE
+313410,KOKE,Midfielder,17,Atletico Madrid,Spain,08.01.1992,22,178,Spain,7,0,TRUE
+330565,Jack WILSHERE,Midfielder,7,Arsenal FC,England,01.01.1992,22,172,England,16,0,TRUE
+315614,Santiago ARIAS,Defender,4,PSV Eindhoven,Netherlands,13.01.1992,22,171,Columbia,5,0,FALSE
+358732,Jordy CLASIE,Midfielder,16,Feyenoord Rotterdam,Netherlands,27.06.1991,22,169,Netherlands,8,0,TRUE
+380004,Sayouba MANDE,Goalkeeper,23,Stabaek IF,Norway,15.06.1993,21,193,Ivory Coast,1,0,FALSE
+373555,John BROOKS,Defender,6,Hertha BSC,Germany,28.01.1993,21,193,USA,4,0,FALSE
+359440,Raphael VARANE,Defender,4,Real Madrid CF,Spain,25.04.1993,21,191,France,5,0,FALSE
+308082,Diego REYES,Defender,5,FC Porto,Portugal,19.09.1992,21,189,Mexico,14,0,FALSE
+369546,Eder BALANTA,Defender,16,CA River Plate,Argentina,28.02.1993,21,181,Columbia,2,0,FALSE
+313559,Ricardo RODRIGUEZ,Defender,13,VfL Wolfsburg,Germany,25.08.1992,21,180,Switzerland,21,0,FALSE
+376360,Ismael DIOMANDE,Midfielder,14,AS Saint-Etienne,France,28.08.1992,21,180,Ivory Coast,1,0,FALSE
+367557,Jean Daniel AKPA,Defender,7,Toulouse FC,France,11.10.1992,21,180,Ivory Coast,1,0,FALSE
+359223,Mattia DE SCIGLIO,Defender,2,AC Milan,Italy,20.10.1992,21,179,Italy,10,0,TRUE
+358101,Muhamed BESIC,Midfielder,7,Ferencvarosi TC,Hungary,10.09.1992,21,177,Bosnia & Herzegovina,9,0,FALSE
+370522,Serge AURIER,Defender,17,Toulouse FC,France,24.12.1992,21,176,Ivory Coast,7,0,FALSE
+339116,Massimo LUONGO,Midfielder,21,Swindon Town FC,England,25.09.1992,21,176,Australia,1,0,FALSE
+380060,Cedric DJEUGOUE,Defender,4,Coton Sport FC,Cameroon,28.08.1992,21,175,Cameroon,3,0,TRUE
+368708,RAFA,Forward,15,Sporting Braga,Portugal,17.05.1993,21,173,Portugal,2,0,TRUE
+315436,Ramon AZEEZ,Midfielder,15,UD Almeria,Spain,12.12.1992,21,170,Nigeria,1,0,FALSE
+356704,Juan QUINTERO,Midfielder,20,FC Porto,Portugal,18.01.1993,21,168,Columbia,4,0,FALSE
+312014,Michael BABATUNDE,Forward,18,FC Volyn Lutsk,Ukraine,24.12.1992,21,165,Nigeria,4,0,FALSE
+336791,Edgar SALLI,Midfielder,20,RC Lens,France,17.08.1992,21,163,Cameroon,8,0,FALSE
+370469,Rashid SUMAILA,Defender,15,Mamelodi Sundowns FC,South Africa,18.12.1992,21,160,Ghana,8,0,FALSE
+362645,Stefanos KAPINO,Goalkeeper,13,Panathinaikos FC,Greece,18.03.1994,20,196,Greece,2,0,TRUE
+379736,Matthias GINTER,Defender,3,SC Freiburg,Germany,19.01.1994,20,187,Germany,2,0,TRUE
+369392,Ross BARKLEY,Midfielder,21,Everton FC,England,05.12.1993,20,185,England,4,0,TRUE
+315424,Kenneth OMERUO,Defender,22,Middlesbrough FC,England,17.10.1993,20,185,Nigeria,17,0,FALSE
+376230,Sead KOLASINAC,Defender,5,FC Schalke 04,Germany,20.06.1993,20,183,Bosnia & Herzegovina,4,0,FALSE
+336085,Terence KONGOLO,Defender,14,Feyenoord Rotterdam,Netherlands,14.02.1994,20,183,Netherlands,1,0,TRUE
+339987,Mateo KOVACIC,Midfielder,20,FC Internazionale,Italy,06.05.1994,20,181,Croatia,9,0,FALSE
+368860,Lucas DIGNE,Defender,17,Paris Saint-Germain FC,France,20.07.1993,20,179,France,2,0,TRUE
+336098,Memphis DEPAY,Forward,21,PSV Eindhoven,Netherlands,13.02.1994,20,178,Netherlands,6,0,TRUE
+368973,DeAndre YEDLIN,Defender,2,Seattle Sounders FC,USA,09.07.1993,20,175,USA,4,0,TRUE
+379939,Nabil BENTALEB,Midfielder,14,Tottenham Hotspur FC,England,24.11.1994,19,189,Algeria,2,0,FALSE
+379911,Divock ORIGI,Forward,17,Lille OSC,France,18.04.1995,19,185,Belgium,1,0,FALSE
+368655,Jose GIMENEZ,Defender,13,Atletico Madrid,Spain,20.01.1995,19,184,Uruguay,5,0,FALSE
+369094,Julian GREEN,Midfielder,16,FC Bayern Muenchen,Germany,06.06.1995,19,172,USA,2,0,FALSE
+332827,Carlos GRUEZO,Midfielder,23,VfB Stuttgart,Germany,19.04.1995,19,171,Ecuador,2,0,FALSE
+336043,Raheem STERLING,Midfielder,19,Liverpool FC,England,08.12.1994,19,170,England,3,0,TRUE
+336450,Luke SHAW,Defender,23,Southampton FC,England,12.07.1995,18,184,England,1,0,TRUE
+319482,Rodrigo MUNOZ,Goalkeeper,12,Club Libertad,Paraguay,22.01.1982,32,185,Uruguay,0,0,FALSE
+367415,Jasmin FEJZIC,Goalkeeper,12,VfR Aalen,Germany,15.05.1986,28,198,Bosnia & Herzegovina,0,0,FALSE
+380663,Sammy BOSSUT,Goalkeeper,13,SV Zulte Waregem,Belgium,11.08.1985,28,187,Belgium,0,0,TRUE
+306818,LEE Bumyoung,Goalkeeper,23,Busan IPark FC,South Korea,02.04.1989,25,199,South Korea,0,0,TRUE
+360642,Camilo VARGAS,Goalkeeper,12,Independiente Santa Fe,Columbia,09.03.1989,25,185,Columbia,0,0,TRUE
+269859,David DE GEA,Goalkeeper,12,Manchester United FC,England,07.11.1990,23,190,Spain,0,0,FALSE
+356676,Roman BUERKI,Goalkeeper,21,Grasshopper Club,Switzerland,14.11.1990,23,188,Switzerland,0,0,TRUE
+369026,Oliver ZELENIKA,Goalkeeper,12,NK Lokomotiva Zagreb,Croatia,14.05.1993,21,192,Croatia,0,0,TRUE
+309420,Mattia PERIN,Goalkeeper,13,Genoa CFC,Italy,10.11.1992,21,188,Italy,0,0,TRUE
+379165,Bailey WRIGHT,Defender,8,Preston North End FC,England,28.07.1992,21,184,Australia,0,0,FALSE
+369050,Ivan MOCINIC,Midfielder,15,HNK Rijeka,Croatia,30.04.1993,21,180,Croatia,0,0,TRUE
+380000,Marcelo BROZOVIC,Midfielder,14,GNK Dinamo Zagreb,Croatia,16.11.1992,21,180,Croatia,0,0,TRUE
+380009,Luis LOPEZ,Goalkeeper,1,Real Espana,Honduras,13.09.1993,20,182,Honduras,0,0,TRUE
+379910,Adnan JANUZAJ,Midfielder,20,Manchester United FC,England,05.02.1995,19,180,Belgium,0,0,FALSE

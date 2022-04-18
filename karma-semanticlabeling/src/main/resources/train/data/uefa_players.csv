@@ -1,0 +1,988 @@
+id,sn,fn,ln,no,ps,nt,db,ag,ht,ap/se,ap/qs,ap/ts,ap/at,go/se,go/qs,go/ts,go/at,ci,cb,cn
+250006566,Bot??a,Alberto,Bot??a,3,2,ESP,27.01.1989,26,187,0,0,0,6,0,0,0,1,2610,Olympiacos,GRE
+250050346,Bouchalakis,Andreas,Bouchalakis,8,3,GRE,05.04.1993,22,186,0,0,0,1,0,0,0,0,2610,Olympiacos,GRE
+250017864,Ideye,Ideye,Brown,99,4,NGA,10.10.1988,26,180,1,0,1,13,0,0,0,4,2610,Olympiacos,GRE
+66176,Cambiasso,Esteban,Cambiasso,91,3,ARG,18.08.1980,35,177,1,0,1,81,0,0,0,6,2610,Olympiacos,GRE
+250023172,Choutesiotis,Lefteris,Choutesiotis,33,1,GRE,20.07.1994,21,192,0,0,0,0,0,0,0,0,2610,Olympiacos,GRE
+106620,Da Costa,Manuel,da Costa,6,2,MAR,06.05.1986,29,191,1,0,1,5,0,0,0,0,2610,Olympiacos,GRE
+95071,Dom??nguez,Alejandro,Dom??nguez,10,3,ARG,10.06.1981,34,175,1,0,1,31,0,0,0,7,2610,Olympiacos,GRE
+1905535,Elabdellaoui,Omar,Elabdellaoui,14,2,NOR,05.12.1991,23,179,1,0,1,7,0,0,0,0,2610,Olympiacos,GRE
+250011522,Finnbogason,Alfred,Finnbogason,9,4,ISL,01.02.1989,26,181,0,0,0,4,0,0,0,1,2610,Olympiacos,GRE
+250017753,Fortounis,Kostas,Fortounis,7,3,GRE,16.10.1992,22,182,1,0,1,1,0,0,0,0,2610,Olympiacos,GRE
+250063842,Hern?õni,,Hern?õni,77,4,POR,20.08.1991,24,180,1,0,1,2,0,0,0,0,2610,Olympiacos,GRE
+250013050,Kapino,Stefanos,Kapino,37,1,GRE,18.03.1994,21,193,0,0,0,0,0,0,0,0,2610,Olympiacos,GRE
+250017994,Kasami,Pajtim,Kasami,11,3,SUI,02.06.1992,23,187,1,0,1,7,0,0,0,1,2610,Olympiacos,GRE
+250056159,Laci,Qazim,Laci,15,3,ALB,19.01.1996,19,176,0,0,0,0,0,0,0,0,2610,Olympiacos,GRE
+250007925,Leandro Salino,,Leandro Salino,30,2,BRA,22.04.1985,30,168,1,0,1,24,0,0,0,0,2610,Olympiacos,GRE
+97657,Maniatis,Giannis,Maniatis,2,2,GRE,12.10.1986,28,178,0,0,0,22,0,0,0,1,2610,Olympiacos,GRE
+250075783,Masuaku,Arthur,Masuaku,26,2,FRA,07.11.1993,21,179,1,0,1,7,0,0,0,1,2610,Olympiacos,GRE
+1909310,Milivojevié?,Luka,Milivojevié?,5,3,SRB,07.04.1991,24,182,0,0,0,9,0,0,0,0,2610,Olympiacos,GRE
+250063448,Pardo,Felipe,Pardo,90,4,COL,17.08.1990,25,,1,0,1,1,0,0,0,0,2610,Olympiacos,GRE
+250070426,Pulido,Alan,Pulido,17,4,MEX,08.03.1991,24,175,0,0,0,0,0,0,0,0,2610,Olympiacos,GRE
+69166,Roberto,,Roberto,16,1,ESP,10.02.1986,29,195,1,0,1,22,0,0,0,0,2610,Olympiacos,GRE
+250054646,Saliakas,Manolis,Saliakas,34,2,GRE,12.09.1996,19,175,0,0,0,0,0,0,0,0,2610,Olympiacos,GRE
+250057664,Seb?≠,,Seb?≠,92,4,BRA,08.06.1992,23,182,1,0,1,1,0,0,0,0,2610,Olympiacos,GRE
+108849,Siovas,Dimitris,Siovas,23,2,GRE,16.09.1988,27,191,1,0,1,11,0,0,0,0,2610,Olympiacos,GRE
+250041550,Vouros,Praxitelis,Vouros,29,2,GRE,05.05.1995,20,183,0,0,0,0,0,0,0,0,2610,Olympiacos,GRE
+250019923,Asare,Nana,Asare,21,2,GHA,11.07.1986,29,175,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250042844,Coulibaly,Kalifa,Coulibaly,7,3,MLI,21.08.1991,24,197,0,0,0,0,0,0,0,0,4608,Gent,BEL
+250026212,Dejaegere,Brecht,Dejaegere,19,3,BEL,29.05.1991,24,174,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250086334,Depoitre,Laurent,Depoitre,9,4,BEL,07.12.1988,26,191,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250052801,Foket,Thomas,Foket,32,3,BEL,25.09.1994,20,177,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250059469,E. Johansson,Erik,Johansson,5,2,SWE,30.12.1988,26,180,0,0,0,10,0,0,0,0,4608,Gent,BEL
+106571,Kums,Sven,Kums,14,3,BEL,26.02.1988,27,178,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250008207,Matton,Thomas,Matton,8,3,BEL,24.10.1985,29,180,1,0,1,1,0,0,0,0,4608,Gent,BEL
+1905564,Milicevic,Danijel,Milicevic,77,3,SUI,05.01.1986,29,177,1,0,1,1,1,0,1,1,4608,Gent,BEL
+250070377,S. Mitrovié?,Stefan,Mitrovié?,13,2,SRB,22.05.1990,25,,1,0,1,1,0,0,0,0,4608,Gent,BEL
+1902553,L. Nielsen,Lasse,Nielsen,23,2,DEN,08.01.1988,27,185,1,0,1,4,0,0,0,0,4608,Gent,BEL
+1905619,Pedersen,Nicklas,Pedersen,28,4,DEN,10.10.1987,27,187,0,0,0,0,0,0,0,0,4608,Gent,BEL
+250014227,Poletanovié?,Marko,Poletanovié?,12,3,SRB,20.07.1993,22,187,0,0,0,0,0,0,0,0,4608,Gent,BEL
+250001584,Rafinha,,Rafinha,4,2,BRA,29.06.1982,33,182,1,0,1,12,0,0,0,1,4608,Gent,BEL
+250012556,Raman,Benito,Raman,26,4,BEL,07.11.1994,20,172,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250010916,Renato Neto,,Renato Neto,10,3,BRA,27.09.1991,23,187,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250043054,Saief,Kenneth,Saief,15,3,ISR,17.12.1993,21,176,0,0,0,0,0,0,0,0,4608,Gent,BEL
+250007046,Sels,Matz,Sels,1,1,BEL,26.02.1992,23,188,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250072874,Simon,Moses,Simon,27,4,NGA,12.07.1995,20,166,1,0,1,1,0,0,0,0,4608,Gent,BEL
+250023865,Thoelen,Yannick,Thoelen,20,1,BEL,18.07.1990,25,,0,0,0,0,0,0,0,0,4608,Gent,BEL
+250012558,Van der Bruggen,Hannes,Van der Bruggen,17,3,BEL,01.04.1993,22,180,0,0,0,0,0,0,0,0,4608,Gent,BEL
+95783,Vandenbussche,Brian,Vandenbussche,25,1,BEL,24.09.1981,33,196,0,0,0,0,0,0,0,0,4608,Gent,BEL
+250006017,Vitas,Uroè≠,Vitas,3,2,SRB,06.07.1992,23,187,0,0,0,0,0,0,0,0,4608,Gent,BEL
+250087991,Adel,Anthony,Adel,66,3,FRA,11.01.1998,17,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250074007,Aouar,Houssem,Aouar,47,3,FRA,30.06.1998,17,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250075910,Beauvue,Claudio,Beauvue,9,4,FRA,16.04.1988,27,174,1,0,1,1,0,0,0,0,5312,Lyon,FRA
+250021592,Bedimo,Henri,Bedimo,3,2,CMR,04.06.1984,31,180,0,0,0,5,0,0,0,0,5312,Lyon,FRA
+250089120,Belkacemi,Abdenour,Belkacemi,49,3,FRA,18.09.1999,16,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250074008,Benjeddi,Adil,Benjeddi,51,2,FRA,29.01.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+93628,Biè≠evac,Milan,Biè≠evac,5,2,SRB,31.08.1983,32,187,0,0,0,11,0,0,0,1,5312,Lyon,FRA
+250074009,Cognat,Timoth??,Cognat,54,3,FRA,25.01.1998,17,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250054950,Cornet,Maxwel,Cornet,27,4,FRA,27.09.1996,18,179,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250062627,D'Arpino,Maxime,D'Arpino,34,3,FRA,17.06.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250062628,De Sousa,J??r??my,De Sousa,52,3,FRA,16.01.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250074010,Del Castillo,Romain,Del Castillo,36,3,FRA,29.03.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250073903,Diakhaby,Mouctar,Diakhaby,41,2,FRA,19.12.1996,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250074012,Dzabana,Alan,Dzabana,55,4,FRA,25.03.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250062148,Fekir,Nabil,Fekir,18,3,FRA,18.07.1993,22,173,0,0,0,1,0,0,0,0,5312,Lyon,FRA
+250011569,Ferri,Jordan,Ferri,12,3,FRA,12.03.1992,23,172,1,0,1,2,0,0,0,0,5312,Lyon,FRA
+250087986,Gaspar,Jordy,Gaspar,56,2,FRA,23.04.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250039725,Ghezzal,Rachid,Ghezzal,11,3,FRA,09.05.1992,23,182,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+1905737,Gonalons,Maxime,Gonalons,21,3,FRA,10.03.1989,26,185,1,0,1,26,0,0,0,2,5312,Lyon,FRA
+107754,Gorgelin,Mathieu,Gorgelin,30,1,FRA,05.08.1990,25,187,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250054954,Grange,Dorian,Grange,50,1,FRA,10.05.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+1908192,Grenier,Cl??ment,Grenier,7,3,FRA,07.01.1991,24,186,0,0,0,6,0,0,0,1,5312,Lyon,FRA
+250089119,Hemans Arday,Isaac,Hemans Arday,58,2,GHA,26.12.1996,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+1901367,Jallet,Christophe,Jallet,13,2,FRA,31.10.1983,31,178,1,0,1,13,1,0,1,1,5312,Lyon,FRA
+250055373,U. Jenssen,Ulrik,Jenssen,35,2,NOR,17.07.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250057033,Kalulu,Aldo,Kalulu,26,3,FRA,21.01.1996,19,,1,0,1,1,0,0,0,0,5312,Lyon,FRA
+250087988,Kalulu,G??d??on,Kalulu,65,2,FRA,29.08.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250054957,Kemen,Olivier,Kemen,24,3,FRA,20.07.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250008012,B. Kon??,Bakary,Kon??,4,2,BFA,27.04.1988,27,188,0,0,0,12,0,0,0,2,5312,Lyon,FRA
+250042776,Labidi,Zakarie,Labidi,32,3,FRA,08.02.1995,20,178,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+1908196,Lacazette,Alexandre,Lacazette,10,4,FRA,28.05.1991,24,175,1,0,1,13,0,0,0,2,5312,Lyon,FRA
+250067767,Lebongo,Stanislas,Lebongo,40,1,FRA,21.09.1997,17,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250087998,Loisi,Enzo,Loisi,67,3,FRA,15.06.1998,17,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+1901643,Anthony Lopes,Anthony,Lopes,1,1,POR,01.10.1990,24,184,1,0,1,5,0,0,0,0,5312,Lyon,FRA
+30670,Malbranque,Steed,Malbranque,17,3,FRA,06.01.1980,35,168,1,0,1,16,0,0,0,2,5312,Lyon,FRA
+250074013,Martelat,Yoann,Martelat,59,3,FRA,16.01.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250047077,C. Martins,Christopher,Martins,46,3,LUX,19.02.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250057034,Mboumbouni,Dylan,Mboumbouni,37,2,FRA,20.02.1996,19,182,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250054827,Mocio,Lucas,Mocio,16,1,FRA,11.05.1994,21,197,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+66372,Morel,J??r??my,Morel,15,2,FRA,02.04.1984,31,176,1,0,1,14,0,0,0,0,5312,Lyon,FRA
+250073904,Moufi,Fahd,Moufi,38,2,FRA,05.05.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250064194,Moutoussamy,Samuel,Moutoussamy,43,2,FRA,12.08.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+73850,Mvuemba,Arnold,Mvuemba,28,3,FRA,28.01.1985,30,172,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250074014,Neto,C??sar,Neto,60,2,FRA,26.02.1999,16,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250057035,Ngouma,Romaric,Ngouma,44,2,FRA,28.01.1995,20,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250086990,Owusu,Elisha,Owusu,61,3,FRA,07.11.1997,17,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250055741,Pagliuca,Kilian,Pagliuca,39,4,SUI,02.09.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250054828,Paye,Mour,Paye,31,4,FRA,24.05.1994,21,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250062684,Perrin,Ga?Ætan,Perrin,62,3,FRA,07.06.1996,19,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250002767,Rafael,,Rafael,20,2,BRA,09.07.1990,25,172,1,0,1,27,0,0,0,0,5312,Lyon,FRA
+250062683,Richard,Thomas,Richard,63,4,FRA,21.03.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250024286,Rose,Lindsay,Rose,22,2,FRA,08.02.1992,23,184,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250074015,Roselli,Alexandre,Roselli,64,2,FRA,17.03.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250016660,Sergi Darder,,Sergi Darder,14,3,ESP,22.12.1993,21,180,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250087989,Sy,Ahamadou,Sy,68,2,FRA,05.01.1998,17,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250054829,Tolisso,Corentin,Tolisso,8,3,FRA,03.08.1994,21,181,1,0,1,1,0,0,0,0,5312,Lyon,FRA
+250081923,Tousart,Lucas,Tousart,29,3,FRA,29.04.1997,18,,0,0,0,0,0,0,0,0,5312,Lyon,FRA
+250014003,Umtiti,Samuel,Umtiti,23,2,FRA,14.11.1993,21,180,1,0,1,4,0,0,0,0,5312,Lyon,FRA
+105575,Valbuena,Mathieu,Valbuena,19,4,FRA,28.09.1984,30,167,1,0,1,38,0,0,0,3,5312,Lyon,FRA
+250013471,Yanga-Mbiwa,Mapou,Yanga-Mbiwa,2,2,FRA,15.05.1989,26,184,1,0,1,12,0,0,0,0,5312,Lyon,FRA
+1906540,Alaba,David,Alaba,27,2,AUT,24.06.1992,23,175,1,0,1,43,0,0,0,4,50037,Bayern,GER
+54091,Xabi Alonso,Xabi,Alonso,14,3,ESP,25.11.1981,33,183,1,0,1,113,0,0,0,5,50037,Bayern,GER
+250000142,Badstuber,Holger,Badstuber,28,2,GER,13.03.1989,26,189,0,0,0,37,0,0,0,1,50037,Bayern,GER
+250075724,Benatia,Medhi,Benatia,5,2,MAR,17.04.1987,28,190,0,0,0,11,0,0,0,1,50037,Bayern,GER
+150182140,Benko,Fabian,Benko,40,3,GER,05.06.1998,17,,0,0,0,0,0,0,0,0,50037,Bayern,GER
+250013892,Bernat,Juan,Bernat,18,2,ESP,01.03.1993,22,172,1,0,1,13,0,0,0,0,50037,Bayern,GER
+98865,Boateng,J??r??me,Boateng,17,2,GER,03.09.1988,27,190,1,0,1,45,0,0,0,3,50037,Bayern,GER
+250054949,Coman,Kingsley,Coman,29,4,FRA,13.06.1996,19,178,1,0,1,3,0,0,0,0,50037,Bayern,GER
+250081687,Dorsch,Niklas,Dorsch,30,3,GER,15.01.1998,17,,0,0,0,0,0,0,0,0,50037,Bayern,GER
+250016027,Douglas Costa,,Douglas Costa,11,3,BRA,14.09.1990,25,170,1,0,1,35,0,0,0,6,50037,Bayern,GER
+150182145,Gaudino,Gianluca,Gaudino,16,3,GER,11.11.1996,18,175,0,0,0,1,0,0,0,0,50037,Bayern,GER
+250007605,G??tze,Mario,G??tze,19,3,GER,03.06.1992,23,185,1,0,1,40,1,0,1,10,50037,Bayern,GER
+250063830,Green,Julian,Green,37,3,USA,06.06.1995,20,172,0,0,0,1,0,0,0,0,50037,Bayern,GER
+250075710,Hundertmark,David,Hundertmark,34,1,GER,06.08.1997,18,,0,0,0,0,0,0,0,0,50037,Bayern,GER
+98953,Javi Mart??nez,,Javi Mart??nez,8,3,ESP,02.09.1988,27,190,0,0,0,20,0,0,0,0,50037,Bayern,GER
+250070417,Kimmich,Joshua,Kimmich,32,3,GER,08.02.1995,20,176,1,0,1,1,0,0,0,0,50037,Bayern,GER
+250003830,Kirchhoff,Jan,Kirchhoff,15,2,GER,01.10.1990,24,195,0,0,0,2,0,0,0,0,50037,Bayern,GER
+63033,Lahm,Philipp,Lahm,21,2,GER,11.11.1983,31,170,1,0,1,96,0,0,0,0,50037,Bayern,GER
+250002096,Lewandowski,Robert,Lewandowski,9,4,POL,21.08.1988,27,184,1,0,1,41,0,0,0,23,50037,Bayern,GER
+250052805,Lucic,Ivan,Lucic,33,1,AUT,23.03.1995,20,193,0,0,0,0,0,0,0,0,50037,Bayern,GER
+250003318,M?¨ller,Thomas,M?¨ller,25,4,GER,13.09.1989,26,186,1,0,1,71,2,0,2,30,50037,Bayern,GER
+97923,Neuer,Manuel,Neuer,1,1,GER,27.03.1986,29,193,1,0,1,74,0,0,0,0,50037,Bayern,GER
+250063828,Pohl,Felix,Pohl,38,2,GER,11.12.1996,18,,0,0,0,0,0,0,0,0,50037,Bayern,GER
+101594,Rafinha,,Rafinha,13,2,BRA,07.09.1985,30,172,0,0,0,45,0,0,0,2,50037,Bayern,GER
+95665,Rib??ry,Franck,Rib??ry,7,3,FRA,07.04.1983,32,170,0,0,0,61,0,0,0,17,50037,Bayern,GER
+57134,Robben,Arjen,Robben,10,4,NED,23.01.1984,31,181,0,0,0,87,0,0,0,25,50037,Bayern,GER
+250008351,Rode,Sebastian,Rode,20,3,GER,11.10.1990,24,179,0,0,0,7,0,0,0,1,50037,Bayern,GER
+43126,Starke,Tom,Starke,22,1,GER,18.03.1981,34,194,0,0,0,0,0,0,0,0,50037,Bayern,GER
+1906776,Thiago Alc?≠ntara,,Thiago Alc?≠ntara,6,3,ESP,11.04.1991,24,170,1,0,1,19,0,0,0,2,50037,Bayern,GER
+1902445,Ulreich,Sven,Ulreich,26,1,GER,03.08.1988,27,192,0,0,0,0,0,0,0,0,50037,Bayern,GER
+1906016,Vidal,Arturo,Vidal,23,3,CHI,22.05.1987,28,180,1,0,1,28,0,0,0,9,50037,Bayern,GER
+250024055,Weihrauch,Patrick,Weihrauch,36,4,GER,03.03.1994,21,181,0,0,0,0,0,0,0,0,50037,Bayern,GER
+250075736,Abner,,Abner,30,2,BRA,30.05.1996,19,176,0,0,0,0,0,0,0,0,50051,Real Madrid,ESP
+58676,Arbeloa,?Ålvaro,Arbeloa,17,2,ESP,17.01.1983,32,180,0,0,0,70,0,0,0,3,50051,Real Madrid,ESP
+102225,Bale,Gareth,Bale,11,3,WAL,16.07.1989,26,186,1,0,1,34,0,0,0,12,50051,Real Madrid,ESP
+93321,Benzema,Karim,Benzema,9,4,FRA,19.12.1987,27,183,1,0,1,74,1,0,1,43,50051,Real Madrid,ESP
+250024448,Carvajal,Dani,Carvajal,15,2,ESP,11.01.1992,23,171,1,0,1,16,0,0,0,0,50051,Real Madrid,ESP
+250057680,Casemiro,,Casemiro,14,3,BRA,23.02.1992,23,184,0,0,0,16,0,0,0,1,50051,Real Madrid,ESP
+95349,Casilla,Kiko,Casilla,13,1,ESP,02.10.1986,28,191,0,0,0,0,0,0,0,0,50051,Real Madrid,ESP
+250039177,Cheryshev,Denis,Cheryshev,21,3,RUS,26.12.1990,24,179,0,0,0,0,0,0,0,0,50051,Real Madrid,ESP
+250039931,Danilo,,Danilo,23,2,BRA,15.07.1991,24,184,0,0,0,23,0,0,0,1,50051,Real Madrid,ESP
+250024454,Isco,,Isco,22,3,ESP,21.04.1992,23,175,1,0,1,36,0,0,0,6,50051,Real Madrid,ESP
+250021636,James Rodr??guez,,James Rodr??guez,10,3,COL,12.07.1991,24,180,0,0,0,23,0,0,0,3,50051,Real Madrid,ESP
+250016661,Jes??,,Jes??,20,4,ESP,26.02.1993,22,178,0,0,0,8,0,0,0,0,50051,Real Madrid,ESP
+250023551,Kovaéçié?,Mateo,Kovaéçié?,16,3,CRO,06.05.1994,21,179,1,0,1,21,0,0,0,1,50051,Real Madrid,ESP
+103147,Kroos,Toni,Kroos,8,3,GER,04.01.1990,25,180,1,0,1,56,0,0,0,6,50051,Real Madrid,ESP
+250079670,Llorente,Marcos,Llorente,28,3,ESP,30.01.1995,20,182,0,0,0,0,0,0,0,0,50051,Real Madrid,ESP
+250040521,Lucas V?≠zquez,,Lucas V?≠zquez,18,3,ESP,01.07.1991,24,173,0,0,0,0,0,0,0,0,50051,Real Madrid,ESP
+1900737,Marcelo,,Marcelo,12,2,BRA,12.05.1988,27,174,1,0,1,57,0,0,0,5,50051,Real Madrid,ESP
+250076701,Mayoral,Borja,Mayoral,29,4,ESP,05.04.1997,18,181,0,0,0,0,0,0,0,0,50051,Real Madrid,ESP
+74699,Modrié?,Luka,Modrié?,19,3,CRO,09.09.1985,30,171,1,0,1,48,0,0,0,5,50051,Real Madrid,ESP
+1900122,Nacho,,Nacho,6,2,ESP,18.01.1990,25,178,1,0,1,11,0,0,0,0,50051,Real Madrid,ESP
+250031037,Navas,Keylor,Navas,1,1,CRC,15.12.1986,28,184,1,0,1,3,0,0,0,0,50051,Real Madrid,ESP
+250081341,??degaard,Martin,??degaard,27,3,NOR,17.12.1998,16,170,0,0,0,1,0,0,0,0,50051,Real Madrid,ESP
+95417,Pepe,,Pepe,3,2,POR,26.02.1983,32,187,1,0,1,78,0,0,0,3,50051,Real Madrid,ESP
+93649,Ramos,Sergio,Ramos,4,2,ESP,30.03.1986,29,183,1,0,1,83,0,0,0,8,50051,Real Madrid,ESP
+63706,Ronaldo,Cristiano,Ronaldo,7,4,POR,05.02.1985,30,184,1,0,1,120,3,0,3,81,50051,Real Madrid,ESP
+250025891,Varane,Rapha?Æl,Varane,2,2,FRA,25.04.1993,22,191,1,0,1,35,0,0,0,0,50051,Real Madrid,ESP
+250086341,Y?≠?Òez,Rub??n,Y?≠?Òez,31,1,ESP,12.10.1993,21,187,0,0,0,0,0,0,0,0,50051,Real Madrid,ESP
+250056620,Alberto,Suently,Alberto,33,2,NED,09.06.1996,19,178,0,0,0,0,0,0,0,0,50062,PSV,NED
+250040545,Arias,Santiago,Arias,4,2,COL,13.01.1992,23,175,1,0,1,1,0,0,0,0,50062,PSV,NED
+250066551,Bergwijn,Steven,Bergwijn,27,4,NED,08.10.1997,17,171,0,0,0,0,0,0,0,0,50062,PSV,NED
+250062264,J. Bertrams,Jesse,Bertrams,31,1,NED,22.12.1994,20,187,0,0,0,0,0,0,0,0,50062,PSV,NED
+250042343,Boljevié?,Aleksandar,Boljevié?,39,4,MNE,12.12.1995,19,172,0,0,0,0,0,0,0,0,50062,PSV,NED
+250053787,Brenet,Joshua,Brenet,20,2,NED,20.03.1994,21,181,1,0,1,5,0,0,0,0,50062,PSV,NED
+250008514,Bruma,Jeffrey,Bruma,5,2,NED,13.11.1991,23,186,1,0,1,7,0,0,0,0,50062,PSV,NED
+250005343,De Jong,Luuk,de Jong,9,4,NED,27.08.1990,25,188,1,0,1,13,0,0,0,2,50062,PSV,NED
+250074030,De Wijs,Jordy,De Wijs,30,2,NED,08.01.1995,20,189,0,0,0,0,0,0,0,0,50062,PSV,NED
+250088102,Groenendijk,Bob,Groenendijk,48,2,NED,15.05.1996,19,,0,0,0,0,0,0,0,0,50062,PSV,NED
+250067766,Guardado,Andr??s,Guardado,18,3,MEX,28.09.1986,28,169,1,0,1,10,0,0,0,0,50062,PSV,NED
+250055351,Al. Gu?¯mundsson,Albert,Gu?¯mundsson,49,3,ISL,15.06.1997,18,,0,0,0,0,0,0,0,0,50062,PSV,NED
+250062259,Heesakkers,Sander,Heesakkers,36,2,NED,08.01.1995,20,182,0,0,0,0,0,0,0,0,50062,PSV,NED
+250042712,Hendrix,Jorrit,Hendrix,29,2,NED,06.02.1995,20,182,1,0,1,1,0,0,0,0,50062,PSV,NED
+250023158,Hermannsson,Hj??rtur,Hermannsson,35,2,ISL,08.02.1995,20,189,0,0,0,0,0,0,0,0,50062,PSV,NED
+250025998,Isimat-Mirin,Nicolas,Isimat-Mirin,2,2,FRA,15.11.1991,23,189,0,0,0,0,0,0,0,0,50062,PSV,NED
+1909101,Jozefzoon,Florian,Jozefzoon,17,4,NED,09.02.1991,24,173,0,0,0,4,0,0,0,0,50062,PSV,NED
+250024857,Koch,Menno,Koch,25,2,NED,02.07.1994,21,195,0,0,0,0,0,0,0,0,50062,PSV,NED
+250087096,Koopmans,Luuk,Koopmans,21,1,NED,18.11.1993,21,,0,0,0,0,0,0,0,0,50062,PSV,NED
+250088106,Lammers,Sam,Lammers,50,4,NED,30.04.1997,18,,0,0,0,0,0,0,0,0,50062,PSV,NED
+250074051,Laursen,Nikolai,Laursen,37,4,DEN,19.02.1998,17,183,0,0,0,0,0,0,0,0,50062,PSV,NED
+250062059,Leemans,Clint,Leemans,26,2,NED,15.09.1995,20,186,0,0,0,0,0,0,0,0,50062,PSV,NED
+250007014,Lestienne,Maxime,Lestienne,16,4,BEL,17.06.1992,23,176,1,0,1,2,0,0,0,0,50062,PSV,NED
+250013866,Locadia,J?¨rgen,Locadia,19,4,NED,07.11.1993,21,180,1,0,1,4,0,0,0,1,50062,PSV,NED
+250058024,Loof,Augustine,Loof,45,2,NED,01.01.1996,19,,0,0,0,0,0,0,0,0,50062,PSV,NED
+250066763,Lundqvist,Ramon-Pascal,Lundqvist,38,3,SWE,10.05.1997,18,,0,0,0,0,0,0,0,0,50062,PSV,NED
+250016667,Maher,Adam,Maher,10,3,NED,20.07.1993,22,176,0,0,0,4,0,0,0,0,50062,PSV,NED
+250007960,Moreno,H??ctor,Moreno,3,2,MEX,17.01.1988,27,183,1,0,1,7,1,0,1,1,50062,PSV,NED
+108917,Narsingh,Luciano,Narsingh,11,4,NED,13.09.1990,25,178,1,0,1,1,1,0,1,1,50062,PSV,NED
+250056621,Paal,Kenneth,Paal,32,3,NED,24.06.1997,18,177,0,0,0,0,0,0,0,0,50062,PSV,NED
+98834,Pasveer,Remko,Pasveer,22,1,NED,08.11.1983,31,186,0,0,0,0,0,0,0,0,50062,PSV,NED
+250086340,Pereiro,Gast??n,Pereiro,7,3,URU,11.06.1995,20,188,0,0,0,0,0,0,0,0,50062,PSV,NED
+67840,S. Poulsen,Simon,Poulsen,14,2,DEN,07.10.1984,30,186,0,0,0,3,0,0,0,0,50062,PSV,NED
+250014667,Pr??pper,Davy,Pr??pper,6,3,NED,02.09.1991,24,189,1,0,1,1,0,0,0,0,50062,PSV,NED
+250074031,Rommens,Olivier,Rommens,40,3,BEL,03.02.1995,20,177,0,0,0,0,0,0,0,0,50062,PSV,NED
+250046911,Sanoh,Moussa,Sanoh,44,4,NED,20.07.1995,20,174,0,0,0,0,0,0,0,0,50062,PSV,NED
+68456,Schaars,Stijn,Schaars,8,3,NED,11.01.1984,31,181,1,0,1,11,0,0,0,0,50062,PSV,NED
+250066563,van Osch,Yanick,van Osch,41,1,NED,24.03.1997,18,,0,0,0,0,0,0,0,0,50062,PSV,NED
+250042720,van Vlerken,Bram,van Vlerken,34,2,NED,07.10.1995,19,175,0,0,0,0,0,0,0,0,50062,PSV,NED
+250042721,Vloet,Rai,Vloet,23,3,NED,08.05.1995,20,180,0,0,0,0,0,0,0,0,50062,PSV,NED
+250024859,Willems,Jetro,Willems,15,2,NED,30.03.1994,21,170,0,0,0,4,0,0,0,0,50062,PSV,NED
+108911,Zoet,Jeroen,Zoet,1,1,NED,06.01.1991,24,186,1,0,1,5,0,0,0,0,50062,PSV,NED
+250017920,Aboubakar,Vincent,Aboubakar,9,4,CMR,22.01.1992,23,184,1,0,1,5,2,0,2,5,50064,Porto,POR
+98959,Alberto Bueno,,Alberto Bueno,23,4,ESP,20.03.1988,27,178,0,0,0,1,0,0,0,0,50064,Porto,POR
+250063840,Andr?? Andr??,,Andr?? Andr??,20,3,POR,26.08.1989,26,174,1,0,1,1,0,0,0,0,50064,Porto,POR
+250042521,Andr?? Silva,,Andr?? Silva,19,4,POR,06.11.1995,19,182,0,0,0,0,0,0,0,0,50064,Porto,POR
+107762,Brahimi,Yacine,Brahimi,8,3,ALG,08.02.1990,25,175,1,0,1,12,0,0,0,6,50064,Porto,POR
+250063924,Bruno Costa,,Bruno Costa,87,4,POR,19.04.1997,18,169,0,0,0,0,0,0,0,0,50064,Porto,POR
+250063927,Caio,Andr??,Caio,91,1,POR,23.02.1994,21,177,0,0,0,0,0,0,0,0,50064,Porto,POR
+34694,Casillas,Iker,Casillas,12,1,ESP,20.05.1981,34,185,1,0,1,153,0,0,0,0,50064,Porto,POR
+250003441,Cissokho,Aly,Cissokho,28,2,FRA,15.09.1987,28,181,0,0,0,40,0,0,0,1,50064,Porto,POR
+250074281,Corona,Jes?ßs,Corona,17,4,MEX,06.01.1993,22,,1,0,1,1,0,0,0,0,50064,Porto,POR
+250014528,Danilo,,Danilo,22,3,POR,09.09.1991,24,188,1,0,1,1,0,0,0,0,50064,Porto,POR
+250076660,David Sualehe,,David Sualehe,65,2,POR,23.03.1997,18,,0,0,0,0,0,0,0,0,50064,Porto,POR
+250055272,Diogo Sousa,,Diogo Sousa,73,2,POR,26.10.1996,18,185,0,0,0,0,0,0,0,0,50064,Porto,POR
+250029855,Evandro,,Evandro,15,3,BRA,23.08.1986,29,179,0,0,0,7,0,0,0,0,50064,Porto,POR
+250076681,Fernando,,Fernando,72,2,POR,14.03.1997,18,,0,0,0,0,0,0,0,0,50064,Porto,POR
+250064522,Filipe Ferreira,,Filipe Ferreira,51,1,POR,20.09.1996,18,,0,0,0,0,0,0,0,0,50064,Porto,POR
+250042516,Francisco Ramos,,Francisco Ramos,48,3,POR,10.04.1995,20,177,0,0,0,0,0,0,0,0,50064,Porto,POR
+71766,Helton,,Helton,1,1,BRA,18.05.1978,37,189,0,0,0,51,0,0,0,0,50064,Porto,POR
+250060117,Herrera,Hector,Herrera,16,3,MEX,19.04.1990,25,183,1,0,1,15,0,0,0,4,50064,Porto,POR
+250011623,Imbula,Giannelli,Imbula,25,3,FRA,12.09.1992,23,186,0,0,0,4,0,0,0,0,50064,Porto,POR
+250076670,Jo?úo Cardoso,,Jo?úo Cardoso,78,3,POR,10.02.1997,18,,0,0,0,0,0,0,0,0,50064,Porto,POR
+250040614,Jo?úo Costa,,Jo?úo Costa,41,1,POR,02.02.1996,19,185,0,0,0,0,0,0,0,0,50064,Porto,POR
+250063928,Jo?úo Gra??a,,Jo?úo Gra??a,50,3,POR,18.06.1995,20,180,0,0,0,0,0,0,0,0,50064,Porto,POR
+250076679,Jorge,,Jorge,64,2,POR,02.04.1997,18,,0,0,0,0,0,0,0,0,50064,Porto,POR
+250040109,Lay?ßn,Miguel,Lay?ßn,21,2,MEX,25.06.1988,27,,1,0,1,1,0,0,0,0,50064,Porto,POR
+250057871,Lu??s Mata,,Lu??s Mata,97,4,POR,06.07.1997,18,179,0,0,0,0,0,0,0,0,50064,Porto,POR
+250007919,Maicon,,Maicon,4,2,BRA,14.09.1988,27,190,1,0,1,22,0,0,0,0,50064,Porto,POR
+250003525,Marcano,Iv?≠n,Marcano,5,2,ESP,23.06.1987,28,189,0,0,0,13,0,0,0,0,50064,Porto,POR
+250017880,Martins Indi,Bruno,Martins Indi,3,2,NED,08.02.1992,23,187,1,0,1,14,0,0,0,0,50064,Porto,POR
+1905761,Maxi Pereira,,Maxi Pereira,2,2,URU,08.06.1984,31,173,1,0,1,40,0,0,0,3,50064,Porto,POR
+1905807,Osvaldo,Pablo,Osvaldo,10,4,ITA,12.01.1986,29,182,1,0,1,6,0,0,0,0,50064,Porto,POR
+250024749,Podstawski,Tom?≠s,Podstawski,56,3,POR,30.01.1995,20,181,0,0,0,0,0,0,0,0,50064,Porto,POR
+250040613,Rafa,,Rafa,55,2,POR,09.05.1995,20,182,0,0,0,0,0,0,0,0,50064,Porto,POR
+250057870,R?ßben Macedo,,R?ßben Macedo,77,4,POR,09.03.1996,19,171,0,0,0,0,0,0,0,0,50064,Porto,POR
+250055271,R?ßben Neves,,R?ßben Neves,6,3,POR,13.03.1997,18,180,1,0,1,10,0,0,0,0,50064,Porto,POR
+250055268,Rui Moreira,,Rui Moreira,60,3,POR,31.05.1996,19,178,0,0,0,0,0,0,0,0,50064,Porto,POR
+250003853,S??rgio Oliveira,,S??rgio Oliveira,13,3,POR,02.06.1992,23,181,0,0,0,1,0,0,0,0,50064,Porto,POR
+250055277,S??rgio Ribeiro,,S??rgio Ribeiro,70,4,POR,18.01.1996,19,178,0,0,0,0,0,0,0,0,50064,Porto,POR
+250017465,Tello,Cristian,Tello,11,4,ESP,11.08.1991,24,178,1,0,1,18,0,0,0,5,50064,Porto,POR
+73319,Varela,Silvestre,Varela,7,4,POR,02.02.1985,30,180,0,0,0,25,0,0,0,3,50064,Porto,POR
+95698,Bilal Kisa,,Bilal Kisa,5,3,TUR,22.06.1983,32,180,0,0,0,0,0,0,0,0,50067,Galatasaray,TUR
+62309,Burak YéÒlmaz,,Burak YéÒlmaz,17,4,TUR,15.07.1985,30,183,1,0,1,36,0,0,0,10,50067,Galatasaray,TUR
+250025888,Carole,Lionel,Carole,23,2,FRA,12.04.1991,24,182,1,0,1,1,0,0,0,0,50067,Galatasaray,TUR
+99202,Cenk G??nen,,Cenk G??nen,99,1,TUR,21.02.1988,27,190,0,0,0,0,0,0,0,0,50067,Galatasaray,TUR
+1900724,Chedjou,Aur??lien,Chedjou,21,2,CMR,20.06.1985,30,184,0,0,0,24,0,0,0,2,50067,Galatasaray,TUR
+250064362,Denayer,Jason,Denayer,64,2,BEL,28.06.1995,20,184,1,0,1,2,0,0,0,0,50067,Galatasaray,TUR
+1901682,Emre ??olak,,Emre ??olak,52,3,TUR,20.05.1991,24,168,1,0,1,9,0,0,0,0,50067,Galatasaray,TUR
+250013120,Eray é¯è?can,,Eray é¯è?can,67,1,TUR,19.07.1991,24,195,0,0,0,2,0,0,0,0,50067,Galatasaray,TUR
+250024671,G?¨nter,Koray,G?¨nter,28,2,GER,16.08.1994,21,185,0,0,0,0,0,0,0,0,50067,Galatasaray,TUR
+61752,Hakan Balta,,Hakan Balta,22,2,TUR,23.03.1983,32,184,1,0,1,9,0,0,0,1,50067,Galatasaray,TUR
+58613,Hamit AltéÒntop,,Hamit AltéÒntop,4,3,TUR,08.12.1982,32,183,0,0,0,41,0,0,0,2,50067,Galatasaray,TUR
+103866,Jem Paul Karacan,,Jem Paul Karacan,6,3,TUR,21.02.1989,26,178,0,0,0,0,0,0,0,0,50067,Galatasaray,TUR
+250024398,Jos?? Rodr??guez,,Jos?? Rodr??guez,14,3,ESP,16.12.1994,20,180,0,0,0,1,0,0,0,0,50067,Galatasaray,TUR
+1905755,Muslera,Fernando,Muslera,1,1,URU,16.06.1986,29,190,1,0,1,22,0,0,0,0,50067,Galatasaray,TUR
+74637,Olcan AdéÒn,,Olcan AdéÒn,29,3,TUR,30.09.1985,29,176,0,0,0,2,0,0,0,0,50067,Galatasaray,TUR
+62594,Podolski,Lukas,Podolski,11,4,GER,04.06.1985,30,182,1,0,1,26,0,0,0,11,50067,Galatasaray,TUR
+52321,Sabri SaréÒoé?lu,,Sabri SaréÒoé?lu,55,2,TUR,26.07.1984,31,170,1,0,1,21,0,0,0,2,50067,Galatasaray,TUR
+62307,Sel??uk é¯nan,,Sel??uk é¯nan,8,3,TUR,10.02.1985,30,182,1,0,1,23,0,0,0,0,50067,Galatasaray,TUR
+107285,Semih Kaya,,Semih Kaya,26,2,TUR,24.02.1991,24,182,1,0,1,23,0,0,0,0,50067,Galatasaray,TUR
+250086329,Sinan G?¨m?¨s,,Sinan G?¨m?¨s,18,4,TUR,15.01.1994,21,179,1,0,1,1,0,0,0,0,50067,Galatasaray,TUR
+57132,Sneijder,Wesley,Sneijder,10,3,NED,09.06.1984,31,170,1,0,1,77,0,0,0,15,50067,Galatasaray,TUR
+250013144,TaréÒk ??amdal,,TaréÒk ??amdal,38,2,TUR,24.03.1991,24,172,0,0,0,5,0,0,0,0,50067,Galatasaray,TUR
+61369,Umut Bulut,,Umut Bulut,9,4,TUR,15.03.1983,32,184,1,0,1,24,0,0,0,4,50067,Galatasaray,TUR
+250003423,Yasin ??ztekin,,Yasin ??ztekin,7,3,TUR,19.03.1987,28,179,1,0,1,4,0,0,0,0,50067,Galatasaray,TUR
+98593,Adriano,,Adriano,21,2,BRA,26.10.1984,30,172,0,0,0,41,0,0,0,1,50080,Barcelona,ESP
+250022918,David Babunski,David,Babunski,29,3,MKD,01.03.1994,21,,0,0,0,0,0,0,0,0,50080,Barcelona,ESP
+250010245,Bartra,Marc,Bartra,15,2,ESP,15.01.1991,24,183,0,0,0,18,0,0,0,0,50080,Barcelona,ESP
+250075672,Bravo,Claudio,Bravo,13,1,CHI,13.04.1983,32,184,0,0,0,7,0,0,0,0,50080,Barcelona,ESP
+250002704,Busquets,Sergio,Busquets,5,3,ESP,16.07.1988,27,189,1,0,1,68,0,0,0,4,50080,Barcelona,ESP
+250024392,C?≠mara,Juan,C?≠mara,27,3,ESP,13.02.1994,21,,0,0,0,0,0,0,0,0,50080,Barcelona,ESP
+95724,Dani Alves,,Dani Alves,6,2,BRA,06.05.1983,32,173,0,0,0,83,0,0,0,7,50080,Barcelona,ESP
+250075674,Douglas,,Douglas,2,2,BRA,06.08.1990,25,171,0,0,0,0,0,0,0,0,50080,Barcelona,ESP
+250042422,Grimaldo,Alejandro,Grimaldo,30,2,ESP,20.09.1995,19,170,0,0,0,0,0,0,0,0,50080,Barcelona,ESP
+250086317,Gumbau,Gerard,Gumbau,28,3,ESP,18.12.1994,20,188,0,0,0,0,0,0,0,0,50080,Barcelona,ESP
+58031,Iniesta,Andr??s,Iniesta,8,3,ESP,11.05.1984,31,170,1,0,1,110,0,0,0,10,50080,Barcelona,ESP
+250000036,Jordi Alba,,Jordi Alba,18,2,ESP,21.03.1989,26,170,1,0,1,32,0,0,0,2,50080,Barcelona,ESP
+104264,Mascherano,Javier,Mascherano,14,2,ARG,08.06.1984,31,174,1,0,1,81,0,0,0,0,50080,Barcelona,ESP
+104025,Masip,Jordi,Masip,25,1,ESP,03.01.1989,26,179,0,0,0,0,0,0,0,0,50080,Barcelona,ESP
+65012,Mathieu,J??r??my,Mathieu,24,2,FRA,29.10.1983,31,189,1,0,1,24,0,0,0,0,50080,Barcelona,ESP
+95803,Messi,Lionel,Messi,10,4,ARG,24.06.1987,28,169,1,0,1,100,0,0,0,77,50080,Barcelona,ESP
+250063866,Munir El Haddadi,,Munir El Haddadi,17,4,ESP,01.09.1995,20,175,0,0,0,3,0,0,0,0,50080,Barcelona,ESP
+250039508,Neymar,,Neymar,11,4,BRA,05.02.1992,23,175,1,0,1,23,0,0,0,14,50080,Barcelona,ESP
+93148,Piqu??,Gerard,Piqu??,3,2,ESP,02.02.1987,28,192,1,0,1,77,0,0,0,9,50080,Barcelona,ESP
+250013895,Rafinha,,Rafinha,12,3,ESP,12.02.1993,22,174,1,0,1,9,0,0,0,0,50080,Barcelona,ESP
+97744,Rakitié?,Ivan,Rakitié?,4,3,CRO,10.03.1988,27,184,1,0,1,27,0,0,0,2,50080,Barcelona,ESP
+250042429,Samper,Sergi,Samper,26,3,ESP,20.01.1995,20,181,0,0,0,1,0,0,0,0,50080,Barcelona,ESP
+250042431,Sandro Ram??rez,,Sandro Ram??rez,19,4,ESP,09.07.1995,20,175,0,0,0,3,0,0,0,1,50080,Barcelona,ESP
+250006092,Sergi Roberto,,Sergi Roberto,20,3,ESP,07.02.1992,23,177,1,0,1,10,0,0,0,1,50080,Barcelona,ESP
+250063875,Su?≠rez,Jos?? Aurelio,Su?≠rez,31,1,ESP,18.12.1995,19,191,0,0,0,0,0,0,0,0,50080,Barcelona,ESP
+106375,Su?≠rez,Luis,Su?≠rez,9,4,URU,24.01.1987,28,181,1,0,1,22,1,0,1,13,50080,Barcelona,ESP
+250007631,ter Stegen,Marc-Andr??,ter Stegen,1,1,GER,30.04.1992,23,187,1,0,1,16,0,0,0,0,50080,Barcelona,ESP
+71982,Vermaelen,Thomas,Vermaelen,23,2,BEL,14.11.1985,29,180,0,0,0,36,0,0,0,1,50080,Barcelona,ESP
+250030823,Andr?? Ramalho,,Andr?? Ramalho,2,2,BRA,16.02.1992,23,182,1,1,0,7,0,0,0,0,50109,Leverkusen,GER
+250025456,Bellarabi,Karim,Bellarabi,38,3,GER,08.04.1990,25,183,3,2,1,15,1,1,0,3,50109,Leverkusen,GER
+103790,L. Bender,Lars,Bender,8,3,GER,27.04.1989,26,183,3,2,1,24,0,0,0,1,50109,Leverkusen,GER
+103586,Boenisch,Sebastian,Boenisch,17,2,POL,01.02.1987,28,191,0,0,0,15,0,0,0,0,50109,Leverkusen,GER
+250046522,Brandt,Julian,Brandt,19,3,GER,02.05.1996,19,183,3,2,1,11,0,0,0,0,50109,Leverkusen,GER
+250016023,Donati,Giulio,Donati,26,2,ITA,05.02.1990,25,181,0,0,0,12,0,0,0,1,50109,Leverkusen,GER
+250064511,Frey,Marlon,Frey,37,3,GER,24.03.1996,19,,0,0,0,0,0,0,0,0,50109,Leverkusen,GER
+250022829,Hakan ??alhanoé?lu,,Hakan ??alhanoé?lu,10,3,TUR,08.02.1994,21,176,3,2,1,13,3,1,2,6,50109,Leverkusen,GER
+250017851,Hern?≠ndez,Javier,Hern?≠ndez,7,4,MEX,01.06.1988,27,175,3,2,1,35,1,0,1,9,50109,Leverkusen,GER
+98870,Hilbert,Roberto,Hilbert,13,2,GER,16.10.1984,30,182,3,2,1,17,0,0,0,0,50109,Leverkusen,GER
+250042622,Jedvaj,Tin,Jedvaj,16,2,CRO,28.11.1995,19,184,0,0,0,5,0,0,0,0,50109,Leverkusen,GER
+250014636,Kampl,Kevin,Kampl,44,3,SVN,09.10.1990,24,180,1,0,1,8,0,0,0,0,50109,Leverkusen,GER
+98328,Kiessling,Stefan,Kiessling,11,4,GER,25.01.1984,31,191,3,2,1,28,0,0,0,7,50109,Leverkusen,GER
+250021626,Kramer,Christoph,Kramer,23,3,GER,19.02.1991,24,190,3,2,1,3,0,0,0,0,50109,Leverkusen,GER
+57892,Kreè≠ié?,Dario,Kreè≠ié?,25,1,CRO,11.01.1984,31,199,0,0,0,2,0,0,0,0,50109,Leverkusen,GER
+250007620,Leno,Bernd,Leno,1,1,GER,04.03.1992,23,188,3,2,1,29,0,0,0,0,50109,Leverkusen,GER
+1905353,Mehmedi,Admir,Mehmedi,14,4,SUI,16.03.1991,24,183,3,2,1,12,2,1,1,4,50109,Leverkusen,GER
+250000927,??mer Toprak,,??mer Toprak,21,2,TUR,21.07.1989,26,186,0,0,0,23,0,0,0,2,50109,Leverkusen,GER
+1901610,Papadopoulos,Kyriakos,Papadopoulos,5,2,GRE,23.02.1992,23,183,3,2,1,21,0,0,0,1,50109,Leverkusen,GER
+250086073,Ryu,Seung-Woo,Ryu,24,4,KOR,17.12.1993,21,,0,0,0,0,0,0,0,0,50109,Leverkusen,GER
+250055660,Tah,Jonathan,Tah,4,2,GER,11.02.1996,19,,3,2,1,3,0,0,0,0,50109,Leverkusen,GER
+250074376,Wendell,,Wendell,18,2,BRA,20.07.1993,22,176,3,2,1,8,0,0,0,0,50109,Leverkusen,GER
+250040598,Yelldell,David,Yelldell,22,1,USA,01.10.1981,33,194,0,0,0,0,0,0,0,0,50109,Leverkusen,GER
+250024897,Yurchenko,Vladlen,Yurchenko,35,3,UKR,22.01.1994,21,178,0,0,0,0,0,0,0,0,50109,Leverkusen,GER
+250076125,Ag?¨ero,Dami?≠n,Ag?¨ero,33,4,ESP,18.01.1997,18,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250087086,Barrag?≠n,Bernab??,Barrag?≠n,25,1,ESP,18.02.1993,22,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250075538,Benjam??n,,Benjam??n,29,3,GHA,04.01.1994,21,178,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250063807,Ca?Òete,,Ca?Òete,28,2,ESP,22.04.1995,20,185,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250086315,Correa,?Ångel,Correa,16,3,ARG,09.03.1995,20,174,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250087516,Del Amo,Oscar,Del Amo,35,2,ESP,24.10.1997,17,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250040959,Ferreira-Carrasco,Yannick,Ferreira-Carrasco,21,4,BEL,04.09.1993,22,180,0,0,0,10,0,0,0,1,50124,Atl??tico,ESP
+95813,Filipe Lu??s,,Filipe Lu??s,3,2,BRA,09.08.1985,30,188,0,0,0,15,0,0,0,1,50124,Atl??tico,ESP
+93951,Gabi,,Gabi,14,3,ESP,10.07.1983,32,180,1,0,1,20,0,0,0,0,50124,Atl??tico,ESP
+250008066,G?≠mez,Jes?ßs,G?≠mez,18,2,ESP,10.04.1985,30,182,0,0,0,13,0,0,0,0,50124,Atl??tico,ESP
+250063505,Gim??nez,Jos?? Mar??a,Gim??nez,24,2,URU,20.01.1995,20,185,1,0,1,5,0,0,0,0,50124,Atl??tico,ESP
+1906224,God??n,Diego,God??n,2,2,URU,16.02.1986,29,186,1,0,1,27,0,0,0,3,50124,Atl??tico,ESP
+250019498,Griezmann,Antoine,Griezmann,7,3,FRA,21.03.1991,24,176,1,0,1,18,2,0,2,5,50124,Atl??tico,ESP
+250076124,Guille P??rez,,Guille P??rez,41,1,ESP,10.01.1997,18,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250087524,Hern?≠ndez,Mario,Hern?≠ndez,37,2,ESP,25.01.1999,16,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250068442,Jaime Almagro,,Jaime Almagro,34,3,ESP,14.03.1997,18,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250075541,Juan Moreno,,Juan Moreno,39,3,ESP,11.05.1997,18,175,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+69172,Juanfran,,Juanfran,20,2,ESP,09.01.1985,30,180,1,0,1,23,0,0,0,0,50124,Atl??tico,ESP
+1909917,Koke,,Koke,6,3,ESP,08.01.1992,23,178,1,0,1,23,0,0,0,3,50124,Atl??tico,ESP
+250063803,Lucas Hern?≠ndez,,Lucas Hern?≠ndez,19,2,FRA,14.02.1996,19,180,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250052989,Mart??nez,Jackson,Mart??nez,11,4,COL,03.10.1986,28,184,1,0,1,25,0,0,0,13,50124,Atl??tico,ESP
+250058051,Morales,Carlos,Morales,38,1,ESP,28.07.1996,19,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+58032,Moy?ˇ,Miguel ?Ångel,Moy?ˇ,1,1,ESP,02.04.1984,31,189,0,0,0,8,0,0,0,0,50124,Atl??tico,ESP
+250087257,Muguruza,?Ålvaro,Muguruza,40,2,ESP,10.05.1997,18,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250053746,Nacho Monsalve,,Nacho Monsalve,27,2,ESP,27.04.1994,21,180,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250087512,Nica Gomes,,Nica Gomes,36,3,ESP,07.07.1997,18,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250056269,Nu?Òez,Roberto,Nu?Òez,30,4,ESP,03.01.1996,19,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250012069,Oblak,Jan,Oblak,13,1,SVN,07.01.1993,22,186,1,0,1,5,0,0,0,0,50124,Atl??tico,ESP
+250050353,??liver Torres,,??liver Torres,10,3,ESP,10.11.1994,20,178,1,0,1,15,0,0,0,0,50124,Atl??tico,ESP
+250086316,Partey,Thomas,Partey,22,3,GHA,13.06.1993,22,185,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250087511,Rentero,Alberto,Rentero,42,3,ESP,24.03.1997,18,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250087513,San Rom?≠n,Miguel,San Rom?≠n,43,1,ESP,14.07.1997,18,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250063892,San??,Arona,San??,31,3,SEN,21.06.1995,20,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250017725,Sa?ßl ????guez,,Sa?ßl ????guez,17,3,ESP,21.11.1994,20,180,1,0,1,6,0,0,0,0,50124,Atl??tico,ESP
+1907998,Savié?,Stefan,Savié?,15,2,MNE,08.01.1991,24,186,0,0,0,6,0,0,0,0,50124,Atl??tico,ESP
+250064116,Siqueira,Guilherme,Siqueira,4,2,ITA,28.04.1986,29,183,1,0,1,10,0,0,0,0,50124,Atl??tico,ESP
+250087514,Talavera,Gonzalo,Talavera,44,2,ESP,15.07.1997,18,,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+52694,Tiago,,Tiago,5,3,POR,02.05.1981,34,183,1,0,1,46,0,0,0,4,50124,Atl??tico,ESP
+58686,Torres,Fernando,Torres,9,4,ESP,20.03.1984,31,186,1,0,1,57,0,0,0,18,50124,Atl??tico,ESP
+250074566,Vietto,Luciano,Vietto,23,4,ARG,05.12.1993,21,173,1,0,1,1,0,0,0,0,50124,Atl??tico,ESP
+250075547,Villa,Samuel,Villa,32,4,ESP,16.09.1994,21,176,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250075548,Xu Xin,,Xu Xin,26,3,CHN,19.04.1994,21,179,0,0,0,0,0,0,0,0,50124,Atl??tico,ESP
+250056198,Capradossi,Elio,Capradossi,95,2,ITA,11.03.1996,19,185,0,0,0,0,0,0,0,0,50137,Roma,ITA
+250076729,Crisanto,Lorenzo,Crisanto,98,1,ITA,20.04.1998,17,,0,0,0,0,0,0,0,0,50137,Roma,ITA
+58656,De Rossi,Daniele,De Rossi,16,3,ITA,24.07.1983,32,184,1,0,1,42,0,0,0,4,50137,Roma,ITA
+27132,De Sanctis,Morgan,De Sanctis,26,1,ITA,26.03.1977,38,190,1,0,1,22,0,0,0,0,50137,Roma,ITA
+250076732,Di Livio,Lorenzo,Di Livio,52,3,ITA,11.01.1997,18,,0,0,0,0,0,0,0,0,50137,Roma,ITA
+250014002,Digne,Lucas,Digne,3,2,FRA,20.07.1993,22,178,1,0,1,11,0,0,0,1,50137,Roma,ITA
+250076735,D'Urso,Christian,D'Urso,53,3,ITA,26.07.1997,18,,0,0,0,0,0,0,0,0,50137,Roma,ITA
+72048,Dè?eko,Edin,Dè?eko,9,4,BIH,17.03.1986,29,193,1,0,1,31,0,0,0,7,50137,Roma,ITA
+1902206,Falqu??,Iago,Falqu??,14,3,ESP,04.01.1990,25,172,1,0,1,1,0,0,0,0,50137,Roma,ITA
+250026962,Florenzi,Alessandro,Florenzi,24,3,ITA,11.03.1991,24,173,1,0,1,7,1,0,1,1,50137,Roma,ITA
+250011036,Gervinho,,Gervinho,27,4,CIV,27.05.1987,28,179,0,0,0,19,0,0,0,5,50137,Roma,ITA
+250039164,Iturbe,Juan Manuel,Iturbe,7,3,PAR,04.06.1993,22,169,1,0,1,7,0,0,0,1,50137,Roma,ITA
+51580,Keita,Seydou,Keita,20,3,MLI,16.01.1980,35,183,1,0,1,64,0,0,0,6,50137,Roma,ITA
+1905226,Leandro Cast?≠n,,Leandro Cast?≠n,5,2,BRA,05.11.1986,28,184,0,0,0,0,0,0,0,0,50137,Roma,ITA
+95291,Maicon,,Maicon,13,2,BRA,26.07.1981,34,184,0,0,0,61,0,0,0,5,50137,Roma,ITA
+250012954,Manolas,Kostas,Manolas,44,2,GRE,14.06.1991,24,186,1,0,1,20,0,0,0,2,50137,Roma,ITA
+250076738,Marchizza,Riccardo,Marchizza,91,2,ITA,26.03.1998,17,,0,0,0,0,0,0,0,0,50137,Roma,ITA
+1906233,Nainggolan,Radja,Nainggolan,4,3,BEL,04.05.1988,27,176,1,0,1,7,0,0,0,0,50137,Roma,ITA
+104071,Pjanié?,Miralem,Pjanié?,15,3,BIH,02.04.1990,25,180,0,0,0,31,0,0,0,6,50137,Roma,ITA
+250028211,R?¨diger,Antonio,R?¨diger,2,2,GER,03.03.1993,22,190,1,0,1,1,0,0,0,0,50137,Roma,ITA
+250052469,Salah,Mohamed,Salah,11,4,EGY,15.06.1992,23,175,1,0,1,15,0,0,0,5,50137,Roma,ITA
+250022826,Salih U??an,,Salih U??an,48,3,TUR,06.01.1994,21,182,0,0,0,0,0,0,0,0,50137,Roma,ITA
+250076744,Soleri,Edoardo,Soleri,92,4,ITA,19.10.1997,17,,0,0,0,0,0,0,0,0,50137,Roma,ITA
+108501,Szczé?sny,Wojciech,Szczé?sny,25,1,POL,18.04.1990,25,195,1,0,1,30,0,0,0,0,50137,Roma,ITA
+72623,Torosidis,Vasilis,Torosidis,35,2,GRE,10.06.1985,30,185,1,0,1,27,0,0,0,2,50137,Roma,ITA
+15895,Totti,Francesco,Totti,10,4,ITA,27.09.1976,38,180,0,0,0,55,0,0,0,17,50137,Roma,ITA
+250076748,Tumminello,Marco,Tumminello,93,4,ITA,06.11.1998,16,,0,0,0,0,0,0,0,0,50137,Roma,ITA
+1902406,Vainqueur,William,Vainqueur,21,3,FRA,19.11.1988,26,179,0,0,0,0,0,0,0,0,50137,Roma,ITA
+250039930,Alex Sandro,,Alex Sandro,12,2,BRA,26.01.1991,24,179,0,0,0,23,0,0,0,0,50139,Juventus,ITA
+250058117,Audero,Emil,Audero,38,1,ITA,18.01.1997,18,189,0,0,0,0,0,0,0,0,50139,Juventus,ITA
+74055,Barzagli,Andrea,Barzagli,15,2,ITA,08.05.1981,34,186,1,0,1,22,0,0,0,0,50139,Juventus,ITA
+250017925,Bonucci,Leonardo,Bonucci,19,2,ITA,01.05.1987,28,190,1,0,1,30,0,0,0,1,50139,Juventus,ITA
+21307,Buffon,Gianluigi,Buffon,1,1,ITA,28.01.1978,37,192,1,0,1,97,0,0,0,0,50139,Juventus,ITA
+250002700,C?≠ceres,Mart??n,C?≠ceres,4,2,URU,07.04.1987,28,182,0,0,0,15,0,0,0,0,50139,Juventus,ITA
+59142,Chiellini,Giorgio,Chiellini,3,2,ITA,14.08.1984,31,186,1,0,1,44,0,0,0,2,50139,Juventus,ITA
+250015966,Cuadrado,Juan,Cuadrado,16,4,COL,26.05.1988,27,176,1,0,1,2,0,0,0,0,50139,Juventus,ITA
+250086333,Dybala,Paulo,Dybala,21,4,ARG,15.11.1993,21,177,1,0,1,1,0,0,0,0,50139,Juventus,ITA
+68468,Evra,Patrice,Evra,33,2,FRA,15.05.1981,34,175,1,0,1,100,0,0,0,2,50139,Juventus,ITA
+250024953,Hernanes,,Hernanes,11,3,BRA,29.05.1985,30,180,1,0,1,1,0,0,0,0,50139,Juventus,ITA
+74327,Khedira,Sami,Khedira,6,3,GER,04.04.1987,28,189,0,0,0,47,0,0,0,1,50139,Juventus,ITA
+250064108,Lemina,Mario,Lemina,18,3,FRA,01.09.1993,22,182,0,0,0,4,0,0,0,0,50139,Juventus,ITA
+56942,Lichtsteiner,Stephan,Lichtsteiner,26,2,SUI,16.01.1984,31,180,1,0,1,32,0,0,0,0,50139,Juventus,ITA
+99350,Mandè?ukié?,Mario,Mandè?ukié?,17,4,CRO,21.05.1986,29,186,1,0,1,45,1,0,1,19,50139,Juventus,ITA
+1902468,Marchisio,Claudio,Marchisio,8,3,ITA,19.01.1986,29,179,0,0,0,34,0,0,0,2,50139,Juventus,ITA
+250024456,Morata,?Ålvaro,Morata,9,4,ESP,23.10.1992,22,187,1,0,1,19,1,0,1,7,50139,Juventus,ITA
+250061507,Neto,,Neto,25,1,BRA,19.07.1989,26,191,0,0,0,0,0,0,0,0,50139,Juventus,ITA
+250040576,Pereyra,Roberto,Pereyra,37,3,ARG,07.01.1991,24,184,0,0,0,14,0,0,0,0,50139,Juventus,ITA
+250015808,Pogba,Paul,Pogba,10,3,FRA,15.03.1993,22,186,1,0,1,25,0,0,0,1,50139,Juventus,ITA
+250024963,Rugani,Daniele,Rugani,24,2,ITA,29.07.1994,21,188,0,0,0,0,0,0,0,0,50139,Juventus,ITA
+250014297,Sturaro,Stefano,Sturaro,27,3,ITA,09.03.1993,22,178,1,0,1,3,0,0,0,0,50139,Juventus,ITA
+250020649,Zaza,Simone,Zaza,7,4,ITA,25.06.1991,24,186,0,0,0,0,0,0,0,0,50139,Juventus,ITA
+250042508,Alex Alfaiate,,Alex Alfaiate,75,2,POR,17.08.1995,20,182,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250005487,Andr?? Almeida,,Andr?? Almeida,34,2,POR,10.09.1990,25,185,0,0,0,14,0,0,0,0,50147,Benfica,POR
+250064489,Andr?? Ferreira,,Andr?? Ferreira,86,1,POR,29.05.1996,19,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250066107,Buta,,Buta,94,4,POR,10.02.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+103344,Carcela-Gonz?≠lez,Mehdi,Carcela-Gonz?≠lez,39,3,MAR,01.07.1989,26,176,0,0,0,7,0,0,0,0,50147,Benfica,POR
+250041741,Cristante,Bryan,Cristante,24,3,ITA,03.03.1995,20,186,0,0,0,4,0,0,0,0,50147,Benfica,POR
+250073809,Ederson,,Ederson,1,1,BRA,17.08.1993,22,188,0,0,0,0,0,0,0,0,50147,Benfica,POR
+65288,Eliseu,,Eliseu,19,2,POR,01.10.1983,31,175,1,0,1,13,0,0,0,5,50147,Benfica,POR
+105823,Fejsa,Ljubomir,Fejsa,5,3,SRB,14.08.1988,27,185,1,0,1,12,0,0,0,0,50147,Benfica,POR
+250066118,Francisco Ferreira,,Francisco Ferreira,97,2,POR,26.03.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250020656,Gait?≠n,Nicol?≠s,Gait?≠n,10,3,ARG,23.02.1988,27,173,1,0,1,34,1,0,1,3,50147,Benfica,POR
+250064481,Gilson Costa,,Gilson Costa,55,3,POR,24.09.1996,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250054760,Gon??alo Guedes,,Gon??alo Guedes,20,4,POR,29.11.1996,18,179,1,0,1,1,0,0,0,0,50147,Benfica,POR
+250066104,Gon??alo Rodrigues,,Gon??alo Rodrigues,68,3,POR,18.07.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250064483,Hildeberto Pereira,,Hildeberto Pereira,99,4,POR,02.03.1996,19,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250026741,Jardel,,Jardel,33,2,BRA,29.03.1986,29,192,1,0,1,13,0,0,0,0,50147,Benfica,POR
+250060115,Jim??nez,Ra?ßl,Jim??nez,9,4,MEX,05.05.1991,24,190,1,0,1,2,0,0,0,0,50147,Benfica,POR
+250068945,Jo?úo Carvalho,,Jo?úo Carvalho,90,3,POR,09.03.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250087569,Jo?úo Escoval,,Jo?úo Escoval,65,2,POR,08.05.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250057873,Jo?úo Lima,,Jo?úo Lima,96,2,POR,23.06.1996,19,178,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250042511,Jo?úo Nunes,,Jo?úo Nunes,63,2,POR,19.11.1995,19,186,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250024750,Jo?úo Teixeira,,Jo?úo Teixeira,40,3,POR,06.02.1994,21,178,0,0,0,1,0,0,0,0,50147,Benfica,POR
+250026742,Jonas,,Jonas,17,4,BRA,01.04.1984,31,181,1,0,1,15,0,0,0,8,50147,Benfica,POR
+91862,J?ßlio C??sar,,J?ßlio C??sar,12,1,BRA,03.09.1979,36,186,1,0,1,58,0,0,0,0,50147,Benfica,POR
+250055905,Lindel??f,Victor,Lindel??f,14,2,SWE,17.07.1994,21,187,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250075775,Lisandro L??pez,,Lisandro L??pez,2,2,ARG,01.09.1989,26,187,0,0,0,2,0,0,0,0,50147,Benfica,POR
+72580,Luis?úo,,Luis?úo,4,2,BRA,13.02.1981,34,193,1,0,1,56,0,0,0,5,50147,Benfica,POR
+250075977,Miguel Santos,,Miguel Santos,87,1,POR,21.10.1994,20,193,0,0,0,0,0,0,0,0,50147,Benfica,POR
+103218,Mitroglou,Kostas,Mitroglou,11,4,GRE,12.03.1988,27,188,1,0,1,34,1,0,1,14,50147,Benfica,POR
+250064482,Nuno Santos,,Nuno Santos,38,4,POR,13.02.1995,20,179,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250069828,Ould-Chikh,Bilal,Ould-Chikh,8,4,NED,28.07.1997,18,167,0,0,0,0,0,0,0,0,50147,Benfica,POR
+40760,Paulo Lopes,,Paulo Lopes,13,1,POR,29.06.1978,37,186,0,0,0,1,0,0,0,0,50147,Benfica,POR
+250066115,Pedro Rodrigues,,Pedro Rodrigues,88,3,POR,20.05.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250075765,Pizzi,,Pizzi,21,4,POR,06.10.1989,25,172,1,0,1,2,0,0,0,0,50147,Benfica,POR
+250042507,Rebocho,,Rebocho,60,2,POR,23.01.1995,20,172,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250058218,Renato Sanches,,Renato Sanches,85,3,POR,18.08.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250055276,Ricardo Carvalho,,Ricardo Carvalho,73,2,POR,06.03.1996,19,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250058220,R?ßben Dias,,R?ßben Dias,66,2,POR,14.05.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+1907791,Samaris,Andreas,Samaris,7,3,GRE,13.06.1989,26,189,1,0,1,12,0,0,0,0,50147,Benfica,POR
+250014116,Sancidino Silva,,Sancidino Silva,77,4,POR,05.03.1994,21,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250086090,Semedo,N??lson,Semedo,50,2,POR,16.11.1993,21,177,1,0,1,1,0,0,0,0,50147,Benfica,POR
+250038947,S??lvio,,S??lvio,28,2,POR,28.09.1987,27,178,0,0,0,2,0,0,0,0,50147,Benfica,POR
+103893,Taarabt,Adel,Taarabt,23,4,MAR,24.05.1989,26,180,0,0,0,2,0,0,0,0,50147,Benfica,POR
+250075767,Talisca,,Talisca,30,4,BRA,01.02.1994,21,178,1,0,1,7,0,0,0,1,50147,Benfica,POR
+250087574,Tiago Dias,,Tiago Dias,78,4,POR,04.05.1998,17,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250087055,Victor Andrade,,Victor Andrade,31,3,BRA,30.09.1995,19,171,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250066114,Yuri Ribeiro,,Yuri Ribeiro,95,2,POR,24.01.1997,18,,0,0,0,0,0,0,0,0,50147,Benfica,POR
+250021061,Adu,Enoch Kofi,Adu,8,3,GHA,14.09.1990,25,180,5,4,1,21,0,0,0,0,50152,Malm??,SWE
+250066765,Andersson,Erik,Andersson,14,3,SWE,03.05.1997,18,,0,0,0,0,0,0,0,0,50152,Malm??,SWE
+250085796,Andersson,Fredrik,Andersson,29,1,SWE,25.10.1988,26,,0,0,0,0,0,0,0,0,50152,Malm??,SWE
+98970,?Årnason,K?≠ri,?Årnason,21,2,ISL,13.10.1982,32,,5,4,1,6,0,0,0,0,50152,Malm??,SWE
+96871,Azinovic,Zlatan,Azinovic,27,1,SWE,31.01.1988,27,183,2,2,0,2,0,0,0,0,50152,Malm??,SWE
+250008391,Bengtsson,Rasmus,Bengtsson,17,2,SWE,26.06.1986,29,186,6,5,1,8,0,0,0,0,50152,Malm??,SWE
+108933,Berget,Jo Inge,Berget,23,4,NOR,11.09.1990,25,184,7,6,1,16,2,2,0,3,50152,Malm??,SWE
+250076449,Brorsson,Franz,Brorsson,31,2,SWE,30.01.1996,19,,2,2,0,2,0,0,0,0,50152,Malm??,SWE
+250085328,Carvalho,Felipe,Carvalho,25,2,URU,18.09.1993,22,,5,4,1,5,0,0,0,0,50152,Malm??,SWE
+250059465,Cibicki,Paweè?,Cibicki,15,3,SWE,09.01.1994,21,182,1,1,0,8,0,0,0,0,50152,Malm??,SWE
+1902731,Djurdjié?,Nikola,Djurdjié?,28,4,SRB,01.04.1986,29,185,5,4,1,7,1,1,0,1,50152,Malm??,SWE
+108931,Eikrem,Magnus,Eikrem,19,3,NOR,08.08.1990,25,173,4,4,0,8,0,0,0,1,50152,Malm??,SWE
+250076447,Johansson,Marko,Johansson,30,1,SWE,25.08.1998,17,,1,1,0,1,0,0,0,0,50152,Malm??,SWE
+250064624,Konate,Pa,Konate,2,2,SWE,25.04.1994,21,172,0,0,0,4,0,0,0,0,50152,Malm??,SWE
+250034743,Kroon,Simon,Kroon,7,3,SWE,16.06.1993,22,180,1,1,0,10,0,0,0,1,50152,Malm??,SWE
+250005568,Lewicki,Oscar,Lewicki,6,3,SWE,14.07.1992,23,,7,6,1,7,0,0,0,0,50152,Malm??,SWE
+250000110,Mehmeti,Agon,Mehmeti,11,4,SWE,20.11.1989,25,183,2,2,0,12,0,0,0,1,50152,Malm??,SWE
+1902712,Molins,Guillermo,Molins,10,3,SWE,26.09.1988,26,186,0,0,0,2,0,0,0,1,50152,Malm??,SWE
+250087058,??zen,Mahmut,??zen,24,2,SWE,01.09.1988,27,179,0,0,0,0,0,0,0,0,50152,Malm??,SWE
+250059468,Petrovié?,Petar,Petrovié?,18,3,SWE,15.09.1995,20,,0,0,0,0,0,0,0,0,50152,Malm??,SWE
+250058142,Rakip,Erdal,Rakip,5,3,SWE,13.02.1996,19,175,6,5,1,10,0,0,0,0,50152,Malm??,SWE
+250085612,Rodié?,Vladimir,Rodié?,20,3,SRB,07.09.1993,22,,5,4,1,5,1,1,0,1,50152,Malm??,SWE
+70390,Rosenberg,Markus,Rosenberg,9,4,SWE,27.09.1982,32,185,6,5,1,42,2,2,0,14,50152,Malm??,SWE
+250007763,Sana,Tobias,Sana,22,4,SWE,11.07.1989,26,173,4,4,0,9,0,0,0,0,50152,Malm??,SWE
+250076479,Svanberg,Mattias,Svanberg,32,3,SWE,05.01.1999,16,,0,0,0,0,0,0,0,0,50152,Malm??,SWE
+250037611,Tinnerholm,Anton,Tinnerholm,3,2,SWE,26.02.1991,24,175,7,6,1,17,1,1,0,1,50152,Malm??,SWE
+250067400,Vindheim,Andreas,Vindheim,26,2,NOR,04.08.1995,20,,1,1,0,1,0,0,0,0,50152,Malm??,SWE
+43836,Wiland,Johan,Wiland,1,1,SWE,24.01.1981,34,188,5,4,1,38,0,0,0,0,50152,Malm??,SWE
+250039591,Yot?ßn,Yoshimar,Yot?ßn,13,2,PER,07.04.1990,25,,7,6,1,7,0,0,0,0,50152,Malm??,SWE
+250005231,Ademi,Arijan,Ademi,16,3,CRO,29.05.1991,24,183,4,3,1,25,1,1,0,2,50164,Dinamo Zagreb,CRO
+250000060,Antolié?,Domagoj,Antolié?,8,3,CRO,30.06.1990,25,180,4,3,1,11,0,0,0,1,50164,Dinamo Zagreb,CRO
+250066137,Benkovié?,Filip,Benkovié?,26,2,CRO,13.07.1997,18,,2,1,1,2,0,0,0,0,50164,Dinamo Zagreb,CRO
+250042019,??eki??i,Endri,??eki??i,17,4,ALB,23.11.1996,18,,1,1,0,1,0,0,0,0,50164,Dinamo Zagreb,CRO
+250066128,é?orié?,Ante,é?orié?,24,3,CRO,14.04.1997,18,177,4,3,1,5,0,0,0,0,50164,Dinamo Zagreb,CRO
+49116,Eduardo,,Eduardo,34,1,POR,19.09.1982,32,190,7,6,1,11,0,0,0,0,50164,Dinamo Zagreb,CRO
+250052972,Fernandes,Junior,Fernandes,11,4,CHI,10.04.1988,27,181,5,4,1,11,1,0,1,4,50164,Dinamo Zagreb,CRO
+250066067,Gojak,Amer,Gojak,14,3,BIH,13.02.1997,18,,0,0,0,0,0,0,0,0,50164,Dinamo Zagreb,CRO
+250072784,Gon??alo Santos,,Gon??alo Santos,13,3,POR,15.11.1986,28,185,4,4,0,7,0,0,0,0,50164,Dinamo Zagreb,CRO
+250053906,Henr??quez,?Ångelo,Henr??quez,9,4,CHI,13.04.1994,21,180,4,4,0,4,2,2,0,2,50164,Dinamo Zagreb,CRO
+250024626,Ar. Hodè?ié?,Armin,Hodè?ié?,15,4,BIH,17.11.1994,20,,4,4,0,6,1,1,0,1,50164,Dinamo Zagreb,CRO
+1901644,Ivo Pinto,,Ivo Pinto,6,2,POR,07.01.1990,25,184,6,5,1,26,0,0,0,0,50164,Dinamo Zagreb,CRO
+108565,Jeè?ina,Antonijo,Jeè?ina,1,1,CRO,05.06.1989,26,193,0,0,0,0,0,0,0,0,50164,Dinamo Zagreb,CRO
+104663,Méüèúel,Alexandru,Méüèúel,77,2,ROU,17.10.1989,25,,2,2,0,2,0,0,0,0,50164,Dinamo Zagreb,CRO
+250023560,Mikulié?,Marko,Mikulié?,33,1,CRO,30.01.1994,21,187,0,0,0,0,0,0,0,0,50164,Dinamo Zagreb,CRO
+250005234,Musa,Mario,Musa,3,3,CRO,06.07.1990,25,,0,0,0,0,0,0,0,0,50164,Dinamo Zagreb,CRO
+70094,Paulo Machado,,Paulo Machado,10,3,POR,31.03.1986,29,174,6,5,1,20,0,0,0,1,50164,Dinamo Zagreb,CRO
+250012527,Paviéçié?,Domagoj,Paviéçié?,18,3,CRO,09.03.1994,21,,0,0,0,0,0,0,0,0,50164,Dinamo Zagreb,CRO
+103298,Pivarié?,Josip,Pivarié?,19,3,CRO,30.01.1989,26,176,7,6,1,25,2,1,1,2,50164,Dinamo Zagreb,CRO
+250042632,Pjaca,Marko,Pjaca,20,4,CRO,06.05.1995,20,183,7,6,1,11,3,3,0,3,50164,Dinamo Zagreb,CRO
+250071671,Rog,Marko,Rog,30,3,CRO,19.07.1995,20,,7,6,1,7,2,2,0,2,50164,Dinamo Zagreb,CRO
+1903908,Schildenfeld,Gordon,Schildenfeld,23,2,CRO,18.03.1985,30,191,0,0,0,7,0,0,0,0,50164,Dinamo Zagreb,CRO
+250072786,Sigali,Leonardo,Sigali,22,2,ARG,29.05.1987,28,179,6,5,1,8,0,0,0,0,50164,Dinamo Zagreb,CRO
+250039656,Soudani,El Arabi Hilal,Soudani,2,4,ALG,25.11.1987,27,177,7,6,1,16,3,3,0,8,50164,Dinamo Zagreb,CRO
+250028687,èˇovè≠ié?,Damir,èˇovè≠ié?,4,3,CRO,05.02.1990,25,,0,0,0,0,0,0,0,0,50164,Dinamo Zagreb,CRO
+250008202,Taravel,J??r??my,Taravel,87,2,FRA,17.04.1987,28,191,6,5,1,6,1,1,0,1,50164,Dinamo Zagreb,CRO
+250016090,Abdennour,Aymen,Abdennour,23,2,TUN,06.08.1989,26,187,1,0,1,7,0,0,0,1,52268,Valencia,ESP
+250061603,Aderlan Santos,,Aderlan Santos,4,2,BRA,09.04.1989,26,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250017709,Andr?? Gomes,,Andr?? Gomes,21,3,POR,30.07.1993,22,185,1,0,1,5,1,0,1,1,52268,Valencia,ESP
+98405,Barrag?≠n,Antonio,Barrag?≠n,19,2,ESP,12.06.1987,28,187,2,2,0,9,0,0,0,0,52268,Valencia,ESP
+250086036,Danilo Barbosa,,Danilo Barbosa,12,3,BRA,28.02.1996,19,,1,1,0,1,0,0,0,0,52268,Valencia,ESP
+250086037,De Paul,Rodrigo,De Paul,20,4,ARG,24.05.1994,21,,1,1,0,1,0,0,0,0,52268,Valencia,ESP
+250003440,Feghouli,Sofiane,Feghouli,8,3,ALG,26.12.1989,25,178,3,2,1,18,1,1,0,4,52268,Valencia,ESP
+250079394,Fran Villalba,,Fran Villalba,30,3,ESP,11.05.1998,17,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250047086,Gay?ˇ,Jos??,Gay?ˇ,14,2,ESP,25.05.1995,20,,3,2,1,3,0,0,0,0,52268,Valencia,ESP
+250086274,Gil,Nacho,Gil,33,3,ESP,09.09.1995,20,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250064017,Jaume Dom??nech,,Jaume Dom??nech,24,1,ESP,05.11.1990,24,,1,0,1,1,0,0,0,0,52268,Valencia,ESP
+69797,Javi Fuego,,Javi Fuego,18,3,ESP,04.01.1984,31,,3,2,1,3,0,0,0,0,52268,Valencia,ESP
+250024746,Jo?úo Cancelo,,Jo?úo Cancelo,2,2,POR,27.05.1994,21,,1,0,1,1,1,0,1,1,52268,Valencia,ESP
+250086275,Latorre,Antonio,Latorre,36,2,ESP,21.11.1997,17,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250007624,Mustafi,Shkodran,Mustafi,5,2,GER,17.04.1992,23,183,3,2,1,3,0,0,0,0,52268,Valencia,ESP
+101672,Negredo,?Ålvaro,Negredo,7,4,ESP,20.08.1985,30,186,3,2,1,20,1,1,0,7,52268,Valencia,ESP
+250086038,Orb?≠n,Lucas,Orb?≠n,6,2,ESP,03.02.1989,26,184,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250007584,Paco Alc?≠cer,,Paco Alc?≠cer,9,4,ESP,30.08.1993,22,,3,2,1,3,0,0,0,0,52268,Valencia,ESP
+104033,Parejo,Daniel,Parejo,10,3,ESP,16.04.1989,26,178,3,2,1,11,1,1,0,1,52268,Valencia,ESP
+250086307,Pascual,Andr??s,Pascual,34,4,ESP,18.11.1996,18,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250038976,P??rez,Enzo,P??rez,15,3,ARG,22.02.1986,29,179,3,2,1,20,0,0,0,0,52268,Valencia,ESP
+250015969,Piatti,Pablo,Piatti,11,4,ARG,31.03.1989,26,163,3,2,1,9,0,0,0,0,52268,Valencia,ESP
+250014558,Rodrigo,,Rodrigo,17,4,ESP,06.03.1991,24,180,3,2,1,18,1,1,0,3,52268,Valencia,ESP
+250067395,R?ßben Vezo,,R?ßben Vezo,3,2,POR,25.04.1994,21,,2,2,0,2,0,0,0,0,52268,Valencia,ESP
+250062159,Ryan,Mathew,Ryan,25,1,AUS,08.04.1992,23,182,2,2,0,2,0,0,0,0,52268,Valencia,ESP
+250059143,Santi Mina,,Santi Mina,22,4,ESP,07.12.1995,19,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250080576,Sivera,Antonio,Sivera,35,1,ESP,11.08.1996,19,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250086306,Tropi,,Tropi,28,3,ESP,12.05.1995,20,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+106680,Yoel,,Yoel,13,1,ESP,28.08.1988,27,,0,0,0,0,0,0,0,0,52268,Valencia,ESP
+250003528,Alexis S?≠nchez,,Alexis S?≠nchez,17,4,CHI,19.12.1988,26,168,1,0,1,34,0,0,0,7,52280,Arsenal,ENG
+48233,Arteta,Mikel,Arteta,8,3,ESP,26.03.1982,33,183,1,0,1,36,0,0,0,3,52280,Arsenal,ENG
+250047082,Beller??n,H??ctor,Beller??n,24,2,ESP,19.03.1995,20,177,0,0,0,4,0,0,0,0,52280,Arsenal,ENG
+250039158,Campbell,Joel,Campbell,28,4,CRC,26.06.1992,23,178,1,0,1,9,0,0,0,1,52280,Arsenal,ENG
+49029,é?ech,Petr,é?ech,33,1,CZE,20.05.1982,33,196,0,0,0,106,0,0,0,0,52280,Arsenal,ENG
+250047102,Chambers,Calum,Chambers,21,2,ENG,20.01.1995,20,183,0,0,0,7,0,0,0,0,52280,Arsenal,ENG
+1909628,Coquelin,Francis,Coquelin,34,3,FRA,13.05.1991,24,178,1,0,1,10,0,0,0,0,52280,Arsenal,ENG
+69160,Debuchy,Mathieu,Debuchy,2,2,FRA,28.07.1985,30,177,1,0,1,22,0,0,0,0,52280,Arsenal,ENG
+72430,Flamini,Mathieu,Flamini,20,3,FRA,07.03.1984,31,178,0,0,0,56,0,0,0,1,52280,Arsenal,ENG
+250074556,Gabriel,,Gabriel,5,2,BRA,26.11.1990,24,185,1,0,1,1,0,0,0,0,52280,Arsenal,ENG
+1905136,Gibbs,Kieran,Gibbs,3,2,ENG,26.09.1989,25,178,1,0,1,33,0,0,0,2,52280,Arsenal,ENG
+250020851,Giroud,Olivier,Giroud,12,4,FRA,30.09.1986,28,192,1,0,1,20,0,0,0,6,52280,Arsenal,ENG
+250081336,Hinds,Kaylen,Hinds,42,4,ENG,28.01.1998,17,180,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250064352,Huddart,Ryan,Huddart,43,1,ENG,06.03.1997,18,191,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250064296,Iliev,Deyan,Iliev,44,1,BUL,25.02.1995,20,,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250064351,Iwobi,Alex,Iwobi,45,4,ENG,03.05.1996,19,180,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250081196,Johnson,Chiori,Johnson,46,2,ENG,05.10.1997,17,175,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250056954,Kamara,Glen,Kamara,47,3,FIN,28.10.1995,19,183,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250018623,Koscielny,Laurent,Koscielny,6,2,FRA,10.09.1985,30,186,1,0,1,31,0,0,0,2,52280,Arsenal,ENG
+250074433,Macey,Matt,Macey,49,1,ENG,09.09.1994,21,,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250076077,Mavididi,Stephy,Mavididi,50,4,ENG,31.05.1998,17,,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+97575,Mertesacker,Per,Mertesacker,4,2,GER,29.09.1984,30,198,0,0,0,55,0,0,0,2,52280,Arsenal,ENG
+99092,Monreal,Nacho,Monreal,18,2,ESP,26.02.1986,29,178,0,0,0,20,0,0,0,0,52280,Arsenal,ENG
+250064349,Moore,Tafari,Moore,51,2,ENG,05.07.1997,18,173,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250064348,O'Connor,Stefan,O'Connor,52,2,ENG,23.01.1997,18,186,0,0,0,1,0,0,0,0,52280,Arsenal,ENG
+250034526,Ospina,David,Ospina,13,1,COL,31.08.1988,27,183,1,0,1,4,0,0,0,0,52280,Arsenal,ENG
+250021048,Oxlade-Chamberlain,Alex,Oxlade-Chamberlain,15,4,ENG,15.08.1993,22,180,1,0,1,20,0,0,0,3,52280,Arsenal,ENG
+103697,??zil,Mesut,??zil,11,3,GER,15.10.1988,26,183,1,0,1,55,0,0,0,5,52280,Arsenal,ENG
+103769,Ramsey,Aaron,Ramsey,16,3,WAL,26.12.1990,24,177,0,0,0,41,0,0,0,11,52280,Arsenal,ENG
+250079419,Reine-Ad??la??de,Jeff,Reine-Ad??la??de,54,3,FRA,17.01.1998,17,,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+250081197,Robinson,Tyrell,Robinson,55,3,ENG,16.09.1997,18,,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+33466,Rosick?´,Tom?≠è≠,Rosick?´,7,3,CZE,04.10.1980,34,178,0,0,0,83,0,0,0,12,52280,Arsenal,ENG
+72644,Santi Cazorla,,Santi Cazorla,19,3,ESP,13.12.1984,30,168,1,0,1,35,0,0,0,0,52280,Arsenal,ENG
+93279,Walcott,Theo,Walcott,14,4,ENG,16.03.1989,26,176,1,0,1,56,1,0,1,13,52280,Arsenal,ENG
+1901680,Welbeck,Danny,Welbeck,23,4,ENG,26.11.1990,24,185,0,0,0,22,0,0,0,7,52280,Arsenal,ENG
+250081345,Willock,Chris,Willock,59,4,ENG,31.01.1998,17,180,0,0,0,0,0,0,0,0,52280,Arsenal,ENG
+1907893,Wilshere,Jack,Wilshere,10,3,ENG,01.01.1992,23,172,0,0,0,27,0,0,0,4,52280,Arsenal,ENG
+250014680,Ander Herrera,,Ander Herrera,21,3,ESP,14.08.1989,26,182,2,1,1,2,1,1,0,1,52682,Man. United,ENG
+108908,Blind,Daley,Blind,17,3,NED,09.03.1990,25,180,3,2,1,17,0,0,0,0,52682,Man. United,ENG
+50909,Carrick,Michael,Carrick,16,3,ENG,28.07.1981,34,188,2,2,0,70,0,0,0,4,52682,Man. United,ENG
+103806,Darmian,Matteo,Darmian,36,2,ITA,02.12.1989,25,182,3,2,1,3,0,0,0,0,52682,Man. United,ENG
+1901746,De Gea,David,de Gea,1,1,ESP,07.11.1990,24,192,1,0,1,23,0,0,0,0,52682,Man. United,ENG
+250024860,Depay,Memphis,Depay,7,4,NED,13.02.1994,21,176,3,2,1,7,3,2,1,4,52682,Man. United,ENG
+104237,Fellaini,Marouane,Fellaini,27,3,BEL,22.11.1987,27,194,2,1,1,11,1,1,0,1,52682,Man. United,ENG
+250007234,Johnstone,Sam,Johnstone,50,1,ENG,25.03.1993,22,,0,0,0,0,0,0,0,0,52682,Man. United,ENG
+250014728,Jones,Phil,Jones,4,2,ENG,21.02.1992,23,180,0,0,0,17,0,0,0,2,52682,Man. United,ENG
+104584,Juan Mata,,Juan Mata,8,3,ESP,28.04.1988,27,170,3,2,1,31,0,0,0,6,52682,Man. United,ENG
+250043859,Lingard,Jesse,Lingard,35,3,ENG,15.12.1992,22,,0,0,0,0,0,0,0,0,52682,Man. United,ENG
+250042781,Martial,Anthony,Martial,9,4,FRA,05.12.1995,19,181,5,4,1,12,1,1,0,1,52682,Man. United,ENG
+250042799,McNair,Paddy,McNair,33,2,NIR,27.04.1995,20,,0,0,0,0,0,0,0,0,52682,Man. United,ENG
+250056635,Pereira,Andreas,Pereira,44,3,BEL,01.01.1996,19,,0,0,0,0,0,0,0,0,52682,Man. United,ENG
+250024793,Powell,Nick,Powell,22,3,ENG,23.03.1994,21,183,0,0,0,2,0,0,0,0,52682,Man. United,ENG
+250026718,Rojo,Marcos,Rojo,5,2,ARG,20.03.1990,25,187,1,0,1,1,0,0,0,0,52682,Man. United,ENG
+1905918,Romero,Sergio,Romero,20,1,ARG,22.02.1987,28,192,2,2,0,8,0,0,0,0,52682,Man. United,ENG
+63891,Rooney,Wayne,Rooney,10,4,ENG,24.10.1985,29,176,2,2,0,84,3,3,0,33,52682,Man. United,ENG
+103891,Schneiderlin,Morgan,Schneiderlin,28,3,FRA,08.11.1989,25,,1,1,0,1,0,0,0,0,52682,Man. United,ENG
+67496,Schweinsteiger,Bastian,Schweinsteiger,31,3,GER,01.08.1984,31,183,3,2,1,94,0,0,0,13,52682,Man. United,ENG
+250042705,Shaw,Luke,Shaw,23,2,ENG,12.07.1995,20,,3,2,1,3,0,0,0,0,52682,Man. United,ENG
+250011196,Smalling,Chris,Smalling,12,2,ENG,22.11.1989,25,194,3,2,1,25,0,0,0,1,52682,Man. United,ENG
+101303,A. Valencia,Antonio,Valencia,25,3,ECU,04.08.1985,30,178,1,0,1,36,0,0,0,6,52682,Man. United,ENG
+250075737,Varela,Guillermo,Varela,30,2,URU,24.03.1993,22,173,0,0,0,0,0,0,0,0,52682,Man. United,ENG
+250064534,Wilson,James,Wilson,19,4,ENG,01.12.1995,19,,0,0,0,0,0,0,0,0,52682,Man. United,ENG
+106602,Young,Ashley,Young,18,3,ENG,09.07.1985,30,177,2,1,1,15,0,0,0,1,52682,Man. United,ENG
+250022242,Alex Teixeira,,Alex Teixeira,29,3,BRA,06.01.1990,25,173,5,4,1,40,1,1,0,9,52707,Shakhtar Donetsk,UKR
+250061115,Azevedo,M?≠rcio,Azevedo,66,2,BRA,05.02.1986,29,173,3,2,1,7,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250059205,Bernard,,Bernard,10,3,BRA,08.09.1992,23,164,3,2,1,14,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250040615,Dentinho,,Dentinho,9,3,BRA,19.01.1989,26,177,0,0,0,0,0,0,0,0,52707,Shakhtar Donetsk,UKR
+61511,Eduardo,,Eduardo,22,4,CRO,25.02.1983,32,178,4,4,0,42,0,0,0,12,52707,Shakhtar Donetsk,UKR
+250062178,Ferreyra,Facundo,Ferreyra,19,4,ARG,14.03.1991,24,187,0,0,0,5,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250062176,Fred,,Fred,8,3,BRA,05.03.1993,22,169,5,4,1,15,0,0,0,0,52707,Shakhtar Donetsk,UKR
+73035,Gladkiy,Olexandr,Gladkiy,21,4,UKR,24.08.1987,28,188,5,4,1,22,2,2,0,7,52707,Shakhtar Donetsk,UKR
+250058924,Gryn,Serhiy,Gryn,24,4,UKR,06.06.1994,21,,0,0,0,0,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250053792,Ismaily,,Ismaily,31,2,BRA,11.01.1990,25,177,0,0,0,6,0,0,0,1,52707,Shakhtar Donetsk,UKR
+1905028,Kanibolotskiy,Anton,Kanibolotskiy,32,1,UKR,16.05.1988,27,191,0,0,0,0,0,0,0,0,52707,Shakhtar Donetsk,UKR
+94109,Kobin,Vasyl,Kobin,14,3,UKR,24.05.1985,30,180,0,0,0,3,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250056865,Kovalenko,Viktor,Kovalenko,74,3,UKR,14.02.1996,19,186,3,2,1,3,0,0,0,0,52707,Shakhtar Donetsk,UKR
+107955,Kryvtsov,Serhiy,Kryvtsov,38,2,UKR,15.03.1991,24,186,1,1,0,3,0,0,0,0,52707,Shakhtar Donetsk,UKR
+71596,Kucher,Olexandr,Kucher,5,2,UKR,22.10.1982,32,184,3,2,1,50,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250067453,Malyshev,Maksym,Malyshev,17,3,UKR,24.12.1992,22,181,3,2,1,3,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250045024,Marlos,,Marlos,11,3,BRA,07.06.1988,27,173,5,4,1,13,2,2,0,2,52707,Shakhtar Donetsk,UKR
+250064444,Matviyenko,Mykola,Matviyenko,25,2,UKR,02.05.1996,19,,0,0,0,0,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250004737,Ordets,Ivan,Ordets,18,2,UKR,08.07.1992,23,194,2,2,0,3,0,0,0,0,52707,Shakhtar Donetsk,UKR
+67855,Pyatov,Andriy,Pyatov,30,1,UKR,28.06.1984,31,190,5,4,1,57,0,0,0,0,52707,Shakhtar Donetsk,UKR
+250008930,Rakitskiy,Yaroslav,Rakitskiy,44,2,UKR,03.08.1989,26,180,5,4,1,41,0,0,0,1,52707,Shakhtar Donetsk,UKR
+250027153,Sarnavskiy,Bohdan,Sarnavskiy,23,1,UKR,29.01.1995,20,,0,0,0,0,0,0,0,0,52707,Shakhtar Donetsk,UKR
+55031,Shevchuk,Vyacheslav,Shevchuk,13,2,UKR,13.05.1979,36,180,2,2,0,27,0,0,0,0,52707,Shakhtar Donetsk,UKR
+48893,Srna,Darijo,Srna,33,2,CRO,01.05.1982,33,182,5,4,1,82,1,1,0,5,52707,Shakhtar Donetsk,UKR
+1902685,Stepanenko,Taras,Stepanenko,6,3,UKR,08.08.1989,26,181,5,4,1,20,0,0,0,2,52707,Shakhtar Donetsk,UKR
+250022354,Taison,,Taison,28,3,BRA,13.01.1988,27,172,5,4,1,21,0,0,0,1,52707,Shakhtar Donetsk,UKR
+250062177,Wellington Nem,,Wellington Nem,7,3,BRA,06.02.1992,23,165,0,0,0,2,0,0,0,0,52707,Shakhtar Donetsk,UKR
+68573,Andreolli,Marco,Andreolli,17,2,ITA,10.06.1986,29,187,1,0,1,3,0,0,0,0,52714,Sevilla,ESP
+250003399,Banega,??ver,Banega,19,3,ARG,20.06.1988,27,174,1,0,1,17,1,0,1,1,52714,Sevilla,ESP
+250067964,Carlos Fern?≠ndez,,Carlos Fern?≠ndez,28,4,ESP,22.05.1996,19,186,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250086008,Carmona,David,Carmona,26,2,ESP,11.01.1997,18,175,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250035949,Coke,,Coke,23,2,ESP,26.04.1987,28,176,1,0,1,1,0,0,0,0,52714,Sevilla,ESP
+250047084,Cot?≠n,Antonio,Cot?≠n,27,3,ESP,19.05.1996,19,176,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250063974,Crist??foro,Sebasti?≠n,Crist??foro,14,3,URU,23.08.1993,22,173,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250039787,Daniel Carri??o,,Daniel Carri??o,6,3,POR,04.08.1988,27,182,0,0,0,6,0,0,0,0,52714,Sevilla,ESP
+250022295,Escudero,Sergio,Escudero,18,2,ESP,02.09.1989,26,176,0,0,0,4,0,0,0,0,52714,Sevilla,ESP
+101528,Gameiro,Kevin,Gameiro,9,4,FRA,09.05.1987,28,172,1,0,1,4,1,0,1,1,52714,Sevilla,ESP
+250051268,Iborra,Vicente,Iborra,8,3,ESP,16.01.1988,27,190,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250005254,Immobile,Ciro,Immobile,11,4,ITA,20.02.1990,25,181,1,0,1,8,0,0,0,4,52714,Sevilla,ESP
+250086007,Jos?? Matos,,Jos?? Matos,29,2,ESP,06.05.1995,20,169,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250073998,Juan Mu?Òoz,,Juan Mu?Òoz,30,4,ESP,12.11.1995,19,182,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250068979,Juan Soriano,,Juan Soriano,33,1,ESP,23.08.1997,18,182,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+1908193,Kakuta,Ga?Æl,Kakuta,12,3,FRA,21.06.1991,24,172,0,0,0,6,0,0,0,0,52714,Sevilla,ESP
+1908195,Kolodziejczak,Timoth??e,Kolodziejczak,5,2,FRA,01.10.1991,23,185,1,0,1,3,0,0,0,0,52714,Sevilla,ESP
+1905873,Konoplyanka,Yevhen,Konoplyanka,22,3,UKR,29.09.1989,25,176,1,0,1,3,1,0,1,1,52714,Sevilla,ESP
+63344,Krohn-Dehli,Michael,Krohn-Dehli,7,3,DEN,06.06.1983,32,170,1,0,1,1,0,0,0,0,52714,Sevilla,ESP
+102092,Krychowiak,Grzegorz,Krychowiak,4,3,POL,29.01.1990,25,186,1,0,1,1,0,0,0,0,52714,Sevilla,ESP
+69176,Llorente,Fernando,Llorente,24,4,ESP,26.02.1985,30,195,0,0,0,14,0,0,0,3,52714,Sevilla,ESP
+250063765,Luismi,,Luismi,16,3,ESP,05.05.1992,23,180,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250049643,Mariano Ferreira,,Mariano Ferreira,25,2,BRA,23.06.1986,29,177,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250012024,N'Zonzi,Steven,N'Zonzi,15,3,FRA,15.12.1988,26,190,1,0,1,1,0,0,0,0,52714,Sevilla,ESP
+1909693,Rami,Adil,Rami,3,2,FRA,27.12.1985,29,190,0,0,0,14,0,0,0,2,52714,Sevilla,ESP
+52988,Reyes,Jos?? Antonio,Reyes,10,3,ESP,01.09.1983,32,178,1,0,1,35,0,0,0,3,52714,Sevilla,ESP
+250062440,Rico,Sergio,Rico,1,1,ESP,01.09.1993,22,194,1,0,1,1,0,0,0,0,52714,Sevilla,ESP
+250089261,Rodriguez,?Ålvaro,Rodriguez,35,1,ESP,18.02.1998,17,,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+250081368,Soria,David,Soria,31,1,ESP,04.04.1993,22,192,0,0,0,0,0,0,0,0,52714,Sevilla,ESP
+106603,Tr??moulinas,Beno??t,Tr??moulinas,2,2,FRA,28.12.1985,29,173,1,0,1,10,0,0,0,0,52714,Sevilla,ESP
+250062154,Vitolo,,Vitolo,20,3,ESP,02.11.1989,25,183,1,0,1,1,0,0,0,0,52714,Sevilla,ESP
+102812,Antunes,,Antunes,5,2,POR,01.04.1987,28,175,1,0,1,6,0,0,0,0,52723,Dynamo Kyiv,UKR
+250020844,Belhanda,Younes,Belhanda,90,3,MAR,25.02.1990,25,174,1,0,1,7,0,0,0,2,52723,Dynamo Kyiv,UKR
+250086323,Boldenkov,Valery,Boldenkov,44,2,UKR,08.09.1994,21,191,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250042636,Burda,Mykyta,Burda,26,2,UKR,24.03.1995,20,187,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250024883,Bushchan,Georgiy,Bushchan,52,1,UKR,31.05.1994,21,201,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250024124,Buyalskiy,Vitaliy,Buyalskiy,29,3,UKR,06.01.1993,22,170,1,0,1,1,1,0,1,1,52723,Dynamo Kyiv,UKR
+250020488,Danilo Silva,,Danilo Silva,2,2,BRA,24.11.1986,28,185,1,0,1,14,0,0,0,0,52723,Dynamo Kyiv,UKR
+1909713,Dragovic,Aleksandar,Dragovic,6,2,AUT,06.03.1991,24,185,1,0,1,15,0,0,0,0,52723,Dynamo Kyiv,UKR
+1902207,Garmash,Denys,Garmash,19,3,UKR,19.04.1990,25,187,1,0,1,13,0,0,0,1,52723,Dynamo Kyiv,UKR
+250070712,Gonz?≠lez,Derlis,Gonz?≠lez,25,3,PAR,20.03.1994,21,172,1,0,1,9,0,0,0,3,52723,Dynamo Kyiv,UKR
+68316,Gusev,Oleh,Gusev,20,3,UKR,25.04.1983,32,179,1,0,1,53,1,0,1,9,52723,Dynamo Kyiv,UKR
+250036166,J?ßnior Moraes,,J?ßnior Moraes,11,4,BRA,04.04.1987,28,176,1,0,1,1,0,0,0,0,52723,Dynamo Kyiv,UKR
+250011944,Khacheridi,Yevhen,Khacheridi,34,2,UKR,28.07.1987,28,197,1,0,1,13,0,0,0,0,52723,Dynamo Kyiv,UKR
+57902,Kranjéçar,Niko,Kranjéçar,21,3,CRO,13.08.1984,31,185,0,0,0,18,0,0,0,2,52723,Dynamo Kyiv,UKR
+103841,Kravets,Artem,Kravets,22,4,UKR,03.06.1989,26,185,1,0,1,9,0,0,0,0,52723,Dynamo Kyiv,UKR
+250056862,Lukyanchuk,Pavlo,Lukyanchuk,42,2,UKR,19.05.1996,19,,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250063372,Makarenko,Yevhen,Makarenko,27,2,UKR,21.05.1991,24,182,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+70090,Miguel Veloso,,Miguel Veloso,4,3,POR,11.05.1986,29,180,1,0,1,33,0,0,0,3,52723,Dynamo Kyiv,UKR
+98125,Morozyuk,Mykola,Morozyuk,9,2,UKR,17.01.1988,27,176,0,0,0,3,0,0,0,0,52723,Dynamo Kyiv,UKR
+250043091,Myakushko,Serhiy,Myakushko,88,3,UKR,15.04.1993,22,167,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250087700,Nesterenko,Andrii,Nesterenko,45,2,UKR,14.05.1996,19,,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250056867,Orikhovskiy,Pavlo,Orikhovskiy,48,3,UKR,13.05.1996,19,,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250002316,Petrovié?,Radosav,Petrovié?,8,3,SRB,08.03.1989,26,193,0,0,0,17,0,0,0,1,52723,Dynamo Kyiv,UKR
+250010235,Rybalka,Serhiy,Rybalka,17,3,UKR,01.04.1990,25,176,1,0,1,1,0,0,0,0,52723,Dynamo Kyiv,UKR
+73021,Rybka,Olexandr,Rybka,23,1,UKR,10.04.1987,28,193,1,0,1,10,0,0,0,0,52723,Dynamo Kyiv,UKR
+23137,Shovkovskiy,Olexandr,Shovkovskiy,1,1,UKR,02.01.1975,40,191,0,0,0,101,0,0,0,0,52723,Dynamo Kyiv,UKR
+250008250,Sydorchuk,Serhiy,Sydorchuk,16,3,UKR,02.05.1991,24,188,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250026024,Teodorczyk,èÅukasz,Teodorczyk,91,4,POL,03.06.1991,24,185,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+108567,Vida,Domagoj,Vida,24,2,CRO,29.04.1989,26,184,0,0,0,24,0,0,0,2,52723,Dynamo Kyiv,UKR
+250047100,Yaremchuk,Roman,Yaremchuk,41,4,UKR,27.11.1995,19,,0,0,0,0,0,0,0,0,52723,Dynamo Kyiv,UKR
+250000069,Yarmolenko,Andriy,Yarmolenko,10,4,UKR,23.10.1989,25,187,0,0,0,22,0,0,0,3,52723,Dynamo Kyiv,UKR
+250064581,Augustin,Jean-K??vin,Augustin,29,4,FRA,16.06.1997,18,177,0,0,0,0,0,0,0,0,52747,Paris,FRA
+250025875,Aurier,Serge,Aurier,19,2,CIV,24.12.1992,22,176,0,0,0,0,0,0,0,0,52747,Paris,FRA
+1905813,Cavani,Edinson,Cavani,9,4,URU,14.02.1987,28,184,1,0,1,27,1,0,1,16,52747,Paris,FRA
+1900733,David Luiz,,David Luiz,32,2,BRA,22.04.1987,28,188,1,0,1,45,0,0,0,5,52747,Paris,FRA
+250064587,Descamps,R??my,Descamps,40,1,FRA,25.06.1996,19,,0,0,0,0,0,0,0,0,52747,Paris,FRA
+1905153,Di Mar??a,?Ångel,Di Mar??a,11,3,ARG,14.02.1988,27,180,1,0,1,47,1,0,1,9,52747,Paris,FRA
+1901440,Douchez,Nicolas,Douchez,1,1,FRA,22.04.1980,35,186,0,0,0,2,0,0,0,0,52747,Paris,FRA
+59217,Ibrahimovié?,Zlatan,Ibrahimovié?,10,4,SWE,03.10.1981,33,194,1,0,1,114,0,0,0,44,52747,Paris,FRA
+250064583,Kimpembe,Presnel,Kimpembe,3,2,FRA,13.08.1995,20,183,0,0,0,0,0,0,0,0,52747,Paris,FRA
+250024288,Kurzawa,Layvin,Kurzawa,20,2,FRA,04.09.1992,23,182,3,3,0,11,2,2,0,2,52747,Paris,FRA
+250000688,Lavezzi,Ezequiel,Lavezzi,22,4,ARG,03.05.1985,30,173,1,0,1,36,0,0,0,9,52747,Paris,FRA
+250039525,Lucas,,Lucas,7,3,BRA,13.08.1992,23,172,0,0,0,22,0,0,0,0,52747,Paris,FRA
+250064064,Marquinhos,,Marquinhos,5,2,BRA,14.05.1994,21,183,0,0,0,15,0,0,0,3,52747,Paris,FRA
+103546,Matuidi,Blaise,Matuidi,14,3,FRA,09.04.1987,28,175,1,0,1,29,0,0,0,4,52747,Paris,FRA
+60805,Maxwell,,Maxwell,17,2,BRA,27.08.1981,34,177,1,0,1,85,0,0,0,0,52747,Paris,FRA
+250076654,Nkunku,Christopher,Nkunku,33,3,FRA,14.11.1997,17,,0,0,0,0,0,0,0,0,52747,Paris,FRA
+250042784,Ongenda,Hervin,Ongenda,35,4,FRA,24.06.1995,20,169,0,0,0,0,0,0,0,0,52747,Paris,FRA
+250015986,Pastore,Javier,Pastore,27,3,ARG,20.06.1989,26,187,1,0,1,27,0,0,0,4,52747,Paris,FRA
+250053905,Rabiot,Adrien,Rabiot,25,3,FRA,03.04.1995,20,188,0,0,0,11,0,0,0,0,52747,Paris,FRA
+106737,Sirigu,Salvatore,Sirigu,30,1,ITA,12.01.1987,28,192,0,0,0,30,0,0,0,0,52747,Paris,FRA
+250016042,Stambouli,Benjamin,Stambouli,4,3,FRA,13.08.1990,25,180,0,0,0,4,0,0,0,0,52747,Paris,FRA
+56451,Thiago Motta,,Thiago Motta,8,3,ITA,28.08.1982,33,183,1,0,1,66,0,0,0,5,52747,Paris,FRA
+250011954,Thiago Silva,,Thiago Silva,2,2,BRA,22.09.1984,30,183,1,0,1,43,0,0,0,4,52747,Paris,FRA
+1902188,Trapp,Kevin,Trapp,16,1,GER,08.07.1990,25,189,1,0,1,1,0,0,0,0,52747,Paris,FRA
+106762,Van der Wiel,Gregory,van der Wiel,23,2,NED,03.02.1988,27,172,1,0,1,38,0,0,0,1,52747,Paris,FRA
+250006200,Verratti,Marco,Verratti,6,3,ITA,05.11.1992,22,165,1,0,1,25,0,0,0,1,52747,Paris,FRA
+61714,Brouwers,Roel,Brouwers,4,2,NED,28.11.1981,33,190,1,0,1,2,0,0,0,0,52757,M??nchengladbach,GER
+250041718,Christensen,Andreas,Christensen,3,2,DEN,10.04.1996,19,188,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+250074777,Dahoud,Mahmoud,Dahoud,8,3,GER,01.01.1996,19,176,1,0,1,1,0,0,0,0,52757,M??nchengladbach,GER
+1907235,?Ålvaro Dom??nguez,?Ålvaro,Dom??nguez,15,2,ESP,16.05.1989,26,189,0,0,0,6,0,0,0,0,52757,M??nchengladbach,GER
+250017664,Drmic,Josip,Drmic,9,4,SUI,08.08.1992,23,181,1,0,1,13,0,0,0,0,52757,M??nchengladbach,GER
+250055734,Elvedi,Nico,Elvedi,30,2,SUI,30.09.1996,18,188,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+250068760,Hahn,Andr??,Hahn,28,3,GER,13.08.1990,25,185,1,0,1,1,0,0,0,0,52757,M??nchengladbach,GER
+250012551,Hazard,Thorgan,Hazard,10,3,BEL,29.03.1993,22,174,1,0,1,3,0,0,0,0,52757,M??nchengladbach,GER
+54644,Heimeroth,Christofer,Heimeroth,33,1,GER,01.08.1981,34,194,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+1908298,Herrmann,Patrick,Herrmann,7,4,GER,12.02.1991,24,179,0,0,0,2,0,0,0,0,52757,M??nchengladbach,GER
+250041531,Hrgota,Branimir,Hrgota,31,4,SWE,12.01.1993,22,182,0,0,0,1,0,0,0,0,52757,M??nchengladbach,GER
+1901608,Jantschke,Tony,Jantschke,24,2,GER,07.04.1990,25,177,1,0,1,3,0,0,0,0,52757,M??nchengladbach,GER
+74321,Johnson,Fabian,Johnson,19,2,GER,11.12.1987,27,183,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+250056906,Kompalla,Martin,Kompalla,41,1,GER,26.08.1992,23,186,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+250007611,Korb,Julian,Korb,27,2,GER,21.03.1992,23,177,1,0,1,1,0,0,0,0,52757,M??nchengladbach,GER
+250086962,Ndenge,Tsiy-William,Ndenge,44,3,GER,13.06.1997,18,,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+108925,Nordtveit,H?ùvard,Nordtveit,6,3,NOR,21.06.1990,25,186,1,0,1,3,0,0,0,0,52757,M??nchengladbach,GER
+101154,Raffael,,Raffael,11,4,BRA,28.03.1985,30,174,1,0,1,8,0,0,0,0,52757,M??nchengladbach,GER
+250074778,Ritter,Marlon,Ritter,36,3,GER,15.10.1994,20,170,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+250074365,M. Schulz,Marvin,Schulz,18,2,GER,15.01.1995,20,186,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+250014332,N. Schulz,Nico,Schulz,14,3,GER,01.04.1993,22,,1,0,1,1,0,0,0,0,52757,M??nchengladbach,GER
+250002891,Sippel,Tobias,Sippel,21,1,GER,22.03.1988,27,180,0,0,0,0,0,0,0,0,52757,M??nchengladbach,GER
+97746,Sommer,Yann,Sommer,1,1,SUI,17.12.1988,26,183,1,0,1,24,0,0,0,0,52757,M??nchengladbach,GER
+250011790,Stindl,Lars,Stindl,13,3,GER,26.08.1988,27,180,1,0,1,1,0,0,0,0,52757,M??nchengladbach,GER
+31461,Stranzl,Martin,Stranzl,39,2,AUT,16.06.1980,35,190,0,0,0,19,0,0,0,0,52757,M??nchengladbach,GER
+250001818,Traor??,Ibrahima,Traor??,16,3,GNB,21.04.1988,27,172,1,0,1,1,0,0,0,0,52757,M??nchengladbach,GER
+99714,Wendt,Oscar,Wendt,17,2,SWE,24.10.1985,29,181,1,0,1,22,0,0,0,0,52757,M??nchengladbach,GER
+250004721,Xhaka,Granit,Xhaka,34,3,SUI,27.09.1992,22,186,0,0,0,14,0,0,0,1,52757,M??nchengladbach,GER
+57318,Anyukov,Aleksandr,Anyukov,2,2,RUS,28.09.1982,32,178,1,0,1,37,0,0,0,0,52826,Zenit,RUS
+250062301,Bogaev,Dmitri,Bogaev,70,4,RUS,24.01.1994,21,175,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+69737,Criscito,Domenico,Criscito,4,2,ITA,30.12.1986,28,183,1,0,1,28,0,0,0,0,52826,Zenit,RUS
+61148,Danny,,Danny,10,3,POR,07.08.1983,32,178,1,0,1,40,0,0,0,11,52826,Zenit,RUS
+250063900,Dolgov,Pavel,Dolgov,92,4,RUS,16.08.1996,19,187,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+97787,Dzyuba,Artem,Dzyuba,22,4,RUS,22.08.1988,27,194,1,0,1,10,0,0,0,1,52826,Zenit,RUS
+250051730,Evseev,Aleksei,Evseev,94,3,RUS,30.03.1994,21,183,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+1905337,Fayzulin,Viktor,Fayzulin,20,3,RUS,22.04.1986,29,176,1,0,1,34,0,0,0,2,52826,Zenit,RUS
+250038975,Garay,Ezequiel,Garay,24,2,ARG,10.10.1986,28,192,1,0,1,38,0,0,0,1,52826,Zenit,RUS
+250003325,Hulk,,Hulk,7,4,BRA,25.07.1986,29,180,1,0,1,50,2,0,2,18,52826,Zenit,RUS
+250063897,Ivanidi,Ivan,Ivanidi,53,2,RUS,14.06.1996,19,,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250054403,Ivanov,Andrei,Ivanov,52,2,RUS,02.09.1994,21,179,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+69555,Javi Garc??a,,Javi Garc??a,21,3,ESP,08.02.1987,28,187,1,0,1,39,0,0,0,2,52826,Zenit,RUS
+250066368,Karpov,Maksim,Karpov,50,2,RUS,17.03.1995,20,176,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+72819,Kerzhakov,Mikhail,Kerzhakov,41,1,RUS,28.01.1987,28,189,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250089126,Kireenko,Pavel,Kireenko,76,4,RUS,14.06.1994,21,,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250062298,Kubyshkin,Ilya,Kubyshkin,96,2,RUS,12.01.1996,19,180,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250062290,Lodygin,Yuri,Lodygin,1,1,RUS,26.05.1990,25,187,1,0,1,22,0,0,0,0,52826,Zenit,RUS
+62369,Lombaerts,Nicolas,Lombaerts,6,2,BEL,20.03.1985,30,188,1,0,1,41,0,0,0,1,52826,Zenit,RUS
+250034990,Lu??s Neto,,Lu??s Neto,13,2,POR,26.05.1988,27,187,1,0,1,10,0,0,0,0,52826,Zenit,RUS
+34521,Malafeev,Vyacheslav,Malafeev,16,1,RUS,04.03.1979,36,185,0,0,0,24,0,0,0,0,52826,Zenit,RUS
+250024501,Markov,Evgeni,Markov,89,4,RUS,07.07.1994,21,,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250062289,Mzhelski,Mikhail,Mzhelski,80,1,RUS,29.03.1995,20,200,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250066997,Nazimov,Pavel,Nazimov,43,4,RUS,04.02.1996,19,177,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250062292,Obukhov,Igor,Obukhov,83,1,RUS,29.05.1996,19,190,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250062293,Osipov,Pavel,Osipov,73,3,RUS,28.01.1996,19,176,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250042597,Rebenko,Stepan,Rebenko,62,2,RUS,01.05.1995,20,184,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250062299,Rudakov,Maksim,Rudakov,51,1,RUS,22.01.1996,19,182,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+69617,Ryazantsev,Aleksandr,Ryazantsev,5,3,RUS,05.09.1986,29,176,0,0,0,16,0,0,0,1,52826,Zenit,RUS
+250008904,Shatov,Oleg,Shatov,17,3,RUS,29.07.1990,25,173,1,0,1,18,0,0,0,2,52826,Zenit,RUS
+108017,Smolnikov,Igor,Smolnikov,19,2,RUS,08.08.1988,27,178,1,0,1,17,0,0,0,0,52826,Zenit,RUS
+250065763,Troyanov,Konstantin,Troyanov,79,3,RUS,18.11.1995,19,,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250046941,Vasyutin,Aleksandr,Vasyutin,95,1,RUS,04.03.1995,20,190,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+103335,Witsel,Axel,Witsel,28,3,BEL,12.01.1989,26,183,1,0,1,46,1,0,1,4,52826,Zenit,RUS
+250042599,Yaschuk,Danila,Yaschuk,65,3,RUS,13.03.1995,20,181,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250007698,Yusupov,Artur,Yusupov,14,3,RUS,01.09.1989,26,179,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250027062,Zuev,Ilya,Zuev,58,2,RUS,25.01.1994,21,183,0,0,0,0,0,0,0,0,52826,Zenit,RUS
+250064538,Aina,Ola,Aina,34,2,ENG,08.10.1996,18,,0,0,0,0,0,0,0,0,52914,Chelsea,ENG
+103827,Azpilicueta,C??sar,Azpilicueta,28,2,ESP,28.08.1989,26,178,1,0,1,28,0,0,0,0,52914,Chelsea,ENG
+250086844,Baba,Abdul Rahman,Baba,6,2,GHA,02.07.1994,21,,1,0,1,1,0,0,0,0,52914,Chelsea,ENG
+250012196,Begovié?,Asmir,Begovié?,1,1,BIH,20.06.1987,28,196,1,0,1,1,0,0,0,0,52914,Chelsea,ENG
+250040703,Blackman,Jamal,Blackman,27,1,ENG,27.10.1993,21,196,0,0,0,0,0,0,0,0,52914,Chelsea,ENG
+1902472,Cahill,Gary,Cahill,24,2,ENG,19.12.1985,29,188,1,0,1,26,0,0,0,3,52914,Chelsea,ENG
+250066865,Collins,Bradley,Collins,40,1,ENG,18.02.1997,18,,0,0,0,0,0,0,0,0,52914,Chelsea,ENG
+250011668,Courtois,Thibaut,Courtois,13,1,BEL,11.05.1992,23,199,0,0,0,17,0,0,0,0,52914,Chelsea,ENG
+1900730,Diego Costa,,Diego Costa,19,4,ESP,07.10.1988,26,188,1,0,1,17,1,0,1,9,52914,Chelsea,ENG
+70072,F?ˇbregas,Cesc,F?ˇbregas,4,3,ESP,04.05.1987,28,175,1,0,1,96,1,0,1,23,52914,Chelsea,ENG
+250011928,Falcao,Radamel,Falcao,9,4,COL,10.02.1986,29,177,0,0,0,8,0,0,0,4,52914,Chelsea,ENG
+1902160,Hazard,Eden,Hazard,10,3,BEL,07.01.1991,24,170,1,0,1,29,0,0,0,5,52914,Chelsea,ENG
+93629,Ivanovié?,Branislav,Ivanovié?,2,2,SRB,22.02.1984,31,188,0,0,0,54,0,0,0,7,52914,Chelsea,ENG
+250086845,Kenedy,,Kenedy,16,3,BRA,08.02.1996,19,,0,0,0,0,0,0,0,0,52914,Chelsea,ENG
+250056566,Loftus-Cheek,Ruben,Loftus-Cheek,36,3,ENG,23.01.1996,19,192,1,0,1,2,0,0,0,0,52914,Chelsea,ENG
+250005348,Matié?,Nemanja,Matié?,21,3,SRB,01.08.1988,27,193,0,0,0,29,0,0,0,3,52914,Chelsea,ENG
+69271,Mikel,John Obi,Mikel,12,3,NGA,22.04.1987,28,188,0,0,0,55,0,0,0,1,52914,Chelsea,ENG
+250053633,Oscar,,Oscar,8,3,BRA,09.09.1991,24,180,1,0,1,24,1,0,1,7,52914,Chelsea,ENG
+250002701,Pedro Rodr??guez,,Pedro Rodr??guez,17,4,ESP,28.07.1987,28,167,0,0,0,61,0,0,0,15,52914,Chelsea,ENG
+250011599,Ramires,,Ramires,7,3,BRA,24.03.1987,28,180,1,0,1,41,0,0,0,7,52914,Chelsea,ENG
+106631,R??my,Lo??c,R??my,18,4,FRA,02.01.1987,28,184,1,0,1,23,0,0,0,5,52914,Chelsea,ENG
+45902,Terry,John,Terry,26,2,ENG,07.12.1980,34,187,0,0,0,107,0,0,0,10,52914,Chelsea,ENG
+250062165,Traor??,Bertrand,Traor??,14,3,BFA,06.09.1995,20,177,1,0,1,1,0,0,0,0,52914,Chelsea,ENG
+1905688,Willian,,Willian,22,3,BRA,09.08.1988,27,173,1,0,1,53,1,0,1,11,52914,Chelsea,ENG
+250024983,Zouma,Kurt,Zouma,5,2,FRA,27.10.1994,20,190,1,0,1,5,0,0,0,0,52914,Chelsea,ENG
+250064355,Adarabioyo,Tosin,Adarabioyo,53,2,ENG,24.09.1997,17,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+1903543,Ag?¨ero,Sergio,Ag?¨ero,10,4,ARG,02.06.1988,27,172,1,0,1,42,0,0,0,23,52919,Man. City,ENG
+250065921,Ambrose,Thierry,Ambrose,68,4,FRA,28.03.1997,18,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250064361,Barker,Brandon,Barker,62,4,ENG,04.10.1996,18,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250067249,Boadu,Denzil,Boadu,49,3,ENG,20.02.1997,18,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250002338,Bony,Wilfried,Bony,14,4,CIV,10.12.1988,26,182,1,0,1,9,0,0,0,2,52919,Man. City,ENG
+250056557,Bryan,Kean,Bryan,52,3,ENG,01.11.1996,18,182,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250041703,Bytyqi,Sinan,Bytyqi,63,3,AUT,15.01.1995,20,185,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250075757,Caballero,Willy,Caballero,13,1,ARG,28.09.1981,33,186,0,0,0,11,0,0,0,0,52919,Man. City,ENG
+62975,Clichy,Ga?Æl,Clichy,22,2,FRA,26.07.1985,30,176,0,0,0,66,0,0,0,0,52919,Man. City,ENG
+250008901,De Bruyne,Kevin,De Bruyne,17,4,BEL,28.06.1991,24,180,1,0,1,10,0,0,0,0,52919,Man. City,ENG
+250000920,Delph,Fabian,Delph,18,3,ENG,21.11.1989,25,174,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+72455,Demichelis,Mart??n,Demichelis,26,2,ARG,20.12.1980,34,184,0,0,0,65,0,0,0,3,52919,Man. City,ENG
+250054429,Evans,George,Evans,70,3,ENG,13.12.1994,20,184,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+101299,Fernandinho,,Fernandinho,25,3,BRA,04.05.1985,30,176,1,0,1,57,0,0,0,6,52919,Man. City,ENG
+250003327,Fernando,,Fernando,6,3,BRA,25.07.1987,28,185,0,0,0,39,0,0,0,0,52919,Man. City,ENG
+250054431,Glendon,George,Glendon,73,3,WAL,03.05.1995,20,177,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250047105,Gunn,Angus,Gunn,54,1,ENG,22.01.1996,19,196,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+104231,Hart,Joe,Hart,1,1,ENG,19.04.1987,28,196,1,0,1,28,0,0,0,0,52919,Man. City,ENG
+69173,Jes?ßs Navas,,Jes?ßs Navas,15,3,ESP,21.11.1985,29,170,0,0,0,35,0,0,0,3,52919,Man. City,ENG
+250064359,Jorge Intima,,Jorge Intima,65,3,POR,21.09.1995,19,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+105814,Kolarov,Aleksandar,Kolarov,11,2,SRB,10.11.1985,29,187,1,0,1,25,0,0,0,3,52919,Man. City,ENG
+71507,Kompany,Vincent,Kompany,4,2,BEL,10.04.1986,29,190,1,0,1,51,0,0,0,2,52919,Man. City,ENG
+250023237,Lawlor,Ian,Lawlor,45,1,IRL,27.10.1994,20,193,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250064825,Maffeo,Pablo,Maffeo,50,2,ESP,12.07.1997,18,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250003745,Mangala,Eliaquim,Mangala,20,2,FRA,13.02.1991,24,187,1,0,1,24,0,0,0,1,52919,Man. City,ENG
+93324,Nasri,Samir,Nasri,8,3,FRA,26.06.1987,28,175,1,0,1,54,0,0,0,9,52919,Man. City,ENG
+250076609,Nemane,Aaron,Nemane,57,4,ENG,26.06.1997,18,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250017040,Otamendi,Nicol?≠s,Otamendi,30,2,ARG,12.02.1988,27,183,1,0,1,18,0,0,0,0,52919,Man. City,ENG
+250024792,Plummer,Ellis,Plummer,74,2,ENG,02.09.1994,21,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+72795,Sagna,Bacary,Sagna,3,2,FRA,14.02.1983,32,176,1,0,1,52,0,0,0,0,52919,Man. City,ENG
+64257,Silva,David,Silva,21,3,ESP,08.01.1986,29,170,1,0,1,41,0,0,0,6,52919,Man. City,ENG
+250056571,Smith-Brown,Ashley,Smith-Brown,56,2,ENG,31.03.1996,19,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+250024795,Sterling,Raheem,Sterling,7,3,ENG,08.12.1994,20,170,1,0,1,7,0,0,0,0,52919,Man. City,ENG
+250056603,Tattum,Samuel,Tattum,67,3,ENG,03.09.1996,19,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+95082,Tour??,Yaya,Tour??,42,3,CIV,13.05.1983,32,191,1,0,1,59,0,0,0,7,52919,Man. City,ENG
+250076600,Wood,Marcus,Wood,71,3,ENG,12.02.1998,17,,0,0,0,0,0,0,0,0,52919,Man. City,ENG
+101608,Zabaleta,Pablo,Zabaleta,5,2,ARG,16.01.1985,30,176,0,0,0,21,0,0,0,1,52919,Man. City,ENG
+66794,Akinfeev,Igor,Akinfeev,35,1,RUS,08.04.1986,29,185,5,4,1,49,0,0,0,0,54266,CSKA Moskva,RUS
+49086,A. Berezutski,Aleksei,Berezutski,6,2,RUS,20.06.1982,33,190,4,4,0,53,0,0,0,0,54266,CSKA Moskva,RUS
+49083,V. Berezutski,Vasili,Berezutski,24,2,RUS,20.06.1982,33,189,4,3,1,47,0,0,0,3,54266,CSKA Moskva,RUS
+98086,Cauè?a,Aleksandrs,Cauè?a,19,3,LVA,19.01.1988,27,174,0,0,0,8,0,0,0,1,54266,CSKA Moskva,RUS
+250000510,Chepchugov,Sergei,Chepchugov,1,1,RUS,15.07.1985,30,185,0,0,0,2,0,0,0,0,54266,CSKA Moskva,RUS
+250055119,Chernov,Nikita,Chernov,91,2,RUS,14.01.1996,19,189,0,0,0,0,0,0,0,0,54266,CSKA Moskva,RUS
+250002480,Doumbia,Seydou,Doumbia,88,4,CIV,31.12.1987,27,179,3,2,1,18,3,3,0,13,54266,CSKA Moskva,RUS
+108426,Dzagoev,Alan,Dzagoev,10,3,RUS,17.06.1990,25,179,5,4,1,25,2,2,0,6,54266,CSKA Moskva,RUS
+72529,Eremenko,Roman,Eremenko,25,3,FIN,19.03.1987,28,180,5,4,1,29,0,0,0,1,54266,CSKA Moskva,RUS
+250058227,Golovin,Aleksandr,Golovin,60,3,RUS,30.05.1996,19,,1,1,0,1,0,0,0,0,54266,CSKA Moskva,RUS
+55543,Ignashevich,Sergei,Ignashevich,4,2,RUS,14.07.1979,36,186,5,4,1,81,0,0,0,5,54266,CSKA Moskva,RUS
+250055125,Makarov,Aleksandr,Makarov,43,4,RUS,24.04.1996,19,,0,0,0,0,0,0,0,0,54266,CSKA Moskva,RUS
+250052963,M?≠rio Fernandes,,M?≠rio Fernandes,2,2,BRA,28.06.1991,24,189,5,4,1,11,0,0,0,0,54266,CSKA Moskva,RUS
+250004244,Milanov,Georgi,Milanov,23,3,BUL,19.02.1992,23,184,5,4,1,24,0,0,0,0,54266,CSKA Moskva,RUS
+250044943,Musa,Ahmed,Musa,18,4,NGA,14.10.1992,22,170,5,4,1,19,3,3,0,5,54266,CSKA Moskva,RUS
+69615,Nababkin,Kirill,Nababkin,14,2,RUS,08.09.1986,29,176,4,4,0,16,0,0,0,0,54266,CSKA Moskva,RUS
+97869,Natcho,Bibras,Natcho,66,3,ISR,18.02.1988,27,175,4,3,1,18,0,0,0,3,54266,CSKA Moskva,RUS
+250075649,Panchenko,Kirill,Panchenko,8,4,RUS,19.10.1989,25,185,0,0,0,1,0,0,0,0,54266,CSKA Moskva,RUS
+250063906,Pomazun,Ilya,Pomazun,45,1,RUS,16.08.1996,19,189,0,0,0,0,0,0,0,0,54266,CSKA Moskva,RUS
+1906987,Schennikov,Georgi,Schennikov,42,2,RUS,27.04.1991,24,178,3,2,1,29,0,0,0,0,54266,CSKA Moskva,RUS
+93114,Toè≠ié?,Zoran,Toè≠ié?,7,3,SRB,28.04.1987,28,171,5,4,1,23,1,1,0,5,54266,CSKA Moskva,RUS
+250021646,Vasin,Viktor,Vasin,5,2,RUS,06.10.1988,26,192,0,0,0,0,0,0,0,0,54266,CSKA Moskva,RUS
+99720,Wernbloom,Pontus,Wernbloom,3,3,SWE,25.06.1986,29,187,5,4,1,22,0,0,0,3,54266,CSKA Moskva,RUS
+62650,Alberman,Gal,Alberman,6,3,ISR,17.04.1983,32,180,7,6,1,16,0,0,0,1,57477,M. Tel-Aviv,ISR
+250085065,Armaly,Suhail,Armaly,29,3,ISR,10.01.1996,19,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+250083461,Azulay,Shlomy,Azulay,16,3,ISR,30.03.1990,25,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+69561,Ben Basat,Eden,Ben Basat,9,4,ISR,08.09.1986,29,,4,4,0,6,0,0,0,1,57477,M. Tel-Aviv,ISR
+59690,Ben Haim I,Tal,Ben Haim I,26,2,ISR,31.03.1982,33,,7,6,1,11,0,0,0,0,57477,M. Tel-Aviv,ISR
+250005319,Ben Haim II,Tal,Ben Haim II,11,4,ISR,05.08.1989,26,175,7,6,1,15,1,1,0,4,57477,M. Tel-Aviv,ISR
+250005476,Ben Harush,Omri,Ben Harush,20,2,ISR,07.03.1990,25,,6,5,1,11,0,0,0,0,57477,M. Tel-Aviv,ISR
+58025,Carlos Garc??a,,Carlos Garc??a,31,2,ESP,29.04.1984,31,,3,3,0,11,0,0,0,0,57477,M. Tel-Aviv,ISR
+250024646,Dasa,Eliazer,Dasa,2,2,ISR,03.12.1992,22,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+1907202,Einbinder,Daniel,Einbinder,17,3,ISR,16.02.1989,26,186,0,0,0,5,0,0,0,0,57477,M. Tel-Aviv,ISR
+250056097,Glazer,Dan,Glazer,33,3,ISR,20.09.1996,18,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+250042078,Goldberg,Sean,Goldberg,23,2,ISR,13.06.1995,20,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+250056084,Hasson,Sahar,Hasson,41,1,ISR,24.04.1996,19,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+250036953,Igiebor,Nosakhare,Igiebor,40,3,NGA,09.11.1990,24,182,7,6,1,9,2,2,0,2,57477,M. Tel-Aviv,ISR
+69636,Itzhaki,Barak,Itzhaki,10,4,ISR,25.09.1984,30,174,5,5,0,13,1,1,0,3,57477,M. Tel-Aviv,ISR
+250002478,Lifshitz,Daniel,Lifshitz,1,1,ISR,24.04.1988,27,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+250024650,Miha,Dor,Miha,15,3,ISR,02.03.1992,23,,7,6,1,13,0,0,0,0,57477,M. Tel-Aviv,ISR
+93141,Mitrovié?,Nikola,Mitrovié?,24,3,SRB,02.01.1987,28,180,6,5,1,8,0,0,0,0,57477,M. Tel-Aviv,ISR
+250066919,Ohayon,Haviv,Ohayon,55,1,ISR,17.08.1998,17,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+250042083,Peretz,Dor,Peretz,42,3,ISR,17.05.1995,20,,3,2,1,3,0,0,0,0,57477,M. Tel-Aviv,ISR
+250072785,Radonjié?,Dejan,Radonjié?,99,4,CRO,23.07.1990,25,,1,0,1,2,0,0,0,0,57477,M. Tel-Aviv,ISR
+250042207,Rajkovié?,Predrag,Rajkovié?,95,1,SRB,31.10.1995,19,,1,0,1,1,0,0,0,0,57477,M. Tel-Aviv,ISR
+105910,Raly,Oz,Raly,27,2,ISR,22.12.1987,27,,0,0,0,0,0,0,0,0,57477,M. Tel-Aviv,ISR
+97870,Rikan,Avraham,Rikan,22,3,ISR,10.09.1988,27,168,5,4,1,5,0,0,0,0,57477,M. Tel-Aviv,ISR
+70028,Shpungin,Yuval,Shpungin,3,2,ISR,03.04.1987,28,,6,5,1,8,0,0,0,0,57477,M. Tel-Aviv,ISR
+106179,Tibi,Eytan,Tibi,18,2,ISR,16.11.1987,27,,5,4,1,13,0,0,0,0,57477,M. Tel-Aviv,ISR
+63137,Vermouth,Gil,Vermouth,28,3,ISR,05.08.1985,30,174,3,3,0,15,0,0,0,0,57477,M. Tel-Aviv,ISR
+1906423,Zahavi,Eran,Zahavi,7,3,ISR,25.07.1987,28,182,6,5,1,26,7,7,0,15,57477,M. Tel-Aviv,ISR
+55778,Ziv,Yoav,Ziv,14,2,ISR,16.03.1981,34,178,2,2,0,10,0,0,0,0,57477,M. Tel-Aviv,ISR
+250024713,Arnold,Maximilian,Arnold,27,3,GER,27.05.1994,21,184,1,0,1,1,0,0,0,0,64332,Wolfsburg,GER
+250086345,Ascues,Carlos,Ascues,6,2,PER,19.06.1992,23,178,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+53001,Benaglio,Diego,Benaglio,1,1,SUI,08.09.1983,32,194,1,0,1,7,0,0,0,0,64332,Wolfsburg,GER
+92996,Bendtner,Nicklas,Bendtner,3,4,DEN,16.01.1988,27,190,1,0,1,34,0,0,0,9,64332,Wolfsburg,GER
+250024586,Caligiuri,Daniel,Caligiuri,7,3,GER,15.01.1988,27,182,1,0,1,1,0,0,0,0,64332,Wolfsburg,GER
+250003911,Casteels,Koen,Casteels,28,1,BEL,25.06.1992,23,197,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+93921,Dante,,Dante,18,2,BRA,18.10.1983,31,188,1,0,1,31,0,0,0,0,64332,Wolfsburg,GER
+250014661,Dost,Bas,Dost,12,4,NED,31.05.1989,26,196,1,0,1,1,0,0,0,0,64332,Wolfsburg,GER
+250026763,Draxler,Julian,Draxler,10,3,GER,20.09.1993,21,183,1,0,1,26,1,0,1,6,64332,Wolfsburg,GER
+74316,Gr?¨n,Max,Gr?¨n,20,1,GER,05.04.1987,28,192,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+250006494,Guilavogui,Josuha,Guilavogui,23,3,FRA,19.09.1990,24,187,1,0,1,3,0,0,0,0,64332,Wolfsburg,GER
+250022114,Jung,Sebastian,Jung,24,2,GER,22.06.1990,25,179,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+250021927,Klose,Timm,Klose,5,2,SUI,09.05.1988,27,193,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+250064226,Knoche,Robin,Knoche,31,2,GER,22.05.1992,23,190,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+108132,Kruse,Max,Kruse,11,4,GER,19.03.1988,27,180,1,0,1,1,0,0,0,0,64332,Wolfsburg,GER
+250008103,Luiz Gustavo,,Luiz Gustavo,22,3,BRA,23.07.1987,28,187,1,0,1,25,0,0,0,0,64332,Wolfsburg,GER
+250075659,Naldo,,Naldo,25,2,BRA,10.09.1982,33,198,1,0,1,1,0,0,0,0,64332,Wolfsburg,GER
+250066212,Rodriguez,Francisco,Rodriguez,35,3,SUI,14.09.1995,20,191,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+250011089,Rodriguez,Ricardo,Rodriguez,34,2,SUI,25.08.1992,23,180,1,0,1,5,0,0,0,0,64332,Wolfsburg,GER
+250003478,Sch??fer,Marcel,Sch??fer,4,2,GER,07.06.1984,31,182,0,0,0,6,0,0,0,0,64332,Wolfsburg,GER
+250005337,Sch?¨rrle,Andr??,Sch?¨rrle,17,3,GER,06.11.1990,24,184,1,0,1,23,0,0,0,3,64332,Wolfsburg,GER
+250075660,Seguin,Paul,Seguin,30,3,GER,29.03.1995,20,186,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+250064504,Sprenger,Moritz,Sprenger,37,2,GER,22.02.1995,20,190,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+250073720,Stolze,Sebastian,Stolze,33,4,GER,29.01.1995,20,182,0,0,0,0,0,0,0,0,64332,Wolfsburg,GER
+1905801,Tr??sch,Christian,Tr??sch,15,3,GER,01.09.1987,28,181,1,0,1,7,0,0,0,1,64332,Wolfsburg,GER
+70099,Vieirinha,,Vieirinha,8,3,POR,24.01.1986,29,176,0,0,0,3,0,0,0,1,64332,Wolfsburg,GER
+250012884,Aleksievich,Ilya,Aleksievich,9,3,BLR,10.02.1991,24,173,6,5,1,15,0,0,0,0,66168,BATE,BLR
+250066726,Antilevski,Dmitri,Antilevski,44,4,BLR,12.06.1997,18,174,0,0,0,0,0,0,0,0,66168,BATE,BLR
+1903601,Baga,Dmitri,Baga,55,3,BLR,04.01.1990,25,182,6,5,1,25,0,0,0,0,66168,BATE,BLR
+250061653,Baiduk,Dmitri,Baiduk,27,2,BLR,03.08.1996,19,,0,0,0,0,0,0,0,0,66168,BATE,BLR
+250055169,Bogush,Pavel,Bogush,29,3,BLR,24.01.1996,19,,0,0,0,0,0,0,0,0,66168,BATE,BLR
+250072764,Chernik,Sergei,Chernik,16,1,BLR,20.07.1988,27,187,7,6,1,18,0,0,0,0,66168,BATE,BLR
+250084987,Chichkan,Anton,Chichkan,35,1,BLR,10.07.1995,20,186,0,0,0,0,0,0,0,0,66168,BATE,BLR
+1907541,Dubra,Kaspars,Dubra,4,2,LVA,20.12.1990,24,,5,4,1,7,0,0,0,0,66168,BATE,BLR
+250011530,Gaiduchik,Vitali,Gaiduchik,3,2,BLR,12.07.1989,26,185,0,0,0,7,0,0,0,0,66168,BATE,BLR
+250011531,Gordeichuk,Mikhail,Gordeichuk,62,4,BLR,23.10.1989,25,176,7,6,1,27,1,1,0,3,66168,BATE,BLR
+41331,Hleb,Aleksandr,Hleb,81,3,BLR,01.05.1981,34,185,3,2,1,68,0,0,0,4,66168,BATE,BLR
+99725,A. Jevtié?,Aleksandar,Jevtié?,11,4,SRB,30.03.1985,30,,0,0,0,0,0,0,0,0,66168,BATE,BLR
+250072766,Karnitski,Aleksandr,Karnitski,7,3,BLR,14.02.1989,26,187,6,5,1,16,2,2,0,3,66168,BATE,BLR
+21904,Likhtarovich,Dmitri,Likhtarovich,2,3,BLR,01.03.1978,37,180,0,0,0,53,0,0,0,1,66168,BATE,BLR
+250001842,Milunovié?,Nemanja,Milunovié?,19,2,SRB,31.05.1989,26,,7,6,1,7,1,0,1,1,66168,BATE,BLR
+250040558,Mladenovié?,Filip,Mladenovié?,25,2,SRB,15.08.1991,24,180,7,6,1,15,0,0,0,0,66168,BATE,BLR
+106157,Mozolevski,Dmitri,Mozolevski,18,4,BLR,30.04.1985,30,190,0,0,0,10,0,0,0,3,66168,BATE,BLR
+1903365,Nikolié?,Nemanja,Nikolié?,10,3,MNE,01.01.1988,27,182,4,4,0,4,1,1,0,1,66168,BATE,BLR
+250019846,Olekhnovich,Edgar,Olekhnovich,23,3,BLR,17.05.1987,28,183,0,0,0,34,0,0,0,1,66168,BATE,BLR
+250039153,Polyakov,Denis,Polyakov,33,2,BLR,17.04.1991,24,184,3,2,1,25,0,0,0,1,66168,BATE,BLR
+1902972,Rios,Aleksei,Rios,17,3,BLR,14.05.1987,28,,4,4,0,4,0,0,0,0,66168,BATE,BLR
+98996,Rodionov,Vitali,Rodionov,20,4,BLR,11.12.1983,31,179,6,6,0,58,0,0,0,14,66168,BATE,BLR
+250076219,Rovbut,Maksim,Rovbut,28,2,BLR,24.05.1996,19,,0,0,0,0,0,0,0,0,66168,BATE,BLR
+250055182,Scherbitski,Denis,Scherbitski,48,1,BLR,14.04.1996,19,197,0,0,0,0,0,0,0,0,66168,BATE,BLR
+250027769,Signevich,Nikolai,Signevich,13,4,BLR,20.02.1992,23,194,6,5,1,18,0,0,0,0,66168,BATE,BLR
+250052720,Soroko,Artem,Soroko,34,1,BLR,01.04.1992,23,184,0,0,0,1,0,0,0,0,66168,BATE,BLR
+94720,Stasevich,Igor,Stasevich,22,3,BLR,21.10.1985,29,178,5,4,1,26,1,1,0,4,66168,BATE,BLR
+250020170,A. Volodko,Aleksandr,Volodko,8,3,BLR,18.06.1986,29,177,2,1,1,47,0,0,0,4,66168,BATE,BLR
+250012008,M. Volodko,Maksim,Volodko,42,3,BLR,10.11.1992,22,174,4,3,1,14,0,0,0,0,66168,BATE,BLR
+250061655,Yablonski,Evgeni,Yablonski,5,3,BLR,10.05.1995,20,182,3,3,0,8,1,1,0,1,66168,BATE,BLR
+100174,Zhavnerchik,Maksim,Zhavnerchik,15,2,BLR,09.02.1985,30,,6,6,0,18,0,0,0,0,66168,BATE,BLR
+250028700,Y. Akhmetov,Yeldos,Akhmetov,2,2,KAZ,01.06.1990,25,,0,0,0,0,0,0,0,0,2600605,Astana,KAZ
+1903867,Aniéçié?,Marin,Aniéçié?,5,2,BIH,17.08.1989,26,,7,6,1,9,0,0,0,0,2600605,Astana,KAZ
+250006908,Beysebekov,Abzal,Beysebekov,15,2,KAZ,30.11.1992,22,,6,5,1,6,0,0,0,0,2600605,Astana,KAZ
+250021756,Ca?Òas,Roger,Ca?Òas,88,3,COL,27.03.1990,25,,6,5,1,14,2,2,0,2,2600605,Astana,KAZ
+73029,Dedechko,Denys,Dedechko,24,3,UKR,02.07.1987,28,,3,2,1,3,0,0,0,0,2600605,Astana,KAZ
+250020100,Dzholchiyev,Baurzhan,Dzholchiyev,22,4,KAZ,08.05.1990,25,,7,6,1,9,2,2,0,2,2600605,Astana,KAZ
+68517,Erié?,Nenad,Erié?,1,1,KAZ,26.05.1982,33,,5,4,1,5,0,0,0,0,2600605,Astana,KAZ
+250042355,Golubnichi,Mikhail,Golubnichi,40,1,KAZ,31.01.1995,20,185,0,0,0,0,0,0,0,0,2600605,Astana,KAZ
+63312,B. Ilié?,Branko,Ilié?,33,2,SVN,06.02.1983,32,187,7,6,1,9,0,0,0,0,2600605,Astana,KAZ
+250085061,Kabananga,Junior,Kabananga,89,4,COD,04.04.1989,26,,5,4,1,5,0,0,0,0,2600605,Astana,KAZ
+250007798,K??th??voama,Foxi,K??th??voama,10,3,CTA,30.05.1986,29,,7,6,1,7,0,0,0,0,2600605,Astana,KAZ
+250022965,Khairullin,Rinat,Khairullin,18,3,KAZ,19.02.1994,21,,0,0,0,0,0,0,0,0,2600605,Astana,KAZ
+250082023,Kozhamberdy,Zhakyp,Kozhamberdy,20,3,KAZ,26.02.1992,23,,0,0,0,0,0,0,0,0,2600605,Astana,KAZ
+95489,Loginovski,Vladimir,Loginovski,85,1,KAZ,08.10.1985,29,,2,2,0,2,0,0,0,0,2600605,Astana,KAZ
+250059162,Maksimovié?,Nemanja,Maksimovié?,6,3,SRB,26.01.1995,20,,7,6,1,7,1,1,0,1,2600605,Astana,KAZ
+250012081,Muzhikov,Serikzhan,Muzhikov,11,3,KAZ,17.06.1989,26,,2,2,0,2,0,0,0,0,2600605,Astana,KAZ
+108828,Nuserbayev,Tanat,Nuserbayev,17,4,KAZ,01.01.1987,28,,6,6,0,6,0,0,0,0,2600605,Astana,KAZ
+250003870,Pikalkin,Igor,Pikalkin,12,2,KAZ,19.03.1992,23,,0,0,0,0,0,0,0,0,2600605,Astana,KAZ
+250019963,Postnikov,Evgeni,Postnikov,44,2,KAZ,16.04.1986,29,,7,6,1,7,1,1,0,1,2600605,Astana,KAZ
+250028701,Schetkin,Aleksei,Schetkin,9,4,KAZ,21.05.1991,24,,3,2,1,3,0,0,0,0,2600605,Astana,KAZ
+107398,Shomko,Dmitri,Shomko,77,2,KAZ,19.03.1990,25,,7,6,1,7,1,1,0,1,2600605,Astana,KAZ
+250073020,Twumasi,Patrick,Twumasi,23,4,GHA,09.05.1994,21,,4,4,0,4,2,2,0,2,2600605,Astana,KAZ
+250062398,Zhukov,Georgi,Zhukov,8,3,KAZ,19.11.1994,20,,7,6,1,7,0,0,0,0,2600605,Astana,KAZ
