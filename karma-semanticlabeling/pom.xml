@@ -17,7 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
-    <log4j.version>2.15.0</log4j.version>
+    <log4j.version>2.17.1</log4j.version>
     <slf4j.version>1.6.0</slf4j.version>
   </properties>
 
@@ -52,23 +52,23 @@
          <version>1.9.2</version>
       </dependency> 
 
-      <dependency>
-    <groupId>edu.stanford.nlp</groupId>
-    <artifactId>stanford-corenlp</artifactId>
-    <version>4.0.0</version>
-</dependency>
-<dependency>
-    <groupId>edu.stanford.nlp</groupId>
-    <artifactId>stanford-corenlp</artifactId>
-    <version>4.0.0</version>
-    <classifier>models</classifier>
-</dependency>
-<dependency>
-    <groupId>edu.stanford.nlp</groupId>
-    <artifactId>stanford-corenlp</artifactId>
-    <version>4.0.0</version>
-    <classifier>models-english</classifier>
-</dependency>
+<!--      <dependency>-->
+<!--    <groupId>edu.stanford.nlp</groupId>-->
+<!--    <artifactId>stanford-corenlp</artifactId>-->
+<!--    <version>4.4.0</version>-->
+<!--</dependency>-->
+<!--<dependency>-->
+<!--    <groupId>edu.stanford.nlp</groupId>-->
+<!--    <artifactId>stanford-corenlp</artifactId>-->
+<!--    <version>4.4.0</version>-->
+<!--    <classifier>models</classifier>-->
+<!--</dependency>-->
+<!--<dependency>-->
+<!--    <groupId>edu.stanford.nlp</groupId>-->
+<!--    <artifactId>stanford-corenlp</artifactId>-->
+<!--    <version>4.4.0</version>-->
+<!--    <classifier>models-english</classifier>-->
+<!--</dependency>-->
 
 <dependency>
 	<groupId>org.apache.spark</groupId>
@@ -137,7 +137,7 @@
 <dependency>
     <groupId>com.thoughtworks.xstream</groupId>
     <artifactId>xstream</artifactId>
-    <version>1.4.12</version>
+    <version>1.4.19</version>
 </dependency>
 
   </dependencies>
