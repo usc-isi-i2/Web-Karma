@@ -7,9 +7,9 @@ import java.io.*;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import edu.stanford.nlp.pipeline.CoreDocument;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.ling.*;
+//import edu.stanford.nlp.pipeline.CoreDocument;
+//import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+//import edu.stanford.nlp.ling.*;
 
 /**
  * This class is responsible for tokenizing all the columns in the datasets.
@@ -198,87 +198,7 @@ public class TfidfDatabase implements Serializable {
         return ccounter;
     }
 
-    // @staticmethod
-    public static HashMap<String, Double> _compute_tf2(StanfordCoreNLP pipeline, Column col) throws IOException {
-        // counter = Counter();
-        logger.info("In compute_tf");
-        List<String> sents = new ArrayList<String>();
-        List<String> sentences_full = new ArrayList<String>();
-        StringTokenizer st1;
-        List<StringTokenizer> sent_tokens = new ArrayList<StringTokenizer>();
-        for (String sent : col.get_textual_data()) {
-            String sente[] = sent.split(" ");
-            for (String subsent : sente) {
-                sents.add(subsent);
-            }
-            sentences_full.add(sent);
-        }
-        logger.info("Done subsent");
-        HashMap<String, Double> counter = new HashMap<String, Double>();
-        int number_of_token = 0;
-        if (sents.size() == 0) {
-            return null;
-        }
-        for (String sent : sentences_full) {
-            // create a document object
-            if (sent.length() == 0) {
-                continue;
-            }
-            CoreDocument document = new CoreDocument(sent);
-            //annnotate the document
-            pipeline.annotate(document);
-            int i = 0;
-            for (CoreLabel tok : document.tokens()) {
-                // System.out.println(String.format("%s\t%d\t%d", tok.word(), tok.beginPosition(), tok.endPosition()));
-                i++;
-                String nextToken = tok.word();
-                // System.out.println("Name of col:"+col.name);
-                if (!notPunctuation(nextToken)) {
-                    // System.out.println("Continuing!");
-                    continue;
-                }
 
-                // if (col.name.equals("Name")){
-                //     System.out.println("Writing! "+col.name);
-                //     myWriter.write("\n"+nextToken);
-                // }
-                if (!counter.containsKey(nextToken)) {
-                    counter.put(nextToken, 1.0);
-                } else
-                    counter.put(nextToken, counter.get(nextToken) + 1);
-            }
-            // if(sent.hasMoreTokens()){
-            // while(sent.hasMoreTokens()){
-            //     i++;
-            //     String nextToken = sent.nextToken();
-            //     logger.info("Token:"+nextToken);
-            //     logger.info("Doc:"+document.tokens().get(i)+" exp1 "+document.tokens().get(i).word()+" exp2 "+document.tokens().get(i).value());
-            //     if(!counter.containsKey(nextToken)){
-            //         counter.put(nextToken,1.0);
-            //     }
-            //     else
-            //         counter.put(nextToken,counter.get(nextToken)+1);
-            // }
-            // }
-//            logger.info("Done if");
-            number_of_token += i;
-//            if(number_of_token%100==0)
-//                System.out.println("Number of tokens:"+number_of_token);
-        }
-        // if (col.name.equals("Name")){
-        //     myWriter.close();
-        // }
-        logger.info("Done counter");
-        Iterator CIterator = counter.entrySet().iterator();
-        HashMap<String, Double> ccounter = new HashMap<String, Double>(); //for average
-        while (CIterator.hasNext()) {
-            Map.Entry mapElement = (Map.Entry) CIterator.next();
-            double val = (double) mapElement.getValue() / number_of_token;
-            ccounter.put(mapElement.getKey().toString(), val);
-        }
-        logger.info("RETURNING CCOUNTER");
-        return ccounter;
-    }
 
     // #feature_extractor.py (compute_feature_vectors)
     public List<Double> compute_tfidf(Column col) throws IOException {
