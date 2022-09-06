@@ -50,13 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -679,7 +673,7 @@ public class ToCSV {
 				if (cell == null) {
 					csvLine.add("");
 				} else {
-					if (cell.getCellType() != Cell.CELL_TYPE_FORMULA) {
+					if (cell.getCellType() != CellType.FORMULA) {
 						csvLine.add(this.formatter.formatCellValue(cell).replace("\n", " ").replace("\r", " "));
 					} else {
 						csvLine.add(this.formatter.formatCellValue(cell,this.evaluator).replace("\n", " ").replace("\r", " "));
