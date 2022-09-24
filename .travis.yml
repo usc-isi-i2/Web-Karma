@@ -1,2 +1,5 @@
 language: java
 script:  mvn test -DskipTests=false
+cache:
+  directories:
+  - $HOME/.m2
