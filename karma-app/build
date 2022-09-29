@@ -48,7 +48,8 @@ unzip master.zip
 mv karma-app-deps-master/*.tar.gz .
 rm -rf karma-app-deps-master master.zip
 # download tomcat binary
-wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.72/bin/apache-tomcat-8.5.72.zip
+#wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.72/bin/apache-tomcat-8.5.72.zip
+wget https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.82/bin/apache-tomcat-8.5.82.zip
 unzip apache-tomcat-*.zip
 rm apache-tomcat-*.zip
 mv apache-tomcat* tomcat
