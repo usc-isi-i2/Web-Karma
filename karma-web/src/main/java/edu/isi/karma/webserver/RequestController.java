@@ -50,7 +50,6 @@ public class RequestController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String workspaceId = request.getParameter("workspaceId");
-		
 		ExecutionController ctrl = WorkspaceRegistry.getInstance().getExecutionController(workspaceId);
 		if (ctrl == null) {
 			logger.debug("No execution controller found. This sometime happens when the server is restarted and "
