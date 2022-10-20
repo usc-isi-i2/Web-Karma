@@ -170,6 +170,7 @@ public class DSL_main implements Serializable{
         //System.out.println("Computed X:"+X.size()+" X: "+X);
         GenerateTrainingData generateTrainingData = new GenerateTrainingData();
         generateTrainingData.generateTrainingDataForTest(this.featureExtractorObject, X);
+        //generateTrainingData.generateTrainingDataForMain(this.featureExtractorObject);
         writeToFilePredict(generateTrainingData);
         // logger.info("Wrote to file");
 

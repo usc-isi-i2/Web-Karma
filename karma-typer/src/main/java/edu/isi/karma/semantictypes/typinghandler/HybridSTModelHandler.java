@@ -43,7 +43,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
     private ArrayList<String> allowedCharacters;
 
     private boolean modelEnabled = false;
-    private boolean automaticSemanticEnabled = true; // This is to use the model mentioned in https://usc-isi-i2.github.io/papers/pham16-iswc.pdf
+    private boolean automaticSemanticEnabled = false; // This is to use the model mentioned in https://usc-isi-i2.github.io/papers/pham16-iswc.pdf
     private String contextId;
 
     /*
