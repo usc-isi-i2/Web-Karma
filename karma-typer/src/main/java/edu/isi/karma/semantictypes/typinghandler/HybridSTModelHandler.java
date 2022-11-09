@@ -43,7 +43,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
     private ArrayList<String> allowedCharacters;
 
     private boolean modelEnabled = false;
-    private boolean automaticSemanticEnabled = false; // This is to use the model mentioned in https://usc-isi-i2.github.io/papers/pham16-iswc.pdf
+    private boolean automaticSemanticEnabled = true; // This is to use the model mentioned in https://usc-isi-i2.github.io/papers/pham16-iswc.pdf
     private String contextId;
 
     /*
@@ -249,7 +249,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
         {
             SemType st = predictions.get(i).sem_type;
             String label = st.toString();
-            if (predictions.get(i).prob > 0.5) // Random baseline : 0.5
+            if (predictions.get(i).prob > 0.5)
                 sem_result.add(new SemanticTypeLabel(label, (float) predictions.get(i).prob));
         }
 
@@ -414,14 +414,6 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
                     String domainName = label.split("[|]")[0];
                     String typeName = label.split("[|]")[1];
                     sem_col.put(col_name[0],new SemType(domainName,typeName));
-//                    int maxL=0;
-//                    for(String s : sents)
-//                    {
-//                        String subsent[] = s.split("[-:/ ]");
-//                        int subsL = subsent.length;
-//                        if(subsL>maxL)
-//                            maxL=subsL;
-//                    }
                     String data[][] = new String[sents.length][1];
                     data[0][0] = col_name[0];
                     for(int ind =1; ind<sents.length;ind++)

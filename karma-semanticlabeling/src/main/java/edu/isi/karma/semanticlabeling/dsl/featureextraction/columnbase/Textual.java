@@ -21,69 +21,28 @@ import edu.isi.karma.semanticlabeling.dsl.Column;
 public class Textual{
 
     static Logger logger = LogManager.getLogger(Textual.class.getName());
-    // public static Tokenizer get_tokenizer{
-//    public static StanfordCoreNLP get_pipeline(){
-//        // String infixes[] = {"(?<=[0-9A-Za-z])[\\.](?=[0-9])","(?<=[0-9])[\\.](?=[0-9A-Za-z])"};
-//        //return "";
-//        // English.Defaults.infixes = tuple(list(English.Defaults.infixes) + infixes)
-//        // return English.Defaults.create_tokenizer();
-//        // return "";
-//        logger.info("Setting props");
-//        // set up pipeline properties
-//        Properties props = new Properties();
-//        // set the list of annotators to run
-//        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref,kbp,quote");
-//        // set a property for an annotator, in this case the coref annotator is being set to use the neural algorithm
-//        props.setProperty("coref.algorithm", "neural");
-//        // build pipeline
-//        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
-//        logger.info("RETURNING PIPELINE!");
-//        return pipeline;
-//
-//    }
 
     public double jaccard_sim_test(Column col1, Column col2){
-
-        // logger.info("IN textual  jaccard");
 
         Set<String> col1data = new HashSet<String>();
         col1data.addAll(col1.get_textual_data());
         Set<String> col2data = new HashSet<String>();
         col2data.addAll(col2.get_textual_data());
         
-        //System.out.println("col1data, col2data sizes:"+col1data.size()+" "+col2data.size());
         if(col1data.size() == 0 || col2data.size() == 0)
             return 0;
-
-        // System.out.println("Col1data:");
-        // for (String x: col1data){
-        //     System.out.print(" "+x);
-        // }
-        // System.out.println("Col2data:");
-        // for (String x: col2data){
-        //     System.out.print(" "+x);
-        // }
         Set<String> temp = new HashSet<String>();
         temp.addAll(col1data);
         col1data.retainAll(col2data);
         Set<String> intersect = col1data;
         double intersect_size = intersect.size();
-        // System.out.println("Intersect:"+intersect_size);
-        // for (String x: intersect){
-        //     System.out.print(" "+x);
-        // }
         col1data.clear();
         col1data.addAll(temp);
         col1data.addAll(col2data);
         Set<String> union = col1data;
         double union_size = union.size();
-        // System.out.println("Union:"+union_size);
-        // for (String x: union){
-        //     System.out.print(" "+x);
-        // }
-        col1data = temp;
 
-        // System.out.println("Returning textual jaccard"+" "+intersect.size()+" "+intersect_size+" "+union.size()+" "+union_size);
+        col1data = temp;
         if (union_size == 0)
             return 0.0;
         return (intersect_size) / (union_size);

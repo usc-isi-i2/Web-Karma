@@ -30,7 +30,6 @@ public class CreateDSLObjects {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // logger.info("Line:"+line);
                 String[] lineItems = line.split(",",-1);
                 rowList.add(lineItems);
             }
@@ -76,9 +75,6 @@ public class CreateDSLObjects {
 
         int kk=0;
         for(String file: files){
-            // if (!file.contains("bundesliga"))
-            //     continue;
-            // file = "/Users/rutujarane/Desktop/ISI/Semantics/dsl/data/soccer2/2014 WC french.csv"; //test
             String [][] data = readFile(file);
             System.out.println("File gen:"+file);
             if(data.length == 0){
@@ -88,8 +84,6 @@ public class CreateDSLObjects {
             logger.info("Read the file"+file);
             columnBasedTableObj.add(findDatatype(data,file));
             kk++;
-            // if(kk>=1)
-            //     break;
         }
         return new FeatureExtractor(columnBasedTableObj);
 

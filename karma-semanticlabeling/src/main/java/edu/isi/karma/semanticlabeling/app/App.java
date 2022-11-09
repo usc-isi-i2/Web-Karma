@@ -122,8 +122,6 @@ public class App {
                     rank += 1;
             }
             ranks[col] = rank;
-
-
         }
 
         double mean_reciprocal_rank = total_inverse_rank / (double) column_based_table_obj_pred.columns.size();
@@ -145,14 +143,15 @@ public class App {
         String fileListTrain[] = new String[fileList.length - 1];
         System.arraycopy(fileList, 0, fileListTrain, 0, fileNum);
         System.arraycopy(fileList, fileNum + 1, fileListTrain, fileNum, fileList.length - fileNum - 1);
-//        TimeUnit.SECONDS.sleep(1);
         FeatureExtractor featureExtractorObject = CreateDSLObjects.create_feature_extractor(fileListTrain);
         logger.log(Level.INFO, "Feature Extraction Done ! \n Starting model train !");
         DSL_main dsl_obj = new DSL_main(app.modelFilename, featureExtractorObject, true, true, false); // To re-train the model pass the value of load the model as false.
         logger.log(Level.INFO, "Model train done !");
-        logger.log(Level.INFO, "Test FileName:" + fileList[fileNum]);
-        String[][] data = CreateDSLObjects.readFile(fileList[fileNum]);
-        app.testModel(data,fileList[fileNum],dsl_obj);
+        String testFile = fileList[fileNum];
+        testFile = "/Users/bidishadasbaksi/Docs_no_icloud/GitHub/iswc-2016-semantic-labeling/data/datasets/museum/data/s01-cb.csv";
+        logger.log(Level.INFO, "Test FileName:" + testFile);
+        String[][] data = CreateDSLObjects.readFile(testFile);
+        app.testModel(data,testFile,dsl_obj);
         logger.log(Level.INFO, "END!!!");
 
 

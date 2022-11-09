@@ -117,11 +117,11 @@
             <name>OSGeo Release Repository</name>
             <url>https://repo.osgeo.org/repository/release/</url>
         </repository>
-        <repository>
-            <id>KarmaRepo</id>
-            <name>Karma Repo</name>
-            <url>http://repo.karma.isi.edu/artifactory/libs-release-local</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>KarmaRepo</id>-->
+<!--            <name>Karma Repo</name>-->
+<!--            <url>http://repo.karma.isi.edu/artifactory/libs-release-local</url>-->
+<!--        </repository>-->
     </repositories>
     <dependencyManagement>
         <dependencies>
