@@ -249,7 +249,7 @@ public class HybridSTModelHandler implements ISemanticTypeModelHandler {
         {
             SemType st = predictions.get(i).sem_type;
             String label = st.toString();
-            if (predictions.get(i).prob > 0.2) 
+            if (predictions.get(i).prob > 0.2)
                 sem_result.add(new SemanticTypeLabel(label, (float) predictions.get(i).prob));
         }
 

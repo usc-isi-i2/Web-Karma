@@ -27,7 +27,7 @@ import org.json.simple.parser.ParseException;
  * mvn exec:java -Dexec.mainClass="com.mycompany.app.App"
  */
 
-public class App {
+public class App implements Serializable{
 
     static Logger logger = Logger.getLogger(App.class.getName());
     String dataFolder = "train/data";
