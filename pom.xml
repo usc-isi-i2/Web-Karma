@@ -79,14 +79,6 @@
   </properties>
 
   <repositories>
-    <!-- <repository>
-      <id>JGraphT Repository</id>
-      <url>http://tanesha.net/maven2/</url>
-      <snapshots>
-         <enabled>false</enabled>
-      </snapshots>
- 	</repository> -->
-
 	  <repository>
 		  <id>central</id>
 		  <name>Central Maven Repository</name>
@@ -117,11 +109,11 @@
             <name>OSGeo Release Repository</name>
             <url>https://repo.osgeo.org/repository/release/</url>
         </repository>
-        <repository>
-            <id>KarmaRepo</id>
-            <name>Karma Repo</name>
-            <url>http://repo.karma.isi.edu/artifactory/libs-release-local</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>KarmaRepo</id>-->
+<!--            <name>Karma Repo</name>-->
+<!--            <url>http://repo.karma.isi.edu/artifactory/libs-release-local</url>-->
+<!--        </repository>-->
     </repositories>
     <dependencyManagement>
         <dependencies>
@@ -370,49 +362,6 @@
 		  <artifactId>reflections</artifactId>
 		  <version>0.9.10</version>
 	  </dependency>
-
-	  <!--
-	<dependency>
-		<groupId>com.esotericsoftware.kryo</groupId>
-		<artifactId>kryo</artifactId>
-		<version>2.21</version>
-	</dependency>
-	<dependency>
-		<groupId>com.dyuproject.protostuff</groupId>
-		<artifactId>protostuff-api</artifactId>
-		<version>1.0.7</version>
-	</dependency>
-	<dependency>
-		<groupId>com.dyuproject.protostuff</groupId>
-		<artifactId>protostuff-core</artifactId>
-		<version>1.0.7</version>
-	</dependency>
-	<dependency>
-		<groupId>com.dyuproject.protostuff</groupId>
-		<artifactId>protostuff-runtime</artifactId>
-		<version>1.0.7</version>
-	</dependency>
-	<dependency>
-		<groupId>com.dyuproject.protostuff</groupId>
-		<artifactId>protostuff-collectionschema</artifactId>
-		<version>1.0.7</version>
-	</dependency>
-	<dependency>
-		<groupId>com.dyuproject.protostuff</groupId>
-		<artifactId>protostuff-compiler</artifactId>
-		<version>1.0.7</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.thrift</groupId>
-		<artifactId>libthrift</artifactId>
-		<version>0.9.0</version>
-	</dependency>
-	<dependency>
-		<groupId>de.javakaffee</groupId>
-		<artifactId>kryo-serializers</artifactId>
-		<version>0.9</version>
-	</dependency>
-	-->
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository</artifactId>
