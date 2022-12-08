@@ -112,7 +112,7 @@
 						<artifactId>tomcat-maven-plugin</artifactId>
 						<version>1.1</version>
 						<configuration>
-							<argLine>-XX:MaxPermSize=128m</argLine>
+<!--							<argLine>-XX:MaxPermSize=128m</argLine>-->
 							<server>TomcatServer</server>
 							<path>/</path>
 							<url>http://localhost:8080/manager/text</url>

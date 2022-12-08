@@ -11,12 +11,9 @@ import edu.isi.karma.semanticlabeling.dsl.featureextraction.columnbase.Textual;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-// import com.mycompany.dsl.TfidfDatabase;
-
-
 /**
  * This class is responsible for creation of an object from all the tables in the train directory.
- * @author rutujarane
+ * @author rutujarane, Bidisha Das Baksi (bidisha.bksh@gmail.com)
  */
 
 public class FeatureExtractor implements Serializable{
@@ -28,8 +25,6 @@ public class FeatureExtractor implements Serializable{
     List<Column> trainColumns = new ArrayList<Column>();
     HashMap<Column, Integer> column2idx = new HashMap<Column, Integer>();
     public  TfidfDatabase tfidfDB;
-    // Demo demo;
-
 
     public List<Column> getTrainColumns() {
         return trainColumns;
@@ -42,11 +37,7 @@ public class FeatureExtractor implements Serializable{
             for(Column col: tbl.columns){
                 if(col.value != null)
                     this.trainColumns.add(col);
-                // kk++;
-                // if(kk>=2)
-                //     break;
             }
-            // break;
         }
         logger.info("Train_cols"+ this.trainColumns.size());
 
@@ -63,7 +54,6 @@ public class FeatureExtractor implements Serializable{
         Textual textual = new Textual();
         this.tfidfDB = TfidfDatabase.create( this.trainColumns);
         logger.info("Done with FeatureExtractor");
-        // this.demo = new Demo();
     }
     
     public List<List<Double>> computeFeatureVectors(Column col) throws IOException{
@@ -80,36 +70,16 @@ public class FeatureExtractor implements Serializable{
         Textual textual = new Textual();
         List<Double> col_tfidf = this.tfidfDB.compute_tfidf(col);
         for(Column refcol: this.trainColumns){
-//            System.out.println("REf Column from table:"+refcol.table_name);
-//            System.out.println("name:"+refcol.name+" "+col.name);
             List<Double> feature_now = new ArrayList<Double>();
-            // features.append([
-//            System.out.println("colName 1");
             feature_now.add(columnName.jaccard_sim_test(refcol.name, col.name, true));
-           
-//            System.out.println("colName 2");
             feature_now.add(columnName.jaccard_sim_test(refcol.semantic_type.predicate, col.name, true));
-
-//            System.out.println("numeric 1");
             feature_now.add(numeric.ks_test(refcol, col));
-
-//            System.out.println("numeric 2");
             feature_now.add(numeric.mann_whitney_u_test(refcol, col));
-
-//            System.out.println("numeric 3");
             feature_now.add(numeric.jaccard_sim_test(refcol, col));
-
-//            System.out.println("textual 1");
             feature_now.add(textual.jaccard_sim_test(refcol, col));
-
-//            System.out.println("textual 2");
-            // System.out.println("here:"+this.tfidfDB.compute_tfidf(refcol) + " " + this.tfidfDB.compute_tfidf(col) + " " + textual.cosine_similarity(this.tfidfDB.compute_tfidf(refcol), col_tfidf));
             feature_now.add(textual.cosine_similarity(this.tfidfDB.compute_tfidf(refcol), col_tfidf));
-            
-            // System.out.println("feature_now:"+feature_now);
             features.add(feature_now);
         }
-        // System.out.println("Returning from computerFeatureVectors"+features);
         return features;
     }
 }
