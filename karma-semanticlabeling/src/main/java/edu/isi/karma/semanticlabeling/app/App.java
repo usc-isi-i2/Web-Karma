@@ -21,7 +21,7 @@ import org.json.simple.parser.ParseException;
 /**
  * This class is the main class for training and testing of the model.
  *
- * @author rutujarane, bdasbaksi
+ * @author rutujarane, Bidisha Das Baksi (bidisha.bksh@gmail.com)
  * <p>
  * mvn clean install
  * mvn exec:java -Dexec.mainClass="com.mycompany.app.App"
@@ -145,7 +145,6 @@ public class App implements Serializable{
         String fileListTrain[] = new String[fileList.length - 1];
         System.arraycopy(fileList, 0, fileListTrain, 0, fileNum);
         System.arraycopy(fileList, fileNum + 1, fileListTrain, fileNum, fileList.length - fileNum - 1);
-//        TimeUnit.SECONDS.sleep(1);
         FeatureExtractor featureExtractorObject = CreateDSLObjects.create_feature_extractor(fileListTrain);
         logger.log(Level.INFO, "Feature Extraction Done ! \n Starting model train !");
         DSL_main dsl_obj = new DSL_main(app.modelFilename, featureExtractorObject, true, true, false); // To re-train the model pass the value of load the model as false.

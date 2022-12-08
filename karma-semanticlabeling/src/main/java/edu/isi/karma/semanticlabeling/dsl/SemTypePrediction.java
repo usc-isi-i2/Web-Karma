@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 
 /**
  * This class creates an object for every predicted semantic type.
- * @author rutujarane
+ * @author rutujarane, Bidisha Das Baksi (bidisha.bksh@gmail.com)
  */
 
 public class SemTypePrediction implements Serializable{

@@ -6,15 +6,10 @@ import java.io.*;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
-//import edu.stanford.nlp.pipeline.CoreDocument;
-//import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-//import edu.stanford.nlp.ling.*;
-
 /**
  * This class is responsible for tokenizing all the columns in the datasets.
  *
- * @author rutujarane
+ * @author rutujarane, Bidisha Das Baksi (bidisha.bksh@gmail.com)
  */
 
 public class TfidfDatabase implements Serializable {
@@ -27,22 +22,15 @@ public class TfidfDatabase implements Serializable {
     HashMap<String, List<Double>> col2tfidf = new HashMap<String, List<Double>>();
     int n_docs;
     HashMap<String, List<Double>> cache_col2tfidf = new HashMap<String, List<Double>>();
-    // String pipeline;
-    //public transient StanfordCoreNLP pipeline;
 
 
-    // public TfidfDatabase(String pipeline, HashMap<String, Integer> vocab, HashMap<String, Integer> invert_token_idx, HashMap<String, List<Double>> col2tfidf){
     public TfidfDatabase(HashMap<String, Integer> vocab, HashMap<String, Integer> invert_token_idx, HashMap<String, List<Double>> col2tfidf) {
         this.vocab = vocab;
         this.invert_token_idx = invert_token_idx;
-//        this.pipeline = pipeline;
         this.n_docs = col2tfidf.size();
         this.cache_col2tfidf = col2tfidf;
     }
 
-
-    // public static TfidfDatabase create(Tokenizer tokenizer, List<Column> columns){
-    // public static TfidfDatabase create(String pipeline, List<Column> columns){
     public static TfidfDatabase create( List<Column> columns) throws IOException {
         logger.info("Creating TfidfDatabase");
         HashMap<String, Integer> vocab = new HashMap<String, Integer>();
@@ -54,16 +42,12 @@ public class TfidfDatabase implements Serializable {
         List<HashMap<String, Double>> tf_cols = new ArrayList<HashMap<String, Double>>(); //Counter
         HashMap<String, Double> tf = new HashMap<String, Double>();
         for (int i = 0; i < columns.size(); i++) {
-            //logger.info("Column:" + columns.get(i).name);
             if (columns.get(i).value != null) {
                 tf = TfidfDatabase._compute_tf( columns.get(i));
-                // if(tf!=null)
                 tf_cols.add(tf);
             }
         }
 
-        // logger.info("tf_cols:"+tf_cols);
-        // logger.info("Computing vocab");
         // # then compute vocabulary & preparing for idf
         for (HashMap<String, Double> tf_col : tf_cols) {
             Iterator tf_col_Iterator = tf_col.entrySet().iterator();
@@ -84,9 +68,7 @@ public class TfidfDatabase implements Serializable {
 
         }
 
-        // logger.info("Computed vocab invertoken_"+ invert_token_idx);
-
-        // # reduce vocab size
+        // reduce vocab size
         Iterator token_count_Iterator = token_count.entrySet().iterator();
         while (token_count_Iterator.hasNext()) {
             Map.Entry mapElement = (Map.Entry) token_count_Iterator.next();
@@ -95,15 +77,11 @@ public class TfidfDatabase implements Serializable {
                 // # delete this word
                 if (invert_token_idx.containsKey(w))
                     invert_token_idx.remove(w);
-                // del invert_token_idx[w]
             } else
                 vocab.put(w, vocab.size());
         }
 
-        // logger.info("Reduced vocab"+vocab);
-
         // # revisit it and make tfidf
-        // logger.info("Comparing size:"+columns.size()+" "+tf_cols.size());
         for (int i = 0; i < tf_cols.size(); i++) {
             List<Double> tfidf = new ArrayList<Double>(); //A double list of size number of vocab words
             for (int iter = 0; iter < vocab.size(); iter++)
@@ -112,25 +90,13 @@ public class TfidfDatabase implements Serializable {
             while (tf_col_Iterator.hasNext()) {
                 Map.Entry mapElement = (Map.Entry) tf_col_Iterator.next();
                 if (vocab.containsKey(mapElement.getKey())) {
-                    // logger.info("calc");
-                    // logger.info(n_docs+" "+ (1 + invert_token_idx.get(mapElement.getKey())));
-                    // logger.info(n_docs / (1 + invert_token_idx.get(mapElement.getKey())));
                     double val = (double) mapElement.getValue() * Math.log((double) ((double) n_docs / (double) (1 + invert_token_idx.get(mapElement.getKey()))));
                     tfidf.set(vocab.get(mapElement.getKey()), val);
                 }
             }
-            // logger.info("TFIDF:"+tfidf);
             col2tfidf.put(columns.get(i).id, tfidf);
 
         }
-        // logger.info("col2tfidf FINAL:"+col2tfidf);
-        // for col, tf_col in zip(columns, tf_cols):
-        //     tfidf = numpy.zeros((len(vocab)))
-        //     for w, tf in tf_col.items():
-        //         if w in vocab:
-        //             tfidf[vocab[w]] = tf * numpy.log(n_docs / (1 + invert_token_idx[w]))
-        //     col2tfidf[col.id] = tfidf
-
         return new TfidfDatabase( vocab, invert_token_idx, col2tfidf);
 
     }
@@ -148,13 +114,10 @@ public class TfidfDatabase implements Serializable {
     }
 
     public static boolean notPunctuation(String nextToken) {
-        // nextToken = nextToken.trim().replaceAll("\\p{Punct};",""); 
         nextToken = nextToken.trim().replaceAll("[^a-zA-Z0-9 ]", "");
         if (nextToken.equals("")) {
-            // System.out.println("Returning false"+nextToken);
             return false;
         }
-        // System.out.println("Returning true"+nextToken);
         return true;
     }
 
@@ -170,9 +133,6 @@ public class TfidfDatabase implements Serializable {
         logger.info("Done subsent");
         HashMap<String, Double> counter = new HashMap<String, Double>();
         int number_of_token = sents.size();
-//        if (sents.size() == 0) {
-//            return null;
-//        }
         for (String sent : sents) {
             if (sent.length() == 0) {
                 continue;
@@ -214,7 +174,6 @@ public class TfidfDatabase implements Serializable {
         while (compute_counter_Iterator.hasNext()) {
             Map.Entry mapElement = (Map.Entry) compute_counter_Iterator.next();
             if (this.vocab.containsKey(mapElement.getKey())) {
-                // System.out.println(mapElement + " " + (double)mapElement.getValue() + " " + invert_token_idx.get(mapElement.getKey()) + " " + Math.log((double)((double)n_docs / (double)(1 + invert_token_idx.get(mapElement.getKey())))));
                 double val = (double) mapElement.getValue() * Math.log((double) ((double) n_docs / (double) (1 + invert_token_idx.get(mapElement.getKey()))));
                 tfidf.set(this.vocab.get(mapElement.getKey()), val);
             }

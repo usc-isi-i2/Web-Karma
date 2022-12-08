@@ -5,7 +5,7 @@ import java.io.*;
 
 /**
  * This class is responsible for creating a column object for each column.
- * @author rutujarane
+ * @author rutujarane, Bidisha Das Baksi (bidisha.bksh@gmail.com)
  */
 
 public class Column implements Serializable{
@@ -20,14 +20,12 @@ public class Column implements Serializable{
 
     public Column(String table_name, String name, SemType semantic_type, String typee, int sizee, Hashtable<String, Float> type_stats){
         this.id = table_name.concat(name);
-        // f"{table_name}:{name}"
         this.table_name = table_name;
         this.name = name;
         this.semantic_type = semantic_type;
         this.sizee = sizee;
         this.type_stats = type_stats;
         this.typee = typee;
-        // this.value = Optional[ColumnData] = null;
         this.value = null;
     }
 
@@ -35,8 +33,6 @@ public class Column implements Serializable{
         if(this.value.string_data()) {
             return this.value.string_array;
         }
-//        else
-//            return this.value.number_array; // Removing this after comparing with the python implementation
         return new ArrayList<String>();
     }
 

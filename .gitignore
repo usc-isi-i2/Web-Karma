@@ -86,6 +86,7 @@ Thumbs.db
 *.log
 
 *.avro
+*.arff
 
 karma-offline/karma.err
 

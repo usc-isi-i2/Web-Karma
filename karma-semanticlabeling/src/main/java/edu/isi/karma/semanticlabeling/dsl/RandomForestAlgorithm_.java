@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 
 /** RandomForest Classification
-* @author rutujarane
+* @author rutujarane, Bidisha Das Baksi (bidisha.bksh@gmail.com)
 */
 
 public class RandomForestAlgorithm_ implements Serializable{
@@ -35,22 +35,14 @@ public class RandomForestAlgorithm_ implements Serializable{
 		String testingDatasetName = "libsvm_test.arff";
 		// Load and parse the data file, converting it to a DataFrame.
 		Instances trainDataset = getDataSet(trainingDatasetName);
-//		Instances testDataset = getDataSet(testingDatasetName);
 		Instances testDataset = getDataSet(trainingDatasetName);
 		logger.info("Loaded both the datasets");
-
 		RandomForest forest=new RandomForest();
-		// int treesNum = 10;
-		// logger.info("Trees="+forest.getNumTrees());
 		forest.setNumIterations(200);
 		logger.info("Created object");
-
-		// logger.info("Print treeeees:");
 		forest.setPrintClassifiers(true);
-
 		forest.buildClassifier(trainDataset);
 		logger.info("Built classifier");
-
 		Evaluation eval = new Evaluation(trainDataset);
 		eval.evaluateModel(forest, testDataset);
 
@@ -59,19 +51,7 @@ public class RandomForestAlgorithm_ implements Serializable{
 		logger.info("** Decision Tress Evaluation with Datasets **");
 		logger.info(eval.toSummaryString());
 		System.out.print(" the expression for the input data as per alogorithm is ");
-		// logger.info(forest);
 		logger.info("Storing to file:");
-
-		// FileOutputStream fos = new FileOutputStream("randomForestModel");
-		// ObjectOutputStream oos = new ObjectOutputStream(fos);
-		// oos.writeInt(12345);
-		// oos.writeObject("Today");
-		// oos.writeObject(forest);
-		// oos.close();
-
-		// FileWriter myWriter = new FileWriter("randomForestModel.txt");
-		// myWriter.write(forest.toString());
-		// myWriter.close();
 		logger.info("Successfully wrote to the file.");
 		logger.info("matrix:"+eval.toMatrixString());
 		logger.info(eval.toClassDetailsString());
@@ -81,15 +61,11 @@ public class RandomForestAlgorithm_ implements Serializable{
 	}	
 
 	public Instances getDataSet(String fileName) throws Exception{
-
-		DataSource source = new DataSource (fileName); 
-		// logger.info("Set converter");
+		DataSource source = new DataSource(fileName);
 		Instances dataset = source.getDataSet();
-		// logger.info("Loaded dataset");
-		dataset.setClassIndex(dataset.numAttributes() - 1); 
+		dataset.setClassIndex(dataset.numAttributes() - 1);
 		logger.info("Set class index of dataset");
 		return dataset;
-
 	}
 
 	public RandomForest testModel(String testFile, String modelFile) throws Exception{

@@ -17,7 +17,6 @@ public class ColumnBasedTable implements Serializable{
     public ColumnBasedTable(String id, List<Column> columns){
         this.id = id;
         this.columns = columns;
-        // self.name2colidx: Dict[str, int] = {cname.name: idx for idx, cname in enumerate(columns)}
         int i=0;
         for(Column col_name: columns){
             this.name2colidx.put(col_name.name.toString(), i);
