@@ -1,4 +1,6 @@
 {
+  "type": "commonjs",
+
   "build": {
     "appId": "edu.isi.karma",
     "win": {
@@ -19,6 +21,7 @@
       "background": "resources/osx/dmg-background.png"
     }
   },
+
   "directories": {
     "buildResources": "resources"
   },
@@ -43,7 +46,7 @@
     "mocha": "^3.0.2",
     "rollup": "^0.34.7",
     "source-map-support": "^0.4.2",
-    "spectron": "^3.3.0",
+    "spectron": "^13.0.0",
     "yargs": "^4.2.0",
     "electron-packager": "latest"
   }
