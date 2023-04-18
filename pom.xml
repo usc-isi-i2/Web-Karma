@@ -27,7 +27,7 @@
 
 	<properties>
 		<skipTests>true</skipTests>
-    <jettyVersion>9.4.43.v20210629</jettyVersion>
+    <jettyVersion>10.0.14</jettyVersion>
     <project.build.sourceEncoding>
       UTF-8
     </project.build.sourceEncoding>
