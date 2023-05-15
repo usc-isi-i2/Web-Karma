@@ -7,8 +7,6 @@
   "homepage": "http://www.isi.edu/integration/karma/",
   "license": "MIT",
   "main": "background.js",
-  "type": "commonjs",
-
   "dependencies": {
     "fs-jetpack": "^0.9.0",
     "open": "7.0.2",
