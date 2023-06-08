@@ -10,7 +10,7 @@ We value your feedback!
 
 We would greatly appreciate it if you could take a few minutes to provide us with your feedback on our application. Your input will help us improve and enhance the overall user experience.
 
-Please click [here](https://docs.google.com/forms/d/e/1FAIpQLScARPfj46DO3bRcwD84YeTz967Hqjr2O8QTFjuPug77UKufyg/viewform) to access the feedback form, and share your thoughts, suggestions, or report any issues you encountered.
+Please click [here](https://forms.gle/jnHV9Lz3YHdssYgR7) to access the feedback form, and share your thoughts, suggestions, or report any issues you encountered.
 
 Thank you for your support!
 
