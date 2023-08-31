@@ -47,5 +47,6 @@
     "spectron": "^13.0.0",
     "yargs": "^4.2.0",
     "electron-packager": "latest"
-  }
+  },
+  "type": "commonjs"
 }
