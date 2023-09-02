@@ -35,12 +35,6 @@
        		<artifactId>jersey-multipart</artifactId>
        		<version>1.8</version>
        </dependency>
-       
-       <dependency>
-		  <groupId>com.owlike</groupId>
-		  <artifactId>genson</artifactId>
-		  <version>1.6</version>
-		</dependency>
 
        <dependency>
 			<groupId>edu.isi</groupId>
