@@ -71,6 +71,10 @@
 		            <artifactId>jackson.core</artifactId>
 		        </exclusion>
 				<exclusion>
+					<groupId>org.xerial.snappy</groupId>
+					<artifactId>snappy-java</artifactId>
+				</exclusion>
+				<exclusion>
 		            <artifactId>jackson-jaxrs</artifactId>
 		            <groupId>org.codehaus.jackson</groupId>
 		        </exclusion>

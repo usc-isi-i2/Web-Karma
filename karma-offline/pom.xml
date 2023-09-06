@@ -137,6 +137,10 @@
 					<artifactId>microsoft-windowsazure-storage-sdk</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>org.xerial.snappy</groupId>
+					<artifactId>snappy-java</artifactId>
+				</exclusion>
+				<exclusion>
 		            <groupId>com.fasterxml.jackson.core</groupId>
 		            <artifactId>jackson.core</artifactId>
 		        </exclusion>
