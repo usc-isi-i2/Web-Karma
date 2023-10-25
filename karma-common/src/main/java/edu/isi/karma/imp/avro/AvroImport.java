@@ -15,7 +15,6 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.io.JsonEncoder;
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.JsonFactory;
 import org.json.JSONException;
 
 import edu.isi.karma.imp.Import;
@@ -89,17 +88,17 @@ public class AvroImport extends Import {
 		GenericDatumWriter<GenericRecord> writer = new GenericDatumWriter<>(reader.getSchema());
 		while(reader.hasNext())
 		{
-			
+
 			GenericRecord record = reader.next();
-				JsonEncoder encoder = EncoderFactory.get().jsonEncoder(reader.getSchema(), new JsonFactory().createJsonGenerator(baos)).configure(baos);
+				JsonEncoder encoder = EncoderFactory.get().jsonEncoder(reader.getSchema(), baos).configure(baos);
 				writer.write(record, encoder);
 				encoder.flush();
 				if(reader.hasNext())
 				{
 					baos.write(',');
 				}
-				
-			
+
+
 		}
 		reader.close();
 		baos.write('\n');
