@@ -3,6 +3,12 @@
 ![travis ci](https://travis-ci.org/usc-isi-i2/Web-Karma.svg?branch=master)
 
 ---
+After many years of supporting Karma we have decided to archieve this repository since it is difficult to keep up with all of the security updates.  You are welcome to use this software, but please be aware that it is no longer supported and there will be security vulnerabilities.  
+
+SAND is our latest replacement for Karma.  It is available from Github here: https://github.com/usc-isi-i2/sand
+Please check it out and give us feedback on how you are using the tool and if you have any suggestions to improve it.
+
+---
 
 ### Feedback Request
 
